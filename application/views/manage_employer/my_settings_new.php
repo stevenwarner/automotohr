@@ -297,6 +297,11 @@
                                                 <li><a href="<?= base_url('payrolls/ledger/import'); ?>">Import Payroll General Ledger</a></li>
                                             <?php } ?>
                                         <?php } ?>
+                                        <?php if (isPayrollOrPlus(true)) { ?>
+                                            <li>
+                                                <a href="<?= base_url('lms/courses/import_course_csv'); ?>">Import Learning Management System CSV</a>
+                                            </li>
+                                        <?php } ?>
                                         <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
                                             <!-- Attendance module settings -->
                                             <li>

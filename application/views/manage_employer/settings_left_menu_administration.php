@@ -247,5 +247,15 @@
                 </a>
             </li>
         <?php } ?>
+        <?php if (isPayrollOrPlus(true)) { ?>
+            <li>
+                <a <?= uri_string() === "lms/courses/import_course_csv" ? 'class="active"' : ""; ?> href="<?php echo base_url('lms/courses/import_course_csv'); ?>">
+                    <figure>
+                        <i class="fa fa-upload" aria-hidden="true"></i>
+                    </figure>
+                    Import Learning Management System CSV
+                </a>
+            </li>
+        <?php } ?>
     </ul>
 </div>

@@ -1428,7 +1428,8 @@ class Courses extends Public_Controller
             $data['employerId'] = $data['session']['employer_detail']['sid'];
             $data['level'] = 0;
             $data['logged_in_view'] = true;
-            $data['left_navigation'] = 'courses/partials/profile_left_menu';
+            // $data['left_navigation'] = 'courses/partials/profile_left_menu';
+            $data['left_navigation'] = 'manage_employer/settings_left_menu_administration';
             // get the security details
             $data['security_details'] = db_get_access_level_details(
                 $data['session']['employer_detail']['sid'],

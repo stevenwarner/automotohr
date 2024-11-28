@@ -9,7 +9,7 @@
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                            <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
+                            <a href="<?php echo $employee['access_level'] == 'Admin' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
                         </div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
@@ -26,6 +26,8 @@
                                     <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to my Courses</a>
                                 </div>
                             <?php } ?>
+                            <a href="<?php echo base_url('lms/courses/company_courses'); ?>" class="btn btn-info btn-orange csRadius5 csF16 pull-right"><i class="fa fa-list-alt"></i> Company Courses</a>
+                            <a href="<?php echo base_url('lms/courses/company_report'); ?>" class="btn btn-info btn-orange csRadius5 csF16 pull-right margin-right"><i class="fa fa-line-chart"></i> Course report</a>
                         </h1>
                     </div>
 
