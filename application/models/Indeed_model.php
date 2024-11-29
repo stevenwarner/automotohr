@@ -1532,6 +1532,34 @@ class Indeed_model extends CI_Model
             "errors" => 0,
             "companies" => 0,
         ];
+        // set company filter
+        if (!in_array("All", $filter["companies"])) {
+            $this->db->where_in(
+                "portal_job_listings.user_sid",
+                $filter["companies"]
+            );
+        }
+        // add status filter
+        if ($filter["status"]) {
+            //
+            if (in_array("Processed", $filter["status"])) {
+                $this->db->where("is_processed", 1);
+            }
+            if (in_array("Errors", $filter["status"])) {
+                $this->db->where("errors is not null", null);
+            }
+            if (in_array("Processing", $filter["status"])) {
+                $this->db->where("is_processed", 0);
+                $this->db->where("is_processing", 1);
+            }
+            if (in_array("Pending", $filter["status"])) {
+                $this->db->where("is_processed", 0);
+                $this->db->where("is_processing", 0);
+            }
+            if (in_array("Expired", $filter["status"])) {
+                $this->db->where("is_expired", 1);
+            }
+        }
         // get the total records
         // $this->setWhere($filter);
         $returnArray["records"] = $this
