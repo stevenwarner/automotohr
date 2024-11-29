@@ -1192,7 +1192,8 @@ class Indeed_model extends CI_Model
      * @return array
      */
     public function getJobQueueForActiveJobs(
-        int $numberOfJobs
+        int $numberOfJobs,
+        string $generatePayload = "no"
     ) {
         // get the list of activated companies
         $companiesList = $this->getCompaniesForIndeedJobSync();
@@ -1248,25 +1249,27 @@ class Indeed_model extends CI_Model
         if (!$d) {
             return [];
         }
-        // extract job queue sids
-        $queueIds = array_column(
-            $d,
-            "sid"
-        );
-        // update the processing jobs
-        $this
-            ->db
-            ->where_in(
-                "sid",
-                $queueIds
-            )
-            ->update(
-                "indeed_job_queue",
-                [
-                    "is_processing" => 1,
-                    "updated_at" => getSystemDate()
-                ]
+        if ($generatePayload === "no") {
+            // extract job queue sids
+            $queueIds = array_column(
+                $d,
+                "sid"
             );
+            // update the processing jobs
+            $this
+                ->db
+                ->where_in(
+                    "sid",
+                    $queueIds
+                )
+                ->update(
+                    "indeed_job_queue",
+                    [
+                        "is_processing" => 1,
+                        "updated_at" => getSystemDate()
+                    ]
+                );
+        }
         //
         return $d;
     }

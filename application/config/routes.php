@@ -2422,8 +2422,8 @@ $route['manage_admin/reports/indeed/log/(:num)'] = 'manage_admin/reports/Indeed_
  * CRON job links
  */
 // Indeed cron job link
-$route["crons/indeed/process"]["cli"] = "v1/Indeed_cron/processJobSync";
-// LMS CRONS
+$route["crons/indeed/process/(:any)"]["cli"] = "v1/Indeed_cron/processJobSync/$1";
+// LMS CRONScl
 $route["crons/lms/new_course"]["cli"] = "Cron_lms_courses/sendFirstTimeAvailableCourseEmailToEmployees";
 $route["crons/lms/send_remider_emails_to_companies"]["cli"] = "Cron_lms_courses/sendCourseReminderEmails";
 $route["crons/lms/send_report_to_managers"]["cli"] = "Cron_lms_courses/sendCourseReportToManagers";
