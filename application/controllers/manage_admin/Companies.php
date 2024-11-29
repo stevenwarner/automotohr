@@ -3565,6 +3565,7 @@ class Companies extends Admin_Controller
                 "indeed_job_queue",
                 [
                     "has_errors" => 0,
+                    "errors" => null,
                     "updated_at" => $dateWithTime,
                 ]
             );
