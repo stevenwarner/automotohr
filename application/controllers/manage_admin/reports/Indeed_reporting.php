@@ -49,7 +49,7 @@ class Indeed_reporting extends Admin_Controller
             );
 
         // set pagination
-        $per_page = 1;
+        $per_page = PAGINATION_RECORDS_PER_PAGE;
         $page_number = $pageNumber;
         $offset = 0;
         if ($page_number > 1) {
@@ -60,8 +60,11 @@ class Indeed_reporting extends Admin_Controller
         $config["base_url"] = base_url("manage_admin/reports/indeed?". $_SERVER['QUERY_STRING']);
         $config["total_rows"] = $this->data["counts"]["records"];
         $config["per_page"] = $per_page;
-        $config["uri_segment"] = 2;
-        $config["num_links"] = 2;
+        // $config["uri_segment"] = 2;
+        // $config["num_links"] = 2;
+        $config['page_query_string'] = TRUE; // Enable query string for pagination
+        $config['query_string_segment'] = 'page'; // Query string parameter for pagination (default: 'per_page')
+
         $config["use_page_numbers"] = true;
         $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
         $config['full_tag_close'] = '</ul></nav><!--pagination-->';
