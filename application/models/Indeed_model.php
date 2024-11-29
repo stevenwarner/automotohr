@@ -1533,12 +1533,7 @@ class Indeed_model extends CI_Model
             "companies" => 0,
         ];
         // set company filter
-        if (!in_array("All", $filter["companies"])) {
-            $this->db->where_in(
-                "portal_job_listings.user_sid",
-                $filter["companies"]
-            );
-        }
+      
         // add status filter
         if ($filter["status"]) {
             //
@@ -1564,11 +1559,7 @@ class Indeed_model extends CI_Model
         // $this->setWhere($filter);
         $returnArray["records"] = $this
             ->db
-            ->join(
-                "portal_job_listings",
-                "portal_job_listings.sid = indeed_job_queue.job_sid",
-                "inner"
-            )->count_all_results("indeed_job_queue");
+            ->count_all_results("indeed_job_queue");
 
         // get the total processed
         // $this->setWhere($filter);
