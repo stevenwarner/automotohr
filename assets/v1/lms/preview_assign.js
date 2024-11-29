@@ -143,7 +143,7 @@ $(function LMSEmployeeCourses() {
 								"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
 								function () {
 									window.location =
-										baseURI + "lms/courses/" + courseId;
+										baseURI + "lms/courses/" + courseId + "/" + courseLanguage;
 								}
 							);
 						} else if (response.status === "passed") {
