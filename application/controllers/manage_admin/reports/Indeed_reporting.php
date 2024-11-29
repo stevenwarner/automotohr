@@ -57,7 +57,7 @@ class Indeed_reporting extends Admin_Controller
         }
 
         $config = array();
-        $config["base_url"] = base_url("manage_admin/reports/indeed?". $_SERVER['QUERY_STRING']);
+        $config["base_url"] = base_url("manage_admin/reports/indeed?". (str_replace("page=", "pg=",$_SERVER['QUERY_STRING'])));
         $config["total_rows"] = $this->data["counts"]["records"];
         $config["per_page"] = $per_page;
         // $config["uri_segment"] = 2;
