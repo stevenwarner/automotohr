@@ -1863,4 +1863,26 @@ class Indeed_model extends CI_Model
             ->get("indeed_job_queue")
             ->result_array();
     }
+
+
+    public function getSalaryOfJob(int $jobId)
+    {
+        return $this
+            ->db
+            ->select([
+                "portal_job_listings.Salary",
+                "portal_job_listings.SalaryType",
+            ])
+            ->where("sid", $jobId)
+            ->get("portal_job_listings")
+            ->row_array();
+    }
+
+    public function updateSalaryByJobId(int $jobId, array $data)
+    {
+        return $this
+            ->db
+            ->where("sid", $jobId)
+            ->update("portal_job_listings", $data);
+    }
 }
