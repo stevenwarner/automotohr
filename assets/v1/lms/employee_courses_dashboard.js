@@ -276,26 +276,29 @@ $(function LMSEmployeeDashboard() {
 				coursesHTML += `            <p>${course.course_content.substr(0,50)}&nbsp;</p>`;
 				coursesHTML += `        </div>`;
 				coursesHTML += `    </div>`;
+				
+				if (ID == "jsInprogressCourses" || ID == "jsPassedCourses") {
 				coursesHTML += `    <div class="row">`;
 				coursesHTML += `        <div class="col-md-6 col-xs-12">`;
-				coursesHTML += `            <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>`;
+				coursesHTML += `            <p class="csColumSection"><strong>START DATE</strong></p>`;
 				coursesHTML += `            <p>${moment(
-					course.assigned_on
+					course.start_date
 				).format(timeOffDateFormatWithTime)}</p>`;
 				coursesHTML += `        </div>`;
 				coursesHTML += `        <div class="col-md-6 col-xs-12">`;
-				coursesHTML += `            <p class="csColumSection"><strong>DUE DATE</strong></p>`;
+				coursesHTML += `            <p class="csColumSection"><strong>END DATE</strong></p>`;
 
-				if (course.course_end_period === null) {
-					coursesHTML += `--`;
-				} else {
+				if (course.end_date && ID == "jsPassedCourses") {
 					coursesHTML += `            <p>${moment(
-						course.course_end_period
+						course.end_date
 					).format(timeOffDateFormatWithTime)}</p>`;
+				} else {
+					coursesHTML += `--`;
 				}
 				
 				coursesHTML += `        </div>`;
 				coursesHTML += `    </div>`;
+				}
 
 				coursesHTML += `    <div class="row">`;
 				coursesHTML += `        <div class="col-md-12 col-xs-12 text-center">`;
