@@ -3566,6 +3566,8 @@ class Companies extends Admin_Controller
                 [
                     "has_errors" => 0,
                     "errors" => null,
+                    "is_processing" => 0,
+                    "is_processed" => 0,
                     "updated_at" => $dateWithTime,
                 ]
             );
