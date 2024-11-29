@@ -73,6 +73,7 @@ class Indeed_cron extends CI_Controller
      */
     private $indeedContactDetails = [];
 
+    private $generatePayload;
     /**
      * Main entry point
      */
@@ -105,8 +106,9 @@ class Indeed_cron extends CI_Controller
      *
      * @param string $verificationToken
      */
-    public function processJobSync()
+    public function processJobSync(string $generatePayLoad = "no")
     {
+        $this->generatePayload = $generatePayLoad;
         // load the queued jobs
         $this->loadJobs();
         // load portal data
@@ -170,7 +172,8 @@ class Indeed_cron extends CI_Controller
         $this->jobs = $this
             ->indeed_model
             ->getJobQueueForActiveJobs(
-                $this->numberOfJobsForQueue
+                $this->numberOfJobsForQueue,
+                $this->generatePayload
             );
         // when there is no jobs in queue
         if (!$this->jobs) {
@@ -592,6 +595,11 @@ class Indeed_cron extends CI_Controller
         }
         // get the multi job Indeed query
         $queryForIndeed = $this->getJobsBodyForIndeed();
+        //
+        if ($this->generatePayload === "yes") {
+            echo $queryForIndeed . "\n\n";
+            return;
+        }
         // make the call to Indeed
         $response = $this
             ->indeed_lib
@@ -715,6 +723,9 @@ class Indeed_cron extends CI_Controller
             $this->jobBody,
             $multiJobBody
         );
+        if ($this->generatePayload === "yes") {
+            return $multiJobBody;
+        }
         // convert it to http body
         return '{"query":' . json_encode($multiJobBody) . '}';
     }
