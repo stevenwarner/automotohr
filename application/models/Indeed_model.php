@@ -1564,7 +1564,11 @@ class Indeed_model extends CI_Model
         // $this->setWhere($filter);
         $returnArray["records"] = $this
             ->db
-            ->count_all_results("indeed_job_queue");
+            ->join(
+                "portal_job_listings",
+                "portal_job_listings.sid = indeed_job_queue.job_sid",
+                "inner"
+            )->count_all_results("indeed_job_queue");
 
         // get the total processed
         // $this->setWhere($filter);
