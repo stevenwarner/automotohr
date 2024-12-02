@@ -1532,21 +1532,44 @@ class Indeed_model extends CI_Model
             "errors" => 0,
             "companies" => 0,
         ];
+        // set company filter
+      
+        // add status filter
+        if ($filter["status"]) {
+            //
+            if (in_array("Processed", $filter["status"])) {
+                $this->db->where("is_processed", 1);
+            }
+            if (in_array("Errors", $filter["status"])) {
+                $this->db->where("errors is not null", null);
+            }
+            if (in_array("Processing", $filter["status"])) {
+                $this->db->where("is_processed", 0);
+                $this->db->where("is_processing", 1);
+            }
+            if (in_array("Pending", $filter["status"])) {
+                $this->db->where("is_processed", 0);
+                $this->db->where("is_processing", 0);
+            }
+            if (in_array("Expired", $filter["status"])) {
+                $this->db->where("is_expired", 1);
+            }
+        }
         // get the total records
-        $this->setWhere($filter);
+        // $this->setWhere($filter);
         $returnArray["records"] = $this
             ->db
             ->count_all_results("indeed_job_queue");
 
         // get the total processed
-        $this->setWhere($filter);
+        // $this->setWhere($filter);
         $returnArray["processed"] = $this
             ->db
             ->where("is_processed", 1)
             ->count_all_results("indeed_job_queue");
 
         // get the total processing
-        $this->setWhere($filter);
+        // $this->setWhere($filter);
         $returnArray["processing"] = $this
             ->db
             ->where("is_processing", 1)
@@ -1555,7 +1578,7 @@ class Indeed_model extends CI_Model
             ->count_all_results("indeed_job_queue");
 
         // get the total expired
-        $this->setWhere($filter);
+        // $this->setWhere($filter);
         $returnArray["expired"] = $this
             ->db
             ->where(
@@ -1565,7 +1588,7 @@ class Indeed_model extends CI_Model
             ->count_all_results("indeed_job_queue");
 
         // get the total errors
-        $this->setWhere($filter);
+        // $this->setWhere($filter);
         $returnArray["errors"] = $this
             ->db
             ->where(
@@ -1575,7 +1598,7 @@ class Indeed_model extends CI_Model
             ->count_all_results("indeed_job_queue");
 
         // get the total pending
-        $this->setWhere($filter);
+        // $this->setWhere($filter);
         $returnArray["pending"] = $this
             ->db
             ->where(
@@ -1602,8 +1625,34 @@ class Indeed_model extends CI_Model
      */
     public function getQueueRecords(array $filter, int $limit, int $offset)
     {
-        // set the filter
-        $this->setWhere($filter);
+        // set company filter
+        if (!in_array("All", $filter["companies"])) {
+            $this->db->where_in(
+                "portal_job_listings.user_sid",
+                $filter["companies"]
+            );
+        }
+        // add status filter
+        if ($filter["status"]) {
+            //
+            if (in_array("Processed", $filter["status"])) {
+                $this->db->where("is_processed", 1);
+            }
+            if (in_array("Errors", $filter["status"])) {
+                $this->db->where("errors is not null", null);
+            }
+            if (in_array("Processing", $filter["status"])) {
+                $this->db->where("is_processed", 0);
+                $this->db->where("is_processing", 1);
+            }
+            if (in_array("Pending", $filter["status"])) {
+                $this->db->where("is_processed", 0);
+                $this->db->where("is_processing", 0);
+            }
+            if (in_array("Expired", $filter["status"])) {
+                $this->db->where("is_expired", 1);
+            }
+        }
         // add columns to be selected
         return $this
             ->db
@@ -1626,6 +1675,11 @@ class Indeed_model extends CI_Model
                 "portal_job_listings.user_sid",
                 "portal_job_listings.Title",
             ])
+            ->join(
+                "portal_job_listings",
+                "portal_job_listings.sid = indeed_job_queue.job_sid",
+                "inner"
+            )
             ->join(
                 "indeed_job_queue_tracking",
                 "indeed_job_queue_tracking.job_sid = indeed_job_queue.job_sid
@@ -1862,5 +1916,27 @@ class Indeed_model extends CI_Model
             ->where("indeed_job_queue.is_expired", 0)
             ->get("indeed_job_queue")
             ->result_array();
+    }
+
+
+    public function getSalaryOfJob(int $jobId)
+    {
+        return $this
+            ->db
+            ->select([
+                "portal_job_listings.Salary",
+                "portal_job_listings.SalaryType",
+            ])
+            ->where("sid", $jobId)
+            ->get("portal_job_listings")
+            ->row_array();
+    }
+
+    public function updateSalaryByJobId(int $jobId, array $data)
+    {
+        return $this
+            ->db
+            ->where("sid", $jobId)
+            ->update("portal_job_listings", $data);
     }
 }

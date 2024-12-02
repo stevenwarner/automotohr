@@ -2417,6 +2417,8 @@ $route['manage_admin/companies/ajax_change_general_documents_status'] = 'manage_
 $route['manage_admin/reports/indeed'] = 'manage_admin/reports/Indeed_reporting/index';
 $route['manage_admin/reports/indeed/(:num)'] = 'manage_admin/reports/Indeed_reporting/index/$1';
 $route['manage_admin/reports/indeed/log/(:num)'] = 'manage_admin/reports/Indeed_reporting/log/$1';
+$route['manage_admin/reports/indeed/salary/(:num)']["get"] = 'manage_admin/reports/Indeed_reporting/salary/$1';
+$route['manage_admin/reports/indeed/salary/(:num)']["post"] = 'manage_admin/reports/Indeed_reporting/updateSalaryByJobId/$1';
 
 /**
  * CRON job links

@@ -39,24 +39,28 @@
         border-radius: 5px;
         box-shadow: 0 0 5px 1px #eee;
     }
+
     .popover {
-        max-width: 300px !important; /* Set a max width */
+        max-width: 300px !important;
+        /* Set a max width */
     }
 
     .popover .popover-body {
-        padding: 0 !important; /* Remove padding around the table */
+        padding: 0 !important;
+        /* Remove padding around the table */
     }
 
     .popover table {
         margin: 0 !important;
-        width: 100% !important; /* Ensure table takes full width */
+        width: 100% !important;
+        /* Ensure table takes full width */
     }
 
     .popover table th,
     .popover table td {
-        padding: 8px !important; /* Adjust padding as needed */
+        padding: 8px !important;
+        /* Adjust padding as needed */
     }
-
 </style>
 <div class="main">
     <div class="container-fluid">
@@ -234,6 +238,8 @@
                                                         // check and add company name to cache
                                                         $companyCache[$v0["user_sid"]] =
                                                             $companyCache[$v0["user_sid"]] ?? getCompanyColumnById($v0["user_sid"], "CompanyName")["CompanyName"];
+                                                        $errorsArray = $v0["errors"] ? json_decode($v0["errors"], true) : [];
+
                                                     ?>
                                                         <tr data-id="<?= $v0["sid"]; ?>" data-logid="<?= $v0["log_sid"]; ?>" data-jobid="<?= $v0["job_sid"]; ?>">
                                                             <td>
@@ -241,10 +247,10 @@
                                                                     <?= $v0["Title"]; ?>
                                                                 </strong>
                                                                 <p>Company: <?= $companyCache[$v0["user_sid"]]; ?></p>
-                                                                <p>URL: <a href="<?=generateJobLink(
-                                                                    $v0["user_sid"],
-                                                                    $v0["job_sid"]
-                                                                );?>">Job Link</a></p>
+                                                                <p>URL: <a href="<?= generateJobLink(
+                                                                                        $v0["user_sid"],
+                                                                                        $v0["job_sid"]
+                                                                                    ); ?>">Job Link</a></p>
                                                             </td>
                                                             <td class="text-right">
                                                                 <?= $v0["indeed_posting_id"] ?? "-"; ?>
@@ -258,10 +264,10 @@
                                                                 </strong>
                                                             </td>
                                                             <td class="text-right">
-                                                                <?php if ($v0["errors"]):?>
-                                                                <button class="btn btn-danger jsShowErrors" data-errors='<?= htmlspecialchars($v0["errors"], ENT_QUOTES); ?>'>
-                                                                    Show Errors
-                                                                </button>
+                                                                <?php if ($v0["errors"]): ?>
+                                                                    <button class="btn btn-danger jsShowErrors" data-errors='<?= htmlspecialchars($v0["errors"], ENT_QUOTES); ?>'>
+                                                                        Show Errors
+                                                                    </button>
                                                                 <?php endif; ?>
                                                             </td>
                                                             <td class="text-right">
@@ -285,8 +291,14 @@
                                                                     </button>
                                                                 <?php endif; ?>
 
-                                                                <?php if ($v0["has_errors"]): ?>                                                                
-                                                                <button class="btn btn-success jsHasErrors">Run</button>
+                                                                <?php if ($v0["has_errors"] || $v0["errors"]): ?>
+                                                                    <button class="btn btn-success jsHasErrors">Run</button>
+                                                                <?php endif; ?>
+                                                                <?php if (array_key_exists("salary", $errorsArray)) : ?>
+                                                                    <button class="btn btn-success jsSetSalary">
+                                                                        <i class="fa fa-money"></i>
+                                                                        Set Salary
+                                                                    </button>
                                                                 <?php endif; ?>
 
                                                                 <button class="btn btn-success jsHistory">
@@ -336,6 +348,73 @@
 <script src="<?= base_url("public/v1/plugins/ms_modal/main.min.js"); ?>"></script>
 
 <script>
+    $(function() {
+        //
+        let jobId;
+        let XHR = null;
+        $(".jsSetSalary").click(function(event) {
+            //
+            event.preventDefault();
+            //
+            jobId = $(this).closest("tr").data("jobid");
+            //
+            Modal({
+                Id: "jsSalaryModal",
+                Title: "",
+                Loader: "jsSalaryModalLoader",
+                Body: '<div id="jsSalaryModalBody"></div>'
+            }, getSalary)
+        });
+
+        $(document).on("click", ".jsSalaryUpdate", function(event) {
+            //
+            event.preventDefault();
+
+            if (!$("#jsSalary").val()) {
+                return alertify.alert("Salary is required!");
+            }
+            ml(true, "jsSalaryModalLoader")
+            //
+            let formObj = $("#jsSalaryForm").serialize();
+            $.ajax({
+                    url: window.location.origin + "/manage_admin/reports/indeed/salary/" + jobId,
+                    method: "post",
+                    data: formObj
+                })
+                .always(function() {
+                    ml(false, "jsSalaryModalLoader")
+                })
+                .fail(function() {})
+                .success(function(resp) {
+                    alertify.alert("You have successfully updated the salary!", function() {
+                        $("#jsSalaryModal .jsModalCancel").click();
+                    })
+                })
+        });
+
+
+        function getSalary() {
+            //
+            if (XHR !== null) {
+                XHR.abort();
+            }
+            XHR = $
+                .ajax({
+                    url: window.location.origin + "/manage_admin/reports/indeed/salary/" + jobId,
+                    method: "get"
+                })
+                .always(function() {
+                    XHR = null;
+                })
+                .fail(function() {})
+                .success(function(resp) {
+                    $("#jsSalaryModalBody").html(resp.view)
+                    ml(false, "jsSalaryModalLoader")
+                })
+        }
+    });
+
+
     $(function() {
         $("#jsCompanies").select2({
             closeOnSelection: false
@@ -470,13 +549,13 @@
     $(".jsHasErrors").click(function(event) {
         event.preventDefault();
         const jobId = $(this).closest("tr").data("jobid");
-       window.location.href = '<?php echo base_url('manage_admin/companies/runIndeedJob/');?>'+jobId;
-   
+        window.location.href = '<?php echo base_url('manage_admin/companies/runIndeedJob/'); ?>' + jobId;
+
     });
 
     // modal to show the errors
-    $(document).ready(function () {
-        $('.jsShowErrors').on('click', function () {
+    $(document).ready(function() {
+        $('.jsShowErrors').on('click', function() {
             var errors = $(this).data('errors');
 
             // Parse the JSON if it's a JSON string

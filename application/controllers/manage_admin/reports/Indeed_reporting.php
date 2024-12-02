@@ -57,11 +57,14 @@ class Indeed_reporting extends Admin_Controller
         }
 
         $config = array();
-        $config["base_url"] = base_url("manage_admin/reports/indeed");
+        $config["base_url"] = base_url("manage_admin/reports/indeed?". (str_replace("page=", "pg=",$_SERVER['QUERY_STRING'])));
         $config["total_rows"] = $this->data["counts"]["records"];
         $config["per_page"] = $per_page;
-        $config["uri_segment"] = 2;
-        $config["num_links"] = 2;
+        // $config["uri_segment"] = 2;
+        // $config["num_links"] = 2;
+        $config['page_query_string'] = TRUE; // Enable query string for pagination
+        $config['query_string_segment'] = 'page'; // Query string parameter for pagination (default: 'per_page')
+
         $config["use_page_numbers"] = true;
         $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
         $config['full_tag_close'] = '</ul></nav><!--pagination-->';
@@ -117,12 +120,12 @@ class Indeed_reporting extends Admin_Controller
                 $exportBy
             ));
 
-            if(!empty($data["filter"]["startDate"]) && !empty($data["filter"]["endDate"])){
-            fputcsv($output, array(
-                "Period: " ,
-                 $data["filter"]["startDate"] . " - " . $data["filter"]["endDate"],
-            ));
-        }
+            if (!empty($data["filter"]["startDate"]) && !empty($data["filter"]["endDate"])) {
+                fputcsv($output, array(
+                    "Period: ",
+                    $data["filter"]["startDate"] . " - " . $data["filter"]["endDate"],
+                ));
+            }
 
 
             fputcsv($output, array(
@@ -223,5 +226,37 @@ class Indeed_reporting extends Admin_Controller
                 "view" => $this->load->view("manage_admin/reports/indeed_history", ["records" => $records], true)
             ]
         );
+    }
+
+    public function salary(int $jobId)
+    {
+        $records = $this
+            ->indeed_model
+            ->getSalaryOfJob(
+                $jobId
+            );
+
+        return SendResponse(
+            200,
+            [
+                "view" => $this->load->view("manage_admin/reports/salary", ["listing" => $records], true)
+            ]
+        );
+    }
+
+    public function updateSalaryByJobId(int $jobId)
+    {
+
+        $post = $this->input->post(null, true);
+
+        $this
+            ->indeed_model
+            ->updateSalaryByJobId(
+                $jobId,
+                [
+                    "Salary" => $post["jsSalary"],
+                    "SalaryType" => $post["jsSalaryType"],
+                ]
+            );
     }
 }
