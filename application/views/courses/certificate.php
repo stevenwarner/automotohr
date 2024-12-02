@@ -305,7 +305,26 @@
                                                 </div>
                                                 <div class="col-xs-4 pm-certified text-center">
                                                     <span class="pm-credits-text block sans">Proudly Sponsored By</span>
-                                                    <img class="image-responsive" src="<?php echo AWS_S3_BUCKET_URL.$courseInfo['secondary_logo']; ?>" alt="" style="width: 120px">
+                                                    <?php 
+                                                        if ($courseInfo['secondary_logo']) {
+                                                            //
+                                                            $url = AWS_S3_BUCKET_URL.$courseInfo['secondary_logo'];
+                                                            //make a curl call to fetch content
+                                                            $ch = curl_init();
+                                                            curl_setopt($ch, CURLOPT_AUTOREFERER, TRUE);
+                                                            curl_setopt($ch, CURLOPT_HEADER, 0);
+                                                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                                            curl_setopt($ch, CURLOPT_URL, $url);
+                                                            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+                                                            $data = curl_exec($ch);
+                                                            curl_close($ch);
+                                                            //get mime type
+                                                            $mime_type = getMimeType($url);
+                                                            $str64 = base64_encode($data);
+                                                        }
+                                                        //
+                                                    ?>
+                                                    <img class="image-responsive" src="<?php echo "data:" . $mime_type . ";base64," . $str64; ?>" alt="" style="width: 120px">
                                                 </div>
                                                 <div class="col-xs-4 pm-certified text-center">
                                                     <span class="pm-credits-text block sans">Completion Date</span>
@@ -335,7 +354,8 @@
                         </div>
                     </div>
                 </div>    
-            </div>
+            </div>\
+            
         </div>
     </div>  
     <script type="text/javascript" src="<?php echo base_url('assets/js/jquery-1.11.3.min.js'); ?>"></script>
