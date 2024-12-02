@@ -603,7 +603,7 @@ class Course_model extends CI_Model
         if (!empty($c)) {
             foreach ($c as $key => $course) {
                 //
-                $this->db->select('sid, lesson_status, course_status, course_language, created_at, updated_at');
+                $this->db->select('sid, lesson_status, course_status, course_banner, course_language, created_at, updated_at');
                 $this->db->where('company_sid', $companyId);
                 $this->db->where('employee_sid', $employeeId);
                 $this->db->where('course_sid', $course['sid']);

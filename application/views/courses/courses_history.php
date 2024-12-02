@@ -110,13 +110,23 @@
                                                         <?php foreach ($course['history'] as $item) { ?>
                                                             <div class="col-sm-4">
                                                                 <article class="article-sec">
+                                                                    <div class="row">
+                                                                        <div class="col-md-12 col-xs-12">
+                                                                            <?php if ($item['course_banner']) { ?>
+                                                                                <img src="<?php echo AWS_S3_BUCKET_URL.$item['course_banner']; ?>" style="height: 214px !important;" />
+                                                                            <?php } else { ?>   
+                                                                                <img src="https://automotohrattachments.s3.amazonaws.com/default_course_banner-Uk2W5O.jpg" style="height: 214px !important;" />
+                                                                            <?php } ?>    
+                                                                        </div>
+                                                                    </div>
                                                                     <h1 style="height: 58px;">
                                                                         <?php 
-                                                                            if ($item['lesson_status'] == "incomplete") {
-                                                                                echo "Incomplete Course";
-                                                                            } else if ($item['lesson_status'] == "completed") {
-                                                                                echo "Completed Course";
-                                                                            }
+                                                                            echo $course['course_title'];
+                                                                            // if ($item['lesson_status'] == "incomplete") {
+                                                                            //     echo "Incomplete Course";
+                                                                            // } else if ($item['lesson_status'] == "completed") {
+                                                                            //     echo "Completed Course";
+                                                                            // }
                                                                         ?>
                                                                     </h1>
                                                                     <br>
