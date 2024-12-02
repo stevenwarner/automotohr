@@ -141,7 +141,7 @@
                                                                                     <p class="text-danger">Failed</p>
                                                                                 <?php } ?> 
                                                                             <?php } else { ?>
-                                                                                <p>N/A</p>   
+                                                                                <p>Incomplete</p>   
                                                                             <?php } ?>  
                                                                         </div>
                                                                         <div class="col-md-6 col-xs-12">
