@@ -394,7 +394,7 @@ class Courses extends Public_Controller
         $data['AHRStudentID'] = 'AHR-' . $studentId;
         $data['load_view'] = 1;
         $data['level'] = 0;
-        $data['courseInfo'] = $this->course_model->getCourseInfo($courseId);
+        $data['courseInfo'] = $this->course_model->getCourseCertificateInfo($courseId);
         $EmployeeCourseProgress = $this->course_model->getEmployeeCourseProgressInfo($courseId, $studentId, $companyId);
         $studentInfo = $this->course_model->getStudentInfo($studentId);
         //

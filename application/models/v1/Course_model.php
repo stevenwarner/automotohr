@@ -655,4 +655,12 @@ class Course_model extends CI_Model
             return '';
         }
     }
+
+    public function getCourseCertificateInfo($sid)
+    {
+        $this->db->select('course_title, secondary_logo');
+        $this->db->where('sid', $sid);
+        $result = $this->db->get('lms_default_courses')->row_array();
+        return $result;
+    }
 }

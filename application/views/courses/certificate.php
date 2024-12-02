@@ -82,8 +82,8 @@
 
         .pm-certificate-container {
             position: relative;
-            width: 1200px;
-            height: 794px;
+            width: 1400px;
+            height: 860px;
             background-color: #618597;
             padding: 30px;
             color: #333;
@@ -92,46 +92,46 @@
         }
 
         .outer-border {
-            width: 1190px;
-            height: 784px;
+            width: 1390px;
+            height: 850px;
             position: absolute;
             left: 50%;
-            margin-left: -595px;
+            margin-left: -695px;
             top: 50%;
-            margin-top: -392px;
+            margin-top: -425px;
             border: 2px solid #fff;
         }
 
         .inner-border {
-            width: 1144px;
-            height: 742px;
+            width: 1344px;
+            height: 806px;
             position: absolute;
             left: 50%;
-            margin-left: -573px;
+            margin-left: -672px;
             top: 50%;
-            margin-top: -370px;
+            margin-top: -403px;
             border: 2px solid #fff;
         }
         
         .pm-certificate-border {
             position: relative;
-            width: 1134px;
-            height: 732px;
+            width: 1334px;
+            height: 796px;
             padding: 0;
             border: 1px solid #e1e5f0;
             background-color: #ffffff;
             background-image: none;
             left: 50%;
-            margin-left: -568px;
+            margin-left: -667px;
             top: 50%;
-            margin-top: -365px;
+            margin-top: -398px;
         }
 
         .pm-certificate-block {
-            width: 650px;
+            width: 1060px;
             height: 200px;
             position: relative;
-            left: 50%;
+            left: 36%;
             margin-left: -325px;
             top: 70px;
             margin-top: 0;
@@ -176,10 +176,10 @@
             margin-bottom: 5px;
         }
         .pm-certificate-footer {
-            width: 650px;
+            width: 1060px;
             height: 100px;
             position: relative;
-            left: 50%;
+            left: 36%;
             margin-left: -325px;
             bottom: -105px;
         }
@@ -195,6 +195,13 @@
             font-weight: 600;
             margin-top: 26px;
             margin-bottom: 14px;
+        }
+
+        .pm-completion-date-text {
+            font-size: 26px;
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 8px;
         }
 
         .pm-sub-credit-text {
@@ -279,11 +286,11 @@
 
                                     <div class="col-xs-12">
                                         <div class="row">
-                                            <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
+                                            <div class="col-xs-1"><!-- LEAVE EMPTY --></div>
                                             <div class="pm-course-title underline col-xs-10 text-center">
                                                 <span class="pm-course-title-text block bold sans"><?php echo $courseInfo['course_title']; ?> (<?= ucfirst($EmployeeCourseProgress["course_language"]);?>)</span>
                                             </div>
-                                            <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
+                                            <div class="col-xs-1"><!-- LEAVE EMPTY --></div>
                                         </div>
                                     </div>
                                 </div>       
@@ -291,19 +298,36 @@
                                 <div class="col-xs-12">
                                     <div class="row">
                                         <div class="pm-certificate-footer">
-                                            <div class="col-xs-5 pm-certified text-center">
-                                            <span class="pm-credits-text block sans">Training provided by</span>
-                                                <img class="image-responsive" src="<?php echo $AHRLogo; ?>" alt="" style="width: 120px">
-                                            </div>
-                                            <div class="col-xs-2">
-                                                <!-- LEAVE EMPTY -->
-                                            </div>
-                                            <div class="col-xs-5 pm-certified text-center">
-                                                <span class="pm-credits-text block sans">Completion Date</span>
-                                                <span class="pm-entitled-text block cursive"><?php echo $completedOn; ?></span>
-                                                <span class="pm-empty-space block underline"></span>
-                                                <span class="bold block">Employee Number : <?php echo $AHRStudentID; ?></span>
-                                            </div>
+                                            <?php if ($courseInfo['secondary_logo']) { ?>
+                                                <div class="col-xs-4 pm-certified text-center">
+                                                    <span class="pm-credits-text block sans">Training provided by</span>
+                                                    <img class="image-responsive" src="<?php echo $AHRLogo; ?>" alt="" style="width: 120px">
+                                                </div>
+                                                <div class="col-xs-4 pm-certified text-center">
+                                                    <span class="pm-credits-text block sans">Proudly Sponsored By</span>
+                                                    <img class="image-responsive" src="<?php echo AWS_S3_BUCKET_URL.$courseInfo['secondary_logo']; ?>" alt="" style="width: 120px">
+                                                </div>
+                                                <div class="col-xs-4 pm-certified text-center">
+                                                    <span class="pm-credits-text block sans">Completion Date</span>
+                                                    <span class="pm-completion-date-text block cursive"><?php echo $completedOn; ?></span>
+                                                    <span class="pm-empty-space block underline"></span>
+                                                    <span class="bold block">Employee Number : <?php echo $AHRStudentID; ?></span>
+                                                </div>
+                                            <?php } else { ?>
+                                                <div class="col-xs-5 pm-certified text-center">
+                                                <span class="pm-credits-text block sans">Training provided by</span>
+                                                    <img class="image-responsive" src="<?php echo $AHRLogo; ?>" alt="" style="width: 120px">
+                                                </div>
+                                                <div class="col-xs-2">
+                                                    <!-- LEAVE EMPTY -->
+                                                </div>
+                                                <div class="col-xs-5 pm-certified text-center">
+                                                    <span class="pm-credits-text block sans">Completion Date</span>
+                                                    <span class="pm-completion-date-text block cursive"><?php echo $completedOn; ?></span>
+                                                    <span class="pm-empty-space block underline"></span>
+                                                    <span class="bold block">Employee Number : <?php echo $AHRStudentID; ?></span>
+                                                </div>
+                                            <?php } ?>    
                                         </div>
                                     </div>
                                 </div>
