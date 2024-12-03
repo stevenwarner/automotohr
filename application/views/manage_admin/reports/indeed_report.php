@@ -39,25 +39,73 @@
         border-radius: 5px;
         box-shadow: 0 0 5px 1px #eee;
     }
+
     .popover {
-        max-width: 300px !important; /* Set a max width */
+        max-width: 300px !important;
+        /* Set a max width */
     }
 
     .popover .popover-body {
-        padding: 0 !important; /* Remove padding around the table */
+        padding: 0 !important;
+        /* Remove padding around the table */
     }
 
     .popover table {
         margin: 0 !important;
-        width: 100% !important; /* Ensure table takes full width */
+        width: 100% !important;
+        /* Ensure table takes full width */
     }
 
     .popover table th,
     .popover table td {
-        padding: 8px !important; /* Adjust padding as needed */
+        padding: 8px !important;
+        /* Adjust padding as needed */
     }
 
+    .invoice-fields-textarea {
+        background-color: #f7f7f7;
+        border: 2px solid #aaa;
+        color: #000;
+        float: left;
+        height: 150px;
+        padding: 5px;
+        width: 100%;
+        resize: none;
+    }
+
+    .rating-container {
+        position: relative;
+        vertical-align: middle;
+        display: inline-block;
+        color: #e3e3e3;
+        overflow: hidden;
+    }
+
+    .rating-gly-star {
+        font-family: 'Glyphicons Halflings';
+        padding-left: 2px;
+    }
+
+    .rating-xs {
+        font-size: 2em;
+    }
+
+    .rating-disabled {
+        cursor: default;
+    }
+
+    .start-rating {
+        text-align: center;
+    }
+
+    .question-row {
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+    }
 </style>
+
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -201,7 +249,10 @@
                                 </div>
                             </div>
 
-                            <?php if ($records) : ?>
+                            <?php if ($records) :
+
+                                //    _e($records,true);
+                            ?>
                                 <!-- Showing -->
                                 <div class="panel panel-success">
                                     <div class="panel-heading">
@@ -241,10 +292,17 @@
                                                                     <?= $v0["Title"]; ?>
                                                                 </strong>
                                                                 <p>Company: <?= $companyCache[$v0["user_sid"]]; ?></p>
-                                                                <p>URL: <a href="<?=generateJobLink(
-                                                                    $v0["user_sid"],
-                                                                    $v0["job_sid"]
-                                                                );?>">Job Link</a></p>
+                                                                <p>URL: <a href="<?= generateJobLink(
+                                                                                        $v0["user_sid"],
+                                                                                        $v0["job_sid"]
+                                                                                    ); ?>">Job Link</a></p>
+
+                                                                <?php if ($v0["interview_questionnaire_sid"] != '' && $v0["interview_questionnaire_sid"] != 0) { ?>
+                                                                    <p>Questionnaire: <a href="javascript:void(0)" onclick="func_preview_questionnaire(<?php echo $v0['job_sid']; ?>);">View</a></p>
+
+                                                                    </button>
+                                                                <?php } ?>
+
                                                             </td>
                                                             <td class="text-right">
                                                                 <?= $v0["indeed_posting_id"] ?? "-"; ?>
@@ -258,10 +316,10 @@
                                                                 </strong>
                                                             </td>
                                                             <td class="text-right">
-                                                                <?php if ($v0["errors"]):?>
-                                                                <button class="btn btn-danger jsShowErrors" data-errors='<?= htmlspecialchars($v0["errors"], ENT_QUOTES); ?>'>
-                                                                    Show Errors
-                                                                </button>
+                                                                <?php if ($v0["errors"]): ?>
+                                                                    <button class="btn btn-danger jsShowErrors" data-errors='<?= htmlspecialchars($v0["errors"], ENT_QUOTES); ?>'>
+                                                                        Show Errors
+                                                                    </button>
                                                                 <?php endif; ?>
                                                             </td>
                                                             <td class="text-right">
@@ -285,8 +343,8 @@
                                                                     </button>
                                                                 <?php endif; ?>
 
-                                                                <?php if ($v0["has_errors"]): ?>                                                                
-                                                                <button class="btn btn-success jsHasErrors">Run</button>
+                                                                <?php if ($v0["has_errors"]): ?>
+                                                                    <button class="btn btn-success jsHasErrors">Run</button>
                                                                 <?php endif; ?>
 
                                                                 <button class="btn btn-success jsHistory">
@@ -331,6 +389,7 @@
         </div>
     </div>
 </div>
+
 
 <link rel="stylesheet" href="<?= base_url("public/v1/plugins/ms_modal/main.min.css"); ?>">
 <script src="<?= base_url("public/v1/plugins/ms_modal/main.min.js"); ?>"></script>
@@ -470,13 +529,13 @@
     $(".jsHasErrors").click(function(event) {
         event.preventDefault();
         const jobId = $(this).closest("tr").data("jobid");
-       window.location.href = '<?php echo base_url('manage_admin/companies/runIndeedJob/');?>'+jobId;
-   
+        window.location.href = '<?php echo base_url('manage_admin/companies/runIndeedJob/'); ?>' + jobId;
+
     });
 
     // modal to show the errors
-    $(document).ready(function () {
-        $('.jsShowErrors').on('click', function () {
+    $(document).ready(function() {
+        $('.jsShowErrors').on('click', function() {
             var errors = $(this).data('errors');
 
             // Parse the JSON if it's a JSON string
@@ -516,5 +575,54 @@
             .split(' ')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
+    }
+
+    function func_preview_questionnaire(questionnaire_sid) {
+        Modal({
+                Id: "jsModal",
+                Title: "",
+                Loader: "jsModalLoader",
+                Body: '<div id="jsModalBody"></div>'
+            },
+            function() {
+                loadQuestionaire(questionnaire_sid)
+            }
+        );
+    }
+
+
+
+    // load Questionaire
+    function loadQuestionaire(questionnaire_sid) {
+        var my_request;
+        var data_to_send = {
+            'perform_action': 'preview_questionnaire',
+            'questionnaire_sid': questionnaire_sid
+        };
+
+        my_request = $.ajax({
+            url: '<?php echo base_url("interview_questionnaire/ajax_responder"); ?>',
+            type: 'POST',
+            data: data_to_send,
+            dataType: 'json'
+        });
+
+
+        my_request.done(function(response) {
+            //console.log(response);
+
+            /*
+           
+            func_hide_loader();
+            $('#popupmodal .modal-dialog').addClass('modal-lg');
+            $('#popupmodal .modal-dialog').css('width', '90%');
+            $('#popupmodal #popupmodalbody').html(response.html);
+            $('#popupmodal #popupmodallabel').html(response.title);
+            $('#popupmodal').modal('toggle');
+            */
+
+            $("#jsModalBody").html(response.html);
+            $('.jsIPLoader[data-page="jsModalLoader"]').hide(0);
+        });
     }
 </script>

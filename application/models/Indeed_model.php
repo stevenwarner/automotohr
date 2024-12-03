@@ -1625,6 +1625,7 @@ class Indeed_model extends CI_Model
 
                 "portal_job_listings.user_sid",
                 "portal_job_listings.Title",
+                "portal_job_listings.interview_questionnaire_sid"
             ])
             ->join(
                 "indeed_job_queue_tracking",
@@ -1632,6 +1633,7 @@ class Indeed_model extends CI_Model
                 AND indeed_job_queue_tracking.is_deleted = 0",
                 "left"
             )
+         
             ->order_by("indeed_job_queue.sid", "DESC")
             ->limit($limit, $offset)
             ->get("indeed_job_queue")
