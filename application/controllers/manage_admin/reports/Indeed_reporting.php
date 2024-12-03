@@ -50,7 +50,8 @@ class Indeed_reporting extends Admin_Controller
 
         // set pagination
         $per_page = PAGINATION_RECORDS_PER_PAGE;
-        $page_number = $pageNumber;
+        // $page_number = $pageNumber;
+        $page_number = isset($_GET['page']) ? $_GET['page'] : 0;
         $offset = 0;
         if ($page_number > 1) {
             $offset = ($page_number - 1) * $per_page;

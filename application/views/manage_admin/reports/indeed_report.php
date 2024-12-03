@@ -211,7 +211,7 @@
                                     <div class="panel-heading">
                                         <div class="row">
                                             <div class="col-sm-4">
-                                                <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $applicants_count ?></p>
+                                                <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $counts["records"]; ?></p>
                                             </div>
                                             <div class="col-sm-8">
                                                 <?php echo $page_links ?>
