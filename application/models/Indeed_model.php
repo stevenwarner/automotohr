@@ -1591,11 +1591,9 @@ class Indeed_model extends CI_Model
         // $this->setWhere($filter);
         $returnArray["errors"] = $this
             ->db
-            ->where(
-                "has_errors",
-                1
-            )
+            ->where("errors is not null", null)
             ->count_all_results("indeed_job_queue");
+            _e($this->db->last_query(),true);
 
         // get the total pending
         // $this->setWhere($filter);
