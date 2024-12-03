@@ -262,6 +262,9 @@
                                                 <li class="form-col-50-left">
                                                     <label>Salary or Salary Range:
                                                         <input class="invoice-fields" type="text" name="salary" id="salary" value="<?php echo set_value('salary'); ?>">
+                                                        <div class="video-link" style='font-style: italic;'><b></b>
+                                                            Please include Currency sign e.g. $20 - $30
+                                                        </div>
                                                         <?php echo form_error('salary'); ?>
                                                 </li>
 
