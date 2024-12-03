@@ -259,13 +259,43 @@
                                                     <p class="text-danger" style="margin-bottom: -10px; font-size: 16px;"><strong>Note: Your State may have recently mandated a Required Salary Range be added to all jobs that you post.<br> Please Add a Salary or Salary Range here. <a href="#" class=" jsSalaryInfo" style="text-decoration: underline;">Click Here for More Details</a></strong></p></label>
 
                                                 </li>
+
+
                                                 <li class="form-col-50-left">
-                                                    <label>Salary or Salary Range:
+
+
+
+
+
+                                                    <!--   <label>Salary or Salary Range:
                                                         <input class="invoice-fields" type="text" name="salary" id="salary" value="<?php echo set_value('salary'); ?>">
                                                         <div class="video-link" style='font-style: italic;'><b></b>
                                                             Please include Currency sign e.g. $20 - $30
                                                         </div>
-                                                        <?php echo form_error('salary'); ?>
+                                                        <?php // echo form_error('salary'); 
+                                                        ?>
+                                                            -->
+
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <label>Min Salary:</label>
+                                                        <input class="invoice-fields" type="text" name="MinSalary" id="MinSalary" value="<?php echo set_value('Salary'); ?>">
+                                                        <div class="video-link" style='font-style: italic;'><b></b>
+                                                        </div>
+                                                        <?php echo form_error('MinSalary'); ?>
+                                                    </div>
+
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <label>Max Salary:</label>
+                                                        <input class="invoice-fields" type="text" name="MaxSalary" id="MaxSalary" value="<?php echo set_value('Salary'); ?>">
+                                                        <div class="video-link" style='font-style: italic;'><b></b>
+                                                        </div>
+                                                        <?php echo form_error('MaxSalary'); ?>
+                                                    </div>
+
+
+
                                                 </li>
 
 
@@ -746,6 +776,15 @@
                 },
                 Location_ZipCode: {
                     pattern: /^[0-9\-]+$/
+                },
+                MinSalary: {
+                    required: true,
+                    pattern: /^(0*[1-9][0-9]*(\.[0-9]+)?|0+\.[0-9]*[1-9][0-9]*)$/
+
+                },
+                MaxSalary: {
+                    required: true,
+                    pattern: /^(0*[1-9][0-9]*(\.[0-9]+)?|0+\.[0-9]*[1-9][0-9]*)$/
                 }
                 //                salary: {
                 //                    pattern: /^[0-9\-]+$/
@@ -768,7 +807,14 @@
                 },
                 Location_ZipCode: {
                     pattern: 'Numeric values only'
+                },
+                MinSalary: {
+                    pattern: 'Numeric values only and greater than 0'
+                },
+                MaxSalary: {
+                    pattern: 'Numeric values only and greater than 0'
                 }
+
                 //                salary: {
                 //                    pattern: 'Numeric values only'
                 //                }
@@ -891,6 +937,16 @@
             alertify.alert('Error! Job Description Missing', "Job Description cannot be Empty");
             return false;
         }
+
+
+        let minSalary = $("#MinSalary").val();
+        let maxSalary = $("#MaxSalary").val();
+        if (parseInt(maxSalary) < parseInt(minSalary)) {
+            alertify.alert('Error! Salary', "Min Salary cannot be greater than Max Salary");
+            return false;
+        }
+
+
 
         $('#my_loader').show();
         $("#employers_add_job").submit();

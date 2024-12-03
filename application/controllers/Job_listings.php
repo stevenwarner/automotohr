@@ -298,6 +298,11 @@ class Job_listings extends Public_Controller
                     }
                 }
 
+                //
+                $listing_data['Salary'] = $formpost['MinSalary'] . '-' . $formpost['MaxSalary'];
+                unset($listing_data['MinSalary']);
+                unset($listing_data['MaxSalary']);
+
                 if (!empty($formpost['expiration_date'])) {
                     $expiration_date                                            = DateTime::createFromFormat('m/d/Y', $formpost['expiration_date'])->format('Y-m-d H:i:s');
                     $listing_data['expiration_date']                            = $expiration_date;
@@ -1179,6 +1184,13 @@ class Job_listings extends Public_Controller
                             $listing_data[$key] = $value;
                         }
                     }
+
+                    //  _e($listing_data,true,true);
+                    //
+                    $listing_data['Salary'] = $formpost['MinSalary'] . '-' . $formpost['MaxSalary'];
+                    unset($listing_data['MinSalary']);
+                    unset($listing_data['MaxSalary']);
+
                     if (!empty($formpost['expiration_date'])) {
                         $expiration_date = DateTime::createFromFormat('m/d/Y', $formpost['expiration_date'])->format('Y-m-d H:i:s');
                         $listing_data['expiration_date'] = $expiration_date;

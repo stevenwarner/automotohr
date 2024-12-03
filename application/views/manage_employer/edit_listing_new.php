@@ -39,7 +39,7 @@
                                                         Part Time
                                                     </option>
                                                     <option value="Seasonal" <?php if ($listing["JobType"] == "Seasonal") { ?>selected<?php } ?>>
-                                                    Seasonal
+                                                        Seasonal
                                                     </option>
 
                                                 </select>
@@ -160,12 +160,32 @@
                                         </li>
 
                                         <li class="form-col-50-left">
-                                            <label>Salary or Salary Range:</label>
-                                            <input class="invoice-fields" type="text" name="Salary" id="Salary" value="<?php echo set_value('Salary', $listing["Salary"]); ?>">
-                                            <div class="video-link" style='font-style: italic;'><b></b>
-                                                Please include Currency sign e.g. $20 - $30
+                                            <?php
+                                            $salaryArray = setTheSalary(
+                                                $listing["Salary"],
+                                                $listing["SalaryType"]
+                                            );
+
+                                            ?>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+
+                                                <label>Min Salary:</label>
+                                                <input class="invoice-fields" type="text" name="MinSalary" id="MinSalary" value="<?php echo set_value('Salary', $salaryArray["min"]); ?>">
+                                                <div class="video-link" style='font-style: italic;'><b></b>
+                                                </div>
+                                                <?php echo form_error('MinSalary'); ?>
+
                                             </div>
-                                            <?php echo form_error('Salary'); ?>
+
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+
+                                                <label>Max Salary:</label>
+                                                <input class="invoice-fields" type="text" name="MaxSalary" id="MaxSalary" value="<?php echo set_value('Salary', $salaryArray["max"]); ?>">
+                                                <div class="video-link" style='font-style: italic;'><b></b>
+                                                </div>
+                                                <?php echo form_error('MaxSalary'); ?>
+
+                                            </div>
                                         </li>
 
                                         <li class="form-col-50-right">
@@ -1203,6 +1223,15 @@
                 },
                 Location_ZipCode: {
                     pattern: /^[0-9\-]+$/
+                },
+                MinSalary: {
+                    required: true,
+                    pattern: /^(0*[1-9][0-9]*(\.[0-9]+)?|0+\.[0-9]*[1-9][0-9]*)$/
+
+                },
+                MaxSalary: {
+                    required: true,
+                    pattern: /^(0*[1-9][0-9]*(\.[0-9]+)?|0+\.[0-9]*[1-9][0-9]*)$/
                 }
             },
             messages: {
@@ -1222,6 +1251,12 @@
                 },
                 Location_ZipCode: {
                     pattern: 'Numeric values only'
+                },
+                MinSalary: {
+                    pattern: 'Numeric values only and greater than 0'
+                },
+                MaxSalary: {
+                    pattern: 'Numeric values only and greater than 0'
                 }
             },
             submitHandler: function(form, event) {
@@ -1238,6 +1273,13 @@
 
                 if (text_pass.length === 0) {
                     alertify.alert('Error! Job Description Missing', "Job Description cannot be Empty");
+                    return false;
+                }
+
+                let minSalary = $("#MinSalary").val();
+                let maxSalary = $("#MaxSalary").val();
+                if (parseInt(maxSalary) < parseInt(minSalary)) {
+                    alertify.alert('Error! Salary', "Min Salary cannot be greater than Max Salary");
                     return false;
                 }
 
@@ -2004,11 +2046,11 @@
 
 
 <script>
-   // $('#select_template').select2();
+    // $('#select_template').select2();
 </script>
 
 <style>
-    .csSelect2WithBg  .select2-selection__rendered{
+    .csSelect2WithBg .select2-selection__rendered {
         background-color: #fd7a2a;
         color: #fff !important;
     }
