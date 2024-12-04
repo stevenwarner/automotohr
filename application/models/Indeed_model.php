@@ -1616,6 +1616,9 @@ class Indeed_model extends CI_Model
             ->where(
                 "is_processing",
                 0
+            )->where(
+                "is_processed",
+                0
             )
             ->count_all_results("indeed_job_queue");
 
