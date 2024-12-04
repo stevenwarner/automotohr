@@ -1253,16 +1253,18 @@
                 // //
                 let minSalary = $("#minSalary").val()
                 if (minSalary && minSalary.match(/[^0-9.,]/) !== null) {
-                    return alertify.alert(
+                     alertify.alert(
                         "Error! Salary from can only be a number."
                     );
+                    return false;
                 }
 
                 let maxSalary = $("#maxSalary").val()
                 if (maxSalary && maxSalary.match(/[^0-9.,]/) !== null) {
-                    return alertify.alert(
+                     alertify.alert(
                         "Error! Salary to can only be a number."
                     );
+                    return false;
                 }
 
                 // let salaryType = $("#SalaryType option:selected").val()
