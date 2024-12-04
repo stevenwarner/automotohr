@@ -127,7 +127,9 @@ $(function LMSEmployeeCourses() {
 		//
 		console.log(courseLanguage)
 		if (courseType == "scorm") {
-			courseUrl += "/" + courseLanguage
+			courseUrl += "/" + courseLanguage +
+			"?_has=" +
+			(window.location.host.indexOf("www.") !== -1 ? "y" : "n");
 		}
 		XHR = $.ajax({
 			url: courseUrl,
