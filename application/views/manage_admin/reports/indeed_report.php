@@ -143,7 +143,6 @@
                                                         &nbsp;Reset
                                                     </a>
 
-
                                                     <button type="button" id="js-export" class="btn btn-success ">Export CSV</button>
 
                                                 </div>
@@ -294,12 +293,14 @@
                                                                 <?php if ($v0["has_errors"] || $v0["errors"]): ?>
                                                                     <button class="btn btn-success jsHasErrors">Run</button>
                                                                 <?php endif; ?>
-                                                                <?php if (array_key_exists("salary", $errorsArray)) : ?>
-                                                                    <button class="btn btn-success jsSetSalary">
-                                                                        <i class="fa fa-money"></i>
-                                                                        Set Salary
-                                                                    </button>
-                                                                <?php endif; ?>
+                                                                <?php if (array_key_exists("salary", $errorsArray)) : 
+                                                                ?>
+                                                                <button class="btn btn-success jsSetSalary">
+                                                                    <i class="fa fa-money"></i>
+                                                                    Set Salary
+                                                                </button>
+                                                                <?php endif; 
+                                                                ?>
 
                                                                 <button class="btn btn-success jsHistory">
                                                                     <i class="fa fa-eye"></i>
@@ -370,9 +371,33 @@
             //
             event.preventDefault();
 
-            if (!$("#jsSalary").val()) {
-                return alertify.alert("Salary is required!");
+            let minSalary = $("#jsMinSalary").val();
+            let maxSalary = $("#jsMaxSalary").val();
+
+            if (minSalary == '') {
+                alertify.alert('Error! Salary', "Min Salary is required");
+                return false;
             }
+        
+           
+            if (!/^(0*[1-9][0-9]*(\.[0-9]+)?|0+\.[0-9]*[1-9][0-9]*)$/.test(minSalary)) {
+                alertify.alert('Error! Salary', "Min Salary Numeric values only and greater than 0");
+                return false;
+            }
+
+            if (maxSalary != '') {
+                if (!/^(0*[1-9][0-9]*(\.[0-9]+)?|0+\.[0-9]*[1-9][0-9]*)$/.test(maxSalary)) {
+                    return alertify.alert('Error! Salary', "Max Salary Numeric values only and greater than 0");
+                }
+            }
+
+            if (maxSalary != '') {
+                if (parseInt(maxSalary) < parseInt(minSalary)) {
+                    return alertify.alert('Error! Salary', "Min Salary cannot be greater than Max Salary");
+                }
+            }
+
+
             ml(true, "jsSalaryModalLoader")
             //
             let formObj = $("#jsSalaryForm").serialize();

@@ -58,7 +58,7 @@ class Indeed_reporting extends Admin_Controller
         }
 
         $config = array();
-        $config["base_url"] = base_url("manage_admin/reports/indeed?". (str_replace("page=", "pg=",$_SERVER['QUERY_STRING'])));
+        $config["base_url"] = base_url("manage_admin/reports/indeed?" . (str_replace("page=", "pg=", $_SERVER['QUERY_STRING'])));
         $config["total_rows"] = $this->data["counts"]["records"];
         $config["per_page"] = $per_page;
         // $config["uri_segment"] = 2;
@@ -247,15 +247,23 @@ class Indeed_reporting extends Admin_Controller
 
     public function updateSalaryByJobId(int $jobId)
     {
-
         $post = $this->input->post(null, true);
+
+        $minSalary = $post["jsMinSalary"];
+        $maxSalary = $post["jsMaxSalary"];
+
+        if ($maxSalary != '') {
+            $salary = $minSalary . ' - ' . $maxSalary;
+        } else {
+            $salary = $minSalary;
+        }
 
         $this
             ->indeed_model
             ->updateSalaryByJobId(
                 $jobId,
                 [
-                    "Salary" => $post["jsSalary"],
+                    "Salary" => $salary,
                     "SalaryType" => $post["jsSalaryType"],
                 ]
             );
