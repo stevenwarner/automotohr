@@ -845,6 +845,21 @@
                     }
 
                     // //
+                    let minSalary = $("#minSalary").val()
+                    if (minSalary && minSalary.match(/[^0-9.,]/) !== null) {
+                        return alertify.alert(
+                            "Error! Salary from can only be a number."
+                        );
+                    }
+
+                    let maxSalary = $("#maxSalary").val()
+                    if (maxSalary && maxSalary.match(/[^0-9.,]/) !== null) {
+                        return alertify.alert(
+                            "Error! Salary to can only be a number."
+                        );
+                    }
+
+                    // //
                     // let minSalary = $("#minSalary").val()
                     // if (!minSalary) {
                     //     return alertify.alert(
