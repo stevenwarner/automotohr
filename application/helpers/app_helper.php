@@ -4198,6 +4198,8 @@ if (!function_exists("isLoggedInPersonAnExecutiveAdmin")) {
 if (!function_exists("getSanitizeSalary")) {
     function getSanitizeSalary($min, $max)
     {
+        $min = preg_replace("/[^0-9.]/", "", $min);
+        $max = preg_replace("/[^0-9.]/", "", $max);
         return $min . (
             $max
             ? " - " . $max
@@ -4230,10 +4232,15 @@ if (!function_exists("breakSalary")) {
             return $ra;
         }
         //
-        $ra["min"] = $salaryArray["min"];
-        $ra["max"] = $salaryArray["min"] != $salaryArray["max"]
-            ? $salaryArray["max"]
-            : "";
+        $ra["min"] = number_format($salaryArray["min"], 2, ".", ",");
+        $ra["max"] = number_format(
+            ($salaryArray["min"] != $salaryArray["max"]
+                ? $salaryArray["max"]
+                : ""),
+            2,
+            ".",
+            ","
+        );
         return $ra;
     }
 }

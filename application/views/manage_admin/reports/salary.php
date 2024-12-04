@@ -14,13 +14,19 @@ $salary = breakSalary(
                 <div class="form-group">
                     <label>Minimum Salary:
                         <span class="text-danger">*</span>
-                        <input class="invoice-fields" type="number" name="minSalary" id="minSalary" required value="<?php echo set_value('minSalary', $salary["min"]); ?>" placeholder="20">
-                        <?php echo form_error('minSalary'); ?>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">$</span>
+                            <input class="invoice-fields" type="text" name="minSalary" id="minSalary" required value="<?php echo set_value('minSalary', $salary["min"]); ?>" >
+                            <?php echo form_error('minSalary'); ?>
+                        </div>
                 </div>
                 <div class="form-group">
                     <label>Maximum Salary:
-                        <input class="invoice-fields" type="number" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary', $salary["max"]); ?>" placeholder="30">
-                        <?php echo form_error('maxSalary'); ?>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">$</span>
+                            <input class="invoice-fields" type="text" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary', $salary["max"]); ?>" >
+                            <?php echo form_error('maxSalary'); ?>
+                        </div>
                 </div>
 
                 <div class="form-group">

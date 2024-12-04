@@ -145,13 +145,19 @@
                                             <div class="form-col-50-left">
                                                 <label>Minimum Salary:
                                                     <span class="staric">*</span>
-                                                    <input class="invoice-fields" type="number" name="minSalary" id="minSalary" required value="<?php echo set_value('minSalary', $listing["minSalary"]); ?>" placeholder="20">
-                                                    <?php echo form_error('minSalary'); ?>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon" id="basic-addon1">$</span>
+                                                        <input class="invoice-fields" type="text" name="minSalary" id="minSalary" required value="<?php echo set_value('minSalary', $listing["minSalary"]); ?>">
+                                                        <?php echo form_error('minSalary'); ?>
+                                                    </div>
                                             </div>
                                             <div class="form-col-50-right">
                                                 <label>Maximum Salary:
-                                                    <input class="invoice-fields" type="number" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary', $listing["maxSalary"]); ?>" placeholder="30">
-                                                    <?php echo form_error('maxSalary'); ?>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon" id="basic-addon1">$</span>
+                                                        <input class="invoice-fields" type="text" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary', $listing["maxSalary"]); ?>">
+                                                        <?php echo form_error('maxSalary'); ?>
+                                                    </div>
                                             </div>
                                         </li>
                                         <li class="form-col-50-right">
