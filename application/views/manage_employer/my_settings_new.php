@@ -301,6 +301,9 @@
                                             <li>
                                                 <a href="<?= base_url('lms/courses/import_course_csv'); ?>">Import Learning Management System CSV</a>
                                             </li>
+                                            <li class="hidden">
+                                                <a href="<?= base_url('lms/courses/export_course_csv'); ?>">Export Learning Management System CSV</a>
+                                            </li>
                                         <?php } ?>
                                         <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
                                             <!-- Attendance module settings -->

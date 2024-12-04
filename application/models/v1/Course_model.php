@@ -107,10 +107,14 @@ class Course_model extends CI_Model
                 //
                 $this->db->insert('lms_employee_course_history', $result);
                 //
-                $dataToUpdate = array();
                 $dataToUpdate['lesson_status'] = 'incomplete';
                 $dataToUpdate['course_status'] = '';
+                $dataToUpdate['course_banner'] = NULL;
+                $dataToUpdate['course_version'] = NULL;
+                $dataToUpdate['course_file_name'] = NULL;
+                $dataToUpdate['Imsmanifist_json'] = NULL;
                 $dataToUpdate['course_answer_json'] = NULL;
+                $dataToUpdate['course_taken_count'] = $result['course_taken_count'] + 1;
                 //
                 $this->db->where('sid', $rowId)->update('lms_employee_course', $dataToUpdate);
             }
@@ -662,5 +666,36 @@ class Course_model extends CI_Model
         $this->db->where('sid', $sid);
         $result = $this->db->get('lms_default_courses')->row_array();
         return $result;
+    }
+
+    public function moveCourseIntoHistoryAndUpdate() {
+        //
+        $this->db->select('*');
+        $this->db->where('lesson_status', "completed");
+        //
+        $completedCourses = $this->db->get('lms_employee_course')->result_array();
+        //
+        if ($completedCourses) {
+            foreach ($completedCourses as $course) {
+                $rowId = $course['sid'];
+                unset($course['sid']);
+                //
+                $this->db->insert('lms_employee_course_history', $course);
+                //
+                $dataToUpdate = array();
+                $dataToUpdate['lesson_status'] = 'incomplete';
+                $dataToUpdate['course_status'] = '';
+                $dataToUpdate['course_banner'] = NULL;
+                $dataToUpdate['course_version'] = NULL;
+                $dataToUpdate['course_file_name'] = NULL;
+                $dataToUpdate['Imsmanifist_json'] = NULL;
+                $dataToUpdate['course_answer_json'] = NULL;
+                $dataToUpdate['course_taken_count'] = $course['course_taken_count'] + 1;
+                //
+                $this->db->where('sid', $rowId)->update('lms_employee_course', $dataToUpdate);
+            }
+        }
+        //
+        return true;
     }
 }

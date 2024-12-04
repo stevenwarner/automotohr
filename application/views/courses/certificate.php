@@ -77,14 +77,14 @@
         }
 
         .cssMain {
-            background-color: #618597;
+            background-color: #0000FF;
         }
 
         .pm-certificate-container {
             position: relative;
             width: 1400px;
             height: 860px;
-            background-color: #618597;
+            background-color: #0000FF;
             padding: 30px;
             color: #333;
             font-family: "Open Sans", sans-serif;

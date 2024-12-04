@@ -256,6 +256,14 @@
                     Import Learning Management System CSV
                 </a>
             </li>
+            <li class="hidden">
+                <a <?= uri_string() === "lms/courses/export_course_csv" ? 'class="active"' : ""; ?> href="<?php echo base_url('lms/courses/export_course_csv'); ?>">
+                    <figure>
+                        <i class="fa fa-file-text" aria-hidden="true"></i>
+                    </figure>
+                    Export Learning Management System
+                </a>
+            </li>
         <?php } ?>
     </ul>
 </div>

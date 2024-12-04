@@ -1709,6 +1709,7 @@ $route['lms/course/scorm/parse/(:num)'] = 'v1/App/parseScorm/$1';
 $route['lms/courses/report'] = 'v1/Courses/subordinatesReport';
 $route['lms/courses/import_course_csv'] = 'v1/Courses/importCourseCSV';
 $route['lms/courses/import_course_csv_handler'] = 'v1/Courses/handler';
+$route['lms/courses/export_course_csv'] = 'v1/Courses/exportCourseCSV';
 
 $route['lms/subordinate/dashboard/(:num)'] = 'v1/Courses/subordinateDashboard/non_plus/$1';
 $route['lms/subordinate/courses/dashboard/(:num)'] = 'v1/Courses/subordinateDashboard/plus/$1';
@@ -2435,3 +2436,4 @@ $route['manage_admin/reports/indeed/history/(:num)'] = 'manage_admin/reports/Ind
 
 
 $route['lms/courses/company_courses_list']['get'] = 'v1/Courses/companyCoursesList';
+$route['lms/courses/move_recursive_into_history'] = 'v1/Courses/moveRecursiveCoursesIntoHistory';

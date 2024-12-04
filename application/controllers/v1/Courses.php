@@ -1945,4 +1945,60 @@ class Courses extends Public_Controller
             ]
         );
     }
+
+    public function moveRecursiveCoursesIntoHistory ()
+    {
+        //
+        $this->course_model->moveCourseIntoHistoryAndUpdate();
+        //
+        _e("Process completed", true);
+    }
+
+    public function exportCourseCSV () {
+        if ($this->session->userdata('logged_in')) {
+            //
+            $data = [];
+            // check and set user session
+            $data['session'] = checkUserSession();
+            $data['title'] = "Export Courses CSV";
+            // set
+            $data['loggedInPerson'] = $data['session']['employer_detail'];
+            $data['companyId'] = $data['session']['company_detail']['sid'];
+            $data['employerId'] = $data['session']['employer_detail']['sid'];
+            $data['level'] = 0;
+            $data['logged_in_view'] = true;
+            // $data['left_navigation'] = 'courses/partials/profile_left_menu';
+            $data['left_navigation'] = 'manage_employer/settings_left_menu_administration';
+            // get the security details
+            $data['security_details'] = db_get_access_level_details(
+                $data['session']['employer_detail']['sid'],
+                null,
+                $data['session']
+            );
+            //
+            $data['employerData'] = $this->course_model->getEmployerDetail($data['employerId']);
+            //
+            $data['PageCSS'] = [
+                'v1/plugins/ms_modal/main.min',
+                'v1/plugins/alertifyjs/css/alertify.min',
+                'mFileUploader/index'
+            ];
+            // load JS
+            $data['PageScripts'] = [
+                'v1/plugins/ms_modal/main.min',
+                'lodash/loadash.min',
+                'v1/plugins/alertifyjs/alertify.min',
+                'mFileUploader/index',
+                'v1/lms/import_courses_csv'
+            ];
+
+            $this->load->view('main/header', $data);
+            $this->load->view('courses/export_courses_csv');
+            $this->load->view('main/footer');
+        } else {
+            redirect('login', "refresh");
+        }
+    }
+
+
 }
