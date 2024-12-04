@@ -261,7 +261,7 @@
                                                 </li>
                                                 <li class="form-col-50-left">
                                                     <div class="form-col-50-left">
-                                                        <label>Minimum Salary:
+                                                        <label>Salary From:
                                                             <!-- <span class="staric">*</span> -->
                                                             <div class="input-group">
                                                                 <span class="input-group-addon" id="basic-addon1">$</span>
@@ -270,7 +270,7 @@
                                                             </div>
                                                     </div>
                                                     <div class="form-col-50-right">
-                                                        <label>Maximum Salary:
+                                                        <label>Salary To:
                                                             <div class="input-group">
                                                                 <span class="input-group-addon" id="basic-addon1">$</span>
                                                                 <input class="invoice-fields" type="text" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary'); ?>">

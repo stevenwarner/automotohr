@@ -12,7 +12,7 @@ $salary = breakSalary(
             <form action="" id="jsSalaryForm">
 
                 <div class="form-group">
-                    <label>Minimum Salary:
+                    <label>Salary From:
                         <span class="text-danger">*</span>
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">$</span>
@@ -21,7 +21,7 @@ $salary = breakSalary(
                         </div>
                 </div>
                 <div class="form-group">
-                    <label>Maximum Salary:
+                    <label>Salary To:
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1">$</span>
                             <input class="invoice-fields" type="text" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary', $salary["max"]); ?>" >
