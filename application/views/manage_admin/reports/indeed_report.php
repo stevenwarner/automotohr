@@ -372,9 +372,9 @@
             //
             event.preventDefault();
 
-            if (!$("#minSalary").val()) {
-                return alertify.alert("Minimum salary is required!");
-            }
+            // if (!$("#minSalary").val()) {
+            //     return alertify.alert("Minimum salary is required!");
+            // }
             ml(true, "jsSalaryModalLoader")
             //
             let formObj = $("#jsSalaryForm").serialize();

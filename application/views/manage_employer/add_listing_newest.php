@@ -262,10 +262,10 @@
                                                 <li class="form-col-50-left">
                                                     <div class="form-col-50-left">
                                                         <label>Minimum Salary:
-                                                            <span class="staric">*</span>
+                                                            <!-- <span class="staric">*</span> -->
                                                             <div class="input-group">
                                                                 <span class="input-group-addon" id="basic-addon1">$</span>
-                                                                <input class="invoice-fields" type="text" name="minSalary" id="minSalary" required value="<?php echo set_value('minSalary'); ?>">
+                                                                <input class="invoice-fields" type="text" name="minSalary" id="minSalary" value="<?php echo set_value('minSalary'); ?>">
                                                                 <?php echo form_error('minSalary'); ?>
                                                             </div>
                                                     </div>
@@ -281,7 +281,7 @@
                                                 </li>
 
                                                 <li class="form-col-50-right">
-                                                    <label>Salary Type:<span class="staric">*</span></label>
+                                                    <label>Salary Type:</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" id="SalaryType" name="SalaryType">
                                                             <option value="">Select Salary Type</option>
@@ -757,9 +757,6 @@
                 },
                 Location_ZipCode: {
                     pattern: /^[0-9\-]+$/
-                },
-                minSalary: {
-                    required: true
                 }
             },
             messages: {
@@ -902,20 +899,20 @@
             alertify.alert('Error! Job Description Missing', "Job Description cannot be Empty");
             return false;
         }
-        //
-        let minSalary = $("#minSalary").val()
-        if (!minSalary) {
-            return alertify.alert(
-                "Error! Please add a minimum salary."
-            );
-        }
+        // //
+        // let minSalary = $("#minSalary").val()
+        // if (!minSalary) {
+        //     return alertify.alert(
+        //         "Error! Please add a minimum salary."
+        //     );
+        // }
 
-        let salaryType = $("#SalaryType option:selected").val()
-        if (!salaryType) {
-            return alertify.alert(
-                "Error! Please select a salary type."
-            );
-        }
+        // let salaryType = $("#SalaryType option:selected").val()
+        // if (!salaryType) {
+        //     return alertify.alert(
+        //         "Error! Please select a salary type."
+        //     );
+        // }
 
         $('#my_loader').show();
         $("#employers_add_job").submit();

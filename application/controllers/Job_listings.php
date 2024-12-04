@@ -134,17 +134,7 @@ class Job_listings extends Public_Controller
                     'field' => 'JobCategory[]',
                     'label' => 'Job Category',
                     'rules' => 'required'
-                ),
-                array(
-                    'field' => 'minSalary',
-                    'label' => 'Minimum Salary',
-                    'rules' => 'required'
-                ),
-                array(
-                    'field' => 'SalaryType',
-                    'label' => 'Salary Type',
-                    'rules' => 'required'
-                ),
+                )
             );
 
             $this->form_validation->set_error_delimiters('<label class="error">', '</label>');
