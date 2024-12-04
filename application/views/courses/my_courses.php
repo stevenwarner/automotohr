@@ -6,7 +6,7 @@
             <!--  -->
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                    <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
+                    <a href="<?php echo $employee['access_level'] == 'Employee' ?  base_url('employee_management_system') : base_url('dashboard'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
                 </div>
             </div>
             <!--  -->
@@ -24,9 +24,9 @@
                                             <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Team Report</a>
                                         <?php } else if ($type == "plus") { ?>
                                             <a href="<?php echo base_url('lms/courses/company_report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Company Report</a>
-                                        <?php } ?>    
+                                        <?php } ?>
                                     <?php } ?>
-                                <?php } ?>     
+                                <?php } ?>
                             </div>
                         </h1>
                     </div>
@@ -99,16 +99,16 @@
                     </div>
                 </div>
             </div>
-            
+
             <!--  -->
             <div class="row">
                 <div class="col-xs-12 col-md-12 text-right">
-                        <?php if ($viewMode == 'subordinate') { ?>
-                            <button type="button" class="btn btn-info btn-orange csRadius5 csF16 jsSendReminderEmail">
-                                <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                                Send Reminder Email                                        
-                            </button>
-                        <?php } ?>
+                    <?php if ($viewMode == 'subordinate') { ?>
+                        <button type="button" class="btn btn-info btn-orange csRadius5 csF16 jsSendReminderEmail">
+                            <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                            Send Reminder Email
+                        </button>
+                    <?php } ?>
                     <button class="btn btn-black csRadius5 jsFilterSectionBtn csF16" data-key="jsPageLoader">
                         <i class="fa fa-filter" aria-hidden="true"></i>&nbsp;Filter
                     </button>
@@ -127,20 +127,20 @@
                                     The course will soon expire, with less than 15 days remaining.
                                 </div>
                             </div>
-                            
+
                             <div class="row" style="margin: 5px 5px;">
                                 <div class="col-lg-2 bg-danger" style="padding: 16px;"></div>
                                 <div class="col-lg-10" style="padding: 6px; font-weight: 700;">
                                     The course has not been completed and has now expired.
                                 </div>
                             </div>
-                        </div>     
+                        </div>
                     </div>
                     <div id="jsMyAssignedCourses">
-                        
+
                     </div>
                 </div>
-            </div>   
+            </div>
         </div>
     </div>
 </div>
