@@ -36,6 +36,20 @@
                                 </div>
                             </li>
                             <li>
+                                <span>salary ($):</span>	
+                                <div class="text">								
+                                    <input type="text" name="salary" id="salary" value="<?php echo set_value('salary'); ?>" >
+                                    <?php echo form_error('salary'); ?>
+                                </div>
+                            </li>
+                            <li>
+                                <span>salary ($):</span>	
+                                <div class="text">								
+                                    <input type="text" name="salary" id="salary" value="<?php echo set_value('salary'); ?>" >
+                                    <?php echo form_error('salary'); ?>
+                                </div>
+                            </li>
+                            <li>
                                 <span>Salary Type:</span>	
                                 <div class="text">								
                                     <select class="searchList" name="SalaryType">

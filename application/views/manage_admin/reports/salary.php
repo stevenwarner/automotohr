@@ -1,15 +1,28 @@
+<?php
+$salary = breakSalary(
+    $listing["Salary"],
+    $listing["SalaryType"],
+    true
+);
+?>
 <div class="container">
     <div class="panel panel-success">
         <div class="panel-heading"></div>
         <div class="panel-body">
             <form action="" id="jsSalaryForm">
+
                 <div class="form-group">
-                    <label class="" for="jsSalary">Salary:</label>
-                    <input class="invoice-fields" type="text" name="jsSalary" id="jsSalary" value="<?= $listing["Salary"]; ?>">
-                    <p class="text-danger">e.g. $45000 - $65000</p>
+                    <label>Minimum Salary:
+                        <span class="text-danger">*</span>
+                        <input class="invoice-fields" type="number" name="minSalary" id="minSalary" required value="<?php echo set_value('minSalary', $salary["min"]); ?>" placeholder="20">
+                        <?php echo form_error('minSalary'); ?>
+                </div>
+                <div class="form-group">
+                    <label>Maximum Salary:
+                        <input class="invoice-fields" type="number" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary', $salary["max"]); ?>" placeholder="30">
+                        <?php echo form_error('maxSalary'); ?>
                 </div>
 
-                
                 <div class="form-group">
                     <label class="" for="jsSalaryType">Salary Type:</label>
                     <div class="hr-select-dropdown">

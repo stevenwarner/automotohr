@@ -79,6 +79,58 @@
                                             <?= $page_title; ?>
                                         </h1>
                                     </div>
+
+                                    <!-- Thumbnails -->
+                                    <div class="row">
+                                        <div class="col-xs-2">
+                                            <div class="thumbnail put-block">
+                                                <div class="caption">
+                                                    <h3 id="jsSuccessCalls"><?= $counts['totals']; ?></h3>
+                                                    <h4><strong>Total Jobs</strong></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <div class="thumbnail success-block">
+                                                <div class="caption">
+                                                    <h3 id="jsSuccessCalls"><?= $counts['pending']; ?></h3>
+                                                    <h4><strong>Pending Jobs</strong></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <div class="thumbnail post-block">
+                                                <div class="caption">
+                                                    <h3 id="jsSuccessCalls"><?= $counts['processing']; ?></h3>
+                                                    <h4><strong>Processing Jobs</strong></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <div class="thumbnail success-block">
+                                                <div class="caption">
+                                                    <h3 id="jsSuccessCalls"><?= $counts['processed']; ?></h3>
+                                                    <h4><strong>Processed Jobs</strong></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <div class="thumbnail error-block">
+                                                <div class="caption">
+                                                    <h3 id="jsSuccessCalls"><?= $counts['expired']; ?></h3>
+                                                    <h4><strong>Expired Jobs</strong></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <div class="thumbnail error-block">
+                                                <div class="caption">
+                                                    <h3 id="jsSuccessCalls"><?= $counts['errors']; ?></h3>
+                                                    <h4><strong>Jobs With Errors</strong></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="hr-search-criteria <?= $flag ? "opened" : ""; ?>">
                                         <strong>Click to modify search criteria</strong>
                                     </div>
@@ -104,7 +156,7 @@
                                                 <div class="col-sm-4 col-xs-12">
                                                     <div class="form-group">
                                                         <label>Status</label>
-                                                        <select name="status[]" id="status" multiple style="width: 100%;">
+                                                        <select name="status[]" id="status" style="width: 100%;">
                                                             <option <?= in_array("All", $filter["status"]) ? "selected" : ""; ?> value="All">All</option>
                                                             <option <?= in_array("Pending", $filter["status"]) ? "selected" : ""; ?> value="Pending">Pending</option>
                                                             <option <?= in_array("Processing", $filter["status"]) ? "selected" : ""; ?> value="Processing">Processing</option>
@@ -151,57 +203,7 @@
                                         </form>
                                     </div>
 
-                                    <!-- Thumbnails -->
-                                    <div class="row">
-                                        <div class="col-xs-2">
-                                            <div class="thumbnail put-block">
-                                                <div class="caption">
-                                                    <h3 id="jsSuccessCalls"><?= $counts['records']; ?></h3>
-                                                    <h4><strong>Total Jobs</strong></h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <div class="thumbnail success-block">
-                                                <div class="caption">
-                                                    <h3 id="jsSuccessCalls"><?= $counts['pending']; ?></h3>
-                                                    <h4><strong>Pending Jobs</strong></h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <div class="thumbnail post-block">
-                                                <div class="caption">
-                                                    <h3 id="jsSuccessCalls"><?= $counts['processing']; ?></h3>
-                                                    <h4><strong>Processing Jobs</strong></h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <div class="thumbnail success-block">
-                                                <div class="caption">
-                                                    <h3 id="jsSuccessCalls"><?= $counts['processed']; ?></h3>
-                                                    <h4><strong>Processed Jobs</strong></h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <div class="thumbnail error-block">
-                                                <div class="caption">
-                                                    <h3 id="jsSuccessCalls"><?= $counts['expired']; ?></h3>
-                                                    <h4><strong>Expired Jobs</strong></h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-2">
-                                            <div class="thumbnail error-block">
-                                                <div class="caption">
-                                                    <h3 id="jsSuccessCalls"><?= $counts['errors']; ?></h3>
-                                                    <h4><strong>Jobs With Errors</strong></h4>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
 
@@ -370,8 +372,8 @@
             //
             event.preventDefault();
 
-            if (!$("#jsSalary").val()) {
-                return alertify.alert("Salary is required!");
+            if (!$("#minSalary").val()) {
+                return alertify.alert("Minimum salary is required!");
             }
             ml(true, "jsSalaryModalLoader")
             //

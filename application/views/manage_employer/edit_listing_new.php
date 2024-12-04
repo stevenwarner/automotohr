@@ -39,7 +39,7 @@
                                                         Part Time
                                                     </option>
                                                     <option value="Seasonal" <?php if ($listing["JobType"] == "Seasonal") { ?>selected<?php } ?>>
-                                                    Seasonal
+                                                        Seasonal
                                                     </option>
 
                                                 </select>
@@ -160,18 +160,23 @@
                                         </li>
 
                                         <li class="form-col-50-left">
-                                            <label>Salary or Salary Range:</label>
-                                            <input class="invoice-fields" type="text" name="Salary" id="Salary" value="<?php echo set_value('Salary', $listing["Salary"]); ?>">
-                                            <div class="video-link" style='font-style: italic;'><b></b>
-                                                Please include Currency sign e.g. $20 - $30
+                                            <div class="form-col-50-left">
+                                                <label>Minimum Salary:
+                                                    <span class="staric">*</span>
+                                                    <input class="invoice-fields" type="number" name="minSalary" id="minSalary" required value="<?php echo set_value('minSalary', $listing["minSalary"]); ?>" placeholder="20">
+                                                    <?php echo form_error('minSalary'); ?>
                                             </div>
-                                            <?php echo form_error('Salary'); ?>
+                                            <div class="form-col-50-right">
+                                                <label>Maximum Salary:
+                                                    <input class="invoice-fields" type="number" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary', $listing["maxSalary"]); ?>" placeholder="30">
+                                                    <?php echo form_error('maxSalary'); ?>
+                                            </div>
                                         </li>
 
                                         <li class="form-col-50-right">
-                                            <label>Salary Type:</label>
+                                            <label>Salary Type: <span class="staric">*</span></label>
                                             <div class="hr-select-dropdown">
-                                                <select class="invoice-fields" name="SalaryType">
+                                                <select class="invoice-fields" name="SalaryType" id="SalaryType">
                                                     <option value="">Select Salary Type</option>
                                                     <option value="per_hour" <?php if ($listing["SalaryType"] == "per_hour") { ?>selected<?php } ?>>
                                                         per hour
@@ -1203,6 +1208,9 @@
                 },
                 Location_ZipCode: {
                     pattern: /^[0-9\-]+$/
+                },
+                minSalary: {
+                    required: true
                 }
             },
             messages: {
@@ -1239,6 +1247,20 @@
                 if (text_pass.length === 0) {
                     alertify.alert('Error! Job Description Missing', "Job Description cannot be Empty");
                     return false;
+                }
+                //
+                let minSalary = $("#minSalary").val()
+                if (!minSalary) {
+                    return alertify.alert(
+                        "Error! Please add a minimum salary."
+                    );
+                }
+
+                let salaryType = $("#SalaryType option:selected").val()
+                if (!salaryType) {
+                    return alertify.alert(
+                        "Error! Please select a salary type."
+                    );
                 }
 
                 /// youtubevideo vimeovideo
@@ -2004,11 +2026,11 @@
 
 
 <script>
-   // $('#select_template').select2();
+    // $('#select_template').select2();
 </script>
 
 <style>
-    .csSelect2WithBg  .select2-selection__rendered{
+    .csSelect2WithBg .select2-selection__rendered {
         background-color: #fd7a2a;
         color: #fff !important;
     }

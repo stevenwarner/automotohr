@@ -1524,6 +1524,7 @@ class Indeed_model extends CI_Model
     {
         // set return array
         $returnArray = [
+            "totals" => 0,
             "records" => 0,
             "processed" => 0,
             "processing" => 0,
@@ -1533,7 +1534,7 @@ class Indeed_model extends CI_Model
             "companies" => 0,
         ];
         // set company filter
-      
+
         // add status filter
         if ($filter["status"]) {
             //
@@ -1555,9 +1556,24 @@ class Indeed_model extends CI_Model
                 $this->db->where("is_expired", 1);
             }
         }
+        if ($filter["companies"] && !in_array("All", $filter["companies"])) {
+            $this->db->where_in(
+                "portal_job_listings.user_sid",
+                $filter["companies"]
+            );
+        }
         // get the total records
         // $this->setWhere($filter);
         $returnArray["records"] = $this
+            ->db
+            ->join(
+                "portal_job_listings",
+                "portal_job_listings.sid = indeed_job_queue.job_sid",
+                "inner"
+            )
+            ->count_all_results("indeed_job_queue");
+
+        $returnArray["totals"] = $this
             ->db
             ->count_all_results("indeed_job_queue");
 
@@ -1599,6 +1615,9 @@ class Indeed_model extends CI_Model
             ->db
             ->where(
                 "is_processing",
+                0
+            )->where(
+                "is_processed",
                 0
             )
             ->count_all_results("indeed_job_queue");

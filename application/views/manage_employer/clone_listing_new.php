@@ -115,7 +115,7 @@
                                             <li class="form-col-100 autoheight">
                                                 <label class="autoheight" for="select_template">Select Job Description and Job Requirement Templates ( Please read through the templates and edit or review any text that is in "QUOTATIONS" so that it reflects your company branding and message.)</label>
                                                 <div class="csSelect2WithBg">
-                                                    <select class="invoice-fields" id="select_template" style="background-color:#fd7a2a" >
+                                                    <select class="invoice-fields" id="select_template" style="background-color:#fd7a2a">
                                                         <option value="" style="background-color:#f7f7f7">Select Template</option>
                                                         <?php foreach ($templates as $template) { ?>
                                                             <option id="template_<?php echo $template['sid'] ?>" data-description="<?php echo $template['description'] ?>" data-requirements="<?php echo $template['requirements'] ?>" value="<?php echo $template['sid'] ?>" style="background-color:#f7f7f7"><?php echo $template['title'] ?></option>
@@ -137,21 +137,29 @@
                                         </div>
 
                                         <li class="form-col-100 autoheight">
-                                        <p class="text-danger" style="margin-bottom: -10px; font-size: 16px;"><strong>Note: Your State may have recently mandated a Required Salary Range be added to all jobs that you post.<br> Please Add a Salary or Salary Range here. <a href="#" class=" jsSalaryInfo" style="text-decoration: underline;">Click Here for More Details</a></strong></p></label>
+                                            <p class="text-danger" style="margin-bottom: -10px; font-size: 16px;"><strong>Note: Your State may have recently mandated a Required Salary Range be added to all jobs that you post.<br> Please Add a Salary or Salary Range here. <a href="#" class=" jsSalaryInfo" style="text-decoration: underline;">Click Here for More Details</a></strong></p></label>
                                         </li>
 
 
                                         <li class="form-col-50-left">
-                                            <label>Salary:</label>
-                                            <input class="invoice-fields" type="text" name="salary" id="salary" value="<?php echo set_value('salary', $listing["Salary"]); ?>">
-                                            <?php echo form_error('salary'); ?>
+                                            <div class="form-col-50-left">
+                                                <label>Minimum Salary:
+                                                    <span class="staric">*</span>
+                                                    <input class="invoice-fields" type="number" name="minSalary" id="minSalary" required value="<?php echo set_value('minSalary', $listing["minSalary"]); ?>" placeholder="20">
+                                                    <?php echo form_error('minSalary'); ?>
+                                            </div>
+                                            <div class="form-col-50-right">
+                                                <label>Maximum Salary:
+                                                    <input class="invoice-fields" type="number" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary', $listing["maxSalary"]); ?>" placeholder="30">
+                                                    <?php echo form_error('maxSalary'); ?>
+                                            </div>
                                         </li>
                                         <li class="form-col-50-right">
-                                            <label>Salary Type:</label>
+                                            <label>Salary Type:<span class="staric">*</span></label>
                                             <div class="hr-select-dropdown">
-                                                <select class="invoice-fields" name="SalaryType">
+                                                <select class="invoice-fields" name="SalaryType" id="SalaryType">
                                                     <option value="">Select Salary Type</option>
-                                                    <option value="per_hour" <?php if ($listing["SalaryType"] == "per_hour") { ?>selected<?php } ?>>per hour</option>
+                                                    <option value=" per_hour" <?php if ($listing["SalaryType"] == "per_hour") { ?>selected<?php } ?>>per hour</option>
                                                     <option value="per_week" <?php if ($listing["SalaryType"] == "per_week") { ?>selected<?php } ?>>per week</option>
                                                     <option value="per_month" <?php if ($listing["SalaryType"] == "per_month") { ?>selected<?php } ?>>per month</option>
                                                     <option value="per_year" <?php if ($listing["SalaryType"] == "per_year") { ?>selected<?php } ?>>per year</option>
@@ -773,6 +781,9 @@
                     },
                     Location_ZipCode: {
                         pattern: /^[0-9\-]+$/
+                    },
+                    minSalary: {
+                        required: true
                     }
                 },
                 messages: {
@@ -829,6 +840,21 @@
                     if (text_pass.length === 0) {
                         alertify.alert('Error! Job Description Missing', "Job Description cannot be Empty");
                         return false;
+                    }
+
+                    //
+                    let minSalary = $("#minSalary").val()
+                    if (!minSalary) {
+                        return alertify.alert(
+                            "Error! Please add a minimum salary."
+                        );
+                    }
+
+                    let salaryType = $("#SalaryType option:selected").val()
+                    if (!salaryType) {
+                        return alertify.alert(
+                            "Error! Please select a salary type."
+                        );
                     }
 
                     if ($('input[name="video_source"]:checked').val() != 'no_video') {
@@ -1455,7 +1481,7 @@
 </script>
 
 <style>
-    .csSelect2WithBg  .select2-selection__rendered{
+    .csSelect2WithBg .select2-selection__rendered {
         background-color: #fd7a2a;
         color: #fff !important;
     }

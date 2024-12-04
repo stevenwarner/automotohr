@@ -9,7 +9,7 @@
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                            <a href="<?php echo $employee['access_level'] == 'Admin' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
+                            <a href="<?php echo $employee['access_level'] == 'Employee' ?  base_url('employee_management_system') : base_url('dashboard'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
                         </div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
@@ -300,7 +300,7 @@
     var courses = "<?php echo $filters['courses']; ?>";
     var baseURL = "<?= base_url(); ?>";
     var totalCourses = <?= $subordinateInfo["total_course"] ?? 0 ?>;
-    var dueSoonCourses = <?= $subordinateInfo["expire_soon"] ?? 0?>;
+    var dueSoonCourses = <?= $subordinateInfo["expire_soon"] ?? 0 ?>;
     var pastDueCourses = <?= $subordinateInfo["expired"] ?? 0 ?>;
     var inProgressCourses = <?= $subordinateInfo["started"] ?? 0 ?>;
     var completedCourses = <?= $subordinateInfo["completed"] ?? 0 ?>;

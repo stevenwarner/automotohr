@@ -250,12 +250,18 @@ class Indeed_reporting extends Admin_Controller
 
         $post = $this->input->post(null, true);
 
+        //
+        $salary = getSanitizeSalary(
+            $post["minSalary"],
+            $post["maxSalary"],
+        );
+
         $this
             ->indeed_model
             ->updateSalaryByJobId(
                 $jobId,
                 [
-                    "Salary" => $post["jsSalary"],
+                    "Salary" => $salary,
                     "SalaryType" => $post["jsSalaryType"],
                 ]
             );
