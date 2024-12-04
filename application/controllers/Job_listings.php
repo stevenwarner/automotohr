@@ -134,7 +134,17 @@ class Job_listings extends Public_Controller
                     'field' => 'JobCategory[]',
                     'label' => 'Job Category',
                     'rules' => 'required'
-                )
+                ),
+                array(
+                    'field' => 'minSalary',
+                    'label' => 'Minimum Salary',
+                    'rules' => 'required'
+                ),
+                array(
+                    'field' => 'SalaryType',
+                    'label' => 'Salary Type',
+                    'rules' => 'required'
+                ),
             );
 
             $this->form_validation->set_error_delimiters('<label class="error">', '</label>');
@@ -203,7 +213,6 @@ class Job_listings extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 $formpost                                                       = $this->input->post(NULL, TRUE);
-
 
                 if (!isset($formpost['interview_questionnaire_sid']) || $formpost['interview_questionnaire_sid'] == '') {
                     $formpost['interview_questionnaire_sid'] = 0;
@@ -288,6 +297,8 @@ class Job_listings extends Public_Controller
                         $key != 'indeedPackageCustom' &&
                         $key != 'indeedPhoneNumber' &&
                         $key != 'indeedPackageDays' &&
+                        $key != 'minSalary' &&
+                        $key != 'maxSalary' &&
                         $key != 'sponsor_this_job'
                     ) { // exclude these values from array
                         if (is_array($value)) {
@@ -434,6 +445,12 @@ class Job_listings extends Public_Controller
                 if ($hasNewModuleAccess && isset($formpost['sponsor_indeed']) && $formpost['sponsor_indeed'] == 'on') {
                     $listing['indeed_sponsored'] = 1;
                 }
+
+                //
+                $listing_data["Salary"] = getSanitizeSalary(
+                    $formpost["minSalary"],
+                    $formpost["maxSalary"],
+                );
 
                 $jobId                                                          = $this->dashboard_model->add_listing($listing_data);  //Now call dashboard_model function to insert data in DB
 
@@ -876,6 +893,10 @@ class Job_listings extends Public_Controller
                     $job_creator_credentials                                    = $this->dashboard_model->get_employee_name($job_creater_sid);
                     $data['job_creater_details']                                = 'Job Created by: <b>' . $job_creator_credentials['first_name'] . '&nbsp;' . $job_creator_credentials['last_name'] . '&nbsp;[' . $job_creator_credentials['email'] . ']</b>';
                 }
+                //
+                $salaryBreakDown = breakSalary($myListing["Salary"], $myListing["SalaryType"]);
+                $myListing["minSalary"] = $salaryBreakDown["min"];
+                $myListing["maxSalary"] = $salaryBreakDown["max"];
 
                 $data['listing']                                                = $myListing;
                 $job_listing_template_group                                     = $data['session']['company_detail']['job_listing_template_group']; // templates code start
@@ -894,7 +915,8 @@ class Job_listings extends Public_Controller
                 }
 
                 if ($availableTemplatesIds == null || empty($availableTemplatesIds)) {
-                    $availableTemplatesIds                                      = array();
+                    $availableTemplatesIds
+                        = array();
                 }
 
                 $templates                                                      = array();
@@ -1170,6 +1192,8 @@ class Job_listings extends Public_Controller
                             $key != 'indeedPackageCustom' &&
                             $key != 'indeedPhoneNumber' &&
                             $key != 'indeedPackageDays' &&
+                            $key != 'minSalary' &&
+                            $key != 'maxSalary' &&
                             $key != 'sponsor_this_job'
                         ) { // exclude these values from array
                             if (is_array($value)) {
@@ -1406,6 +1430,11 @@ class Job_listings extends Public_Controller
                             $listing_data['indeed_sponsored'] = 0;
                         }
                     }
+                    //
+                    $listing_data["Salary"] = getSanitizeSalary(
+                        $formpost["minSalary"],
+                        $formpost["maxSalary"],
+                    );
 
                     $this->dashboard_model->update_listing($formpost['sid'], $listing_data); //Now call dashboard_model function to insert data in DB
                     if ($listing_data["organic_feed"] == 1) {
@@ -1587,6 +1616,10 @@ class Job_listings extends Public_Controller
                         $data['employeesArray']                                 = array($logged_in_user_sid);
                     }
 
+                    $salaryBreakDown = breakSalary($myListing["Salary"], $myListing["SalaryType"]);
+                    $myListing["minSalary"] = $salaryBreakDown["min"];
+                    $myListing["maxSalary"] = $salaryBreakDown["max"];
+
                     $data['listing']                                            = $myListing;
 
                     if (empty($data['listing'])) {
@@ -1698,6 +1731,8 @@ class Job_listings extends Public_Controller
                             $key != 'cc_expire_year' &&
                             $key != 'cc_type' &&
                             $key != 'cc_ccv' &&
+                            $key != 'minSalary' &&
+                            $key != 'maxSalary' &&
                             $key != 'sponsor_this_job'
                         ) { // exclude these values from array
                             if (is_array($value)) {
@@ -1848,6 +1883,12 @@ class Job_listings extends Public_Controller
                             $listing_data['approval_status']                    = 'pending';
                         }
                     }
+
+                    //
+                    $listing_data["Salary"] = getSanitizeSalary(
+                        $formpost["minSalary"],
+                        $formpost["maxSalary"],
+                    );
 
                     $jobId                                                      = $this->dashboard_model->add_listing($listing_data);
                     if ($listing_data["organic_feed"] == 1) {

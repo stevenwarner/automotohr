@@ -370,8 +370,8 @@
             //
             event.preventDefault();
 
-            if (!$("#jsSalary").val()) {
-                return alertify.alert("Salary is required!");
+            if (!$("#minSalary").val()) {
+                return alertify.alert("Minimum salary is required!");
             }
             ml(true, "jsSalaryModalLoader")
             //
