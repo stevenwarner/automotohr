@@ -1334,6 +1334,19 @@ class Home extends CI_Controller
                     $links                                                      .= '</ul>';
                     $list['share_links']                                        = $links; //Generate Share Links - end
                     $data['job_details']                                        = $list;
+                    //
+                    $salaryBreakDown = breakSalary(
+                        $data["job_details"]["Salary"],
+                        $data["job_details"]["SalaryType"]
+                    );
+
+                    //
+                    if (strpos($salaryBreakDown["min"], "$") === false) {
+                        $data["job_details"]["Salary"] = "$" . $salaryBreakDown["min"];
+                        if ($salaryBreakDown["max"]) {
+                            $data["job_details"]["Salary"] .= " - $" . $salaryBreakDown["max"];
+                        }
+                    }
 
                     if (empty($data['job_details']['pictures'])) {
                         $data['image']                                          = base_url('assets/theme-1/images/new_logo.JPG');
