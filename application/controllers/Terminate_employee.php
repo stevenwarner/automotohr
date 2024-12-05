@@ -258,7 +258,7 @@ class Terminate_employee extends Public_Controller
             }
 
             if ($status_data[0]['changed_by'] != 0) {
-                if ($status_data[0]['changed_by'] != $employer_sid) {
+                if (!isPayrollOrPlus() && ($status_data[0]['changed_by'] != $employer_sid) ) {
                     $this->session->set_flashdata('message', '<b>Error:</b> Un-Authorized!');
                     redirect('employee_status/' . $sid);
                 }
