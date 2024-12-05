@@ -4198,6 +4198,8 @@ if (!function_exists("isLoggedInPersonAnExecutiveAdmin")) {
 if (!function_exists("getSanitizeSalary")) {
     function getSanitizeSalary($min, $max)
     {
+        $min = preg_replace("/[^0-9.]/", "", $min);
+        $max = preg_replace("/[^0-9.]/", "", $max);
         return $min . (
             $max
             ? " - " . $max

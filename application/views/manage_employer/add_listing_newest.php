@@ -261,21 +261,27 @@
                                                 </li>
                                                 <li class="form-col-50-left">
                                                     <div class="form-col-50-left">
-                                                        <label>Minimum Salary:
-                                                            <span class="staric">*</span>
-                                                            <input class="invoice-fields" type="number" name="minSalary" id="minSalary" required value="<?php echo set_value('minSalary'); ?>" placeholder="20">
-                                                            <?php echo form_error('minSalary'); ?>
+                                                        <label>Salary From:
+                                                            <!-- <span class="staric">*</span> -->
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon" id="basic-addon1">$</span>
+                                                                <input class="invoice-fields" type="text" name="minSalary" id="minSalary" value="<?php echo set_value('minSalary'); ?>">
+                                                                <?php echo form_error('minSalary'); ?>
+                                                            </div>
                                                     </div>
                                                     <div class="form-col-50-right">
-                                                        <label>Maximum Salary:
-                                                            <input class="invoice-fields" type="number" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary'); ?>" placeholder="30">
-                                                            <?php echo form_error('maxSalary'); ?>
+                                                        <label>Salary To:
+                                                            <div class="input-group">
+                                                                <span class="input-group-addon" id="basic-addon1">$</span>
+                                                                <input class="invoice-fields" type="text" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary'); ?>">
+                                                                <?php echo form_error('maxSalary'); ?>
+                                                            </div>
                                                     </div>
 
                                                 </li>
 
                                                 <li class="form-col-50-right">
-                                                    <label>Salary Type:<span class="staric">*</span></label>
+                                                    <label>Salary Type:</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" id="SalaryType" name="SalaryType">
                                                             <option value="">Select Salary Type</option>
@@ -751,9 +757,6 @@
                 },
                 Location_ZipCode: {
                     pattern: /^[0-9\-]+$/
-                },
-                minSalary: {
-                    required: true
                 }
             },
             messages: {
@@ -896,20 +899,37 @@
             alertify.alert('Error! Job Description Missing', "Job Description cannot be Empty");
             return false;
         }
-        //
+
+        // //
         let minSalary = $("#minSalary").val()
-        if (!minSalary) {
-            return alertify.alert(
-                "Error! Please add a minimum salary."
+        if (minSalary && minSalary.match(/[^0-9.,]/) !== null) {
+             alertify.alert(
+                "Error! Salary from can only be a number."
             );
+            return false;
         }
 
-        let salaryType = $("#SalaryType option:selected").val()
-        if (!salaryType) {
-            return alertify.alert(
-                "Error! Please select a salary type."
+        let maxSalary = $("#maxSalary").val()
+        if (maxSalary && maxSalary.match(/[^0-9.,]/) !== null) {
+             alertify.alert(
+                "Error! Salary to can only be a number."
             );
+            return false;
         }
+        // //
+        // let minSalary = $("#minSalary").val()
+        // if (!minSalary) {
+        //     return alertify.alert(
+        //         "Error! Please add a minimum salary."
+        //     );
+        // }
+
+        // let salaryType = $("#SalaryType option:selected").val()
+        // if (!salaryType) {
+        //     return alertify.alert(
+        //         "Error! Please select a salary type."
+        //     );
+        // }
 
         $('#my_loader').show();
         $("#employers_add_job").submit();
