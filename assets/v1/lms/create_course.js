@@ -674,7 +674,9 @@ $(function createCourse() {
 				}
 			);
 		}
-
+		//
+		courseObj.course_banner = response.data;
+		//
 		if (courseObj.course_secondary_logo_type == "yes") {
 			// upload secondary logo
 			let responseLogo = await uploadFile(courseObj.course_secondary_logo);
