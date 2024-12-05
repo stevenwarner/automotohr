@@ -1,5 +1,6 @@
 $(function LMSCourses() {
 	// set the xhr
+
 	let XHR = null;
 	// set the default filter
 	let filterObj = {
@@ -296,4 +297,162 @@ $(function LMSCourses() {
 	//
 	getDefaultJobTitles();
 	getLMSDefaultCourses();
+
+
+
+	//
+	$(document).on("click", ".jsEditCourseMaterial", function (event) {
+		// stop the default functionality
+		event.preventDefault();
+		// call the function
+		editCourseMaterial($(this).closest("tr").data("id"), $(this).closest("tr").data("title"));
+	});
+
+
+	//
+	function editCourseMaterial(courseId, courseTitle) {
+		window.previewCourseId = courseId;
+		// create modal
+		Modal(
+			{
+				Id: "jsLMSCourseMaterialModal",
+				Title: "Helping Material - " + courseTitle,
+				Loader: "jsLMSCourseMaterialModalLoader",
+				Cl: "container",
+				Body: '<div id="jsLMSCourseMaterialModalBody"></div>',
+			},
+
+			loadCourseMaterialView
+		);
+	}
+
+
+	function loadCourseMaterialView() {
+		// check the call
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		//
+		XHR = $.ajax({
+			url: apiURL + "lms/course/view/editmaterial",
+			method: "GET",
+		})
+			.success(function (resp) {
+				//
+				XHR = null;
+				// load the view
+				$(jsLMSCourseMaterialModalBody).html(resp);
+
+				$("#jsEditCourseMaterialLanguage").select2({
+					closeOnSelect: false,
+				});
+
+				$("#jsEditCourseMaterialFile").msFileUploader({
+					fileLimit: "200mb",
+					allowedTypes: ["jpg", "jpeg", "png", "gif", "pdf", "doc", "docx", "rtf", "ppt", "xls", "xlsx", "csv"],
+				});
+
+				ml(false, "jsLMSCourseMaterialModalLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function () {
+				// empty the call
+				XHR = null;
+			});
+	}
+
+
+
+	//Add Course Material
+	$(document).on("click", ".jsAddCourseMaterialBtn", function (event) {
+		// stop the default event
+		event.preventDefault();
+		// create the course object
+		const courseObj = {
+			course_id: window.previewCourseId,
+			material_language: $("#jsEditCourseMaterialLanguage").val().trim(),
+		};
+		//
+		handleCourseMaterialCreation(courseObj);
+	});
+
+
+	async function handleCourseMaterialCreation(courseObj) {
+		//
+		const errorArray = [];
+		// validate	
+
+		var course_file = $("#jsEditCourseMaterialFile").msFileUploader("get");
+
+		if (!Object.keys(course_file).length) {
+			errorArray.push(
+				"Please upload the material file."
+			);
+		} else if (course_file.errorCode) {
+			errorArray.push(course_file.errorCode);
+		} else { }
+
+		//
+		if (errorArray.length) {
+			// make the user notify of errors
+			return alertify.alert(
+				"ERROR!",
+				getErrorsStringFromArray(errorArray),
+				CB
+			);
+		}
+
+		// start the loader and upload the file
+		ml(true, "jsLMSCourseMaterialModalLoader");
+		// upload file
+		let response = await uploadFile(course_file);
+		// parse the JSON
+		response = JSON.parse(response);
+		// if file was not uploaded successfully
+		if (!response.data) {
+			return alertify.alert(
+				"ERROR",
+				"Failed to upload the file.",
+				function () {
+					//
+					ml(false, "jsLMSCourseMaterialModalLoader");
+				}
+			);
+		}
+		// set the file
+		try {
+			//
+			const createCourseResponse = await createCoursMaterialeCall(courseObj);
+			//			
+
+		} catch (err) {
+			ml(false, "jsLMSCourseMaterialModalLoader");
+			return alertify.alert(
+				"ERROR!",
+				getErrorsStringFromArray(err.errors, "Errors!!"),
+				CB
+			);
+		}
+	}
+
+	//
+	function createCoursMaterialeCall(courseObj) {
+
+		return new Promise(function (resolve, reject) {
+			//
+			$.ajax({
+				url: apiURL + "lms/course/creatematerial",
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				data: JSON.stringify(courseObj),
+			})
+				.success(resolve)
+				.fail(function (response) {
+					reject(response.responseJSON);
+				});
+		});
+	}
+
 });
