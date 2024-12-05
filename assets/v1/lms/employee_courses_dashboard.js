@@ -286,7 +286,7 @@ $(function LMSEmployeeDashboard() {
 				).format(timeOffDateFormatWithTime)}</p>`;
 				coursesHTML += `        </div>`;
 				coursesHTML += `        <div class="col-md-6 col-xs-12">`;
-				coursesHTML += `            <p class="csColumSection"><strong>END DATE</strong></p>`;
+				coursesHTML += `            <p class="csColumSection"><strong>COMPLETED DATE</strong></p>`;
 
 				if (course.end_date && ID == "jsPassedCourses") {
 					coursesHTML += `            <p>${moment(
