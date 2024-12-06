@@ -121,6 +121,7 @@ class Indeed_cron extends CI_Controller
             );
         // iterate through jobs
         foreach ($this->jobs as $job) {
+            echo "\n Job Id = ".$this->job["job_sid"];
             $this->jobBody = "";
             // set the job
             $this->job = $job;
@@ -130,8 +131,7 @@ class Indeed_cron extends CI_Controller
             $this->setJobUUIdAndPublishDate();
             // check if job is expired
             if ($job["is_expired"]) {
-                echo "\n Expired job body";
-
+                echo "\n Expired";
                 $this->expiredJobs[] = $this->job;
                 continue;
             }
@@ -139,8 +139,7 @@ class Indeed_cron extends CI_Controller
             $this->generateJobBody();
             //
             if ($this->job["errors"]) {
-                echo "\n Error happaned";
-
+                echo "\n AutomotoHR Errors";
                 $this
                     ->indeed_model
                     ->saveErrors(
@@ -149,6 +148,8 @@ class Indeed_cron extends CI_Controller
                     );
                 continue;
             }
+            //
+            echo "\n Sending";
             // create/update jobs on Indeed
             $this->sendJobsToIndeed();
 
@@ -602,7 +603,7 @@ class Indeed_cron extends CI_Controller
     {
         // revert if there is no body
         if (!$this->jobBody) {
-            echo "\n No Indeed body";
+            echo "\n Empty Indeed Body";
             return false;
         }
         // get the multi job Indeed query
@@ -612,7 +613,7 @@ class Indeed_cron extends CI_Controller
             echo $queryForIndeed . "\n\n";
             return;
         }
-        echo "\nMade Indeed call for job id".$this->job["job_sid"];
+        echo "\nCalling Indeed";
         // make the call to Indeed
         $response = $this
             ->indeed_lib
@@ -621,7 +622,7 @@ class Indeed_cron extends CI_Controller
             );
         // check for errors
         if ($response["error"]) {
-            echo "\nIndeed error call";
+            echo "\nIndeed Error";
             return $this
                 ->indeed_model
                 ->updateJobsQueue(
@@ -635,7 +636,7 @@ class Indeed_cron extends CI_Controller
                     ]
                 );
         }
-        echo "\nIndeed success";
+        echo "\nIndeed Success";
 
         // set the track and update queue
         return $this
@@ -813,7 +814,7 @@ class Indeed_cron extends CI_Controller
                     "log_sid" => $logId,
                 ]
             );
-        echo "\nIndeed esucess processed";
+        echo "\nIndeed Success Processed\n\n";
 
         //
         return true;
