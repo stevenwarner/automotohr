@@ -2019,7 +2019,8 @@ class Indeed_model extends CI_Model
             $doExpire = true;
         }
         // check for job inactive
-        if (!$status = $this->getJobApprovalStatus($queueJob["user_sid"], $queueJob["job_sid"])) {
+        $status = $this->getJobApprovalStatus($queueJob["user_sid"], $queueJob["job_sid"]);
+        if (!$status) {
             $doExpire = true;
         }
         //
