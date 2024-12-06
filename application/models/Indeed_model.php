@@ -2023,10 +2023,12 @@ class Indeed_model extends CI_Model
             $doExpire = true;
         }
         //
-        if (!$doExpire) {
-            return false;
+        if ($doExpire) {
+            $this->expireJobToQueue($queueJob["job_sid"]);
         }
+
+        _e("Job processed with id " . $queueJob["job_sid"] . " - " . $doExpire ? "yes" : "no");
         //
-        $this->expireJobToQueue($queueJob["job_sid"]);
+        return false;
     }
 }
