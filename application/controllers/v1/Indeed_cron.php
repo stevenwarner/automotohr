@@ -598,6 +598,7 @@ class Indeed_cron extends CI_Controller
     {
         // revert if there is no body
         if (!$this->jobBody) {
+            echo "\n No Indeed body";
             return false;
         }
         // get the multi job Indeed query
