@@ -130,6 +130,8 @@ class Indeed_cron extends CI_Controller
             $this->setJobUUIdAndPublishDate();
             // check if job is expired
             if ($job["is_expired"]) {
+                echo "\n Expired job body";
+
                 $this->expiredJobs[] = $this->job;
                 continue;
             }
