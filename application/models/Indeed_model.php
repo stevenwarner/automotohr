@@ -2019,7 +2019,7 @@ class Indeed_model extends CI_Model
             $doExpire = true;
         }
         // check for job inactive
-        if (!$this->getJobApprovalStatus($queueJob["user_sid"], $queueJob["job_sid"])) {
+        if (!$status = $this->getJobApprovalStatus($queueJob["user_sid"], $queueJob["job_sid"])) {
             $doExpire = true;
         }
         //
@@ -2027,7 +2027,7 @@ class Indeed_model extends CI_Model
             $this->expireJobToQueue($queueJob["job_sid"]);
         }
 
-        _e("Job processed with id " . $queueJob["job_sid"] . " - " . $doExpire ? "yes" : "no");
+        echo "\n\nJob processed with id " . $queueJob["job_sid"] . " - " . ($doExpire ? "yes" : "no")." - Status: ".($status ? "Yes" : "No")."\n";
         //
         return false;
     }
