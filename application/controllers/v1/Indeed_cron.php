@@ -11,7 +11,7 @@ class Indeed_cron extends CI_Controller
      * holds the jobs count
      * @var int
      */
-    private $numberOfJobsForQueue = 2;
+    private $numberOfJobsForQueue = 10;
 
     /**
      * holds the jobs
@@ -157,7 +157,7 @@ class Indeed_cron extends CI_Controller
         // delete jobs from Indeed
         $this->deleteJobsFromIndeed();
         //
-        exit("All done");
+        exit("\nAll done");
     }
 
 
