@@ -151,7 +151,7 @@ class Indeed_cron extends CI_Controller
             usleep(200);
         }
         // delete jobs from Indeed
-        // $this->deleteJobsFromIndeed();
+        $this->deleteJobsFromIndeed();
         echo "-----Processed ids-----";
         _e($this->jobIds);
         echo "-----Processed ids end-----";
