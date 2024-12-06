@@ -130,8 +130,8 @@ class Indeed_cron extends CI_Controller
             $this->setJobUUIdAndPublishDate();
             // check if job is expired
             if ($job["is_expired"]) {
-                // $this->expiredJobs[] = $this->job;
-                // continue;
+                $this->expiredJobs[] = $this->job;
+                continue;
             }
             // generate the add/edit job body
             $this->generateJobBody();
@@ -151,10 +151,22 @@ class Indeed_cron extends CI_Controller
             usleep(200);
         }
         // delete jobs from Indeed
-        // $this->deleteJobsFromIndeed();
+        $this->deleteJobsFromIndeed();
 
         //
         exit("All done");
+    }
+
+
+    /**
+     * refresh expired jobs on queue
+     */
+    public function refreshExpiredJobsOnQueue()
+    {
+        //
+        $this
+            ->indeed_model
+            ->refreshExpiredJobsOnQueue();
     }
 
 
@@ -438,10 +450,6 @@ class Indeed_cron extends CI_Controller
                 $this->job["Salary"],
                 $this->job['SalaryType']
             );
-        }
-        //
-        if ($salaryArray["min"] == "0") {
-            $this->job["errors"]["salary"] = "Salary is either missing or misformed.";
         }
         //
         return $salaryArray;

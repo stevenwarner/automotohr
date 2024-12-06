@@ -890,6 +890,7 @@ class Indeed_model extends CI_Model
             $updateArray = [];
             $updateArray["is_expired"] = 1;
             $updateArray["is_processed"] = 0;
+            $updateArray["is_processing"] = 0;
             $updateArray["processed_at"] = null;
             $updateArray["updated_at"] = getSystemDate();
             //
@@ -1953,5 +1954,79 @@ class Indeed_model extends CI_Model
             ->db
             ->where("sid", $jobId)
             ->update("portal_job_listings", $data);
+    }
+
+    public function refreshExpiredJobsOnQueue()
+    {
+        // get active jobs from queue
+        $queueJobs = $this
+            ->db
+            ->select([
+                "indeed_job_queue.job_sid",
+                "portal_job_listings.user_sid",
+                "portal_job_listings.organic_feed",
+            ])
+            ->where("indeed_job_queue.is_expired", 0)
+            ->group_start() // main group
+            ->group_start() // not processed
+            ->where("indeed_job_queue.is_processing", 0)
+            ->where("indeed_job_queue.is_processed", 0)
+            ->group_end()
+            ->or_group_start() // processed
+            ->where("indeed_job_queue.is_processed", 1)
+            ->group_end()
+            ->group_end()
+            ->join(
+                "portal_job_listings",
+                "portal_job_listings.sid = indeed_job_queue.job_sid",
+                "inner"
+            )
+            ->get("indeed_job_queue")
+            ->result_array();
+        //
+        if (!$queueJobs) {
+            exit("Not done");
+        }
+        //
+        foreach ($queueJobs as $queueJob) {
+            //
+            $this->checkJobStatusAndRefreshOnQueue(
+                $queueJob
+            );
+        }
+        //
+        exit("All done!");
+    }
+
+    //
+    private function checkJobStatusAndRefreshOnQueue(
+        array $queueJob
+    ) {
+        // set the expire flag
+        $doExpire = false;
+        // check if company is inactive
+        if (
+            $this
+            ->db
+            ->where("sid", $queueJob["user_sid"])
+            ->where("active", 0)
+            ->count_all_results("users")
+        ) {
+            $doExpire = true;
+        }
+        // check for organic feed
+        if ($queueJob["organic_feed"] != 1) {
+            $doExpire = true;
+        }
+        // check for job inactive
+        if (!$this->getJobApprovalStatus($queueJob["user_sid"], $queueJob["job_sid"])) {
+            $doExpire = true;
+        }
+        //
+        if (!$doExpire) {
+            return false;
+        }
+        //
+        $this->expireJobToQueue($queueJob["job_sid"]);
     }
 }
