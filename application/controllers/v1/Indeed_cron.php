@@ -137,6 +137,8 @@ class Indeed_cron extends CI_Controller
             $this->generateJobBody();
             //
             if ($this->job["errors"]) {
+                echo "\n Error happaned";
+
                 $this
                     ->indeed_model
                     ->saveErrors(
