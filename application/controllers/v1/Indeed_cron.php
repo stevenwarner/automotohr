@@ -121,7 +121,7 @@ class Indeed_cron extends CI_Controller
             );
         // iterate through jobs
         foreach ($this->jobs as $job) {
-            echo "\n Job Id = ".$this->job["job_sid"];
+            echo "\n Job Id = " . $this->job["job_sid"];
             $this->jobBody = "";
             // set the job
             $this->job = $job;
@@ -455,6 +455,10 @@ class Indeed_cron extends CI_Controller
                 $this->job['SalaryType']
             );
         }
+        $salaryArray["period"] =
+            $salaryArray["period"]
+            ? $salaryArray["period"]
+            : "YEAR";
         //
         return $salaryArray;
     }
