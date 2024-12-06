@@ -2018,8 +2018,12 @@ class Indeed_model extends CI_Model
         if ($queueJob["organic_feed"] != 1) {
             $doExpire = true;
         }
+        // get job approval status
+        $status = $this->db
+            ->where('approval_status', 'approved')
+            ->where('sid', $queueJob["job_sid"])
+            ->count_all_results('portal_job_listings');
         // check for job inactive
-        $status = $this->getJobApprovalStatus($queueJob["user_sid"], $queueJob["job_sid"]);
         if (!$status) {
             $doExpire = true;
         }
@@ -2028,7 +2032,7 @@ class Indeed_model extends CI_Model
             $this->expireJobToQueue($queueJob["job_sid"]);
         }
 
-        echo "\n\nJob processed with id " . $queueJob["job_sid"] . " - " . ($doExpire ? "yes" : "no")." - Status: ".($status ? "Yes" : "No")."\n";
+        echo "\n\nJob processed with id " . $queueJob["job_sid"] . " - " . ($doExpire ? "yes" : "no") . " - Status: " . ($status ? "Yes" : "No") . "\n";
         //
         return false;
     }
