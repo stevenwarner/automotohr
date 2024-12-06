@@ -440,7 +440,7 @@ class Indeed_cron extends CI_Controller
             "salary" => 0,
             "min" => 0,
             "max" => 0,
-            "period" => "",
+            "period" => "YEAR",
         ];
         //
         if ($this->job["Salary"]) {
@@ -607,7 +607,7 @@ class Indeed_cron extends CI_Controller
             echo $queryForIndeed . "\n\n";
             return;
         }
-        echo "\nMade Indeed call";
+        echo "\nMade Indeed call for job id".$this->job["job_sid"];
         // make the call to Indeed
         $response = $this
             ->indeed_lib
