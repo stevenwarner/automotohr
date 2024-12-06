@@ -23,7 +23,7 @@ $(function LMSEmployeeCourses() {
 	$(document).on("change", ".jsChangeScormLanguage", function (event) {
 		event.preventDefault();
 		//
-        // var courseId = $(this).data("course_id");
+		// var courseId = $(this).data("course_id");
 		var language = $(this).val();
 		//
 		alertify
@@ -35,10 +35,9 @@ $(function LMSEmployeeCourses() {
 				CB
 			)
 			.setHeader("Confirm");
-		
 	});
 
-	function changeScormLanguage (language) {
+	function changeScormLanguage(language) {
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();
@@ -54,7 +53,7 @@ $(function LMSEmployeeCourses() {
 				"/" +
 				courseId +
 				"/" +
-				language ,
+				language,
 			method: "PUT",
 		})
 			.success(function (response) {
@@ -62,7 +61,8 @@ $(function LMSEmployeeCourses() {
 				XHR = null;
 				//
 				if (response.status === "language_changed") {
-					window.location = baseURI + "lms/courses/" + courseId + '/' + language;
+					window.location =
+						baseURI + "lms/courses/" + courseId + "/" + language;
 				}
 				//
 				ml(false, "jsPageLoader");
@@ -138,14 +138,15 @@ $(function LMSEmployeeCourses() {
 				})
 					.success(function (response) {
 						if (response.status === "failed") {
-							return alertify.alert(
-								"WARNING!",
-								"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
-								function () {
-									window.location =
-										baseURI + "lms/courses/" + courseId + "/" + courseLanguage;
-								}
-							);
+							// return alertify.alert(
+							// 	"WARNING!",
+							// 	"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
+							// 	function () {
+							// 		window.location =
+							// 			baseURI + "lms/courses/" + courseId + "/" + courseLanguage;
+							// 	}
+							// );
+							return;
 						} else if (response.status === "passed") {
 							return alertify.alert(
 								"SUCCESS!",
@@ -374,14 +375,15 @@ $(function LMSEmployeeCourses() {
 				// set the view
 
 				if (response.status === "failed") {
-					return alertify.alert(
-						"WARNING!",
-						"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
-						function () {
-							window.location =
-								baseURI + "lms/courses/" + courseId;
-						}
-					);
+					// return alertify.alert(
+					// 	"WARNING!",
+					// 	"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
+					// 	function () {
+					// 		window.location =
+					// 			baseURI + "lms/courses/" + courseId;
+					// 	}
+					// );
+					return;
 				} else if (response.status === "passed") {
 					return alertify.alert(
 						"SUCCESS!",
