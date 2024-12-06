@@ -146,18 +146,12 @@ class Indeed_cron extends CI_Controller
                 continue;
             }
             // create/update jobs on Indeed
-            // $this->sendJobsToIndeed();
+            $this->sendJobsToIndeed();
 
             usleep(200);
         }
         // delete jobs from Indeed
         $this->deleteJobsFromIndeed();
-        echo "-----Processed ids-----";
-        _e($this->jobIds);
-        echo "-----Processed ids end-----";
-        echo "-----Expired ids-----";
-        _e($this->expiredJobs);
-        echo "-----Expired ids end-----";
         //
         exit("All done");
     }
@@ -613,6 +607,7 @@ class Indeed_cron extends CI_Controller
             echo $queryForIndeed . "\n\n";
             return;
         }
+        echo "\nMade Indeed call";
         // make the call to Indeed
         $response = $this
             ->indeed_lib
@@ -621,6 +616,7 @@ class Indeed_cron extends CI_Controller
             );
         // check for errors
         if ($response["error"]) {
+            echo "\nIndeed error call";
             return $this
                 ->indeed_model
                 ->updateJobsQueue(
@@ -634,6 +630,8 @@ class Indeed_cron extends CI_Controller
                     ]
                 );
         }
+        echo "\nIndeed success";
+
         // set the track and update queue
         return $this
             ->handleSuccessEvent(
@@ -810,6 +808,8 @@ class Indeed_cron extends CI_Controller
                     "log_sid" => $logId,
                 ]
             );
+        echo "\nIndeed esucess processed";
+
         //
         return true;
     }
