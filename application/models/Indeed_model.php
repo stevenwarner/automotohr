@@ -717,22 +717,25 @@ class Indeed_model extends CI_Model
      */
     public function addJobToQueue(
         int $jobId,
-        int $companyId
+        int $companyId,
+        bool $byPass = false
     ): array {
-        // check if company is approved
-        if (!$this->checkIfCompanyIsAllowed($companyId)) {
-            return [
-                "errors" => [
-                    "Company is not allowed"
-                ]
-            ];
-        }
-        //
-        // check if job is allowed to be added to queue
-        if (!$this->getJobApprovalStatus($companyId, $jobId)) {
-            return ["errors" => [
-                "The job is not approved."
-            ]];
+        if (!$byPass) {
+            // check if company is approved
+            if (!$this->checkIfCompanyIsAllowed($companyId)) {
+                return [
+                    "errors" => [
+                        "Company is not allowed"
+                    ]
+                ];
+            }
+            //
+            // check if job is allowed to be added to queue
+            if (!$this->getJobApprovalStatus($companyId, $jobId)) {
+                return ["errors" => [
+                    "The job is not approved."
+                ]];
+            }
         }
         // set current date and time
         $dateWithTime = getSystemDate();
@@ -772,22 +775,25 @@ class Indeed_model extends CI_Model
      */
     public function updateJobToQueue(
         int $jobId,
-        int $companyId
+        int $companyId,
+        bool $byPass = false
     ): array {
-        // check if company is approved
-        if (!$this->checkIfCompanyIsAllowed($companyId)) {
-            return [
-                "errors" => [
-                    "Company is not allowed"
-                ]
-            ];
-        }
+        if (!$byPass) {
+            // check if company is approved
+            if (!$this->checkIfCompanyIsAllowed($companyId)) {
+                return [
+                    "errors" => [
+                        "Company is not allowed"
+                    ]
+                ];
+            }
 
-        // check if job is allowed to be added to queue
-        if (!$this->getJobApprovalStatus($companyId, $jobId)) {
-            return ["errors" => [
-                "The job is not approved."
-            ]];
+            // check if job is allowed to be added to queue
+            if (!$this->getJobApprovalStatus($companyId, $jobId)) {
+                return ["errors" => [
+                    "The job is not approved."
+                ]];
+            }
         }
         // set current date and time
         $dateWithTime = getSystemDate();
@@ -798,7 +804,7 @@ class Indeed_model extends CI_Model
                 ->count_all_results("indeed_job_queue")
         ) {
             // add when the job was not found
-            return $this->addJobToQueue($jobId, $companyId);
+            return $this->addJobToQueue($jobId, $companyId, $byPass);
         }
         // check if the job is processed
         if ($this->db
@@ -2035,5 +2041,16 @@ class Indeed_model extends CI_Model
         echo "\n\nJob processed with id " . $queueJob["job_sid"] . " - " . ($doExpire ? "yes" : "no") . " - Status: " . ($status ? "Yes" : "No") . "\n";
         //
         return false;
+    }
+
+    public function handleJobQueueFromXml($jobs)
+    {
+        foreach ($jobs as $job) {
+            $this->updateJobToQueue(
+                $job["job_sid"],
+                $job["company_sid"],
+                true
+            );
+        }
     }
 }

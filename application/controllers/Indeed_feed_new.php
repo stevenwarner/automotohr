@@ -752,7 +752,8 @@ class Indeed_feed_new extends CI_Controller
                 $jobsForQueues[] = ["job_sid" => $job["sid"], "company_sid" => $companySid];
             }
         }
-        _e(count($jobsForQueues));
+        //
+        $this->indeed_model->handleJobQueueFromXml($jobsForQueues);
         exit;
     }
 }
