@@ -721,6 +721,7 @@ class Indeed_model extends CI_Model
         bool $byPass = false
     ): array {
         if (!$byPass) {
+            return [];
             // check if company is approved
             if (!$this->checkIfCompanyIsAllowed($companyId)) {
                 return [
@@ -779,6 +780,7 @@ class Indeed_model extends CI_Model
         bool $byPass = false
     ): array {
         if (!$byPass) {
+            return [];
             // check if company is approved
             if (!$this->checkIfCompanyIsAllowed($companyId)) {
                 return [
