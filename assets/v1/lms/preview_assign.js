@@ -146,12 +146,7 @@ $(function LMSEmployeeCourses() {
 							// 			baseURI + "lms/courses/" + courseId + "/" + courseLanguage;
 							// 	}
 							// );
-							window.location =
-								baseURI +
-								"lms/courses/" +
-								courseId +
-								"/" +
-								courseLanguage;
+							
 							return;
 						} else if (response.status === "passed") {
 							return alertify.alert(
@@ -389,7 +384,7 @@ $(function LMSEmployeeCourses() {
 					// 			baseURI + "lms/courses/" + courseId;
 					// 	}
 					// );
-					window.location = baseURI + "lms/courses/" + courseId;
+					// window.location = baseURI + "lms/courses/" + courseId;
 					return;
 				} else if (response.status === "passed") {
 					return alertify.alert(
