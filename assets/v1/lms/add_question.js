@@ -58,9 +58,9 @@ $(function addQuestion() {
 		} else if ($(this).val() === "record") {
 			$(".jsAddQuestionRecordVideoBox").removeClass("hidden");
 			videoFileRef.init();
-		} else {
+		} else if ($(this).val() === "link") {
 			$(".jsAddQuestionLinkVideoBox").removeClass("hidden");
-		}
+		} 
 	});
 
 	/**
@@ -326,6 +326,8 @@ $(function addQuestion() {
 			) {
 				errorArray.push("Invalid YouTube / Vimeo link.");
 			}
+		} else {
+			questionObj.video_file_name = "none";
 		}
 		//
 		if (errorArray.length) {
@@ -338,29 +340,36 @@ $(function addQuestion() {
 		ml(true, modalLoaderId);
 		//
 		if (doUpdated) {
-			//
-			let uploadedFileObject = {};
-			//
-			if (questionObj.video_type === "upload") {
-				uploadedFileObject = await uploadFile(fileObject);
+			if (questionObj.video_type != "none") {
 				//
-				if (typeof uploadedFileObject === "string") {
-					// parse json
-					uploadedFileObject = JSON.parse(uploadedFileObject);
+				let uploadedFileObject = {};
+				//
+				if (questionObj.video_type === "upload") {
+					uploadedFileObject = await uploadFile(fileObject);
+					//
+					if (typeof uploadedFileObject === "string") {
+						// parse json
+						uploadedFileObject = JSON.parse(uploadedFileObject);
+					}
+				} else {
+					uploadedFileObject = await uploadStream(fileStream);
 				}
-			} else {
-				uploadedFileObject = await uploadStream(fileStream);
+
+				//
+				//file upload failed
+				if (!Object.keys(uploadedFileObject).length) {
+					// hide the loader
+					ml(false, modalLoaderId);
+					// show error
+					return alertify.alert(
+						"ERROR!",
+						"Failed to upload file.",
+						CB
+					);
+				}
+				// saves theuploadedFileObject file name
+				questionObj.video_file_name = uploadedFileObject.data;
 			}
-			//
-			//file upload failed
-			if (!Object.keys(uploadedFileObject).length) {
-				// hide the loader
-				ml(false, modalLoaderId);
-				// show error
-				return alertify.alert("ERROR!", "Failed to upload file.", CB);
-			}
-			// saves the file name
-			questionObj.video_file_name = uploadedFileObject.data;
 		}
 		questionObj.question_id = Date.now();
 		// close the connection
