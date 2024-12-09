@@ -143,7 +143,7 @@
                                                         } ?>
                                                     </td>
                                                     <td class="text-center" style="vertical-align: middle;">
-                                                        <?php if ($employer_sid == $record['changed_by'] || $record['changed_by'] == 0) { ?>
+                                                        <?php if (isPayrollOrPlus() || ($employer_sid == $record['changed_by'] || $record['changed_by'] == 0)) { ?>
                                                             <a class="btn btn-success btn-sm" href="<?php echo base_url('edit_status') . '/' . $employer['sid'] . '/' . $record['sid']; ?>">
                                                                 <i class="fa fa-edit"></i>
                                                             </a>

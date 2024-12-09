@@ -11,7 +11,7 @@ class Indeed_cron extends CI_Controller
      * holds the jobs count
      * @var int
      */
-    private $numberOfJobsForQueue = 20;
+    private $numberOfJobsForQueue = 50;
 
     /**
      * holds the jobs
@@ -121,6 +121,7 @@ class Indeed_cron extends CI_Controller
             );
         // iterate through jobs
         foreach ($this->jobs as $job) {
+            echo "\n Job Id = " . $this->job["job_sid"];
             $this->jobBody = "";
             // set the job
             $this->job = $job;
@@ -130,13 +131,15 @@ class Indeed_cron extends CI_Controller
             $this->setJobUUIdAndPublishDate();
             // check if job is expired
             if ($job["is_expired"]) {
-                // $this->expiredJobs[] = $this->job;
-                // continue;
+                echo "\n Expired";
+                $this->expiredJobs[] = $this->job;
+                continue;
             }
             // generate the add/edit job body
             $this->generateJobBody();
             //
             if ($this->job["errors"]) {
+                echo "\n AutomotoHR Errors";
                 $this
                     ->indeed_model
                     ->saveErrors(
@@ -145,16 +148,29 @@ class Indeed_cron extends CI_Controller
                     );
                 continue;
             }
+            //
+            echo "\n Sending";
             // create/update jobs on Indeed
             $this->sendJobsToIndeed();
 
             usleep(200);
         }
         // delete jobs from Indeed
-        // $this->deleteJobsFromIndeed();
-
+        $this->deleteJobsFromIndeed();
         //
-        exit("All done");
+        exit("\nAll done");
+    }
+
+
+    /**
+     * refresh expired jobs on queue
+     */
+    public function refreshExpiredJobsOnQueue()
+    {
+        //
+        $this
+            ->indeed_model
+            ->refreshExpiredJobsOnQueue();
     }
 
 
@@ -429,7 +445,7 @@ class Indeed_cron extends CI_Controller
             "salary" => 0,
             "min" => 0,
             "max" => 0,
-            "period" => "",
+            "period" => "YEAR",
         ];
         //
         if ($this->job["Salary"]) {
@@ -439,10 +455,10 @@ class Indeed_cron extends CI_Controller
                 $this->job['SalaryType']
             );
         }
-        //
-        if ($salaryArray["min"] == "0") {
-            $this->job["errors"]["salary"] = "Salary is either missing or misformed.";
-        }
+        $salaryArray["period"] =
+            $salaryArray["period"]
+            ? $salaryArray["period"]
+            : "YEAR";
         //
         return $salaryArray;
     }
@@ -591,6 +607,7 @@ class Indeed_cron extends CI_Controller
     {
         // revert if there is no body
         if (!$this->jobBody) {
+            echo "\n Empty Indeed Body";
             return false;
         }
         // get the multi job Indeed query
@@ -600,6 +617,7 @@ class Indeed_cron extends CI_Controller
             echo $queryForIndeed . "\n\n";
             return;
         }
+        echo "\nCalling Indeed";
         // make the call to Indeed
         $response = $this
             ->indeed_lib
@@ -608,6 +626,7 @@ class Indeed_cron extends CI_Controller
             );
         // check for errors
         if ($response["error"]) {
+            echo "\nIndeed Error";
             return $this
                 ->indeed_model
                 ->updateJobsQueue(
@@ -621,6 +640,8 @@ class Indeed_cron extends CI_Controller
                     ]
                 );
         }
+        echo "\nIndeed Success";
+
         // set the track and update queue
         return $this
             ->handleSuccessEvent(
@@ -797,6 +818,8 @@ class Indeed_cron extends CI_Controller
                     "log_sid" => $logId,
                 ]
             );
+        echo "\nIndeed Success Processed\n\n";
+
         //
         return true;
     }

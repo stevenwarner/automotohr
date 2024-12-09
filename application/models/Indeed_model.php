@@ -717,22 +717,26 @@ class Indeed_model extends CI_Model
      */
     public function addJobToQueue(
         int $jobId,
-        int $companyId
+        int $companyId,
+        bool $byPass = false
     ): array {
-        // check if company is approved
-        if (!$this->checkIfCompanyIsAllowed($companyId)) {
-            return [
-                "errors" => [
-                    "Company is not allowed"
-                ]
-            ];
-        }
-        //
-        // check if job is allowed to be added to queue
-        if (!$this->getJobApprovalStatus($companyId, $jobId)) {
-            return ["errors" => [
-                "The job is not approved."
-            ]];
+        if (!$byPass) {
+            return [];
+            // check if company is approved
+            if (!$this->checkIfCompanyIsAllowed($companyId)) {
+                return [
+                    "errors" => [
+                        "Company is not allowed"
+                    ]
+                ];
+            }
+            //
+            // check if job is allowed to be added to queue
+            if (!$this->getJobApprovalStatus($companyId, $jobId)) {
+                return ["errors" => [
+                    "The job is not approved."
+                ]];
+            }
         }
         // set current date and time
         $dateWithTime = getSystemDate();
@@ -772,22 +776,26 @@ class Indeed_model extends CI_Model
      */
     public function updateJobToQueue(
         int $jobId,
-        int $companyId
+        int $companyId,
+        bool $byPass = false
     ): array {
-        // check if company is approved
-        if (!$this->checkIfCompanyIsAllowed($companyId)) {
-            return [
-                "errors" => [
-                    "Company is not allowed"
-                ]
-            ];
-        }
+        if (!$byPass) {
+            return [];
+            // check if company is approved
+            if (!$this->checkIfCompanyIsAllowed($companyId)) {
+                return [
+                    "errors" => [
+                        "Company is not allowed"
+                    ]
+                ];
+            }
 
-        // check if job is allowed to be added to queue
-        if (!$this->getJobApprovalStatus($companyId, $jobId)) {
-            return ["errors" => [
-                "The job is not approved."
-            ]];
+            // check if job is allowed to be added to queue
+            if (!$this->getJobApprovalStatus($companyId, $jobId)) {
+                return ["errors" => [
+                    "The job is not approved."
+                ]];
+            }
         }
         // set current date and time
         $dateWithTime = getSystemDate();
@@ -798,7 +806,7 @@ class Indeed_model extends CI_Model
                 ->count_all_results("indeed_job_queue")
         ) {
             // add when the job was not found
-            return $this->addJobToQueue($jobId, $companyId);
+            return $this->addJobToQueue($jobId, $companyId, $byPass);
         }
         // check if the job is processed
         if ($this->db
@@ -890,6 +898,7 @@ class Indeed_model extends CI_Model
             $updateArray = [];
             $updateArray["is_expired"] = 1;
             $updateArray["is_processed"] = 0;
+            $updateArray["is_processing"] = 0;
             $updateArray["processed_at"] = null;
             $updateArray["updated_at"] = getSystemDate();
             //
@@ -1953,5 +1962,97 @@ class Indeed_model extends CI_Model
             ->db
             ->where("sid", $jobId)
             ->update("portal_job_listings", $data);
+    }
+
+    public function refreshExpiredJobsOnQueue()
+    {
+        // get active jobs from queue
+        $queueJobs = $this
+            ->db
+            ->select([
+                "indeed_job_queue.job_sid",
+                "portal_job_listings.user_sid",
+                "portal_job_listings.organic_feed",
+            ])
+            ->where("indeed_job_queue.is_expired", 0)
+            ->group_start() // main group
+            ->group_start() // not processed
+            ->where("indeed_job_queue.is_processing", 0)
+            ->where("indeed_job_queue.is_processed", 0)
+            ->group_end()
+            ->or_group_start() // processed
+            ->where("indeed_job_queue.is_processed", 1)
+            ->group_end()
+            ->group_end()
+            ->join(
+                "portal_job_listings",
+                "portal_job_listings.sid = indeed_job_queue.job_sid",
+                "inner"
+            )
+            ->get("indeed_job_queue")
+            ->result_array();
+        //
+        if (!$queueJobs) {
+            exit("Not done");
+        }
+        //
+        foreach ($queueJobs as $queueJob) {
+            //
+            $this->checkJobStatusAndRefreshOnQueue(
+                $queueJob
+            );
+        }
+        //
+        exit("All done!");
+    }
+
+    //
+    private function checkJobStatusAndRefreshOnQueue(
+        array $queueJob
+    ) {
+        // set the expire flag
+        $doExpire = false;
+        // check if company is inactive
+        if (
+            $this
+            ->db
+            ->where("sid", $queueJob["user_sid"])
+            ->where("active", 0)
+            ->count_all_results("users")
+        ) {
+            $doExpire = true;
+        }
+        // check for organic feed
+        if ($queueJob["organic_feed"] != 1) {
+            $doExpire = true;
+        }
+        // get job approval status
+        $status = $this->db
+            ->where('approval_status', 'approved')
+            ->where('sid', $queueJob["job_sid"])
+            ->count_all_results('portal_job_listings');
+        // check for job inactive
+        if (!$status) {
+            $doExpire = true;
+        }
+        //
+        if ($doExpire) {
+            $this->expireJobToQueue($queueJob["job_sid"]);
+        }
+
+        echo "\n\nJob processed with id " . $queueJob["job_sid"] . " - " . ($doExpire ? "yes" : "no") . " - Status: " . ($status ? "Yes" : "No") . "\n";
+        //
+        return false;
+    }
+
+    public function handleJobQueueFromXml($jobs)
+    {
+        foreach ($jobs as $job) {
+            $this->updateJobToQueue(
+                $job["job_sid"],
+                $job["company_sid"],
+                true
+            );
+        }
     }
 }

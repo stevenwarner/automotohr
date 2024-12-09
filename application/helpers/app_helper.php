@@ -4207,35 +4207,3 @@ if (!function_exists("getSanitizeSalary")) {
         );
     }
 }
-
-if (!function_exists("breakSalary")) {
-    function breakSalary($salary, $salaryType)
-    {
-        // set default array
-        $ra = [
-            "min" => "",
-            "max" => "",
-        ];
-        //
-        if (!$salary) {
-            return $ra;
-        }
-        // get the salary
-        $salaryArray = setTheSalary(
-            $salary,
-            $salaryType,
-            true
-        );
-        if ($salaryArray["min"] == 0) {
-            //
-            $ra["min"] = $salary;
-            return $ra;
-        }
-        //
-        $ra["min"] = $salaryArray["min"];
-        $ra["max"] = $salaryArray["min"] != $salaryArray["max"]
-            ? $salaryArray["max"]
-            : "";
-        return $ra;
-    }
-}

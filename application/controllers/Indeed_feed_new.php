@@ -38,8 +38,8 @@ class Indeed_feed_new extends CI_Controller
                 $this->newIndex();
                 return;
                 break;
-                case 'test':
-                $this->test();
+            case 'jobsForQueue':
+                $this->jobsForQueue();
                 return;
                 break;
         }
@@ -644,6 +644,117 @@ class Indeed_feed_new extends CI_Controller
                 );
             }
         }
+    }
+
+
+    /**
+     * Indeed Organic/Paid Jobs
+     *
+     *  @return VOID
+     */
+    private function jobsForQueue()
+    {
+        //
+        $featuredJobs = $this->all_feed_model->get_all_company_jobs_ams();
+        // Get Indeed Paid Job Ids
+        $indeedPaidJobIds = $this->indeed_model->getIndeedPaidJobIds();
+        $indeedPaidJobs = [];
+        if (sizeof($indeedPaidJobIds['Ids'])) {
+            // Get Indeed Paid Jobs
+            $jobIds = $indeedPaidJobIds['Ids'];
+            $budget = $indeedPaidJobIds['Budget'];
+            $indeedPaidJobs = $this->indeed_model->getIndeedPaidJobs();
+        } else $budget = $jobIds = array();
+        // Get Indeed Organic Jobs
+        $indeedOrganicJobs = $this->indeed_model->getIndeedOrganicJobs($featuredJobs);
+        // Get Active companies
+        $activeCompanies = $this->indeed_model->getAllActiveCompanies($sid);
+        //
+        $rows = '';
+        //
+        $infoArray = array();
+        $infoArray['Skipped']['Paid'] = array();
+        $infoArray['Skipped']['Organic'] = array();
+        $infoArray['Listed']['Paid'] = array();
+        $infoArray['Listed']['Organic'] = array();
+        //
+        $totalJobsForFeed = 0;
+
+        $jobsForQueues = [];
+
+        // Loop through Organic Jobs
+        if (sizeof($indeedPaidJobs)) {
+            foreach ($indeedPaidJobs as $job) {
+                // Check for active company
+                if (!in_array($job['user_sid'], $activeCompanies)) {
+                    $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Company In-active');
+                    continue;
+                }
+                //
+                $companySid = $job['user_sid'];
+                // Check if company details exists
+                $companyPortal = $this->indeed_model->getPortalDetail($companySid);
+                //
+                if (empty($companyPortal)) {
+                    $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Company details not found');
+                    continue;
+                }
+                //
+                $companyData = $this->indeed_model->getCompanyNameAndJobApproval($companySid);
+                $companyName = $companyData['CompanyName'];
+                $hasJobApprovalRights = $companyData['has_job_approval_rights'];
+                // Check for approval rights
+                if ($hasJobApprovalRights ==  1) {
+                    $approvalRightStatus = $job['approval_status'];
+                    //
+                    if ($approvalRightStatus != 'approved') {
+                        $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Job not approved');
+                        continue;
+                    }
+                }
+                $jobsForQueues[] = ["job_sid" => $job["sid"], "company_sid" => $companySid];
+            }
+        }
+
+        // Loop through Organic Jobs
+        if (sizeof($indeedOrganicJobs)) {
+            foreach ($indeedOrganicJobs as $job) {
+                if (in_array($job['sid'], $jobIds)) {
+                    continue;
+                }
+                // Check for active company
+                if (!in_array($job['user_sid'], $activeCompanies)) {
+                    $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Company In-active');
+                    continue;
+                }
+                //
+                $companySid = $job['user_sid'];
+                // Check if company details exists
+                $companyPortal = $this->indeed_model->getPortalDetail($companySid);
+                //
+                if (empty($companyPortal)) {
+                    $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Company details not found');
+                    continue;
+                }
+                //
+                $companyData = $this->indeed_model->getCompanyNameAndJobApproval($companySid);
+                $companyName = $companyData['CompanyName'];
+                $hasJobApprovalRights = $companyData['has_job_approval_rights'];
+                // Check for approval rights
+                if ($hasJobApprovalRights ==  1) {
+                    $approvalRightStatus = $job['approval_status'];
+                    //
+                    if ($approvalRightStatus != 'approved') {
+                        $infoArray['Skipped']['Paid'] = array('jobSid' => $job['sid'], 'companySid' => $job['user_sid'], 'Cause' => 'Job not approved');
+                        continue;
+                    }
+                }
+                $jobsForQueues[] = ["job_sid" => $job["sid"], "company_sid" => $companySid];
+            }
+        }
+        //
+        $this->indeed_model->handleJobQueueFromXml($jobsForQueues);
+        exit;
     }
 }
 

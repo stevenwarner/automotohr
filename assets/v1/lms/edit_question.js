@@ -59,7 +59,7 @@ $(function editQuestion() {
 		} else if ($(this).val() === "record") {
 			$(".jsEditQuestionRecordVideoBox").removeClass("hidden");
 			videoFileRef.init();
-		} else {
+		} else if ($(this).val() === "link") {
 			$(".jsEditQuestionLinkVideoBox").removeClass("hidden");
 		}
 	});
@@ -184,8 +184,19 @@ $(function editQuestion() {
 		$(
 			'.jsEditQuestionVideoType[value="' + questionObj.video_type + '"]'
 		).prop("checked", true);
+
 		//
-		if (questionObj.video_type === "link") {
+		if (questionObj.video_type === "none") {
+			$(
+				'.jsEditQuestionVideoType[value="' +
+					questionObj.video_type +
+					'"]'
+			).prop("checked", true);
+			$(".jsEditQuestionUploadVideoBox").addClass("hidden");
+			$(".jsEditQuestionRecordVideoBox").addClass("hidden");
+			$(".jsEditQuestionLinkVideoBox").addClass("hidden");
+			$("#jsEditQuestionLink").val(questionObj.video_file_name);
+		} else if (questionObj.video_type === "link") {
 			$(
 				'.jsEditQuestionVideoType[value="' +
 					questionObj.video_type +
@@ -479,6 +490,8 @@ $(function editQuestion() {
 			) {
 				errorArray.push("Invalid YouTube / Vimeo link.");
 			}
+		} else {
+			questionObj.video_file_name = "none";
 		}
 		//
 		if (errorArray.length) {
@@ -491,28 +504,34 @@ $(function editQuestion() {
 		ml(true, modalLoaderId);
 		//
 		if (doUpdated) {
-			//
-			let uploadedFileObject = {};
-			//
-			if (questionObj.video_type === "upload") {
-				uploadedFileObject = await uploadFile(fileObject);
+			if (questionObj.video_type != "none") {
 				//
-				if (typeof uploadedFileObject === "string") {
-					// parse json
-					uploadedFileObject = JSON.parse(uploadedFileObject);
+				let uploadedFileObject = {};
+				//
+				if (questionObj.video_type === "upload") {
+					uploadedFileObject = await uploadFile(fileObject);
+					//
+					if (typeof uploadedFileObject === "string") {
+						// parse json
+						uploadedFileObject = JSON.parse(uploadedFileObject);
+					}
+				} else {
+					uploadedFileObject = await uploadStream(fileStream);
 				}
-			} else {
-				uploadedFileObject = await uploadStream(fileStream);
+				//file upload failed
+				if (!Object.keys(uploadedFileObject).length) {
+					// hide the loader
+					ml(false, modalLoaderId);
+					// show error
+					return alertify.alert(
+						"ERROR!",
+						"Failed to upload file.",
+						CB
+					);
+				}
+				// saves the file name
+				questionObj.video_file_name = uploadedFileObject.data;
 			}
-			//file upload failed
-			if (!Object.keys(uploadedFileObject).length) {
-				// hide the loader
-				ml(false, modalLoaderId);
-				// show error
-				return alertify.alert("ERROR!", "Failed to upload file.", CB);
-			}
-			// saves the file name
-			questionObj.video_file_name = uploadedFileObject.data;
 		}
 		// close the connection
 		videoFileRef.close();

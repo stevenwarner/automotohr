@@ -409,7 +409,7 @@ $(function createCourse() {
 				//
 				$("#jsAddCourseVideoFile").msFileUploader({
 					fileLimit: "200mb",
-					allowedTypes: ["mp4", "ppt", "pptx", "mov"],
+					allowedTypes: ["mp4", "ppt", "pptx", "mov", "wav"],
 				});
 				//
 				$("input[name=jsAddCourseType][value=scorm]").attr(

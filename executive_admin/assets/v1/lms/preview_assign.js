@@ -9,16 +9,18 @@ $(function LMSEmployeeCourses() {
 		// prevent default event
 		event.preventDefault();
 		//
-		alertify.confirm(
-			"Are you sure you want to start this course?",
-			function () {
-				startCourse();
-			},
-			CB
-		).setHeader("Confirm");
+		alertify
+			.confirm(
+				"Are you sure you want to start this course?",
+				function () {
+					startCourse();
+				},
+				CB
+			)
+			.setHeader("Confirm");
 	});
 
-	function startCourse () {
+	function startCourse() {
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();
@@ -27,7 +29,13 @@ $(function LMSEmployeeCourses() {
 		ml(true, "jsPageLoader");
 		// make the call
 		XHR = $.ajax({
-			url: apiURL + "lms/trainings/" + employeeId + "/" + courseId + "/start",
+			url:
+				apiURL +
+				"lms/trainings/" +
+				employeeId +
+				"/" +
+				courseId +
+				"/start",
 			method: "GET",
 		})
 			.success(function (response) {
@@ -71,20 +79,22 @@ $(function LMSEmployeeCourses() {
 				})
 					.success(function (response) {
 						if (response.status === "failed") {
-							return alertify.alert(
-								"WARNING!",
-								"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
-								function () {
-									window.location =
-										baseURI + "lms/courses/" + courseId;
-								}
-							);
+							// return alertify.alert(
+							// 	"WARNING!",
+							// 	"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
+							// 	function () {
+							// 		window.location =
+							// 			baseURI + "lms/courses/" + courseId;
+							// 	}
+							// );
+							return;
 						} else if (response.status === "passed") {
 							return alertify.alert(
 								"SUCCESS!",
 								"Congratulations on successfully passing this course!",
 								function () {
-									window.location = baseURI + "lms/courses/my";
+									window.location =
+										baseURI + "lms/courses/my";
 								}
 							);
 						}
@@ -95,7 +105,7 @@ $(function LMSEmployeeCourses() {
 						XHR = null;
 					});
 				//
-			}	
+			}
 		}
 		//
 		window.sendCourseToSave = sendCourseToSave;
@@ -296,14 +306,15 @@ $(function LMSEmployeeCourses() {
 				// set the view
 
 				if (response.status === "failed") {
-					return alertify.alert(
-						"WARNING!",
-						"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
-						function () {
-							window.location =
-								baseURI + "lms/courses/" + courseId;
-						}
-					);
+					// return alertify.alert(
+					// 	"WARNING!",
+					// 	"Apologies for not passing this course. We highly encourage you to consider giving it another attempt.",
+					// 	function () {
+					// 		window.location =
+					// 			baseURI + "lms/courses/" + courseId;
+					// 	}
+					// );
+					return;
 				} else if (response.status === "passed") {
 					return alertify.alert(
 						"SUCCESS!",
@@ -325,7 +336,7 @@ $(function LMSEmployeeCourses() {
 			});
 	}
 	//
-	
+
 	//
 	if (lessonStatus === "not_started") {
 		ml(false, "jsPageLoader");
