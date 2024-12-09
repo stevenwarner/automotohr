@@ -301,7 +301,7 @@
                                             <li>
                                                 <a href="<?= base_url('lms/courses/import_course_csv'); ?>">Import Learning Management System CSV</a>
                                             </li>
-                                            <li class="hidden">
+                                            <li>
                                                 <a href="<?= base_url('lms/courses/export_course_csv'); ?>">Export Learning Management System CSV</a>
                                             </li>
                                         <?php } ?>

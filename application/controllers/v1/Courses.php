@@ -1976,25 +1976,230 @@ class Courses extends Public_Controller
                 $data['session']
             );
             //
-            $data['employerData'] = $this->course_model->getEmployerDetail($data['employerId']);
-            //
-            $data['PageCSS'] = [
-                'v1/plugins/ms_modal/main.min',
-                'v1/plugins/alertifyjs/css/alertify.min',
-                'mFileUploader/index'
-            ];
-            // load JS
-            $data['PageScripts'] = [
-                'v1/plugins/ms_modal/main.min',
-                'lodash/loadash.min',
-                'v1/plugins/alertifyjs/alertify.min',
-                'mFileUploader/index',
-                'v1/lms/import_courses_csv'
-            ];
+            $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
-            $this->load->view('main/header', $data);
-            $this->load->view('courses/export_courses_csv');
-            $this->load->view('main/footer');
+            if ($this->form_validation->run() == false) {
+                $data['employerData'] = $this->course_model->getEmployerDetail($data['employerId']);
+                $data['companyCourses'] = $this->course_model->getActiveCompanyCourses($data['companyId']); 
+                //
+                $this->load->view('main/header', $data);
+                $this->load->view('courses/export_courses_csv');
+                $this->load->view('main/footer');
+            } else {
+                $perform_action = $this->input->post('perform_action');
+
+                switch ($perform_action) {
+                    case 'export_courses':
+                        $exportRows = '';
+                        $checked_boxes = explode(',', $_POST['columns']);
+                        //
+                        $selectedCourses = $this->course_model->getSelectedCourses($_POST['courses'], $data['companyId']);
+                        $companyEmployeesList = $this->course_model->getCompanyActiveEmployeesWithCourses($data['companyId']);
+                        //
+                        if ($companyEmployeesList && $selectedCourses) {
+                            //
+                            foreach ($companyEmployeesList as $employee) {
+                                //
+                                foreach ($selectedCourses as $course) {
+                                    //
+                                    $courseStatus = $this->course_model->getEmployeeCourseStatus($course['sid'], $employee['sid']);
+                                    //
+                                    $exportRow = '';
+                                    //
+                                    foreach ($checked_boxes as $key => $item) {
+                                        if ($item == "employee_id") {
+                                            $exportRow .= $employee['sid'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "employee_no") {
+                                            $exportRow .= $employee['employee_number'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "employee_ssn") {
+                                            $exportRow .= $employee['ssn'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "employee_email") {
+                                            $exportRow .= $employee['email'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "employee_PhoneNumber") {
+                                            $exportRow .= $employee['PhoneNumber'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "first_name") {
+                                            $exportRow .= $employee['first_name'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "last_name") {
+                                            $exportRow .= $employee['last_name'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "access_level") {
+                                            $exportRow .= $employee['access_level'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "job_title") {
+                                            $exportRow .= $employee['job_title'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "course_title") {
+                                            $exportRow .= $course['course_title'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "lesson_status") {
+                                            $exportRow .= $courseStatus['lesson_status'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "course_status") {
+                                            $exportRow .= $courseStatus['course_status'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "course_type") {
+                                            $exportRow .= $course['course_type'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "course_taken_count") {
+                                            $exportRow .= $courseStatus['course_taken_count'] . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "course_started_date") {
+                                            $startDate = $courseStatus['created_at'] ? formatDateToDB($courseStatus['created_at'], DB_DATE_WITH_TIME, SITE_DATE) : "";
+                                            $exportRow .= $startDate . ',';
+                                            substr($exportRow, 0, -1);
+                                        } else if ($item == "course_completion_date") {
+                                            $completionDate = $courseStatus['updated_at'] ? formatDateToDB($courseStatus['updated_at'], DB_DATE_WITH_TIME, SITE_DATE) : "";
+                                            $exportRow .= $completionDate . ',';
+                                            substr($exportRow, 0, -1);
+                                        }
+                                    }
+                                    //
+                                    $exportRows .= $exportRow . PHP_EOL;
+                                    //
+                                }
+                            }
+                        }
+                        //
+                        if (!empty($exportRows)) {
+                            //
+                            $header = [];
+                            //
+                            if (count($checked_boxes) > 0) {
+                                foreach ($checked_boxes as $key => $item) {
+                                    if ($item == "employee_id") {
+                                        $header[$key] = "Employee ID";
+                                    } else if ($item == "employee_no") {
+                                        $header[$key] = "Employee Number";
+                                    } else if ($item == "employee_ssn") {
+                                        $header[$key] = "Employee SSN";
+                                    } else if ($item == "employee_email") {
+                                        $header[$key] = "Employee Email";
+                                    } else if ($item == "employee_PhoneNumber") {
+                                        $header[$key] = "Employee Phone Number";
+                                    } else if ($item == "first_name") {
+                                        $header[$key] = "First Name";
+                                    } else if ($item == "last_name") {
+                                        $header[$key] = "Last Name";
+                                    } else if ($item == "access_level") {
+                                        $header[$key] = "Access Level";
+                                    } else if ($item == "job_title") {
+                                        $header[$key] = "Job Title";
+                                    } else if ($item == "course_title") {
+                                        $header[$key] = "Course Title";
+                                    } else if ($item == "lesson_status") {
+                                        $header[$key] = "Lesson Status";
+                                    } else if ($item == "course_status") {
+                                        $header[$key] = "Course Status";
+                                    } else if ($item == "course_type") {
+                                        $header[$key] = "Course Type";
+                                    } else if ($item == "course_taken_count") {
+                                        $header[$key] = "Course Taken Count";
+                                    } else if ($item == "course_started_date") {
+                                        $header[$key] = "Course Start Date";
+                                    } else if ($item == "course_completion_date") {
+                                        $header[$key] = "Course Completion Date";
+                                    }
+                                }
+                                //
+                            }
+                            //
+                            $companyHeader = '';
+                            if (!empty($data['session']['company_detail']['CompanyName'])) {
+                                $companyHeader = ',,,,' . $data['session']['company_detail']['CompanyName'];
+                            }
+                            //
+                            $header_row = implode(',', $header);
+                            //
+                            $file_content = '';
+                            $file_content .= $header_row . PHP_EOL;
+                            $file_content .= $exportRows;
+                            $file_size = 0;
+                            //
+                            if (function_exists('mb_strlen')) {
+                                $file_size = mb_strlen($file_content, '8bit');
+                            } else {
+                                $file_size = strlen($file_content);
+                            }
+
+                            header('Pragma: public');     // required
+                            header('Expires: 0');         // no cache
+                            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                            header('Cache-Control: private', false);
+                            header('Content-Type: text/csv');  // Add the mime type from Code igniter.
+                            header('Content-Disposition: attachment; filename="learning_management_system_' . date('Y_m_d-H:i:s') . '.csv"');  // Add the file name
+                            header('Content-Transfer-Encoding: binary');
+                            header('Content-Length: ' . $file_size); // provide file size
+                            header('Connection: close');
+                            echo $companyHeader . PHP_EOL . PHP_EOL;
+                            echo $header_row . PHP_EOL;
+                            echo $exportRows;
+
+                            break;
+                        } else {
+                            $this->session->set_flashdata('message', '<b>Error:</b> Record(s) Not Found!');
+                            redirect('lms/courses/export_course_csv');
+                        }
+
+
+                        
+                        //  _e($_POST,true,true);
+                        //
+                        $employer_sid = $data['session']['employer_detail']['sid'];
+                        $data_to_insert['company_sid'] = $this->input->post('company_sid');
+                        $access_level = explode(',', $this->input->post('access_level'));
+
+                        if ($access_level[0] == 'all') {
+                            $data_to_insert['employee_type'] = 'all';
+                        } else {
+                            $data_to_insert['employee_type'] = $this->input->post('access_level');
+                        }
+
+                        $data_to_insert['employee_status'] = $this->input->post('status');
+                        $data_to_insert['custom_type'] = $this->input->post('assignAndSendDocument');
+                        $data_to_insert['custom_date'] = $this->input->post('assignAndSendCustomDate');
+                        $data_to_insert['custom_day'] = $this->input->post('assignAndSendCustomDay');
+                        $data_to_insert['custom_time'] = $this->input->post('assignAndSendCustomTime');
+                        if ($this->input->post('report_all_columns') == 1) {
+                            $data_to_insert['selected_columns'] = 'all';
+                        } else {
+                            $data_to_insert['selected_columns'] = $this->input->post('test');
+                        }
+                        $sender_list = $this->input->post('assignAdnSendSelectedEmployees');
+                        if ($sender_list[0] == '-1') {
+                            $data_to_insert['sender_list'] = 'all';
+                        } else {
+                            $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',', $this->input->post('assignAdnSendSelectedEmployees')) : '';
+                        }
+                        //  $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',',$this->input->post('assignAdnSendSelectedEmployees')) : '';
+
+                        $data_to_insert['created_at'] = date('Y-m-d H:i:s');
+                        $data_to_insert['created_by'] = $employer_sid;
+                        $to_date = $this->input->post('to_date');
+                        $from_date =  $this->input->post('from_date');
+
+                        if (!empty($to_date)) {
+                            $to_date = empty($to_date) ? null : DateTime::createFromFormat('m-d-Y', $to_date)->format('Y-m-d 00:00:00');
+                        }
+                        //
+                        if (!empty($from_date)) {
+                            $from_date = empty($from_date) ? null : DateTime::createFromFormat('m-d-Y', $from_date)->format('Y-m-d 23:59:59');
+                        }
+
+                        $data_to_insert['to_date'] = $to_date;
+                        $data_to_insert['from_date'] = $from_date;
+                        $this->export_csv_model->save_employee_csv_report_settings($data_to_insert);
+                        $this->session->set_flashdata('message', '<strong>Success</strong> CSV Report Settings Saved Successfully');
+                        redirect('export_employees_csv', 'refresh');
+
+                        break;
+                }
+            }    
         } else {
             redirect('login', "refresh");
         }

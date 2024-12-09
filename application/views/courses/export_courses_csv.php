@@ -17,15 +17,15 @@
                             </div>
                             <div class="panel-body">
                                 <pre>
-<b>First Name, Last Name, E-Mail, Primary Number, Street Address, City, Zipcode, State, Country, Access Level, Job Title,Status</b><br>
-Jason, Snow, jason@abc.com, +123456789, 123 Street, California, 90001, CA, United States, Admin, General Manager,ActiveEmployee
-Albert, King, albert@example.com, +123456789, 98 Street, California, 90001, CA, United States, Manager, Manager Sales,ActiveEmployee,
-Nathan, Quite, nathan@example.com, +1823212129, your Street, California, 90001, CA, United States, Hiring Manager,ActiveActiveEmployee, 
-Allen, Knight, allen@example.com, +1223312129, your Street, California, 90001, CA, United States, Employee, Office Assistant,InactiveEmployee,
-Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, United States,Employee, Team Lead,InactiveEmployee, 
+<b>Employee ID, Employee Number, Employee SSN, Employee Email, Employee Phone Number,  First Name, Last Name, Access Level, Job Title, Status, Course Title, Lesson Status, Course Status, Course Type, Course Taken Count, Course Start Date, Course Completion Date</b><br>
+1234, E1234, 219-09-9999, jason@example.com, +1234567892, Jason, Snow, Admin, General Manager, ActiveEmployee, EHS Training, completed, passed, manual, 3, 5/8/2024, 6/9/2024,
+1235, E1235, 219-08-8888, albert@example.com, +123456789, Albert, King, Manager, Manager Sales, ActiveEmployee,Respiratory Management, completed, passed, scorm, 2, 5/8/2024, 6/9/2024,
+1236, E1236, 219-07-7777, nathan@example.com, +1823212129, Nathan, Quite, Hiring Manager, ActiveActiveEmployee, Sales & Finance Training, incomplete, failed, scorm, 1, 5/8/2024, 6/9/2024,
+1237, E1237, 219-06-6666, allen@example.com, +1223312129, Allen, Knight, Employee, Office Assistant, InactiveEmployee, EHS Training, completed, passed, scorm, 4, 5/8/2024, 6/9/2024
+1238, E1238, 219-05-5555, jack@example.com, +013212129, Jack, Brown, Employee, Team Lead, InactiveEmployee, Respiratory Management, completed, passed, scorm, 3, 5/8/2024, 6/9/2024,
                                 </pre>
                             </div>
-                            <?php if ($access_level_plus || $pay_plan_flag == 1) { ?>
+                            <?php if ($session['employer_detail']['access_level_plus'] || $session['employer_detail']['pay_plan_flag']) { ?>
                                 <div class="panel panel-default cs_margin_panel">
                                     <div class="panel-heading">
                                         <div class="row">
@@ -36,355 +36,122 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                 </label>
                                                 <p class="cs_line">Include columns in export file</p>
                                             </div>
-                                            <!--                                            <div class="col-lg-3 col-xs-2 ">-->
-                                            <!--                                                <span  class="fa fa-plus cs_icon_margin" data-toggle="collapse" href="#collapse1"></span><span  class="fa fa-minus cs_icon_margin" data-toggle="collapse" href="#collapse1"></span>-->
-                                            <!--                                            </div>-->
                                         </div>
                                     </div>
                                     <div id="collapse1" class="panel-collapse ">
                                         <div class="panel-body">
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox"> Resume Url <input type="checkbox" class="check_it" name="resume_url" value="resume">
+                                                    <label class="control control--checkbox"> Employee Id <input type="checkbox" class="check_it" name="employee_id" value="employee_id">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Cover Letter Url<input type="checkbox" class="check_it" name="cover_letter_url" value="cover_letter">
+                                                    <label class="control control--checkbox">Employee Number<input type="checkbox" class="check_it" name="employee_no" value="employee_no">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Time Zone<input type="checkbox" class="check_it" name="time_zone" value="timezone">
+                                                    <label class="control control--checkbox">Employee SSN<input type="checkbox" class="check_it" name="employee_ssn" value="employee_ssn">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Secondary Email<input type="checkbox" class="check_it" name="secondary_email" value="secondary_email">
+                                                    <label class="control control--checkbox">Employee Email<input type="checkbox" class="check_it" name="employee_email" value="employee_email">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Secondary Phone Number<input type="checkbox" class="check_it" name="secondary_phone_number" value="secondary_PhoneNumber">
+                                                    <label class="control control--checkbox">Employee Phone Number<input type="checkbox" class="check_it" name="employee_phone_number" value="employee_PhoneNumber">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Other Email<input type="checkbox" class="check_it" name="other_email" value="other_email">
+                                                    <label class="control control--checkbox">First Name<input type="checkbox" class="check_it" name="first_name" value="first_name">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Other Phone Number<input type="checkbox" class="check_it" name="other_phone_number" value="other_PhoneNumber">
+                                                    <label class="control control--checkbox">Last Name<input type="checkbox" class="check_it" name="last_name" value="last_name">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Office Location<input type="checkbox" class="check_it" name="office_location" value="office_location">
+                                                    <label class="control control--checkbox">Access Level<input type="checkbox" class="check_it" name="access_level" value="access_level">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Linkedin Url<input type="checkbox" class="check_it" name="linkedin_url" value="linkedin_profile_url">
+                                                    <label class="control control--checkbox">Job Title<input type="checkbox" class="check_it" name="job_title" value="job_title">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Employee Number<input type="checkbox" name="emplolyee_number" class="check_it" value="employee_number">
+                                                    <label class="control control--checkbox">Course Title<input type="checkbox" class="check_it" name="course_title" value="course_title">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Social Security Number<input type="checkbox" name="social_security_number" class="check_it" value="ssn">
+                                                    <label class="control control--checkbox">Lesson Status,<input type="checkbox" class="check_it" name="lesson_status" value="lesson_status">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Date of Birth<input type="checkbox" name="dob" class="check_it" value="dob">
+                                                    <label class="control control--checkbox">Course Status<input type="checkbox" class="check_it" name="course_status" value="course_status">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Department<input type="checkbox" name="department" class="check_it" value="department_sid">
+                                                    <label class="control control--checkbox">Course Type<input type="checkbox" class="check_it" name="course_type" value="course_type">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Team<input type="checkbox" name="team" class="check_it" value="team_sid">
+                                                    <label class="control control--checkbox">Course Taken Count<input type="checkbox" class="check_it" name="course_taken_count" value="course_taken_count">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Joining Date<input type="checkbox" name="joining_date" class="check_it" value="joined_at">
+                                                    <label class="control control--checkbox">Course Start Date<input type="checkbox" class="check_it" name="course_started_date" value="course_started_date">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Shift Hours<input type="checkbox" name="shift_hours" class="check_it" value="user_shift_hours">
+                                                    <label class="control control--checkbox">Course Completion Date<input type="checkbox" class="check_it" name="course_completion_date"  value="course_completion_date">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Shift Minutes<input type="checkbox" name="shift_minutes" class="check_it" value="user_shift_minutes">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Shift Start Time<input type="checkbox" name="shift_start_time" class="check_it" value="shift_start_time">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Shift End Time<input type="checkbox" name="shift_end_time" class="check_it" value="shift_end_time">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <!-- <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Interest<input type="checkbox" name="interest" class="check_it" value="Interest"><div class="control__indicator"></div></label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Short Bio<input type="checkbox" name="short_bio" class="check_it" value="Short Bio"><div class="control__indicator"></div></label>
-                                                </div>
-                                            </div> -->
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Video Url<input type="checkbox" name="video_url" class="check_it" value="video_type">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Nick Name<input type="checkbox" name="nick_name" class="check_it" value="nick_name">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <!--  -->
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Hourly Rate<input type="checkbox" name="hourly_rate" class="check_it" value="hourly_rate">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <!--  -->
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Middle Name<input type="checkbox" name="middle_name" class="check_it" value="middle_name">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Hourly Technician<input type="checkbox" name="hourly_technician" class="check_it" value="hourly_technician">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <!--  -->
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Rehire Date<input type="checkbox" name="rehire_date" class="check_it" value="rehire_date">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Flat Rate Technician<input type="checkbox" name="flat_rate_technician" class="check_it" value="flat_rate_technician">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <!--  -->
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Terminated Date<input type="checkbox" name="terminated_date" class="check_it" value="terminated_date">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Semi Monthly Salary<input type="checkbox" name="semi_monthly_salary" class="check_it" value="semi_monthly_salary">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Semi Monthly Draw<input type="checkbox" name="semi_monthly_draw" class="check_it" value="semi_monthly_draw">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <!--  -->
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Terminated Reason<input type="checkbox" name="terminated_reason" class="check_it" value="terminated_reason">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <?php if (isPayrollOrPlus(true)) { ?>
-
-                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                    <div class="checkbox cs_full_width">
-                                                        <label class="control control--checkbox">EEOC Code<input type="checkbox" name="eeoc_code" class="check_it" value="eeoc_code">
-                                                            <div class="control__indicator"></div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                    <div class="checkbox cs_full_width">
-                                                        <label class="control control--checkbox">Benefits Salary<input type="checkbox" name="salary_benefits" class="check_it" value="salary_benefits">
-                                                            <div class="control__indicator"></div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                    <div class="checkbox cs_full_width">
-                                                        <label class="control control--checkbox">Workers Compensation Code<input type="checkbox" name="workers_compensation_code" class="check_it" value="workers_compensation_code">
-                                                            <div class="control__indicator"></div>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            <?php } ?>
-
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">I Speak<input type="checkbox" name="languages_speak" class="check_it" value="languages_speak">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Marital Status<input type="checkbox" name="marital_status" class="check_it" value="marital_status">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Profile Picture URL<input type="checkbox" name="profile_picture" class="check_it" value="profile_picture">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Drivers License<input type="checkbox" name="drivers_license" class="check_it" value="drivers_license">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Gender<input type="checkbox" name="gender" class="check_it" value="gender">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Union Member<input type="checkbox" name="union_member" class="check_it" value="union_member">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Union Name<input type="checkbox" name="union_name" class="check_it" value="union_name">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Uniform Top Size<input type="checkbox" name="uniform_top_size" class="check_it" value="uniform_top_size">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Uniform Bottom Size<input type="checkbox" name="uniform_bottom_size" class="check_it" value="uniform_bottom_size">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Employment Type<input type="checkbox" name="employment_type" class="check_it" value="employment_type">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Approvers<input type="checkbox" name="approvers" class="check_it" value="approvers">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -396,41 +163,32 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="hr-box">
                                 <div class="hr-innerpadding">
-                                    <form id="form_export_employees" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                        <input type="hidden" id="perform_action" name="perform_action" value="export_employees" />
-                                        <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                                    <form id="form_export_courses" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                        <input type="hidden" id="perform_action" name="perform_action" value="export_courses" />
+                                        <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $companyId; ?>" />
                                         <div class="row">
                                             <!--  -->
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                <label>Access Level:</label>
+                                                <label>Course Title:</label>
                                                 <div class="hr-select-dropdown autoheight">
-                                                    <select data-rule-required="true" class="invoice-fields" name="access_level[]" id="access_level" multiple>
-                                                        <option value="all">All Employees</option>
-                                                        <?php if (!empty($access_levels)) { ?>
-                                                            <?php foreach ($access_levels as $access_level) { ?>
-                                                                <option value="<?php echo $access_level; ?>"><?php echo $access_level; ?></option>
+                                                    <select data-rule-required="true" class="invoice-fields" name="courses[]" id="jsCourses" multiple>
+                                                        <option value="0">All Courses</option>
+                                                        <?php if (!empty($companyCourses)) { ?>
+                                                            <?php foreach ($companyCourses as $course) { ?>
+                                                                <option value="<?php echo $course['sid']; ?>"><?php echo $course['course_title']; ?></option>
                                                             <?php } ?>
                                                         <?php } ?>
-                                                        <option value="executive_admin">Executive Admin</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <!--  -->
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                <label>Status:</label>
+                                                <label>Course Status:</label>
                                                 <div class="hr-select-dropdown autoheight">
-                                                    <select data-rule-required="true" class="invoice-fields" name="status[]" id="employee_status" multiple>
-
+                                                    <select data-rule-required="true" class="invoice-fields" name="courseStatus" id="jsCourseStatus">
                                                         <option value="all">All</option>
-                                                        <option value="active">Active</option>
-                                                        <option value="leave">Leave</option>
-                                                        <option value="suspended">Suspended</option>
-                                                        <option value="retired">Retired</option>
-                                                        <option value="rehired">Rehired</option>
-                                                        <option value="deceased">Deceased</option>
-                                                        <option value="terminated">Terminated</option>
-                                                        <option value="inactive">Inactive</option>
-
+                                                        <option value="Passed">Passed</option>
+                                                        <option value="failed">Failed</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -439,14 +197,12 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
 
                                             <!--  -->
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                                <label>From:</label>
-                                                <input type="text" name="from_date" value="" class="invoice-fields" id="display_start_date">
+                                                
                                             </div>
 
                                             <!--  -->
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                                <label>To:</label>
-                                                <input type="text" name="to_date" value="" class="invoice-fields" id="display_end_date">
+                                                
                                             </div>
                                             <!--  -->
 
@@ -462,38 +218,18 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                             </div>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <?php $this->load->view('export_employees_csv/csv_report_section'); ?>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script>
-    $('#employee_status').select2({
+    $('#jsCourses').select2({
         closeOnSelect: false
     });
 
-    $('#display_start_date').datepicker({
-        dateFormat: 'mm-dd-yy',
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "<?php echo DOB_LIMIT; ?>",
-        onSelect: function(value) {
-            $('#display_end_date').datepicker('option', 'minDate', value);
-        }
-    });
-
-    $('#display_end_date').datepicker({
-        dateFormat: 'mm-dd-yy',
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "<?php echo DOB_LIMIT; ?>"
+    $('#jsCourseStatus').select2({
+        closeOnSelect: false
     });
 
     $("#check_all").click(function() {
@@ -501,7 +237,8 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
     });
 
     $(document).ready(function() {
-        $('#form_export_employees').validate();
+        $('#jsCourses').select2('val', ['all']);
+        $('#form_export_courses').validate();
     });
 
     $(".fa-minus").hide();
@@ -525,14 +262,21 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             $("#check_all").prop("checked", true);
         }
     });
-    <?php if ($access_level_plus || $pay_plan_flag == 1) { ?>
-        $("#form_export_employees").submit(function(e) {
+    <?php if ($session['employer_detail']['access_level_plus'] || $session['employer_detail']['pay_plan_flag']) { ?>
+        $("#form_export_courses").submit(function(e) {
             var ids = [];
             $(".check_it:checked").map(function() {
                 ids.push($(this).val());
             });
-            $(this).append("<input type='hidden' name='test'>");
-            $("input[name='test']").val(ids);
+            //
+            if (!ids.length) {
+                $(".check_it").map(function() {
+                    ids.push($(this).val());
+                });
+            }
+            //
+            $(this).append("<input type='hidden' name='columns'>");
+            $("input[name='columns']").val(ids);
 
         });
     <?php } ?>

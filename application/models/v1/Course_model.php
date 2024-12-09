@@ -698,4 +698,86 @@ class Course_model extends CI_Model
         //
         return true;
     }
+
+    public function getSelectedCourses ($coursesIds, $companyId) {
+        //
+        $this->db->select('sid, course_title, course_type');
+        //
+        $this->db->where('is_active', 1);
+        $this->db->where('company_sid', $companyId);
+        //
+        if (!in_array(0, $coursesIds)) {
+            $this->db->where_in('sid', $coursesIds);
+        } 
+        //
+        $result = $this->db->get('lms_default_courses')->result_array();
+        return $result;
+    }
+
+    // Fetch all company active employees
+    function getCompanyActiveEmployeesWithCourses(
+        $companyId
+    ) {
+        //
+        $this->db
+            ->select('
+            users.sid,
+            users.email,
+            users.ssn,
+            users.PhoneNumber,
+            users.job_title,
+            users.first_name,
+            users.last_name,
+            users.access_level,
+            users.employee_number,
+            users.lms_job_title,
+        ')
+        ->join(
+            "portal_job_title_templates",
+            "portal_job_title_templates.sid = users.lms_job_title",
+            "inner"
+        )
+        ->where([
+            "users.lms_job_title is not null" => null,
+            "users.parent_sid" => $companyId,
+            "users.active" => 1,
+            "users.terminated_status" => 0,
+            "users.is_executive_admin" => 0,
+            "portal_job_title_templates.status" => 1,
+        ]);
+        //
+     
+        $a = $this->db->get('users');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    } 
+
+    function getEmployeeCourseStatus(
+        int $courseId,
+        int $employeeId
+    ): array {
+        // get the employee assigned course
+        $courseInfo = get_instance()->db
+            ->select('lesson_status, course_status, course_taken_count, created_at, updated_at')
+            ->from('lms_employee_course')
+            ->where('course_sid', $courseId)
+            ->where('employee_sid', $employeeId)
+            ->get()
+            ->row_array();
+        //
+        // if course not started yet
+        if (!$courseInfo) {
+            $courseInfo['lesson_status'] = 'not_started';
+            $courseInfo['course_status'] = '';
+            $courseInfo['course_taken_count'] = 0;
+            $courseInfo['created_at'] = '';
+            $courseInfo['updated_at'] = '';
+        }
+        //
+        return $courseInfo;
+    }
+
 }
