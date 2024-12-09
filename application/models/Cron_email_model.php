@@ -687,30 +687,33 @@ class Cron_email_model extends CI_Model
                     true,
                     true
                 );
+            //
             $replaceArray["{{course_listing_table}}"] = $this->generateCoursesTable(
                 $employee["courses"]
             );
-
+            //
             // set keys
             $replaceKeys = array_keys($replaceArray);
-
+            //
             // replace
             $fromName = str_replace(
                 $replaceKeys,
                 $replaceArray,
                 $templateFromName
             );
+            //
             $subject = str_replace(
                 $replaceKeys,
                 $replaceArray,
                 $templateSubject
             );
-            $body = str_replace(
-                $replaceKeys,
-                $replaceArray,
-                $templateBody
-            );
-
+            //
+            $email_hf = message_header_footer_domain($this->companyId, $companyDetails["company_name"]);
+            //
+            $body = $email_hf['header']
+                    . str_replace($replaceKeys, $replaceArray, $templateBody)
+                    . $email_hf['footer'];
+            //        
             log_and_sendEmail(
                 $fromName,
                 $employee["email"],
