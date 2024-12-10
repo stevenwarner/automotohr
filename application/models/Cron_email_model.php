@@ -8,12 +8,18 @@ class Cron_email_model extends CI_Model
     private $byPass;
     private $notifiers;
     private $companyEmployees;
+    private $testingCompanyIds;
 
     public function __construct()
     {
         parent::__construct();
         //
         $this->byPass = false;
+        $this->testingCompanyIds = [
+            51,
+            8578,
+            21, // testing company from local
+        ];
     }
 
     /**
@@ -27,10 +33,6 @@ class Cron_email_model extends CI_Model
         if (!$companyIds) {
             exit("No companies found!");
         }
-        $companyIds = [
-            51,
-            8578,
-        ];
         // iterate
         foreach ($companyIds as $companyId) {
             // send emails
@@ -44,10 +46,10 @@ class Cron_email_model extends CI_Model
     public function sendCourseReminderEmailsByCompanyId(
         int $companyId,
         array $types = [
-            "due_soon",
-            "expired",
-            "inprogress",
-            "ready_to_start",
+            "due_soon", // due soon
+            "expired", // past due
+            "inprogress", // in progress
+            "ready_to_start", // ready to start
         ],
         array $courseIds = []
     ) {
@@ -169,6 +171,7 @@ class Cron_email_model extends CI_Model
             ->select("distinct(company_sid)")
             ->where("is_processing", 0)
             ->limit(1)
+            ->where_in('company_sid', $this->testingCompanyIds)
             ->get("lms_course_email_queue")
             ->row_array();
         //
@@ -241,22 +244,44 @@ class Cron_email_model extends CI_Model
         if (!$this->notifiers) {
             return ["errors" => ["No notifiers found"]];
         }
-        // get the company employees by course
-        $employeesWithCourseList = $this
-            ->getCompanyEmployeesWithCourses(
-                $types,
-                $courseIds
-            );
-        //
-        if (!$employeesWithCourseList) {
-            return ["errors" => ["No employees found!"]];
+        // loop through the 
+        foreach ($this->notifiers as $v0) {
+            // skip in case of non-employee contact
+            // as we don't have team members
+            if ($v0["employer_sid"] === 0) {
+                continue;
+            }
+            // get the ream member ids
+            $response = getMyDepartmentAndTeams($v0["employer_sid"], "courses");
+            //
+            $teamEmployeeIds = $response
+                ? array_column(
+                    $response["employees"],
+                    "employee_sid"
+                )
+                : [];
+            //
+            if (!$teamEmployeeIds) {
+                continue;
+            }
+            // get the company employees by course
+            $employeesWithCourseList = $this
+                ->getCompanyEmployeesWithCourses(
+                    $types,
+                    $courseIds,
+                    $teamEmployeeIds
+                );
+            // no team members found
+            if (!$employeesWithCourseList) {
+                continue;
+            }
+            //
+            $this->companyEmployees = $employeesWithCourseList;
+            //
+            $report = $this->generateReport();
+            //
+            $this->sendCourseReportEmails($report);
         }
-        //
-        $this->companyEmployees = $employeesWithCourseList;
-        //
-        $report = $this->generateReport();
-        //
-        $this->sendCourseReportEmails($report);
         //
         return ["success"];
     }
@@ -509,6 +534,7 @@ class Cron_email_model extends CI_Model
             ->select('company_sid')
             ->where('module_sid', $record['sid'])
             ->where('is_active', 1)
+            ->where_in('company_sid', $this->testingCompanyIds)
             ->get("company_modules")
             ->result_array();
 
@@ -711,8 +737,8 @@ class Cron_email_model extends CI_Model
             $email_hf = message_header_footer_domain($this->companyId, $companyDetails["company_name"]);
             //
             $body = $email_hf['header']
-                    . str_replace($replaceKeys, $replaceArray, $templateBody)
-                    . $email_hf['footer'];
+                . str_replace($replaceKeys, $replaceArray, $templateBody)
+                . $email_hf['footer'];
             //        
             log_and_sendEmail(
                 $fromName,

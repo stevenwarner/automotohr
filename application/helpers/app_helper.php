@@ -1488,7 +1488,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
             departments_team_management.name as team_name,
             departments_management.sid,
             departments_management.name,
-            departments_management.supervisor
+            departments_management.lms_managers_ids
         ")
             ->join(
                 "departments_management",
@@ -1498,8 +1498,8 @@ if (!function_exists('getMyDepartmentAndTeams')) {
             ->where("departments_management.is_deleted", 0)
             ->where("departments_team_management.is_deleted", 0)
             ->group_start()
-            ->where("FIND_IN_SET({$employeeId}, departments_team_management.team_lead) > 0", null, null)
-            ->or_where("FIND_IN_SET({$employeeId}, departments_management.supervisor) > 0", null, null)
+            // ->where("FIND_IN_SET({$employeeId}, departments_team_management.team_lead) > 0", null, null)
+            // ->or_where("FIND_IN_SET({$employeeId}, departments_management.supervisor) > 0", null, null)
             ->or_where("FIND_IN_SET({$employeeId}, departments_management.lms_managers_ids) > 0", null, null)
             ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.lms_managers_ids) > 0", null, null)
             ->group_end();
@@ -1527,7 +1527,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                     "employees_ids" => []
                 );
                 //
-                if (in_array($employeeId, explode(",", $team["supervisor"]))) {
+                if (in_array($employeeId, explode(",", $team["lms_managers_ids"]))) {
                     $r['departments'][$team["sid"]] = array(
                         "sid" => $team["sid"],
                         "name" =>  $team["name"],
