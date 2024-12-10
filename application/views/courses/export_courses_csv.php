@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
-                    <?php $this->load->view('manage_employer/settings_left_menu_administration'); ?>
+                    <?php $this->load->view($left_navigation); ?>
                 </div>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>

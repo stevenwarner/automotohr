@@ -23,7 +23,7 @@ $importValueArray .= ' ,  , 219-09-9999, , , Schaller Auto Body, incomplete, fai
 $importValueArray .= ', , , email@abc.com, , EHS Training, completed, passed, scorm, 4, 5/8/2024, 6/9/2024,<br/>';
 $importValueArray .= ' , , , , +1234567892, Respiratory Management, completed, passed, scorm, 3, 5/8/2024, 6/9/2024,<br/>';
 $importValueArray .= ',  E15708, , , , Sales & Finance Training, incomplete, failed, scorm, 1, 5/8/2024, 6/9/2024,<br/>';
-?> 
+?>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -85,5 +85,5 @@ $importValueArray .= ',  E15708, , , , Sales & Finance Training, incomplete, fai
 </div>
 
 <script>
-    var baseURI = "<?=base_url()?>";
+    var baseURI = "<?= base_url() ?>";
 </script>
