@@ -44,6 +44,7 @@ class Resources extends Public_Controller
             $this->resources_model->getLatestBlogs($this->blogCount, 0);
         //
         // get latest blogs
+     //   _e($this->blogCount,true,true);
         $data['resources'] =
             $this->resources_model->getResources($this->blogCount, 0);
         //

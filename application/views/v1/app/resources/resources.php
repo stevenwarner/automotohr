@@ -69,6 +69,12 @@
                                         </label>
                                     </div>
                                     <div class="form-check">
+                                        <input class="form-check-input resources-checkbox no-padding" name="resourceType" value="Audio" type="checkbox">
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                        Audios
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
                                         <input class="form-check-input resources-checkbox no-padding" name="resourceType" value="Webinars" type="checkbox">
                                         <label class="form-check-label" for="flexCheckDefault">
                                             Webinars

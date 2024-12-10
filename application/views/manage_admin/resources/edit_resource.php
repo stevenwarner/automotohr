@@ -97,6 +97,11 @@
                                                             </label>
 
                                                             <label class="control control--checkbox">
+                                                                <input type="checkbox" name="resourcetype[]" value="Audio" <?php echo in_array("Videos", $resourceTypeArray) ? 'checked' : '' ?>> Audio
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+
+                                                            <label class="control control--checkbox">
                                                                 <input type="checkbox" name="resourcetype[]" value="Webinars" <?php echo in_array("Webinars", $resourceTypeArray) ? 'checked' : '' ?>> Webinars
                                                                 <div class="control__indicator"></div>
                                                             </label>
@@ -246,7 +251,7 @@
     //
     $('#jsFileUpload').mFileUploader({
         fileLimit: -1,
-        allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov'],
+        allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov','mp3','wav','aac','flac'],
         text: 'Click / Drag to upload',
         <?php if (isset($page_data['resources']) && $page_data['resources'] != "") { ?>
             placeholderImage: "<?= $page_data['resources']; ?>"
@@ -276,6 +281,7 @@
         }
 
         formData.append('document_title', 'resources');
+        
 
         $.ajax({
             url: '<?= base_url('manage_admin/uploadresource'); ?>',
