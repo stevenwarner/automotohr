@@ -299,7 +299,6 @@ $(function LMSCourses() {
 	getLMSDefaultCourses();
 
 
-
 	//
 	$(document).on("click", ".jsEditCourseMaterial", function (event) {
 		// stop the default functionality
@@ -322,19 +321,20 @@ $(function LMSCourses() {
 				Body: '<div id="jsLMSCourseMaterialModalBody"></div>',
 			},
 
-			loadCourseMaterialView
+			loadCourseMaterialView(courseId)
 		);
 	}
 
 
-	function loadCourseMaterialView() {
+	function loadCourseMaterialView(courseId) {
 		// check the call
 		if (XHR !== null) {
 			XHR.abort();
 		}
+
 		//
 		XHR = $.ajax({
-			url: apiURL + "lms/course/view/editmaterial",
+			url: apiURL + "lms/course/view/editmaterial/" + courseId,
 			method: "GET",
 		})
 			.success(function (resp) {
@@ -360,7 +360,6 @@ $(function LMSCourses() {
 				XHR = null;
 			});
 	}
-
 
 
 	//Add Course Material
@@ -419,11 +418,30 @@ $(function LMSCourses() {
 				}
 			);
 		}
+
 		// set the file
+		courseObj.material_file = response.data;
+
 		try {
-			//
 			const createCourseResponse = await createCoursMaterialeCall(courseObj);
-			//			
+
+		//	console.log(createCourseResponse.materialdata);
+			let actionButtons = '';
+			actionButtons += `<button class="btn btn-success jsview" title="View" placement="top">`;
+			actionButtons += `<i class="fa fa-eye" aria-hidden="true"></i>`;
+			actionButtons += `</button>`;
+			actionButtons += `<button class="btn btn-danger jsDisableCourse" title="Delete Material" placement="top">`;
+			actionButtons += `<i class="fa fa-ban"></i>`;
+			actionButtons += `</button>`;
+
+			$('#coursematerialtbl').append('<tr data-id="' + createCourseResponse.materialdata[0].sid + '" id="' + createCourseResponse.materialdata[0].sid + '"><td><strong>' + createCourseResponse.materialdata[0].material_language + '</strong></td><td><a href="#" class="btn btn-link">' + createCourseResponse.materialdata[0].material_file + '</a></td><td>' + actionButtons + '</td></tr>');
+			ml(false, "jsLMSCourseMaterialModalLoader");
+
+			alertify.success('Course Material Successful Created ');		
+
+		//	$('#jsEditCourseMaterialFile').trigger('click');
+
+			//
 
 		} catch (err) {
 			ml(false, "jsLMSCourseMaterialModalLoader");
@@ -456,3 +474,52 @@ $(function LMSCourses() {
 	}
 
 });
+
+//
+$(document).on("click", ".jsDeleteCourseMaterial", function (event) {
+	// prevent default event
+	event.preventDefault();
+	//
+	let materialId = $(this).closest("tr").data("id");
+	//
+	return alertify
+		.confirm(
+			"Do you really want to delete this mterial?",
+			function () {
+
+				deleteCourseMaterial(materialId)
+			},
+			CB
+		)
+		.set("labels", {
+			ok: "Yes",
+			cancel: "No",
+		})
+		.setHeader("Confirm");
+});
+
+
+
+//
+function deleteCourseMaterial(materialId) {
+	// show the loader
+	ml(true, "jsLMSCourseMaterialModalLoader");
+	// make the call
+	XHR = $.ajax({
+		url: apiURL + "lms/course/deletematerial/" + materialId,
+		method: "DELETE",
+	})
+		.success(function (response) {
+			// empty the call
+			XHR = null;
+			alertify.success('Course Material Successful Deleted ');
+			$("#row" + materialId).remove();
+		})
+		.fail(handleErrorResponse)
+		.done(function () {
+			// empty the call
+			XHR = null;
+			// hide the loader
+			ml(false, "jsLMSCourseMaterialModalLoader");
+		});
+}
