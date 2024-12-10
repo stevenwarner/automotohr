@@ -64,10 +64,6 @@ $(function createCourse() {
 			course_questions: questionsArray,
 		};
 		//
-		if ($(".jsAddIndefiniteCourse").is(":checked")) {
-			courseObj.course_end_period = null;
-		}
-		//
 		handleCourseCreation(courseObj);
 	});
 
@@ -191,9 +187,9 @@ $(function createCourse() {
 	$(document).on("click", ".jsAddIndefiniteCourse", function (event) {
 		if ($(".jsAddIndefiniteCourse").is(":checked")) {
 			$("#jsAddCourseEndPeriod").val("");
-			$(".jsRecurringCourses").hide();
+			$(".jsAddCourseEndPeriodLabel").hide();
 		} else {
-			$(".jsRecurringCourses").show();
+			$(".jsAddCourseEndPeriodLabel").show();
 		}
 	});
 
@@ -509,6 +505,15 @@ $(function createCourse() {
 		if (!courseObj.course_start_period) {
 			errorArray.push("Course start date is required.");
 		}
+		//
+		if ($(".jsAddIndefiniteCourse").is(":checked")) {
+			courseObj.course_end_period = null;
+		} else {
+			if (!courseObj.course_end_period.length) {
+				errorArray.push("Course end date is required.");
+			}
+		}
+		//
 		if (!courseObj.course_sort_order) {
 			errorArray.push("Course sort order is required.");
 		}
@@ -526,7 +531,7 @@ $(function createCourse() {
 			errorArray.push(courseObj.course_banner.errorCode);
 		}
 		//
-		if (courseObj.course_secondary_logo_type == "yes") {
+		if (courseObj.course_type == "scorm" && courseObj.course_secondary_logo_type == "yes") {
 			// handle logo
 			if (!Object.keys(courseObj.course_secondary_logo).length) {
 				errorArray.push("Please upload the Course Secondary Logo.");

@@ -110,10 +110,6 @@ $(function editCourse() {
 			course_questions: questionsArray,
 		};
 		//
-		if ($(".jsEditIndefiniteCourse").is(":checked")) {
-			courseObj.course_end_period = null;
-		}
-		//
 		handleCourseUpdate(courseObj);
 	});
 
@@ -237,9 +233,9 @@ $(function editCourse() {
 	$(document).on("click", ".jsEditIndefiniteCourse", function (event) {
 		if ($(".jsEditIndefiniteCourse").is(":checked")) {
 			$("#jsEditCourseEndPeriod").val("");
-			$(".jsRecurringCourses").hide();
+			$(".jsEditCourseEndPeriodLabel").hide();
 		} else {
-			$(".jsRecurringCourses").show();
+			$(".jsEditCourseEndPeriodLabel").show();
 		}
 	});
 
@@ -412,6 +408,14 @@ $(function editCourse() {
 		if (!courseObj.course_recurring_type.length) {
 			errorArray.push("Course recurring type is required.");
 		}
+		//
+		if ($(".jsEditIndefiniteCourse").is(":checked")) {
+			courseObj.course_end_period = null;
+		} else {
+			if (!courseObj.course_end_period.length) {
+				errorArray.push("Course end date is required.");
+			}
+		}
 		// handle banner
 		if (typeof courseObj.course_banner.link === "undefined") {
 			if (!Object.keys(courseObj.course_banner).length) {
@@ -421,7 +425,7 @@ $(function editCourse() {
 			}
 		}
 		//	
-		if (courseObj.course_secondary_logo_type == "yes") {
+		if (courseObj.course_type == "scorm" && courseObj.course_secondary_logo_type == "yes") {
 			// handle logo
 			if (!Object.keys(courseObj.course_secondary_logo).length) {
 				errorArray.push("Please upload the Course Secondary Logo.");
@@ -555,6 +559,7 @@ $(function editCourse() {
 						}
 					} else {
 						scorm_course_files[index]["filePath"] = item.value.link;
+						// scorm_course_files.splice(index, 1);
 					}
 				})
 			);
@@ -876,7 +881,7 @@ $(function editCourse() {
 		//
 		if (co.course_end_period == null) {
 			$(".jsEditIndefiniteCourse").prop("checked", true);
-			$(".jsRecurringCourses").hide();
+			$(".jsEditCourseEndPeriodLabel").hide();
 		}
 		//
 		$("#jsEditCourseStartPeriod")
@@ -907,7 +912,6 @@ $(function editCourse() {
 					);
 					//
 					$(".jsEditIndefiniteCourse").prop("checked", false);
-					$(".jsRecurringCourses").show();
 				},
 			})
 			.datepicker(
