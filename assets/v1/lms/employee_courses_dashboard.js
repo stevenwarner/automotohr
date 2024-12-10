@@ -68,9 +68,9 @@ $(function LMSEmployeeDashboard() {
 	$(document).on("click", ".jsStartCourse", function (event) {
 		event.preventDefault();
 		//
-        var courseId = $(this).data("course_id");
-		var language = $('.jsCourseLanguage'+courseId).val();
-        var url = baseURI + "lms/courses/" + courseId + '/' + language;
+		var courseId = $(this).data("course_id");
+		var language = $(".jsCourseLanguage" + courseId).val();
+		var url = baseURI + "lms/courses/" + courseId + "/" + language;
 		var previousLanguage = $(this).data("previous_language");
 		//
 		if (previousLanguage.length && previousLanguage != language) {
@@ -78,32 +78,30 @@ $(function LMSEmployeeDashboard() {
 				.confirm(
 					"Are you sure you want to change course language?",
 					function () {
-						changeScormLanguage(language, courseId)
+						changeScormLanguage(language, courseId);
 					},
 					CB
 				)
 				.setHeader("Confirm");
-			
 		} else {
 			//
-			$(this).attr('href', url);
+			$(this).attr("href", url);
 			//
-			window.location = $(this).attr('href').toString();
+			window.location = $(this).attr("href").toString();
 		}
-		
 	});
 
 	$(document).on("change", ".jsSelectCourseLanguage", function (event) {
 		event.preventDefault();
 		//
-        var courseId = $(this).data("course_id");
+		var courseId = $(this).data("course_id");
 		var language = $(this).val();
-        var url = baseURI + "lms/courses/" + courseId + '/' + language;
+		var url = baseURI + "lms/courses/" + courseId + "/" + language;
 		//
-        $('.jsStartCourse'+courseId).attr('href', url);
+		$(".jsStartCourse" + courseId).attr("href", url);
 	});
 
-	function changeScormLanguage (language, courseId) {
+	function changeScormLanguage(language, courseId) {
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();
@@ -119,7 +117,7 @@ $(function LMSEmployeeDashboard() {
 				"/" +
 				courseId +
 				"/" +
-				language ,
+				language,
 			method: "PUT",
 		})
 			.success(function (response) {
@@ -127,7 +125,8 @@ $(function LMSEmployeeDashboard() {
 				XHR = null;
 				//
 				if (response.status === "language_changed") {
-					window.location = baseURI + "lms/courses/" + courseId + '/' + language;
+					window.location =
+						baseURI + "lms/courses/" + courseId + "/" + language;
 				}
 				//
 				ml(false, "jsPageLoader");
@@ -163,7 +162,14 @@ $(function LMSEmployeeDashboard() {
 				filterObj.status,
 			method: "GET",
 		})
-			.success( function (response) {
+			.always(function () {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.success(function (response) {
 				// empty the call
 				XHR = null;
 				// set the view
@@ -182,44 +188,71 @@ $(function LMSEmployeeDashboard() {
 				//
 				if (courses.length) {
 					courses.map(function (course) {
-						if (course["employee_sid"] == null || course["employee_sid"] == employeeId) {
-							if (response.data.assignedIds.includes(course["sid"])) {
+						if (
+							course["employee_sid"] == null ||
+							course["employee_sid"] == employeeId
+						) {
+							if (
+								response.data.assignedIds.includes(
+									course["sid"]
+								)
+							) {
 								//
-								if (response.data.inprogressIds.includes(course["sid"])) {
+								if (
+									response.data.inprogressIds.includes(
+										course["sid"]
+									)
+								) {
 									// if(inprogressCourses.length < 3) {
-										inprogressCourses.push(course);
+									inprogressCourses.push(course);
 									// }
-								} else if (response.data.expiredIds.includes(course["sid"])) {	
+								} else if (
+									response.data.expiredIds.includes(
+										course["sid"]
+									)
+								) {
 									// if(pastDueCourses.length < 3) {
-										pastDueCourses.push(course);
+									pastDueCourses.push(course);
 									// }
-								} else if (response.data.expiredSoonIds.includes(course["sid"])) {
+								} else if (
+									response.data.expiredSoonIds.includes(
+										course["sid"]
+									)
+								) {
 									// if(dueSoonCourses.length < 3) {
-										dueSoonCourses.push(course);
-									// }	
-								} else if (response.data.readyToStartIds.includes(course["sid"])) {
-									// if(readyToStartCourses.length < 3) {
-										readyToStartCourses.push(course);
+									dueSoonCourses.push(course);
 									// }
-								} else if (response.data.passedIds.includes(course["sid"])) {
+								} else if (
+									response.data.readyToStartIds.includes(
+										course["sid"]
+									)
+								) {
+									// if(readyToStartCourses.length < 3) {
+									readyToStartCourses.push(course);
+									// }
+								} else if (
+									response.data.passedIds.includes(
+										course["sid"]
+									)
+								) {
 									// if(passedCourses.length < 3) {
-										passedCourses.push(course);
-									// }	
+									passedCourses.push(course);
+									// }
 								} else {
 									// if(assignedCourses.length < 3) {
-										assignedCourses.push(course);
-									// }	
+									assignedCourses.push(course);
+									// }
 								}
-							}	
-						}	
+							}
+						}
 					});
-				} 
+				}
 				//
-				setCourseBox(inprogressCourses, 'jsInprogressCourses');
-				setCourseBox(pastDueCourses, 'jsPastDueCourses');
-				setCourseBox(dueSoonCourses, 'jsDueSoonCourses');
-				setCourseBox(readyToStartCourses, 'jsAssignedCourses');
-				setCourseBox(passedCourses, 'jsPassedCourses');
+				setCourseBox(inprogressCourses, "jsInprogressCourses");
+				setCourseBox(pastDueCourses, "jsPastDueCourses");
+				setCourseBox(dueSoonCourses, "jsDueSoonCourses");
+				setCourseBox(readyToStartCourses, "jsAssignedCourses");
+				setCourseBox(passedCourses, "jsPassedCourses");
 				//
 				if (count.assigned) {
 					//
@@ -233,19 +266,12 @@ $(function LMSEmployeeDashboard() {
 				}
 				// hide the loader
 				ml(false, "jsPageLoader");
-			})
-			.fail(handleErrorResponse)
-			.always(function () {
-				// empty the call
-				XHR = null;
-				// hide the loader
-				ml(false, "jsPageLoader");
 			});
 	}
 
-	function setCourseBox (courses, ID) {
+	function setCourseBox(courses, ID) {
 		//
-		let coursesHTML = '';
+		let coursesHTML = "";
 		//
 		if (courses.length) {
 			courses.map(function (course) {
@@ -273,53 +299,65 @@ $(function LMSEmployeeDashboard() {
 				coursesHTML += `    </h1>`;
 				coursesHTML += `    <div class="row">`;
 				coursesHTML += `        <div class="col-md-12 col-xs-12">`;
-				coursesHTML += `            <p>${course.course_content.substr(0,50)}&nbsp;</p>`;
+				coursesHTML += `            <p>${course.course_content.substr(
+					0,
+					50
+				)}&nbsp;</p>`;
 				coursesHTML += `        </div>`;
 				coursesHTML += `    </div>`;
-				
-				if (ID == "jsInprogressCourses" || ID == "jsPassedCourses") {
-				coursesHTML += `    <div class="row">`;
-				coursesHTML += `        <div class="col-md-6 col-xs-12">`;
-				coursesHTML += `            <p class="csColumSection"><strong>START DATE</strong></p>`;
-				coursesHTML += `            <p>${moment(
-					course.start_date
-				).format(timeOffDateFormatWithTime)}</p>`;
-				coursesHTML += `        </div>`;
-				coursesHTML += `        <div class="col-md-6 col-xs-12">`;
-				coursesHTML += `            <p class="csColumSection"><strong>END DATE</strong></p>`;
 
-				if (course.end_date && ID == "jsPassedCourses") {
+				if (ID == "jsInprogressCourses" || ID == "jsPassedCourses") {
+					coursesHTML += `    <div class="row">`;
+					coursesHTML += `        <div class="col-md-6 col-xs-12">`;
+					coursesHTML += `            <p class="csColumSection"><strong>START DATE</strong></p>`;
 					coursesHTML += `            <p>${moment(
-						course.end_date
+						course.start_date
 					).format(timeOffDateFormatWithTime)}</p>`;
-				} else {
-					coursesHTML += `--`;
-				}
-				
-				coursesHTML += `        </div>`;
-				coursesHTML += `    </div>`;
+					coursesHTML += `        </div>`;
+					coursesHTML += `        <div class="col-md-6 col-xs-12">`;
+					coursesHTML += `            <p class="csColumSection"><strong>END DATE</strong></p>`;
+
+					if (course.end_date && ID == "jsPassedCourses") {
+						coursesHTML += `            <p>${moment(
+							course.end_date
+						).format(timeOffDateFormatWithTime)}</p>`;
+					} else {
+						coursesHTML += `--`;
+					}
+
+					coursesHTML += `        </div>`;
+					coursesHTML += `    </div>`;
 				}
 
 				coursesHTML += `    <div class="row">`;
 				coursesHTML += `        <div class="col-md-12 col-xs-12 text-center">`;
 				coursesHTML += `            <select class="form-control jsSelectCourseLanguage jsCourseLanguage${course.sid}" data-course_id="${course.sid}">`;
 				//
-				var defaultLanguage = '';
-				var previousLanguage = '';
-				if (course['course_type'] == 'scorm') {
-					defaultLanguage = course['course_languages'][0];
+				var defaultLanguage = "";
+				var previousLanguage = "";
+				if (course["course_type"] == "scorm") {
+					defaultLanguage = course["course_languages"][0];
 				} else {
-					defaultLanguage = 'english';
+					defaultLanguage = "english";
 				}
 				//
-				if (course['course_type'] == 'scorm') {
-					course['course_languages'].map(function (language) {
-						if (course['selected_language'] && course['selected_language'] == language) {
-							defaultLanguage = course['selected_language'];
-							previousLanguage = course['selected_language'];
-							coursesHTML += `            <option value="${language}" selected="selected">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+				if (course["course_type"] == "scorm") {
+					course["course_languages"].map(function (language) {
+						if (
+							course["selected_language"] &&
+							course["selected_language"] == language
+						) {
+							defaultLanguage = course["selected_language"];
+							previousLanguage = course["selected_language"];
+							coursesHTML += `            <option value="${language}" selected="selected">${
+								language.charAt(0).toUpperCase() +
+								language.slice(1)
+							}</option>`;
 						} else {
-							coursesHTML += `            <option value="${language}">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+							coursesHTML += `            <option value="${language}">${
+								language.charAt(0).toUpperCase() +
+								language.slice(1)
+							}</option>`;
 						}
 					});
 				} else {
@@ -335,375 +373,401 @@ $(function LMSEmployeeDashboard() {
 				coursesHTML += `            <p>&nbsp;</p>`;
 
 				if (course.course_status == "passed") {
-					coursesHTML += `        <button class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-previous_language="${previousLanguage}" data-course_id="${course.sid}" href="${baseURI + "lms/courses/" + course.sid + "/" + defaultLanguage}">
+					coursesHTML += `        <button class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${
+						course.sid
+					}" data-previous_language="${previousLanguage}" data-course_id="${
+						course.sid
+					}" href="${
+						baseURI +
+						"lms/courses/" +
+						course.sid +
+						"/" +
+						defaultLanguage
+					}">
 												<i class="fa fa-eye"></i>
 												View Content
 											</button>`;
-											
+
 					coursesHTML += `        <a class="btn btn-info csRadius5 csF16" href="${window.location.origin}/lms/courses/${course.sid}/${employeeId}/my/certificate">
 												<i class="fa fa-eye"></i>
 												View Certificate
 											</a>`;
 				} else {
-					coursesHTML += `        <button class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-previous_language="${previousLanguage}" data-course_id="${course.sid}" href="${baseURI + "lms/courses/" + course.sid + "/" + defaultLanguage}">
+					coursesHTML += `        <button class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${
+						course.sid
+					}" data-previous_language="${previousLanguage}" data-course_id="${
+						course.sid
+					}" href="${
+						baseURI +
+						"lms/courses/" +
+						course.sid +
+						"/" +
+						defaultLanguage
+					}">
 												<i class="fa fa-play"></i>
 												Launch Content
 											</button>`;
-				}	
+				}
 
 				coursesHTML += `        </div>`;
 				coursesHTML += `    </div>`;
 				coursesHTML += `</article>`;
 				coursesHTML += `</div>`;
 				coursesHTML += `</div>`;
-						
 			});
 		} else {
 			//
-            var message = "Apologies, but no assigned course was found.";
-            //
-            if (ID == 'jsInprogressCourses') {
-                message = "Apologies, but there are currently no courses in progress.";
-            } else if (ID == 'jsPastDueCourses') {
-                message = "Apologies, but no past due courses were found.";
-            } else if (ID == 'jsDueSoonCourses') {
-                message = "Apologies, but no courses with upcoming expiration dates were found.";
-            }
+			var message = "Apologies, but no assigned course was found.";
+			//
+			if (ID == "jsInprogressCourses") {
+				message =
+					"Apologies, but there are currently no courses in progress.";
+			} else if (ID == "jsPastDueCourses") {
+				message = "Apologies, but no past due courses were found.";
+			} else if (ID == "jsDueSoonCourses") {
+				message =
+					"Apologies, but no courses with upcoming expiration dates were found.";
+			}
 
-            coursesHTML += '<div class="col-sm-12">';
+			coursesHTML += '<div class="col-sm-12">';
 			coursesHTML += ' <p class="alert alert-info text-center">';
-            coursesHTML += message;
-            coursesHTML += ' </p>';
-            coursesHTML += '</div>';
-		}	
+			coursesHTML += message;
+			coursesHTML += " </p>";
+			coursesHTML += "</div>";
+		}
 		//
-		$("#"+ID).html(coursesHTML);
-		
-		
+		$("#" + ID).html(coursesHTML);
 	}
 	//
-	function loadOverView (count) {
-		var percentage = Math.round(((count.assigned - count.pending) / count.assigned) * 100);
-		$("#jsOverViewTrainings").html(percentage+"%");
+	function loadOverView(count) {
+		var percentage = Math.round(
+			((count.assigned - count.pending) / count.assigned) * 100
+		);
+		$("#jsOverViewTrainings").html(percentage + "%");
 		$("#jsOverViewCourseDueSoon").html(count.pending);
 		$("#jsOverViewCourseTotal").html(count.assigned);
 	}
 	//
-	function loadMyAssignedCoursesPaiChart(
-        count
-    ) {
-		Highcharts.chart('container', {
+	function loadMyAssignedCoursesPaiChart(count) {
+		Highcharts.chart("container", {
 			chart: {
-				type: 'pie'
+				type: "pie",
 			},
 			title: {
-				text: 'Assigned Course(s)'
+				text: "Assigned Course(s)",
 			},
 			tooltip: {
-				valueSuffix: ''
+				valueSuffix: "",
 			},
 			plotOptions: {
 				pie: {
 					dataLabels: {
 						enabled: true,
 						style: {
-							fontSize: '12px' // Increase font size for all data labels here
-						}
-					}
+							fontSize: "12px", // Increase font size for all data labels here
+						},
+					},
 				},
 				series: {
 					allowPointSelect: true,
-					cursor: 'pointer',
-					dataLabels: [{
-						enabled: true,
-						distance: 20
-					}, {
-						enabled: true,
-						distance: -40,
-						format: '{point.percentage:.1f}%',
-						style: {
-							fontSize: '1.2em',
-							textOutline: 'none',
-							opacity: 0.7
+					cursor: "pointer",
+					dataLabels: [
+						{
+							enabled: true,
+							distance: 20,
 						},
-						filter: {
-							operator: '>',
-							property: 'percentage',
-							value: 10
-						}
-					}]
-				}
+						{
+							enabled: true,
+							distance: -40,
+							format: "{point.percentage:.1f}%",
+							style: {
+								fontSize: "1.2em",
+								textOutline: "none",
+								opacity: 0.7,
+							},
+							filter: {
+								operator: ">",
+								property: "percentage",
+								value: 10,
+							},
+						},
+					],
+				},
 			},
 			series: [
 				{
-					name: 'Course(s)',
+					name: "Course(s)",
 					colorByPoint: true,
 					point: {
 						events: {
-							click: function(e) {
-								window.open(e.point.url, '_blank');
+							click: function (e) {
+								window.open(e.point.url, "_blank");
 								e.preventDefault();
-							}
-						}
+							},
+						},
 					},
 					data: [
 						{
-							name: 'Due Soon',
+							name: "Due Soon",
 							y: count.expire_soon,
-							color: '#feb56a',
-							url: baseURI + "lms/courses/my?type=due_soon"
+							color: "#feb56a",
+							url: baseURI + "lms/courses/my?type=due_soon",
 						},
 						{
-							name: 'Past Due',
+							name: "Past Due",
 							sliced: true,
 							selected: true,
 							y: count.expired,
-							color: '#fa4b42',
-							url: baseURI + "lms/courses/my?type=past_due"
+							color: "#fa4b42",
+							url: baseURI + "lms/courses/my?type=past_due",
 						},
 						{
-							name: 'In Progress',
+							name: "In Progress",
 							y: count.inprogress,
-							color: '#544fc5',
-							url: baseURI + "lms/courses/my?type=inprogress"
+							color: "#544fc5",
+							url: baseURI + "lms/courses/my?type=inprogress",
 						},
 						{
-							name: 'Ready To Start',
+							name: "Ready To Start",
 							y: count.readyToStart,
-							color: '#2caffe',
-							url: baseURI + "lms/courses/my?type=ready_to_start"
+							color: "#2caffe",
+							url: baseURI + "lms/courses/my?type=ready_to_start",
 						},
 						{
-							name: 'Passed',
+							name: "Passed",
 							y: count.passed,
-							color: '#00e272',
-							url: baseURI + "lms/courses/my?type=completed"
-						}
-					]
-				}
+							color: "#00e272",
+							url: baseURI + "lms/courses/my?type=completed",
+						},
+					],
+				},
 			],
 			tooltip: {
 				style: {
-					fontSize: '14px' // Increase font size for the tooltip here
-				}
-			}
+					fontSize: "14px", // Increase font size for the tooltip here
+				},
+			},
 		});
-    }
+	}
 	//
-	function loadMyAssignedCoursesBarChart (count) {
-		Highcharts.chart('container1', {
+	function loadMyAssignedCoursesBarChart(count) {
+		Highcharts.chart("container1", {
 			chart: {
-				type: 'column'
+				type: "column",
 			},
 			title: {
-				align: 'left',
-				text: 'Assigned Course(s) Bar Chart'
+				align: "left",
+				text: "Assigned Course(s) Bar Chart",
 			},
 			accessibility: {
 				announceNewData: {
-					enabled: true
-				}
+					enabled: true,
+				},
 			},
 			xAxis: {
-				type: 'category',
+				type: "category",
 				labels: {
 					style: {
-						fontSize: '12px'  // Change this to your desired size
-					}
-				}
+						fontSize: "12px", // Change this to your desired size
+					},
+				},
 			},
 			yAxis: {
 				title: {
-					text: 'Total number of assigned course(s)'
+					text: "Total number of assigned course(s)",
 				},
 				labels: {
 					style: {
-						fontSize: '12px'  // Change this to your desired size
-					}
-				}
-		
+						fontSize: "12px", // Change this to your desired size
+					},
+				},
 			},
 			legend: {
-				enabled: false
+				enabled: false,
 			},
 			plotOptions: {
 				series: {
 					borderWidth: 0,
 					dataLabels: {
 						enabled: true,
-						format: '{point.y}'
-					}
-				}
+						format: "{point.y}",
+					},
+				},
 			},
-		
+
 			tooltip: {
-				headerFormat: '<span style="font-size:14px">{series.name}</span><br>',
-				pointFormat: '<span style="font-size:12px; color:{point.color}">{point.name}:</span> <b style="font-size:12px">{point.y} course(s)</b>'
+				headerFormat:
+					'<span style="font-size:14px">{series.name}</span><br>',
+				pointFormat:
+					'<span style="font-size:12px; color:{point.color}">{point.name}:</span> <b style="font-size:12px">{point.y} course(s)</b>',
 			},
-		
+
 			series: [
 				{
-					name: 'Course(s)',
+					name: "Course(s)",
 					colorByPoint: true,
 					point: {
 						events: {
-							click: function(e) {
-								window.open(e.point.url, '_blank');
+							click: function (e) {
+								window.open(e.point.url, "_blank");
 								e.preventDefault();
-							}
-						}
+							},
+						},
 					},
 					data: [
 						{
-							name: 'Assigned ',
-							color: '#6B8ABB',
+							name: "Assigned ",
+							color: "#6B8ABB",
 							y: count.assigned,
 							url: baseURI + "lms/courses/my?type=assigned",
 						},
 						{
-							name: 'Pending',
-							color: '#ff834e',
+							name: "Pending",
+							color: "#ff834e",
 							y: count.pending,
-							url: baseURI + "lms/courses/my?type=pending"
+							url: baseURI + "lms/courses/my?type=pending",
 						},
 						{
-							name: 'Ready To Start',
-							color: '#2caffe',
+							name: "Ready To Start",
+							color: "#2caffe",
 							y: count.readyToStart,
-							url: baseURI + "lms/courses/my?type=ready_to_start"
+							url: baseURI + "lms/courses/my?type=ready_to_start",
 						},
 						{
-							name: 'In Progress',
-							color: '#544fc5',
+							name: "In Progress",
+							color: "#544fc5",
 							y: count.inprogress,
-							url: baseURI + "lms/courses/my?type=inprogress"
+							url: baseURI + "lms/courses/my?type=inprogress",
 						},
 						{
-							name: 'Passed',
-							color: '#00e272',
+							name: "Passed",
+							color: "#00e272",
 							y: count.passed,
-							url: baseURI + "lms/courses/my?type=completed"
+							url: baseURI + "lms/courses/my?type=completed",
 						},
 						{
-							name: 'Past Due',
-							color: '#fa4b42',
+							name: "Past Due",
+							color: "#fa4b42",
 							y: count.expired,
-							url: baseURI + "lms/courses/my?type=past_due"
+							url: baseURI + "lms/courses/my?type=past_due",
 						},
 						{
-							name: 'Due Soon',
-							color: '#feb56a',
+							name: "Due Soon",
+							color: "#feb56a",
 							y: count.expire_soon,
-							url: baseURI + "lms/courses/my?type=due_soon"
-						}
+							url: baseURI + "lms/courses/my?type=due_soon",
+						},
 					],
 					dataLabels: {
 						style: {
-							fontSize: '12px'  // Change this to your desired size
-						}
-					}
-				}
-			]
+							fontSize: "12px", // Change this to your desired size
+						},
+					},
+				},
+			],
 		});
 	}
 	//
-	function loadMyAssignedCoursesPassingChart (count) {
-		Highcharts.chart('container2', {
-
+	function loadMyAssignedCoursesPassingChart(count) {
+		Highcharts.chart("container2", {
 			chart: {
-				type: 'gauge',
+				type: "gauge",
 				plotBackgroundColor: null,
 				plotBackgroundImage: null,
 				plotBorderWidth: 0,
 				plotShadow: false,
-				height: '80%'
+				height: "80%",
 			},
-		
+
 			title: {
-				text: 'Course(s) Passing Rate'
+				text: "Course(s) Passing Rate",
 			},
-		
+
 			pane: {
 				startAngle: -90,
 				endAngle: 89.9,
 				background: null,
-				center: ['50%', '75%'],
-				size: '110%'
+				center: ["50%", "75%"],
+				size: "110%",
 			},
-		
+
 			// the value axis
 			yAxis: {
 				min: 0,
 				max: count.assigned,
-				tickPixelInterval:100,
-				tickPosition: 'inside',
-				tickColor: Highcharts.defaultOptions.chart.backgroundColor || '#FFFFFF',
+				tickPixelInterval: 100,
+				tickPosition: "inside",
+				tickColor:
+					Highcharts.defaultOptions.chart.backgroundColor ||
+					"#FFFFFF",
 				tickLength: 20,
 				tickWidth: 2,
 				minorTickInterval: null,
 				labels: {
 					distance: 20,
 					style: {
-						fontSize: '14px'
-					}
+						fontSize: "14px",
+					},
 				},
 				lineWidth: 0,
-				plotBands: [{
-					from: count.assigned,
-					to: (count.assigned/2),
-					color: '#55BF3B', // green
-					thickness: 20,
-					borderRadius: '50%'
-				}, {
-					from: (count.assigned/3),
-					to: 0,
-					color: '#DF5353', // red
-					thickness: 20,
-					borderRadius: '50%'
-				}, {
-					from: count.assigned/1.9,
-					to: count.assigned/3.1,
-					color: '#DDDF0D', // yellow
-					thickness: 20
-				}]
+				plotBands: [
+					{
+						from: count.assigned,
+						to: count.assigned / 2,
+						color: "#55BF3B", // green
+						thickness: 20,
+						borderRadius: "50%",
+					},
+					{
+						from: count.assigned / 3,
+						to: 0,
+						color: "#DF5353", // red
+						thickness: 20,
+						borderRadius: "50%",
+					},
+					{
+						from: count.assigned / 1.9,
+						to: count.assigned / 3.1,
+						color: "#DDDF0D", // yellow
+						thickness: 20,
+					},
+				],
 			},
-		
-			series: [{
-				name: 'Speed',
-				data: [count.passed],
-				tooltip: {
-					valueSuffix: ' km/h'
+
+			series: [
+				{
+					name: "Speed",
+					data: [count.passed],
+					tooltip: {
+						valueSuffix: " km/h",
+					},
+					dataLabels: {
+						format: "{y} Passed",
+						borderWidth: 0,
+						color:
+							(Highcharts.defaultOptions.title &&
+								Highcharts.defaultOptions.title.style &&
+								Highcharts.defaultOptions.title.style.color) ||
+							"#333333",
+						style: {
+							fontSize: "16px",
+						},
+					},
+					dial: {
+						radius: "80%",
+						backgroundColor: "gray",
+						baseWidth: 12,
+						baseLength: "0%",
+						rearLength: "0%",
+					},
+					pivot: {
+						backgroundColor: "gray",
+						radius: 6,
+					},
 				},
-				dataLabels: {
-					format: '{y} Passed',
-					borderWidth: 0,
-					color: (
-						Highcharts.defaultOptions.title &&
-						Highcharts.defaultOptions.title.style &&
-						Highcharts.defaultOptions.title.style.color
-					) || '#333333',
-					style: {
-						fontSize: '16px'
-					}
-				},
-				dial: {
-					radius: '80%',
-					backgroundColor: 'gray',
-					baseWidth: 12,
-					baseLength: '0%',
-					rearLength: '0%'
-				},
-				pivot: {
-					backgroundColor: 'gray',
-					radius: 6
-				}
-		
-			}]
-		
+			],
 		});
-		
 	}
 	//
 	getLMSAssignCourses();
-	
 });
