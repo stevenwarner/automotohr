@@ -539,31 +539,54 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             </div>
                         <?php } ?>
 
-
-                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                            <div class="widget-box">
-                                <a href="<?php echo base_url('my_learning_center'); ?>">
-                                    <div class="link-box bg-bgcyan full-width">
-                                        <h2>My Learning Center</h2>
-                                        <div class="current-date">
-                                            <span><?php echo $training_session_count; ?><sub>Pending</sub></span>
-                                        </div>
-                                        <!--                                            <ul class="cs-jam-ul">-->
-                                        <!--                                                <li>Training Sessions: -->
-                                        <? //= $training_session_count;
-                                        ?>
-                                        <!-- Pending </li>-->
-                                        <!--                                            </ul>-->
-                                        <div class="status-panel">
-                                            <h3>Training Sessions and Online Videos</h3>
-                                            <!--                                                <span>Assigned to You</span>-->
-                                            <?php //echo $complete_steps['documents'] > 0 ? '<span>completed</span>' : '<span>skipped</span>'
-                                            ?>
-                                        </div>
+                        <?php if ($isLMSModuleEnabled) : ?>
+                            <?php if (!isLoggedInPersonAnExecutiveAdmin()) { ?>
+                                <!-- LMS - Courses -->
+                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                    <div class="widget-box">
+                                        <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>">
+                                            <div class="link-box bg-bgcyan full-width">
+                                                <h2>Compliance Courses</h2>
+                                                <div class="current-date">
+                                                    <span><?= $pendingTrainings ?? 0; ?><sub>Pending</sub></span>
+                                                </div>
+                                                <div class="status-panel">
+                                                    <h3>Show</h3>
+                                                    <span>Assigned to You</span>
+                                                </div>
+                                            </div>
+                                        </a>
                                     </div>
-                                </a>
+                                </div>
+                            <?php } ?>
+                        <?php else: ?>
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <a href="<?php echo base_url('my_learning_center'); ?>">
+                                        <div class="link-box bg-bgcyan full-width">
+                                            <h2>My Learning Center</h2>
+                                            <div class="current-date">
+                                                <span><?php echo $training_session_count; ?><sub>Pending</sub></span>
+                                            </div>
+                                            <!--                                            <ul class="cs-jam-ul">-->
+                                            <!--                                                <li>Training Sessions: -->
+                                            <? //= $training_session_count;
+                                            ?>
+                                            <!-- Pending </li>-->
+                                            <!--                                            </ul>-->
+                                            <div class="status-panel">
+                                                <h3>Training Sessions and Online Videos</h3>
+                                                <!--                                                <span>Assigned to You</span>-->
+                                                <?php //echo $complete_steps['documents'] > 0 ? '<span>completed</span>' : '<span>skipped</span>'
+                                                ?>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        <?php endif; ?>
+
+
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                             <div class="widget-box">
                                 <a href="<?php echo base_url('hr_documents_management/my_documents'); ?>">
@@ -984,53 +1007,6 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
                         <?php } ?>
-
-                        <?php if ($isLMSModuleEnabled) : ?>
-                            <!-- LMS - Team Courses -->
-                            <?php if ($haveSubordinate == "yes") { ?>
-                                <!-- <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 hidden">
-                                    <div class="widget-box bg-box">
-                                        <a href="<?php echo base_url('lms/courses/report'); ?>">
-                                            <div class="link-box bg-redish full-width">
-                                                <div class="bg-icon-holder">
-                                                    <i class="fa fa-users"></i>
-                                                </div>
-                                                <h2>Team Courses</h2>
-                                                <div><span>&nbsp;</span></div>
-                                                <div class="current-date">
-                                                    <span><?= $subordinateCount ?? 0; ?><sub>Employees</sub></span>
-                                                </div>
-                                                <div class="status-panel">
-                                                    <h3>Manage Team Courses</h3>
-                                                    <span>Manage</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div> -->
-                            <?php } ?>
-                             <?php if(!isLoggedInPersonAnExecutiveAdmin()) {?>
-                            <!-- LMS - Courses -->
-                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                <div class="widget-box">
-                                    <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>">
-                                        <div class="link-box bg-redish full-width">
-                                            <h2>Courses</h2>
-                                            <div><span>&nbsp;</span></div>
-                                            <div class="current-date">
-                                                <span><?= $pendingTrainings ?? 0; ?><sub>Pending</sub></span>
-                                            </div>
-                                            <div class="status-panel">
-                                                <h3>Courses</h3>
-                                                <span>Assigned to You</span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                            <?php } ?>
-                        <?php endif; ?>
-
 
                         <?php if (checkIfAppIsEnabled(SCHEDULE_MODULE)) : ?>
 

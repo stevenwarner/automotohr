@@ -9,7 +9,7 @@
             </a>
         </li>
         <!--3-->
-        <?php if (isPayrollOrPlus(true)) { ?>
+        <?php if (isPayrollOrPlus()) { ?>
             <li>
                 <a <?php if (strpos(base_url(uri_string()), 'company_courses') !== false) {
                         echo 'class="active"';
@@ -17,9 +17,9 @@
                     <figure><i class="fa fa-list-alt"></i></figure>Courses
                 </a>
             </li>
-        <?php } ?> 
+        <?php } ?>
         <!--4-->
-        <?php if (isPayrollOrPlus(true)) { ?>
+        <?php if (isPayrollOrPlus()) { ?>
             <li>
                 <a <?php if (strpos(base_url(uri_string()), 'company_report') !== false) {
                         echo 'class="active"';
@@ -27,9 +27,23 @@
                     <figure><i class="fa fa-line-chart"></i></figure>Report
                 </a>
             </li>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), 'import_course_csv') !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?php echo base_url('lms/courses/import_course_csv') ?>">
+                    <figure><i class="fa fa-upload"></i></figure>Import
+                </a>
+            </li>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), 'export_course_csv') !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?php echo base_url('lms/courses/export_course_csv') ?>">
+                    <figure><i class="fa fa-download"></i></figure>Export
+                </a>
+            </li>
         <?php } ?>
 
-        <?php if (!isLoggedInPersonAnExecutiveAdmin()) {?>
+        <?php if (!isLoggedInPersonAnExecutiveAdmin()) { ?>
             <li>
                 <a <?php if (strpos(base_url(uri_string()), 'my') !== false) {
                         echo 'class="active"';
