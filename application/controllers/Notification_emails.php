@@ -2292,13 +2292,6 @@ class Notification_emails extends Public_Controller
                 case 'course_status':
                     $this->form_validation->set_rules('course_status', 'Course Status', 'required|trim|xss_clean');
                     break;
-                case 'add_notification_email':
-                    $this->form_validation->set_rules('contact_name', 'Contact name', 'trim|xss_clean|required');
-                    $this->form_validation->set_rules('contact_no', 'Contact Number', 'trim|xss_clean');
-                    $this->form_validation->set_rules('short_description', 'Short Description', 'trim|xss_clean');
-                    $this->form_validation->set_rules('email', 'Email Address', 'trim|xss_clean|required');
-                    $this->form_validation->set_rules('notifications_type', 'notifications type', 'trim|xss_clean');
-                    break;
                 case 'add_notification_employee':
                     $this->form_validation->set_rules('employee', 'Employee Email', 'trim|xss_clean|required|callback_check_course');
                 default:

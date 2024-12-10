@@ -54,9 +54,6 @@
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                         <div class="panel panel-success">
                                             <div class="panel-body">
-                                                <?php if ($notification_type != 'approval_management') { ?>
-                                                    <a href="javascript:;" id="add_new_notification" class="btn btn-success btn-block"><i class="fa fa-plus"></i> Non Employee Notification Email</a>
-                                                <?php } ?>
                                                 <a href="javascript:;" id="add_new_notification_employee" class="btn btn-success btn-block"><i class="fa fa-plus"></i> Employee Notification Email</a>
                                             </div>
                                         </div>
