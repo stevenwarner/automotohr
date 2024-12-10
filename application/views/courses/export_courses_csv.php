@@ -77,19 +77,19 @@
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">First Name<input type="checkbox" class="check_it" name="first_name" value="first_name">
+                                                    <label class="control control--checkbox">First Name<input type="checkbox" class="check_it" name="first_name" value="first_name" checked>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Last Name<input type="checkbox" class="check_it" name="last_name" value="last_name">
+                                                    <label class="control control--checkbox">Last Name<input type="checkbox" class="check_it" name="last_name" value="last_name" checked>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin hidden">
                                                 <div class="checkbox cs_full_width">
                                                     <label class="control control--checkbox">Access Level<input type="checkbox" class="check_it" name="access_level" value="access_level">
                                                         <div class="control__indicator"></div>
@@ -98,28 +98,28 @@
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Job Title<input type="checkbox" class="check_it" name="job_title" value="job_title">
+                                                    <label class="control control--checkbox">Job Title<input type="checkbox" class="check_it" name="job_title" value="job_title" checked>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Course Title<input type="checkbox" class="check_it" name="course_title" value="course_title">
+                                                    <label class="control control--checkbox">Course Title<input type="checkbox" class="check_it" name="course_title" value="course_title" checked>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Lesson Status,<input type="checkbox" class="check_it" name="lesson_status" value="lesson_status">
+                                                    <label class="control control--checkbox">Lesson Status<input type="checkbox" class="check_it" name="lesson_status" value="lesson_status" checked>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Course Status<input type="checkbox" class="check_it" name="course_status" value="course_status">
+                                                    <label class="control control--checkbox">Course Status<input type="checkbox" class="check_it" name="course_status" value="course_status" checked>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
@@ -140,14 +140,14 @@
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Course Start Date<input type="checkbox" class="check_it" name="course_started_date" value="course_started_date">
+                                                    <label class="control control--checkbox">Course Start Date<input type="checkbox" class="check_it" name="course_started_date" value="course_started_date" checked>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
                                                 <div class="checkbox cs_full_width">
-                                                    <label class="control control--checkbox">Course Completion Date<input type="checkbox" class="check_it" name="course_completion_date"  value="course_completion_date">
+                                                    <label class="control control--checkbox">Course Completion Date<input type="checkbox" class="check_it" name="course_completion_date" value="course_completion_date" checked>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
@@ -197,12 +197,12 @@
 
                                             <!--  -->
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                                
+
                                             </div>
 
                                             <!--  -->
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                                
+
                                             </div>
                                             <!--  -->
 
