@@ -264,6 +264,8 @@
                                                         <tbody>
                                                             <?php foreach ($department['employees'] as $employee) { ?>
                                                                 <?php
+                                                                    // _e($employee,true);
+                                                                    $employeeInfo = get_employee_profile_info($employee);
                                                                     $assignCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['courseCount'];
                                                                     $pendingCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['pendingCount'];
                                                                     $completedCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['completedCount'];
@@ -283,7 +285,24 @@
                                                                     }
                                                                 ?>
                                                                 <tr class="<?php echo $rowColor; ?>">    
-                                                                    <td class="_csVm"><b><?php echo $companyReport["EmployeeList"][$employee]["full_name"]; ?></b></td>
+                                                                    <td class="_csVm">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-3">
+                                                                                <img style="width: 80px; height: 80px; border-radius: 50% !important;" src="<?= getImageURL($employeeInfo["profile_picture"]); ?>" alt="" />
+                                                                            </div>
+                                                                            <div class="col-sm-9">
+                                                                                <p class="text-small weight-6 myb-0" style="font-size: 20px;">
+                                                                                    <?= remakeEmployeeName($employeeInfo, true, true); ?>
+                                                                                </p>
+                                                                                <p class="text-small">
+                                                                                    <?= remakeEmployeeName($employeeInfo, false); ?>
+                                                                                </p>
+                                                                                <p class="text-small">
+                                                                                    <?= $employeeInfo['email']; ?>
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>   
+                                                                    </td>
                                                                     <td class="_csVm"><?php echo $assignText; ?></td>
                                                                     <td class="_csVm"><?php echo $pendingText; ?></td>
                                                                     <td class="_csVm"><?php echo $completedText; ?></td>

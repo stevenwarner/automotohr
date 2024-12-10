@@ -195,9 +195,8 @@
                                                             <tbody id="jsSubordinateList">
                                                                 <?php if (!empty($subordinateInfo["employees"])) { ?>
                                                                     <?php foreach ($subordinateInfo["employees"] as $employee) { ?>
-                                                                        <?php //if ($employee['job_title_sid'] > 0) { 
-                                                                        ?>
                                                                         <?php
+                                                                        $employeeInfo = get_employee_profile_info($employee["employee_sid"]);
                                                                         $teamId = $employee['team_sid'];
                                                                         $departmentId = $employee['department_sid'];
                                                                         $assignCourses = !empty($employee['assign_courses']) ? explode(",", $employee['assign_courses']) : [];
@@ -220,16 +219,32 @@
                                                                                     </label>
                                                                                 <?php } ?>
                                                                             </td>
-                                                                            <td class="_csVm js-employee-name"><b><?php echo $employee['full_name']; ?></b></td>
+                                                                            <td class="_csVm js-employee-name">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        <img style="width: 80px; height: 80px; border-radius: 50% !important;" src="<?= getImageURL($employeeInfo["profile_picture"]); ?>" alt="" />
+                                                                                    </div>
+                                                                                    <div class="col-sm-9">
+                                                                                        <p class="text-small weight-6 myb-0" style="font-size: 20px;">
+                                                                                            <?= remakeEmployeeName($employeeInfo, true, true); ?>
+                                                                                        </p>
+                                                                                        <p class="text-small">
+                                                                                            <?= remakeEmployeeName($employeeInfo, false); ?>
+                                                                                        </p>
+                                                                                        <p class="text-small">
+                                                                                            <?= $employeeInfo['email']; ?>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>        
+                                                                            </td>
                                                                             <td class="_csVm"><?php echo $departmentName; ?></td>
                                                                             <td class="_csVm"><?php echo $teamName; ?></td>
-                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['total_course'] : 0; ?></td>
-                                                                            </td>
-                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['completed'] : 0; ?></td>
-                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expire_soon'] : 0; ?></td>
-                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expired'] : 0; ?></td>
-                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['ready_to_start'] : 0; ?></td>
-                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['started'] : 0; ?></td>
+                                                                            <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['total_course'] : 0; ?></td>
+                                                                            <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['completed'] : 0; ?></td>
+                                                                            <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expire_soon'] : 0; ?></td>
+                                                                            <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expired'] : 0; ?></td>
+                                                                            <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['ready_to_start'] : 0; ?></td>
+                                                                            <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['started'] : 0; ?></td>
                                                                             <td class="_csVm">
                                                                                 <!-- <a href="<?php echo base_url('lms/subordinate/courses/' . $employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
                                                                                         <i class="fa fa-eye"></i> View
