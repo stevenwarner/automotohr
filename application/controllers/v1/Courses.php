@@ -50,6 +50,10 @@ class Courses extends Public_Controller
         } else {
             $haveSubordinate = 'no';
         }
+
+        if (isPayrollOrPlus()) {
+            $haveSubordinate = "yes";
+        }
         //
         $data['title'] = "My Course(s) | " . STORE_NAME;
         $data['companyId'] = $companyId;

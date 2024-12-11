@@ -1496,13 +1496,15 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                 "inner"
             )
             ->where("departments_management.is_deleted", 0)
-            ->where("departments_team_management.is_deleted", 0)
-            ->group_start()
-            // ->where("FIND_IN_SET({$employeeId}, departments_team_management.team_lead) > 0", null, null)
-            // ->or_where("FIND_IN_SET({$employeeId}, departments_management.supervisor) > 0", null, null)
-            ->or_where("FIND_IN_SET({$employeeId}, departments_management.lms_managers_ids) > 0", null, null)
-            ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.lms_managers_ids) > 0", null, null)
-            ->group_end();
+            ->where("departments_team_management.is_deleted", 0);
+            // if not plus then check for LMS manager role
+        if (!isPayrollOrPlus()) {
+
+            $CI->db->group_start()
+                ->where("FIND_IN_SET({$employeeId}, departments_management.lms_managers_ids) > 0", null, null)
+                ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.lms_managers_ids) > 0", null, null)
+                ->group_end();
+        }
         //
         if ($method == "count_all_results") {
             $CI->db->limit(1);
@@ -1527,7 +1529,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                     "employees_ids" => []
                 );
                 //
-                if (in_array($employeeId, explode(",", $team["lms_managers_ids"]))) {
+                if (isPayrollOrPlus() || (in_array($employeeId, explode(",", $team["lms_managers_ids"])))) {
                     $r['departments'][$team["sid"]] = array(
                         "sid" => $team["sid"],
                         "name" =>  $team["name"],
