@@ -69,6 +69,7 @@ class Courses extends Admin_Controller
             'v1/lms/edit_question',
             'v1/lms/create_course',
             'v1/lms/edit_course',
+            'v1/lms/course_materials',
             'v1/lms/main'
         ];
         // get access token
