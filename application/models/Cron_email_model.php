@@ -171,7 +171,7 @@ class Cron_email_model extends CI_Model
             ->select("distinct(company_sid)")
             ->where("is_processing", 0)
             ->limit(1)
-            ->where_in('company_sid', $this->testingCompanyIds)
+            // ->where_in('company_sid', $this->testingCompanyIds)
             ->get("lms_course_email_queue")
             ->row_array();
         //
@@ -534,7 +534,7 @@ class Cron_email_model extends CI_Model
             ->select('company_sid')
             ->where('module_sid', $record['sid'])
             ->where('is_active', 1)
-            ->where_in('company_sid', $this->testingCompanyIds)
+            // ->where_in('company_sid', $this->testingCompanyIds)
             ->get("company_modules")
             ->result_array();
 
