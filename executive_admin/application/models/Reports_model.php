@@ -1243,4 +1243,181 @@ class Reports_model extends CI_Model
         }
         return $return_data;
     }
+
+
+    //
+    public function getAssignedDocumentForReport($assignedById, $companySid, $documentTitle,$startDate,$endDate)
+    {
+        //
+        $this->db->select('
+        documents_assigned.user_sid,
+        documents_assigned.document_title,
+        documents_assigned.sid,
+        documents_assigned.user_consent,
+        documents_assigned.confidential_employees,
+        documents_assigned.document_description,
+        documents_assigned.acknowledgment_required,
+        documents_assigned.download_required,
+        documents_assigned.signature_required,
+        documents_assigned.acknowledged,
+        documents_assigned.uploaded,
+        documents_assigned.downloaded,
+        documents_assigned.document_sid,
+        documents_assigned.status,
+        documents_assigned.assigned_date,
+        documents_assigned.company_sid,
+        users.companyName ,
+        emp.first_name,
+         emp.last_name           
+    ');
+
+        $this->db
+            ->from('documents_assigned');
+
+        $this->db->join('users', 'users.sid =  documents_assigned.company_sid', 'left');
+        $this->db->join('users as emp', 'emp.sid =  documents_assigned.user_sid', 'right');
+
+
+        if ($documentTitle != 'all') {
+            $this->db->like('documents_assigned.document_title', urldecode($documentTitle));
+        }
+
+        if ($companySid != 'all') {
+            $this->db->where('documents_assigned.company_sid', $companySid);
+        }
+
+        if($startDate!='all' && $endDate!='all' && $documentTitle == 'all' ){
+            $this->db->where('documents_assigned.assigned_date >=', $startDate);
+            $this->db->where('documents_assigned.assigned_date <=', $endDate);
+        }
+
+        $this->db->where_in('documents_assigned.assigned_by', $assignedById);
+        $this->db->where('documents_assigned.status', 1);
+        $this->db->where('documents_assigned.archive', 0);
+
+        //
+        $result = $this->db->get();
+        //
+        $data = $result->result_array();
+        //
+        if (!empty($data)) {
+
+            foreach ($data as $key => $val) {
+
+                $data[$key]['completedStatus'] = '';
+
+                if ($val['status'] != 1) {
+                    continue;
+                }
+                // Column to check
+                $is_magic_tag_exist = preg_match('/{{(.*?)}}/', $val['document_description']) ? true : false;
+                //
+                if (!$is_magic_tag_exist) $is_magic_tag_exist = preg_match('/<select(.*?)>/', $val['document_description']);
+                //
+                $is_document_completed = 0;
+                //
+                $is_magic_tag_exist = 0;
+                //
+                if (str_replace(EFFECT_MAGIC_CODE_LIST, '', $val['document_description']) != $val['document_description']) {
+                    $is_magic_tag_exist = 1;
+                }
+                // Check for uploaded manual dcoument
+                if ($val['document_sid'] == 0) {
+                    // continue;
+                    $data[$key]['completedStatus'] = 'No Action Required';
+                } else {
+                    //
+                    if ($this->isDocumentArchived($val["document_sid"])) {
+                        unset($data[$key]);
+                        continue;
+                    }
+                    //
+                    if ($val['acknowledgment_required'] || $val['download_required'] || $val['signature_required'] || $is_magic_tag_exist) {
+
+                        if ($val['acknowledgment_required'] == 1 && $val['download_required'] == 1 && $val['signature_required'] == 1) {
+                            if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['acknowledgment_required'] == 1 && $val['download_required'] == 1) {
+                            if ($is_magic_tag_exist == 1) {
+                                if ($val['uploaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else {
+                                    $is_document_completed = 0;
+                                }
+                            } else if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($val['acknowledged'] == 1 && $val['downloaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['acknowledgment_required'] == 1 && $val['signature_required'] == 1) {
+                            if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['download_required'] == 1 && $val['signature_required'] == 1) {
+                            if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['acknowledgment_required'] == 1) {
+                            if ($val['acknowledged'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['download_required'] == 1) {
+                            if ($val['downloaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['signature_required'] == 1) {
+                            if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($is_magic_tag_exist == 1) {
+                            if ($val['user_consent'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        }
+
+                        if ($is_document_completed == 1) {
+                            $data[$key]['completedStatus'] = 'Completed';
+                        } else {
+                            $data[$key]['completedStatus'] = 'Not Completed';
+                        }
+                    } else {
+                        $data[$key]['completedStatus'] = 'No Action Required';
+                    }
+                }
+            }
+        }
+
+
+        return $data ? array_values($data) : [];
+    }
+
+    //
+    public function isDocumentArchived($documentId)
+    {
+        return $this->db
+            ->where("sid", $documentId)
+            ->where("archive", 1)
+            ->count_all_results("documents_management");
+    }
 }

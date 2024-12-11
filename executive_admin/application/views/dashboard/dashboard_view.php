@@ -49,15 +49,16 @@
 
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="col-lg-8 col-md-6 col-xs-12 col-sm-6">
+                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                             </div>
+                        
                             <div class="col-lg-2 col-md-3 col-xs-12 col-sm-3">
                                 <div class="form-group">
                                     <label class="hidden-xs">&nbsp;</label>
                                     <?php if ($applysignature == 1) { ?> <a id="apply_signature_btn" href="javascript:;" class="btn btn-success btn-block">Apply E-Signature</a> <?php } ?>
                                 </div>
-                            </div>
-
+                            </div>                       
+                       
                             <div class="col-lg-2 col-md-3 col-xs-12 col-sm-3">
                                 <div class="form-group">
                                     <label class="hidden-xs">&nbsp;</label>
@@ -65,6 +66,13 @@
                                 </div>
                             </div>
 
+                            <div class="col-lg-2 col-md-3 col-xs-12 col-sm-3">
+                                <div class="form-group">
+                                    <label class="hidden-xs">&nbsp;</label>
+                                    <a id="manage_signature_btn" href="<?php echo base_url('reports/admin_report')?>" class="btn btn-success btn-block">Activity</a>
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                     <div class="hr-box">

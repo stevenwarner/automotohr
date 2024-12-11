@@ -136,3 +136,8 @@ $route['reply_message/(:num)/(:num)'] = 'private_messages/reply_message/$1/$2';
 
 //ComplyNet
 $route['complynet/(:num)'] = 'complynet/index/$1';
+
+//
+$route['reports/admin_report'] = 'reports/applicants_report/documentsReport';
+$route['reports/admin_report/(:any)/(:any)/(:any)/(:any)'] = 'reports/applicants_report/documentsReport/$1/$2/$3/$4';
+

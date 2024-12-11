@@ -1,17 +1,20 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Applicants_report extends CI_Controller {
+class Applicants_report extends CI_Controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         $this->load->library("pagination");
         $this->load->model('Reports_model');
     }
 
-    public function index($company_sid, $keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $start_date = 'all', $end_date = 'all', $page_number = 1) {
+    public function index($company_sid, $keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $start_date = 'all', $end_date = 'all', $page_number = 1)
+    {
         if ($this->session->userdata('executive_loggedin')) {
             $data = $this->session->userdata('executive_loggedin');
             $data['title'] = 'Applicants Report';
@@ -34,13 +37,13 @@ class Applicants_report extends CI_Controller {
             $start_date = urldecode($start_date);
             $end_date = urldecode($end_date);
 
-            if(!empty($start_date) && $start_date != 'all') {
+            if (!empty($start_date) && $start_date != 'all') {
                 $start_date_applied = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
             } else {
                 $start_date_applied = date('Y-m-d 00:00:00');
             }
 
-            if(!empty($end_date) && $end_date != 'all') {
+            if (!empty($end_date) && $end_date != 'all') {
                 $end_date_applied = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
             } else {
                 $end_date_applied = date('Y-m-d 23:59:59');
@@ -48,12 +51,12 @@ class Applicants_report extends CI_Controller {
 
             $data['flag'] = true;
 
-//            $applicant_types = array();
-//            $applicant_types[] = 'Applicant';
-//            $applicant_types[] = 'Talent Network';
-//            $applicant_types[] = 'Manual Candidate';
-//            $applicant_types[] = 'Re-Assigned Candidates';
-//            $applicant_types[] = 'Job Fair';
+            //            $applicant_types = array();
+            //            $applicant_types[] = 'Applicant';
+            //            $applicant_types[] = 'Talent Network';
+            //            $applicant_types[] = 'Manual Candidate';
+            //            $applicant_types[] = 'Re-Assigned Candidates';
+            //            $applicant_types[] = 'Job Fair';
             $applicant_types = explode(',', APPLICANT_TYPE_ATS);
             $data['applicant_types'] = $applicant_types;
 
@@ -65,7 +68,7 @@ class Applicants_report extends CI_Controller {
             //$per_page = 2;
             //$page_number = $this->input->get('page_number');
             $offset = 0;
-            if($page_number > 1){
+            if ($page_number > 1) {
                 $offset = ($page_number - 1) * $per_page;
             }
 
@@ -139,7 +142,7 @@ class Applicants_report extends CI_Controller {
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
 
-                    fputcsv($output, ['Company Name' , getCompanyNameBySid($company_sid)]);
+                    fputcsv($output, ['Company Name', getCompanyNameBySid($company_sid)]);
 
 
                     fputcsv($output, array('Job Title', 'First Name', 'Last Name', 'Email', 'Phone Number', 'Date Applied', 'Applicant Type', 'Questionnaire Score', 'Reviews Score'));
@@ -153,7 +156,7 @@ class Applicants_report extends CI_Controller {
                         $input['phone_number'] = $applicant['phone_number'];
                         $input['date_applied'] = date_with_time($applicant['date_applied']);
                         $input['applicant_type'] = $applicant['applicant_type'];
-                        
+
                         if ($applicant['questionnaire'] == '' || $applicant['questionnaire'] == NULL) {
                             $input['questionnaire_score'] = 'N/A';
                         } else {
@@ -195,4 +198,45 @@ class Applicants_report extends CI_Controller {
         }
     }
 
+    //
+    public function documentsReport($company_sid = 'all', $keyword = 'all', $start_date = 'all', $end_date = 'all')
+    {
+        if ($this->session->userdata('executive_loggedin')) {
+            $data = $this->session->userdata('executive_loggedin');
+            $data['title'] = 'Applicants Report';
+
+            $data['flag'] = false;
+            $data['assigneddocuments'] = [];
+
+
+            $this->load->model('Users_model');
+            $executive_user_companies  = $this->Users_model->get_executive_users_companies($data['executive_user']['sid'], null);
+            $data['executive_user_companies'] = $executive_user_companies;
+
+
+            if (!empty($start_date) && $start_date != 'all') {
+                $start_date_assigned = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
+            } else{
+                $start_date_assigned ='all';
+            }
+
+            if (!empty($end_date) && $end_date != 'all') {
+                $end_date_assigned = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
+            } else{
+                $end_date_assigned='all';
+            }
+
+           // if ($this->uri->segment(3) != '') {
+                $userSids = array_column($executive_user_companies, 'logged_in_sid');
+                $data['assigneddocuments'] = $this->Reports_model->getAssignedDocumentForReport($userSids, $company_sid, $keyword,$start_date_assigned,$end_date_assigned);
+                $data['flag'] = true;
+          //  }
+
+            $this->load->view('main/header', $data);
+            $this->load->view('reports/documents_activity_report');
+            $this->load->view('main/footer');
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
 }
