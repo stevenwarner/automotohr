@@ -1246,7 +1246,7 @@ class Reports_model extends CI_Model
 
 
     //
-    public function getAssignedDocumentForReport($assignedById, $companySid, $documentTitle,$startDate,$endDate)
+    public function getAssignedDocumentForReport($assignedById, $companySid, $documentTitle, $startDate, $endDate)
     {
         //
         $this->db->select('
@@ -1268,7 +1268,14 @@ class Reports_model extends CI_Model
         documents_assigned.company_sid,
         users.companyName ,
         emp.first_name,
-         emp.last_name           
+         emp.last_name,
+         emp.middle_name,
+         emp.job_title  ,
+         emp.timezone ,
+         emp.is_executive_admin,
+         emp.access_level ,
+         emp.access_level_plus,
+         emp.pay_plan_flag       
     ');
 
         $this->db
@@ -1286,7 +1293,7 @@ class Reports_model extends CI_Model
             $this->db->where('documents_assigned.company_sid', $companySid);
         }
 
-        if($startDate!='all' && $endDate!='all' && $documentTitle == 'all' ){
+        if ($startDate != 'all' && $endDate != 'all' && $documentTitle == 'all') {
             $this->db->where('documents_assigned.assigned_date >=', $startDate);
             $this->db->where('documents_assigned.assigned_date <=', $endDate);
         }

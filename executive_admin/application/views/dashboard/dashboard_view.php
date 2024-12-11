@@ -69,7 +69,7 @@
                             <div class="col-lg-2 col-md-3 col-xs-12 col-sm-3">
                                 <div class="form-group">
                                     <label class="hidden-xs">&nbsp;</label>
-                                    <a id="manage_signature_btn" href="<?php echo base_url('reports/admin_report')?>" class="btn btn-success btn-block">Activity</a>
+                                    <a id="manage_signature_btn" href="<?php echo base_url('reports/admin_report')?>" class="btn btn-success btn-block">Documents Activity</a>
                                 </div>
                             </div>
                             

@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="heading-title page-title">
-                    <h1 class="page-title"><i class="fa fa-dashboard"></i><?php echo $title; ?></h1>
+                   
                     <a class="black-btn pull-right" href="<?php echo base_url('dashboard'); ?>">
                         <i class="fa fa-long-arrow-left"></i>
                         Back to Dashboard
@@ -77,7 +77,7 @@
                 <div class="hr-box">
                     <div class="hr-box-header bg-header-green">
                         <span class="pull-left">
-                            <h1 class="hr-registered">Activity Report</h1>
+                            <h1 class="hr-registered">Documents Activity Report</h1>
                         </span>
                         <span class="pull-right">
                             <h1 class="hr-registered">Total Records Found : <?php echo count($assigneddocuments); ?></h1>
@@ -100,9 +100,9 @@
                                             <?php if (!empty($assigneddocuments)) { ?>
                                                 <?php foreach ($assigneddocuments as $document) { ?>
                                                     <tr>
+                                                        <td><?php echo $document['companyName']; ?> </td>
+                                                        <td><?php echo remakeEmployeeName($document)?></td>
                                                         <td><?php echo $document['document_title']; ?></td>
-                                                        <td><?php echo $document['first_name']." ".$document['last_name'] ; ?></td>
-                                                        <td><?php echo $document['companyName']; ?></td>
                                                         <td><?php echo  reset_datetime(array(
                                                                 'datetime' => $document['assigned_date'],
                                                                 'from_zone' => STORE_DEFAULT_TIMEZONE_ABBR, // PST
