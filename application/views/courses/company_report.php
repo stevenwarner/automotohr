@@ -264,7 +264,6 @@
                                                         <tbody>
                                                             <?php foreach ($department['employees'] as $employee) { ?>
                                                                 <?php
-                                                                    // _e($employee,true);
                                                                     $employeeInfo = get_employee_profile_info($employee);
                                                                     $assignCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['courseCount'];
                                                                     $pendingCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['pendingCount'];

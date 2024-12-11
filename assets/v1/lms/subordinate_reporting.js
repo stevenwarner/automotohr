@@ -110,7 +110,25 @@ $(function LMSEmployeeCourses() {
 					html += `		<div class="control__indicator"></div>`;
 					html += `	</label>`;
 					html += `</td>`;
-					html += `<td class="_csVm"><b>${employee.full_name}</b></td>`;
+					html += `<td class="_csVm">`;
+					html += `	<div class="row">`;
+					html += `		<div class="col-sm-3">`;
+					html += `			<img style="width: 80px; height: 80px; border-radius: 50% !important;" src="${employee['profile_picture_url']}" alt="" />`;
+					html += `		</div>`;
+					html += `		<div class="col-sm-9">`;
+					html += `			<p class="text-small weight-6 myb-0" style="font-size: 20px;">`;
+					html += 				employee['only_name']
+					html += `			</p>`;
+					html += `			<p class="text-small">`;
+					html += 				employee['designation']
+					html += `			</p>`;
+					html += `			<p class="text-small">`;
+					html += 				employee['email']
+					html += `			</p>`;
+					html += `		</div>`;
+					html += `	</div>`; 
+
+					html += `</td>`;
 					html += `<td class="_csVm">${employee.department_name}</td>`;
 					html += `<td class="_csVm">${employee.team_name}</td>`;
 					html += `<td class="_csVm">${

@@ -1565,7 +1565,9 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                         users.access_level_plus,
                         users.is_executive_admin,
                         users.pay_plan_flag,
-                        users.lms_job_title
+                        users.lms_job_title,
+                        users.profile_picture,
+                        users.email
                     ")
                         ->join(
                             "portal_job_title_templates",
@@ -1599,9 +1601,14 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                     //
                     $employees[$employee['employee_sid']]["job_title_sid"] =  !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
                     $employees[$employee['employee_sid']]["full_name"] = $employeeName;
+                    $employees[$employee['employee_sid']]["profile_picture_url"] = getImageURL($jobTitleInfo["profile_picture"]);
+                    $employees[$employee['employee_sid']]["only_name"] = remakeEmployeeName($jobTitleInfo, true, true);
+                    $employees[$employee['employee_sid']]["designation"] = remakeEmployeeName($jobTitleInfo, false);
                     $employees[$employee['employee_sid']]["employee_sid"] = $employee['employee_sid'];
                     $employees[$employee['employee_sid']]["department_sid"] = $employee['department_sid'];
                     $employees[$employee['employee_sid']]["team_sid"] = $employee['team_sid'];
+                    $employees[$employee['employee_sid']]["lms_job_title"] = $employee['lms_job_title'];
+                    $employees[$employee['employee_sid']]["email"] = $jobTitleInfo['email'];
                     //
                     $employeeData = [];
                     $employeeData["employee_sid"] = $employee['employee_sid'];

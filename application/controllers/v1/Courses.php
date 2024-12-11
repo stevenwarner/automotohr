@@ -2141,64 +2141,10 @@ class Courses extends Public_Controller
                             echo $companyHeader . PHP_EOL . PHP_EOL;
                             echo $header_row . PHP_EOL;
                             echo $exportRows;
-
-                            break;
                         } else {
                             $this->session->set_flashdata('message', '<b>Error:</b> Record(s) Not Found!');
                             redirect('lms/courses/export_course_csv');
                         }
-
-
-                        
-                        //  _e($_POST,true,true);
-                        //
-                        $employer_sid = $data['session']['employer_detail']['sid'];
-                        $data_to_insert['company_sid'] = $this->input->post('company_sid');
-                        $access_level = explode(',', $this->input->post('access_level'));
-
-                        if ($access_level[0] == 'all') {
-                            $data_to_insert['employee_type'] = 'all';
-                        } else {
-                            $data_to_insert['employee_type'] = $this->input->post('access_level');
-                        }
-
-                        $data_to_insert['employee_status'] = $this->input->post('status');
-                        $data_to_insert['custom_type'] = $this->input->post('assignAndSendDocument');
-                        $data_to_insert['custom_date'] = $this->input->post('assignAndSendCustomDate');
-                        $data_to_insert['custom_day'] = $this->input->post('assignAndSendCustomDay');
-                        $data_to_insert['custom_time'] = $this->input->post('assignAndSendCustomTime');
-                        if ($this->input->post('report_all_columns') == 1) {
-                            $data_to_insert['selected_columns'] = 'all';
-                        } else {
-                            $data_to_insert['selected_columns'] = $this->input->post('test');
-                        }
-                        $sender_list = $this->input->post('assignAdnSendSelectedEmployees');
-                        if ($sender_list[0] == '-1') {
-                            $data_to_insert['sender_list'] = 'all';
-                        } else {
-                            $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',', $this->input->post('assignAdnSendSelectedEmployees')) : '';
-                        }
-                        //  $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',',$this->input->post('assignAdnSendSelectedEmployees')) : '';
-
-                        $data_to_insert['created_at'] = date('Y-m-d H:i:s');
-                        $data_to_insert['created_by'] = $employer_sid;
-                        $to_date = $this->input->post('to_date');
-                        $from_date =  $this->input->post('from_date');
-
-                        if (!empty($to_date)) {
-                            $to_date = empty($to_date) ? null : DateTime::createFromFormat('m-d-Y', $to_date)->format('Y-m-d 00:00:00');
-                        }
-                        //
-                        if (!empty($from_date)) {
-                            $from_date = empty($from_date) ? null : DateTime::createFromFormat('m-d-Y', $from_date)->format('Y-m-d 23:59:59');
-                        }
-
-                        $data_to_insert['to_date'] = $to_date;
-                        $data_to_insert['from_date'] = $from_date;
-                        $this->export_csv_model->save_employee_csv_report_settings($data_to_insert);
-                        $this->session->set_flashdata('message', '<strong>Success</strong> CSV Report Settings Saved Successfully');
-                        redirect('export_employees_csv', 'refresh');
-
                         break;
                 }
             }    

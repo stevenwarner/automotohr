@@ -129,7 +129,7 @@
                                                 $percentage = $total != 0 ? round(($completed / $total * 100), 0, PHP_ROUND_HALF_UP) . '%' : '0%';
                                                 ?>
                                                 <h2 style="">Completed Courses: <span style="color: #ef6c34;" id="jsOverViewTrainings"><?= $percentage ?></span></h2>
-                                                <h3 style="margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon"><?= $unCompleted ?></span> Courses Due Soon</h3>
+                                                <h3 style="margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon"><?= $unCompleted ?></span> Courses Pending</h3>
                                                 <h3 style="margin-top: 0px;"><span id="jsOverViewCourseTotal"><?= $total ?></span> Courses Total</h3>
                                             </div>
                                         </div>
@@ -196,7 +196,6 @@
                                                                 <?php if (!empty($subordinateInfo["employees"])) { ?>
                                                                     <?php foreach ($subordinateInfo["employees"] as $employee) { ?>
                                                                         <?php
-                                                                        $employeeInfo = get_employee_profile_info($employee["employee_sid"]);
                                                                         $teamId = $employee['team_sid'];
                                                                         $departmentId = $employee['department_sid'];
                                                                         $assignCourses = !empty($employee['assign_courses']) ? explode(",", $employee['assign_courses']) : [];
@@ -222,17 +221,17 @@
                                                                             <td class="_csVm js-employee-name">
                                                                                 <div class="row">
                                                                                     <div class="col-sm-3">
-                                                                                        <img style="width: 80px; height: 80px; border-radius: 50% !important;" src="<?= getImageURL($employeeInfo["profile_picture"]); ?>" alt="" />
+                                                                                        <img style="width: 80px; height: 80px; border-radius: 50% !important;" src="<?= $employee['profile_picture_url']; ?>" alt="" />
                                                                                     </div>
                                                                                     <div class="col-sm-9">
                                                                                         <p class="text-small weight-6 myb-0" style="font-size: 20px;">
-                                                                                            <?= remakeEmployeeName($employeeInfo, true, true); ?>
+                                                                                            <?= $employee['only_name']; ?>
                                                                                         </p>
                                                                                         <p class="text-small">
-                                                                                            <?= remakeEmployeeName($employeeInfo, false); ?>
+                                                                                            <?= $employee['designation']; ?>
                                                                                         </p>
                                                                                         <p class="text-small">
-                                                                                            <?= $employeeInfo['email']; ?>
+                                                                                            <?= $employee['email']; ?>
                                                                                         </p>
                                                                                     </div>
                                                                                 </div>        
