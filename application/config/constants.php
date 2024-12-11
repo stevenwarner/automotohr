@@ -629,7 +629,7 @@ define('GENERAL_DOCUMENT', 'The selected contacts will be notified by email when
 define('EMPLOYEE_PROFILE', 'The selected contacts will be notified by email when an employee changes their profile info.');
 define('DEFAULT_APPROVERS', 'The selected contacts will be notified by email when a document is assigned for an approval.');
 define('PRIVATE_MESSAGE', 'The recipient will be notified by email when any employee sends a private message to another employee, or a Candidate or person responds to an email that was sent by the employee from within the system.');
-define('COURSE_MESSAGE', 'The recipient will be notified by email for pending, due soon, expired, ready to start courses.');
+define('COURSE_MESSAGE', 'The LMS Managers will be notified about the course reports of their team members.');
 
 define('I9_EXPIRES', '10/31/2022');
 define('I9_NEW_EXPIRES', '07/31/2026');
