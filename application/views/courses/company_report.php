@@ -53,18 +53,20 @@
                                                     <option value="all">All</option>
                                                     <?php if (!empty($filterData["employees"])) { ?>
                                                         <?php foreach ($filterData["employees"] as $employee) { ?>
-                                                            <option value="<?php echo $employee['sid']; ?>">
-                                                                <?php echo remakeEmployeeName([
-                                                                    'first_name' => $employee['first_name'],
-                                                                    'last_name' => $employee['last_name'],
-                                                                    'access_level' => $employee['access_level'],
-                                                                    'timezone' => isset($employee['timezone']) ? $employee['timezone'] : '',
-                                                                    'access_level_plus' => $employee['access_level_plus'],
-                                                                    'is_executive_admin' => $employee['is_executive_admin'],
-                                                                    'pay_plan_flag' => $employee['pay_plan_flag'],
-                                                                    'job_title' => $employee['job_title'],
-                                                                ]); ?>
-                                                            </option>
+                                                            <?php if ($employer_detail['sid'] != $employee['sid']) { ?>
+                                                                <option value="<?php echo $employee['sid']; ?>">
+                                                                    <?php echo remakeEmployeeName([
+                                                                        'first_name' => $employee['first_name'],
+                                                                        'last_name' => $employee['last_name'],
+                                                                        'access_level' => $employee['access_level'],
+                                                                        'timezone' => isset($employee['timezone']) ? $employee['timezone'] : '',
+                                                                        'access_level_plus' => $employee['access_level_plus'],
+                                                                        'is_executive_admin' => $employee['is_executive_admin'],
+                                                                        'pay_plan_flag' => $employee['pay_plan_flag'],
+                                                                        'job_title' => $employee['job_title'],
+                                                                    ]); ?>
+                                                                </option>
+                                                            <?php } ?>    
                                                         <?php } ?>  
                                                     <?php } ?>    
                                                 </select>

@@ -522,6 +522,8 @@ class Courses extends Public_Controller
             $subordinateInfo['completed'] = 0;
             $subordinateInfo['ready_to_start'] = 0;
             //
+            unset($subordinateInfo['employees'][$employeeId]);
+            //
             foreach ($subordinateInfo['employees'] as $key => $subordinateEmployee) {
                 //
                 $teamId = $subordinateEmployee['team_sid'];
@@ -1134,86 +1136,90 @@ class Courses extends Public_Controller
                 $companyReport["total_employees"] = count($companyEmployeesList);
                 //
                 foreach ($companyEmployeesList as $ekey => $employee) {
+                    //
+                    if ($session['employer_detail']['sid'] == $employee['sid']) {
+                        unset($companyEmployeesList[$ekey]);
+                    }else {
+                        if ($fetchEmployees == "all" || in_array($employee['sid'], explode(",", $fetchEmployees))) {
 
-                    if ($fetchEmployees == "all" || in_array($employee['sid'], explode(",", $fetchEmployees))) {
-
-                        $employeesList[$employee['sid']]["sid"]  = $employee['sid'];
-                        //
-                        $employeeName = remakeEmployeeName([
-                            'first_name' => $employee['first_name'],
-                            'last_name' => $employee['last_name'],
-                            'access_level' => $employee['access_level'],
-                            'timezone' => isset($employee['timezone']) ? $employee['timezone'] : '',
-                            'access_level_plus' => $employee['access_level_plus'],
-                            'is_executive_admin' => $employee['is_executive_admin'],
-                            'pay_plan_flag' => $employee['pay_plan_flag'],
-                            'job_title' => $employee['job_title'],
-                        ]);
-                        //
-                        $employeesList[$employee['sid']]["full_name"]  = $employeeName;
-                        //
-                        if (!empty($employee['lms_job_title'])) {
-                            $employeesList[$employee['sid']]["courses_sid"]  = $jobRoleCourses[$employee['job_title_sid']];
+                            $employeesList[$employee['sid']]["sid"]  = $employee['sid'];
                             //
-                            $job_title_sid = !empty($employee['job_title_sid']) ? $employee['job_title_sid'] : -1;
+                            $employeeName = remakeEmployeeName([
+                                'first_name' => $employee['first_name'],
+                                'last_name' => $employee['last_name'],
+                                'access_level' => $employee['access_level'],
+                                'timezone' => isset($employee['timezone']) ? $employee['timezone'] : '',
+                                'access_level_plus' => $employee['access_level_plus'],
+                                'is_executive_admin' => $employee['is_executive_admin'],
+                                'pay_plan_flag' => $employee['pay_plan_flag'],
+                                'job_title' => $employee['job_title'],
+                            ]);
                             //
-                            $employeesList[$employee['sid']]["courses_statistics"] = $this->course_model->checkEmployeeCoursesReport(
-                                $data['company_sid'],
-                                $employee['sid'],
-                                $jobRoleCourses[$job_title_sid]
-                            );
+                            $employeesList[$employee['sid']]["full_name"]  = $employeeName;
                             //
-                            $companyReport["employee_have_courses"]++;
-                            //
-                            foreach ($employeesList[$employee['sid']]["courses_statistics"]["coursesInfo"] as $cikey => $coursesStatus) {
+                            if (!empty($employee['lms_job_title'])) {
+                                $employeesList[$employee['sid']]["courses_sid"]  = $jobRoleCourses[$employee['job_title_sid']];
                                 //
-                                if (isset($coursesList[$cikey])) {
-                                    $coursesList[$cikey]['assign_employee_count']++;
+                                $job_title_sid = !empty($employee['job_title_sid']) ? $employee['job_title_sid'] : -1;
+                                //
+                                $employeesList[$employee['sid']]["courses_statistics"] = $this->course_model->checkEmployeeCoursesReport(
+                                    $data['company_sid'],
+                                    $employee['sid'],
+                                    $jobRoleCourses[$job_title_sid]
+                                );
+                                //
+                                $companyReport["employee_have_courses"]++;
+                                //
+                                foreach ($employeesList[$employee['sid']]["courses_statistics"]["coursesInfo"] as $cikey => $coursesStatus) {
                                     //
-                                    if ($coursesStatus == 0) {
-                                        $coursesList[$cikey]['assign_employee_pending_count']++;
-                                    } else {
-                                        $coursesList[$cikey]['assign_employee_completed_count']++;
+                                    if (isset($coursesList[$cikey])) {
+                                        $coursesList[$cikey]['assign_employee_count']++;
+                                        //
+                                        if ($coursesStatus == 0) {
+                                            $coursesList[$cikey]['assign_employee_pending_count']++;
+                                        } else {
+                                            $coursesList[$cikey]['assign_employee_completed_count']++;
+                                        }
                                     }
                                 }
-                            }
-                        } else {
-                            $employeesList[$employee['sid']]['job_title_sid'] = 0;
-                            $employeesList[$employee['sid']]["courses_sid"]  = 0;
-                            $employeesList[$employee['sid']]["courses_statistics"] = [
-                                "completedCount" => 0,
-                                "pendingCount" => 0,
-                                "courseCount" => 0,
-                                "percentage" => 0
-                            ];
-                            //
-                            $companyReport["employee_not_have_courses"]++;
-                        }
-                        //
-                        $departmentAndTeams = $this->course_model->fetchDepartmentTeams($employee['sid']);
-                        $employeesList[$employee['sid']]["departments"]  = $departmentAndTeams['departmentIds'];
-                        $employeesList[$employee['sid']]["teams"]  = $departmentAndTeams['teamIds'];
-                        //
-                        $employeeDepartments = explode(",", $departmentAndTeams['departmentIds']);
-                        //
-                        foreach ($employeeDepartments as $employeeDepartment) {
-                            //
-                            if (isset($departments[$employeeDepartment])) {
-                                if ($employeesList[$employee['sid']]["courses_sid"] == 0) {
-                                    $departments[$employeeDepartment]['employee_not_have_courses']++;
-                                } else {
-                                    $departments[$employeeDepartment]['employee_have_courses']++;
-                                    //
-                                    $departments[$employeeDepartment]['pending_courses'] = $departments[$employeeDepartment]['pending_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['pendingCount'];
-                                    $departments[$employeeDepartment]['completed_courses'] = $departments[$employeeDepartment]['completed_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['completedCount'];
-                                    $departments[$employeeDepartment]['total_courses'] = $departments[$employeeDepartment]['total_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['courseCount'];
-                                    //
-                                }
+                            } else {
+                                $employeesList[$employee['sid']]['job_title_sid'] = 0;
+                                $employeesList[$employee['sid']]["courses_sid"]  = 0;
+                                $employeesList[$employee['sid']]["courses_statistics"] = [
+                                    "completedCount" => 0,
+                                    "pendingCount" => 0,
+                                    "courseCount" => 0,
+                                    "percentage" => 0
+                                ];
                                 //
-                                $departments[$employeeDepartment]['employees'][] = $employee['sid'];
+                                $companyReport["employee_not_have_courses"]++;
                             }
+                            //
+                            $departmentAndTeams = $this->course_model->fetchDepartmentTeams($employee['sid']);
+                            $employeesList[$employee['sid']]["departments"]  = $departmentAndTeams['departmentIds'];
+                            $employeesList[$employee['sid']]["teams"]  = $departmentAndTeams['teamIds'];
+                            //
+                            $employeeDepartments = explode(",", $departmentAndTeams['departmentIds']);
+                            //
+                            foreach ($employeeDepartments as $employeeDepartment) {
+                                //
+                                if (isset($departments[$employeeDepartment])) {
+                                    if ($employeesList[$employee['sid']]["courses_sid"] == 0) {
+                                        $departments[$employeeDepartment]['employee_not_have_courses']++;
+                                    } else {
+                                        $departments[$employeeDepartment]['employee_have_courses']++;
+                                        //
+                                        $departments[$employeeDepartment]['pending_courses'] = $departments[$employeeDepartment]['pending_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['pendingCount'];
+                                        $departments[$employeeDepartment]['completed_courses'] = $departments[$employeeDepartment]['completed_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['completedCount'];
+                                        $departments[$employeeDepartment]['total_courses'] = $departments[$employeeDepartment]['total_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['courseCount'];
+                                        //
+                                    }
+                                    //
+                                    $departments[$employeeDepartment]['employees'][] = $employee['sid'];
+                                }
+                            }
+                            //
                         }
-                        //
                     }
                 }
                 //
