@@ -1495,6 +1495,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                 "departments_management.sid = departments_team_management.department_sid",
                 "inner"
             )
+            ->where("departments_management.company_sid", $CI->session->userdata("logged_in")["company_detail"]["sid"])
             ->where("departments_management.is_deleted", 0)
             ->where("departments_team_management.is_deleted", 0);
             // if not plus then check for LMS manager role
