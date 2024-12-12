@@ -760,8 +760,8 @@ class Course_model extends CI_Model
         int $employeeId
     ): array {
         // get the employee assigned course
-        $courseInfo = get_instance()->db
-            ->select('lesson_status, course_status, course_taken_count, created_at, updated_at')
+        $courseInfo = $this->db
+            ->select('lesson_status, course_status, course_taken_count, created_at, completed_at')
             ->from('lms_employee_course')
             ->where('course_sid', $courseId)
             ->where('employee_sid', $employeeId)
@@ -774,8 +774,24 @@ class Course_model extends CI_Model
             $courseInfo['course_status'] = '';
             $courseInfo['course_taken_count'] = 0;
             $courseInfo['created_at'] = '';
-            $courseInfo['updated_at'] = '';
+            $courseInfo['completed_at'] = '';
         }
+        //
+        return $courseInfo;
+    }
+
+    public function getEmployeeCourseHistory (
+        int $courseId,
+        int $employeeId
+    ): array {
+        // get the employee assigned course
+        $courseInfo = $this->db
+            ->select('lesson_status, course_status, course_taken_count, created_at, completed_at')
+            ->from('lms_employee_course_history')
+            ->where('course_sid', $courseId)
+            ->where('employee_sid', $employeeId)
+            ->get()
+            ->result_array();
         //
         return $courseInfo;
     }

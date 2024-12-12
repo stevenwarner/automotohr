@@ -1977,7 +1977,7 @@ class Courses extends Public_Controller
                 null,
                 $data['session']
             );
-            //
+            //sudo
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
             if ($this->form_validation->run() == false) {
@@ -2056,14 +2056,85 @@ class Courses extends Public_Controller
                                             $exportRow .= $startDate . ',';
                                             substr($exportRow, 0, -1);
                                         } else if ($item == "course_completion_date") {
-                                            $completionDate = $courseStatus['updated_at'] ? formatDateToDB($courseStatus['updated_at'], DB_DATE_WITH_TIME, SITE_DATE) : "";
+                                            $completionDate = $courseStatus['completed_at'] ? formatDateToDB($courseStatus['completed_at'], DB_DATE_WITH_TIME, SITE_DATE) : "";
                                             $exportRow .= $completionDate . ',';
                                             substr($exportRow, 0, -1);
                                         }
                                     }
                                     //
+                                    $exportRow .= 'current,';
+                                    substr($exportRow, 0, -1);
+                                    //
                                     $exportRows .= $exportRow . PHP_EOL;
                                     //
+                                    // check course history
+                                    $courseHistory = $this->course_model->getEmployeeCourseHistory($course['sid'], $employee['sid']);  
+                                    // 
+                                    if ($courseHistory) {
+                                        foreach ($courseHistory as $history) {
+                                            //
+                                            $exportHistoryRow = '';
+                                            //
+                                            foreach ($checked_boxes as $key => $item) {
+                                                if ($item == "employee_id") {
+                                                    $exportHistoryRow .= $employee['sid'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "employee_no") {
+                                                    $exportHistoryRow .= $employee['employee_number'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "employee_ssn") {
+                                                    $exportHistoryRow .= $employee['ssn'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "employee_email") {
+                                                    $exportHistoryRow .= $employee['email'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "employee_PhoneNumber") {
+                                                    $exportHistoryRow .= $employee['PhoneNumber'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "first_name") {
+                                                    $exportHistoryRow .= $employee['first_name'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "last_name") {
+                                                    $exportHistoryRow .= $employee['last_name'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "access_level") {
+                                                    $exportHistoryRow .= $employee['access_level'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "job_title") {
+                                                    $exportHistoryRow .= $employee['job_title'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "course_title") {
+                                                    $exportHistoryRow .= $course['course_title'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "lesson_status") {
+                                                    $exportHistoryRow .= $history['lesson_status'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "course_status") {
+                                                    $exportHistoryRow .= $history['course_status'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "course_type") {
+                                                    $exportHistoryRow .= $course['course_type'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "course_taken_count") {
+                                                    $exportHistoryRow .= $history['course_taken_count'] . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "course_started_date") {
+                                                    $startDate = $history['created_at'] ? formatDateToDB($history['created_at'], DB_DATE_WITH_TIME, SITE_DATE) : "";
+                                                    $exportHistoryRow .= $startDate . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                } else if ($item == "course_completion_date") {
+                                                    $completionDate = $history['completed_at'] ? formatDateToDB($history['completed_at'], DB_DATE_WITH_TIME, SITE_DATE) : "";
+                                                    $exportHistoryRow .= $completionDate . ',';
+                                                    substr($exportHistoryRow, 0, -1);
+                                                }
+                                            }
+                                            //
+                                            $exportHistoryRow .= 'history,';
+                                            substr($exportHistoryRow, 0, -1);
+                                            //
+                                            $exportRows .= $exportHistoryRow . PHP_EOL;
+                                        }
+                                    } 
                                 }
                             }
                         }
@@ -2116,7 +2187,7 @@ class Courses extends Public_Controller
                                 $companyHeader = ',,,,' . $data['session']['company_detail']['CompanyName'];
                             }
                             //
-                            $header_row = implode(',', $header);
+                            $header_row = implode(',', $header).",Record Type";
                             //
                             $file_content = '';
                             $file_content .= $header_row . PHP_EOL;
@@ -2145,6 +2216,7 @@ class Courses extends Public_Controller
                             $this->session->set_flashdata('message', '<b>Error:</b> Record(s) Not Found!');
                             redirect('lms/courses/export_course_csv');
                         }
+                        //
                         break;
                 }
             }    
