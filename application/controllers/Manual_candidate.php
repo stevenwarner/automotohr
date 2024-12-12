@@ -93,8 +93,10 @@ class Manual_candidate extends Public_Controller
                     $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                     $user_data['desired_job_title'] = $templetJobTitleDataArray[1];
                     $user_data['job_title_type'] = $templetJobTitleDataArray[0];
+                    $user_data['lms_job_title'] = $templetJobTitleDataArray[0];
                 } else {
                     $user_data['job_title_type'] = 0;
+                    $user_data['lms_job_title'] = null;
                 }
 
 

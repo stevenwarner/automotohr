@@ -400,6 +400,9 @@ class employers extends Admin_Controller
                 $data['job_title_type'] = 0;
             }
 
+           // _e($data,true,true);
+
+
             //
             if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
                 $data['complynet_job_title'] = $this->input->post('complynet_job_title');
@@ -696,6 +699,7 @@ class employers extends Admin_Controller
             if ($this->form_validation->run() == false) {
                 $this->render('manage_admin/company/add_employer');
             } else {
+
                 $company_sid = $this->input->post('company_sid');
                 $ip_address = getUserIP() . ' - ' . $_SERVER['HTTP_USER_AGENT'];
                 $username = $this->input->post('username');
@@ -717,7 +721,6 @@ class employers extends Admin_Controller
                 $salt = generateRandomString(48);
 
 
-
                 if ($registration_date != NULL) {
                     $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
                     $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
@@ -727,13 +730,27 @@ class employers extends Admin_Controller
                 }
 
                 $insert_data = array();
+
+                $insert_data['job_title'] = $job_title;
+                //
+                if ($this->input->post('temppate_job_title') && $this->input->post('temppate_job_title') != '0') {
+                    $templetJobTitleData = $this->input->post('temppate_job_title');
+                    $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                    $insert_data['job_title'] = $templetJobTitleDataArray[1];
+                    $insert_data['job_title_type'] = $templetJobTitleDataArray[0];
+                    $insert_data['lms_job_title'] = $templetJobTitleDataArray[0];
+                } else {
+                    $insert_data['job_title_type'] = 0;
+                    $insert_data['lms_job_title'] = null;
+                }
+
+
                 $insert_data['ip_address'] = $ip_address;
                 $insert_data['username'] = $username;
                 $insert_data['email'] = $email;
                 $insert_data['first_name'] = $first_name;
                 $insert_data['last_name'] = $last_name;
                 $insert_data['employee_type'] = $employee_type;
-                $insert_data['job_title'] = $job_title;
                 $insert_data['cell_number'] = $cell_number;
                 $insert_data['registration_date'] = $registration_date;
                 $insert_data['joined_at'] = $joined_at;

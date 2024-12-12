@@ -1665,8 +1665,11 @@ class Employee_management extends Public_Controller
                         $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                         $data_to_insert['job_title'] = $templetJobTitleDataArray[1];
                         $data_to_insert['job_title_type'] = $templetJobTitleDataArray[0];
+                        $data_to_insert['lms_job_title'] = $templetJobTitleDataArray[0];
+
                     } else {
                         $data_to_insert['job_title_type'] = 0;
+                        $data_to_insert['lms_job_title'] = null;
                     }
 
                     //
@@ -1942,8 +1945,9 @@ class Employee_management extends Public_Controller
                         // update employee complynet job title on complynet
 
                         if ($employee_detail['complynet_job_title'] != $data_to_insert['complynet_job_title']) {
-                            // updateEmployeeJobRoleToComplyNet($sid, $company_id);
+                             updateEmployeeJobRoleToComplyNet($sid, $company_id);
                         }
+                     
 
                         // update employee department on complynet
                         /*
@@ -1956,7 +1960,7 @@ class Employee_management extends Public_Controller
                             $departmentId = $departmentId != 0 ? getDepartmentColumnByTeamId($department, 'department_sid') : 0;
                             //
                             if ($employee_detail['department_sid'] != $departmentId) {
-                                // updateEmployeeDepartmentToComplyNet($sid, $company_id);
+                                 updateEmployeeDepartmentToComplyNet($sid, $company_id);
                             }
 
                     }

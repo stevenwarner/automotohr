@@ -1002,13 +1002,15 @@ class Application_tracking_system extends Public_Controller
                 $user_data['full_employment_application'] = serialize($full_emp_app);
 
                 //
-                if ($this->input->post('temppate_job_title') && $formpost['template_job_title'] != '0') {
+                if ($this->input->post('template_job_title') && $formpost['template_job_title'] != '0') { 
                     $templetJobTitleData = $formpost['template_job_title'];
                     $templetJobTitleDataArray = explode('#', $templetJobTitleData);
                     $user_data['desired_job_title'] = $templetJobTitleDataArray[1];
                     $user_data['job_title_type'] = $templetJobTitleDataArray[0];
+                    $user_data['lms_job_title'] = $templetJobTitleDataArray[0];
                 } else {
                     $user_data['job_title_type'] = 0;
+                    $user_data['lms_job_title'] = null;
                 }
 
 
@@ -1042,7 +1044,6 @@ class Application_tracking_system extends Public_Controller
                     $user_data['languages_speak'] = implode(',', $languages_speak);
                 }
                 //
-
                 $result = $this->application_tracking_system_model->update_applicant($app_id, $user_data);
 
                 $this->session->set_flashdata('message', '<b>Success:</b> Applicant updated successfully');
