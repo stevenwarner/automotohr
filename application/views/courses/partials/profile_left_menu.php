@@ -27,14 +27,14 @@
                     <figure><i class="fa fa-line-chart"></i></figure>Report
                 </a>
             </li>
-            <li>
+            <li class="hidden">
                 <a <?php if (strpos(base_url(uri_string()), 'import_course_csv') !== false) {
                         echo 'class="active"';
                     } ?> href="<?php echo base_url('lms/courses/import_course_csv') ?>">
                     <figure><i class="fa fa-upload"></i></figure>Import
                 </a>
             </li>
-            <li>
+            <li class="hidden">
                 <a <?php if (strpos(base_url(uri_string()), 'export_course_csv') !== false) {
                         echo 'class="active"';
                     } ?> href="<?php echo base_url('lms/courses/export_course_csv') ?>">
