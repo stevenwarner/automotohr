@@ -277,12 +277,11 @@
                                                                     $completedText = $completedCourses > 1 ? $completedCourses." courses completed" : $completedCourses." courses completed";
                                                                     //
                                                                     $rowColor = "bg-danger";
+                                                                    //
                                                                     if ($completedCoursesPercentage >= "50") {
                                                                         $rowColor = "bg-success";
                                                                     } else if ($completedCoursesPercentage < "50" && $completedCoursesPercentage > "1") {
                                                                         $rowColor = "bg-warning";
-                                                                    } else {
-
                                                                     }
                                                                 ?>
                                                                 <tr class="<?php echo $rowColor; ?>">    

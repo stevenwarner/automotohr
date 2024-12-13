@@ -171,7 +171,7 @@
                                                 <div class="hr-innerpadding">
 
                                                     <div class="table-responsive">
-                                                        <table class="table table-bordered table-hover table-striped">
+                                                        <table class="table table-bordered table-hover">
                                                             <thead style="background-color: #fd7a2a;">
                                                                 <tr>
                                                                     <th>
@@ -183,12 +183,12 @@
                                                                     <th>Employee Name</th>
                                                                     <th>Department</th>
                                                                     <th>Team</th>
-                                                                    <th>Course Count</th>
-                                                                    <th>Passed Course(s)</th>
+                                                                    <th>Assigned Course(s)</th>
+                                                                    <th>Completed Course(s)</th>
+                                                                    <th>Courses in Progress</th>
+                                                                    <th>Ready To Start</th>
                                                                     <th>Due Soon</th>
                                                                     <th>Past Due</th>
-                                                                    <th>Ready To Start</th>
-                                                                    <th>Courses in Progress</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -203,10 +203,20 @@
                                                                         $courseCountText = $courseCount > 1 ? $courseCount . " courses assigned" : $courseCount . " course assigned";
                                                                         $departmentName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
                                                                         $teamName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
+                                                                        //
+                                                                        $completedCoursesPercentage = ($employee['coursesInfo']['completed'] / $employee['coursesInfo']['total_course']) * 100;
+                                                                        //
+                                                                        $rowColor = "bg-danger";
+                                                                        //
+                                                                        if ($completedCoursesPercentage >= "50") {
+                                                                            $rowColor = "bg-success";
+                                                                        } else if ($completedCoursesPercentage < "50" && $completedCoursesPercentage > "1") {
+                                                                            $rowColor = "bg-warning";
+                                                                        }
                                                                         ?>
-                                                                        <tr>
+                                                                        <tr class="<?php echo $rowColor; ?>">
                                                                             <td>
-                                                                                <?php if ($courseCount > 0) { ?>
+                                                                                <?php if ($courseCount > 0 && $employee['coursesInfo']['total_course'] != $employee['coursesInfo']['completed']) { ?>
                                                                                     <label class="control control--checkbox">
                                                                                         <input type="checkbox" class="jsSelectSubordinate" name="employees_ids[]" value="<?php echo $employee['employee_sid']; ?>" />
                                                                                         <div class="control__indicator"></div>
@@ -240,10 +250,10 @@
                                                                             <td class="_csVm"><?php echo $teamName; ?></td>
                                                                             <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['total_course'] : 0; ?></td>
                                                                             <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['completed'] : 0; ?></td>
+                                                                            <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['started'] : 0; ?></td>
+                                                                            <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['ready_to_start'] : 0; ?></td>
                                                                             <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expire_soon'] : 0; ?></td>
                                                                             <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expired'] : 0; ?></td>
-                                                                            <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['ready_to_start'] : 0; ?></td>
-                                                                            <td class="_csVm text-center"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['started'] : 0; ?></td>
                                                                             <td class="_csVm">
                                                                                 <!-- <a href="<?php echo base_url('lms/subordinate/courses/' . $employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
                                                                                         <i class="fa fa-eye"></i> View

@@ -627,6 +627,7 @@ class Courses extends Public_Controller
             exit(0);
         }
         //
+        // _e($subordinateInfo,true);
         $data['title'] = "My Courses :: " . STORE_NAME;
         $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
