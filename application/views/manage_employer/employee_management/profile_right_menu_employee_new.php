@@ -520,7 +520,13 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
                                         </li>
                                     <?php } ?>
-                                    <?php if (check_access_permissions_for_view($security_details, 'emp_learning_center')) { ?>
+                                    <?php if (checkIfAppIsEnabled(MODULE_LMS)) { ?>
+                                        <li>
+                                            <span class="left-addon"><i aria-hidden="true" class="fa fa-bank"></i></span>
+                                            <h4>Learning Center</h4>
+                                            <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                        </li>
+                                    <?php } else if (check_access_permissions_for_view($security_details, 'emp_learning_center')) { ?>
                                         <li>
                                             <span class="left-addon"><i aria-hidden="true" class="fa fa-bank"></i></span>
                                             <h4>Learning Center</h4>
