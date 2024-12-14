@@ -43,10 +43,34 @@ $products = $pageContent["page"]["sections"]["products"];
                                     <i class="fa fa-edit" aria-hidden="true"></i>
                                     &nbsp;Edit
                                 </button>
+
+                                <?php
+                                if ($value["status"] == "1") {
+                                    $deleteText = "De-Activate";
+                                    $btn = "btn-danger";
+                                    $statusText="Active";
+                                    $statusColor="text-success";
+                                } else if ($value["status"] == "0") {
+                                    $deleteText = "Activate";
+                                    $btn = "btn-success";                                  
+                                    $statusText="De Active";
+                                    $statusColor="text-danger";
+                                } else {
+                                    $deleteText = "De-Activate";
+                                    $btn = "btn-danger";
+                                    $statusText="Active";
+                                    $statusColor="text-success";
+                                } ?>
+                                <button class="btn <?= $btn ?> jsDeleteHomeProduct" type="button" data-status="<?= $value["status"]; ?>">
+                                    &nbsp;<?php echo $deleteText; ?>
+                                </button>
+                                <p class="<?=$statusColor?>"><strong>[<?=$statusText?>]</strong></p>
+                                <!--
                                 <button class="btn btn-danger jsDeleteHomeProduct" type="button">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                     &nbsp;Delete
-                                </button>
+                                </button> -->
+
                             </div>
                         </div>
                         <hr />

@@ -84,8 +84,11 @@
                 if ($value["direction"] === "right_to_left") {
                     $classFirst = $classSecond = "";
                 }
+
         ?>
                 <!-- row 1 -->
+
+                <?php if($value['status']!="0"){?>
                 <div class="row">
                     <div class="col-xl-12 column-flex-center">
                         <div class="w-80 image-section-padding-product">
@@ -116,6 +119,8 @@
                         </div>
                     </div>
                 </div>
+              <?php }?>
+
         <?php }
         } ?>
 

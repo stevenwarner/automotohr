@@ -21,6 +21,21 @@
                                             &nbsp;
                                             Back To CMS
                                         </a>
+
+                                        <?php if ($page["status"]) { ?>
+                                            <button class="btn btn-danger jsPageStatus" data-key="0">
+                                                <i class="fa fa-ban"></i>
+                                                &nbsp;
+                                                Unpublish Page
+                                            </button>
+                                        <?php } else { ?>
+                                            <button class="btn btn-success jsPageStatus" data-key="1">
+                                                <i class="fa fa-shield"></i>
+                                                &nbsp;
+                                                Publish Page
+                                            </button>
+                                        <?php } ?>
+                                        
                                     </div>
                                 </div>
                             </div>
