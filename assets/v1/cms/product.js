@@ -461,4 +461,46 @@ $(function () {
 			});
 	}
 
+	//
+	$(".jsDraggable").sortable({
+		update: function(event, ui) {
+			//
+			var tagIndex = 0;
+			var orderList = [];
+			var indecators = ui.item.context.className.split(" ");
+			//
+			$("."+indecators[0]).map(function (i) {
+				tagIndex = $(this).data("index");
+				orderList.push($(this).data("key"));
+			});
+			// 
+			var obj = {};
+			obj.tagIndex = tagIndex;
+			obj.sortOrders = orderList;
+			//
+			updateCardsSortOrder(obj);
+		}
+	});
+	//
+	function updateCardsSortOrder(data) {
+		// check if XHR already in progress
+		if (XHR !== null) {
+			XHR.abort();
+		}
+
+		//
+		XHR = $.ajax({
+			url: baseUrl("cms/update_solutions_sort_order/" + getSegment(2)),
+			method: "post",
+			data,
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				
+			});
+	}
+
 });

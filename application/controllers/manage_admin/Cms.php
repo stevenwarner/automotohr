@@ -1627,4 +1627,39 @@ class Cms extends Admin_Controller
             ]
         );
     }
+
+
+    //
+    public function updateSolutionsSortOrder(int $pageId)
+    {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+        $post = $this->input->post(null, true);
+        //
+        $pageContent = json_decode($pageContent, true);
+
+        //
+        if (isset($post["sortOrders"])) {
+            $tagCards = $pageContent["page"]["sections"]["products"];
+
+            //
+            foreach ($post["sortOrders"] as $key => $index) {
+                //
+                $item = $tagCards[$index];
+                $pageContent["page"]["sections"]["products"][$key] = $item;
+            }
+            //        
+            $msg = "You have successfully updated a cards sort order.";
+        }
+        //
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, [
+            "msg" => $msg
+        ]);
+    }
 }
