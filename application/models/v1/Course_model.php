@@ -481,7 +481,9 @@ class Course_model extends CI_Model
         //
         $result = [
             "completedCount" => 0,
+            "inProgressCount" => 0,
             "pendingCount" => 0,
+            "readyToStart" => 0,
             "courseCount" => count($employeeAssignCoursesList),
             "percentage" => 0,
             "coursesInfo" => []
@@ -489,21 +491,26 @@ class Course_model extends CI_Model
         //
         if (!empty($employeeAssignCoursesList)) {
             foreach ($employeeAssignCoursesList as $courseId) {
-
+                //
+                $this->db->select("lesson_status");
                 $this->db->where('company_sid', $companyId);
                 $this->db->where('employee_sid', $employeeId);
                 $this->db->where('course_sid', $courseId);
-                $this->db->where('course_status', "passed");
                 //
-                $this->db->from('lms_employee_course');
+                $a = $this->db->get('lms_employee_course');
                 //
-                $count = $this->db->count_all_results();
+                $b = $a->row_array();
+                $a = $a->free_result();
                 //
-                if ($count > 0) {
-                    $result["completedCount"]++;
-                } else {
+                if (empty($b)) {
                     $result["pendingCount"]++;
-                }  
+                    $result["readyToStart"]++;
+                } else if ($b['lesson_status'] == 'completed') {
+                    $result["completedCount"]++;
+                } else if ($b['lesson_status'] == 'incomplete') {
+                    $result["pendingCount"]++;
+                    $result["inProgressCount"]++;
+                }
                 //
                 $result["coursesInfo"][$courseId] = $count;   
             }

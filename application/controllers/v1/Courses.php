@@ -1066,6 +1066,10 @@ class Courses extends Public_Controller
                 "total_employees" => 0,
                 "departments_report" => [],
                 "courses_report" => [
+                    "total_assigned_courses" => 0,
+                    "total_completed_courses" => 0,
+                    "total_inprogress_courses" => 0,
+                    "total_rts_courses" => 0,
                     "expired" => 0,
                     "started" => 0,
                     "coming" => 0,
@@ -1121,6 +1125,8 @@ class Courses extends Public_Controller
                     $departments[$department['sid']]['pending_courses'] = 0;
                     $departments[$department['sid']]['completed_courses'] = 0;
                     $departments[$department['sid']]['total_courses'] = 0;
+                    $departments[$department['sid']]['readyToStart_courses'] = 0;
+                    $departments[$department['sid']]['inProgress_courses'] = 0;
                 }
                 //
                 if ($filters["departments"] == "all" || $filters["departments"] == '0') {
@@ -1132,6 +1138,8 @@ class Courses extends Public_Controller
                     $departments[0]['pending_courses'] = 0;
                     $departments[0]['completed_courses'] = 0;
                     $departments[0]['total_courses'] = 0;
+                    $departments[0]['readyToStart_courses'] = 0;
+                    $departments[0]['inProgress_courses'] = 0;
                 }
                 //
                 $companyReport["total_employees"] = count($companyEmployeesList);
@@ -1140,7 +1148,7 @@ class Courses extends Public_Controller
                     //
                     if ($session['employer_detail']['sid'] == $employee['sid']) {
                         unset($companyEmployeesList[$ekey]);
-                    }else {
+                    } else {
                         if ($fetchEmployees == "all" || in_array($employee['sid'], explode(",", $fetchEmployees))) {
 
                             $employeesList[$employee['sid']]["sid"]  = $employee['sid'];
@@ -1171,24 +1179,35 @@ class Courses extends Public_Controller
                                 //
                                 $companyReport["employee_have_courses"]++;
                                 //
-                                foreach ($employeesList[$employee['sid']]["courses_statistics"]["coursesInfo"] as $cikey => $coursesStatus) {
+                                if ($employeesList[$employee['sid']]["courses_statistics"]) {
                                     //
-                                    if (isset($coursesList[$cikey])) {
-                                        $coursesList[$cikey]['assign_employee_count']++;
+                                    $companyReport["courses_report"]['total_assigned_courses'] = $companyReport["courses_report"]['total_assigned_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['courseCount'];
+                                    $companyReport["courses_report"]['total_completed_courses'] = $companyReport["courses_report"]['total_completed_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['completedCount'];
+                                    $companyReport["courses_report"]['total_inprogress_courses'] = $companyReport["courses_report"]['total_inprogress_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['inProgressCount'];
+                                    $companyReport["courses_report"]['total_rts_courses'] = $companyReport["courses_report"]['total_rts_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['readyToStart'];
+                                    //
+                                    foreach ($employeesList[$employee['sid']]["courses_statistics"]["coursesInfo"] as $cikey => $coursesStatus) {
                                         //
-                                        if ($coursesStatus == 0) {
-                                            $coursesList[$cikey]['assign_employee_pending_count']++;
-                                        } else {
-                                            $coursesList[$cikey]['assign_employee_completed_count']++;
+                                        if (isset($coursesList[$cikey])) {
+                                            $coursesList[$cikey]['assign_employee_count']++;
+                                            //
+                                            if ($coursesStatus == 0) {
+                                                $coursesList[$cikey]['assign_employee_pending_count']++;
+                                            } else {
+                                                $coursesList[$cikey]['assign_employee_completed_count']++;
+                                            }
                                         }
                                     }
                                 }
+                                //
                             } else {
                                 $employeesList[$employee['sid']]['job_title_sid'] = 0;
                                 $employeesList[$employee['sid']]["courses_sid"]  = 0;
                                 $employeesList[$employee['sid']]["courses_statistics"] = [
                                     "completedCount" => 0,
+                                    "inProgressCount" => 0,
                                     "pendingCount" => 0,
+                                    "readyToStart" => 0,
                                     "courseCount" => 0,
                                     "percentage" => 0
                                 ];
@@ -1213,6 +1232,8 @@ class Courses extends Public_Controller
                                         $departments[$employeeDepartment]['pending_courses'] = $departments[$employeeDepartment]['pending_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['pendingCount'];
                                         $departments[$employeeDepartment]['completed_courses'] = $departments[$employeeDepartment]['completed_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['completedCount'];
                                         $departments[$employeeDepartment]['total_courses'] = $departments[$employeeDepartment]['total_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['courseCount'];
+                                        $departments[$employeeDepartment]['readyToStart_courses'] = $departments[$employeeDepartment]['readyToStart_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['readyToStart'];
+                                        $departments[$employeeDepartment]['inProgress_courses'] = $departments[$employeeDepartment]['inProgress_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['inProgressCount'];
                                         //
                                     }
                                     //
@@ -1233,11 +1254,12 @@ class Courses extends Public_Controller
             $data["filters"] = $filters;
             $data["filterData"] = $filterData;
             $companyReport["departments_report"] = $departments;
+            // _e($companyReport["courses_report"],true,true);
             //
             if ($this->input->method() === 'post') {
                 if (!empty($companyEmployeesList) && !empty($companyCoursesList)) {
                     header('Content-Type: text/csv; charset=utf-8');
-                    header('Content-Disposition: attachment; filename=data.csv');
+                    header('Content-Disposition: attachment; filename='.$session['company_detail']['CompanyName'].'_LMS_company_report_'.date('Y_m_d-H:i:s').'.csv');
                     $output = fopen('php://output', 'w');
                     //
                     fputcsv($output, array('Company Name', $session['company_detail']['CompanyName'], '', '', '', ''));
@@ -1247,12 +1269,20 @@ class Courses extends Public_Controller
                     fputcsv($output, array('', '', '', '', '', ''));
                     fputcsv($output, array('', '', '', '', '', ''));
                     //
-                    fputcsv($output, array('Employee have courses', $companyReport['employee_have_courses'], '', '', '', ''));
-                    fputcsv($output, array('Employee not have courses', $companyReport['employee_not_have_courses'], '', '', '', ''));
+                    fputcsv($output, array('Number of Employees with Assigned Courses', $companyReport['employee_have_courses'], '', '', '', ''));
+                    fputcsv($output, array('Number of Employees Without Assigned Courses', $companyReport['employee_not_have_courses'], '', '', '', ''));
                     //
-                    fputcsv($output, array('Expired courses', $companyReport['courses_report']['expired'], '', '', '', ''));
-                    fputcsv($output, array('Start courses', $companyReport['courses_report']['started'], '', '', '', ''));
-                    fputcsv($output, array('Coming courses', $companyReport['courses_report']['coming'], '', '', '', ''));
+                    // fputcsv($output, array('Expired courses', $companyReport['courses_report']['expired'], '', '', '', ''));
+                    // fputcsv($output, array('Employees who have Started but not Completed a Course', $companyReport['courses_report']['started'], '', '', '', ''));
+                    // fputcsv($output, array('Coming courses', $companyReport['courses_report']['coming'], '', '', '', ''));
+                    //
+                    fputcsv($output, array('', '', '', '', '', ''));
+                    fputcsv($output, array('', '', '', '', '', ''));
+                    //
+                    fputcsv($output, array('Total Assigned Course(s)', $companyReport['courses_report']['total_assigned_courses'], 'Percentage', '', '', ''));
+                    fputcsv($output, array('Total Completed Course(s)', $companyReport['courses_report']['total_completed_courses'], round(($companyReport['courses_report']['total_completed_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%', '', '', ''));
+                    fputcsv($output, array('Total Inprogress Course(s)', $companyReport['courses_report']['total_inprogress_courses'], round(($companyReport['courses_report']['total_inprogress_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%', '', '', ''));
+                    fputcsv($output, array('Total Ready to Start Course(s)', $companyReport['courses_report']['total_rts_courses'], round(($companyReport['courses_report']['total_rts_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%', '', '', ''));
                     //
                     fputcsv($output, array('', '', '', '', '', ''));
                     fputcsv($output, array('', '', '', '', '', ''));
@@ -1261,7 +1291,8 @@ class Courses extends Public_Controller
                     $cols[] = 'Employee Name';
                     $cols[] = 'Department';
                     $cols[] = 'Assign Course(s)';
-                    $cols[] = 'Pending Course(s)';
+                    $cols[] = 'Inprogress Course(s)';
+                    $cols[] = 'Ready To Start Course(s)';
                     $cols[] = 'Completed Course(s)';
                     $cols[] = 'Completion Percentage';
                     //
@@ -1271,7 +1302,8 @@ class Courses extends Public_Controller
                         if (!empty($department["employees"])) {
                             foreach ($department['employees'] as $employee) {
                                 $assignCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['courseCount'];
-                                $pendingCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['pendingCount'];
+                                $inProgressCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['inProgressCount'];
+                                $readyTOStartCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['readyToStart'];
                                 $completedCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['completedCount'];
                                 $completedCoursesPercentage = $companyReport["EmployeeList"][$employee]["courses_statistics"]['percentage'];
                                 //
@@ -1279,7 +1311,8 @@ class Courses extends Public_Controller
                                     $companyReport["EmployeeList"][$employee]["full_name"],
                                     $department["name"],
                                     $assignCourses,
-                                    $pendingCourses,
+                                    $inProgressCourses,
+                                    $readyTOStartCourses,
                                     $completedCourses,
                                     $completedCoursesPercentage . " %"
                                 ));
