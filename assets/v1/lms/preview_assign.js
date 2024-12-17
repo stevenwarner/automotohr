@@ -37,6 +37,90 @@ $(function LMSEmployeeCourses() {
 			.setHeader("Confirm");
 	});
 
+	$(document).on("click", ".jsViewMaterial", function (event) {
+		event.preventDefault();
+		//
+		var filePath = $(this).data("path");
+		var fileName = $(this).data("name");
+		var fileTitle = $(this).data("title");
+		//
+		$("#jsMaterialModelTitle").text(fileTitle);
+		$("#jsMaterialModel").modal("show");
+		$("#jsMaterialModelLoader").hide();
+		//
+		loadMaterial(filePath, fileName);
+	});
+
+	$(document).on("click", ".jsMaterialModelCancel", function (event) {
+		event.preventDefault();
+		$("#jsMaterialModelBody").html("");
+		$('#jsMaterialModel').modal('hide');
+	});		
+
+	function loadMaterial (filePath, fileName) {
+		var html = '';
+		var ext = fileName.split('.').pop().toLowerCase(); // Extract extension
+		//
+		
+		if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == 'gif'){
+			html += `<div class="img-thumbnail">`;
+			html += `<img class="img-responsive" src="${filePath}" style="width:100%; height:500px;" />`;
+			html += `</div>`;
+		} else if (ext == "pdf" || ext == "rtf" || ext == "doc" || ext == 'docx' || ext == "ppt" || ext == "pptx" || ext == "xls" || ext == 'xlsx') {
+			switch (ext) {
+                case 'pdf':
+                    preview_iframe_url = 'https://docs.google.com/gview?url=' + filePath + '&embedded=true';
+                    break;
+                case 'rtf':
+                    preview_iframe_url = 'https://docs.google.com/gview?url=' + filePath + '&embedded=true';
+                    break;
+                case 'doc':
+                    preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(filePath);
+                    break;
+                case 'docx':
+                    preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(filePath);
+                    break;
+                case 'ppt':
+                    preview_iframe_url = 'https://docs.google.com/gview?url=' + filePath + '&embedded=true';
+                    break;
+                case 'pptx':
+                    dpreview_iframe_url = 'https://docs.google.com/gview?url=' + filePath + '&embedded=true';
+                    break;
+                case 'xls':
+                    preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(filePath);
+                    break;
+                case 'xlsx':
+                    preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(filePath);
+                    break;
+			}		
+			//
+			html += `<iframe src="${preview_iframe_url}" id="preview_iframe" class="uploaded-file-preview" style="width:100%; height:800px;" frameborder="0"></iframe>`;
+			//
+		} else if (ext == "mov" || ext == "mp4" || ext == "wav" || ext == 'mp3') {
+			html += `<div id="latest-iframe-container"">`;
+        html += `	<div class="embed-responsive embed-responsive-4by3">`;
+        html += ` 		<div id="latest-iframe-holder" class="embed-responsive-item">`;
+			html += `<video controls style="width:100%; height:auto;">`;
+				if (ext == 'mp3') {
+					html += `<source src="${filePath}" type="audio/mpeg">`;
+				} else if (ext == 'mp4') {
+					html += `<source src="${filePath}" type="audio/mp4">`;
+				} else if (ext == 'wav') { 
+					html += `<source src="${filePath}" type="audio/wav">`;
+				} else if (ext == 'mov') { 
+					html += `<source src="${filePath}" type="audio/mov">`;
+				}			
+				html += `	Your browser does not support the audio element.`;
+			html += `</video>`;
+			html += `       </div>`;
+        html += `	</div>`;
+        html += `</div>`;
+		}
+		
+		//
+		$("#jsMaterialModelBody").html(html);
+	}
+
 	function changeScormLanguage(language) {
 		// check and abort previous calls
 		if (XHR !== null) {

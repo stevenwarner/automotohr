@@ -318,6 +318,9 @@ class Courses extends Public_Controller
         $data['PageScripts'] = [
             'js/app_helper',
             'v1/common',
+            'v1/plugins/ms_uploader/main',
+            'v1/plugins/ms_modal/main',
+            'v1/plugins/ms_recorder/main',
             'v1/lms/preview_assign',
         ];
         //
