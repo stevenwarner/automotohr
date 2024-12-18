@@ -1,4 +1,6 @@
-<?php $pageHeader = getPageContent('header', true)["page"]["sections"]; ?>
+<?php $pageHeader = getPageContent('header', true)["page"]["sections"];
+$activePages = getAllActivePages();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -49,53 +51,90 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-modal" aria-labelledby="navbarScrollingDropdown">
                                     <div class="display-flex">
-                                        <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu1Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu1Text"]); ?></a>
-                                            <p class="dropdown-item-custom">
-                                                <?= ($pageHeader["section_1"]["subMenu1Details"]); ?>
-                                            </p>
-                                            <hr class="dropdown-hr" />
-                                        </li>
+                                        <?php
+                                        $subMenu1LinkArray = explode("/", $pageHeader["section_1"]["subMenu1Link"]);
+                                        if (in_array($subMenu1LinkArray[1], $activePages)) {
+                                        ?>
+                                            <li>
+                                                <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu1Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu1Text"]); ?></a>
+                                                <p class="dropdown-item-custom">
+                                                    <?= ($pageHeader["section_1"]["subMenu1Details"]); ?>
+                                                </p>
+                                                <hr class="dropdown-hr" />
+                                            </li>
+                                        <?php } ?>
+
                                         <hr />
-                                        <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu2Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu2Text"]); ?></a>
-                                            <p class="dropdown-item-custom">
-                                                <?= ($pageHeader["section_1"]["subMenu2Details"]); ?>
-                                            </p>
-                                            <hr class="dropdown-hr" />
-                                        </li>
-                                        <hr class="dropdown-divider" />
-                                        <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu3Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu3Text"]); ?></a>
-                                            <p class="dropdown-item-custom">
-                                                <?= ($pageHeader["section_1"]["subMenu3Details"]); ?>
-                                            </p>
-                                            <hr class="dropdown-hr" />
-                                        </li>
-                                        <hr class="dropdown-divider" />
+                                        <?php
+                                        $subMenu2LinkArray = explode("/", $pageHeader["section_1"]["subMenu2Link"]);
+                                        if (in_array($subMenu2LinkArray[1], $activePages)) {
+                                        ?>
+                                            <li>
+                                                <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu2Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu2Text"]); ?></a>
+                                                <p class="dropdown-item-custom">
+                                                    <?= ($pageHeader["section_1"]["subMenu2Details"]); ?>
+                                                </p>
+                                                <hr class="dropdown-hr" />
+                                            </li>
+
+                                        <?php } ?>
+
+                                        <?php
+                                        $subMenu3LinkArray = explode("/", $pageHeader["section_1"]["subMenu3Link"]);
+                                        if (in_array($subMenu3LinkArray[1], $activePages)) {
+                                        ?>
+                                            <hr class="dropdown-divider" />
+                                            <li>
+                                                <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu3Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu3Text"]); ?></a>
+                                                <p class="dropdown-item-custom">
+                                                    <?= ($pageHeader["section_1"]["subMenu3Details"]); ?>
+                                                </p>
+                                                <hr class="dropdown-hr" />
+                                            </li>
+                                            <hr class="dropdown-divider" />
+                                        <?php } ?>
+
                                     </div>
+
+
                                     <div class="display-flex margin-top-twenty">
-                                        <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu4Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu4Text"]); ?></a>
-                                            <p class="dropdown-item-custom">
-                                                <?= ($pageHeader["section_1"]["subMenu4Details"]); ?>
-                                            </p>
-                                            <hr class="dropdown-divider" />
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu5Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu5Text"]); ?></a>
-                                            <p class="dropdown-item-custom">
-                                                <?= ($pageHeader["section_1"]["subMenu5Details"]); ?>
-                                            </p>
-                                            <hr class="dropdown-divider" />
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu6Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu6Text"]); ?></a>
-                                            <p class="dropdown-item-custom">
-                                                <?= ($pageHeader["section_1"]["subMenu6Details"]); ?>
-                                            </p>
-                                            <hr class="dropdown-divider" />
-                                        </li>
+                                        <?php
+                                        $subMenu4LinkArray = explode("/", $pageHeader["section_1"]["subMenu4Link"]);
+                                        if (in_array($subMenu4LinkArray[1], $activePages)) {
+                                        ?>
+                                            <li>
+                                                <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu4Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu4Text"]); ?></a>
+                                                <p class="dropdown-item-custom">
+                                                    <?= ($pageHeader["section_1"]["subMenu4Details"]); ?>
+                                                </p>
+                                                <hr class="dropdown-divider" />
+                                            </li>
+                                        <?php } ?>
+                                        <?php
+                                        $subMenu5LinkArray = explode("/", $pageHeader["section_1"]["subMenu5Link"]);
+                                        if (in_array($subMenu5LinkArray[1], $activePages)) {
+                                        ?>
+                                            <li>
+                                                <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu5Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu5Text"]); ?></a>
+                                                <p class="dropdown-item-custom">
+                                                    <?= ($pageHeader["section_1"]["subMenu5Details"]); ?>
+                                                </p>
+                                                <hr class="dropdown-divider" />
+                                            </li>
+                                        <?php } ?>
+                                        <?php
+                                        $subMenu6LinkArray = explode("/", $pageHeader["section_1"]["subMenu6Link"]);
+                                        if (in_array($subMenu6LinkArray[1], $activePages)) {
+                                        ?>
+                                            <li>
+                                                <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu6Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu6Text"]); ?></a>
+                                                <p class="dropdown-item-custom">
+                                                    <?= ($pageHeader["section_1"]["subMenu6Details"]); ?>
+                                                </p>
+                                                <hr class="dropdown-divider" />
+                                            </li>
+                                        <?php } ?>
+
                                     </div>
                                 </ul>
                             </li>

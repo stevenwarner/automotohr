@@ -49,9 +49,15 @@ class App extends CI_Controller
         //
         $this->getCommon($data, "why-us");
         $data['whyUsContent'] = $whyUsContent;
+        $data['pageContent'] = $pageContent;
+        if(empty($whyUsContent)){
+            $this->load->view('errors/html/error_404');
+
+        }else{
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/why_us');
         $this->load->view($this->footer);
+        }
     }
 
     /**
@@ -116,9 +122,14 @@ class App extends CI_Controller
         $this->getCommon($data, "privacy-policy");
         //
         $data['pageContent'] = $pageContent;
+        if(empty($pageContent)){
+            $this->load->view('errors/html/error_404');
+
+        }else{
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/privacy_policy');
         $this->load->view($this->footer);
+        }
     }
 
     /**
@@ -208,10 +219,18 @@ class App extends CI_Controller
         $this->getCommon($data, "products");
         //
         $data["pageContent"] = $pageContent["sections"];
-        //
+        //        
+        if(empty($pageContent)){
+            $this->load->view('errors/html/error_404');
+
+        }else{
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/products/main');
         $this->load->view($this->footer);
+    }
+
+
+
     }
 
     /**
@@ -263,9 +282,14 @@ class App extends CI_Controller
         //
         $data["countries"] = $this->affiliation_model->get_all_countries();
         //
+        if(empty($pageContent)){
+            $this->load->view('errors/html/error_404');
+
+        }else{
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/affiliate');
         $this->load->view($this->footer);
+        }
     }
 
     /**
