@@ -1568,7 +1568,8 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                         users.pay_plan_flag,
                         users.lms_job_title,
                         users.profile_picture,
-                        users.email
+                        users.email,
+                        portal_job_title_templates.sid as job_title_sid
                     ")
                         ->join(
                             "portal_job_title_templates",

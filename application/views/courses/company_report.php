@@ -278,9 +278,9 @@
                                                                     //
                                                                     $rowColor = "bg-danger";
                                                                     //
-                                                                    if ($completedCoursesPercentage >= "50") {
+                                                                    if ($completedCoursesPercentage == "100") {
                                                                         $rowColor = "bg-success";
-                                                                    } else if ($completedCoursesPercentage < "50" && $completedCoursesPercentage > "1") {
+                                                                    } else if ($completedCoursesPercentage < "99" && $completedCoursesPercentage > "1") {
                                                                         $rowColor = "bg-warning";
                                                                     }
                                                                 ?>

@@ -593,7 +593,6 @@ class Courses extends Public_Controller
                 foreach ($subordinateInfo['employees'] as $subordinateEmployee) {
                     if ($subordinateEmployee["job_title_sid"] > 0) {
                         //
-                        _e($subordinateEmployee, true, true);
                         if (in_array($subordinateEmployee["employee_sid"], $filters["employees"])) {
                             $selectedEmployeesList[] = $subordinateEmployee;
                             array_push($selectedEmployeesIds, $subordinateEmployee["employee_sid"]);
@@ -630,7 +629,6 @@ class Courses extends Public_Controller
             exit(0);
         }
         //
-        // _e($subordinateInfo,true);
         $data['title'] = "My Courses :: " . STORE_NAME;
         $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
@@ -1257,7 +1255,6 @@ class Courses extends Public_Controller
             $data["filters"] = $filters;
             $data["filterData"] = $filterData;
             $companyReport["departments_report"] = $departments;
-            // _e($companyReport["courses_report"],true,true);
             //
             if ($this->input->method() === 'post') {
                 if (!empty($companyEmployeesList) && !empty($companyCoursesList)) {
