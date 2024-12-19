@@ -110,6 +110,8 @@ $(function courseMaterials() {
 			},
 			getTheView
 		);
+
+		$('.csModalBody').css('top', '100px');
 	}
 
 	function getTheView() {

@@ -337,10 +337,13 @@ $(function editCourse() {
 				Loader: modalLoaderId,
 				Cl: "container",
 				Ask: true,
-				Body: '<div id="' + modalId + 'Body"></div>',
+				Body: '<div id="' + modalId + 'Body" style="top: 100px;"></div>',
 			},
 			loadView
 		);
+
+		$('.csModalBody').css('top', '100px');
+
 	}
 
 	/**
