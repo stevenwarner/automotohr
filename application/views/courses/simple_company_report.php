@@ -256,7 +256,7 @@
                             },
                             {
                                 category: 'Ready To Start',
-                                value: <?php echo round(($companyReport['courses_report']['total_inprogress_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2); ?>,
+                                value: <?php echo round(($companyReport['courses_report']['total_rts_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2); ?>,
                                 color: '#DF5353'
                             },
                             {
