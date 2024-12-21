@@ -1710,6 +1710,8 @@ $route['lms/courses/report'] = 'v1/Courses/subordinatesReport';
 $route['lms/courses/import_course_csv'] = 'v1/Courses/importCourseCSV';
 $route['lms/courses/import_course_csv_handler'] = 'v1/Courses/handler';
 $route['lms/courses/export_course_csv'] = 'v1/Courses/exportCourseCSV';
+$route['lms/courses/simple_company_report'] = 'v1/Courses/simpleCompanyReport';
+$route['lms/courses/simple_company_report/(:any)/(:any)/(:any)'] = 'v1/Courses/simpleCompanyReport/$1/$2/$3';
 
 $route['lms/subordinate/dashboard/(:num)'] = 'v1/Courses/subordinateDashboard/non_plus/$1';
 $route['lms/subordinate/courses/dashboard/(:num)'] = 'v1/Courses/subordinateDashboard/plus/$1';

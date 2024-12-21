@@ -223,16 +223,16 @@
                                     <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
                                         <div class="row" style="margin: 5px 5px;">
                                             <div class="col-lg-2 bg-success" style="padding: 16px;"></div>
-                                            <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has nearly completed 50% or more of the courses.</div>
+                                            <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has finished 100% of the required courses.</div>
                                         </div>
                                         <div class="row" style="margin: 5px 5px;">
                                             <div class="col-lg-2 bg-warning" style="padding: 16px;"></div>
-                                            <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has started attempting their assigned courses, but they have completed less than 50% of them.</div>
+                                            <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has started their assigned courses, but has not yet completed all of them.</div>
                                         </div>
                                         
                                         <div class="row" style="margin: 5px 5px;">
                                             <div class="col-lg-2 bg-danger" style="padding: 16px;"></div>
-                                            <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has either not started their assigned courses or has not been assigned any courses yet.</div>
+                                            <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has either not begun their assigned courses or has not been assigned any courses at this time.</div>
                                         </div>
                                     </div>
 
@@ -241,6 +241,11 @@
                                             <i class="fa fa-download" aria-hidden="true"></i>
                                             Export CSV
                                         </button>
+
+                                        <a type="button" class="form-btn margin-top" id="jsSimpleReportURL" target="_blank" href="<?php echo base_url("lms/courses/simple_company_report"); ?>">
+                                            <i class="fa fa-download" aria-hidden="true"></i>
+                                            Download Report
+                                        </a>
                                     </div>
                                 </div>
 
@@ -387,6 +392,10 @@
         var courses = "<?php echo $filters['courses']; ?>";
         var employees = "<?php echo $filters['employees']; ?>";
         var baseURL = "<?= base_url(); ?>";
+
+        var originalURL = window.location.href;
+        var newURL = originalURL.replace("company_report", "simple_company_report")
+        $("#jsSimpleReportURL").attr('href', newURL);
 
         // load select2 on department
         $("#jsCompanyDepartments").select2({

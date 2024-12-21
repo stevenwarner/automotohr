@@ -328,6 +328,7 @@ class Course_model extends CI_Model
             users.pay_plan_flag,
             users.job_title,
             users.lms_job_title,
+            users.profile_picture,
             portal_job_title_templates.sid as job_title_sid
         ')
         //     ->join(
