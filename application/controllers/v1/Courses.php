@@ -2572,7 +2572,7 @@ class Courses extends Public_Controller
             $action = $decrypt_keys[1];
             $companyId = getEmployeeUserParent_sid($employeeId);
             //
-            $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
+            $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses", "get", $companyId);
             $subordinateInfo['courses'] = $this->course_model->getActiveCompanyCourses($companyId);
             //
             if (!empty($subordinateInfo['employees'])) {
