@@ -1,6 +1,8 @@
 $(function () {
 	let XHR = null;
 
+	let pageId = getSegment(2);
+
 	$("#jsProductSliderForm").validate({
 		rules: {
 			mainHeading: {
@@ -117,9 +119,21 @@ $(function () {
 		//
 		const bannerRef = $(this).closest(".row").data("key");
 		const buttonRef = $(this);
+		let sectionStatus = $(this).data("status");
+
+		let statusMsg = "";
+		if (sectionStatus == "1") {
+			statusMsg = " De-Activate ";
+		} else if (sectionStatus == "0") {
+			statusMsg = " Activate ";
+		}
+		else {
+			statusMsg = " De-Activate ";
+		}
+
 		//
 		return _confirm(
-			"Do you really want to delete this product section?",
+			"Do you really want to " + statusMsg + "  this product section?",
 			function () {
 				processDeleteBProduct(bannerRef, buttonRef);
 			}
@@ -157,9 +171,9 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=" +
-							redirectTo
+						getSegment(2) +
+						"/?page=" +
+						redirectTo
 					);
 				});
 			});
@@ -261,8 +275,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=products"
+						getSegment(2) +
+						"/?page=products"
 					);
 				});
 			});
@@ -366,8 +380,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=products"
+						getSegment(2) +
+						"/?page=products"
 					);
 				});
 			});
@@ -382,6 +396,7 @@ $(function () {
 		//
 		const pageId = getSegment(2);
 		const btnHook = callButtonHook(buttonRef, true);
+
 		//
 		XHR = $.ajax({
 			url: baseUrl("cms/" + pageId + "/product/" + bannerRef),
@@ -396,10 +411,96 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=products"
+						getSegment(2) +
+						"/?page=products"
 					);
 				});
 			});
 	}
+
+
+	//
+	$(".jsPageStatus").click(function (event) {
+		//
+		event.preventDefault();
+		//
+		const formDataObj = new FormData();
+		formDataObj.append("section", "status");
+		formDataObj.append("status", $(this).data("key"));
+		//
+		processPageSectionStatus(formDataObj, $(".jsPageStatus"), "pageDetails");
+	});
+
+	//
+	function processPageSectionStatus(formDataObj, buttonRef, redirectTo) {
+		//
+		if (XHR !== null) {
+			return false;
+		}
+		const btnHook = callButtonHook(buttonRef, true);
+		//
+		XHR = $.ajax({
+			url: baseUrl("manage_admin/cms/page/edit/" + pageId),
+			method: "POST",
+			data: formDataObj,
+			processData: false,
+			contentType: false,
+		})
+			.always(function () {
+				XHR = null;
+				callButtonHook(btnHook, false);
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"manage_admin/edit_page/" +
+							pageId 
+					);
+				});
+			});
+	}
+
+	//
+	$(".jsDraggable").sortable({
+		update: function(event, ui) {
+			//
+			var tagIndex = 0;
+			var orderList = [];
+			var indecators = ui.item.context.className.split(" ");
+			//
+			$("."+indecators[0]).map(function (i) {
+				tagIndex = $(this).data("index");
+				orderList.push($(this).data("key"));
+			});
+			// 
+			var obj = {};
+			obj.tagIndex = tagIndex;
+			obj.sortOrders = orderList;
+			//
+			updateCardsSortOrder(obj);
+		}
+	});
+	//
+	function updateCardsSortOrder(data) {
+		// check if XHR already in progress
+		if (XHR !== null) {
+			XHR.abort();
+		}
+
+		//
+		XHR = $.ajax({
+			url: baseUrl("cms/update_solutions_sort_order/" + getSegment(2)),
+			method: "post",
+			data,
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				
+			});
+	}
+
 });

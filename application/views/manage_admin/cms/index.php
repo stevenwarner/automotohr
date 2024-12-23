@@ -57,6 +57,11 @@
                                                                                 <?php echo $page['slug']; ?>
                                                                             </a>
                                                                         </td>
+                                                                        <td style="vertical-align: middle;" class="text-center bg-<?= $page["status"] ? "success" : "danger"; ?>">
+                                                                            <strong>
+                                                                                <?= $page["status"] ? "PUBLISHED" : "UNPUBLISHED"; ?>
+                                                                            </strong>
+                                                                        </td>
                                                                         <td style="vertical-align: middle;">
                                                                             <?= formatDateToDB(
                                                                                 $page["updated_at"],
@@ -64,11 +69,7 @@
                                                                                 DATE_WITH_TIME
                                                                             ); ?>
                                                                         </td>
-                                                                        <td style="vertical-align: middle;" class="text-center bg-<?= $page["status"] ? "success" : "danger"; ?>">
-                                                                            <strong>
-                                                                                <?= $page["status"] ? "PUBLISHED" : "UNPUBLISHED"; ?>
-                                                                            </strong>
-                                                                        </td>
+                                                                    
                                                                         <td style="vertical-align: middle;">
                                                                             <?php if ($page['is_dynamic']) { ?>
                                                                                 <a href="<?php echo base_url('manage_admin/cms/page/edit/' . $page['sid']) ?>" class="btn btn-warning">
