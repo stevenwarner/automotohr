@@ -1498,7 +1498,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
             ->where("departments_management.company_sid", $CI->session->userdata("logged_in")["company_detail"]["sid"])
             ->where("departments_management.is_deleted", 0)
             ->where("departments_team_management.is_deleted", 0);
-            // if not plus then check for LMS manager role
+        // if not plus then check for LMS manager role
         if (!isPayrollOrPlus()) {
 
             $CI->db->group_start()
@@ -4218,5 +4218,27 @@ if (!function_exists("getSanitizeSalary")) {
             ? " - " . $max
             : ""
         );
+    }
+}
+
+
+//
+if (!function_exists('getAllActivePages')) {
+
+    function getAllActivePages()
+    {
+        //
+        $CI = &get_instance();
+        $CI->db
+            ->select('slug');  
+        $CI->db->where('status', 1);
+        $pageResult =   $CI->db->get('cms_pages_new')->result_array();
+
+        $activeslugs = [];
+        if (!empty($pageResult)) {
+                  $activeslugs = array_column($pageResult,'slug');
+        }
+       $activeslugs = array_column($pageResult,'slug');
+       return $activeslugs;
     }
 }

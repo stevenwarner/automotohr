@@ -122,6 +122,9 @@ class Indeed_cron extends CI_Controller
         // iterate through jobs
         foreach ($this->jobs as $job) {
             echo "\n Job Id = " . $this->job["job_sid"];
+            if (!$this->job["job_sid"]) {
+                continue;
+            }
             $this->jobBody = "";
             // set the job
             $this->job = $job;

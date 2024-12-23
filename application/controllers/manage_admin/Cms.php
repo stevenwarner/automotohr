@@ -179,7 +179,7 @@ class Cms extends Admin_Controller
         $this->data["appCSS"] = bundleCSS([
             "v1/plugins/ms_modal/main",
             "v1/plugins/ms_uploader/main",
-        ], "public/v1/app/", "app_" . $page_data["page"], true);
+        ], "public/v1/app/", "app_" . $page_data["page"], false);
         //
         $files = [];
         // for home page
@@ -202,6 +202,7 @@ class Cms extends Admin_Controller
         }
         // for each page
         else {
+
             $files = [
                 "v1/cms/page/" . $page_data["page"]
             ];
@@ -218,7 +219,7 @@ class Cms extends Admin_Controller
             "js/app_helper",
             "v1/cms/meta",
             "v1/cms/page",
-        ], $files), "public/v1/app/", "app_" . $page_data["page"], true);
+        ], $files), "public/v1/app/", "app_" . $page_data["page"], false);
 
         $this->render('manage_admin/cms/v1/' . $page_data['page']);
     }
@@ -1100,11 +1101,22 @@ class Cms extends Admin_Controller
         $pageContent = $this->cms_model->get_page_data($pageId)["content"];
         // //
         $pageContent = json_decode($pageContent, true);
+        $statusMsg = '';
+        // unset($pageContent["page"]["sections"]["products"][$index]);
+        if ($pageContent["page"]["sections"]["products"][$index]['status'] == "1") {
+            $pageContent["page"]["sections"]["products"][$index]['status'] = "0";
+            $statusMsg = 'De-Activate';
+        } else if ($pageContent["page"]["sections"]["products"][$index]['status'] == "0") {
+            $pageContent["page"]["sections"]["products"][$index]['status'] = "1";
+            $statusMsg = 'Activate';
+        } else {
+            $pageContent["page"]["sections"]["products"][$index]['status'] = "0";
+            $statusMsg = 'De-Activate';
+        }
 
-        unset($pageContent["page"]["sections"]["products"][$index]);
         $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
-        return SendResponse(200, ["msg" => "You have successfully deleted the selected product section."]);
+        return SendResponse(200, ["msg" => "You have successfully " . $statusMsg . " the selected product section."]);
     }
 
 
@@ -1397,7 +1409,8 @@ class Cms extends Admin_Controller
         ]);
     }
 
-    public function sortCards ($cards) {
+    public function sortCards($cards)
+    {
         //
         foreach ($cards as $key => $card) {
             if (!isset($card['sortOrder'])) {
@@ -1415,7 +1428,8 @@ class Cms extends Admin_Controller
         return $cards;
     }
 
-    public function updateSortOrder (int $pageId) {
+    public function updateSortOrder(int $pageId)
+    {
         // get the page record
         $pageContent = $this->cms_model
             ->get_page_data(
@@ -1436,8 +1450,8 @@ class Cms extends Admin_Controller
                 $item = $tagCards[$index];
                 //
                 $item['index'] = $key;
-                $item['sortOrder'] = $key+1;
-                $newCardsOrder[] = $item; 
+                $item['sortOrder'] = $key + 1;
+                $newCardsOrder[] = $item;
             }
             //         
             $pageContent["page"]["sections"]["section0"]["tags"][$post["tagIndex"]]["cards"] = $newCardsOrder;
@@ -1557,7 +1571,6 @@ class Cms extends Admin_Controller
                 $pageContent["meta"]["title"] = $post["title"];
                 $pageContent["meta"]["description"] = $post["description"];
                 $pageContent["meta"]["keywords"] = $post["keywords"];
-
             } else {
                 if ($post["source_type"]) {
                     //
@@ -1592,7 +1605,7 @@ class Cms extends Admin_Controller
                     $post["sourceFile"] = $fileLink;
                     $post["sourceType"] = $post["source_type"];
                 }
-    
+
                 //
                 $post["details"] = $this->input->post("details", false);
                 // update the section
@@ -1613,5 +1626,40 @@ class Cms extends Admin_Controller
                 "pageId" => $pageId
             ]
         );
+    }
+
+
+    //
+    public function updateSolutionsSortOrder(int $pageId)
+    {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+        $post = $this->input->post(null, true);
+        //
+        $pageContent = json_decode($pageContent, true);
+
+        //
+        if (isset($post["sortOrders"])) {
+            $tagCards = $pageContent["page"]["sections"]["products"];
+
+            //
+            foreach ($post["sortOrders"] as $key => $index) {
+                //
+                $item = $tagCards[$index];
+                $pageContent["page"]["sections"]["products"][$key] = $item;
+            }
+            //        
+            $msg = "You have successfully updated a cards sort order.";
+        }
+        //
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, [
+            "msg" => $msg
+        ]);
     }
 }
