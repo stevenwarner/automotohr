@@ -1474,8 +1474,11 @@ if (!function_exists('getMyDepartmentAndTeams')) {
      */
     function getMyDepartmentAndTeams(int $employeeId, string $flag = "", string $method = "get", int $companyId = 0): array
     {
+        //
+        $CI = &get_instance();
+        //
         $companyId = $companyId != 0
-            ? $company_sid
+            ? $companyId
             : $CI->session->userdata("logged_in")["company_detail"]["sid"];
         // set default
         $r = [
@@ -1483,8 +1486,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
             'teams' => [],
             'employees' => []
         ];
-        //
-        $CI = &get_instance();
+
         //
         $CI->db->select("
             departments_team_management.sid as team_sid, 
