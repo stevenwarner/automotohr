@@ -2442,3 +2442,4 @@ $route['lms/courses/company_courses_list']['get'] = 'v1/Courses/companyCoursesLi
 $route['lms/courses/move_recursive_into_history'] = 'v1/Courses/moveRecursiveCoursesIntoHistory';
 $route['lms/manager_report/(:any)'] = 'v1/Courses/managerCoursesReport/$1';
 $route["cms/update_solutions_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateSolutionsSortOrder/$1";
+

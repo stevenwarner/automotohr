@@ -766,7 +766,6 @@ class Cron_email_model extends CI_Model
         // get the required indexes
         $templateSubject = $template["subject"];
         $templateFromName = $template["from_name"];
-        $templateBody = $template["text"];
         //
         $this->load->library('encryption');
         //
@@ -775,6 +774,7 @@ class Cron_email_model extends CI_Model
         );
         //
         foreach ($this->notifiers as $employee) {
+            $templateBody = $template["text"];
             // set replace array
             $replaceArray = $companyReplaceArray;
             //
