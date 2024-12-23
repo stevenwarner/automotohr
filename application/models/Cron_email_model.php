@@ -767,7 +767,12 @@ class Cron_email_model extends CI_Model
         $templateSubject = $template["subject"];
         $templateFromName = $template["from_name"];
         $templateBody = $template["text"];
-
+        //
+        $this->load->library('encryption');
+        //
+        $this->encryption->initialize(
+            get_encryption_initialize_array()
+        );
         //
         foreach ($this->notifiers as $employee) {
             // set replace array
@@ -777,7 +782,27 @@ class Cron_email_model extends CI_Model
             $replaceArray["{{full_name}}"] =
                 $replaceArray["{{contact_name}}"]
                 = $employee["contact_name"];
-
+            //
+            $viewCode = str_replace(
+                ['/', '+'],
+                ['$$ab$$', '$$ba$$'],
+                $this->encryption->encrypt($employee['employer_sid'] . '/' . 'view')
+            );
+            //
+            $downloadCode = str_replace(
+                ['/', '+'],
+                ['$$ab$$', '$$ba$$'],
+                $this->encryption->encrypt($employee['employer_sid'] . '/' . 'download')
+            );
+            //
+            $viewLink = base_url("lms/manager_report") . '/' . $viewCode;
+            $downloadLink = base_url("lms/manager_report") . '/' . $downloadCode;
+            //
+            $viewReport = '<a style="background-color: #337ab7; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
+            $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
+            //
+            $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
+            $templateBody = str_replace('{{download_report}}', $downloadReport, $templateBody);
             // set keys
             $replaceKeys = array_keys($replaceArray);
 
@@ -797,7 +822,7 @@ class Cron_email_model extends CI_Model
                 $replaceArray,
                 $templateBody
             );
-
+            //
             log_and_send_email_with_attachment(
                 FROM_EMAIL_NOTIFICATIONS,
                 $employee["email"],

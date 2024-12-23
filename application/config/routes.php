@@ -2440,3 +2440,4 @@ $route['manage_admin/reports/indeed/history/(:num)'] = 'manage_admin/reports/Ind
 
 $route['lms/courses/company_courses_list']['get'] = 'v1/Courses/companyCoursesList';
 $route['lms/courses/move_recursive_into_history'] = 'v1/Courses/moveRecursiveCoursesIntoHistory';
+$route['lms/manager_report/(:any)'] = 'v1/Courses/managerCoursesReport/$1';

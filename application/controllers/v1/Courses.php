@@ -2544,5 +2544,92 @@ class Courses extends Public_Controller
        
     }
 
+    /**
+     * public function for Accept and Reject Document
+     * 
+     * @version 1.0
+     * @date    05/17/2022
+     * 
+     * 
+     * @param string $token
+     */
+    function managerCoursesReport(
+        $token
+    ) {
+        // 
+        $this->load->library('encryption');
+        //
+        $this->encryption->initialize(
+            get_encryption_initialize_array()
+        );
+        //
+        $decrypt_token = $this->encryption->decrypt(str_replace(['$$ab$$', '$$ba$$'], ['/', '+'], $token));
+        //
+        if (!empty($decrypt_token)) {
+            $decrypt_keys = explode("/", $decrypt_token);
+            //
+            $employeeId = $decrypt_keys[0];
+            $action = $decrypt_keys[1];
+            $companyId = getEmployeeUserParent_sid($employeeId);
+            //
+            $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
+            $subordinateInfo['courses'] = $this->course_model->getActiveCompanyCourses($companyId);
+            //
+            if (!empty($subordinateInfo['employees'])) {
+                //
+                $subordinateInfo['total_assigned_courses'] = 0;
+                $subordinateInfo['total_inprogress_courses'] = 0;
+                $subordinateInfo['total_completed_courses'] = 0;
+                $subordinateInfo['total_rts_courses'] = 0;
+                $subordinateInfo['employee_have_courses'] = 0;
+                $subordinateInfo['employee_not_have_courses'] = 0;
+                $subordinateInfo['employees_with_completed_courses'] = 0;
+                $subordinateInfo['employees_with_started_courses'] = 0;
+                $subordinateInfo['employees_with_not_started_courses'] = 0;
+                //
+                unset($subordinateInfo['employees'][$employeeId]);
+                //
+                foreach ($subordinateInfo['employees'] as $key => $subordinateEmployee) {
+                    //
+                    $teamId = $subordinateEmployee['team_sid'];
+                    $subordinateInfo['employees'][$key]['department_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
+                    $subordinateInfo['employees'][$key]['team_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
+                    //
+                    if (isset($subordinateEmployee['coursesInfo'])) {
+                        //
+                        $subordinateInfo["employee_have_courses"]++;
+                        $subordinateInfo['total_assigned_courses'] = $subordinateInfo['total_assigned_courses'] + $subordinateEmployee['coursesInfo']['total_course'];
+                        $subordinateInfo['total_inprogress_courses'] = $subordinateInfo['total_inprogress_courses'] + $subordinateEmployee['coursesInfo']['started'];
+                        $subordinateInfo['total_completed_courses'] = $subordinateInfo['total_completed_courses'] + $subordinateEmployee['coursesInfo']['completed'];
+                        $subordinateInfo['total_rts_courses'] = $subordinateInfo['total_rts_courses'] + $subordinateEmployee['coursesInfo']['ready_to_start'];
+                        $subordinateInfo['employees'][$key]['coursesInfo']['percentage'] =  ($subordinateEmployee['coursesInfo']['completed'] / $subordinateEmployee['coursesInfo']['total_course']) * 100;
+                        //
+                        if ($subordinateEmployee['coursesInfo']['total_course'] == $subordinateEmployee['coursesInfo']['completed']) {
+                            $subordinateInfo["employees_with_completed_courses"]++;
+                        } else if ($subordinateEmployee['coursesInfo']['completed'] > 0) {
+                            $subordinateInfo["employees_with_started_courses"]++;
+                        } else if ($subordinateEmployee['coursesInfo']['started'] == 0) {
+                            $subordinateInfo["employees_with_not_started_courses"]++;
+                        }
+                    } else {
+                        $subordinateInfo["employee_not_have_courses"]++;
+                    }
+                }
+            }
+            //
+            $data["employeeId"] = $employeeId;
+            $data["companyId"] = $companyId;
+            $data["companyName"] = getCompanyNameBySid($companyId);
+            $data["companyLogo"] = 'https://automotohrattachments.s3.amazonaws.com/' . getCompanyLogoBySid($companyId);
+            $data["subordinateReport"] = $subordinateInfo;
+            $data["action"] = $action;
+            //
+            $this->load->view('courses/manager_report', $data);
+            ///
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
+
 
 }

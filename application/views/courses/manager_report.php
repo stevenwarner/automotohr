@@ -20,16 +20,16 @@
                             <section class="padding-10mm">
                                 <article class="sheet-header">
                                     <div class="header-logo">
-                                        <?php if (!empty($session['company_detail']['Logo'])) { ?>
-                                            <img src="<?php echo 'https://automotohrattachments.s3.amazonaws.com/' . $session['company_detail']['Logo'] ?>" style="width: 75px; height: 75px;" class="img-rounded"><br>
-                                        <?php } ?>
+                                        <img src="<?php echo $companyLogo; ?>" style="width: 75px; height: 75px;" class="img-rounded"><br>
                                     </div>
                                     <div class="center-col">
-                                        <h2><?php echo $session['company_detail']['CompanyName']; ?></h2>
+                                        <h2><?php echo $companyName; ?></h2>
                                     </div>
                                 </article>
-                                <p><strong>Exported By:  </strong> <?php echo getUserNameBySID($employer_sid); ?></p>
-                                <p><strong>Exported Date: </strong> <?php echo formatDateToDB( date('Y-m-d H:i:s'), DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></p>
+                                <?php if ($action == "download") { ?>
+                                    <p><strong>Exported By:  </strong> <?php echo getUserNameBySID($employeeId); ?></p>
+                                    <p><strong>Exported Date: </strong> <?php echo formatDateToDB( date('Y-m-d H:i:s'), DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></p>
+                                <?php } ?>
                                 <table class="i9-table">
                                     <thead>
                                         <tr class="bg-gray">
@@ -63,7 +63,7 @@
                                                 Number of Employees with Assigned Courses
                                             </td>
                                             <td>
-                                            <?php echo $companyReport['employee_have_courses']; ?>
+                                            <?php echo $subordinateReport['employee_have_courses']; ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -71,7 +71,7 @@
                                                 Number of Employees Without Assigned Courses
                                             </td>
                                             <td>
-                                                <?php echo $companyReport['employee_not_have_courses']; ?>
+                                                <?php echo $subordinateReport['employee_not_have_courses']; ?>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -90,7 +90,7 @@
                                                 Total Assigned Course(s)
                                             </td>
                                             <td>
-                                            <?php echo $companyReport['courses_report']['total_assigned_courses']; ?>
+                                            <?php echo $subordinateReport['total_assigned_courses']; ?>
                                             </td>
                                             <td class="bg-gray">
                                                 <strong>Percentage</strong>
@@ -100,10 +100,13 @@
                                             <td>
                                                 Total Completed Course(s)
                                             <td>
-                                                <?php echo $companyReport['courses_report']['total_completed_courses']; ?>
+                                                <?php echo $subordinateReport['total_completed_courses']; ?>
                                             </td>
                                             <td>
-                                                <?php echo round(($companyReport['courses_report']['total_completed_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%'; ?>
+                                                <?php 
+                                                    $completedPercentage = round(($subordinateReport['total_completed_courses'] / $subordinateReport['total_assigned_courses']) * 100, 2);
+                                                    echo $completedPercentage.'%';
+                                                ?>
                                             </td>
                                         </tr>
                                         <tr>
@@ -111,20 +114,26 @@
                                                 Total Inprogress Course(s)
                                             </td>
                                             <td>
-                                            <?php echo $companyReport['courses_report']['total_inprogress_courses']; ?>
+                                                <?php echo $subordinateReport['total_inprogress_courses']; ?>
                                             </td>
                                             <td>
-                                            <?php echo round(($companyReport['courses_report']['total_inprogress_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%'; ?>
+                                                <?php 
+                                                    $inprogressPercentage = round(($subordinateReport['total_inprogress_courses'] / $subordinateReport['total_assigned_courses']) * 100, 2);
+                                                    echo $inprogressPercentage.'%'; 
+                                                ?>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 Total Ready to Start Course(s)
                                             <td>
-                                                <?php echo $companyReport['courses_report']['total_rts_courses']; ?>
+                                                <?php echo $subordinateReport['total_rts_courses']; ?>
                                             </td>
                                             <td>
-                                            <?php echo round(($companyReport['courses_report']['total_rts_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%'; ?>
+                                                <?php
+                                                    $rtsPercentage = round(($subordinateReport['total_rts_courses'] / $subordinateReport['total_assigned_courses']) * 100, 2);
+                                                    echo $rtsPercentage.'%'; 
+                                                ?>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -164,47 +173,58 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($companyReport['departments_report'] as $department) { ?>
-                                            <?php if (!empty($department["employees"])) { ?>
-                                                <?php foreach ($department['employees'] as $employee) { ?>
-                                                    <?php
-                                                        $completedCoursesPercentage = $companyReport["EmployeeList"][$employee]["courses_statistics"]['percentage'];
-                                                        //
-                                                        $rowColor = "bg-danger";
-                                                        //
-                                                        if ($completedCoursesPercentage == "100") {
-                                                            $rowColor = "bg-success";
-                                                        } else if ($completedCoursesPercentage < "99" && $completedCoursesPercentage > "1") {
-                                                            $rowColor = "bg-warning";
-                                                        }    
-                                                    ?>
-                                                    <tr class="<?php echo $rowColor; ?>">
-                                                        <td>
-                                                            <img style="width: 55px; height: 55px; border-radius: 50% !important;" src="<?php echo $companyReport["EmployeeList"][$employee]['profile_picture'] ?>" alt="" />
-                                                        </td>
-                                                        <td>
-                                                            <?php echo $companyReport["EmployeeList"][$employee]["full_name"]; ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php echo $department["name"]; ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php echo $companyReport["EmployeeList"][$employee]["courses_statistics"]['courseCount']; ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php echo $companyReport["EmployeeList"][$employee]["courses_statistics"]['inProgressCount']; ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php echo $companyReport["EmployeeList"][$employee]["courses_statistics"]['readyToStart']; ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php echo $companyReport["EmployeeList"][$employee]["courses_statistics"]['completedCount']; ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php echo $companyReport["EmployeeList"][$employee]["courses_statistics"]['percentage']; ?>
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
+                                        <?php if ($subordinateReport['employees']) { ?>
+                                            <?php foreach ($subordinateReport['employees'] as $employee) { ?>
+                                                <?php
+                                                    $percentage = 0;
+                                                    $assignedCourses = 0;
+                                                    $inprogressCourses = 0;
+                                                    $rtsCourses = 0;
+                                                    $completedCourses = 0;
+                                                    //
+                                                    if (isset($employee['coursesInfo'])) {
+                                                        $percentage = $employee['coursesInfo']['percentage'];
+                                                        $assignedCourses = $employee['coursesInfo']['total_course'];;
+                                                        $inprogressCourses = $employee['coursesInfo']['started'];
+                                                        $rtsCourses = $employee['coursesInfo']['ready_to_start'];
+                                                        $completedCourses = $employee['coursesInfo']['completed'];
+                                                    }
+                                                    
+                                                    //
+                                                    $rowColor = "bg-danger";
+                                                    //
+                                                    if ($percentage == "100") {
+                                                        $rowColor = "bg-success";
+                                                    } else if ($percentage < "99" && $percentage > "1") {
+                                                        $rowColor = "bg-warning";
+                                                    }    
+                                                ?>
+                                                <tr class="<?php echo $rowColor; ?>">
+                                                    <td>
+                                                        <img style="width: 55px; height: 55px; border-radius: 50% !important;" src="<?php echo $employee['profile_picture_url'] ?>" alt="" />
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $employee["full_name"]; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $employee["department_name"]; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $assignedCourses; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $inprogressCourses; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $rtsCourses; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $completedCourses; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $percentage."%"; ?>
+                                                    </td>
+                                                </tr>
                                             <?php } ?>
                                         <?php } ?>
                                     </tbody>
@@ -225,6 +245,7 @@
         </div>    
         <script type="text/javascript" src="<?php echo base_url('assets/js/jquery-1.11.3.min.js'); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
+        
         <script type="text/javascript">
             $( window ).on( "load", function() {
 
@@ -246,17 +267,17 @@
                         data: [
                             {
                                 category: 'In Progress',
-                                value: <?php echo round(($companyReport['courses_report']['total_inprogress_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2); ?>,
+                                value: <?php echo round(($subordinateReport['total_inprogress_courses'] / $subordinateReport['total_assigned_courses']) * 100, 2); ?>,
                                 color: '#DDDF0D'
                             },
                             {
                                 category: 'Ready To Start',
-                                value: <?php echo round(($companyReport['courses_report']['total_rts_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2); ?>,
+                                value: <?php echo round(($subordinateReport['total_rts_courses'] / $subordinateReport['total_assigned_courses']) * 100, 2); ?>,
                                 color: '#DF5353'
                             },
                             {
                                 category: 'Completed',
-                                value: <?php echo round(($companyReport['courses_report']['total_completed_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2); ?>,
+                                value: <?php echo round(($subordinateReport['total_completed_courses'] / $subordinateReport['total_assigned_courses']) * 100, 2); ?>,
                                 color: '#00e272'
                             }
                         ],
@@ -285,22 +306,22 @@
                 var chartData = [
                     {
                         category: "Employee(s) with Course Completions",
-                        value: <?php echo $companyReport['employees_with_completed_courses'] ; ?>,
+                        value: <?php echo $subordinateReport['employees_with_completed_courses'] ; ?>,
                         color: '#00e272'
                     },
                     {
                         category: 'Employee(s) with Ongoing Course(s)',
-                        value: <?php echo $companyReport['employees_with_started_courses']; ?>,
+                        value: <?php echo $subordinateReport['employees_with_started_courses']; ?>,
                         color: '#DDDF0D'
                     },
                     {
                         category: 'Employee(s) Yet to Start Course(s)',
-                        value: <?php echo $companyReport['employees_with_not_started_courses']; ?>,
+                        value: <?php echo $subordinateReport['employees_with_not_started_courses']; ?>,
                         color: '#DF5353'
                     },
                     {
                         category: 'Employees Without Assigned Courses',
-                        value: <?php echo $companyReport['employee_not_have_courses']; ?>,
+                        value: <?php echo $subordinateReport['employee_not_have_courses']; ?>,
                         color: '#544fc5'
                     }
                 ];
@@ -342,76 +363,80 @@
                     }
                 });
 
-                setTimeout(() => {
-                    var imgs = $('#jsCompanyReport').find('img');
-                    var i = 0;
-                    //
-                    if(imgs.length){
-                        $("#jsFileLoader").show();
+                if ('<?php echo $action; ?>' == "download") { 
+                    setTimeout(() => {
+                        var imgs = $('#jsCompanyReport').find('img');
+                        var i = 0;
                         //
-                        i = imgs.length;
-                        //
-                        $(imgs).each(function(ind,v) {
-                            var imgSrc = $(this).attr('src');
-                            var _this = this;
+                        if(imgs.length){
+                            $("#jsFileLoader").show();
+                            //
+                            i = imgs.length;
+                            //
+                            $(imgs).each(function(ind,v) {
+                                var imgSrc = $(this).attr('src');
+                                var _this = this;
 
-                            var p = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm; 
+                                var p = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm; 
 
-                            if (imgSrc.match(p)) {
-                                $.ajax({
-                                    url: '<?= base_url('hr_documents_management/getbase64/')?>',
-                                    data:{
-                                        url: imgSrc.trim()
-                                    },
-                                    type: "GET",
-                                    async: false,
-                                    success: function (resp){
-                                        resp = JSON.parse(resp);
-                                        $(_this).attr("src", "data:"+resp.type+";base64,"+resp.string);
-                                        --i;
-                                        download_document();
-                                    },
-                                    error: function(){
+                                if (imgSrc.match(p)) {
+                                    $.ajax({
+                                        url: '<?= base_url('hr_documents_management/getbase64/')?>',
+                                        data:{
+                                            url: imgSrc.trim()
+                                        },
+                                        type: "GET",
+                                        async: false,
+                                        success: function (resp){
+                                            resp = JSON.parse(resp);
+                                            $(_this).attr("src", "data:"+resp.type+";base64,"+resp.string);
+                                            --i;
+                                            download_document();
+                                        },
+                                        error: function(){
 
-                                    }
-                                });
-                            } else { 
-                                --i; 
-                                download_document();
-                            }
-                        });
-                    } else {
-                        download_document();
-                    }
-
-                    function download_document(){
-                        if(i != 0) return;
-                        $("#jsFileLoader").hide();
-                        // 
-                        var draw = kendo.drawing;
-                        draw.drawDOM($("#jsCompanyReport"), {
-                            avoidLinks: false,
-                            paperSize: "auto",
-                            multiPage: true,
-                            margin: { bottom: "2cm" },
-                            scale: 0.8
-                        })
-                        .then(function(root) {
-                            return draw.exportPDF(root);
-                        })
-                        .done(function(data) {
-                            var pdf;
-                            pdf = data;
-
-                            $('#myiframe').attr("src",data);
-                            kendo.saveAs({
-                                dataURI: pdf,
-                                fileName: '<?php echo str_replace(' ', '_', $session['company_detail']['CompanyName'])."_".date('m_d_Y_H_i_s', strtotime('now')).".pdf"; ?>',
+                                        }
+                                    });
+                                } else { 
+                                    --i; 
+                                    download_document();
+                                }
                             });
-                            window.close(); 
-                        });
-                    }
-                }, 2000);    
+                        } else {
+                            download_document();
+                        }
+
+                        function download_document(){
+                            if(i != 0) return;
+                            $("#jsFileLoader").hide();
+                            // 
+                            var draw = kendo.drawing;
+                            draw.drawDOM($("#jsCompanyReport"), {
+                                avoidLinks: false,
+                                paperSize: "auto",
+                                multiPage: true,
+                                margin: { bottom: "2cm" },
+                                scale: 0.8
+                            })
+                            .then(function(root) {
+                                return draw.exportPDF(root);
+                            })
+                            .done(function(data) {
+                                var pdf;
+                                pdf = data;
+
+                                $('#myiframe').attr("src",data);
+                                kendo.saveAs({
+                                    dataURI: pdf,
+                                    fileName: '<?php echo str_replace(' ', '_', $companyName)."_".date('m_d_Y_H_i_s', strtotime('now')).".pdf"; ?>',
+                                });
+                                window.close(); 
+                            });
+                        }
+                    }, 2000);   
+                } else {
+                    $("#jsFileLoader").hide();
+                }
             });
         </script>
     </body>
