@@ -234,7 +234,9 @@ class Cron_email_model extends CI_Model
         array $courseIds = []
     ) {
         echo "Company Id: {$companyId} \n";
-
+        if ($companyId != 51) {
+            return;
+        }
         // set the company Id
         $this->companyId = $companyId;
         // get notifiers
