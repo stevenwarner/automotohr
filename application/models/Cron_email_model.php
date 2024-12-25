@@ -233,6 +233,7 @@ class Cron_email_model extends CI_Model
         ],
         array $courseIds = []
     ) {
+        echo "Company Id: {$companyId} \n";
         // set the company Id
         $this->companyId = $companyId;
         // get notifiers
@@ -242,6 +243,7 @@ class Cron_email_model extends CI_Model
         );
         //
         if (!$this->notifiers) {
+            echo "No notifiers found! \n";
             return ["errors" => ["No notifiers found"]];
         }
         // loop through the 
@@ -249,10 +251,11 @@ class Cron_email_model extends CI_Model
             // skip in case of non-employee contact
             // as we don't have team members
             if ($v0["employer_sid"] === 0) {
+                echo "Employer Id 0 \n";
                 continue;
             }
             // get the ream member ids
-            $response = getMyDepartmentAndTeams($v0["employer_sid"], "courses");
+            $response = getMyDepartmentAndTeams($v0["employer_sid"], "courses", "get", $this->companyId);
             //
             $teamEmployeeIds = $response
                 ? array_column(
@@ -262,6 +265,7 @@ class Cron_email_model extends CI_Model
                 : [];
             //
             if (!$teamEmployeeIds) {
+                echo "No teams found \n";
                 continue;
             }
             // get the company employees by course
@@ -273,14 +277,17 @@ class Cron_email_model extends CI_Model
                 );
             // no team members found
             if (!$employeesWithCourseList) {
+                echo "No employees with courses found \n";
                 continue;
             }
             //
             $this->companyEmployees = $employeesWithCourseList;
             //
             $report = $this->generateReport();
+            echo "Report generated \n";
             //
             $this->sendCourseReportEmails($report);
+            echo "Report Sent \n\n";
         }
         //
         return ["success"];
@@ -822,6 +829,7 @@ class Cron_email_model extends CI_Model
                 $replaceArray,
                 $templateBody
             );
+            echo "Sending Email \n\n";
             //
             log_and_send_email_with_attachment(
                 FROM_EMAIL_NOTIFICATIONS,

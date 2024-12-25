@@ -1472,16 +1472,21 @@ if (!function_exists('getMyDepartmentAndTeams')) {
      * @param string $flag
      * @param string $method
      */
-    function getMyDepartmentAndTeams(int $employeeId, string $flag = "", string $method = "get"): array
+    function getMyDepartmentAndTeams(int $employeeId, string $flag = "", string $method = "get", int $companyId = 0): array
     {
+        //
+        $CI = &get_instance();
+        //
+        $companyId = $companyId != 0
+            ? $companyId
+            : $CI->session->userdata("logged_in")["company_detail"]["sid"];
         // set default
         $r = [
             'departments' => [],
             'teams' => [],
             'employees' => []
         ];
-        //
-        $CI = &get_instance();
+
         //
         $CI->db->select("
             departments_team_management.sid as team_sid, 
@@ -1495,7 +1500,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                 "departments_management.sid = departments_team_management.department_sid",
                 "inner"
             )
-            ->where("departments_management.company_sid", $CI->session->userdata("logged_in")["company_detail"]["sid"])
+            ->where("departments_management.company_sid", $companyId)
             ->where("departments_management.is_deleted", 0)
             ->where("departments_team_management.is_deleted", 0);
         // if not plus then check for LMS manager role
@@ -4426,15 +4431,15 @@ if (!function_exists('getAllActivePages')) {
         //
         $CI = &get_instance();
         $CI->db
-            ->select('slug');  
+            ->select('slug');
         $CI->db->where('status', 1);
         $pageResult =   $CI->db->get('cms_pages_new')->result_array();
 
         $activeslugs = [];
         if (!empty($pageResult)) {
-                  $activeslugs = array_column($pageResult,'slug');
+            $activeslugs = array_column($pageResult, 'slug');
         }
-       $activeslugs = array_column($pageResult,'slug');
-       return $activeslugs;
+        $activeslugs = array_column($pageResult, 'slug');
+        return $activeslugs;
     }
 }
