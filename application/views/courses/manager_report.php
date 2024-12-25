@@ -90,7 +90,7 @@
                                                 Total Assigned Course(s)
                                             </td>
                                             <td>
-                                            <?php echo $subordinateReport['total_assigned_courses']; ?>
+                                                <?php echo $subordinateReport['total_assigned_courses']; ?>
                                             </td>
                                             <td class="bg-gray">
                                                 <strong>Percentage</strong>
@@ -251,7 +251,7 @@
 
                 $("#container1").kendoChart({
                     title: {
-                        text: "Course(s) Overview",
+                        text: "Employee(s) Overview",
                         font: "22px Arial" // Title font size
                     },
                     seriesDefaults: {
@@ -267,17 +267,17 @@
                         data: [
                             {
                                 category: 'In Progress',
-                                value: <?php echo round(($subordinateReport['total_inprogress_courses'] / $subordinateReport['total_assigned_courses']) * 100, 2); ?>,
+                                value: <?php echo round(($subordinateReport['employees_with_started_courses'] / $subordinateReport['employee_have_courses']) * 100, 2); ?>,
                                 color: '#DDDF0D'
                             },
                             {
                                 category: 'Ready To Start',
-                                value: <?php echo round(($subordinateReport['total_rts_courses'] / $subordinateReport['total_assigned_courses']) * 100, 2); ?>,
+                                value: <?php echo round(($subordinateReport['employees_with_not_started_courses'] / $subordinateReport['employee_have_courses']) * 100, 2); ?>,
                                 color: '#DF5353'
                             },
                             {
                                 category: 'Completed',
-                                value: <?php echo round(($subordinateReport['total_completed_courses'] / $subordinateReport['total_assigned_courses']) * 100, 2); ?>,
+                                value: <?php echo round(($subordinateReport['employees_with_completed_courses'] / $subordinateReport['employee_have_courses']) * 100, 2); ?>,
                                 color: '#00e272'
                             }
                         ],

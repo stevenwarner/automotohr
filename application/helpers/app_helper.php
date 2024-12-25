@@ -1671,6 +1671,202 @@ if (!function_exists('getMyDepartmentAndTeams')) {
     }
 }
 
+if (!function_exists('getLMSManagerDepartmentAndTeams')) {
+    /**
+     * get employee teams and departments
+     *
+     * @param int $employeeId
+     * @param string $flag
+     * @param string $method
+     */
+    function getLMSManagerDepartmentAndTeams(int $employeeId, $companyId): array
+    {
+        // set default
+        $r = [
+            'departments' => [],
+            'teams' => [],
+            'employees' => []
+        ];
+        //
+        $CI = &get_instance();
+        //
+        $CI->db->select("
+            departments_team_management.sid as team_sid, 
+            departments_team_management.name as team_name,
+            departments_management.sid,
+            departments_management.name,
+            departments_management.lms_managers_ids
+        ")
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_team_management.department_sid",
+                "inner"
+            )
+            ->where("departments_management.company_sid", $companyId)
+            ->where("departments_management.is_deleted", 0)
+            ->where("departments_team_management.is_deleted", 0);
+        
+
+        $CI->db->group_start()
+            ->where("FIND_IN_SET({$employeeId}, departments_management.lms_managers_ids) > 0", null, null)
+            ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.lms_managers_ids) > 0", null, null)
+            ->group_end();
+        
+        $departmentAndTeams = $CI->db->get('departments_team_management');
+        //
+        $departmentAndTeams = $departmentAndTeams->result_array();
+        //
+        if (!empty($departmentAndTeams)) {
+            //
+            foreach ($departmentAndTeams as $team) {
+                $r['teams'][$team["team_sid"]] = array(
+                    "department_sid" => $team["sid"],
+                    "department_name" => $team["name"],
+                    "sid" => $team["team_sid"],
+                    "name" => $team["team_name"],
+                    "employees_ids" => []
+                );
+                //
+                if (isPayrollOrPlus() || (in_array($employeeId, explode(",", $team["lms_managers_ids"])))) {
+                    $r['departments'][$team["sid"]] = array(
+                        "sid" => $team["sid"],
+                        "name" =>  $team["name"],
+                        "employees_ids" => []
+                    );
+                }
+            }
+            //
+            $teamSids = array_column($departmentAndTeams, "team_sid");
+            //
+            $TeamEmployees = $CI->db->select("
+                            department_sid, 
+                            team_sid, 
+                            employee_sid
+                        ")
+                ->where_in('team_sid', $teamSids)
+                ->get('departments_employee_2_team')
+                ->result_array();
+            //
+            $alreadyExist = [];
+            $employees = [];
+            //
+            foreach ($TeamEmployees as $employee) {
+                //
+                if (!in_array($employee['employee_sid'], $alreadyExist)) {
+                    array_push($alreadyExist, $employee['employee_sid']);
+                    $jobTitleInfo = $CI->db->select("
+                        users.job_title,
+                        users.first_name,
+                        users.last_name,
+                        users.access_level,
+                        users.timezone,
+                        users.access_level_plus,
+                        users.is_executive_admin,
+                        users.pay_plan_flag,
+                        users.lms_job_title,
+                        users.profile_picture,
+                        users.email,
+                        portal_job_title_templates.sid as job_title_sid
+                    ")
+                        ->join(
+                            "portal_job_title_templates",
+                            "portal_job_title_templates.sid = users.lms_job_title",
+                            "left"
+                        )
+                        ->where('users.sid', $employee['employee_sid'])
+                        ->where([
+                            "users.active" => 1,
+                            "users.terminated_status" => 0,
+                            "users.is_executive_admin" => 0
+                        ])
+                        ->get('users')
+                        ->row_array();
+                    if (!$jobTitleInfo || !$jobTitleInfo["first_name"]) {
+                        continue;
+                    }
+                    //
+                    $jobTitleId = !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
+                    //  
+                    $employeeName = remakeEmployeeName([
+                        'first_name' => $jobTitleInfo['first_name'],
+                        'last_name' => $jobTitleInfo['last_name'],
+                        'access_level' => $jobTitleInfo['access_level'],
+                        'timezone' => isset($jobTitleInfo['timezone']) ? $jobTitleInfo['timezone'] : '',
+                        'access_level_plus' => $jobTitleInfo['access_level_plus'],
+                        'is_executive_admin' => $jobTitleInfo['is_executive_admin'],
+                        'pay_plan_flag' => $jobTitleInfo['pay_plan_flag'],
+                        'job_title' => $jobTitleInfo['job_title'],
+                    ]);
+                    //
+                    $employees[$employee['employee_sid']]["job_title_sid"] =  !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
+                    $employees[$employee['employee_sid']]["full_name"] = $employeeName;
+                    $employees[$employee['employee_sid']]["profile_picture_url"] = getImageURL($jobTitleInfo["profile_picture"]);
+                    $employees[$employee['employee_sid']]["only_name"] = remakeEmployeeName($jobTitleInfo, true, true);
+                    $employees[$employee['employee_sid']]["designation"] = remakeEmployeeName($jobTitleInfo, false);
+                    $employees[$employee['employee_sid']]["employee_sid"] = $employee['employee_sid'];
+                    $employees[$employee['employee_sid']]["department_sid"] = $employee['department_sid'];
+                    $employees[$employee['employee_sid']]["team_sid"] = $employee['team_sid'];
+                    $employees[$employee['employee_sid']]["lms_job_title"] = $employee['lms_job_title'];
+                    $employees[$employee['employee_sid']]["email"] = $jobTitleInfo['email'];
+                    //
+                    $employeeData = [];
+                    $employeeData["employee_sid"] = $employee['employee_sid'];
+                    $employeeData["job_title_sid"] =  $jobTitleId;
+                    $employeeData["employee_name"] =  $employeeName;
+                    //
+                   
+                    if ($jobTitleInfo['lms_job_title'] != 0) {
+                        $today = date('Y-m-d');
+                        //
+                        $companyId = getEmployeeUserParent_sid($employee['employee_sid']);
+                        //
+                        $companyCourses = $CI->db->select("
+                                lms_default_courses.sid
+                            ")
+                            ->join(
+                                "lms_default_courses_job_titles",
+                                "lms_default_courses_job_titles.lms_default_courses_sid = lms_default_courses.sid",
+                                "right"
+                            )
+                            ->where('lms_default_courses.company_sid', $companyId)
+                            ->where('lms_default_courses.is_active', 1)
+                            ->where('course_start_period <=', $today)
+                            ->group_start()
+                            ->where('lms_default_courses_job_titles.job_title_id', -1)
+                            ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
+                            ->group_end()
+                            ->get('lms_default_courses')
+                            ->result_array();
+                        //
+                        $assignCourses = !empty($companyCourses) ? implode(',', array_column($companyCourses, "sid")) : "";
+                        //
+                        $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses;
+                        $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($assignCourses, $employee['employee_sid']);
+                        $employeeData["assign_courses"] =  $assignCourses;
+                    } else {
+                        $employees[$employee['employee_sid']]["assign_courses"] = "";
+                        $employeeData["assign_courses"] =  "";
+                    }
+
+                    //
+                    if (isset($r['departments'][$employee['department_sid']])) {
+                        $r['departments'][$employee['department_sid']]['employees_ids'][] = $employeeData;
+                    }
+                    //
+                    if (isset($r['teams'][$employee['team_sid']])) {
+                        $r['teams'][$employee['team_sid']]['employees_ids'][] = $employeeData;
+                    }
+                    //
+                }
+            }
+            //
+            $r['employees'] = $employees;
+        }
+        //
+        return $r;
+    }
+}
+
 if (!function_exists('getCoursesInfo')) {
     /**
      * Prefill he form data
