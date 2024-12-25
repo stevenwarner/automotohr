@@ -805,7 +805,7 @@ class Cron_email_model extends CI_Model
             $viewLink = base_url("lms/manager_report") . '/' . $viewCode;
             $downloadLink = base_url("lms/manager_report") . '/' . $downloadCode;
             //
-            $viewReport = '<a style="background-color: #337ab7; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
+            $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
             $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
             //
             $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
