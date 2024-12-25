@@ -2572,11 +2572,7 @@ class Courses extends Public_Controller
             $action = $decrypt_keys[1];
             $companyId = getEmployeeUserParent_sid($employeeId);
             //
-<<<<<<< HEAD
             $subordinateInfo = getLMSManagerDepartmentAndTeams($employeeId, $companyId);
-=======
-            $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses", "get", $companyId);
->>>>>>> ec7e3af249b8c257a1fd943a83532cf685782b23
             $subordinateInfo['courses'] = $this->course_model->getActiveCompanyCourses($companyId);
             //
             if (!empty($subordinateInfo['employees'])) {
