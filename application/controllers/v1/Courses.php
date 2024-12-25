@@ -631,6 +631,8 @@ class Courses extends Public_Controller
         //
         $data['title'] = "My Courses :: " . STORE_NAME;
         $data['companyId'] = $companyId;
+        $data["companyName"] = $session['company_detail']['CompanyName'];
+        $data["companyLogo"] = 'https://automotohrattachments.s3.amazonaws.com/' . $session['company_detail']['Logo'];
         $data['employer_sid'] = $employeeId;
         $data['employee'] = $session['employer_detail'];
         $data['load_view'] = 1;
@@ -699,6 +701,8 @@ class Courses extends Public_Controller
         $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['subordinate_sid'] = $subordinateId;
+        $data["companyName"] = $session['company_detail']['CompanyName'];
+        $data["companyLogo"] = 'https://automotohrattachments.s3.amazonaws.com/' . $session['company_detail']['Logo'];
         $data['subordinateName'] = getUserNameBySID($subordinateId);
         $data['subordinateInfo'] = get_employee_profile_info($subordinateId);
         $data['viewMode'] = "subordinate";
@@ -1715,6 +1719,8 @@ class Courses extends Public_Controller
         //
         $data['title'] = "Subordinate Courses History :: " . STORE_NAME;
         $data['companyId'] = $companyId;
+        $data["companyName"] = $session['company_detail']['CompanyName'];
+        $data["companyLogo"] = 'https://automotohrattachments.s3.amazonaws.com/' . $session['company_detail']['Logo'];
         $data['employer_sid'] = $employeeId;
         $data['viewMode'] = "subordinate";
         $data['employee'] = $session['employer_detail'];
