@@ -103,12 +103,24 @@ $(function LMSEmployeeCourses() {
 					var departmentName = "N/A";
 					var teamName = "N/A";
 
-					html += `<tr class="js-tr">`;
+					var completedCoursesPercentage = (employee.coursesInfo.completed / employee.coursesInfo.total_course) * 100;
+
+					var rowColor = "bg-danger";
+					//
+					if (completedCoursesPercentage == "100") {
+						rowColor = "bg-success";
+					} else if (completedCoursesPercentage < "90" && completedCoursesPercentage > "1") {
+						rowColor = "bg-warning";
+					}
+
+					html += `<tr class="js-tr ${rowColor}">`;
 					html += `<td>`;
+					if (employee.coursesInfo.total_course > 0 && employee.coursesInfo.total_course != employee.coursesInfo.completed) { 
 					html += `	<label class="control control--checkbox">`;
 					html += `		<input type="checkbox" name="employees_ids[]" value="${employee["employee_sid"]}" />`;
 					html += `		<div class="control__indicator"></div>`;
 					html += `	</label>`;
+					}
 					html += `</td>`;
 					html += `<td class="_csVm">`;
 					html += `	<div class="row">`;
@@ -142,12 +154,7 @@ $(function LMSEmployeeCourses() {
 							: 0
 					}</td>`;
 					html += `<td class="_csVm">${
-						employee.coursesInfo
-							? employee.coursesInfo.expire_soon
-							: 0
-					}</td>`;
-					html += `<td class="_csVm">${
-						employee.coursesInfo ? employee.coursesInfo.expired : 0
+						employee.coursesInfo ? employee.coursesInfo.started : 0
 					}</td>`;
 					html += `<td class="_csVm">${
 						employee.coursesInfo
@@ -155,8 +162,15 @@ $(function LMSEmployeeCourses() {
 							: 0
 					}</td>`;
 					html += `<td class="_csVm">${
-						employee.coursesInfo ? employee.coursesInfo.started : 0
+						employee.coursesInfo
+							? employee.coursesInfo.expire_soon
+							: 0
 					}</td>`;
+					html += `<td class="_csVm">${
+						employee.coursesInfo ? employee.coursesInfo.expired : 0
+					}</td>`;
+					
+					
 					html += `<td class="_csVm"><a href="${baseURL}lms/subordinate/courses/${employee["employee_sid"]}" class="btn btn-info btn-block csRadius5 csF16">View</a></td>`;
 					html += `</tr>`;
 				});

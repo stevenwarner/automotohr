@@ -537,7 +537,6 @@ class Courses extends Public_Controller
                     //
                     if (isset($_GET['courses']) && $_GET['courses'][0] != "all") {
                         $filterCourses = getCoursesInfo(implode(',', $_GET['courses']), $key);
-                        // _e($filterCourses,true);
                         //
                         $subordinateInfo['employees'][$key]['coursesInfo']['total_course'] = $filterCourses['total_course'];
                         $subordinateInfo['employees'][$key]['coursesInfo']['expire_soon'] = $filterCourses['expire_soon'];

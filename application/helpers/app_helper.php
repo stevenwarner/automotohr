@@ -1921,16 +1921,16 @@ if (!function_exists('getCoursesInfo')) {
             //
             if ($courseStatus == 'not_started') {
                 if ($start_diff < 0 && $end_diff > 0) {
+                    //
                     if ($end_diff < 15) {
                         $result['expire_soon']++;
                     }
                     //
-                    // $result['started']++;
                 } else if ($start_diff < 0 && $end_diff < 0) {
                     $result['expired']++;
-                } else {
-                    $result['ready_to_start']++;
                 }
+                //
+                $result['ready_to_start']++;
             } else if ($courseStatus == 'started') {
                 $result['started']++;
             } else if ($courseStatus == 'completed') {
