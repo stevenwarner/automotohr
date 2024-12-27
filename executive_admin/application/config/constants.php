@@ -191,3 +191,6 @@ define('STORE_DEFAULT_TIMEZONE_ABBR', 'PST');
 define('IS_TIMEZONE_ACTIVE', TRUE);
 
 define('DOB_LIMIT', '1900:+1');
+
+//
+define('MODULE_LMS', 'lms');

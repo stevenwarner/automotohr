@@ -535,8 +535,9 @@ class Courses extends Public_Controller
                 //
                 if (isset($subordinateEmployee['coursesInfo'])) {
                     //
-                    if (isset($_GET['courses']) && $_GET['courses'] != "all") {
+                    if (isset($_GET['courses']) && $_GET['courses'][0] != "all") {
                         $filterCourses = getCoursesInfo(implode(',', $_GET['courses']), $key);
+                        // _e($filterCourses,true);
                         //
                         $subordinateInfo['employees'][$key]['coursesInfo']['total_course'] = $filterCourses['total_course'];
                         $subordinateInfo['employees'][$key]['coursesInfo']['expire_soon'] = $filterCourses['expire_soon'];
@@ -587,10 +588,11 @@ class Courses extends Public_Controller
             $selectedEmployeesList = [];
             $selectedEmployeesIds = [];
             //
-            if ($filters["departments"][0] == 'all' || $filters["teams"][0] == 'all' || $filters["employees"][0] == 'all') {
+            if ($filters["departments"][0] == 'all' && $filters["teams"][0] == 'all' && $filters["employees"][0] == 'all') {
                 $selectedEmployeesList = $subordinateInfo['employees'];
             } else {
                 foreach ($subordinateInfo['employees'] as $subordinateEmployee) {
+                    //
                     if ($subordinateEmployee["job_title_sid"] > 0) {
                         //
                         if (in_array($subordinateEmployee["employee_sid"], $filters["employees"])) {

@@ -1907,3 +1907,60 @@ if (!function_exists('GetScripts')) {
         return $html;
     }
 }
+
+//
+if (!function_exists('get_executive_administrator_admin_plus_status')) {
+    function get_executive_administrator_admin_plus_status($executiveAdminSid, $companySid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('users.access_level_plus');
+        $CI->db->where('executive_admin_sid', $executiveAdminSid);
+        $CI->db->where('company_sid', $companySid);
+        $CI->db->join('users', 'executive_user_companies.logged_in_sid = users.sid', 'left');
+        $result = $CI->db->get('executive_user_companies')->row_array();
+        return $result;
+    }
+}
+
+if (!function_exists('checkIfAppIsEnabled')) {
+    function checkIfAppIsEnabled(
+        $ctl,
+        $companyId
+    ) {
+        // Get the instance of CI object
+        $ci = &get_instance();
+        // Get the called controller name
+        $ctl = trim(strtolower(preg_replace('/[^a-zA-Z]/', '', $ctl ? $ctl : $ci->router->fetch_class())));
+        // If not a controller then pass
+        if ($ctl == '') return;
+        //
+        $a = $ci
+            ->db
+            ->select('sid, stage, is_disabled, is_ems_module')
+            ->where('module_slug', $ctl)
+            ->limit(1)
+            ->get('modules');
+        //
+        $b = $a->row_array();
+        $a->free_result();
+        // If module doesn't exists then no need to continue
+        if (!sizeof($b)) return true;
+
+        // Lets check if module is activated against logged in company
+        $a = $ci
+            ->db
+            ->where('module_sid', $b['sid'])
+            ->where('company_sid', $companyId)
+            ->where('is_active', 1)
+            ->get('company_modules');
+        //
+        $b = $a->row_array();
+        $a->free_result();
+        //
+        if (!sizeof($b)) {
+            return false;
+        }
+        //
+        return true;
+    }
+}

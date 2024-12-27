@@ -118,8 +118,8 @@
                                     <thead>
                                         <tr>
                                             <th class="col-lg-4">Company Name</th>
-                                            <th class="col-lg-4">Company Website</th>
-                                            <th class="col-lg-4 text-center">Actions</th>
+                                            <th class="col-lg-3">Company Website</th>
+                                            <th class="col-lg-5 text-center">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -152,7 +152,20 @@
 
                                                             <?php if ($user_company['message_total'] > 0) { ?>
                                                                 <img class="icon-msg-new" src="<?= base_url() ?>assets/images/new_msg.gif">
-                                                            <?php       } ?>
+                                                            <?php } ?>
+
+                                                            <?php 
+                                                                $adminPlusData = get_executive_administrator_admin_plus_status($user_company['executive_admin_sid'], $user_company['company_sid']);
+                                                                //
+                                                                $execAdminAccessLevelPlus = FALSE;
+                                                                if (!empty($adminPlusData)) {
+                                                                    $execAdminAccessLevelPlus =  $adminPlusData['access_level_plus'] ? TRUE : FALSE;
+                                                                }
+                                                            ?>
+
+                                                            <?php if ($execAdminAccessLevelPlus && checkIfAppIsEnabled(MODULE_LMS,$user_company['company_sid'])) {?>
+                                                                <!-- <a class="btn btn-success btn-sm" href="<?php //echo base_url() . 'lms_company_report/' . $user_company['company_sid']; ?>">LMS Company Report</a> -->
+                                                            <?php } ?>
                                                         </div>
                                                     </td>
                                                 </tr>
