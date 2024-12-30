@@ -211,157 +211,173 @@
                             <div class="box-wrapper">
                                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                 <div class="row">
-                                    <?php if (check_access_permissions_for_view($security_details, 'add_listing')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-pencil-square-o"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('add_listing') ?>">Create A New Job</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <small>Unlimited Free Jobs</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('add_listing') ?>" class="site-btn">Create
-                                                            A New Job</a>
+                                    <?php if (checkIfAppIsEnabled('createnewjob')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'add_listing')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-pencil-square-o"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url('add_listing') ?>">Create A New Job</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <small>Unlimited Free Jobs</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('add_listing') ?>" class="site-btn">Create
+                                                                A New Job</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
+
                                     <!--1-->
-                                    <?php if (check_access_permissions_for_view($security_details, 'market_place')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-shopping-cart"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('market_place') ?>">My Marketplace</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <small>Popular Job Boards</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('market_place') ?>" class="site-btn">Visit</a>
+                                    <?php if (checkIfAppIsEnabled('marketplace')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'market_place')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-shopping-cart"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url('market_place') ?>">My Marketplace</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <small>Popular Job Boards</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('market_place') ?>" class="site-btn">Visit</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
                                     <!--2-->
-                                    <?php if (check_access_permissions_for_view($security_details, 'my_listings')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-list-alt"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('my_listings/active') ?>">My Jobs</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <span class="green">'<?php echo $jobCountActive; ?>
-                                                            ' Active Jobs</span><br>
-                                                        <small><?php echo $jobCount; ?> Job(s)</small>
-                                                    </div>
-                                                    <div class="count-box">
-                                                        <small></small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('my_listings/active') ?>" class="site-btn">View All</a>
+                                    <?php if (checkIfAppIsEnabled('myjobs')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'my_listings')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-list-alt"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url('my_listings/active') ?>">My Jobs</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <span class="green">'<?php echo $jobCountActive; ?>
+                                                                ' Active Jobs</span><br>
+                                                            <small><?php echo $jobCount; ?> Job(s)</small>
+                                                        </div>
+                                                        <div class="count-box">
+                                                            <small></small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('my_listings/active') ?>" class="site-btn">View All</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
                                     <!--3-->
-                                    <?php if (check_access_permissions_for_view($security_details, 'application_tracking')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-line-chart"></i></figure>
-                                                    <h2 class="post-title" style="margin: 2px 0;">
-                                                        <a href="<?php echo base_url('application_tracking_system/active/all/all/all/all/all/all/all/all/all') ?>">Application
-                                                            Tracking System</a>
-                                                    </h2>
-                                                    <div class="count-box" style="font-size: 12px">
-                                                        <span class="green">'<?php echo $applicants_today; ?>' New Application(s) Today</span><br>
-                                                        <small style="font-size: 12px"><?php echo $applicants; ?> Active Application(s)</small><br>
-                                                        <small style="font-size: 12px"><?php echo $all_active_inactive_applicants; ?> Total Application(s)</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('application_tracking_system/active/all/all/all/all/all/all/all/all/all') ?>" class="site-btn">View Applicants</a>
+                                    <?php
+                                    if (checkIfAppIsEnabled('applicanttrackingsystem')) {
+                                        if (check_access_permissions_for_view($security_details, 'application_tracking')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-line-chart"></i></figure>
+                                                        <h2 class="post-title" style="margin: 2px 0;">
+                                                            <a href="<?php echo base_url('application_tracking_system/active/all/all/all/all/all/all/all/all/all') ?>">Application
+                                                                Tracking System</a>
+                                                        </h2>
+                                                        <div class="count-box" style="font-size: 12px">
+                                                            <span class="green">'<?php echo $applicants_today; ?>' New Application(s) Today</span><br>
+                                                            <small style="font-size: 12px"><?php echo $applicants; ?> Active Application(s)</small><br>
+                                                            <small style="font-size: 12px"><?php echo $all_active_inactive_applicants; ?> Total Application(s)</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('application_tracking_system/active/all/all/all/all/all/all/all/all/all') ?>" class="site-btn">View Applicants</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    <?php } ?>
+                                    <?php }
+                                    } ?>
                                     <!--4-->
-                                    <?php if (check_access_permissions_for_view($security_details, 'my_events')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-calendar"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('calendar/my_events') ?>">Calendar / Events</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <span class="green">'<?php echo $eventCountToday; ?>' Events Scheduled Today</span><br>
-                                                        <small><?php echo $eventCount; ?> Event(s)</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('calendar/my_events') ?>" class="site-btn">Show
-                                                            Events</a>
+                                    <?php if (checkIfAppIsEnabled('calendarevents')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'my_events')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-calendar"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url('calendar/my_events') ?>">Calendar / Events</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <span class="green">'<?php echo $eventCountToday; ?>' Events Scheduled Today</span><br>
+                                                            <small><?php echo $eventCount; ?> Event(s)</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('calendar/my_events') ?>" class="site-btn">Show
+                                                                Events</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
                                     <!--5-->
-                                    <?php if (check_access_permissions_for_view($security_details, 'private_messages')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure>
-                                                        <?php if ($unreadMessageCount > 0) { ?>
-                                                            <img src="<?= base_url('assets/images/new_msg.gif') ?>">
-                                                        <?php } else { ?>
-                                                            <i class="fa fa-envelope"></i>
-                                                        <?php } ?>
-                                                    </figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('private_messages') ?>">Private Message</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <small><?php echo $unreadMessageCount; ?> New Message(s)</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('private_messages') ?>" class="site-btn">Show Messages</a>
+                                    <?php if (checkIfAppIsEnabled('privatemessage')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'private_messages')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure>
+                                                            <?php if ($unreadMessageCount > 0) { ?>
+                                                                <img src="<?= base_url('assets/images/new_msg.gif') ?>">
+                                                            <?php } else { ?>
+                                                                <i class="fa fa-envelope"></i>
+                                                            <?php } ?>
+                                                        </figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url('private_messages') ?>">Private Message</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <small><?php echo $unreadMessageCount; ?> New Message(s)</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('private_messages') ?>" class="site-btn">Show Messages</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
                                     <!--6-->
                                     <?php
                                     $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
                                     ?>
-                                    <?php if (check_access_permissions_for_view($security_details, 'employee_management') || $canAccessDocument) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-users"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url(); ?>employee_management">Employee / Team Members</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <small>Team Management</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url(); ?>employee_management" class="site-btn">Access & Manage</a>
+                                    <?php if (checkIfAppIsEnabled('etm')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'employee_management') || $canAccessDocument) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-users"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url(); ?>employee_management">Employee / Team Members</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <small>Team Management</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url(); ?>employee_management" class="site-btn">Access & Manage</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
                                     <!--7-->
                                     <?php if (check_blue_panel_status_for_view()) { ?>
@@ -412,106 +428,116 @@
                                     <?php //} 
                                     ?>
                                     <!--9-->
-                                    <?php if (check_access_permissions_for_view($security_details, 'my_settings')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure>
-                                                        <i class="fa fa-sliders"></i>
-                                                    </figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('my_settings') ?>">Settings</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <small>Manage Career Site</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('my_settings') ?>" class="site-btn">Configure</a>
+                                    <?php if (checkIfAppIsEnabled('settings')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'my_settings')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure>
+                                                            <i class="fa fa-sliders"></i>
+                                                        </figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url('my_settings') ?>">Settings</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <small>Manage Career Site</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('my_settings') ?>" class="site-btn">Configure</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
                                     <!--10-->
-                                    <?php if (check_access_permissions_for_view($security_details, 'screening_questionnaires')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-file-text-o"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('screening_questionnaires') ?>">Candidate
-                                                            Questionnaires</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <small><?php echo $questionnairCount; ?> Questionnaires</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('screening_questionnaires') ?>" class="site-btn">Create New</a>
+                                    <?php if (checkIfAppIsEnabled('candidatequestionnaires')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'screening_questionnaires')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-file-text-o"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url('screening_questionnaires') ?>">Candidate
+                                                                Questionnaires</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <small><?php echo $questionnairCount; ?> Questionnaires</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('screening_questionnaires') ?>" class="site-btn">Create New</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
                                     <!--11-->
-                                    <?php if (check_access_permissions_for_view($security_details, 'interview_questionnaire')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-file-text-o"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('interview_questionnaire'); ?>">Interview
-                                                            Questionnaires</a>
-                                                    </h2>
-                                                    <!--<div class="count-box">
+                                    <?php if (checkIfAppIsEnabled('interviewquestionnaires')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'interview_questionnaire')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-file-text-o"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url('interview_questionnaire'); ?>">Interview
+                                                                Questionnaires</a>
+                                                        </h2>
+                                                        <!--<div class="count-box">
                                                     <small><?php /*echo $unread_tickets_count; */ ?> Unread Ticket(s)</small>
                                                 </div>-->
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('interview_questionnaire'); ?>" class="site-btn">Interview Questionnaires</a>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('interview_questionnaire'); ?>" class="site-btn">Interview Questionnaires</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
                                     <!--12-->
-                                    <?php if (check_access_permissions_for_view($security_details, 'background_check')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-file"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('accurate_background'); ?>">Background
-                                                            Checks Report</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <span class="green">'<?php echo $checks_monthly_count; ?>' New Check(s) This Month</span><br>
-                                                        <small><?php echo $checks_total_count; ?> Check(s)</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('accurate_background'); ?>" class="site-btn">View Report</a>
+                                    <?php if (checkIfAppIsEnabled('backgroundchecksreport')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'background_check')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-file"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url('accurate_background'); ?>">Background
+                                                                Checks Report</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <span class="green">'<?php echo $checks_monthly_count; ?>' New Check(s) This Month</span><br>
+                                                            <small><?php echo $checks_total_count; ?> Check(s)</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('accurate_background'); ?>" class="site-btn">View Report</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
                                     <!--13-->
-                                    <?php if (check_access_permissions_for_view($security_details, 'support_tickets')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-tags"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('support_tickets'); ?>">Support
-                                                            Tickets</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <small><?php echo $unread_tickets_count; ?> Unread Ticket(s)</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('support_tickets'); ?>" class="site-btn">Access Support Tickets</a>
+                                    <?php if (checkIfAppIsEnabled('supporttickets')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'support_tickets')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-tags"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url('support_tickets'); ?>">Support
+                                                                Tickets</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <small><?php echo $unread_tickets_count; ?> Unread Ticket(s)</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('support_tickets'); ?>" class="site-btn">Access Support Tickets</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
                                     <!--14-->
                                     <!--
@@ -535,114 +561,120 @@
                             --><?php /*} */ ?>
                                     <!--15-->
 
-                                    <?php if ($EmsStatus == 1) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-file-text-o <?= $all_documents_approval ? 'start_animation' : ''; ?>"></i></figure>
-                                                    <h2 class="post-title" style="margin: 2px 0;">
-                                                        <a href="<?php echo base_url('hr_documents_management/approval_documents') ?>">Approval Documents</a>
-                                                    </h2>
-                                                    <div class="count-box" style="font-size: 12px">
-                                                        <small style="font-size: 12px"><?php echo $all_documents_approval; ?> Total Document(s)</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('hr_documents_management/approval_documents') ?>" class="site-btn">View Documents</a>
+                                    <?php if (checkIfAppIsEnabled('approvaldocuments')) { ?>
+                                        <?php if ($EmsStatus == 1) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-file-text-o <?= $all_documents_approval ? 'start_animation' : ''; ?>"></i></figure>
+                                                        <h2 class="post-title" style="margin: 2px 0;">
+                                                            <a href="<?php echo base_url('hr_documents_management/approval_documents') ?>">Approval Documents</a>
+                                                        </h2>
+                                                        <div class="count-box" style="font-size: 12px">
+                                                            <small style="font-size: 12px"><?php echo $all_documents_approval; ?> Total Document(s)</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('hr_documents_management/approval_documents') ?>" class="site-btn">View Documents</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
 
                                     <?php $data['session'] = $this->session->userdata('logged_in'); ?>
                                     <?php $company_sid = $data["session"]["company_detail"]["sid"]; ?>
 
-                                    <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status'] && check_access_permissions_for_view($security_details, 'ems_portal')) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-file-text-o"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo base_url('manage_ems'); ?>">Employee Management System</a>
-                                                    </h2>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('manage_ems'); ?>" class="site-btn">Manage</a>
+                                    <?php if (checkIfAppIsEnabled('ems')) { ?>
+                                        <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status'] && check_access_permissions_for_view($security_details, 'ems_portal')) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-file-text-o"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo base_url('manage_ems'); ?>">Employee Management System</a>
+                                                        </h2>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('manage_ems'); ?>" class="site-btn">Manage</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <!--                                    --><?php //if($access_level == 'Employee') { 
-                                                                                    ?>
-                                        <!--                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">-->
-                                        <!--                                            <div class="dash-box">-->
-                                        <!--                                                <div class="dashboard-widget-box">-->
-                                        <!--                                                    <figure><i class="fa fa-book"></i></figure>-->
-                                        <!--                                                    <h2 class="post-title">-->
-                                        <!--                                                        <a href="--><?php //echo base_url('learning_center/my_learning_center'); 
-                                                                                                                ?>
-                                        <!--">My Learning Center</a>-->
-                                        <!--                                                    </h2>-->
-                                        <!--                                                    <div class="count-box">-->
-                                        <!--                                                        <small>&nbsp;</small>-->
-                                        <!--                                                    </div>-->
-                                        <!--                                                    <div class="button-panel">-->
-                                        <!--                                                        <a href="--><?php //echo base_url('learning_center/my_learning_center'); 
-                                                                                                                ?>
-                                        <!--" class="site-btn">Manage</a>-->
-                                        <!--                                                    </div>-->
-                                        <!--                                                </div>-->
-                                        <!--                                                <span class="beta-label">beta</span>-->
-                                        <!--                                            </div>-->
-                                        <!--                                        </div>-->
-                                        <!--                                    --><?php //} else { 
-                                                                                    ?>
-                                        <!--                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">-->
-                                        <!--                                            <div class="dash-box">-->
-                                        <!--                                                <div class="dashboard-widget-box">-->
-                                        <!--                                                    <figure><i class="fa fa-book"></i></figure>-->
-                                        <!--                                                    <h2 class="post-title">-->
-                                        <!--                                                        <a href="--><?php //echo base_url('learning_center'); 
-                                                                                                                ?>
-                                        <!--">Learning Center</a>-->
-                                        <!--                                                    </h2>-->
-                                        <!--                                                    <div class="count-box">-->
-                                        <!--                                                        <small>&nbsp;</small>-->
-                                        <!--                                                    </div>-->
-                                        <!--                                                    <div class="button-panel">-->
-                                        <!--                                                        <a href="--><?php //echo base_url('learning_center'); 
-                                                                                                                ?>
-                                        <!--" class="site-btn">Manage</a>-->
-                                        <!--                                                    </div>-->
-                                        <!--                                                </div>-->
-                                        <!--                                                <span class="beta-label">beta</span>-->
-                                        <!--                                            </div>-->
-                                        <!--                                        </div>-->
-                                        <!--                                    --><?php //} 
-                                                                                    ?>
+                                            <!--                                    --><?php //if($access_level == 'Employee') { 
+                                                                                        ?>
+                                            <!--                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">-->
+                                            <!--                                            <div class="dash-box">-->
+                                            <!--                                                <div class="dashboard-widget-box">-->
+                                            <!--                                                    <figure><i class="fa fa-book"></i></figure>-->
+                                            <!--                                                    <h2 class="post-title">-->
+                                            <!--                                                        <a href="--><?php //echo base_url('learning_center/my_learning_center'); 
+                                                                                                                    ?>
+                                            <!--">My Learning Center</a>-->
+                                            <!--                                                    </h2>-->
+                                            <!--                                                    <div class="count-box">-->
+                                            <!--                                                        <small>&nbsp;</small>-->
+                                            <!--                                                    </div>-->
+                                            <!--                                                    <div class="button-panel">-->
+                                            <!--                                                        <a href="--><?php //echo base_url('learning_center/my_learning_center'); 
+                                                                                                                    ?>
+                                            <!--" class="site-btn">Manage</a>-->
+                                            <!--                                                    </div>-->
+                                            <!--                                                </div>-->
+                                            <!--                                                <span class="beta-label">beta</span>-->
+                                            <!--                                            </div>-->
+                                            <!--                                        </div>-->
+                                            <!--                                    --><?php //} else { 
+                                                                                        ?>
+                                            <!--                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">-->
+                                            <!--                                            <div class="dash-box">-->
+                                            <!--                                                <div class="dashboard-widget-box">-->
+                                            <!--                                                    <figure><i class="fa fa-book"></i></figure>-->
+                                            <!--                                                    <h2 class="post-title">-->
+                                            <!--                                                        <a href="--><?php //echo base_url('learning_center'); 
+                                                                                                                    ?>
+                                            <!--">Learning Center</a>-->
+                                            <!--                                                    </h2>-->
+                                            <!--                                                    <div class="count-box">-->
+                                            <!--                                                        <small>&nbsp;</small>-->
+                                            <!--                                                    </div>-->
+                                            <!--                                                    <div class="button-panel">-->
+                                            <!--                                                        <a href="--><?php //echo base_url('learning_center'); 
+                                                                                                                    ?>
+                                            <!--" class="site-btn">Manage</a>-->
+                                            <!--                                                    </div>-->
+                                            <!--                                                </div>-->
+                                            <!--                                                <span class="beta-label">beta</span>-->
+                                            <!--                                            </div>-->
+                                            <!--                                        </div>-->
+                                            <!--                                    --><?php //} 
+                                                                                        ?>
+                                        <?php } ?>
                                     <?php } ?>
+
                                     <?php //} 
                                     ?>
                                     <!--17-->
-
-                                    <?php if ($EmsStatus == 1) { ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-clipboard <?php echo !empty($total_pending_auth_doc) && $total_pending_auth_doc > 0 ? 'start_animation' : ''; ?>"></i></figure>
-                                                    <h2 class="post-title" style="margin: 2px 0;">
-                                                        <a href="<?php echo base_url('authorized_document'); ?>">Pending Authorized Documents</a>
-                                                    </h2>
-                                                    <div class="count-box" style="font-size: 12px">
-                                                        <span class="green"><?php echo $total_assigned_today_doc; ?> Assigned Document(s) Today</span><br>
-                                                        <small style="font-size: 12px"><?php echo $total_pending_auth_doc; ?> Pending Document(s)</small><br>
-                                                        <small style="font-size: 12px"><?php echo $total_assigned_auth_doc; ?> Total Document(s)</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?php echo base_url('authorized_document'); ?>" class="site-btn">Show Documents</a>
+                                    <?php if (checkIfAppIsEnabled('pendingauthorizeddocuments')) { ?>
+                                        <?php if ($EmsStatus == 1) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-clipboard <?php echo !empty($total_pending_auth_doc) && $total_pending_auth_doc > 0 ? 'start_animation' : ''; ?>"></i></figure>
+                                                        <h2 class="post-title" style="margin: 2px 0;">
+                                                            <a href="<?php echo base_url('authorized_document'); ?>">Pending Authorized Documents</a>
+                                                        </h2>
+                                                        <div class="count-box" style="font-size: 12px">
+                                                            <span class="green"><?php echo $total_assigned_today_doc; ?> Assigned Document(s) Today</span><br>
+                                                            <small style="font-size: 12px"><?php echo $total_pending_auth_doc; ?> Pending Document(s)</small><br>
+                                                            <small style="font-size: 12px"><?php echo $total_assigned_auth_doc; ?> Total Document(s)</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?php echo base_url('authorized_document'); ?>" class="site-btn">Show Documents</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        <?php } ?>
                                     <?php } ?>
 
                                     <?php if ($EmsStatus == 1) { ?>
@@ -669,32 +701,35 @@
                                     <?php } ?>
 
                                     <!-- Employee Information Change -->
-                                    <?php if ($EmsStatus == 1) { ?>
-                                        <?php if ($access_level_plus == 1 || $pay_plan_flag == 1) { ?>
-                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                                <div class="dash-box">
-                                                    <div class="dashboard-widget-box">
-                                                        <figure>
-                                                            <i class="fa fa-users <?= $employeeInformationChange['daily'] > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
-                                                        </figure>
-                                                        <h2 class="post-title" style="margin: 2px 0;">
-                                                            <a href="<?php echo base_url('employee/information/report'); ?>">
-                                                                Employee Information Change
-                                                            </a>
-                                                        </h2>
-                                                        <div class="count-box" style="font-size: 12px">
-                                                            <span class="green">Today <?= $employeeInformationChange['daily']; ?> changed information</span><br>
-                                                            <small style="font-size: 12px">This week <?= $employeeInformationChange['week']; ?> changed information</small><br>
-                                                            <small style="font-size: 12px">This month <?= $employeeInformationChange['month']; ?> changed information</small><br>
-                                                        </div>
-                                                        <div class="button-panel">
-                                                            <a href="<?php echo base_url('employee/information/report'); ?>" class="site-btn">Show Changes</a>
+                                    <?php if (checkIfAppIsEnabled('employeeinformationchange')) { ?>
+                                        <?php if ($EmsStatus == 1) { ?>
+                                            <?php if ($access_level_plus == 1 || $pay_plan_flag == 1) { ?>
+                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                    <div class="dash-box">
+                                                        <div class="dashboard-widget-box">
+                                                            <figure>
+                                                                <i class="fa fa-users <?= $employeeInformationChange['daily'] > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
+                                                            </figure>
+                                                            <h2 class="post-title" style="margin: 2px 0;">
+                                                                <a href="<?php echo base_url('employee/information/report'); ?>">
+                                                                    Employee Information Change
+                                                                </a>
+                                                            </h2>
+                                                            <div class="count-box" style="font-size: 12px">
+                                                                <span class="green">Today <?= $employeeInformationChange['daily']; ?> changed information</span><br>
+                                                                <small style="font-size: 12px">This week <?= $employeeInformationChange['week']; ?> changed information</small><br>
+                                                                <small style="font-size: 12px">This month <?= $employeeInformationChange['month']; ?> changed information</small><br>
+                                                            </div>
+                                                            <div class="button-panel">
+                                                                <a href="<?php echo base_url('employee/information/report'); ?>" class="site-btn">Show Changes</a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        <?php } ?>
-                                    <?php  } ?>
+                                            <?php } ?>
+                                        <?php  } ?>
+
+                                    <?php } ?>
 
                                     <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status'] && checkIfAppIsEnabled('documentlibrary')) { ?>
                                         <!-- Documents Library -->
@@ -782,14 +817,11 @@
                                         </div>
                                     <?php } ?>
 
-
-
                                     <?php
                                     $pto_user_access = get_pto_user_access($session['employer_detail']['parent_sid'], $session['employer_detail']['sid']);
                                     ?>
 
                                     <!-- Performance Review -->
-
                                     <?php if (checkIfAppIsEnabled('performance_management')) { ?>
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                             <div class="dash-box">
@@ -909,8 +941,6 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
-
-
                                     <?php } ?>
 
                                     <?php if (checkIfAppIsEnabled('timeoff') && $pto_user_access['dashboard'] == 1) { ?>
@@ -1130,25 +1160,25 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
-                                        <?php if(!isLoggedInPersonAnExecutiveAdmin()) {?>
-                                        <!--  -->
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-file <?= $pendingTrainings != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
-                                                    </figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?= base_url('lms/courses/my_lms_dashboard'); ?>">Compliance Courses</a>
-                                                    </h2>
-                                                    <div class="count-box" style="font-size: 12px">
-                                                        <span class="green"><?= $pendingTrainings ?? 0; ?> course(s) pending</span><br>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?= base_url('lms/courses/my_lms_dashboard'); ?>" class="site-btn">Show</a>
+                                        <?php if (!isLoggedInPersonAnExecutiveAdmin()) { ?>
+                                            <!--  -->
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-file <?= $pendingTrainings != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
+                                                        </figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?= base_url('lms/courses/my_lms_dashboard'); ?>">Compliance Courses</a>
+                                                        </h2>
+                                                        <div class="count-box" style="font-size: 12px">
+                                                            <span class="green"><?= $pendingTrainings ?? 0; ?> course(s) pending</span><br>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?= base_url('lms/courses/my_lms_dashboard'); ?>" class="site-btn">Show</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         <?php } ?>
                                         <!--  -->
                                     <?php endif; ?>
@@ -1175,45 +1205,48 @@
                                     <?php } ?>
 
                                     <!-- Account Activity -->
-                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                        <div class="dash-box activity-box-wrp">
-                                            <div class="activity-box">
-                                                <h2>Account Activity</h2>
-                                                <article class="activity-count">
-                                                    <label>Jobs Active</label>
-                                                    <div class="progress v3">
-                                                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                            <span class="number-of-count"><?php echo $jobCountActive; ?></span>
+
+                                    <?php if (checkIfAppIsEnabled('accountactivity')) { ?>
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                            <div class="dash-box activity-box-wrp">
+                                                <div class="activity-box">
+                                                    <h2>Account Activity</h2>
+                                                    <article class="activity-count">
+                                                        <label>Jobs Active</label>
+                                                        <div class="progress v3">
+                                                            <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                                <span class="number-of-count"><?php echo $jobCountActive; ?></span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </article>
-                                                <article class="activity-count">
-                                                    <label>Jobs posted</label>
-                                                    <div class="progress v1">
-                                                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                            <span class="number-of-count"><?php echo $jobCount; ?></span>
+                                                    </article>
+                                                    <article class="activity-count">
+                                                        <label>Jobs posted</label>
+                                                        <div class="progress v1">
+                                                            <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                                <span class="number-of-count"><?php echo $jobCount; ?></span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </article>
-                                                <article class="activity-count">
-                                                    <label>Job page visitors</label>
-                                                    <div class="progress v2">
-                                                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                            <span class="number-of-count"><?php echo $visitors; ?></span>
+                                                    </article>
+                                                    <article class="activity-count">
+                                                        <label>Job page visitors</label>
+                                                        <div class="progress v2">
+                                                            <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                                <span class="number-of-count"><?php echo $visitors; ?></span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </article>
-                                                <article class="activity-count">
-                                                    <label>Applications received</label>
-                                                    <div class="progress v3">
-                                                        <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                                                            <span class="number-of-count"><?php echo $applicants; ?></span>
+                                                    </article>
+                                                    <article class="activity-count">
+                                                        <label>Applications received</label>
+                                                        <div class="progress v3">
+                                                            <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                                                <span class="number-of-count"><?php echo $applicants; ?></span>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </article>
+                                                    </article>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    <?php } ?>
                                 </div>
                             </div>
                         </div>

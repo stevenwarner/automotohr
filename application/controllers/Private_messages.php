@@ -7,6 +7,12 @@ class Private_messages extends Public_Controller
         parent::__construct();
         $this->load->model('message_model');
         require_once(APPPATH . 'libraries/aws/aws.php');
+
+        if (!checkIfAppIsEnabled('privatemessage')) {
+            $this->session->set_flashdata('message', '<b>Error:</b> Access Denied');
+            redirect(base_url('dashboard'), "refresh");
+        }
+
     }
 
     public function index()

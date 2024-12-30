@@ -7,6 +7,12 @@ class Screening_questionnaires extends Public_Controller {
     
     public function index() { 
         if ($this->session->userdata('logged_in')) { //echo 'here'; exit;
+
+            if (!checkIfAppIsEnabled('candidatequestionnaires')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+            
             //$medata = $this->screening_questionnaires_model->update_old_questionnaire_records();
             $session_details                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $session_details['employer_detail']['sid'];

@@ -10,6 +10,12 @@ class Export_applicants_csv extends Public_Controller {
 
     public function index($keyword = 'all', $job_sid = 'all', $applicant_type = 'all', $applicant_status = 'all', $start_date = 'all', $end_date = 'all', $page_number = 1) {
         if ($this->session->userdata('logged_in')) {
+
+            if (!checkIfAppIsEnabled('applicanttrackingsystem')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);

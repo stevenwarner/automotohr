@@ -7,72 +7,97 @@
                 <figure><i class="fa fa-th"></i></figure>Dashboard
             </a>
         </li>
-        <?php if (check_access_permissions_for_view($security_details, 'add_listing')) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('add_listing')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('add_listing') ?>">
-                    <figure><i class="fa fa-pencil-square-o"></i></figure>Create A New Job
-                </a>
-            </li>
-        <?php } ?> <!--1-->
-        <?php if (check_access_permissions_for_view($security_details, 'market_place')) { ?>
-            <li>
-                <a <?php if (base_url(uri_string()) == site_url('market_place')) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('market_place') ?>">
-                    <figure><i class="fa fa-shopping-cart"></i></figure>My Marketplace
-                </a>
-            </li>
-        <?php } ?> <!--2-->
-        <?php if (check_access_permissions_for_view($security_details, 'my_listings')) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('my_listings')) !== false || strpos(base_url(uri_string()), site_url('edit_listing')) !== false || strpos(base_url(uri_string()), site_url('clone_listing')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('my_listings/active') ?>">
-                    <figure><i class="fa fa-list-alt"></i></figure>My Jobs
-                </a>
-            </li>
-        <?php } ?> <!--3-->
-        <?php if (check_access_permissions_for_view($security_details, 'application_tracking')) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('application_tracking_system')) !== false || strpos(base_url(uri_string()), site_url('manual_candidate')) !== false || strpos(base_url(uri_string()), site_url('archived_applicants')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('application_tracking_system/active/all/all/all/all/all/all/all/all/all') ?>">
-                    <figure><i class="fa fa-line-chart"></i></figure>Application Tracking
-                </a>
-            </li>
-        <?php } ?> <!--4-->
-        <?php if (check_access_permissions_for_view($security_details, 'my_events')) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('calendar/my_events')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('calendar/my_events') ?>">
-                    <figure><i class="fa fa-calendar"></i></figure>Calendar / Events
-                </a>
-            </li>
-        <?php } ?> <!--5-->
-        <?php if (check_access_permissions_for_view($security_details, 'private_messages')) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('private_messages')) !== false || strpos(base_url(uri_string()), site_url('inbox_message_detail')) !== false || strpos(base_url(uri_string()), site_url('outbox')) !== false || strpos(base_url(uri_string()), site_url('compose_message')) !== false || strpos(base_url(uri_string()), site_url('reply_message')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('private_messages') ?>">
-                    <figure><i class="fa fa-envelope"></i></figure>Private Message
-                </a>
-            </li>
-        <?php } ?> <!--6-->
+        <?php if (checkIfAppIsEnabled('createnewjob')) { ?>
+            <?php if (check_access_permissions_for_view($security_details, 'add_listing')) { ?>
+                <li>
+                    <a <?php if (strpos(base_url(uri_string()), site_url('add_listing')) !== false) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url('add_listing') ?>">
+                        <figure><i class="fa fa-pencil-square-o"></i></figure>Create A New Job
+                    </a>
+                </li>
+            <?php } ?>
+        <?php } ?>
+
+        <!--1-->
+        <?php if (checkIfAppIsEnabled('marketplace')) { ?>
+            <?php if (check_access_permissions_for_view($security_details, 'market_place')) { ?>
+                <li>
+                    <a <?php if (base_url(uri_string()) == site_url('market_place')) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url('market_place') ?>">
+                        <figure><i class="fa fa-shopping-cart"></i></figure>My Marketplace
+                    </a>
+                </li>
+            <?php } ?>
+        <?php } ?>
+        <!--2-->
+
+        <?php if (checkIfAppIsEnabled('myjobs')) { ?>
+            <?php if (check_access_permissions_for_view($security_details, 'my_listings')) { ?>
+                <li>
+                    <a <?php if (strpos(base_url(uri_string()), site_url('my_listings')) !== false || strpos(base_url(uri_string()), site_url('edit_listing')) !== false || strpos(base_url(uri_string()), site_url('clone_listing')) !== false) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url('my_listings/active') ?>">
+                        <figure><i class="fa fa-list-alt"></i></figure>My Jobs
+                    </a>
+                </li>
+            <?php } ?>
+        <?php } ?>
+
+        <!--3-->
+        <?php if (checkIfAppIsEnabled('applicanttrackingsystem')) { ?>
+            <?php if (check_access_permissions_for_view($security_details, 'application_tracking')) { ?>
+                <li>
+                    <a <?php if (strpos(base_url(uri_string()), site_url('application_tracking_system')) !== false || strpos(base_url(uri_string()), site_url('manual_candidate')) !== false || strpos(base_url(uri_string()), site_url('archived_applicants')) !== false) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url('application_tracking_system/active/all/all/all/all/all/all/all/all/all') ?>">
+                        <figure><i class="fa fa-line-chart"></i></figure>Application Tracking
+                    </a>
+                </li>
+            <?php } ?>
+        <?php } ?>
+        <!--4-->
+        <?php if (checkIfAppIsEnabled('calendarevents')) { ?>
+            <?php if (check_access_permissions_for_view($security_details, 'my_events')) { ?>
+                <li>
+                    <a <?php if (strpos(base_url(uri_string()), site_url('calendar/my_events')) !== false) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url('calendar/my_events') ?>">
+                        <figure><i class="fa fa-calendar"></i></figure>Calendar / Events
+                    </a>
+                </li>
+            <?php } ?>
+        <?php } ?>
+        <!--5-->
+        <?php if (checkIfAppIsEnabled('privatemessage')) { ?>
+            <?php if (check_access_permissions_for_view($security_details, 'private_messages')) { ?>
+                <li>
+                    <a <?php if (strpos(base_url(uri_string()), site_url('private_messages')) !== false || strpos(base_url(uri_string()), site_url('inbox_message_detail')) !== false || strpos(base_url(uri_string()), site_url('outbox')) !== false || strpos(base_url(uri_string()), site_url('compose_message')) !== false || strpos(base_url(uri_string()), site_url('reply_message')) !== false) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url('private_messages') ?>">
+                        <figure><i class="fa fa-envelope"></i></figure>Private Message
+                    </a>
+                </li>
+            <?php } ?>
+        <?php } ?>
+        <!--6-->
         <?php
         $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
         ?>
-        <?php if (check_access_permissions_for_view($security_details, 'employee_management') || $canAccessDocument) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('employee_management')) !== false || strpos(base_url(uri_string()), site_url('invite_colleagues')) !== false || strpos(base_url(uri_string()), site_url('send_offer_letter_documents')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url(); ?>employee_management">
-                    <figure><i class="fa fa-users"></i></figure>Employee / Team Members
-                </a>
-            </li>
-        <?php } ?> <!--7-->
+        <?php if (checkIfAppIsEnabled('etm')) { ?>
+            <?php if (check_access_permissions_for_view($security_details, 'employee_management') || $canAccessDocument) { ?>
+                <li>
+                    <a <?php if (strpos(base_url(uri_string()), site_url('employee_management')) !== false || strpos(base_url(uri_string()), site_url('invite_colleagues')) !== false || strpos(base_url(uri_string()), site_url('send_offer_letter_documents')) !== false) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url(); ?>employee_management">
+                        <figure><i class="fa fa-users"></i></figure>Employee / Team Members
+                    </a>
+                </li>
+            <?php } ?>
+        <?php } ?>
+
+        <!--7-->
         <?php if (check_company_ems_status($this->session->userdata('logged_in')['company_detail']['sid'])) { ?>
             <!--            --><?php //if(check_access_permissions_for_view($security_details, 'documents_management')) { 
                                 ?>
@@ -115,24 +140,30 @@
                     </li>-->
         <?php  //} 
         ?> <!--9-->
-        <?php if (check_access_permissions_for_view($security_details, 'my_settings')) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('my_settings')) !== false || strpos(base_url(uri_string()), site_url('order_history')) !== false || strpos(base_url(uri_string()), site_url('order_detail')) !== false || strpos(base_url(uri_string()), site_url('job_products_report')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('my_settings') ?>">
-                    <figure><i class="fa fa-sliders"></i></figure>Settings
-                </a>
-            </li>
-        <?php } ?> <!--10-->
-        <?php if (check_access_permissions_for_view($security_details, 'screening_questionnaires')) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('screening_questionnaires')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('screening_questionnaires') ?>">
-                    <figure><i class="fa fa-file-text-o"></i></figure>Candidate Questionnaires
-                </a>
-            </li>
-        <?php } ?> <!--11-->
+        <?php if (checkIfAppIsEnabled('settings')) { ?>
+            <?php if (check_access_permissions_for_view($security_details, 'my_settings')) { ?>
+                <li>
+                    <a <?php if (strpos(base_url(uri_string()), site_url('my_settings')) !== false || strpos(base_url(uri_string()), site_url('order_history')) !== false || strpos(base_url(uri_string()), site_url('order_detail')) !== false || strpos(base_url(uri_string()), site_url('job_products_report')) !== false) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url('my_settings') ?>">
+                        <figure><i class="fa fa-sliders"></i></figure>Settings
+                    </a>
+                </li>
+            <?php } ?>
+        <?php } ?>
+        <!--10-->
+        <?php if (checkIfAppIsEnabled('candidatequestionnaires')) { ?>
+            <?php if (check_access_permissions_for_view($security_details, 'screening_questionnaires')) { ?>
+                <li>
+                    <a <?php if (strpos(base_url(uri_string()), site_url('screening_questionnaires')) !== false) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url('screening_questionnaires') ?>">
+                        <figure><i class="fa fa-file-text-o"></i></figure>Candidate Questionnaires
+                    </a>
+                </li>
+            <?php } ?>
+        <?php } ?>
+        <!--11-->
         <?php if (check_access_permissions_for_view($security_details, 'video_interview_system')) { ?>
             <li>
                 <a <?php if (strpos(base_url(uri_string()), site_url('video_interview_system')) !== false) {
@@ -142,15 +173,18 @@
                 </a>
             </li>
         <?php } ?>
-        <?php if (check_access_permissions_for_view($security_details, 'interview_questionnaire')) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('interview_questionnaire')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url("interview_questionnaire"); ?>">
-                    <figure><i class="fa fa-file-text-o"></i></figure>Interview Questionnaires
-                </a>
-            </li>
-        <?php } ?> <!--12-->
+        <?php if (checkIfAppIsEnabled('interviewquestionnaires')) { ?>
+            <?php if (check_access_permissions_for_view($security_details, 'interview_questionnaire')) { ?>
+                <li>
+                    <a <?php if (strpos(base_url(uri_string()), site_url('interview_questionnaire')) !== false) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url("interview_questionnaire"); ?>">
+                        <figure><i class="fa fa-file-text-o"></i></figure>Interview Questionnaires
+                    </a>
+                </li>
+            <?php } ?>
+        <?php } ?>
+        <!--12-->
         <?php if (check_access_permissions_for_view($security_details, 'background_check')) { ?>
             <li>
                 <a <?php if (strpos(base_url(uri_string()), site_url('background_check')) !== false) {
@@ -199,27 +233,32 @@
             <?php  } ?>
         <?php  } ?><!--16-->
 
-        <?php if (check_access_permissions_for_view($security_details, 'support_tickets')) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('support_tickets')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url("support_tickets"); ?>">
-                    <figure><i class="fa fa-tags"></i></figure>Support Tickets
-                </a>
-            </li>
-        <?php  } ?>
+        <?php if (checkIfAppIsEnabled('supporttickets')) { ?>
+            <?php if (check_access_permissions_for_view($security_details, 'support_tickets')) { ?>
+                <li>
+                    <a <?php if (strpos(base_url(uri_string()), site_url('support_tickets')) !== false) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url("support_tickets"); ?>">
+                        <figure><i class="fa fa-tags"></i></figure>Support Tickets
+                    </a>
+                </li>
+            <?php  } ?>
+        <?php } ?>
         <!--17-->
 
+        <?php if (checkIfAppIsEnabled('ems')) { ?>
+            <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status'] && check_access_permissions_for_view($security_details, 'ems_portal')) { ?>
+                <li>
+                    <a <?php if (strpos(base_url(uri_string()), site_url('manage_ems')) !== false) {
+                            echo 'class="active"';
+                        } ?> href="<?php echo base_url("manage_ems"); ?>">
+                        <figure><i class="fa fa-file-text-o"></i></figure>Employee Management System
+                    </a>
+                </li>
+            <?php  } ?>
+        <?php } ?>
 
-        <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status'] && check_access_permissions_for_view($security_details, 'ems_portal')) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('manage_ems')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url("manage_ems"); ?>">
-                    <figure><i class="fa fa-file-text-o"></i></figure>Employee Management System
-                </a>
-            </li>
-        <?php  } ?>
+
         <!--            --><?php //$data['session'] = $this->session->userdata('logged_in'); 
                             ?>
         <!--            --><?php //$company_sid = $data["session"]["company_detail"]["sid"]; 

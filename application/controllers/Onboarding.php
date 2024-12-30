@@ -3127,6 +3127,12 @@ class Onboarding extends CI_Controller
     public function configuration()
     {
         if ($this->session->userdata('logged_in')) {
+
+            if (!checkIfAppIsEnabled('onboardingconfiguration')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -4341,12 +4347,12 @@ class Onboarding extends CI_Controller
 
                 $value = '<div style="border: 1px dotted #000; padding:5px;"  contenteditable="true"></div>';
                 $document_content = str_replace('{{text}}', $value, $document_content);
-                $document_content = str_replace('{{short_text_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
-                $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
+                $document_content = str_replace('{{short_text_required}}', ' (<b>Required Field</b>)' . $value, $document_content);
+                $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)' . $value, $document_content);
 
                 $value = '<div style="border: 1px dotted #000; padding:5px; min-height: 145px;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
                 $document_content = str_replace('{{text_area}}', $value, $document_content);
-                $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
+                $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)' . $value, $document_content);
                 //
                 $checkboxRequired = '<div class="row">';
                 $checkboxRequired .= '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
@@ -4622,6 +4628,13 @@ class Onboarding extends CI_Controller
             //Removed pay plan 
             $pp_flag = 0;
             //
+
+            if ($user_type == 'applicant') {
+                if (!checkIfAppIsEnabled('applicanttrackingsystem')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access Denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+            }
 
             switch ($user_type) {
                 case 'employee':
@@ -6615,7 +6628,7 @@ class Onboarding extends CI_Controller
                             if (!empty($document['authorized_editable_date'])) {
                                 $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                                 $offer_letter['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_signature_date, $offer_letter['document_description']);
-                            } 
+                            }
                         }
                         //
                         $document_content = replace_tags_for_document($company_info['sid'], $user_sid, $user_type, $offer_letter['document_description'], $offer_letter['document_sid']);

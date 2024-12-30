@@ -9,6 +9,11 @@ class Market_place extends Public_Controller {
     public function index($productType = NULL) {
         if ($this->session->userdata('logged_in')) {
 
+            if (!checkIfAppIsEnabled('marketplace')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             if (isset($_SERVER['HTTP_REFERER'])) { //Handle back url - start
                 $referer_url = $_SERVER['HTTP_REFERER'];
 
@@ -121,6 +126,12 @@ class Market_place extends Public_Controller {
 
     public function marketplace_details($sid = NULL) {
         if ($this->session->userdata('logged_in')) {
+
+            if (!checkIfAppIsEnabled('marketplace')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);

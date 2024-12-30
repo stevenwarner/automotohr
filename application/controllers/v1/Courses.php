@@ -1259,7 +1259,7 @@ class Courses extends Public_Controller
             if ($this->input->method() === 'post') {
                 if (!empty($companyEmployeesList) && !empty($companyCoursesList)) {
                     header('Content-Type: text/csv; charset=utf-8');
-                    header('Content-Disposition: attachment; filename='.$session['company_detail']['CompanyName'].'_LMS_company_report_'.date('Y_m_d-H:i:s').'.csv');
+                    header('Content-Disposition: attachment; filename=' . $session['company_detail']['CompanyName'] . '_LMS_company_report_' . date('Y_m_d-H:i:s') . '.csv');
                     $output = fopen('php://output', 'w');
                     //
                     fputcsv($output, array('Company Name', $session['company_detail']['CompanyName'], '', '', '', ''));
@@ -1280,9 +1280,9 @@ class Courses extends Public_Controller
                     fputcsv($output, array('', '', '', '', '', ''));
                     //
                     fputcsv($output, array('Total Assigned Course(s)', $companyReport['courses_report']['total_assigned_courses'], 'Percentage', '', '', ''));
-                    fputcsv($output, array('Total Completed Course(s)', $companyReport['courses_report']['total_completed_courses'], round(($companyReport['courses_report']['total_completed_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%', '', '', ''));
-                    fputcsv($output, array('Total Inprogress Course(s)', $companyReport['courses_report']['total_inprogress_courses'], round(($companyReport['courses_report']['total_inprogress_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%', '', '', ''));
-                    fputcsv($output, array('Total Ready to Start Course(s)', $companyReport['courses_report']['total_rts_courses'], round(($companyReport['courses_report']['total_rts_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%', '', '', ''));
+                    fputcsv($output, array('Total Completed Course(s)', $companyReport['courses_report']['total_completed_courses'], round(($companyReport['courses_report']['total_completed_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2) . '%', '', '', ''));
+                    fputcsv($output, array('Total Inprogress Course(s)', $companyReport['courses_report']['total_inprogress_courses'], round(($companyReport['courses_report']['total_inprogress_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2) . '%', '', '', ''));
+                    fputcsv($output, array('Total Ready to Start Course(s)', $companyReport['courses_report']['total_rts_courses'], round(($companyReport['courses_report']['total_rts_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2) . '%', '', '', ''));
                     //
                     fputcsv($output, array('', '', '', '', '', ''));
                     fputcsv($output, array('', '', '', '', '', ''));
@@ -1989,7 +1989,7 @@ class Courses extends Public_Controller
         );
     }
 
-    public function moveRecursiveCoursesIntoHistory ()
+    public function moveRecursiveCoursesIntoHistory()
     {
         //
         $this->course_model->moveCourseIntoHistoryAndUpdate();
@@ -1997,7 +1997,8 @@ class Courses extends Public_Controller
         _e("Process completed", true);
     }
 
-    public function exportCourseCSV () {
+    public function exportCourseCSV()
+    {
         if ($this->session->userdata('logged_in')) {
             //
             $data = [];
@@ -2022,7 +2023,7 @@ class Courses extends Public_Controller
 
             if ($this->form_validation->run() == false) {
                 $data['employerData'] = $this->course_model->getEmployerDetail($data['employerId']);
-                $data['companyCourses'] = $this->course_model->getActiveCompanyCourses($data['companyId']); 
+                $data['companyCourses'] = $this->course_model->getActiveCompanyCourses($data['companyId']);
                 //
                 $this->load->view('main/header', $data);
                 $this->load->view('courses/export_courses_csv');
@@ -2108,7 +2109,7 @@ class Courses extends Public_Controller
                                     $exportRows .= $exportRow . PHP_EOL;
                                     //
                                     // check course history
-                                    $courseHistory = $this->course_model->getEmployeeCourseHistory($course['sid'], $employee['sid']);  
+                                    $courseHistory = $this->course_model->getEmployeeCourseHistory($course['sid'], $employee['sid']);
                                     // 
                                     if ($courseHistory) {
                                         foreach ($courseHistory as $history) {
@@ -2174,7 +2175,7 @@ class Courses extends Public_Controller
                                             //
                                             $exportRows .= $exportHistoryRow . PHP_EOL;
                                         }
-                                    } 
+                                    }
                                 }
                             }
                         }
@@ -2227,7 +2228,7 @@ class Courses extends Public_Controller
                                 $companyHeader = ',,,,' . $data['session']['company_detail']['CompanyName'];
                             }
                             //
-                            $header_row = implode(',', $header).",Record Type";
+                            $header_row = implode(',', $header) . ",Record Type";
                             //
                             $file_content = '';
                             $file_content .= $header_row . PHP_EOL;
@@ -2259,11 +2260,9 @@ class Courses extends Public_Controller
                         //
                         break;
                 }
-            }    
+            }
         } else {
             redirect('login', "refresh");
         }
     }
-
-
 }

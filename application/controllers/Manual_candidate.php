@@ -11,6 +11,11 @@ class Manual_candidate extends Public_Controller
         $this->load->model('manual_candidate_model');
         $this->load->model('job_listings_visibility_model');
         require_once(APPPATH . 'libraries/aws/aws.php');
+        //
+        if (!checkIfAppIsEnabled('applicanttrackingsystem')) {
+            $this->session->set_flashdata('message', '<b>Error:</b> Access Denied');
+            redirect(base_url('dashboard'), "refresh");
+        }
     }
 
     public function index()

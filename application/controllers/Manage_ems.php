@@ -1,7 +1,9 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Manage_ems extends Public_Controller {
-    public function __construct() {
+class Manage_ems extends Public_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('onboarding_model');
         $this->form_validation->set_error_delimiters('<p class="error"><i class="fa fa-exclamation-circle"></i> ', '</p>');
@@ -9,36 +11,49 @@ class Manage_ems extends Public_Controller {
         $this->load->library("pagination");
     }
 
-    public function index() {
+    public function index()
+    {
         if ($this->session->userdata('logged_in')) {
-                $data['session'] = $this->session->userdata('logged_in');
-                getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
-                $employer_detail = $data['session']['employer_detail'];
-                $security_sid = $employer_detail['sid'];
-                $security_details = db_get_access_level_details($security_sid);
-                $data['security_details'] = $security_details;
-                $data['title'] = 'Employee Management System';
-                check_access_permissions($security_details, 'dashboard', 'ems_portal'); // Param2: Redirect URL, Param3: Function Name
-                $company_id = $data["session"]["company_detail"]["sid"];
-                $employer_id = $data["session"]["employer_detail"]["sid"];
 
-                $loggedin_access_level = $employer_detail['access_level'];
-                $data['access_level'] = $loggedin_access_level;
-                $this->load->view('main/header', $data);
-                $this->load->view('manage_ems/index');
-                $this->load->view('main/footer');
+            if (!checkIfAppIsEnabled('ems')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
+            $data['session'] = $this->session->userdata('logged_in');
+            getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
+            $employer_detail = $data['session']['employer_detail'];
+            $security_sid = $employer_detail['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            $data['title'] = 'Employee Management System';
+            check_access_permissions($security_details, 'dashboard', 'ems_portal'); // Param2: Redirect URL, Param3: Function Name
+            $company_id = $data["session"]["company_detail"]["sid"];
+            $employer_id = $data["session"]["employer_detail"]["sid"];
+
+            $loggedin_access_level = $employer_detail['access_level'];
+            $data['access_level'] = $loggedin_access_level;
+            $this->load->view('main/header', $data);
+            $this->load->view('manage_ems/index');
+            $this->load->view('main/footer');
         } else {
             redirect(base_url('login'), "refresh");
         }
-
     }
 
-    public function ems_notification(){
+    public function ems_notification()
+    {
         if ($this->session->userdata('logged_in')) {
+
+            if (!checkIfAppIsEnabled('employeeemsnotification')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
             $data['session'] = $this->session->userdata('logged_in');
             $employer_detail = $data['session']['employer_detail'];
-            
+
             $security_sid = $employer_detail['sid'];
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
@@ -58,7 +73,7 @@ class Manage_ems extends Public_Controller {
             $employees_for_select                                           = array();
 
             foreach ($employees as $employee) {
-                $employees_for_select[$employee['sid']]                     = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).'] ['.$employee['email'].']';
+                $employees_for_select[$employee['sid']]                     = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . '] [' . $employee['email'] . ']';
             }
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|xss_clean|trim');
             $data['employees']                                              = $employees_for_select;
@@ -66,7 +81,7 @@ class Manage_ems extends Public_Controller {
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_ems/ems_notification');
                 $this->load->view('main/footer');
-            }else {
+            } else {
                 $perform_action = $this->input->post('perform_action');
 
                 switch ($perform_action) {
@@ -101,36 +116,36 @@ class Manage_ems extends Public_Controller {
                         $insert_data['status'] = 1;
                         $insert_data['created_date'] = date('Y-m-d H:i:s');
                         $pictures = upload_file_to_aws('docs', $company_sid, 'docs', '', AWS_S3_BUCKET_NAME);
-//                        $pictures = 'Docs.ac';
+                        //                        $pictures = 'Docs.ac';
                         if (!empty($pictures) && $pictures != 'error') {
                             $insert_data['image_code'] = $pictures;
                         }
 
-                        if(isset($_FILES['video_upload']) && !empty($_FILES['video_upload']['name'])) {
+                        if (isset($_FILES['video_upload']) && !empty($_FILES['video_upload']['name'])) {
                             $random = generateRandomString(5);
                             $company_id = $data['session']['company_detail']['sid'];
                             $target_file_name = basename($_FILES["video_upload"]["name"]);
 
-                            $file_name = strtolower($company_id.'/'.$random.'_'.$target_file_name);
+                            $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
 
                             $target_dir = "assets/uploaded_videos/";
                             $target_file = $target_dir . $file_name;
 
-                            $filename = $target_dir.$company_id;
-                            if (!file_exists($filename)){
+                            $filename = $target_dir . $company_id;
+                            if (!file_exists($filename)) {
                                 mkdir($filename);
                             }
-                            
+
                             if (move_uploaded_file($_FILES["video_upload"]["tmp_name"], $target_file)) {
 
-                                $this->session->set_flashdata('message', '<strong>The file '. basename( $_FILES["video_upload"]["name"]). ' has been uploaded.');
+                                $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["video_upload"]["name"]) . ' has been uploaded.');
                             } else {
 
                                 $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
                                 redirect('add_ems_notification', 'refresh');
                             }
                             $video_id = $file_name;
-                        }else{
+                        } else {
                             $video_id = $this->input->post('url');
 
                             if ($video_source == 'youtube') {
@@ -146,17 +161,17 @@ class Manage_ems extends Public_Controller {
                                 $video_id = $this->vimeo_get_id($video_id);
                             }
                         }
-                       
+
                         $insert_data['video_url'] = $video_id;
 
                         $notification_id = $this->onboarding_model->insert_dashboard_notification($insert_data);
-                        if($employees_assigned_to == 'specific'){
-                            foreach($employees_assigned_sid as $emp_sid){
+                        if ($employees_assigned_to == 'specific') {
+                            foreach ($employees_assigned_sid as $emp_sid) {
                                 $insert_data = array('ems_notification_sid' => $notification_id, 'employee_sid' => $emp_sid);
                                 $this->onboarding_model->insert_assigned_configuration($insert_data);
                             }
                         }
-                       
+
                         $this->session->set_flashdata('message', '<strong>Success: </strong> New Notification Added Successfully!');
                         redirect('add_ems_notification', 'refresh');
                         break;
@@ -167,7 +182,8 @@ class Manage_ems extends Public_Controller {
         }
     }
 
-    public function edit_ems_notification($sid) {
+    public function edit_ems_notification($sid)
+    {
         getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         $data['session'] = $this->session->userdata('logged_in');
         $security_sid = $data['session']['employer_detail']['sid'];
@@ -187,8 +203,7 @@ class Manage_ems extends Public_Controller {
 
             foreach ($employees as $employee) {
                 // $employees_for_select[$employee['sid']] = ucwords($employee['first_name'] . ' ' . $employee['last_name']);
-                $employees_for_select[$employee['sid']]                     = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).'] ['.$employee['email'].']';
-
+                $employees_for_select[$employee['sid']]                     = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . '] [' . $employee['email'] . ']';
             }
 
             $data['employees'] = $employees_for_select;
@@ -196,7 +211,7 @@ class Manage_ems extends Public_Controller {
             $this->load->view('main/header', $data);
             $this->load->view('manage_ems/ems_notification_edit');
             $this->load->view('main/footer');
-        } else{
+        } else {
             $title = $this->input->post('title');
             $description = $this->input->post('description');
             $video_source = $this->input->post('video_source');
@@ -214,27 +229,27 @@ class Manage_ems extends Public_Controller {
             $update_data['image_status'] = $image_status;
             $update_data['video_status'] = $video_status;
             $pictures = upload_file_to_aws('docs', $company_sid, 'docs', '', AWS_S3_BUCKET_NAME);
-//            $pictures = 'Docs.ac';
+            //            $pictures = 'Docs.ac';
             if (!empty($pictures) && $pictures != 'error') {
                 $update_data['image_code'] = $pictures;
             }
 
-            if(isset($_FILES['video_upload']) && !empty($_FILES['video_upload']['name'])) {
-                $random = date('H-i-s').generateRandomString(5);
+            if (isset($_FILES['video_upload']) && !empty($_FILES['video_upload']['name'])) {
+                $random = date('H-i-s') . generateRandomString(5);
                 $company_id = $data['session']['company_detail']['sid'];
                 $target_file_name = basename($_FILES["video_upload"]["name"]);
-                $file_name = strtolower($company_id.'/'.$random.'_'.$target_file_name);
+                $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
                 $target_dir = "assets/uploaded_videos/";
                 $target_file = $target_dir . $file_name;
-                $filename = $target_dir.$company_id;
+                $filename = $target_dir . $company_id;
 
-                if (!file_exists($filename)){
+                if (!file_exists($filename)) {
                     mkdir($filename);
                 }
 
                 if (move_uploaded_file($_FILES["video_upload"]["tmp_name"], $target_file)) {
 
-                    $this->session->set_flashdata('message', '<strong>The file '. basename( $_FILES["video_upload"]["name"]). ' has been uploaded.');
+                    $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["video_upload"]["name"]) . ' has been uploaded.');
                 } else {
                     $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
                     redirect('add_ems_notification', 'refresh');
@@ -258,25 +273,25 @@ class Manage_ems extends Public_Controller {
                     $video_id = $this->vimeo_get_id($video_id);
                 }
 
-                if($source_flag!='upload'){
+                if ($source_flag != 'upload') {
                     $update_data['video_url'] = $video_id;
                 }
             }
 
-            $this->onboarding_model->update_ems_notification($sid,$update_data);
+            $this->onboarding_model->update_ems_notification($sid, $update_data);
 
-            if($employees_assigned_to == 'specific'){
-                foreach($employees_assigned_sid as $emp_sid){
-                    if(!in_array($emp_sid,$ems_notification[0]['assigned_emp'])){
+            if ($employees_assigned_to == 'specific') {
+                foreach ($employees_assigned_sid as $emp_sid) {
+                    if (!in_array($emp_sid, $ems_notification[0]['assigned_emp'])) {
                         $update_data = array('ems_notification_sid' => $sid, 'employee_sid' => $emp_sid);
                         $this->onboarding_model->insert_assigned_configuration($update_data);
                     }
                 }
 
-                if(sizeof($ems_notification[0]['assigned_emp'])>0){
-                    foreach($ems_notification[0]['assigned_emp'] as $selected){
-                        if(!in_array($selected,$employees_assigned_sid)){
-                            $this->onboarding_model->delete_assigned_configuration($selected,$sid);
+                if (sizeof($ems_notification[0]['assigned_emp']) > 0) {
+                    foreach ($ems_notification[0]['assigned_emp'] as $selected) {
+                        if (!in_array($selected, $employees_assigned_sid)) {
+                            $this->onboarding_model->delete_assigned_configuration($selected, $sid);
                         }
                     }
                 }
@@ -286,19 +301,21 @@ class Manage_ems extends Public_Controller {
         }
     }
 
-    public function enable_disable_notification($id){
-        $data = array('status'=>$this->input->get('status'));
-        $this->onboarding_model->update_ems_notification($id,$data);
-        print_r(json_encode(array('message'=>'updated')));
+    public function enable_disable_notification($id)
+    {
+        $data = array('status' => $this->input->get('status'));
+        $this->onboarding_model->update_ems_notification($id, $data);
+        print_r(json_encode(array('message' => 'updated')));
     }
 
-    public function vimeo_get_id($str) {
+    public function vimeo_get_id($str)
+    {
         if ($str != "") {
-            if($_SERVER['HTTP_HOST']=='localhost'){
+            if ($_SERVER['HTTP_HOST'] == 'localhost') {
                 $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
                 $response = @file_get_contents($api_url);
 
-                if(!empty($response)){
+                if (!empty($response)) {
                     $response = json_decode($response, true);
 
                     if (isset($response['video_id'])) {
@@ -329,5 +346,4 @@ class Manage_ems extends Public_Controller {
             return 0;
         }
     }
-
 }

@@ -18,6 +18,7 @@ class Incident_reporting_system extends Public_Controller
     public function index()
     {
         if ($this->session->userdata('logged_in')) {
+            //
             if (checkIfAppIsEnabled('incidents')) {
                 $data['session'] = $this->session->userdata('logged_in');
                 $security_sid = $data['session']['employer_detail']['sid'];
@@ -44,7 +45,7 @@ class Incident_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }  
+            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -283,7 +284,7 @@ class Incident_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }     
+            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -322,7 +323,7 @@ class Incident_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }      
+            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -657,7 +658,7 @@ class Incident_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }    
+            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -1056,6 +1057,8 @@ class Incident_reporting_system extends Public_Controller
 
     public function assigned_incidents()
     {
+
+        //
         if ($this->session->userdata('logged_in')) {
             if (checkIfAppIsEnabled('incidents')) {
                 $data['session'] = $this->session->userdata('logged_in');
@@ -1101,7 +1104,7 @@ class Incident_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }      
+            }
         } else {
             redirect(base_url('login'), 'refresh');
         }
@@ -2354,6 +2357,7 @@ class Incident_reporting_system extends Public_Controller
     public function safety_check_list()
     {
         if ($this->session->userdata('logged_in')) {
+
             if (checkIfAppIsEnabled('incidents')) {
                 $data['session'] = $this->session->userdata('logged_in');
                 $security_sid = $data['session']['employer_detail']['sid'];
@@ -2373,7 +2377,7 @@ class Incident_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }    
+            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -2428,6 +2432,8 @@ class Incident_reporting_system extends Public_Controller
             $employer_sid = $data['session']['employer_detail']['sid'];
             $data['employee'] = $data['session']['employer_detail'];
             $incident_details = $this->incident_reporting_model->fetch_reports_user_guide($id);
+
+            // 
 
             if (empty($incident_details)) {
                 $this->session->set_flashdata('message', '<b>Error:</b> No Safety Checklist found!');
@@ -2531,7 +2537,7 @@ class Incident_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }    
+            }
         } else {
             redirect(base_url('login'), 'refresh');
         }
@@ -2583,7 +2589,7 @@ class Incident_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }      
+            }
         } else {
             redirect(base_url('login'), 'refresh');
         }
@@ -2604,7 +2610,7 @@ class Incident_reporting_system extends Public_Controller
             $status_to_update['incident_status'] = 'Closed';
             $this->db->where('incident_sid', $id);
             $this->db->where('employer_sid', $session['employer_detail']['sid']);
-		    $this->db->update('incident_assigned_emp', $status_to_update);
+            $this->db->update('incident_assigned_emp', $status_to_update);
             // If status Is "pending" then Update It To "respond"
             //
             $data_to_insert = array();

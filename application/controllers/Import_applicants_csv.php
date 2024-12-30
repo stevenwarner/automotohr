@@ -13,6 +13,12 @@ class Import_applicants_csv extends Public_Controller
     public function index()
     {
         if ($this->session->userdata('logged_in')) {
+
+            if (!checkIfAppIsEnabled('applicanttrackingsystem')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             $data['title'] = 'Import Applicants From CSV File';
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];

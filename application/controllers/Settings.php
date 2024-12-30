@@ -41,6 +41,12 @@ class Settings extends Public_Controller
     public function my_settings()
     {
         if ($this->session->userdata('logged_in')) {
+
+            if (!checkIfAppIsEnabled('settings')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -702,7 +708,7 @@ class Settings extends Public_Controller
                 //Emergency Contact
                 $portal_data['emergency_contact_phone_number_status'] = $this->input->post('emergency_contact_phone_number_status')  ? 1 : 0;
                 $portal_data['emergency_contact_email_status'] = $this->input->post('emergency_contact_email_status')  ? 1 : 0;
-                
+
                 $this->dashboard_model->update_portal($portal_data, $company_id);
                 $this->session->set_flashdata('message', '<b>Success:</b> Company Profile is updated successfully');
                 redirect("my_settings", "location");
@@ -6189,9 +6195,8 @@ class Settings extends Public_Controller
         //
         if ($shiftStatus == 'rejected') {
             $this->sendEmailToEmployee($shiftIds);
-            
         } else if ($shiftStatus == 'confirmed') {
-            
+
             $this->sendEmailToAdmin($shiftIds);
         }
         //
@@ -6200,7 +6205,8 @@ class Settings extends Public_Controller
         ]);
     }
 
-    function sendEmailToEmployee ($shiftIds) {
+    function sendEmailToEmployee($shiftIds)
+    {
         //
         $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftIds);
         //
@@ -6239,7 +6245,8 @@ class Settings extends Public_Controller
         }
     }
 
-    function sendEmailToAdmin ($shiftIds) {
+    function sendEmailToAdmin($shiftIds)
+    {
         //
         $companyDetail = checkAndGetSession("company_detail");
         $adminList = getCompanyAdminPlusList($companyDetail['sid']);
@@ -6286,7 +6293,7 @@ class Settings extends Public_Controller
                     }
                 }
             }
-        }    
+        }
     }
 
     /**
@@ -6487,8 +6494,8 @@ class Settings extends Public_Controller
         } else {
             $this->shift_model->cancelShiftsTradeRequest($shiftIds, $data_update_request);
         }
-        
-        
+
+
         //
         // send mail
         $emailTemplateFromEmployee = get_email_template(SHIFTS_SWAP_ADMIN_REJECTED);
@@ -6643,7 +6650,6 @@ class Settings extends Public_Controller
                 "list" => $data["employeesdata"]
             ]
         );
-      
     }
 
     //
@@ -6743,6 +6749,5 @@ class Settings extends Public_Controller
             "view" => $this->load->view("v1/settings/shifts/partials/shift_history", $data, true),
             "data" => $data["return"] ?? []
         ]);
-    }    
-
+    }
 }

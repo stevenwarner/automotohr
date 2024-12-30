@@ -38,6 +38,12 @@ class Job_listings extends Public_Controller
     public function add_listing()
     {
         if ($this->session->has_userdata('logged_in')) {
+            //
+            if (!checkIfAppIsEnabled('createnewjob')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
             $security_details                                                   = db_get_access_level_details($security_sid);
@@ -672,6 +678,12 @@ class Job_listings extends Public_Controller
     public function my_listings($status = 'active', $searchKeyword = null, $currentPage = null)
     {
         if ($this->session->has_userdata('logged_in')) {
+
+            if (!checkIfAppIsEnabled('myjobs')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data['session']['company_detail']['sid'];
             $employer_sid = $data['session']['employer_detail']['sid'];

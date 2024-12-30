@@ -9,6 +9,12 @@ class Accurate_background extends Public_Controller {
     }
 
     public function index($username = '', $search_sid = 0, $order_by = '', $statuses = '', $product_type = '', $start_time = '', $end_time = '', $page = 0) {
+     
+        if (!checkIfAppIsEnabled('backgroundchecksreport')) {
+            $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+            redirect(base_url('dashboard'), "refresh");
+        }
+
         $this->index_new($username, $search_sid, $order_by, $statuses, $product_type, $start_time, $end_time); return;
         if ($this->session->has_userdata('logged_in')) {
             $data['title'] = 'Accurate Background Orders';

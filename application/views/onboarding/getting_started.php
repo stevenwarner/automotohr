@@ -655,29 +655,34 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </a>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                            <div class="widget-box">
-                                <a href="<?php echo base_url('private_messages'); ?>">
-                                    <div class="link-box bg-blue full-width">
-                                        <h2>Private Messages</h2>
-                                        <div><span>&nbsp;</span></div>
-                                        <div class="current-date">
-                                            <span><?php echo $messages; ?><sub>Pending</sub></span>
+
+                        <?php if (checkIfAppIsEnabled('privatemessage')) { ?>
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <a href="<?php echo base_url('private_messages'); ?>">
+                                        <div class="link-box bg-blue full-width">
+                                            <h2>Private Messages</h2>
+                                            <div><span>&nbsp;</span></div>
+                                            <div class="current-date">
+                                                <span><?php echo $messages; ?><sub>Pending</sub></span>
+                                            </div>
+                                            <!--                                            <ul class="cs-jam-ul">-->
+                                            <!--                                                <li>Messages: -->
+                                            <? //= $messages;
+                                            ?>
+                                            <!-- Pending</li>-->
+                                            <!--                                            </ul>-->
+                                            <div class="status-panel">
+                                                <h3>View Messages</h3>
+                                                <span>Send & Receive Messages</span>
+                                            </div>
                                         </div>
-                                        <!--                                            <ul class="cs-jam-ul">-->
-                                        <!--                                                <li>Messages: -->
-                                        <? //= $messages;
-                                        ?>
-                                        <!-- Pending</li>-->
-                                        <!--                                            </ul>-->
-                                        <div class="status-panel">
-                                            <h3>View Messages</h3>
-                                            <span>Send & Receive Messages</span>
-                                        </div>
-                                    </div>
-                                </a>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        <?php } ?>
+
+
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                             <div class="widget-box">
                                 <a href="<?php echo base_url('my_events'); ?>">

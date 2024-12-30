@@ -1615,6 +1615,23 @@
                                                 <header class="hr-box-header hr-box-footer"></header>
                                             </article>
 
+                                            <article class="col-sm-6 information-box">
+                                                        <header class="hr-box-header">
+                                                            MANAGE MODULES
+                                                        </header>
+                                                        <div class="table-outer">
+                                                            <div class="info-row">
+                                                                <ul>
+                                                                    <li>
+                                                                        <label></label>
+                                                                        <a href="<?php echo base_url('manage_admin/security_settings/manage_modules/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <header class="hr-box-header hr-box-footer"></header>
+                                                    </article>
+
                                         </div>
 
 

@@ -10,6 +10,12 @@ class Support_tickets extends Public_Controller {
 
     public function index() {
         if ($this->session->userdata('logged_in')) {
+
+            if (!checkIfAppIsEnabled('supporttickets')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);

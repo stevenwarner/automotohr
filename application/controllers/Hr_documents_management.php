@@ -22,6 +22,12 @@ class Hr_documents_management extends Public_Controller
         getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
 
         if ($this->session->userdata('logged_in')) {
+
+            if (!checkIfAppIsEnabled('emsdocumentmanagement')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -15091,6 +15097,12 @@ class Hr_documents_management extends Public_Controller
         if (!$this->session->userdata('logged_in')) {
             return redirect(base_url('login'), "refresh");
         }
+
+        if (!checkIfAppIsEnabled('approvaldocuments')) {
+            $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+            redirect(base_url('dashboard'), "refresh");
+        }
+       
         //
         $data['session'] = $this->session->userdata('logged_in');
         $employer_detail = $data['session']['employer_detail'];

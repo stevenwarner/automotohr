@@ -179,6 +179,13 @@ class Employee_management extends Public_Controller
     {
         if ($this->session->userdata('logged_in')) {
             //
+
+if (!checkIfAppIsEnabled('etm')) {
+    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+    redirect(base_url('dashboard'), "refresh");
+}
+
+
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);

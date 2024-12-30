@@ -67,6 +67,8 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                       <?php  if (checkIfAppIsEnabled('applicanttrackingsystem')) {?>
                                         <div class="col-lg-4 dash-box-main col-md-6 col-xs-12 col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
@@ -89,6 +91,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                       <?php }?>
                                         <div class="col-lg-4 col-md-6  col-xs-12 dash-box-main col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
@@ -177,6 +180,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php  if (checkIfAppIsEnabled('applicanttrackingsystem')) {?>
                                         <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
@@ -199,6 +203,8 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php }?>
+
                                         <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">

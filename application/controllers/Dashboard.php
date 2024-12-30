@@ -741,7 +741,7 @@ class Dashboard extends Public_Controller
                 $this->session->set_flashdata('message', '<strong>Warning</strong> Not Allowed!');
                 redirect('dashboard', 'refresh');
             }
-
+           
             $security_details                                                   = db_get_access_level_details($security_sid);
             $data['security_details']                                           = $security_details;
             $employer_id                                                        = $employer_detail['sid'];

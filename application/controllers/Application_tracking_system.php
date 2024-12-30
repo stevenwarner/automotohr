@@ -20,6 +20,11 @@ class Application_tracking_system extends Public_Controller
             ->replaceStatusCheck(
                 $this->session->userdata('logged_in')['company_detail']['sid'] ?? 0
             );
+            //
+            if (!checkIfAppIsEnabled('applicanttrackingsystem')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access Denied');
+               redirect(base_url('dashboard'), "refresh");
+            }
     }
 
     public function index($archive = 'active', $searchKeyword = NULL, $job_sid = NULL, $status = NULL, $job_fit_category_sid = 0, $app_type = 'all', $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all')
