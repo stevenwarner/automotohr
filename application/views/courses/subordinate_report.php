@@ -4,15 +4,6 @@
 
             <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
 
-            <div class="text-center">
-                <span class="">	
-                    <img src="<?php echo $companyLogo; ?>" style="width: 75px; height: 75px;" class="img-rounded" alt="Company logo">
-	                <br>
-	                <br>
-	                <?php echo $companyName; ?>	LMS Team Report
-                </span>
-            </div>
-
             <div class="row">
                 <div class="col-lg-12">
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>

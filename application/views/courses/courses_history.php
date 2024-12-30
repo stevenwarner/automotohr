@@ -2,17 +2,7 @@
     <div class="container"> -->
 <div class="main csPageWrap">
     <div class="container-fluid">
-        <div style="position: relative">
-            <?php if ($page == "employee_courses_history") { ?>
-                <div class="text-center">
-                    <span class="">	
-                        <img src="<?php echo $companyLogo; ?>" style="width: 75px; height: 75px;" class="img-rounded" alt="Company logo">
-                        <br>
-                        <br>
-                        <?php echo $companyName ?> <?php echo $reviewAs == "plus" ? "Employee LMS History" : "Subordinate LMS History"; ?>
-                    </span>
-                </div>
-            <?php } ?>    
+        <div style="position: relative">  
             <?php $this->load->view('courses/partials/my_course_filter'); ?>
             <!--  -->
             <div class="row">
