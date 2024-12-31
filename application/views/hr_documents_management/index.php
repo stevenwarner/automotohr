@@ -89,10 +89,10 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                 </thead>
                                                                 <tbody>
 
-                                                                    <?php if ($active_group['other_documents']) {?>
+                                                                    <?php if ($active_group['other_documents']) { ?>
                                                                         <?php foreach ($active_group['other_documents'] as $otherDocument) : ?>
                                                                             <tr>
-                                                                                <td class="col-xs-6"><?php echo $otherDocument?></td>
+                                                                                <td class="col-xs-6"><?php echo $otherDocument ?></td>
                                                                                 <td class="col-xs-2"> </td>
                                                                                 <td class="col-xs-1"></td>
                                                                                 <td class="col-xs-1"></td>
@@ -131,7 +131,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                                     <?php } else if ($document['document_type'] == 'uploaded') { ?>
                                                                                         <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                                     <?php  } else { ?>
-                                                                                        <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                        <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-fillable="<?= $document["fillable_document_slug"] ? 1 : 0; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                                     <?php } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
@@ -240,7 +240,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                                     <?php if ($document['document_type'] == 'uploaded') { ?>
                                                                                         <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                                     <?php  } else { ?>
-                                                                                        <button class="btn btn-primary btn-sm btn-block" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                        <button class="btn btn-primary btn-sm btn-block" data-fillable="<?= $document["fillable_document_slug"] ? 1 : 0; ?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                                     <?php  } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
@@ -345,7 +345,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                             <?php if ($document['document_type'] == 'uploaded') { ?>
                                                                                 <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                             <?php } else { ?>
-                                                                                <button class="btn btn-primary btn-sm btn-block" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                <button class="btn btn-primary btn-sm btn-block" data-fillable="<?= $document["fillable_document_slug"] ? 1 : 0; ?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                             <?php  } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
@@ -535,7 +535,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                             <?php } else if ($document['document_type'] == 'uploaded') { ?>
                                                                                 <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                             <?php } else { ?>
-                                                                                <button class="btn btn-primary btn-sm btn-block" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                <button class="btn btn-primary btn-sm btn-block" data-fillable="<?= $document["fillable_document_slug"] ? 1 : 0; ?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                             <?php  } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
@@ -1424,13 +1424,23 @@ $requiredMessage = 'This document is required to complete the process.';
     }
 
     function remakeAccessLevel(obj) {
-        if ((obj.is_executive_admin) && (obj.is_executive_admin != 0)) {
-            obj.is_executive_admin = 'Executive ' + obj['access_level'];
+        //
+        let accessLevelText = "";
+        //
+        if (obj.is_executive_admin && obj.is_executive_admin != 0) {
+            accessLevelText += "Executive ";
         }
-        if (obj.access_level_plus == 1 && obj.pay_plan_flag == 1) return obj.access_level + ' Plus / Payroll';
-        if (obj.access_level_plus == 1) return obj.access_level + ' Plus';
-        if (obj.pay_plan_flag == 1) return obj.access_level + ' Payroll';
-        return obj.access_level;
+        if (obj.access_level_plus == 1 && obj.pay_plan_flag == 1) {
+            accessLevelText += obj.access_level + ' Plus / Payroll';
+        } else if (obj.access_level_plus == 1) {
+            accessLevelText += obj.access_level + ' Plus';
+        } else if (obj.pay_plan_flag == 1) {
+            accessLevelText += obj.access_level + ' Payroll';
+        } else {
+            accessLevelText += obj.access_level;
+        }
+
+        return accessLevelText;
     }
     var employees = $('#employees').selectize({
         plugins: ['remove_button'],
@@ -1483,8 +1493,8 @@ $requiredMessage = 'This document is required to complete the process.';
 
         //        $('#gen-doc-title').val(document_title);
         if (isFillable) {
-        CKEDITOR.instances.gen_doc_description
-             && CKEDITOR.instances.gen_doc_description.destroy()
+            CKEDITOR.instances.gen_doc_description &&
+                CKEDITOR.instances.gen_doc_description.destroy()
             $("#gen_doc_description").val((document_description))
             $("#gen_doc_description").hide()
             $("#gen_doc_description").after(`<div id="jsFillableView">${makeTheFillableView(document_description)}</div>`)
@@ -1638,12 +1648,12 @@ $requiredMessage = 'This document is required to complete the process.';
         });
     }
 
-    function remakeAccessLevel(obj) {
-        if (obj.access_level_plus == 1 && obj.pay_plan_flag == 1) return obj.access_level + ' Plus / Payroll';
-        if (obj.access_level_plus == 1) return obj.access_level + ' Plus';
-        if (obj.pay_plan_flag == 1) return obj.access_level + ' Payroll';
-        return obj.access_level;
-    }
+    // function remakeAccessLevel(obj) {
+    //     if (obj.access_level_plus == 1 && obj.pay_plan_flag == 1) return obj.access_level + ' Plus / Payroll';
+    //     if (obj.access_level_plus == 1) return obj.access_level + ' Plus';
+    //     if (obj.pay_plan_flag == 1) return obj.access_level + ' Payroll';
+    //     return obj.access_level;
+    // }
 
     $(document).on('click', '.js-assign-type', function() {
         if ($(this).val() == 'department') {
@@ -2049,8 +2059,7 @@ $requiredMessage = 'This document is required to complete the process.';
 
 
 <script>
-    function makeTheFillableView(description)
-    {
+    function makeTheFillableView(description) {
 
         const inputReplace = "---------------";
         const textAreaReplace = "<p>--------------------------------------------------</p>";
@@ -2283,7 +2292,7 @@ $requiredMessage = 'This document is required to complete the process.';
         description = description.replace("{{fillable_from_rate}}", inputGroupReplace)
         description = description.replace("{{fillable_to_rate}}", inputGroupReplace)
         description = description.replace("{{fillable_all_reasons}}", statusTableReplace)
-        
+
         return description;
     }
 </script>
