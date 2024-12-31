@@ -1869,7 +1869,7 @@ if (!function_exists('getImageURL')) {
         if (!empty($img) && !preg_match('/pdf|doc|docx|xls|xlxs/i', strtolower($img))) {
             return AWS_S3_BUCKET_URL . $img;
         } else {
-            return base_url('assets/images/img-applicant.jpg');
+            return AWS_S3_BUCKET_URL . '64533-profile_picture--ydI.jpg';
         }
     }
 }
