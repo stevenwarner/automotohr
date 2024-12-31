@@ -1964,3 +1964,128 @@ if (!function_exists('checkIfAppIsEnabled')) {
         return true;
     }
 }
+
+if (!function_exists('getSystemDate')) {
+    /**
+     * Get the current datetime
+     *
+     * @param string $format
+     * @param string $timestamp
+     * @return string
+     */
+    function getSystemDate(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now')
+    {
+        return date($format, strtotime($timestamp));
+    }
+}
+
+if (!function_exists('get_employee_profile_info')) {
+    function get_employee_profile_info($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('first_name, last_name, email, timezone, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, profile_picture, PhoneNumber');
+        $CI->db->where('sid', $emp_id);
+        return $CI->db->get('users')->row_array();
+    }
+}
+
+if (!function_exists('getCompanyLogoBySid')) {
+    function getCompanyLogoBySid($company_sid)
+    {
+        $company_name = '';
+        if (!empty($company_sid)) {
+
+            $CI = &get_instance();
+            $CI->db->select('Logo');
+            $CI->db->where('sid', $company_sid);
+            //
+            $company_info = $CI->db->get('users')->row_array();
+
+            if (!empty($company_info)) {
+                $company_name = $company_info['Logo'];
+            }
+        }
+
+        return $company_name;
+    }
+}
+
+if (!function_exists('getUserNameBySID')) {
+    function getUserNameBySID($sid, $remake = true)
+    {
+        $user_info = db_get_employee_profile($sid);
+
+        if (!empty($user_info)) {
+            return $remake ? remakeEmployeeName([
+                'first_name' => $user_info[0]['first_name'],
+                'last_name' => $user_info[0]['last_name'],
+                'access_level' => $user_info[0]['access_level'],
+                'timezone' => isset($user_info[0]['timezone']) ? $user_info[0]['timezone'] : '',
+                'access_level_plus' => $user_info[0]['access_level_plus'],
+                'is_executive_admin' => $user_info[0]['is_executive_admin'],
+                'pay_plan_flag' => $user_info[0]['pay_plan_flag'],
+                'job_title' => $user_info[0]['job_title'],
+            ]) : $user_info;
+        } else {
+            return '';
+        }
+    }
+}
+
+if (!function_exists('db_get_employee_profile')) {
+    function db_get_employee_profile($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('first_name, last_name, email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, timezone,middle_name');
+        $CI->db->where('sid', $emp_id);
+        return $CI->db->get('users')->result_array();
+    }
+}
+
+if (!function_exists('formatDateToDB')) {
+    function formatDateToDB(
+        $date,
+        $fromFormat = 'm/d/Y',
+        $toFormat = 'Y-m-d'
+    ) {
+        //
+        if (empty($date)) {
+            return $date;
+        }
+        // auto detect format
+        if ($fromFormat === false) {
+            $fromFormat = detectDateTimeFormat($date);
+        }
+        //
+        $date = formatDateBeforeProcess($date, $fromFormat);
+        //
+        return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
+    }
+}
+
+if (!function_exists('formatDateBeforeProcess')) {
+    /**
+     * Format date to correct
+     *
+     * @param string $date
+     * @param string $format
+     * @return string
+     */
+    function formatDateBeforeProcess(
+        string $date,
+        string $format
+    ) {
+        //
+        if (
+            $format == 'm/d/Y' &&
+            preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $date)
+        ) {
+            return DateTime::createFromFormat(
+                'm-d-Y',
+                $date
+            )->format('m/d/Y');
+        }
+        //
+        return $date;
+    }
+}

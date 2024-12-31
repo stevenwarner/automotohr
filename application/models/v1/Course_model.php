@@ -503,17 +503,20 @@ class Course_model extends CI_Model
                 $b = $a->row_array();
                 $a = $a->free_result();
                 //
+                $status = 0;
+                //
                 if (empty($b)) {
                     $result["pendingCount"]++;
                     $result["readyToStart"]++;
                 } else if ($b['lesson_status'] == 'completed') {
+                    $status = 1;
                     $result["completedCount"]++;
                 } else if ($b['lesson_status'] == 'incomplete') {
                     $result["pendingCount"]++;
                     $result["inProgressCount"]++;
                 }
                 //
-                $result["coursesInfo"][$courseId] = $count;   
+                $result["coursesInfo"][$courseId] = $status;   
             }
             //
             if ($result["completedCount"]> 0) {

@@ -164,7 +164,7 @@
                                                             ?>
 
                                                             <?php if ($execAdminAccessLevelPlus && checkIfAppIsEnabled(MODULE_LMS,$user_company['company_sid'])) {?>
-                                                                <!-- <a class="btn btn-success btn-sm" href="<?php //echo base_url() . 'lms_company_report/' . $user_company['company_sid']; ?>">LMS Company Report</a> -->
+                                                                <a class="btn btn-success btn-sm" href="<?php echo base_url() . 'lms_company_report/' . $user_company['company_sid']; ?>">LMS Company Report</a>
                                                             <?php } ?>
                                                         </div>
                                                     </td>

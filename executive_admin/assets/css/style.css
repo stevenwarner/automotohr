@@ -1820,3 +1820,47 @@ span.required {
     background-color: #d9534f;
     border-color: #d43f3a;
 }
+
+.dn {
+    display: none;
+}
+
+.orange-btn {
+    background-color: #fd7a2a;
+    border: medium none;
+    border-radius: 5px;
+    color: #fff;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 24px;
+    margin: 0 0 0 5px;
+    padding: 4px 10px;
+}
+
+.p0 {
+    padding: 0px !important;
+}
+
+.report-btns {
+    float: left;
+    margin: 10px 0;
+    width: 100%;
+}
+
+.form-btn {
+    float: right;
+    width: 100%;
+    background-color: #81b431;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    padding: 9px 5px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.margin-top {
+    margin-top: 20px !important;
+}
