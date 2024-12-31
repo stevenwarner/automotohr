@@ -46,13 +46,8 @@ class LMS_company_report extends CI_Controller
                 "courses" => urldecode($courses),
                 "employees" => urldecode($employees)
             ];
-            
-            error_reporting(E_ALL);
-			ini_set('display_errors', 1);
-            // _e("pakistan",true);
-            // echo $companyId;
+            //
             $companyEmployeesList = $this->course_model->getAllActiveEmployees($companyId, false);
-            // _e($companyEmployeesList,true,true);
             //
             $filterData = [];
             $filterData["employees"] = $companyEmployeesList;

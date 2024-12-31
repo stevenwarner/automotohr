@@ -53,7 +53,7 @@
                                                         <option value="all">All</option>
                                                         <?php if (!empty($filterData["employees"])) { ?>
                                                             <?php foreach ($filterData["employees"] as $employee) { ?>
-                                                                <?php if ($employer_detail['sid'] != $employee['sid']) { ?>
+                                                                <?php if ($executiveUserId != $employee['sid']) { ?>
                                                                     <option value="<?php echo $employee['sid']; ?>">
                                                                         <?php echo remakeEmployeeName([
                                                                             'first_name' => $employee['first_name'],
