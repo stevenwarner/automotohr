@@ -3398,6 +3398,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->order_by("concat(first_name,' ',last_name)", "ASC", false);
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('active', 1);
+        $this->db->where('is_executive_admin', 0);
         $this->db->where("`sid` NOT IN ($where_clause)", NULL, False);
         $result = $this->db->get('users')->result_array();
         return $result;
