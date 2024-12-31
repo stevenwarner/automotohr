@@ -19,7 +19,7 @@
             </div>
             <div class="right-header">
                 <h3>USCIS <br> Form I-9</h3>
-                <p>OMB No. 1615-0047<br>Expires <?php echo I9_NEW_EXPIRES; ?></p>
+                <p>OMB No. 1615-0047<br>Expires <?php echo I9_NEW_EXPIRES_2025; ?></p>
             </div>
         </article>
         <p><strong>START HERE:</strong> Employers must ensure the form instructions are available to employees when completing this form. Employers are liable for failing to comply with the requirements for completing this form. See below and the <a href="https://www.uscis.gov/i-9" target="_blank">Instructions</a>.</p>
