@@ -277,12 +277,12 @@
 	                        up_dept.addItems('');
 	                        up_dept.refreshItems();
 	                    });
-	                    $('#js-bulk-assign-msg-modal').show();
-	                    $('#js-bulk-assign-btn-modal').hide();
+	                    // $('#js-bulk-assign-msg-modal').show();
+	                    // $('#js-bulk-assign-btn-modal').hide();
 	                    up_dept.disable();
 	                } else{
-	                    $('#js-bulk-assign-msg-modal').hide();
-	                    $('#js-bulk-assign-btn-modal').show();
+	                    // $('#js-bulk-assign-msg-modal').hide();
+	                    // $('#js-bulk-assign-btn-modal').show();
 	                    up_dept.enable();
 	                    up_dept.clearOptions();
 	                    up_dept.load(function(callback) {
