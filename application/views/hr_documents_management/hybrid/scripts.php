@@ -223,7 +223,8 @@
 	                // var employees = JSON.parse(data);
 	                var employees = data.Employees;
 	                var departments = data.Departments;
-	                if(employees.length == 0){
+					console.log(employees.length)
+	                if(employees.length == 0){console.log('up1')
 	                    up_emp.clearOptions();
 	                    up_emp.load(function(callback) {
 	                        var arr = [{}];
@@ -238,7 +239,7 @@
 	                    $('#js-bulk-assign-msg-modal').show();
 	                    $('#js-bulk-assign-btn-modal').hide();
 	                    up_emp.disable();
-	                } else{
+	                } else{console.log('down1')
 	                    $('#js-bulk-assign-msg-modal').hide();
 	                    $('#js-bulk-assign-btn-modal').show();
 	                    up_emp.enable();
