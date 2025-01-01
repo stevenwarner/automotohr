@@ -237,8 +237,7 @@ if (sizeof($assigned_offer_letter_history)) foreach ($assigned_offer_letter_hist
                     // var employees = JSON.parse(data);
                     var employees = data.Employees;
                     var departments = data.Departments;
-                    console.log(employees.length)
-                    if (employees.length == 0) {console.log("up")
+                    if (employees.length == 0) {
                         up_emp.clearOptions();
                         up_emp.load(function(callback) {
                             var arr = [{}];
@@ -253,7 +252,7 @@ if (sizeof($assigned_offer_letter_history)) foreach ($assigned_offer_letter_hist
                         $('#js-bulk-assign-msg-modal').show();
                         $('#js-bulk-assign-btn-modal').hide();
                         up_emp.disable();
-                    } else {console.log("down")
+                    } else {
                         $('#js-bulk-assign-msg-modal').hide();
                         $('#js-bulk-assign-btn-modal').show();
                         up_emp.enable();
