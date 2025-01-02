@@ -11,14 +11,6 @@ class Testing extends CI_Controller
         $this->load->model('hr_documents_management_model');
     }
 
-    public function getManagers () {
-        $managers = get_notification_email_contacts(
-            64187,
-            "course_status"
-        );
-        _e($managers,true,true);
-    }
-
     /**
      * 
      */

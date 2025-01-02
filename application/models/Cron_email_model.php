@@ -286,7 +286,7 @@ class Cron_email_model extends CI_Model
             $report = $this->generateReport();
             echo "Report generated \n";
             //
-            $this->sendCourseReportEmails($report);
+            $this->sendCourseReportEmails($report, $v0);
             echo "Report Sent \n\n";
         }
         //
@@ -757,7 +757,7 @@ class Cron_email_model extends CI_Model
         }
     }
 
-    private function sendCourseReportEmails(array $report)
+    private function sendCourseReportEmails(array $report, array $employee)
     {
         // get the template
         $template = get_email_template(COURSE_REPORT_EMAILS);
@@ -780,7 +780,7 @@ class Cron_email_model extends CI_Model
             get_encryption_initialize_array()
         );
         //
-        foreach ($this->notifiers as $employee) {
+        // foreach ($this->notifiers as $employee) {
             $templateBody = $template["text"];
             // set replace array
             $replaceArray = $companyReplaceArray;
@@ -840,7 +840,7 @@ class Cron_email_model extends CI_Model
                 $report,
                 "sendMailWithAttachmentAsString"
             );
-        }
+        // }
     }
 
     /**
