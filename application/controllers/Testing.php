@@ -11,10 +11,12 @@ class Testing extends CI_Controller
         $this->load->model('hr_documents_management_model');
     }
 
-    /**
-     * 
-     */
-    public function redirectToComply(int $employeeId = 0)
+    public function getManagers () {
+        $managers = get_notification_email_contacts(
+            $this->companyId,
+            "course_status"
+        );
+        _e($managers,true,true);
     {
         // check if we need to read from session
         if ($employeeId === 0) {
