@@ -214,7 +214,7 @@ class Form_w4 extends Public_Controller
 
             $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
 
-            $compare_date_2025 = date("Y-m-d", strtotime('2025-01-01'));
+            $compare_date_2025 = date("Y-m-d", strtotime('2025-01-02'));
 
             //
             if ($this->form_validation->run() == FALSE) {
@@ -830,7 +830,7 @@ class Form_w4 extends Public_Controller
             $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
             $data['pre_form'] = $previous_form;
 
-            $compare_date_2025 = date("Y-m-d", strtotime('2025-01-01'));
+            $compare_date_2025 = date("Y-m-d", strtotime('2025-01-00'));
 
 
             if ($assign_on >= $compare_date_2025) {
@@ -860,7 +860,7 @@ class Form_w4 extends Public_Controller
             $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
             $data['pre_form'] = $previous_form;
 
-            $compare_date_2025 = date("Y-m-d", strtotime('2025-01-01'));
+            $compare_date_2025 = date("Y-m-d", strtotime('2025-01-02'));
 
             if ($assign_on >= $compare_date_2025) {
                 $this->load->view('form_w4/download_w4_2025', $data);

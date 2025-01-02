@@ -117,7 +117,7 @@ if (!function_exists('get_form_view')) {
             $compare_date = date("Y-m-d", strtotime('2020-01-06'));
             $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
 
-            $compare_date_2025 = date("Y-m-d", strtotime('2025-01-01'));
+            $compare_date_2025 = date("Y-m-d", strtotime('2025-01-02'));
 
             if ($assign_on >= $compare_date_2025) {
                 $view = $CI->load->view('form_w4/form_w4_2025_pdf', $form_values, TRUE);

@@ -9176,7 +9176,7 @@ class Onboarding extends CI_Controller
 
                     $assign_on = date("Y-m-d", strtotime($previous_form['sent_date']));
                     $compare_date = date("Y-m-d", strtotime('2020-01-06'));
-                    $compare_date_2025 = date("Y-m-d", strtotime('2025-01-01'));
+                    $compare_date_2025 = date("Y-m-d", strtotime('2025-01-02'));
                   
                     if ($this->form_validation->run() == FALSE) {
                         $this->load->view('onboarding/applicant_boarding_header', $data);

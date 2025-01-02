@@ -1902,7 +1902,7 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
 
                 $assign_on = date("Y-m-d", strtotime($form_values['pre_form']['sent_date']));
                 $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
-                $compare_date_2025 = date("Y-m-d", strtotime('2025-01-01'));
+                $compare_date_2025 = date("Y-m-d", strtotime('2025-01-02'));
 
 
                 if ($assign_on >= $compare_date_2025) {

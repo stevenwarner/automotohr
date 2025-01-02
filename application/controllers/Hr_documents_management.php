@@ -14820,7 +14820,7 @@ class Hr_documents_management extends Public_Controller
             // $html = $this->load->view('form_w4/preview_w4_2020', $data, true);
             $assign_on = date("Y-m-d", strtotime($data["pre_form"]['sent_date']));
             $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
-            $compare_date_2025 = date("Y-m-d", strtotime('2025-01-01'));
+            $compare_date_2025 = date("Y-m-d", strtotime('2025-01-02'));
 
             if ($assign_on >= $compare_date_2025) {
                 $html = $this->load->view('form_w4/preview_w4_2025', $data, true);
