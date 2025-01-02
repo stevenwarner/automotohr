@@ -13,10 +13,16 @@ class Testing extends CI_Controller
 
     public function getManagers () {
         $managers = get_notification_email_contacts(
-            $this->companyId,
+            64187,
             "course_status"
         );
         _e($managers,true,true);
+    }
+
+    /**
+     * 
+     */
+    public function redirectToComply(int $employeeId = 0)
     {
         // check if we need to read from session
         if ($employeeId === 0) {
