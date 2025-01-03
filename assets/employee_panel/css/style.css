@@ -2688,6 +2688,21 @@ p.error_message {
   background-color: #00bfff;
   text-decoration: underline;
 }
+
+/* 6 */
+/*5*/
+.nav-tabs.btn-tabs > li.compliance-safety-inspections a {
+  background-color: #5D3FD3;
+  color: #fff;
+}
+.nav-tabs.btn-tabs > li.compliance-safety-inspections.active a,
+.nav-tabs.btn-tabs > li.compliance-safety-inspections.active > a:hover,
+.nav-tabs.btn-tabs > li.compliance-safety-inspections.active > a:focus {
+  background-color: #5D3FFF;
+  text-decoration: underline;
+}
+
+
 .title-font {
   font-size: 18px !important;
 }
