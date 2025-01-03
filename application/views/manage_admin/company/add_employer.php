@@ -180,6 +180,9 @@
                                                                         <option value="Warranty Clerk">
                                                                             Warranty Clerk
                                                                         </option>
+                                                                        <option value="DX Driver">
+                                                                            DX Driver
+                                                                        </option>
                                                                     </select>
                                                                 </div>
                                                             </div>
