@@ -426,7 +426,7 @@ define('YOUTUBE_VIDEO', 'Youtube');
 define('VIMEO_VIDEO', 'Vimeo');
 define('UPLOAD_VIDEO', 'Upload Video');
 define('UPLOAD_AUDIO', 'Upload Audio');
-define('UPLOAD_VIDEO_SIZE', 40.00);
+define('UPLOAD_VIDEO_SIZE', 200.00);
 define('UPLOAD_AUDIO_SIZE', 40.00);
 define('VIDEO_LOADER_MESSAGE', 'Please wait, while we are processing your request.');
 define('ERROR_UPLOAD_VIDEO_SIZE', 'The uploaded video is too long, You can upload video up to 40MB.');
