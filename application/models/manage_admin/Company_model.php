@@ -2330,7 +2330,7 @@ class Company_model extends CI_Model
     function getDynamicModulesByCompany($companyId)
     {
         $a = $this->db
-            ->select('sid, module_name, "0" as status')
+            ->select('sid, module_name,module_slug, "0" as status')
             ->where('is_disabled', 0)
             ->where('stage', 'production')
             ->order_by('module_name', 'ASC')
@@ -3525,5 +3525,23 @@ class Company_model extends CI_Model
                     "indeed_job_opt" => $data
                 ]
             );
+    }
+
+
+    //
+    function getIncidentStatus($sid)
+    {
+        $result = $this->db
+            ->select('is_active')
+            ->where('company_sid', $sid)
+            ->where('module_sid', 13)
+            ->get('company_modules')
+            ->row_array();
+
+        if (!empty($result)) {
+            return $result['is_active'];
+        } else {
+            return 0;
+        }
     }
 }
