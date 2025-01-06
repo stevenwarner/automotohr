@@ -746,7 +746,8 @@
                                                     <div class="table-outer">
                                                         <div class="info-row">
                                                             <ul>
-                                                                <?php if ($company_info['incidents']) {
+                                                                <?php
+                                                                if ($company_info['incidents']) {
                                                                     $status = 'Enabled';
                                                                     $btn_value = 'Disable';
                                                                 } else {
@@ -1558,6 +1559,7 @@
                                             <!-- Dynamic Modules -->
                                             <?php if (sizeof($dynamicModules)) {
                                                 foreach ($dynamicModules as $k => $v) { ?>
+                                                <?php if($v['module_slug']!='incidents'){?>
                                                     <article class="col-sm-6 information-box">
                                                         <header class="hr-box-header">
                                                             <?= $v['module_name']; ?>
@@ -1595,6 +1597,7 @@
                                                         </div>
                                                         <header class="hr-box-header hr-box-footer"></header>
                                                     </article>
+                                                    <?php }?>
                                             <?php }
                                             } ?>
                                         </div>
@@ -2209,6 +2212,7 @@
     //
     $(document).on('click', '#change-incident', function() {
         var status = $('#change-incident').attr('data-status');
+
         var id = $('#change-incident').attr('data-attr');
         alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html(),
             function() {
@@ -2225,7 +2229,7 @@
                         if (status == 0) {
                             window.location.href = '<?php echo base_url('setup_default_config') . '/' ?>' + id;
                         } else {
-                            window.location.href = '<?php echo current_url() ?>';
+                             window.location.href = '<?php echo current_url() ?>';
                         }
                     },
                     error: function() {}
@@ -2390,7 +2394,7 @@
 
         alertify.confirm('Confirmation', "<strong> " + msg + "</strong>",
             function() {
-                 $("#form_set_indeed_job_opt_status").submit();
+                $("#form_set_indeed_job_opt_status").submit();
             },
             function() {
                 alertify.error('Canceled');
