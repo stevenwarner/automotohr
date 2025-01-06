@@ -80,9 +80,7 @@ class job_title_templates_model extends CI_Model
         } else if ($status == 'active') {
             $data['status'] = 1;
         }
-        
         //
-
         $this->db->where('sid', $sid);
         $this->db->update('portal_job_title_templates', $data);
     }
