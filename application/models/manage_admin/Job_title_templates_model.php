@@ -74,6 +74,14 @@ class job_title_templates_model extends CI_Model
         $data = array(
             'archive_status' => $status
         );
+        //
+        if ($status == 'deleted') {
+            $data['status'] = 0;
+        } else if ($status == 'active') {
+            $data['status'] = 1;
+        }
+        
+        //
 
         $this->db->where('sid', $sid);
         $this->db->update('portal_job_title_templates', $data);
