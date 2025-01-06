@@ -279,6 +279,9 @@
                                                                     <option <?= $data["complynet_job_title"] == 'Warranty Clerk' ? 'selected' : ''; ?> value="Warranty Clerk">
                                                                         Warranty Clerk
                                                                     </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'DX Driver' ? 'selected' : ''; ?> value="DX Driver">
+                                                                        DX Driver
+                                                                    </option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -297,7 +300,7 @@
                                                                         <select name="lms_job_title" id="lms_job_title" class="invoice-fields">
                                                                             <option value="0">Please select job title</option>
                                                                             <?php foreach ($storeJobTitles as $titleRow) { ?>
-                                                                                <option value="<?php echo $titleRow['sid']; ?>" <?=$titleRow["sid"] == $data["lms_job_title"] ? "selected": "";?>> <?php echo $titleRow['title']; ?> </option>
+                                                                                <option value="<?php echo $titleRow['sid']; ?>" <?= $titleRow["sid"] == $data["lms_job_title"] ? "selected" : ""; ?>> <?php echo $titleRow['title']; ?> </option>
                                                                             <?php } ?>
                                                                         </select>
                                                                     <?php } ?>

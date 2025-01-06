@@ -139,6 +139,9 @@
                                                                         <option <?= $template["complynet_job_title"] == 'Warranty Clerk' ? 'selected' : ''; ?> value="Warranty Clerk">
                                                                             Warranty Clerk
                                                                         </option>
+                                                                        <option <?= $template["complynet_job_title"] == 'DX Driver' ? 'selected' : ''; ?> value="DX Driver">
+                                                                            DX Driver
+                                                                        </option>
                                                                     </select>
                                                                 </div>
 

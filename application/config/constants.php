@@ -426,7 +426,7 @@ define('YOUTUBE_VIDEO', 'Youtube');
 define('VIMEO_VIDEO', 'Vimeo');
 define('UPLOAD_VIDEO', 'Upload Video');
 define('UPLOAD_AUDIO', 'Upload Audio');
-define('UPLOAD_VIDEO_SIZE', 40.00);
+define('UPLOAD_VIDEO_SIZE', 200.00);
 define('UPLOAD_AUDIO_SIZE', 40.00);
 define('VIDEO_LOADER_MESSAGE', 'Please wait, while we are processing your request.');
 define('ERROR_UPLOAD_VIDEO_SIZE', 'The uploaded video is too long, You can upload video up to 40MB.');
@@ -751,5 +751,30 @@ define('SHIFTS_SWAP_ADMIN_APPROVED', 451);
 define("COURSE_UNCOMPLETED_REMINDER_EMAILS", 470);
 define("COURSE_REPORT_EMAILS", 471);
 define("COURSE_DUE_SOON_DAYS", 4);
+
+
+////
+define('W4_EXEMPTION_FROM_WITHHOLDING_25', 'You may claim exemption
+from withholding for 2025 if you meet both of the following
+conditions: you had no federal income tax liability in 2024
+and you expect to have no federal income tax liability in
+2025. You had no federal income tax liability in 2024 if (1)
+your total tax on line 24 on your 2024 Form 1040 or 1040-SR
+is zero (or less than the sum of lines 27, 28, and 29), or (2)
+you were not required to file a return because your income
+was below the filing threshold for your correct filing status. If
+you claim exemption, you will have no income tax withheld
+from your paycheck and may owe taxes and penalties when
+you file your 2025 tax return. To claim exemption from
+withholding, certify that you meet both of the conditions
+above by writing “Exempt” on Form W-4 in the space below
+Step 4(c). Then, complete SteAction Required: Courses Pendingps 1(a), 1(b), and 5. Do not
+complete any other steps. You will need to submit a new
+Form W-4 by February 17, 2026');
+
+
+define('W4_YEAR_25', '2025');
+define('I9_NEW_EXPIRES_2025', '05/31/2027');
+
 
 
