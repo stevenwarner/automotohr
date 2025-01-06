@@ -57,10 +57,16 @@ class Merge_employees extends Admin_Controller
         $secondary_employee_sid = $this->input->post('secondary_employee_sid');
         $primary_employee_sid   = $this->input->post('primary_employee_sid');
         $secondary_employee_email    = $this->input->post('secondary_employee_email');
-
-
+        //
+        // set array
+        $passArray = [
+            'oldEmployeeId' => $secondary_employee_sid,
+            'oldCompanyId' => $company_sid,
+            'newEmployeeId' => $primary_employee_sid,
+            'newCompanyId' => $company_sid 
+        ];
+        //
         $adminId = getCompanyAdminSid($company_sid);
-
         //
         //Update Primary Employee Profile
         $secondary_employee_data = $this->merge_employees_model->update_company_employee($primary_employee_sid, $secondary_employee_sid);
@@ -132,6 +138,10 @@ class Merge_employees extends Admin_Controller
         ];
         //
         $this->merge_employees_model->save_merge_secondary_employee_info($merge_secondary_employee_data, $primary_employee_sid, $secondary_employee_sid);
+        //
+        // merge employee courses
+        // $this->load->model('manage_admin/copy_employees_model');
+        // $this->copy_employees_model->copyEmployeeLMSCourses($passArray);
         //
         $array['status'] = "success";
         $array['message'] = "Success! Employee is successfully merged!";

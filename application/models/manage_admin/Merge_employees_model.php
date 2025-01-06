@@ -67,6 +67,9 @@ class Merge_employees_model extends CI_Model
         }
         //
         $data_to_update = $this->findDifference($primary_employee, $secondary_employee);
+        _e($primary_employee,true);
+        _e($secondary_employee,true);
+        _e($data_to_update,true,true);
         //
         if (!empty($data_to_update)) {
             //Update primary Employee

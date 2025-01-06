@@ -168,6 +168,7 @@ class Copy_employees extends Admin_Controller
                 //
                 //Update Primary Employee Profile
                 $secondary_employee_data = $this->merge_employees_model->update_company_employee($primary_employee_sid, $secondary_employee_sid);
+                die("there 11");
 
                 // now move all other information
 
@@ -333,7 +334,8 @@ class Copy_employees extends Admin_Controller
 
                 //
                 //   $this->complynet_model->manageEmployee($passArray);
-
+                //
+                $this->copy_employees_model->copyEmployeeLMSCourses($passArray);
 
                 echo json_encode($resp);
             } else {
@@ -367,9 +369,9 @@ class Copy_employees extends Admin_Controller
 
                 $user_to_insert['parent_sid'] = $to_company;
                 unset($user_to_insert['sid']);
-
+                //
                 $new_employee_sid = $this->copy_employees_model->copy_user_to_other_company($user_to_insert);
-
+                $passArray['newEmployeeId'] = $new_employee_sid;
                 $e_signature = $this->copy_employees_model->get_employee_e_signature($from_company, $employee_sid, $user_type);
 
                 if (!empty($e_signature)) {
@@ -865,7 +867,8 @@ class Copy_employees extends Admin_Controller
 
                 //
                 //    $this->complynet_model->manageEmployee($passArray);
-
+                //
+                $this->copy_employees_model->copyEmployeeLMSCourses($passArray);
                 //
                 echo json_encode($resp);
             }

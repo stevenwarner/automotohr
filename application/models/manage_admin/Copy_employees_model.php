@@ -1344,4 +1344,190 @@ class Copy_employees_model extends CI_Model
         //
         return $offerLetterId;
     }
+
+    public function copyEmployeeLMSCourses (array $data) {
+        //
+        if ($this->checkIfAppIsEnabled(MODULE_LMS, $data['oldCompanyId']) && $this->checkIfAppIsEnabled(MODULE_LMS, $data['newCompanyId']))  {
+            //
+            // $lmsJobTitleId = $this->getEmployeeJobTitle($data['oldEmployeeId']);
+            //
+            $courses = $this->getEmployeeCourses($data['oldEmployeeId'], $data['oldCompanyId']);
+            //
+            //
+            if ($courses) {
+                foreach ($courses as $course) {
+                    // check this course exist into primary company
+                    $newCourseId = $this->checkCourseExistIntoPrimaryCompany($course['course_sid'], $data['oldCompanyId'], $data['newCompanyId']);
+                    //
+                    if (
+                        !$this
+                        ->db
+                        ->where([
+                            "course_sid" => $newCourseId,
+                            "company_sid" => $data['newCompanyId'],
+                            "employee_sid" => $data['newEmployeeId']
+                        ])
+                        ->count_all_results("lms_employee_course")
+                    ) {
+                        $oldCourseId = $course['sid'];
+                        unset($course['sid']);
+                        $course['course_sid'] = $newCourseId;
+                        $course['company_sid'] = $data['newCompanyId'];
+                        $course['employee_sid'] = $data['newEmployeeId'];
+                        //
+                        $this->db->insert('lms_employee_course', $course);
+                        //
+                        $courseHistory = $this->getEmployeeCourseHistory($oldCourseId, $data['oldEmployeeId'], $data['oldCompanyId']);
+                        //
+                        if ($courseHistory) {
+                            foreach ($courseHistory as $history) {
+                                unset($history['sid']);
+                                $history['course_sid'] = $newCourseId;
+                                $history['company_sid'] = $data['newCompanyId'];
+                                $history['employee_sid'] = $data['newEmployeeId'];
+                                //
+                                $this->db->insert('lms_employee_course_history', $history);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function checkIfAppIsEnabled(
+        $ctl,
+        $companyId
+    ) {
+        // Get the called controller name
+        $ctl = trim(strtolower(preg_replace('/[^a-zA-Z]/', '', $ctl ? $ctl : '')));
+        // If not a controller then pass
+        if ($ctl == '') return;
+        //
+        $a = $this
+            ->db
+            ->select('sid, stage, is_disabled, is_ems_module')
+            ->where('module_slug', $ctl)
+            ->limit(1)
+            ->get('modules');
+        //
+        $b = $a->row_array();
+        $a->free_result();
+        // If module doesn't exists then no need to continue
+        if (!sizeof($b)) return true;
+
+        // Lets check if module is activated against logged in company
+        $a = $this
+            ->db
+            ->where('module_sid', $b['sid'])
+            ->where('company_sid', $companyId)
+            ->where('is_active', 1)
+            ->get('company_modules');
+        //
+        $b = $a->row_array();
+        $a->free_result();
+        //
+        if (!sizeof($b)) {
+            return false;
+        }
+        //
+        return true;
+    }
+
+    private function getEmployeeJobTitle ($employeeId) {
+        //
+        $a = $this
+            ->db
+            ->select('lms_job_title')
+            ->where('sid', $employeeId)
+            ->get('users');
+        //
+        $b = $a->row_array();
+        $a->free_result();
+        //
+        if (empty($b['lms_job_title'])) {
+            return 0;
+        } else {
+            return $b['lms_job_title'];
+        }
+    }
+
+    private function getEmployeeCourses ($employeeId, $companyId) {
+        $this->db->select('*');
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('employee_sid', $employeeId);
+        $result = $this->db->get('lms_employee_course')->result_array();
+        //
+        return $result;
+    }
+
+    private function getEmployeeCourseHistory ($courseId, $employeeId, $companyId) {
+        $this->db->select('*');
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('employee_sid', $employeeId);
+        $result = $this->db->get('lms_employee_course_history')->result_array();
+        //
+        return $result;
+    }
+
+    function checkCourseExistIntoPrimaryCompany($courseId, $fromCompanyId, $toCompanyId)
+    {
+        $this->db->select('default_course_sid');
+        $this->db->where('assigned_course_sid', $courseId);
+        $this->db->where('assign_company_sid', $fromCompanyId);
+        //
+        $this->db->from('lms_assign_course_log');
+        $record_obj = $this->db->get();
+        $defaultCourseId = $record_obj->row_array()['default_course_sid'];
+        $record_obj->free_result();
+        //
+        $this->db->select('assigned_course_sid');
+        $this->db->where('default_course_sid', $defaultCourseId);
+        $this->db->where('assign_company_sid', $toCompanyId);
+        //
+        $this->db->from('lms_assign_course_log');
+        $record_obj = $this->db->get();
+        $assignCourseId = $record_obj->row_array()['assigned_course_sid'];
+        $record_obj->free_result();
+        //
+        if ($assignCourseId) {
+            return $assignCourseId;
+        } else {
+            $this->db->select('*');
+            $this->db->where('sid', $defaultCourseId);
+            $defaultCourse = $this->db->get('lms_default_courses')->row_array();
+            //
+            unset($defaultCourse['sid']);
+            $defaultCourse['company_sid'] = $toCompanyId;
+            //
+            $this->db->insert('lms_default_courses', $defaultCourse);
+            $newDefaultId = $this->db->insert_id();
+            //
+            $dataToInsert = [];
+            $dataToInsert['default_company_sid'] = 0;
+            $dataToInsert['assign_company_sid'] = $toCompanyId;
+            $dataToInsert['default_course_sid'] = $defaultCourseId;
+            $dataToInsert['assigned_course_sid'] = $newDefaultId;
+            //
+            $this->db->insert('lms_assign_course_log', $dataToInsert);
+            //
+            $this->db->select('job_title_id');
+            $this->db->where('lms_default_courses_sid', $courseId);
+            $courseJobTitles = $this->db->get('lms_default_courses_job_titles')->result_array();
+            //
+            foreach ($courseJobTitles as $jobTitle) {
+                $jobTitleToInsert = [];
+                $jobTitleToInsert['lms_default_courses_sid'] = $newDefaultId;
+                $jobTitleToInsert['job_title_id'] = $jobTitle['job_title_id'];
+                //
+                $this->db->insert('lms_default_courses_job_titles', $jobTitleToInsert);
+            }
+            //f
+            return $newDefaultId;
+        }
+        //
+    }
+
+
 }
