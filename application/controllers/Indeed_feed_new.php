@@ -654,6 +654,7 @@ class Indeed_feed_new extends CI_Controller
      */
     private function jobsForQueue()
     {
+        $sid = $this->isActiveFeed();
         //
         $featuredJobs = $this->all_feed_model->get_all_company_jobs_ams();
         // Get Indeed Paid Job Ids
