@@ -1359,37 +1359,39 @@ class Copy_employees_model extends CI_Model
                     // check this course exist into primary company
                     $newCourseId = $this->checkCourseExistIntoPrimaryCompany($course['course_sid'], $data['oldCompanyId'], $data['newCompanyId']);
                     //
-                    if (
-                        !$this
-                        ->db
-                        ->where([
-                            "course_sid" => $newCourseId,
-                            "company_sid" => $data['newCompanyId'],
-                            "employee_sid" => $data['newEmployeeId']
-                        ])
-                        ->count_all_results("lms_employee_course")
-                    ) {
-                        $oldCourseId = $course['sid'];
-                        unset($course['sid']);
-                        $course['course_sid'] = $newCourseId;
-                        $course['company_sid'] = $data['newCompanyId'];
-                        $course['employee_sid'] = $data['newEmployeeId'];
-                        //
-                        $this->db->insert('lms_employee_course', $course);
-                        //
-                        $courseHistory = $this->getEmployeeCourseHistory($oldCourseId, $data['oldEmployeeId'], $data['oldCompanyId']);
-                        //
-                        if ($courseHistory) {
-                            foreach ($courseHistory as $history) {
-                                unset($history['sid']);
-                                $history['course_sid'] = $newCourseId;
-                                $history['company_sid'] = $data['newCompanyId'];
-                                $history['employee_sid'] = $data['newEmployeeId'];
-                                //
-                                $this->db->insert('lms_employee_course_history', $history);
+                    if ($newCourseId != 0) {
+                        if (
+                            !$this
+                            ->db
+                            ->where([
+                                "course_sid" => $newCourseId,
+                                "company_sid" => $data['newCompanyId'],
+                                "employee_sid" => $data['newEmployeeId']
+                            ])
+                            ->count_all_results("lms_employee_course")
+                        ) {
+                            $oldCourseId = $course['sid'];
+                            unset($course['sid']);
+                            $course['course_sid'] = $newCourseId;
+                            $course['company_sid'] = $data['newCompanyId'];
+                            $course['employee_sid'] = $data['newEmployeeId'];
+                            //
+                            $this->db->insert('lms_employee_course', $course);
+                            //
+                            $courseHistory = $this->getEmployeeCourseHistory($oldCourseId, $data['oldEmployeeId'], $data['oldCompanyId']);
+                            //
+                            if ($courseHistory) {
+                                foreach ($courseHistory as $history) {
+                                    unset($history['sid']);
+                                    $history['course_sid'] = $newCourseId;
+                                    $history['company_sid'] = $data['newCompanyId'];
+                                    $history['employee_sid'] = $data['newEmployeeId'];
+                                    //
+                                    $this->db->insert('lms_employee_course_history', $history);
+                                }
                             }
                         }
-                    }
+                    }    
                 }
             }
         }
@@ -1494,37 +1496,41 @@ class Copy_employees_model extends CI_Model
         if ($assignCourseId) {
             return $assignCourseId;
         } else {
-            $this->db->select('*');
-            $this->db->where('sid', $defaultCourseId);
-            $defaultCourse = $this->db->get('lms_default_courses')->row_array();
             //
-            unset($defaultCourse['sid']);
-            $defaultCourse['company_sid'] = $toCompanyId;
+            return 0;
+            // Stop creating new course if its not exist into primary company
             //
-            $this->db->insert('lms_default_courses', $defaultCourse);
-            $newDefaultId = $this->db->insert_id();
-            //
-            $dataToInsert = [];
-            $dataToInsert['default_company_sid'] = 0;
-            $dataToInsert['assign_company_sid'] = $toCompanyId;
-            $dataToInsert['default_course_sid'] = $defaultCourseId;
-            $dataToInsert['assigned_course_sid'] = $newDefaultId;
-            //
-            $this->db->insert('lms_assign_course_log', $dataToInsert);
-            //
-            $this->db->select('job_title_id');
-            $this->db->where('lms_default_courses_sid', $courseId);
-            $courseJobTitles = $this->db->get('lms_default_courses_job_titles')->result_array();
-            //
-            foreach ($courseJobTitles as $jobTitle) {
-                $jobTitleToInsert = [];
-                $jobTitleToInsert['lms_default_courses_sid'] = $newDefaultId;
-                $jobTitleToInsert['job_title_id'] = $jobTitle['job_title_id'];
-                //
-                $this->db->insert('lms_default_courses_job_titles', $jobTitleToInsert);
-            }
-            //f
-            return $newDefaultId;
+            // $this->db->select('*');
+            // $this->db->where('sid', $defaultCourseId);
+            // $defaultCourse = $this->db->get('lms_default_courses')->row_array();
+            // //
+            // unset($defaultCourse['sid']);
+            // $defaultCourse['company_sid'] = $toCompanyId;
+            // //
+            // $this->db->insert('lms_default_courses', $defaultCourse);
+            // $newDefaultId = $this->db->insert_id();
+            // //
+            // $dataToInsert = [];
+            // $dataToInsert['default_company_sid'] = 0;
+            // $dataToInsert['assign_company_sid'] = $toCompanyId;
+            // $dataToInsert['default_course_sid'] = $defaultCourseId;
+            // $dataToInsert['assigned_course_sid'] = $newDefaultId;
+            // //
+            // $this->db->insert('lms_assign_course_log', $dataToInsert);
+            // //
+            // $this->db->select('job_title_id');
+            // $this->db->where('lms_default_courses_sid', $courseId);
+            // $courseJobTitles = $this->db->get('lms_default_courses_job_titles')->result_array();
+            // //
+            // foreach ($courseJobTitles as $jobTitle) {
+            //     $jobTitleToInsert = [];
+            //     $jobTitleToInsert['lms_default_courses_sid'] = $newDefaultId;
+            //     $jobTitleToInsert['job_title_id'] = $jobTitle['job_title_id'];
+            //     //
+            //     $this->db->insert('lms_default_courses_job_titles', $jobTitleToInsert);
+            // }
+            // //
+            // return $newDefaultId;
         }
         //
     }
