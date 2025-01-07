@@ -34,6 +34,11 @@ class Job_listings_auto_deactivation extends CI_Controller
                     $job_title = $job['Title'];
                     $expiration_date = $job['expiration_date'];
                     $expiring_job_sids[] = $sid;
+                     // expire the job on Indeed
+                    $this->indeed_model->expireJobToQueue(
+                        $job["sid"]
+                    );
+
                     // Send job status alert to AC
                     $this->sendJobDetailsToRemarket(
                         array_merge($job, ['active' => 0]),
@@ -43,11 +48,7 @@ class Job_listings_auto_deactivation extends CI_Controller
                             'CompanyName' => $job['CompanyName']
                         ]
                     );
-                    // expire the job on Indeed
-                    $this->indeed_model->expireJobToQueue(
-                        $job["sid"]
-                    );
-
+                   
                     $message_text .= '<li> ==== START ====</li>';
                     $message_text .= '<li>Job ID:' . $sid . ' - Title: ' . $job_title . '</li>';
                     //                $has_applicant_approval_rights = $job['has_applicant_approval_rights'];

@@ -448,11 +448,11 @@ class Job_listings extends Public_Controller
                 if ($listing_data["organic_feed"] == 1) {
                     // load the indeed model
                     $this->load->model("Indeed_model", "indeed_model");
-                    $this->indeed_model->addJobToQueue(
-                        $jobId,
-                        $company_id,
-                        $listing_data["approval_status"]
-                    );
+                    // $this->indeed_model->addJobToQueue(
+                    //     $jobId,
+                    //     $company_id,
+                    //     $listing_data["approval_status"]
+                    // );
                 }
                 //send new created job to remarket
                 $this->sendJobDetailsToRemarket($listing_data, $jobId, $data['session']['company_detail']);
@@ -1430,10 +1430,10 @@ class Job_listings extends Public_Controller
                     if ($listing_data["organic_feed"] == 1) {
                         // load the indeed model
                         $this->load->model("Indeed_model", "indeed_model");
-                        $this->indeed_model->updateJobToQueue(
-                            $formpost['sid'],
-                            $company_id
-                        );
+                        // $this->indeed_model->updateJobToQueue(
+                        //     $formpost['sid'],
+                        //     $company_id
+                        // );
                     }
 
                     if ($formpost['listing_status']) {
@@ -1884,10 +1884,10 @@ class Job_listings extends Public_Controller
                     if ($listing_data["organic_feed"] == 1) {
                         // load the indeed model
                         $this->load->model("Indeed_model", "indeed_model");
-                        $this->indeed_model->addJobToQueue(
-                            $jobId,
-                            $company_id
-                        );
+                        // $this->indeed_model->addJobToQueue(
+                        //     $jobId,
+                        //     $company_id
+                        // );
                     }
                     //send new cloned job to remarket
                     $this->sendJobDetailsToRemarket($listing_data, $jobId, $data['session']['company_detail']);
@@ -1967,12 +1967,12 @@ class Job_listings extends Public_Controller
                         "indeed_model"
                     );
                     // call the cron handler
-                    $this
-                        ->indeed_model
-                        ->checkAndActivateJobs(
-                            $newJobIds,
-                            $company_id
-                        );
+                    // $this
+                    //     ->indeed_model
+                    //     ->checkAndActivateJobs(
+                    //         $newJobIds,
+                    //         $company_id
+                    //     );
                     $insert_record['edit_date'] = date('Y-m-d H:i:s');
                     $insert_record['edit_by_name'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
                     $insert_record['edit_by_sid'] = $data['session']['employer_detail']['sid'];
