@@ -679,6 +679,10 @@ $requiredMessage = 'This document is required to complete the process.';
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--radio">
+                                    <input type="radio" name="assign_type" value="executives" class="js-assign-type" /> Executives
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <label class="control control--radio">
                                     <input type="radio" name="assign_type" value="department" class="js-assign-type" /> Department &nbsp;
                                     <div class="control__indicator"></div>
                                 </label>
@@ -716,6 +720,17 @@ $requiredMessage = 'This document is required to complete the process.';
                                 <div class="">
                                     <select multiple="multiple" name="employees[]" id="employees" required>
                                         <option value="" selected>Please Select Employee</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-12 js-executives-box">
+                            <div class="form-group full-width">
+                                <label>Executives <span class="hr-required red">*</span></label>
+                                <div class="">
+                                    <select multiple="multiple" name="executives[]" id="executives" required>
+                                        <option value="" selected>Please Select Executives</option>
                                     </select>
                                 </div>
 
@@ -945,6 +960,10 @@ $requiredMessage = 'This document is required to complete the process.';
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--radio">
+                                    <input type="radio" name="assign_type" value="executives" class="js-assign-type" /> Executives
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <label class="control control--radio">
                                     <input type="radio" name="assign_type" value="department" class="js-assign-type" /> Department &nbsp;
                                     <div class="control__indicator"></div>
                                 </label>
@@ -982,6 +1001,17 @@ $requiredMessage = 'This document is required to complete the process.';
                                 <div class="">
                                     <select multiple="multiple" name="employees[]" id="uploaded-employees" required>
                                         <option value="" selected>Please Select Employee</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-12 js-executives-box">
+                            <div class="form-group full-width">
+                                <label>Executives <span class="hr-required red">*</span></label>
+                                <div class="">
+                                    <select multiple="multiple" name="executives[]" id="uploaded-executives" required>
+                                        <option value="" selected>Please Select Executives</option>
                                     </select>
                                 </div>
 
@@ -1039,6 +1069,7 @@ $requiredMessage = 'This document is required to complete the process.';
         $('#uploaded-form').validate({
             submitHandler: function(form) {
                 var up_emp = $('#uploaded-employees').val();
+                var up_executives = $('#uploaded-executives').val();
                 var up_dept = $('#uploaded-departments').val();
                 var up_team = $('#uploaded-team').val();
 
@@ -1052,6 +1083,12 @@ $requiredMessage = 'This document is required to complete the process.';
 
                     if (up_team.length == 0) {
                         alertify.alert('ERROR!', 'Please select at least one team.');
+                        return;
+                    }
+                } else if ($('#model_uploaded_doc').find('.js-assign-type:checked').val() == 'executives') {
+
+                    if (up_executives.length == 0) {
+                        alertify.alert('ERROR!', 'Please select at least one executive.');
                         return;
                     }
                 } else {
@@ -1123,6 +1160,11 @@ $requiredMessage = 'This document is required to complete the process.';
                 } else if ($('.js-assign-type:checked').val() == 'team') {
                     if (tem.getValue().length == 0) {
                         alertify.alert('ERROR!', 'Please select at least one team.');
+                        return;
+                    }
+                } else if ($('.js-assign-type:checked').val() == 'executives') {
+                    if (gen_s_executives.getValue().length == 0) {
+                        alertify.alert('ERROR!', 'Please select at least one executive.');
                         return;
                     }
                 } else {
@@ -1247,6 +1289,14 @@ $requiredMessage = 'This document is required to complete the process.';
         persist: true,
         create: false
     });
+    
+    var upexecutives = $('#uploaded-executives').selectize({
+        plugins: ['remove_button'],
+        delimiter: ',',
+        allowEmptyOption: false,
+        persist: true,
+        create: false
+    });
 
     var updepartments = $('#uploaded-departments').selectize({
         plugins: ['remove_button'],
@@ -1265,6 +1315,7 @@ $requiredMessage = 'This document is required to complete the process.';
     });
 
     var up_emp = upemployees[0].selectize;
+    var up_executives = upexecutives[0].selectize;
     var up_dept = updepartments[0].selectize;
     var up_tem = upteams[0].selectize;
 
@@ -1272,6 +1323,7 @@ $requiredMessage = 'This document is required to complete the process.';
         // Reset modal
         $('.js-department-box').hide();
         $('.js-team-box').hide();
+        $('.js-executives-box').hide();
         $('.js-employee-box').show();
         $('.js-assign-type[value="employee"]').prop('checked', true);
 
@@ -1291,6 +1343,7 @@ $requiredMessage = 'This document is required to complete the process.';
                 // var employees = JSON.parse(data);
                 var employees = data.Employees;
                 var departments = data.Departments;
+                var executives = data.Executives;
                 var teams = data.Teams;
                 if (employees.length == 0) {
                     up_emp.clearOptions();
@@ -1333,8 +1386,46 @@ $requiredMessage = 'This document is required to complete the process.';
                         up_emp.refreshItems();
                     });
                 }
+                
+                if (executives.length == 0) {
+                    up_executives.clearOptions();
+                    up_executives.load(function(callback) {
+                        var arr = [{}];
+                        arr[0] = {
+                            value: '',
+                            text: 'Please Select Employee'
+                        }
+                        callback(arr);
+                        up_executives.addItems('');
+                        up_executives.refreshItems();
+                    });
+                    up_executives.disable();
+                } else {
+                    up_executives.enable();
+                    up_executives.clearOptions();
+                    up_executives.load(function(callback) {
 
-                if (departments.length == 0 && employees.length == 0) {
+                        var arr = [{}];
+                        var j = 0;
+
+                        arr[j++] = {
+                            value: -1,
+                            text: 'All'
+                        };
+
+                        for (var i = 0; i < executives.length; i++) {
+                            arr[j++] = {
+                                value: executives[i].sid,
+                                text: (executives[i].first_name + ' ' + executives[i].last_name) + (executives[i].job_title != '' && executives[i].job_title != null ? ' (' + executives[i].job_title + ')' : '') + ' [' + remakeAccessLevel(executives[i]) + ']'
+                            }
+                        }
+
+                        callback(arr);
+                        up_executives.refreshItems();
+                    });
+                }
+
+                if (departments.length == 0 && employees.length == 0 && executives.length == 0) {
                     up_dept.clearOptions();
                     up_dept.load(function(callback) {
                         var arr = [{}];
@@ -1449,6 +1540,14 @@ $requiredMessage = 'This document is required to complete the process.';
         persist: true,
         create: false
     });
+    
+    var gen_executives = $('#executives').selectize({
+        plugins: ['remove_button'],
+        delimiter: ',',
+        allowEmptyOption: false,
+        persist: true,
+        create: false
+    });
 
     var departments = $('#department').selectize({
         plugins: ['remove_button'],
@@ -1467,6 +1566,7 @@ $requiredMessage = 'This document is required to complete the process.';
     });
 
     var emp = employees[0].selectize;
+    var gen_s_executives = gen_executives[0].selectize;
     var dept = departments[0].selectize;
     var tem = teams[0].selectize;
 
@@ -1474,6 +1574,7 @@ $requiredMessage = 'This document is required to complete the process.';
         // Reset modal
         $('.js-department-box').hide();
         $('.js-team-box').hide();
+        $('.js-executives-box').hide();
         $('.js-employee-box').show();
         $('.js-assign-type[value="employee"]').prop('checked', true);
         $('.js-notification-email-gen[value="yes"]').prop('checked', true);
@@ -1518,6 +1619,7 @@ $requiredMessage = 'This document is required to complete the process.';
             success: function(data) {
                 var employees = data.Employees;
                 var departments = data.Departments;
+                var executives = data.Executives;
                 var teams = data.Teams;
                 if (employees.length == 0) {
                     emp.clearOptions();
@@ -1561,8 +1663,51 @@ $requiredMessage = 'This document is required to complete the process.';
                         emp.refreshItems();
                     });
                 }
+                
+                if (executives.length == 0) {
+                    gen_s_executives.clearOptions();
+                    gen_s_executives.load(function(callback) {
+                        var arr = [{}];
+                        arr[0] = {
+                            value: '',
+                            text: 'Please Select Employee'
+                        }
+                        callback(arr);
+                        gen_s_executives.addItems('');
+                        gen_s_executives.refreshItems();
+                    });
+                    $('#empty-emp').show();
+                    gen_s_executives.disable();
+                } else {
+                    $('#empty-emp').hide();
+                    gen_s_executives.enable();
+                    gen_s_executives.clearOptions();
+                    gen_s_executives.load(function(callback) {
+
+                        var arr = [{}];
+                        var j = 0;
+                        arr[j++] = {
+                            value: -1,
+                            text: 'All'
+                        };
+
+                        for (var i = 0; i < executives.length; i++) {
+                            var dr = '';
+                            if (executives[i]['job_title'] != '' && executives[i]['job_title'] != null)
+                                dr += ' (' + (executives[i]['job_title']) + ')';
+                            dr += ' [' + remakeAccessLevel(executives[i]) + ']';
+                            arr[j++] = {
+                                value: executives[i].sid,
+                                text: executives[i].first_name + ' ' + executives[i].last_name + dr
+                            }
+                        }
+
+                        callback(arr);
+                        gen_s_executives.refreshItems();
+                    });
+                }
                 // 
-                if (departments.length == 0 && employees.length == 0) {
+                if (departments.length == 0 && employees.length == 0 && executives.length == 0) {
                     dept.clearOptions();
                     dept.load(function(callback) {
                         var arr = [{}];
@@ -1659,14 +1804,22 @@ $requiredMessage = 'This document is required to complete the process.';
         if ($(this).val() == 'department') {
             $('.js-employee-box').hide();
             $('.js-team-box').hide();
+            $('.js-executives-box').hide();
             $('.js-department-box').show();
         } else if ($(this).val() == 'team') {
             $('.js-employee-box').hide();
             $('.js-department-box').hide();
+            $('.js-executives-box').hide();
             $('.js-team-box').show();
+        } else if ($(this).val() == 'executives') {
+            $('.js-employee-box').hide();
+            $('.js-department-box').hide();
+            $('.js-team-box').hide();
+            $('.js-executives-box').show();
         } else {
             $('.js-department-box').hide();
             $('.js-team-box').hide();
+            $('.js-executives-box').hide();
             $('.js-employee-box').show();
         }
     });

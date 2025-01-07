@@ -192,10 +192,18 @@ class Hr_documents_management extends Public_Controller
                                 $post['teams'],
                                 $company_sid
                             );
+                        } else if ($post['assign_type'] == 'executives') {
+                            // Fetch all employees belong to selected department
+                            $select_employees = $this->hr_documents_management_model->getEmployees(
+                                $post['executives'],
+                                $company_sid,
+                                1
+                            );
                         } else {
                             $select_employees = $this->hr_documents_management_model->getEmployees(
                                 $post['employees'],
-                                $company_sid
+                                $company_sid,
+                                0
                             );
                         }
 
@@ -8255,6 +8263,7 @@ class Hr_documents_management extends Public_Controller
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data['session']['company_detail']['sid'];
         $employees = $this->hr_documents_management_model->fetch_documents_employees($doc_sid, $doc_type, $company_sid);
+        $executives = $this->hr_documents_management_model->fetch_documents_executives($doc_sid, $doc_type, $company_sid);
         if (!$this->input->post('departments')) {
             // Get all active Departments
             $departments = $this->hr_documents_management_model->getDepartments(
@@ -8270,6 +8279,7 @@ class Hr_documents_management extends Public_Controller
             //
             echo json_encode(array(
                 'Employees' => $employees,
+                'Executives' => $executives,
                 'Departments' =>  $departments,
                 'Teams' =>  $teams
             ));
@@ -10804,10 +10814,18 @@ class Hr_documents_management extends Public_Controller
                         $post['teams'],
                         $company_sid
                     );
+                } else if ($post['assign_type'] == 'executives') {
+                    // Fetch all employees belong to selected department
+                    $select_employees = $this->hr_documents_management_model->getEmployees(
+                        $post['teams'],
+                        $company_sid,
+                        1
+                    );
                 } else {
                     $select_employees = $this->hr_documents_management_model->getEmployees(
                         $post['employees'],
-                        $company_sid
+                        $company_sid,
+                        0
                     );
                 }
                 //
