@@ -1510,7 +1510,7 @@ class Indeed_model extends CI_Model
         $records = $this
             ->db
             ->select("user_sid")
-            ->where("indeed_job_sync", 1)
+            // ->where("indeed_job_sync", 1)
             ->get("portal_employer")
             ->result_array();
         //
