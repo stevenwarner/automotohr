@@ -1420,9 +1420,9 @@ class Companies extends Admin_Controller
         if ($company_sid != null) {
             $this->data['page_title'] = 'Manage Company Dashboard';
             $company_info = $this->company_model->get_company_details($company_sid);
-           //$company_info['incidents'] = checkIfAppIsEnabled('incidents');
+            //$company_info['incidents'] = checkIfAppIsEnabled('incidents');
 
-           $company_info['incidents'] = $this->company_model->getIncidentStatus($company_sid);
+            $company_info['incidents'] = $this->company_model->getIncidentStatus($company_sid);
 
             if (sizeof($company_info) < 1) {
                 $this->session->set_flashdata('message', 'Company not found!');
@@ -3516,7 +3516,7 @@ class Companies extends Admin_Controller
     {
         $sid = $this->input->post("sid");
         $status = $this->input->post("status");
-        
+
         if ($status) {
             $data = array('is_active' => 0);
             $return_data = array(
@@ -3532,8 +3532,14 @@ class Companies extends Admin_Controller
                 'value'     =>  0
             );
         }
-    
-        $this->company_model->update_incident_status($sid, $data);
+        //
+        $this
+            ->company_model
+            ->checkAndUpdateModule(
+                $sid,
+                "incidents",
+                $data
+            );
 
         print_r(json_encode($return_data));
     }

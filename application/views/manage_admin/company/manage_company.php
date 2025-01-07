@@ -1559,7 +1559,7 @@
                                             <!-- Dynamic Modules -->
                                             <?php if (sizeof($dynamicModules)) {
                                                 foreach ($dynamicModules as $k => $v) { ?>
-                                                <?php if($v['module_slug']!='incidentss'){?>
+                                                <?php if($v['module_slug']!='incidents'){?>
                                                     <article class="col-sm-6 information-box">
                                                         <header class="hr-box-header">
                                                             <?= $v['module_name']; ?>
