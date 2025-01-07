@@ -57,37 +57,37 @@ class Users extends CI_Controller
         ], $this->js, 'login', $this->disableMinifiedFiles);
 
 
-        // if (isset($_COOKIE[STORE_NAME]['username']) && isset($_COOKIE[STORE_NAME]['password'])) {
-        //     $username = $this->decryptCookie($_COOKIE[STORE_NAME]['username']);
-        //     $password = $this->decryptCookie($_COOKIE[STORE_NAME]['password']);
-        //     $result = $this->users_model->login($username, $password);
+        if (isset($_COOKIE[STORE_NAME]['username']) && isset($_COOKIE[STORE_NAME]['password'])) {
+            $username = $this->decryptCookie($_COOKIE[STORE_NAME]['username']);
+            $password = $this->decryptCookie($_COOKIE[STORE_NAME]['password']);
+            $result = $this->users_model->login($username, $password);
 
-        //     if ($result) {
-        //         // Check for timezone
-        //         // Added on: 26-05-2019
-        //         if ($result['employer']['timezone'] == '' || $result['employer']['timezone'] == NULL || !preg_match('/^[A-Z]/', $result['employer']['timezone'])) {
-        //             if ($result['company']['timezone'] != '' && preg_match('/^[A-Z]/', $result['company']['timezone'])) $result['employer']['timezone'] = $result['company']['timezone'];
-        //             else $result['employer']['timezone'] = STORE_DEFAULT_TIMEZONE_ABBR;
-        //         }
-        //         $sess_array = array(
-        //             'company_detail' => $result["company"],
-        //             'employer_detail' => $result["employer"],
-        //             'cart' => $result["cart"],
-        //             'portal_detail' => $result["portal"],
-        //             'clocked_status' => $result["clocked_status"],
-        //             'is_super' => 0
-        //         );
+            if ($result) {
+                // Check for timezone
+                // Added on: 26-05-2019
+                if ($result['employer']['timezone'] == '' || $result['employer']['timezone'] == NULL || !preg_match('/^[A-Z]/', $result['employer']['timezone'])) {
+                    if ($result['company']['timezone'] != '' && preg_match('/^[A-Z]/', $result['company']['timezone'])) $result['employer']['timezone'] = $result['company']['timezone'];
+                    else $result['employer']['timezone'] = STORE_DEFAULT_TIMEZONE_ABBR;
+                }
+                $sess_array = array(
+                    'company_detail' => $result["company"],
+                    'employer_detail' => $result["employer"],
+                    'cart' => $result["cart"],
+                    'portal_detail' => $result["portal"],
+                    'clocked_status' => $result["clocked_status"],
+                    'is_super' => 0
+                );
 
-        //         //Set Default Timezone
-        //         // $company_timezone = $result['portal']['company_timezone'];
-        //         // date_default_timezone_set($company_timezone);
+                //Set Default Timezone
+                // $company_timezone = $result['portal']['company_timezone'];
+                // date_default_timezone_set($company_timezone);
 
 
-        //         $this->session->set_userdata('logged_in', $sess_array);
-        //         $this->session->set_userdata('accurate_background', array());
-        //         redirect("dashboard", "location");
-        //     }
-        // }
+                $this->session->set_userdata('logged_in', $sess_array);
+                $this->session->set_userdata('accurate_background', array());
+                redirect("dashboard", "location");
+            }
+        }
 
         $config = array(
             array(
