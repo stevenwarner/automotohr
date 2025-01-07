@@ -18,6 +18,12 @@ class Private_messages extends Public_Controller
     public function index()
     {
         if ($this->session->userdata('logged_in')) {
+
+            if (!checkIfAppIsEnabled('privatemessage')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             $data['session'] = $this->session->userdata('logged_in');
             $employer_detail = $data['session']['employer_detail'];
             $company_detail = $data['session']['company_detail'];

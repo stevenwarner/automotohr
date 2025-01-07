@@ -717,23 +717,27 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                         //                                $safety_check = $extra_info['safety_sheet'];
                         //                            }
                         //                            if($safety_check == 1 && $safety_sheet_flag > 0) {
-                        if ($safety_sheet_flag > 0) { ?>
-                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                <div class="widget-box">
-                                    <a href="<?php echo base_url('safety_sheets'); ?>">
-                                        <div class="link-box bg-incident full-width">
-                                            <h2>Safety Sheets</h2>
-                                            <div class="status-panel">
-                                                <h3>Safety Sheets</h3>
-                                                <span>Safety Sheets</span>
-                                                <?php //echo $complete_steps['documents'] > 0 ? '<span>completed</span>' : '<span>skipped</span>'
-                                                ?>
+
+                        if (checkIfAppIsEnabled('safetysheets')) {
+                            if ($safety_sheet_flag > 0) { ?>
+                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                    <div class="widget-box">
+                                        <a href="<?php echo base_url('safety_sheets'); ?>">
+                                            <div class="link-box bg-incident full-width">
+                                                <h2>Safety Sheets</h2>
+                                                <div class="status-panel">
+                                                    <h3>Safety Sheets</h3>
+                                                    <span>Safety Sheets</span>
+                                                    <?php //echo $complete_steps['documents'] > 0 ? '<span>completed</span>' : '<span>skipped</span>'
+                                                    ?>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                        <?php } ?>
+                        <?php }
+                        } ?>
+
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                             <div class="widget-box">
                                 <a href="<?php echo base_url('e_signature'); ?>">
