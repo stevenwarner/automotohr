@@ -60,6 +60,9 @@ class Export_csv_model extends CI_Model
     function get_all_employees_from_DB($company_sid, $access_level, $status, $start, $end)
     {
         //
+        if (!$status) {
+            $status= ["all"];
+        }
 
         /*
         $this->db->select('*');
@@ -91,20 +94,21 @@ class Export_csv_model extends CI_Model
         }
         */
 
- 
+
         $this->db->select('*');
         $this->db->where('parent_sid', $company_sid);
 
         if (is_array($access_level)) {
             if (!in_array("all", $access_level)) {
+                $this->db->group_start();
                 $this->db->where_in('access_level', $access_level);
                 //
-                if(in_array("executive_admin", $access_level)){
-                   $this->db->or_where('is_executive_admin', 1);                    
-               }else{
-                $this->db->where('is_executive_admin', 0);  
-               }
-                              
+                if (in_array("executive_admin", $access_level)) {
+                    $this->db->or_where('is_executive_admin', 1);
+                } else {
+                    $this->db->where('is_executive_admin', 0);
+                }
+                $this->db->group_end();
             }
         } else {
             if ($access_level != 'all' && $access_level != 'executive_admin' && $access_level != null) {
@@ -136,7 +140,6 @@ class Export_csv_model extends CI_Model
                 }
                 $this->db->group_end();
             }
-            
         } else {
             if ($status == 'active') {
                 $this->db->where('active', 1);
