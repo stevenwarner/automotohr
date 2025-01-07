@@ -1710,13 +1710,13 @@ if (!function_exists('getLMSManagerDepartmentAndTeams')) {
             ->where("departments_management.company_sid", $companyId)
             ->where("departments_management.is_deleted", 0)
             ->where("departments_team_management.is_deleted", 0);
-        
+
 
         $CI->db->group_start()
             ->where("FIND_IN_SET({$employeeId}, departments_management.lms_managers_ids) > 0", null, null)
             ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.lms_managers_ids) > 0", null, null)
             ->group_end();
-        
+
         $departmentAndTeams = $CI->db->get('departments_team_management');
         //
         $departmentAndTeams = $departmentAndTeams->result_array();
@@ -1819,7 +1819,7 @@ if (!function_exists('getLMSManagerDepartmentAndTeams')) {
                     $employeeData["job_title_sid"] =  $jobTitleId;
                     $employeeData["employee_name"] =  $employeeName;
                     //
-                   
+
                     if ($jobTitleInfo['lms_job_title'] != 0) {
                         $today = date('Y-m-d');
                         //
@@ -4441,5 +4441,100 @@ if (!function_exists('getAllActivePages')) {
         }
         $activeslugs = array_column($pageResult, 'slug');
         return $activeslugs;
+    }
+}
+
+
+if (!function_exists("manage_sitemap")) {
+    /**
+     * Function to manage the sitemap by adding, updating, or removing URLs.
+     * If the sitemap file doesn't exist, it will be created.
+     * It checks if the URL exists, updates it, adds it, or deletes it accordingly.
+     */
+    function manage_sitemap($url, $priority = '0.80', $action = 'add')
+    {
+        //
+        $sitemap_file = FCPATH . 'sitemap.xml';
+        //
+        $url = base_url($url);
+        // Check if the sitemap file exists
+        if (!file_exists($sitemap_file)) {
+            // Create a new file if it doesn't exist
+            $xml = create_sitemap_structure($sitemap_file);
+        } else {
+            // Load the existing sitemap if file exists
+            $xml = simplexml_load_file($sitemap_file);
+            if (!$xml) {
+                return false;
+            }
+        }
+
+        // Define the URL namespace
+        $namespace = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+        $urlset = $xml->children($namespace);
+
+        // Handle actions: add, update, or delete
+        if ($action == 'delete') {
+            //
+            $i = 0;
+            // Loop through the URL entries and delete the specified URL
+            foreach ($urlset->url as $index => $url_entry) {
+                if ((string)$url_entry->loc == $url) {
+                    unset($urlset->url[$i]);
+                    break;
+                }
+                $i++;
+            }
+        } else {
+            // Add or update the URL
+            $url_exists = false;
+            foreach ($urlset->url as $url_entry) {
+                if ((string)$url_entry->loc == $url) {
+                    // Update the existing URL
+                    $url_entry->lastmod = date('Y-m-d\TH:i:s\Z');
+                    $url_entry->priority = $priority;
+                    $url_exists = true;
+                    break;
+                }
+            }
+
+            // If the URL doesn't exist, add it as a sibling
+            if (!$url_exists && $action == 'add') {
+                // Add the new URL as a sibling
+                $new_url = $xml->addChild('url');
+                $new_url->addChild('loc', $url);
+                $new_url->addChild('lastmod', date('Y-m-d\TH:i:s\Z'));
+                $new_url->addChild('priority', $priority);
+            }
+        }
+
+        // Save the updated sitemap back to the file only if there are changes
+        return $xml->asXML($sitemap_file);
+    }
+}
+
+
+if (!function_exists("create_sitemap_structure")) {
+    /**
+     * Creates a basic sitemap structure.
+     * This function will be used when the sitemap file doesn't exist.
+     */
+    function create_sitemap_structure($sitemap_file)
+    {
+        $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8" ?><urlset></urlset>');
+        $xml->addAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+        $xml->addAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+        $xml->addAttribute('xsi:schemaLocation', 'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.w3.org/2001/XMLSchema-instance');
+
+        // Create the first URL as an example
+        $url = $xml->addChild('url');
+        $url->addChild('loc', 'https://www.automotohr.com/');
+        $url->addChild('lastmod', date('Y-m-d\TH:i:s\Z'));
+        $url->addChild('priority', '1.00');
+
+        // Save the new XML file
+        $xml->asXML($sitemap_file);
+
+        return $xml;
     }
 }

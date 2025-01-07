@@ -128,6 +128,12 @@ class Resources extends Admin_Controller
                 $newSid = $this->resources_model->add_resources($dataInsert);
                 $dataInsert['slug'] = $dataInsert['slug'] . '-' . $newSid;
                 $this->resources_model->update_resources($newSid, $dataInsert);
+                //
+                manage_sitemap(
+                    "resources/" . $dataInsert["slug"],
+                    1,
+                    $dataInsert['status'] == 1 ? "add" : "delete"
+                );
 
                 $this->session->set_flashdata('message', '<strong>Success:</strong> Resource added successfully.');
                 redirect('manage_admin/edit_resource/0', 'refresh');
@@ -138,6 +144,12 @@ class Resources extends Admin_Controller
                     $dataInsert['slug'] = $dataInsert['slug'] . '-' . $sid;
                 }
                 $this->resources_model->update_resources($sid, $dataInsert);
+                //
+                manage_sitemap(
+                    "resources/" . $dataInsert["slug"],
+                    1,
+                    $dataInsert['status'] == 1 ? "add" : "delete"
+                );
                 $this->session->set_flashdata('message', '<strong>Success:</strong> Resource Updated successfully.');
                 redirect('manage_admin/edit_resource/' . $sid, 'refresh');
             }
@@ -275,7 +287,7 @@ class Resources extends Admin_Controller
     //
     public function updateSortOrder()
     {
-            //
+        //
         $newSortKey = $this->input->post(null, true);
 
         foreach ($newSortKey['sortOrders'] as $key => $value) {
@@ -289,14 +301,5 @@ class Resources extends Admin_Controller
         return SendResponse(200, [
             "msg" => $msg
         ]);
-
     }
-
-
-
-
-
-
-
-      
 }
