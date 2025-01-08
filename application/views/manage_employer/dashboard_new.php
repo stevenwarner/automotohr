@@ -1106,7 +1106,11 @@
 
                                     <?php if ($isLMSModuleEnabled) : ?>
                                         <!--  -->
-                                        <?php if ($session['employer_detail']['access_level_plus'] == 1) { ?>
+                                        <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['is_executive_admin'] == 1) {
+                                            $lmsToLink = $session['employer_detail']['access_level_plus'] == 1
+                                                ? 'lms/courses/company_courses'
+                                                : 'lms/courses/report';
+                                        ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="dash-box">
                                                     <div class="dashboard-widget-box">
@@ -1114,7 +1118,7 @@
                                                             <i class="fa fa-file <?= $coursesInfo['expire_soon'] > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
                                                         </figure>
                                                         <h2 class="post-title" style="margin: 2px 0;">
-                                                            <a href="<?= base_url('lms/courses/company_courses'); ?>">
+                                                            <a href="<?= base_url($lmsToLink); ?>">
                                                                 Course Management
                                                             </a>
                                                         </h2>
@@ -1124,31 +1128,31 @@
                                                             <small style="font-size: 12px">Expired <?= $coursesInfo['expired']; ?> course(s)</small><br>
                                                         </div>
                                                         <div class="button-panel">
-                                                            <a href="<?= base_url('lms/courses/company_courses'); ?>" class="site-btn">Manage</a>
+                                                            <a href="<?= base_url($lmsToLink); ?>" class="site-btn">Manage</a>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         <?php } ?>
-                                        <?php if(!isLoggedInPersonAnExecutiveAdmin()) {?>
-                                        <!--  -->
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <figure><i class="fa fa-file <?= $pendingTrainings != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
-                                                    </figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?= base_url('lms/courses/my_lms_dashboard'); ?>">Compliance Courses</a>
-                                                    </h2>
-                                                    <div class="count-box" style="font-size: 12px">
-                                                        <span class="green"><?= $pendingTrainings ?? 0; ?> course(s) pending</span><br>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a href="<?= base_url('lms/courses/my_lms_dashboard'); ?>" class="site-btn">Show</a>
+                                        <?php if (!isLoggedInPersonAnExecutiveAdmin()) { ?>
+                                            <!--  -->
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <figure><i class="fa fa-file <?= $pendingTrainings != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
+                                                        </figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?= base_url('lms/courses/my_lms_dashboard'); ?>">Compliance Courses</a>
+                                                        </h2>
+                                                        <div class="count-box" style="font-size: 12px">
+                                                            <span class="green"><?= $pendingTrainings ?? 0; ?> course(s) pending</span><br>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a href="<?= base_url('lms/courses/my_lms_dashboard'); ?>" class="site-btn">Show</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         <?php } ?>
                                         <!--  -->
                                     <?php endif; ?>
