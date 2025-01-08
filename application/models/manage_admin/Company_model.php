@@ -3531,10 +3531,18 @@ class Company_model extends CI_Model
     //
     function getIncidentStatus($sid)
     {
+        // get the module id
+        $moduleId = $this
+            ->db
+            ->select("sid")
+            ->where("module_slug", "incidents")
+            ->limit(1)
+            ->get("modules")
+            ->row_array()["sid"];
         $result = $this->db
             ->select('is_active')
             ->where('company_sid', $sid)
-            ->where('module_sid', 13)
+            ->where('module_sid', $moduleId)
             ->get('company_modules')
             ->row_array();
 
@@ -3543,5 +3551,64 @@ class Company_model extends CI_Model
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Update module
+     */
+    public function checkAndUpdateModule(
+        int $companyId,
+        string $moduleSlug,
+        array $data
+    ): array {
+        // get the module id
+        $moduleId = $this
+            ->db
+            ->select("sid")
+            ->where("module_slug", $moduleSlug)
+            ->limit(1)
+            ->get("modules")
+            ->row_array()["sid"];
+        //
+        if (!$moduleId) {
+            return ["errors" => ["Module not found!"]];
+        }
+        //
+        $todayDateTime = getSystemDate();
+        // check if module is added or not
+        if (
+            !$this
+                ->db
+                ->where([
+                    "company_sid" => $companyId,
+                    "module_sid" => $moduleId
+                ])
+                ->count_all_results("company_modules")
+        ) {
+            // add the module
+            $this
+                ->db
+                ->insert(
+                    "company_modules",
+                    [
+                        "module_sid" => $moduleId,
+                        "company_sid" => $companyId,
+                        "is_active" => 0,
+                        "created_at" => $todayDateTime,
+                        "updated_at" => $todayDateTime,
+                    ]
+                );
+        }
+        // update 
+        $this
+            ->db
+            ->where("module_sid", $moduleId)
+            ->where("company_sid", $companyId)
+            ->update(
+                "company_modules",
+                $data
+            );
+        //
+        return ["success" => "You have successfully updated the module."];
     }
 }

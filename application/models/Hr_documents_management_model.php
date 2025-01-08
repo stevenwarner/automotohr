@@ -3403,6 +3403,32 @@ class Hr_documents_management_model extends CI_Model
         $result = $this->db->get('users')->result_array();
         return $result;
     }
+    
+    function fetch_documents_executives($doc_sid, $doc_type, $company_sid)
+    {
+        $this->db->select('user_sid');
+        $this->db->from('documents_assigned');
+        $this->db->where('document_sid', $doc_sid);
+        $this->db->where('document_type', $doc_type);
+        $where_clause = $this->db->get_compiled_select();
+        $this->db->select('
+            sid,
+            first_name,
+            last_name,
+            access_level_plus,
+            pay_plan_flag,
+            access_level,
+            is_executive_admin, 
+            job_title
+        ');
+        $this->db->order_by("concat(first_name,' ',last_name)", "ASC", false);
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->where('active', 1);
+        $this->db->where('is_executive_admin', 1);
+        $this->db->where("`sid` NOT IN ($where_clause)", NULL, False);
+        $result = $this->db->get('users')->result_array();
+        return $result;
+    }
 
     function update_document_pending_status($document_sid = NULL)
     {
@@ -5474,7 +5500,7 @@ class Hr_documents_management_model extends CI_Model
     }
 
 
-    function getEmployees($employeeList, $companySid)
+    function getEmployees($employeeList, $companySid, $isExecutiveAdmins = 0)
     {
         //
         if (!in_array('-1', $employeeList)) {
@@ -5485,6 +5511,7 @@ class Hr_documents_management_model extends CI_Model
             ->select('sid')
             ->where('parent_sid', $companySid)
             ->where('active', 1)
+            ->where('is_executive_admin', $isExecutiveAdmins)
             ->get('users');
         //
         $b = $a->result_array();

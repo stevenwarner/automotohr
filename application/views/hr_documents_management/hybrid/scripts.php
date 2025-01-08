@@ -92,6 +92,15 @@
 		        persist: true,
 		        create: false
 		    });
+			
+			//
+			var upexecutives = $('#js-executives-modal').selectize({
+		        plugins: ['remove_button'],
+		        delimiter: ',',
+		        allowEmptyOption:false,
+		        persist: true,
+		        create: false
+		    });
 
 			//
 		    var updepartments = $('#js-departments-modal').selectize({
@@ -103,6 +112,7 @@
 		    });
 
 		    var up_emp = upemployees[0].selectize;
+		    var up_executives = upexecutives[0].selectize;
 		    var up_dept = updepartments[0].selectize;
 		}
 		//
@@ -162,8 +172,14 @@
 	        if($(this).val() == 'department'){
 	            $('.js-employee-box-modal').hide();
 	            $('.js-department-box-modal').show();
-	        } else{
+	            $('.js-executives-box-modal').hide();
+	        } else if($(this).val() == 'executives'){
+				$('.js-employee-box-modal').hide();
 	            $('.js-department-box-modal').hide();
+	            $('.js-executives-box-modal').show();
+	        } else{
+				$('.js-department-box-modal').hide();
+	            $('.js-executives-box-modal').hide();
 	            $('.js-employee-box-modal').show();
 	        }
 	    });
@@ -199,6 +215,7 @@
 			activeDocument = d;
 			// Reset modal
 	        $('.js-department-box-modal').hide();
+	        $('.js-executives-box-modal').hide();
 	        $('.js-employee-box-modal').show();
 	        $('.js-assign-type-modal[value="employee"]').prop('checked', true);
 	        $('.js-notification-email-hybrid[value="yes"]').prop('checked', true);
@@ -222,6 +239,7 @@
 	            success: function (data) {
 	                // var employees = JSON.parse(data);
 	                var employees = data.Employees;
+	                var executives = data.Executives;
 	                var departments = data.Departments;
 	                if(employees.length == 0){
 	                    up_emp.clearOptions();
@@ -264,8 +282,50 @@
 	                        up_emp.refreshItems();
 	                    });
 	                }
+					
+					if(executives.length == 0){
+	                    up_executives.clearOptions();
+	                    up_executives.load(function(callback) {
+	                        var arr = [{}];
+	                        arr[0] = {
+	                            value: '',
+	                            text: 'Please Select Executive'
+	                        }
+	                        callback(arr);
+	                        up_executives.addItems('');
+	                        up_executives.refreshItems();
+	                    });
+	                    // $('#js-bulk-assign-msg-modal').show();
+	                    // $('#js-bulk-assign-btn-modal').hide();
+	                    up_executives.disable();
+	                } else{
+	                    // $('#js-bulk-assign-msg-modal').hide();
+	                    // $('#js-bulk-assign-btn-modal').show();
+	                    up_executives.enable();
+	                    up_executives.clearOptions();
+	                    up_executives.load(function(callback) {
 
-	                if(departments.length == 0 || employees.length == 0){
+	                        var arr = [{}];
+	                        var j = 0;
+
+	                        arr[j++] = {
+	                            value: -1,
+	                            text: 'All'
+	                        };
+
+	                        for (var i = 0; i < executives.length; i++) {
+	                            arr[j++] = {
+	                                value: executives[i].sid,
+	                                text: (executives[i].first_name + ' ' + executives[i].last_name)+( executives[i].job_title != '' && executives[i].job_title != null ? ' ('+executives[i].job_title+')' : ''  )+ ' ['+ remakeAccessLevel(executives[i])+']'
+	                            }
+	                        }
+
+	                        callback(arr);
+	                        up_executives.refreshItems();
+	                    });
+	                }
+
+	                if(departments.length == 0 || employees.length == 0 || executives.length === 0){
 	                    up_dept.clearOptions();
 	                    up_dept.load(function(callback) {
 	                        var arr = [{}];
@@ -326,6 +386,7 @@
 			o.documentSid = activeDocument.sid;
 			o.description = CKEDITOR.instances['js-description-modal'].getData();
 			o.employees = up_emp.getValue();
+			o.executives = up_executives.getValue();
 			o.auth_sign_sid = 0;
 			o.assign_type = $('.js-assign-type-modal:checked').val();
 			o.sendEmails = $('.js-notification-email-hybrid:checked').val();
@@ -338,6 +399,11 @@
             if($('#js-bulk-assign-hybrid-modal').find('.js-assign-type-modal:checked').val() == 'department'){
                 if(o.departments.length == 0){
                     alertify.alert('ERROR!', 'Please select atleast one department.');
+                    return;
+                }
+            } else if($('#js-bulk-assign-hybrid-modal').find('.js-assign-type-modal:checked').val() == 'executives'){
+                if(o.executives.length == 0){
+                    alertify.alert('ERROR!', 'Please select atleast one executive.');
                     return;
                 }
             }else{
@@ -638,6 +704,10 @@
                                     <input type="radio" name="assign_type" value="employee" class="js-assign-type-modal" /> Employee
                                     <div class="control__indicator"></div>
                                 </label>
+								<label class="control control--radio">
+                                    <input type="radio" name="assign_type" value="executives" class="js-assign-type-modal" /> Executives
+                                    <div class="control__indicator"></div>
+                                </label>
                                 <label class="control control--radio">
                                     <input type="radio" name="assign_type" value="department" class="js-assign-type-modal" /> Department &nbsp;
                                     <div class="control__indicator"></div>
@@ -661,6 +731,17 @@
                                 <div class="">
                                     <select multiple="multiple" name="employees[]" id="js-employees-modal" required>
                                         <option value="" selected>Please Select Employee</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+						<div class="col-lg-12 js-executives-box-modal">
+                            <div class="form-group full-width">
+                                <label>Executives <span class="hr-required red">*</span></label>
+                                <div class="">
+                                    <select multiple="multiple" name="executives[]" id="js-executives-modal" required>
+                                        <option value="" selected>Please Select Executives</option>
                                     </select>
                                 </div>
 
