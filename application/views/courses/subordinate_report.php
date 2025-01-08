@@ -24,8 +24,10 @@
                             <?php if (!isLoggedInPersonAnExecutiveAdmin()) { ?>
                                 <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5 csF16 pull-right"><i class="fa fa-arrow-left"></i> Back to my Courses</a>
                             <?php } ?>
+                            <?php if(isPayrollOrPlus()) { ?>
                             <a href="<?php echo base_url('lms/courses/company_courses'); ?>" class="btn btn-info btn-orange csRadius5 csF16 pull-right margin-right"><i class="fa fa-list-alt"></i> Company Courses</a>
                             <a href="<?php echo base_url('lms/courses/company_report'); ?>" class="btn btn-info btn-orange csRadius5 csF16 pull-right margin-right"><i class="fa fa-line-chart"></i> Course report</a>
+                                <?php } ?>
                         </h1>
                     </div>
 
