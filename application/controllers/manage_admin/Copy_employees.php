@@ -168,7 +168,6 @@ class Copy_employees extends Admin_Controller
                 //
                 //Update Primary Employee Profile
                 $secondary_employee_data = $this->merge_employees_model->update_company_employee($primary_employee_sid, $secondary_employee_sid);
-                die("there 11");
 
                 // now move all other information
 
