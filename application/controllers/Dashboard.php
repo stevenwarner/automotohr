@@ -178,7 +178,7 @@ class Dashboard extends Public_Controller
                 // _e($today_end, true);
                 // _e($this_month_start, true);
                 // _e($this_month_end, true, true);
-                
+
                 $eventCount                                                     = $this->dashboard_model->company_employee_events_count($company_id, $employer_id); //Events
                 $eventCountToday                                                = $this->dashboard_model->company_employee_events_count($company_id, $employer_id, $today_start, $today_end);
                 $data['eventCount']                                             = $eventCount;
@@ -591,7 +591,7 @@ class Dashboard extends Public_Controller
                 'daily' => $this->em->getEmployeeInformationChange($company_id, 'daily'),
                 'week' => $this->em->getEmployeeInformationChange($company_id, 'week'),
                 'month' => $this->em->getEmployeeInformationChange($company_id, 'month')
-            ]; 
+            ];
             // set default js
             $data['PageScripts'] = [];
             $data['incident_count'] = $this->dashboard_model->assigned_incidents_count($employer_id, $company_id);
@@ -674,7 +674,7 @@ class Dashboard extends Public_Controller
                     "employee"
                 );
 
-                
+
             $data['documents_count'] += count($companyStateForms["not_completed"]);
 
             // load shifts model
@@ -685,7 +685,7 @@ class Dashboard extends Public_Controller
                     getSystemDate("Y-m-01"),
                     getSystemDate("Y-m-t")
                 );
-                
+
             $data["mySubordinatesCount"] = $this->shift_model
                 ->getMySubordinates(
                     $employer_id,
@@ -709,16 +709,21 @@ class Dashboard extends Public_Controller
                 $data["pendingVerificationPerformanceDocument"] = $pendingVerificationPerformanceSectionOne;
             }
 
-            if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { 
+            if (checkIfAppIsEnabled(SCHEDULE_MODULE)) {
                 //
                 $data["awaitingShiftRequests"] = $this->shift_model->getAwaitingSwapShiftsByUserId($employer_id);
                 //
                 if (isPayrollOrPlus()) {
                     $data["awaitingShiftsApprovals"] = $this->shift_model->getAwaitingSwapShiftsApprovals();
-                }    
-            }    
-                
+                }
+            }
+
+
+            //   
+            $subdata = $this->subordinatesReport();
             //
+            $data['subordinateInfo'] = $subdata['subordinateInfo'];
+
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
             $this->load->view('main/footer');
@@ -1193,15 +1198,15 @@ class Dashboard extends Public_Controller
                     );
                 //
                 $data['documents_count'] = $data['documents_count'] + ($pendingPerformanceDocument ? 1 : 0);
-            } 
+            }
 
-            if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { 
+            if (checkIfAppIsEnabled(SCHEDULE_MODULE)) {
                 //
                 $data["awaitingShiftRequests"] = $this->shift_model->getAwaitingSwapShiftsByUserId($employer_id);
                 //
                 if (isPayrollOrPlus()) {
                     $data["awaitingShiftsApprovals"] = $this->shift_model->getAwaitingSwapShiftsApprovals();
-                }    
+                }
             }
 
             $this->load->view('main/header', $data);
@@ -1607,5 +1612,73 @@ class Dashboard extends Public_Controller
         echo "<pre>";
         print_r($insert_data);
         //$this->db->insert_batch('google_fonts', $insert_data);
+    }
+
+
+    //
+    public function subordinatesReport($departments = "all", $teams = "all", $employees = "all", $courses = "all")
+    {
+        //
+        $this->load->model('v1/course_model');
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
+        $subordinateInfo['courses'] = $this->course_model->getActiveCompanyCourses($companyId);
+        //
+        $haveSubordinate = 'no';
+        //
+        if (!empty($subordinateInfo['employees'])) {
+            //
+            $subordinateInfo['total_course'] = 0;
+            $subordinateInfo['expire_soon'] = 0;
+            $subordinateInfo['expired'] = 0;
+            $subordinateInfo['started'] = 0;
+            $subordinateInfo['completed'] = 0;
+            $subordinateInfo['ready_to_start'] = 0;
+            //
+            unset($subordinateInfo['employees'][$employeeId]);
+            //
+            foreach ($subordinateInfo['employees'] as $key => $subordinateEmployee) {
+                //
+                $teamId = $subordinateEmployee['team_sid'];
+                $subordinateInfo['employees'][$key]['department_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
+                $subordinateInfo['employees'][$key]['team_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
+                //
+                if (isset($subordinateEmployee['coursesInfo'])) {
+                    //
+                    if (isset($_GET['courses']) && $_GET['courses'][0] != "all") {
+                        $filterCourses = getCoursesInfo(implode(',', $_GET['courses']), $key);
+                        //
+                        $subordinateInfo['employees'][$key]['coursesInfo']['total_course'] = $filterCourses['total_course'];
+                        $subordinateInfo['employees'][$key]['coursesInfo']['expire_soon'] = $filterCourses['expire_soon'];
+                        $subordinateInfo['employees'][$key]['coursesInfo']['expired'] = $filterCourses['expired'];
+                        $subordinateInfo['employees'][$key]['coursesInfo']['started'] = $filterCourses['started'];
+                        $subordinateInfo['employees'][$key]['coursesInfo']['completed'] = $filterCourses['completed'];
+                        $subordinateInfo['employees'][$key]['coursesInfo']['ready_to_start'] = $filterCourses['ready_to_start'];
+                    }
+                    //
+                    $subordinateInfo['total_course'] = $subordinateInfo['total_course'] + $subordinateEmployee['coursesInfo']['total_course'];
+                    $subordinateInfo['expire_soon'] = $subordinateInfo['expire_soon'] + $subordinateEmployee['coursesInfo']['expire_soon'];
+                    $subordinateInfo['expired'] = $subordinateInfo['expired'] + $subordinateEmployee['coursesInfo']['expired'];
+                    $subordinateInfo['started'] = $subordinateInfo['started'] + $subordinateEmployee['coursesInfo']['started'];
+                    $subordinateInfo['completed'] = $subordinateInfo['completed'] + $subordinateEmployee['coursesInfo']['completed'];
+                    $subordinateInfo['ready_to_start'] = $subordinateInfo['ready_to_start'] + $subordinateEmployee['coursesInfo']['ready_to_start'];
+                }
+            }
+            //
+            // Enter subordinate json into DB
+            $haveSubordinate = 'yes';
+        }
+
+        $data['haveSubordinate'] = $haveSubordinate;
+        $data['subordinateInfo'] = $subordinateInfo;
+        return $data;
     }
 }
