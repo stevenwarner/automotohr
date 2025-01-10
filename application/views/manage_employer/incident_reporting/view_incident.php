@@ -3674,13 +3674,13 @@
                     .attr("id", "document-iframe")
                     .attr("class", "uploaded-file-preview")
                     .attr("src", item_url);
-                $("#document-iframe-holder").append(document_content);
+                $("#document-iframe-holder").html(document_content);
             } else {
                 var image_content = $("<img />")
                     .attr("id", "image-tag")
                     .attr("class", "img-responsive")
                     .attr("src", item_url);
-                $("#document-iframe-holder").append(image_content);
+                $("#document-iframe-holder").html(image_content);
             }
 
         } else {
