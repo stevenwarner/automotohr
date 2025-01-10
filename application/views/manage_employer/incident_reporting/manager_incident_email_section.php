@@ -266,7 +266,7 @@
                                                                                                                                                 }
 
                                                                                                                                                 $item_source      = 'document';
-                                                                                                                                            } else if (in_array($item_source, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                                                                                                                            } else if (in_array(strtolower($item_source), ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
                                                                                                                                                 $document_category = 'Image';
                                                                                                                                                 $item_url = AWS_S3_BUCKET_URL . $item_path;
                                                                                                                                                 $item_source    = "image";
@@ -554,7 +554,7 @@
                                                                                                                                                 }
 
                                                                                                                                                 $item_source      = 'document';
-                                                                                                                                            } else if (in_array($item_source, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                                                                                                                            } else if (in_array(strtolower($item_source), ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
                                                                                                                                                 $document_category = 'Image';
                                                                                                                                                 $item_url = AWS_S3_BUCKET_URL . $item_path;
                                                                                                                                                 $item_source    = "image";
