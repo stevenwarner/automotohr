@@ -19,7 +19,7 @@
                             <div class="row">
                                 <div class="applicant-reg-date">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        
+
                                         <form id="form-filters" method="post" enctype="multipart/form-data" action="">
                                             <div class="row">
                                                 <!-- Department Filter  -->
@@ -72,7 +72,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="row0">    
+                                            <div class="row0">
                                                 <!-- Filter Buttons  -->
                                                 <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8"></div>
 
@@ -80,31 +80,31 @@
                                                     <div class="report-btns text-right">
                                                         <!-- <div class="row">
                                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6"> -->
-                                                                <button type="button" class="orange-btn" onclick="jsApplyDateFilters();">
-                                                                    <i class="fa fa-filter" aria-hidden="true"></i>
-                                                                    &nbsp;
-                                                                    Apply Filter
-                                                                </button>
-                                                            <!-- </div>
+                                                        <button type="button" class="orange-btn" onclick="jsApplyDateFilters();">
+                                                            <i class="fa fa-filter" aria-hidden="true"></i>
+                                                            &nbsp;
+                                                            Apply Filter
+                                                        </button>
+                                                        <!-- </div>
                                                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6"> -->
-                                                                <button type="button" class="black-btn" onclick="jsClearDateFilters();">
-                                                                    <i class="fa fa-times" aria-hidden="true"></i>
-                                                                    &nbsp;
-                                                                    Clear Filter
-                                                                </button>
-                                                            <!-- </div> -->
-                                                            <button type="submit" id="jsFetchCSVReport" class="dn"></button>
+                                                        <button type="button" class="black-btn" onclick="jsClearDateFilters();">
+                                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                                            &nbsp;
+                                                            Clear Filter
+                                                        </button>
+                                                        <!-- </div> -->
+                                                        <button type="submit" id="jsFetchCSVReport" class="dn"></button>
                                                         <!-- </div> -->
                                                     </div>
                                                 </div>
-                                            </div>    
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="panel panel-default">
-                                <div class="panel-heading">
+                                <div class="panel-heading" style="background-color: #fd7a2a!important;">
                                     <strong>Overview</strong>
                                 </div>
                                 <div class="panel-body">
@@ -151,7 +151,7 @@
                             </div>
 
                             <div class="panel panel-default">
-                                <div class="panel-heading">
+                                <div class="panel-heading" style="background-color: #fd7a2a!important;">
                                     <strong>Progress</strong>
                                 </div>
                                 <div class="panel-body">
@@ -217,7 +217,7 @@
                             </div>
 
                             <div class="panel panel-default">
-                                <div class="panel-heading">
+                                <div class="panel-heading" style="background-color: #fd7a2a!important;">
                                     <strong>Report</strong>
                                 </div>
                                 <div class="panel-body">
@@ -225,31 +225,46 @@
                                         <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
                                             <div class="row" style="margin: 5px 5px;">
                                                 <div class="col-lg-2 bg-success" style="padding: 16px;"></div>
-                                                <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has finished 100% of the required courses.</div>
+                                                <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has successfully completed 100% of their required courses.</div>
                                             </div>
                                             <div class="row" style="margin: 5px 5px;">
                                                 <div class="col-lg-2 bg-warning" style="padding: 16px;"></div>
-                                                <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has started their assigned courses, but has not yet completed all of them.</div>
+                                                <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has made progress by starting their assigned courses, but still has work left to complete them.</div>
                                             </div>
 
                                             <div class="row" style="margin: 5px 5px;">
                                                 <div class="col-lg-2 bg-danger" style="padding: 16px;"></div>
-                                                <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has either not begun their assigned courses or has not been assigned any courses at this time.</div>
+                                                <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee hasn't started their assigned courses yet, or possibly hasn't been assigned any.</div>
                                             </div>
                                         </div>
 
                                         <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                            <button type="button" class="form-btn" onclick="excel_export()">
+                                            <button type="button" class="form-btn" onclick="excel_export()" style="background-color: #1032c3;">
                                                 <i class="fa fa-download" aria-hidden="true"></i>
                                                 Export CSV
                                             </button>
 
-                                            <a type="button" class="form-btn margin-top" id="jsSimpleReportURL" target="_blank" href="<?php echo base_url("lms/courses/simple_company_report"); ?>">
+                                            <a type="button" class="form-btn margin-top" id="jsSimpleReportURL" target="_blank" href="<?php echo base_url("lms/courses/simple_company_report"); ?>" style="background-color: #1032c3;">
                                                 <i class="fa fa-download" aria-hidden="true"></i>
                                                 Download Report
                                             </a>
+
+                                            <button type="button" class="form-btn  jsSendReminderEmail" style="margin-top: 10px; width:100%;margin-left:0px; background-color: #fd7a2a;">
+                                                <i class="fa fa-paper-plane" aria-hidden="true"></i> Send Reminder Email
+                                            </button>
                                         </div>
                                     </div>
+
+
+                                    <div class="hr-box" style="border-bottom: 0px;margin-bottom: -10px; padding-left:12px;">
+                                        <div class="hr-innerpadding" style="margin-bottom: 0px">
+                                            <label class="control control--checkbox">
+                                                <input type="checkbox" class="jsCheckAll" />
+                                                <div class="control__indicator" style="margin-top: -10px;background: #afaaaa;"> </div>
+                                            </label>
+                                        </div>
+                                    </div>
+
 
                                     <?php foreach ($companyReport['departments_report'] as $department) { ?>
                                         <?php if (!empty($department["employees"])) { ?>
@@ -274,6 +289,10 @@
                                                                     <?php
                                                                     $employeeInfo = get_employee_profile_info($employee);
                                                                     $assignCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['courseCount'];
+
+                                                                    $courseCount = !empty($assignCourses) ? count($assignCourses) : 0;
+
+
                                                                     $pendingCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['pendingCount'];
                                                                     $completedCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['completedCount'];
                                                                     $completedCoursesPercentage = $companyReport["EmployeeList"][$employee]["courses_statistics"]['percentage'];
@@ -289,14 +308,31 @@
                                                                     } else if ($completedCoursesPercentage < "99" && $completedCoursesPercentage > "1") {
                                                                         $rowColor = "bg-warning";
                                                                     }
+
+
                                                                     ?>
                                                                     <tr class="<?php echo $rowColor; ?>">
                                                                         <td class="_csVm">
                                                                             <div class="row">
+                                                                                <div class="col-sm-1">
+                                                                                    <?php if ($courseCount > 0 && $companyReport["EmployeeList"][$employee]['courses_statistics']['courseCount'] != $companyReport["EmployeeList"][$employee]['courses_statistics']['completedCount']) { ?>
+                                                                                        <label class="control control--checkbox">
+                                                                                            <input type="checkbox" class="jsSelectSubordinate" name="employees_ids[]" value="<?php echo $employee ?>" />
+                                                                                            <div class="control__indicator" style="background: #afaaaa;"></div>
+                                                                                        </label>
+                                                                                    <?php } else { ?>
+                                                                                        <label class="control control--checkbox">
+                                                                                            <input type="checkbox" value="" disabled />
+                                                                                            <div class="control__indicator"></div>
+                                                                                        </label>
+                                                                                    <?php } ?>
+                                                                                </div>
+
                                                                                 <div class="col-sm-3">
                                                                                     <img style="width: 80px; height: 80px; border-radius: 50% !important;" src="<?= getImageURL($employeeInfo["profile_picture"]); ?>" alt="" />
                                                                                 </div>
-                                                                                <div class="col-sm-9">
+                                                                                <div class="col-sm-8">
+
                                                                                     <p class="text-small weight-6 myb-0" style="font-size: 20px;">
                                                                                         <?= remakeEmployeeName($employeeInfo, true, true); ?>
                                                                                     </p>
@@ -345,20 +381,34 @@
     </div>
 </div>
 
-<?php 
-    $haveCourses = $companyReport['employee_have_courses'];
-    $NotHaveCourses = $companyReport['employee_not_have_courses'];
-    $TotalEmployees = $companyReport['total_employees'];
-    //
-    $percentageHaveCourses = ($haveCourses / $TotalEmployees) * 100;
-    $percentageNotHaveCourses = ($NotHaveCourses / $TotalEmployees) * 100;
+
+<div id="my_loader" class="text-center my_loader" style="display: none;">
+    <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
+    <div class="loader-icon-box">
+        <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
+        <div class="loader-text" style="display:block; margin-top: 35px;">Please wait ...
+        </div>
+    </div>
+</div>
+
+<?php
+$haveCourses = $companyReport['employee_have_courses'];
+$NotHaveCourses = $companyReport['employee_not_have_courses'];
+$TotalEmployees = $companyReport['total_employees'];
+//
+$percentageHaveCourses = ($haveCourses / $TotalEmployees) * 100;
+$percentageNotHaveCourses = ($NotHaveCourses / $TotalEmployees) * 100;
 ?>
 
 
 <style>
-    ._csVm{ vertical-align: middle !important; } 
+    ._csVm {
+        vertical-align: middle !important;
+    }
 
-    .stepText2 { text-align: center; }
+    .stepText2 {
+        text-align: center;
+    }
 
     .btn-black {
         background-color: #000;
@@ -379,11 +429,11 @@
     .bg-success {
         background-color: #dff0d8 !important;
     }
-    
+
     .bg-warning {
         background-color: #fcf8e3 !important;
     }
-    
+
     .bg-danger {
         background-color: #f2dede !important;
     }
@@ -438,7 +488,7 @@
         var courses = $('#jsCompanyCourses').val();
         var employees = $('#jsSubordinateEmployees').val();
 
-        var url = '<?php echo base_url('lms_company_report/'.$companyId); ?>';
+        var url = '<?php echo base_url('lms_company_report/' . $companyId); ?>';
 
         departments = departments != '' && departments != null && departments != undefined ? encodeURIComponent(departments) : '0';
         courses = courses != '' && courses != null && courses != undefined ? encodeURIComponent(courses) : '0';
@@ -455,7 +505,7 @@
     }
 
     function jsClearDateFilters() {
-        var url = '<?php echo base_url("lms_company_report/".$companyId); ?>';
+        var url = '<?php echo base_url("lms_company_report/" . $companyId); ?>';
         window.location = url;
     }
 
@@ -520,8 +570,7 @@
             text: 'Department Distribution'
         },
         subtitle: {
-            text:
-                ''
+            text: ''
         },
         xAxis: {
             type: 'category'
@@ -549,8 +598,7 @@
             text: 'Department Courses Completion Distribution'
         },
         subtitle: {
-            text:
-                ''
+            text: ''
         },
         xAxis: {
             type: 'category'
@@ -575,8 +623,7 @@
             text: 'Courses Completion Distribution'
         },
         subtitle: {
-            text:
-                ''
+            text: ''
         },
         xAxis: {
             type: 'category'
@@ -589,4 +636,73 @@
         },
         colors: ['#4CBB17', '#fd7a2a']
     });
+
+
+    //
+
+    $(document).on("click", ".jsCheckAll", selectAllInputs);
+
+    function selectAllInputs() {
+
+        $('input[name="employees_ids[]').prop('checked', $(this).prop("checked"));
+    }
+
+    //
+    function get_all_selected_employees() {
+        var tmp = [];
+        $.each($('input[name="employees_ids[]"]:checked'), function() {
+            var obj = {};
+            obj.employee_sid = parseInt($(this).val());
+            obj.employee_name = $(this).closest('tr').find('td.js-employee-name').text();
+
+            tmp.push(obj);
+        });
+        return tmp;
+    }
+
+    $(document).on('click', '.jsSendReminderEmail', function(e) {
+      //  e.preventDefault();
+        //
+        senderList = get_all_selected_employees();
+        //
+        if (senderList.length === 0) {
+            alertify.alert('ERROR!', 'Please select at least one employee to start the process.');
+            return;
+        }
+        //
+        alertify.confirm('Do you really want to send email reminders to the selected employees?', function() {
+            //
+            $('#my_loader').show();
+            sendEmailToEmployees(senderList);
+
+        });
+    });
+
+
+    function sendEmailToEmployees(senderList) {
+        // check and abort previous calls
+       
+        //
+        XHR = $.ajax({
+                url: "<?php echo base_url() ?>" + "lms_company_report/emailReminder/bulk",
+                method: "POST",
+                data: {
+                    employeeList: senderList,
+                    companySid: '<?php echo $companyId ?>',
+                },
+            })
+            .success(function(response) {
+                // empty the call
+                alertify.success(
+                    "You have successfully sent an email reminder to selected employees.");
+
+                $('#my_loader').hide();
+                location.reload();
+
+            })
+            .fail(handleErrorResponse)
+            .done(function(response) {
+                // empty the call
+            });
+    }
 </script>

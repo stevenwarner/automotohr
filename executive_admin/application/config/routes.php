@@ -140,3 +140,6 @@ $route['lms_company_report/(:num)'] = 'reports/LMS_company_report/index/$1';
 $route['lms_company_report/(:num)/(:any)/(:any)/(:any)'] = 'reports/LMS_company_report/index/$1/$2/$3/$4';
 $route['lms_simple_company_report/(:num)'] = 'reports/LMS_company_report/simpleCompanyReport/$1';
 $route['get_base64_image'] = 'reports/LMS_company_report/getBase64Image';
+
+
+$route['lms_company_report/emailReminder/(:any)'] = 'reports/LMS_company_report/emailReminder/$1';

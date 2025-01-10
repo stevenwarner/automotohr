@@ -194,3 +194,11 @@ define('DOB_LIMIT', '1900:+1');
 
 //
 define('MODULE_LMS', 'lms');
+
+
+// Courses
+define("COURSE_UNCOMPLETED_REMINDER_EMAILS", 470);
+define("COURSE_REPORT_EMAILS", 471);
+define("COURSE_DUE_SOON_DAYS", 4);
+
+define('STAGING_SERVER_URL', 'http://localhost/ahr/');

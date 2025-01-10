@@ -35,7 +35,7 @@ class LMS_company_report extends CI_Controller
                 redirect('dashboard', 'refresh');
             }
             //
-            $data['title'] = "LMS Employees Report [ ".$data['companyName']." ]";
+            $data['title'] = "LMS Employees Report [ " . $data['companyName'] . " ]";
             $data['companyId'] = $companyId;
             $data['executiveUserId'] = $executiveUserId;
             $data['logged_in_view'] = true;
@@ -275,7 +275,7 @@ class LMS_company_report extends CI_Controller
             if ($this->input->method() === 'post') {
                 if (!empty($companyEmployeesList) && !empty($companyCoursesList)) {
                     header('Content-Type: text/csv; charset=utf-8');
-                    header('Content-Disposition: attachment; filename='.$data['companyName'].'_LMS_company_report_'.date('Y_m_d-H:i:s').'.csv');
+                    header('Content-Disposition: attachment; filename=' . $data['companyName'] . '_LMS_company_report_' . date('Y_m_d-H:i:s') . '.csv');
                     $output = fopen('php://output', 'w');
                     //
                     fputcsv($output, array('Company Name', $data['companyName'], '', '', '', ''));
@@ -296,9 +296,9 @@ class LMS_company_report extends CI_Controller
                     fputcsv($output, array('', '', '', '', '', ''));
                     //
                     fputcsv($output, array('Total Assigned Course(s)', $companyReport['courses_report']['total_assigned_courses'], 'Percentage', '', '', ''));
-                    fputcsv($output, array('Total Completed Course(s)', $companyReport['courses_report']['total_completed_courses'], round(($companyReport['courses_report']['total_completed_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%', '', '', ''));
-                    fputcsv($output, array('Total Inprogress Course(s)', $companyReport['courses_report']['total_inprogress_courses'], round(($companyReport['courses_report']['total_inprogress_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%', '', '', ''));
-                    fputcsv($output, array('Total Ready to Start Course(s)', $companyReport['courses_report']['total_rts_courses'], round(($companyReport['courses_report']['total_rts_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2).'%', '', '', ''));
+                    fputcsv($output, array('Total Completed Course(s)', $companyReport['courses_report']['total_completed_courses'], round(($companyReport['courses_report']['total_completed_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2) . '%', '', '', ''));
+                    fputcsv($output, array('Total Inprogress Course(s)', $companyReport['courses_report']['total_inprogress_courses'], round(($companyReport['courses_report']['total_inprogress_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2) . '%', '', '', ''));
+                    fputcsv($output, array('Total Ready to Start Course(s)', $companyReport['courses_report']['total_rts_courses'], round(($companyReport['courses_report']['total_rts_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2) . '%', '', '', ''));
                     //
                     fputcsv($output, array('', '', '', '', '', ''));
                     fputcsv($output, array('', '', '', '', '', ''));
@@ -349,7 +349,8 @@ class LMS_company_report extends CI_Controller
         }
     }
 
-    public function simpleCompanyReport ($companyId, $departments = "all", $courses = "all", $employees = "all") {
+    public function simpleCompanyReport($companyId, $departments = "all", $courses = "all", $employees = "all")
+    {
         if ($this->session->userdata('executive_loggedin')) {
             // Added on: 28-08-2023
             $data = $this->session->userdata('executive_loggedin');
@@ -370,10 +371,10 @@ class LMS_company_report extends CI_Controller
                 redirect('dashboard', 'refresh');
             }
             //
-            $data['title'] = "LMS Employees Report [ ".$data['companyName']." ]";
+            $data['title'] = "LMS Employees Report [ " . $data['companyName'] . " ]";
             $data['companyId'] = $companyId;
             $data['executiveUserId'] = $executiveUserId;
-            $data['executiveUserName'] = $data['executive_user']['first_name'] .' '. $data['executive_user']['last_name'] . ' [Executive Admin] (Admin Plus)';
+            $data['executiveUserName'] = $data['executive_user']['first_name'] . ' ' . $data['executive_user']['last_name'] . ' [Executive Admin] (Admin Plus)';
             $data['logged_in_view'] = true;
             //
             //
@@ -382,9 +383,9 @@ class LMS_company_report extends CI_Controller
                 "courses" => urldecode($courses),
                 "employees" => urldecode($employees)
             ];
-            
+
             error_reporting(E_ALL);
-			ini_set('display_errors', 1);
+            ini_set('display_errors', 1);
             // _e("pakistan",true);
             // echo $companyId;
             $companyEmployeesList = $this->course_model->getAllActiveEmployees($companyId, false);
@@ -646,4 +647,57 @@ class LMS_company_report extends CI_Controller
 
         print_r(json_encode(array('type' => $mime_type, 'string' => $str64)));
     }
+
+    //
+    public function emailReminder($type)
+    {
+        //
+        $res = [
+            'Status' => false,
+            'Message' => 'Invalid Request.'
+        ];
+        //
+        if (
+            !$this->input->is_ajax_request() ||
+            !$this->input->post(null, true) ||
+            $this->input->method() != 'post'
+        ) {
+            return SendResponse(400, $res);
+        }
+        //
+        $post = $this->input->post(null, true);
+
+        $companySid = $post['companySid'];
+
+
+        // extract employee id
+        $employeeIds = array_column($post["employeeList"], "employee_sid");
+        //
+        if (!$employeeIds) {
+            $res["Message"] = "No employees selected";
+            return SendResponse(400, $res);
+        }
+
+        // send reminder emails
+        $response = $this->course_model->sendCourseReminderEmailsToSpecificEmployees(
+                $employeeIds,
+                $companySid,
+                true
+            );
+
+
+        if ($response["errors"]) {
+            $res["Message"] = "Something went wrong!";
+            return SendResponse(400, $res);
+        }
+
+        //
+        $res['Status'] = true;
+        $res['Message'] = 'You have successfully sent an email reminder to selected employees.';
+        //
+        res($res);
+    }
+
+
+  
 }
