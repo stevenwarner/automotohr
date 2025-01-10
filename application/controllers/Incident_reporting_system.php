@@ -1057,6 +1057,16 @@ class Incident_reporting_system extends Public_Controller
                     redirect(current_url(), 'refresh');
                 }
 
+                // Fetch Document For Library
+                $library_documets = $this->incident_reporting_model->get_library_documents($id);
+
+                // Fetch Media For Media
+                $library_media = $this->incident_reporting_model->get_library_media($id);
+
+
+                $data['library_media']                  = $library_media;
+                $data['library_documets']               = $library_documets;
+
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/incident_reporting/view_incident_old');
                 $this->load->view('main/footer');
