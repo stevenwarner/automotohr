@@ -33,7 +33,7 @@
                             </div>
                             <?php echo form_error('password'); ?>
 
-                            <a href="<?= base_url('dashboard/forgot_password'); ?>" class="forgot-password-mention margin-bottom-zero text-end d-block inter-family forget_text_color">Forgot Password?</a>
+                            <a href="<?= base_url('dashboard/forgot_password'); ?>" class="forgot-password-mention margin-bottom-zero text-end d-block inter-family forget_text_color">Forgot your Username / Password?</a>
                             <button class="m exective-input-buttons margin-bottom-20 w-100 login_btn center-horizontally font-size_24" type="submit">
                                 LOGIN
                             </button>
