@@ -37,7 +37,7 @@
                 <?php } ?>
                 <div class="table-responsive table-outer">
                     <div class="table-wrp data-table">
-                        <table class="table table-bordered table-hover table-stripped" id="reference_network_table">
+                        <table class="table table-bordered table-hover table-stripped">
                             <b>Report Type</b>
                             <tbody>
                             <tr>
@@ -50,7 +50,7 @@
 
                 <div class="table-responsive table-outer">
                     <div class="table-wrp data-table">
-                        <table class="table table-bordered table-hover table-stripped" id="reference_network_table">
+                        <table class="table table-bordered table-hover table-stripped">
                             <b>Related Documents</b>
                             <tbody>
                                 <?php if(sizeof($files)>0){
@@ -72,7 +72,7 @@
                 <?php if ($incident[0]['report_type'] == 'confidential') { ?>
                     <div class="table-responsive table-outer">
                         <div class="table-wrp data-table">
-                            <table class="table table-bordered table-hover table-stripped" id="reference_network_table">
+                            <table class="table table-bordered table-hover table-stripped">
                                 <b>Upload Docs :</b>
                                 <tbody>
 
@@ -257,5 +257,8 @@
     }
 </script>
 <?php } else { ?>
-    <?php $this->load->view('manage_employer/incident_reporting/view_incident'); ?>
+    <?php 
+        // $this->load->view('manage_employer/incident_reporting/view_incident'); 
+        $this->load->view('manage_employer/incident_reporting/view_incident_new'); 
+    ?>
 <?php } ?>

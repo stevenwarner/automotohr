@@ -1065,7 +1065,8 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                             <span class="applicant-not-found">No Incident Assigned!</span>
                         </div>
                     <?php } ?>
-                        </div>
+                    <!-- Document Section End -->
+                </div>
             </div>
         </div>
     </div>

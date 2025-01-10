@@ -143,6 +143,8 @@ class Incident_reporting_system extends Public_Controller
                     unset($_POST['submit']);
                     unset($_POST['inc-id']);
                     unset($_POST['review_manager']);
+                    //
+                    $incidentId = 0;
 
                     if ($update_id != 0) {
                         $update['report_type'] = $report_type;
@@ -152,6 +154,8 @@ class Incident_reporting_system extends Public_Controller
                         $video_to_update = array();
                         $video_to_update['is_incident_reported'] = 1;
                         $this->incident_reporting_model->update_incident_related_video($update_id, $video_to_update);
+                        //
+                        $incidentId = $update_id;
                     } else {
                         $insert = array();
                         $insert['company_sid'] = $company_sid;
@@ -162,13 +166,15 @@ class Incident_reporting_system extends Public_Controller
                         $insert['incident_name'] = $incident_details[0]['incident_name'];
                         $insert['on_behalf_employee_sid'] =  $employer_sid;
                         $incident = $this->incident_reporting_model->insert_incident_reporting($insert);
+                        //
+                        $incidentId = $incident;
                     }
 
                     if (isset($_POST['any_witnesses']) && $_POST['any_witnesses'] == 1) {
                         foreach ($_POST['witnesses'] as $key => $witness) {
                             $witness_to_insert = array();
                             $witness_to_insert['incident_type_id']          = $id;
-                            $witness_to_insert['incident_reporting_id']     = $incident;
+                            $witness_to_insert['incident_reporting_id']     = $incidentId;
                             $witness_to_insert['company_sid']               = $company_sid;
                             $witness_to_insert['witness_type']              = $witness['type'];
                             $witness_to_insert['witness_name']              = $witness['full_name'];
@@ -199,12 +205,12 @@ class Incident_reporting_system extends Public_Controller
                             }
 
                             $insert['answer'] = strip_tags($val);
-                            $insert['incident_reporting_id'] = $incident;
+                            $insert['incident_reporting_id'] = $incidentId;
                             $this->incident_reporting_model->insert_inc_que_ans($insert);
                         } elseif (sizeof($exp) == 1 && !empty($val) && $exp[0] == 'signature') {
                             $insert['question'] = $exp[0];
                             $insert['answer'] = strip_tags($val);
-                            $insert['incident_reporting_id'] = $incident;
+                            $insert['incident_reporting_id'] = $incidentId;
                             $this->incident_reporting_model->insert_inc_que_ans($insert);
                         }
                     }
@@ -219,13 +225,14 @@ class Incident_reporting_system extends Public_Controller
                             'company_sid' => $company_sid,
                             'employer_sid' => $manager,
                             'assigned_date' => date('Y-m-d H:i:s'),
-                            'incident_sid' => $incident
+                            'incident_sid' => $incidentId
                         );
 
                         $this->incident_reporting_model->assign_incident_to_emp($assigned_emp);     //Add the employees who are gonna receive this incident from employee reporting
                         $emp = $this->incident_reporting_model->fetch_employee_name_by_sid($manager);
 
-                        $reply_url = base_url('incident_reporting_system/view_single_assign') . '/' . $incident;
+                        $reply_url = base_url('incident_reporting_system/view_single_assign') . '/' . $incidentId;
+                        $viewIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $reply_url . '" target="_blank">View Report</a>';
                         $replacement_array['applicant_name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
                         $replacement_array['applicant-name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
                         $replacement_array['first-name'] = ucwords($emp[0]['first_name']);
@@ -234,12 +241,15 @@ class Incident_reporting_system extends Public_Controller
                         $replacement_array['lastname'] = ucfirst($emp[0]['last_name']);
                         $replacement_array['first_name'] = ucwords($emp[0]['first_name']);
                         $replacement_array['last_name'] = ucfirst($emp[0]['last_name']);
-                        $replacement_array['reply_url'] = $reply_url;
-
-                        log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $emp[0]['email'], $replacement_array);
+                        $replacement_array['view_button'] = $viewIncidentBtn;
+                        //
+                        $message_hf = message_header_footer($company_sid, $data['session']['company_detail']['CompanyName']);
+                        //
+                        log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $emp[0]['email'], $replacement_array, $message_hf);
                     }
 
                     // Sending incident email to Steven start
+                    $viewAdminIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url("manage_admin/reports/incident_reporting/view_incident/".$incidentId) . '" target="_blank">View Report</a>';
                     $stevendata = [
                         'first_name' => 'Steven',
                         'last_name' => 'Warner',
@@ -247,7 +257,8 @@ class Incident_reporting_system extends Public_Controller
                         'phone' => '',
                         'firstname' => 'Steven',
                         'lastname' => 'Warner',
-                        'company_name' => getCompanyNameBySid($company_sid)
+                        'company_name' => getCompanyNameBySid($company_sid),
+                        'view_button' => $viewAdminIncidentBtn
                     ];
 
                     log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $stevendata['email'], $stevendata);
@@ -762,6 +773,7 @@ class Incident_reporting_system extends Public_Controller
 
                 // Fetch Media For Media
                 $library_media = $this->incident_reporting_model->get_user_library_media($id, $employer_sid, 'employee');
+                
 
                 $data                                   = array();
                 $data['id']                             = $id;
@@ -772,6 +784,7 @@ class Incident_reporting_system extends Public_Controller
                 $data['comments']                       = $comments;
                 $data['witnesses']                      = $witnesses;
                 $data['load_view']                      = $load_view;
+                $data['incident_id']                    = $incident_id;
                 $data['company_sid']                    = $company_sid;
                 $data['current_user']                   = $employer_sid;
                 $data['incident_name']                  = $incident_name;
@@ -787,7 +800,12 @@ class Incident_reporting_system extends Public_Controller
                 $data['on_behalf_employee'] = $on_behalf_employee;
                 $data['on_behalf_employee_sid'] = $access[0]['on_behalf_employee_sid'];
                 $data['access_employer_sid'] = $access[0]['employer_sid'];
-
+                //
+                if ($incident_id == 50) {
+                    // Fetch All Active Company Employees For Adding As Witness
+                    $data['employees'] = $this->incident_reporting_model->fetch_all_company_employees($company_sid);
+                }
+                //
 
                 if (isset($_POST['submit']) && $_POST['submit'] == 'submit') {
                     $perform_action = $_POST['perform_action'];
@@ -883,10 +901,23 @@ class Incident_reporting_system extends Public_Controller
                             }
 
                             $url = base_url('incident_reporting_system/view_incident_email/' . $conversation_key);
+                            $employeeType = $this->incident_reporting_model->isIncidentManager($receiver_email, $company_sid, $id);
+                            //
+                        
 
                             $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                             $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email regarding an assigned incident.</p>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+                            if($employeeType != "out_sider") {
+                                if ($employeeType == "reporter") {
+                                    $viewIncident = base_url('incident_reporting_system/view_incident/' . $id);
+                                } else if ($employeeType == "incident_manager") {
+                                    $viewIncident = base_url('incident_reporting_system/view_single_assign/' . $id);
+                                }
+                                //
+                                $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Incident</a>' . '<br>';
+                                $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                            }
                             $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
@@ -1323,6 +1354,7 @@ class Incident_reporting_system extends Public_Controller
                         $manual_email_to_insert['message_body']             = $message;
 
                         $inserted_email_sid = $this->incident_reporting_model->insert_incident_email_record($manual_email_to_insert);
+                        $isEmployee = $this->incident_reporting_model->checkManualUserIsAnEmployee($_POST['manual_email'], $company_sid);
 
                         if (!empty($attachments)) {
 
@@ -1372,6 +1404,20 @@ class Incident_reporting_system extends Public_Controller
                         $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                         $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about incident.</p>' . '<br>';
                         $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+                        if ($isEmployee) {
+                            $employeeType = $this->incident_reporting_model->isIncidentManager($_POST['manual_email'], $company_sid, $id);
+                            //
+                            if($employeeType != "out_sider") {
+                                if ($employeeType == "reporter") {
+                                    $viewIncident = base_url('incident_reporting_system/view_incident/' . $id);
+                                } else if ($employeeType == "incident_manager") {
+                                    $viewIncident = base_url('incident_reporting_system/view_single_assign/' . $id);
+                                }
+                                //
+                                $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Incident</a>' . '<br>';
+                                $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                            }
+                        }
                         $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
                         $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                         $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
@@ -1476,10 +1522,23 @@ class Incident_reporting_system extends Public_Controller
                             }
 
                             $url = base_url('incident_reporting_system/view_incident_email/' . $conversation_key);
+                            $employeeType = $this->incident_reporting_model->isIncidentManager($receiver_email, $company_sid, $id);
+                            //
+                           
 
                             $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                             $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about incident.</p>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+                            if($employeeType != "out_sider") {
+                                if ($employeeType == "reporter") {
+                                    $viewIncident = base_url('incident_reporting_system/view_incident/' . $id);
+                                } else if ($employeeType == "incident_manager") {
+                                    $viewIncident = base_url('incident_reporting_system/view_single_assign/' . $id);
+                                }
+                                //
+                                $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Incident</a>' . '<br>';
+                                $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                            }
                             $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
@@ -2139,10 +2198,26 @@ class Incident_reporting_system extends Public_Controller
                     $from_name = $user_first_name . ' ' . $user_last_name;
                     $name = explode("@", $manual_email);
                     $receiver_name = $name[0];
+                    //
+                    $isEmployee = $this->incident_reporting_model->checkManualUserIsAnEmployee($manual_email, $company_sid);
 
                     $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                     $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about incident.</p>' . '<br>';
                     $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+                    if ($isEmployee) {
+                        $employeeType = $this->incident_reporting_model->isIncidentManager($manual_email, $company_sid, $inc_reported_id);
+                        //
+                        if($employeeType != "out_sider") {
+                            if ($employeeType == "reporter") {
+                                $viewIncident = base_url('incident_reporting_system/view_incident/' . $inc_reported_id);
+                            } else if ($employeeType == "incident_manager") {
+                                $viewIncident = base_url('incident_reporting_system/view_single_assign/' . $inc_reported_id);
+                            }
+                            //
+                            $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Incident</a>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                        }
+                    }
                     $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
                     $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                     $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
@@ -2275,6 +2350,8 @@ class Incident_reporting_system extends Public_Controller
                         }
 
                         $url = base_url('incident_reporting_system/view_incident_email/' . $conversation_key);
+                        $employeeType = $this->incident_reporting_model->isIncidentManager($receiver_email, $company_sid, $inc_reported_id);
+                        //
 
                         $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                         if ($is_manager == 1) {
@@ -2287,6 +2364,16 @@ class Incident_reporting_system extends Public_Controller
                             $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email regarding an assigned incident.</p>' . '<br>';
                         }
                         $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+                        if($employeeType != "out_sider") {
+                            if ($employeeType == "reporter") {
+                                $viewIncident = base_url('incident_reporting_system/view_incident/' . $inc_reported_id);
+                            } else if ($employeeType == "incident_manager") {
+                                $viewIncident = base_url('incident_reporting_system/view_single_assign/' . $inc_reported_id);
+                            }
+                            //
+                            $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Incident</a>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                        }
                         $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
                         $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                         $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';

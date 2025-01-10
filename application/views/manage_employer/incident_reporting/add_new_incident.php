@@ -150,13 +150,13 @@ if (isset($applicant)) {
                                     <div class="row">
                                         <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
                                             <label class="control control--radio">
-                                                Yes<input type="radio" id="<?php echo $question['id']; ?>" name="radio_<?php echo $question['id']; ?>" data-attr="<?php echo $question['is_required']; ?>" value="yes" style="position: relative;" checked>
+                                                Yes<input type="radio" id="<?php echo $question['id']; ?>" name="radio_<?php echo $question['id']; ?>" data-attr="<?php echo $question['is_required']; ?>" value="yes" style="position: relative;">
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>
                                         <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
                                             <label class="control control--radio">
-                                                No<input type="radio" id="<?php echo $question['id']; ?>" name="radio_<?php echo $question['id']; ?>" data-attr="<?php echo $question['is_required']; ?>" value="no" style="position: relative;">
+                                                No<input type="radio" id="<?php echo $question['id']; ?>" name="radio_<?php echo $question['id']; ?>" data-attr="<?php echo $question['is_required']; ?>" value="no" style="position: relative;" checked>
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>

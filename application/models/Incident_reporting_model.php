@@ -1375,4 +1375,47 @@ class Incident_reporting_model extends CI_Model
 		$records_obj->free_result();
 		return $records_arr;
 	}
+
+	function checkManualUserIsAnEmployee($email, $companyId)
+	{
+		if (
+            $this->db
+            ->where('email', $email)
+            ->where('parent_sid', $companyId)
+            ->count_all_results('users')
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+	}
+
+	function isIncidentManager($email, $companyId, $incidentId)
+	{
+		$this->db->select('sid');
+		$this->db->where('email', $email);
+		$this->db->where('parent_sid', $companyId);
+		$record_obj = $this->db->get('users');
+		$employeeId = $record_obj->row_array()['sid'];
+		$record_obj->free_result();
+		//
+		if (
+            $this->db
+            ->where('employer_sid', $employeeId)
+			->where('id', $incidentId)
+            ->count_all_results('incident_reporting')
+        ) {
+            return "reporter";
+        } else if (
+			$this->db
+            ->where('employer_sid', $employeeId)
+			->where('incident_sid', $incidentId)
+            ->count_all_results('incident_assigned_emp')
+		) {
+            return "incident_manager";
+        }
+		//
+		return "out_sider";
+		
+	}
 }

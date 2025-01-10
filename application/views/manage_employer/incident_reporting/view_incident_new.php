@@ -81,6 +81,83 @@
                 <!-- Question/Answer Section End -->
 
                 <!-- Witnesses Section Start -->
+                <?php if ($incident[0]['status'] != 'Closed' && $incident_id == 50) { ?>
+                    <div class="table-responsive table-outer">
+                        <div class="panel panel-blue">
+                            <div class="panel-heading incident-panal-heading">
+                                <b>Add Witnesses</b>
+                            </div>
+                            <div class="panel-body">
+                                <form id="form_new_witnesses" method="post" action="" autocomplete="off">
+                                    <input type="hidden" id="perform_action" name="perform_action" value="add_witness" />
+
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                            <div class="form-group">
+                                                <label class="auto-height">
+                                                    Add Company Witnesses :
+                                                </label>
+                                                <?php if (sizeof($employees) > 0) { ?>
+                                                    <select id="employee_to_witness" src="1" class="form-control">
+                                                        <option>Please Select Employee as Witness</option>
+                                                        <?php foreach ($employees as $employee) { ?>
+                                                            <?php
+                                                            if ($employer_sid == $employee['sid']) {
+                                                                continue;
+                                                            }
+                                                            $employee_full_name =  $employee['first_name'] . ' ' . $employee['last_name'];
+                                                            $option_value = $employee_full_name . ',' . $employee['email'] . ',' . $employee['PhoneNumber'];
+                                                            ?>
+
+                                                            <option value="<?php echo $option_value; ?>"><?php echo $employee_full_name; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                <?php } else { ?>
+                                                    <p>No Employee Found.</p>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                            <div class="form-group">
+                                                <label class="auto-height">
+                                                    Add Outside Witnesses :
+                                                </label>
+                                                <a href="javascript:;" id="add_new_witrness" class="btn btn-info btn-block mb-2" src="1" onclick="add_new_witrness('outter');" style="height: : 30px; line-height: 30px">Add Witness</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                            <div class="panel panel-info">
+                                                <div class="panel-heading">
+                                                    <strong>Company Witnesses</strong>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div id="add_inner_wirnesses_section">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-info">
+                                                <div class="panel-heading">
+                                                    <strong>Outside Witnesses</strong>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div id="add_outter_wirnesses_section" style="background-color: #eee;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12 text-right">
+                                        <button type="submit" class="btn btn-info incident-panal-button" name="submit" value="submit">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+
                 <?php if (isset($witnesses) && !empty($witnesses)) { ?>
                     <div class="table-responsive table-outer">
                         <div class="panel panel-blue">
@@ -132,7 +209,7 @@
                 <!-- Witnesses Section End -->
 
                 <!-- Media Section Start -->
-                <!-- <?php if ($incident[0]['status'] != 'Closed') { ?>
+                <?php if ($incident[0]['status'] != 'Closed' && $incident_id == 50) { ?>
                     <div class="table-responsive table-outer">
                         <div class="panel panel-blue">
                             <div class="panel-heading incident-panal-heading">
@@ -204,7 +281,7 @@
                             </div>
                         </div>
                     </div>
-                <?php } ?> -->
+                <?php } ?>
 
                 <?php if (!empty($videos) || !empty($videos_archived)) { ?>
                     <div class="table-responsive table-outer">
@@ -284,6 +361,19 @@
 
                                                                         <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="btn btn-block btn-info js-view-video">Watch Video</a>
                                                                     </span>
+
+                                                                    <?php if ($incident_id == 50) { ?>
+                                                                        <span class="post-author" style="margin-right: 10px;"><a href="javascript:void(0)" data-id="<?= $video['sid']; ?>" class="btn btn-block btn-info js-archive-video">Archive Video</a></span>
+                                                                        <span class="post-author" style="margin-right: 10px;"><a href="javascript:void(0)" data-id="<?php echo $video['sid']; ?>" data-title="<?php echo $video['video_title']; ?>" class="btn btn-block btn-info js-edit-video">Edit Video</a></span>
+                                                                    <?php } ?>
+
+                                                                    <?php if ($video['video_type'] == 'upload_audio' || $video['video_type'] == 'upload_video') { ?>
+                                                                            <span class="post-author" style="margin-right: 10px;">
+                                                                            <a target="_blank" href="<?php echo base_url('incident_reporting_system/download_media_file') . '/' . $video['sid']; ?>" class="btn btn-block btn-info">
+                                                                                <i class="fa fa-download"></i>
+                                                                            </a>
+                                                                        </span>
+                                                                    <?php } ?>
                                                                 </div>
                                                                 <div class="full-width announcement-des" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                                                                     <?php
@@ -369,6 +459,19 @@
 
                                                                         <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="btn btn-block btn-info js-view-video">Watch Video</a>
                                                                     </span>
+
+                                                                    <?php if ($incident_id == 50) { ?>
+                                                                        <span class="post-author" style="margin-right: 10px;"><a href="javascript:void(0)" data-id="<?= $video['sid']; ?>" class="btn btn-block btn-info js-active-video">Activate Video</a></span>
+                                                                        <span class="post-author" style="margin-right: 10px;"><a href="javascript:void(0)" data-id="<?php echo $video['sid']; ?>" data-title="<?php echo $video['video_title']; ?>" class="btn btn-block btn-info js-edit-video">Edit Video</a></span>
+                                                                    <?php } ?>
+
+                                                                    <?php if ($video['video_type'] == 'upload_audio' || $video['video_type'] == 'upload_video') { ?>
+                                                                            <span class="post-author" style="margin-right: 10px;">
+                                                                            <a target="_blank" href="<?php echo base_url('incident_reporting_system/download_media_file') . '/' . $video['sid']; ?>" class="btn btn-block btn-info">
+                                                                                <i class="fa fa-download"></i>
+                                                                            </a>
+                                                                        </span>
+                                                                    <?php } ?>
                                                                 </div>
                                                                 <div class="full-width announcement-des" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                                                                     <?php
@@ -391,7 +494,7 @@
                 <!-- Media Section End -->
 
                 <!-- Document Section Start -->
-                <!-- <?php if ($incident[0]['status'] != 'Closed') { ?>
+                <?php if ($incident[0]['status'] != 'Closed' && $incident_id == 50) { ?>
                     <div class="table-responsive table-outer">
                         <div class="panel panel-blue">
                             <div class="panel-heading incident-panal-heading">
@@ -426,7 +529,7 @@
                             </div>
                         </div>
                     </div>
-                <?php } ?> -->
+                <?php } ?> 
 
                 <?php if (sizeof($get_incident_document) > 0 || sizeof($get_incident_document_archived) > 0) { ?>
                     <div class="table-responsive table-outer">
@@ -487,9 +590,35 @@
                                                                                 <?php
                                                                                 $download_url = $document['file_code'];
                                                                                 $file_name = explode(".", $download_url);
+                                                                                $document_name = $file_name[0];
                                                                                 $document_extension = $file_name[1];
+                                                                                if ($document_extension == 'pdf') {
+                                                                                    $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
+                                                                                    $preview_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $download_url . '&embedded=true';
+                                                                                } else if ($document_extension == 'doc') {
+                                                                                    $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
+                                                                                    $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
+                                                                                } else if ($document_extension == 'docx') {
+                                                                                    $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+                                                                                    $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
+                                                                                } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                                                                    $print_url = base_url('incident_reporting_system/print_image/' . $document['id']);
+                                                                                    $preview_url = AWS_S3_BUCKET_URL . $download_url;
+                                                                                } else {
+                                                                                    $print_url = '';
+                                                                                }
                                                                                 ?>
-                                                                                <a href="javascript:;" class="btn btn-info btn-block" onclick="view_incident_doc(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $download_url; ?>" data-preview-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-file"></i> View</a>
+
+                                                                                <a href="javascript:;" class="pull-right print-incident modify-comment-btn" onclick="view_incident_doc(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $download_url; ?>" data-preview-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-file"></i> View</a>
+
+                                                                                <a target="_blank" href="<?php echo $print_url; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-print"></i> Print</a>
+
+                                                                                <a target="_blank" href="<?php echo base_url('incident_reporting_system/download_incident_document') . '/' . $download_url; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-download"></i> Download</a>
+
+                                                                                <?php if ($incident_id == 50) { ?>
+                                                                                    <a href="javascript:void(0)" class="js-edit-document print-incident pull-right modify-comment-btn" data-id="<?php echo $document['id']; ?>" data-url="<?php echo $preview_url; ?>" data-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-pencil"></i>&nbsp;Edit</a>
+                                                                                    <a href="javascript:void(0)" class="js-archive-document pull-right print-incident modify-comment-btn" data-id="<?php echo $document['id']; ?>"><i class="fa fa-archive"></i>&nbsp;Archive</a>
+                                                                                <?php } ?>
                                                                             </td>
                                                                         </tr>
                                                                     <?php } ?>
@@ -548,13 +677,39 @@
                                                                                     ?>
                                                                                 </td>
                                                                                 <td class="text-center">
-                                                                                    <?php
-                                                                                    $download_url = $document['file_code'];
-                                                                                    $file_name = explode(".", $download_url);
-                                                                                    $document_extension = $file_name[1];
-                                                                                    ?>
-                                                                                    <a href="javascript:;" class="btn btn-info btn-block" onclick="view_incident_doc(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $download_url; ?>" data-preview-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-file"></i> View</a>
-                                                                                </td>
+                                                                                        <?php
+                                                                                        $download_url = $document['file_code'];
+                                                                                        $file_name = explode(".", $download_url);
+                                                                                        $document_name = $file_name[0];
+                                                                                        $document_extension = $file_name[1];
+
+                                                                                        if ($document_extension == 'pdf') {
+                                                                                            $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
+                                                                                            $preview_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $download_url . '&embedded=true';
+                                                                                        } else if ($document_extension == 'doc') {
+                                                                                            $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
+                                                                                            $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
+                                                                                        } else if ($document_extension == 'docx') {
+                                                                                            $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+                                                                                            $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
+                                                                                        } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                                                                            $print_url = base_url('incident_reporting_system/print_image/' . $document['id']);
+                                                                                            $preview_url = AWS_S3_BUCKET_URL . $download_url;
+                                                                                        } else {
+                                                                                            $print_url = '';
+                                                                                        }
+                                                                                        ?>
+
+                                                                                        <a href="javascript:;" class="pull-right print-incident modify-comment-btn" onclick="view_incident_doc(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $download_url; ?>" data-preview-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-file"></i> View</a>
+
+                                                                                        <a target="_blank" href="<?php echo $print_url; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-print"></i> Print</a>
+
+                                                                                        <a target="_blank" href="<?php echo base_url('incident_reporting_system/download_incident_document') . '/' . $download_url; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-download"></i> Download</a>
+                                                                                        <?php if ($incident_id == 50) { ?>
+                                                                                            <a href="javascript:void(0)" class="js-edit-document print-incident pull-right modify-comment-btn" data-id="<?php echo $document['id']; ?>" data-url="<?php echo $preview_url; ?>" data-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-pencil"></i>&nbsp;Edit</a>
+                                                                                            <a href="javascript:void(0)" class="js-active-document pull-right print-incident modify-comment-btn" data-id="<?php echo $document['id']; ?>"><i class="fa fa-archive"></i>&nbsp;Activate</a>
+                                                                                        <?php } ?>
+                                                                                    </td>
                                                                             </tr>
                                                                         <?php } ?>
                                                                     </tbody>
