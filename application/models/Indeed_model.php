@@ -2047,6 +2047,15 @@ class Indeed_model extends CI_Model
 
     public function handleJobQueueFromXml($jobs)
     {
+
+        //markexpire
+        $jobids = [];
+        $jobids = array_column($jobs, 'job_sid');
+
+        if (!empty($jobids)) {
+            $this->JobToQueueMarkAsExpired($jobids);
+        }
+
         foreach ($jobs as $job) {
             $this->updateJobToQueue(
                 $job["job_sid"],
@@ -2054,5 +2063,16 @@ class Indeed_model extends CI_Model
                 true
             );
         }
+    }
+
+
+    //
+    public function JobToQueueMarkAsExpired($jobids)
+    {
+        $data['is_expired'] = 1;
+        return $this
+            ->db
+            ->where_not_in("job_sid", $jobids)
+            ->update("indeed_job_queue", $data);
     }
 }
