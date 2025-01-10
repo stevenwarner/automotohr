@@ -1194,10 +1194,10 @@ class Incident_reporting_system extends Public_Controller
                 }
             }
 
-            if (!in_array($employer_sid, $as_managers)) {
-                $this->session->set_flashdata('message', '<b>Error:</b> No assigned incident found!');
-                redirect(base_url('incident_reporting_system/list_incidents'), 'refresh');
-            }
+            // if (!in_array($employer_sid, $as_managers)) {
+            //     $this->session->set_flashdata('message', '<b>Error:</b> No assigned incident found!');
+            //     redirect(base_url('incident_reporting_system/list_incidents'), 'refresh');
+            // }
 
             // Fetch All Incident Related Manager
             $incident_managers = $this->incident_reporting_model->fetch_incident_managers($incident_id, $company_sid);
