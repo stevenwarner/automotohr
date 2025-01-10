@@ -773,7 +773,6 @@ class Incident_reporting_system extends Public_Controller
 
                 // Fetch Media For Media
                 $library_media = $this->incident_reporting_model->get_user_library_media($id, $employer_sid, 'employee');
-                
 
                 $data                                   = array();
                 $data['id']                             = $id;
@@ -1373,7 +1372,7 @@ class Incident_reporting_system extends Public_Controller
                                     $item_type  = $item_info['video_type'];
                                     $item_path  = $item_info['video_url'];
                                 } else if ($attachment_type == 'Document') {
-                                    $attachment_type = str_replace("d_", "", $record_sid);
+                                    $record_sid = str_replace("d_", "", $record_sid);
                                     $item_info  = $this->incident_reporting_model->get_attach_file_info($record_sid, 'document');
                                     $item_title = $item_info['document_title'];
                                     $item_type  = $item_info['type'];
