@@ -839,7 +839,7 @@
                                                                                                                         $attach_item_type = $attach_item['attachment_type'];
                                                                                                                         $item_sid = $attach_item['sid'];
                                                                                                                         $item_title = $attach_item['item_title'];
-                                                                                                                        $item_source = $attach_item['item_type'];
+                                                                                                                        $item_source = strtolower($attach_item['item_type']);
                                                                                                                         $item_path = $attach_item['item_path'];
                                                                                                                         $item_url = '';
 
