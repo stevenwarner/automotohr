@@ -1107,16 +1107,13 @@
                                     <?php if ($isLMSModuleEnabled) : ?>
                                         <!--  -->
                                         <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['is_executive_admin'] == 1) {
-                                            //  $lmsToLink = $session['employer_detail']['access_level_plus'] == 1
-                                            //      ? 'lms/courses/company_courses'
-                                            //     : 'lms/courses/report';
-
+                                            // in case of plus
                                             $lmsToLink = $session['employer_detail']['access_level_plus'] == 1
-                                                ? 'lms/courses/report'
+                                                ? 'lms/courses/company_courses'
                                                 : 'lms/courses/report';
                                         ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                                <div class="dash-box" >
+                                                <div class="dash-box">
                                                     <div class="dashboard-widget-box" style="margin-top: -10px;">
                                                         <figure>
                                                             <i class="fa fa-file <?= $coursesInfo['expire_soon'] > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
@@ -1126,19 +1123,19 @@
                                                                 Course Management
                                                             </a>
                                                         </h2>
-                                                        <div class="count-box" style="font-size: 12px">                                                           
+                                                        <div class="count-box" style="font-size: 12px">
                                                             <?php
                                                             $total = $subordinateInfo["total_course"];
                                                             $completed = $subordinateInfo["completed"];
                                                             $unCompleted = $total - $completed;
                                                             $percentage = $total != 0 ? round(($completed / $total * 100), 0, PHP_ROUND_HALF_UP) . '%' : '0%';
-                                                           
-                                                           ?>
+
+                                                            ?>
                                                             <small style="font-size: 12px">Courses Total <?= $total ?></small><br>
                                                             <small style="font-size: 12px">Completed Courses <?= $percentage ?> </small><br>
                                                             <small style="font-size: 12px">Courses Pending <?= $unCompleted ?> </small><br>
                                                             <small style="font-size: 12px">Not Started <?= $subordinateInfo["ready_to_start"] ?> </small><br>
-                                                            
+
                                                         </div><br>
                                                         <div class="button-panel" style="margin-bottom: -10px;">
                                                             <a href="<?= base_url($lmsToLink); ?>" class="site-btn">Manage</a>
