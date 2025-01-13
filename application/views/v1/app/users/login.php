@@ -24,7 +24,7 @@
                                     <?php echo form_error('password'); ?>
 
                                     <div class="w-full forgot-password-text">
-                                        <span><a href="<?php echo site_url('forgot-password'); ?>">Forgot Password ?</a></span>
+                                        <span><a href="<?php echo site_url('forgot-password'); ?>">Forgot your Username / Password?</a></span>
                                     </div>
 
                                     <div class="margin-top-30">
