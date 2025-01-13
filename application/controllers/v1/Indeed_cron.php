@@ -896,12 +896,16 @@ class Indeed_cron extends CI_Controller
             $cat_id = explode(',', $JobCategorys);
             $job_category_array = array();
 
+            
             foreach ($cat_id as $id) {
                 $job_cat_name = $this->all_feed_model->get_job_category_name_by_id($id);
                 $job_category_array[] = $job_cat_name[0]['value'];
+                
+                $jobCatgoriesString .= "'".($job_cat_name[0]['value'])."',";
+
             }
 
-            $jobCatgoriesString = implode(', ', $job_category_array);
+            $jobCatgoriesString = rtrim($jobCatgoriesString, ",");
         }
 
         return $jobCatgoriesString;
