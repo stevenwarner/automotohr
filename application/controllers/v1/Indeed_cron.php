@@ -728,9 +728,6 @@ class Indeed_cron extends CI_Controller
      */
     private function getJobsBodyForIndeed(): string
     {
-
-        echo $this->jobBody;
-        die("Sada");
         $multiJobBody = <<<'GRAPHQL'
         mutation {
             createSourcedJobPostings(
@@ -901,7 +898,7 @@ class Indeed_cron extends CI_Controller
                 $job_cat_name = $this->all_feed_model->get_job_category_name_by_id($id);
                 $job_category_array[] = $job_cat_name[0]['value'];
                 
-                $jobCatgoriesString .= "'".($job_cat_name[0]['value'])."',";
+                $jobCatgoriesString .= '"'.($job_cat_name[0]['value']).'",';
 
             }
 
