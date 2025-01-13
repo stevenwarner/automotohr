@@ -62,9 +62,10 @@ class Incident_reporting extends Admin_Controller {
             if(sizeof($inc_type)>0){
                 $this->data['name']   = ucfirst($inc_type[0]['incident_name']);
                 $this->data['status'] = $inc_type[0]['status'];
-                $this->data['ins'] = ucfirst($inc_type[0]['instructions']);
+                $this->data['ins'] = ucfirget_incident_typest($inc_type[0]['instructions']);
                 $this->data['rsn'] = $inc_type[0]['reasons'];
                 $this->data['safety_checklist'] = $inc_type[0]['safety_checklist'];
+                $this->data['is_safety_incident'] = $inc_type[0]['is_safety_incident'];
                 $this->data['fillable_by'] = $inc_type[0]['fillable_by'];
                 $this->data['parent_sid'] = $inc_type[0]['parent_sid'];
             }
