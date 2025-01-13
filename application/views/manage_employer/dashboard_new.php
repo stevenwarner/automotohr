@@ -1134,9 +1134,9 @@
 
                                                             ?>
                                                             <small style="font-size: 12px">Courses Total <?= $total; ?></small><br>
-                                                            <small style="font-size: 12px">Completed Courses <?= $percentage; ?> </small><br>
-                                                            <small style="font-size: 12px">Courses Pending <?= $percentageNotCompleted; ?> </small><br>
-                                                            <small style="font-size: 12px">Not Started <?= $percentageReadyToStart; ?> </small><br>
+                                                            <small style="font-size: 12px" class="text-success">Completed Courses <?= $percentage; ?> </small><br>
+                                                            <small style="font-size: 12px" class="text-danger">Courses Pending <?= $percentageNotCompleted; ?> </small><br>
+                                                            <small style="font-size: 12px" class="text-warning">Not Started <?= $percentageReadyToStart; ?> </small><br>
 
                                                         </div><br>
                                                         <div class="button-panel" style="margin-bottom: -10px;">
