@@ -59,9 +59,9 @@ foreach ($monthDates as $monthDate) {
                     <!-- Page title -->
                     <div class="row">
                         <div class="col-sm-12 text-right">
-                            <a href="<?= base_url("my_settings"); ?>" class="btn btn-black">
+                            <a href="<?= base_url("dashboard"); ?>" class="btn btn-black">
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                                &nbsp;Settings
+                                &nbsp;Dashboard
                             </a>
                             <a href="<?= base_url("settings/shifts/breaks"); ?>" class="btn btn-orange">
                                 <i class="fa fa-cogs" aria-hidden="true"></i>
@@ -71,7 +71,35 @@ foreach ($monthDates as $monthDate) {
                                 <i class="fa fa-cogs" aria-hidden="true"></i>
                                 &nbsp;Manage Shift Templates
                             </a>
-                         
+
+
+
+                            <?php if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
+                                <a href="<?= base_url("shifts/my"); ?>" class="btn btn-orange" >
+                                <i class="fa fa-calendar" aria-hidden="true"></i>    
+                                &nbsp;My Shifts
+                                </a>
+
+                                <a href="<?= base_url("shifts/my/subordinates"); ?>" class="btn btn-orange" >
+                                <i class="fa fa-users" aria-hidden="true"></i>     
+                                &nbsp;My Team Shifts
+                                </a>
+
+                                <a href="<?= base_url("shifts/myTrade"); ?>" class="btn btn-orange" >
+                                <i class="fa fa-exchange" aria-hidden="true"></i>                                
+                                &nbsp;Shift Swap Requests
+                                </a>
+
+                                <?php if (isPayrollOrPlus()) { ?>
+                                    <a href="<?= base_url("settings/shifts/trade"); ?>" class="btn btn-orange">
+                                    <i class="fa fa-exchange" aria-hidden="true"></i>
+                                        &nbsp;Shift Swap Approvals
+                                    </a>
+                                <?php } ?>
+
+                            <?php } ?>
+
+
                         </div>
                     </div>
                     <br />

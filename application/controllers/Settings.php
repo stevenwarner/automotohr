@@ -4206,7 +4206,37 @@ class Settings extends Public_Controller
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/main"
         ], "public/v1/shifts/", "main", false);
+
         //
+      
+        
+        $this->load->model("v1/Shift_model", "shift_model");
+        $data["mySubordinatesCount"] = $this->shift_model
+        ->getMySubordinates(
+            $loggedInEmployee['sid'],
+            true
+        );
+
+        $data['myAssignedShifts'] = $this->shift_model
+        ->getShiftsCountByEmployeeId(
+            $loggedInEmployee['sid'],
+            getSystemDate("Y-m-01"),
+            getSystemDate("Y-m-t")
+        );
+        
+
+        if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { 
+            //
+            $data["awaitingShiftRequests"] = $this->shift_model->getAwaitingSwapShiftsByUserId($loggedInEmployee['sid']);
+            //
+            if (isPayrollOrPlus()) {
+                $data["awaitingShiftsApprovals"] = $this->shift_model->getAwaitingSwapShiftsApprovals();
+            }    
+        } 
+
+
+
+
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/listing');
         $this->load->view('main/footer');
