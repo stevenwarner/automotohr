@@ -10,12 +10,22 @@
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"><br>
                     </div>
 
-                    <div class="row">
-                        <div class="col-sm-12 text-right">
-                        <a href="<?= base_url("dashboard"); ?>" class="btn btn-blue ">
+                    <div class="row"><br>
+                    <div class="col-sm-4 text-left">
+                            <a href="<?= base_url("dashboard"); ?>" class="btn btn-blue ">
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
                                 &nbsp;Dashboard
                             </a>
+                            <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
+                                <a href="<?= base_url("settings/shifts/manage"); ?>" class="btn btn-orange">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                    &nbsp;Shifts
+                                </a>
+
+                            <?php } ?>
+                        </div>
+                        <div class="col-sm-8 text-right">
+                      
                             <a href="<?= base_url("shifts/my/subordinates"); ?>" class="btn btn-orange">
                                 <i class="fa fa-users" aria-hidden="true"></i>
                                 &nbsp;My Team Shifts

@@ -63,6 +63,13 @@ foreach ($monthDates as $monthDate) {
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
                                 &nbsp;Dashboard
                             </a>
+
+                            <?php if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
+                                <a href="<?= base_url("shifts/my"); ?>" class="btn btn-orange" >
+                                <i class="fa fa-calendar" aria-hidden="true"></i>    
+                                &nbsp;My Shifts
+                                </a>
+                                <?php }?>
                             <a href="<?= base_url("settings/shifts/breaks"); ?>" class="btn btn-orange">
                                 <i class="fa fa-cogs" aria-hidden="true"></i>
                                 &nbsp;Manage Breaks
@@ -73,14 +80,8 @@ foreach ($monthDates as $monthDate) {
                             </a>
 
 
-
                             <?php if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
-                                <a href="<?= base_url("shifts/my"); ?>" class="btn btn-orange" >
-                                <i class="fa fa-calendar" aria-hidden="true"></i>    
-                                &nbsp;My Shifts
-                                </a>
-
-                                <a href="<?= base_url("shifts/my/subordinates"); ?>" class="btn btn-orange" >
+                                                              <a href="<?= base_url("shifts/my/subordinates"); ?>" class="btn btn-orange" >
                                 <i class="fa fa-users" aria-hidden="true"></i>     
                                 &nbsp;My Team Shifts
                                 </a>

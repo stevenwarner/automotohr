@@ -4207,8 +4207,7 @@ class Settings extends Public_Controller
             "v1/settings/shifts/main"
         ], "public/v1/shifts/", "main", false);
 
-        //
-      
+        //      
         
         $this->load->model("v1/Shift_model", "shift_model");
         $data["mySubordinatesCount"] = $this->shift_model
