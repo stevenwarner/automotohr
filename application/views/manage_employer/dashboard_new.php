@@ -1129,12 +1129,14 @@
                                                             $completed = $subordinateInfo["completed"];
                                                             $unCompleted = $total - $completed;
                                                             $percentage = $total != 0 ? round(($completed / $total * 100), 0, PHP_ROUND_HALF_UP) . '%' : '0%';
+                                                            $percentageNotCompleted = $total != 0 ? round(($unCompleted / $total * 100), 0, PHP_ROUND_HALF_UP) . '%' : '0%';
+                                                            $percentageReadyToStart= $total != 0 ? round(($subordinateInfo["ready_to_start"] / $total * 100), 0, PHP_ROUND_HALF_UP) . '%' : '0%';
 
                                                             ?>
-                                                            <small style="font-size: 12px">Courses Total <?= $total ?></small><br>
-                                                            <small style="font-size: 12px">Completed Courses <?= $percentage ?> </small><br>
-                                                            <small style="font-size: 12px">Courses Pending <?= $unCompleted ?> </small><br>
-                                                            <small style="font-size: 12px">Not Started <?= $subordinateInfo["ready_to_start"] ?> </small><br>
+                                                            <small style="font-size: 12px">Courses Total <?= $total; ?></small><br>
+                                                            <small style="font-size: 12px">Completed Courses <?= $percentage; ?> </small><br>
+                                                            <small style="font-size: 12px">Courses Pending <?= $percentageNotCompleted; ?> </small><br>
+                                                            <small style="font-size: 12px">Not Started <?= $percentageReadyToStart; ?> </small><br>
 
                                                         </div><br>
                                                         <div class="button-panel" style="margin-bottom: -10px;">
