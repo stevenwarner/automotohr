@@ -728,6 +728,9 @@ class Indeed_cron extends CI_Controller
      */
     private function getJobsBodyForIndeed(): string
     {
+
+        echo $this->jobBody;
+        die("Sada");
         $multiJobBody = <<<'GRAPHQL'
         mutation {
             createSourcedJobPostings(
