@@ -2054,5 +2054,20 @@ class Indeed_model extends CI_Model
                 true
             );
         }
+        // expire jobs
+        $this->JobToQueueMarkAsExpired(array_column($jobs, "job_sid"));
+    }
+
+    //
+    public function JobToQueueMarkAsExpired($jobids)
+    {
+        if (!$jobIds) {
+            return false;
+        }
+        $data['is_expired'] = 1;
+        return $this
+            ->db
+            ->where_not_in("job_sid", $jobids)
+            ->update("indeed_job_queue", $data);
     }
 }
