@@ -11,7 +11,7 @@ class Indeed_cron extends CI_Controller
      * holds the jobs count
      * @var int
      */
-    private $numberOfJobsForQueue = 50;
+    private $numberOfJobsForQueue = 1;
 
     /**
      * holds the jobs
@@ -299,6 +299,7 @@ class Indeed_cron extends CI_Controller
             '\title' => $this->job["Title"],
             '\description' => $this->getDescription(),
             '\jobTypes' => $this->getJobType(),
+            '\jobCategories' => $this->getJobCategories(),
             '\country' => "US",
             '\cityRegionPostal' => $this->getRegionPostal(),
             '\currency' => 'USD',
@@ -588,6 +589,7 @@ class Indeed_cron extends CI_Controller
                 datePublished: "\datePublished"
                 taxonomyClassification: {
                     jobTypes: [\jobTypes]
+                    categories: [\jobCategories]
                 }
                 url: "\url"
             }
@@ -873,5 +875,32 @@ class Indeed_cron extends CI_Controller
     private function getJobType(): string
     {
         return $this->job["JobType"] !== "Full Time" ? '"part-time"' : '"full-time"';
+    }
+
+    /**
+     * get the job type
+     *
+     * @return array
+     */
+    private function getJobCategories(): string
+    {
+        //
+        $jobCatgoriesString = "";
+        //
+        $JobCategorys = $this->job['JobCategory'];
+
+        if ($JobCategorys != null) {
+            $cat_id = explode(',', $JobCategorys);
+            $job_category_array = array();
+
+            foreach ($cat_id as $id) {
+                $job_cat_name = $this->all_feed_model->get_job_category_name_by_id($id);
+                $job_category_array[] = $job_cat_name[0]['value'];
+            }
+
+            $jobCatgoriesString = implode(', ', $job_category_array);
+        }
+
+        return $jobCatgoriesString;
     }
 }

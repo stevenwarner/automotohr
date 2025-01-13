@@ -1232,6 +1232,7 @@ class Indeed_model extends CI_Model
                 "portal_job_listings.JobType",
                 "portal_job_listings.questionnaire_sid",
                 "portal_job_listings.approval_status",
+                "portal_job_listings.JobCategory",
                 "states.state_code",
             ])
             ->join(
