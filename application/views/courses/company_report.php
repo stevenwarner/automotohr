@@ -126,8 +126,8 @@
                                                 <thead>
                                                     <tr>
                                                         <th></th>
-                                                        <th>Employee(s) Have Courses</th>
-                                                        <th>Employee(s) Not Have Courses</th>
+                                                        <th>Employee(s) with Assigned Courses</th>
+                                                        <th>Employee(s) with NO Courses Assigned</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>

@@ -2089,3 +2089,61 @@ if (!function_exists('formatDateBeforeProcess')) {
         return $date;
     }
 }
+
+if (!function_exists('message_header_footer_domain')) {
+
+    function message_header_footer_domain($compnay_id, $company_Name)
+    {
+        $CI = &get_instance();
+        $CI->db->select('sub_domain');
+        $CI->db->where('user_sid', $compnay_id);
+        $CI->db->from('portal_employer');
+        $result = $CI->db->get()->result_array();
+        $domain_name = $result[0]['sub_domain'];
+        $data['header'] = '<div class = "content" style = "font-size: 100%; line-height: 1.6em; display: block; max-width: 1000px; margin: 0 auto; padding: 0; position:relative"><div style = "width:100%; float:left; padding:5px 20px; text-align:center; box-sizing: border-box; background-color:#0000FF;"><h2 style = "color:#fff;">' . $company_Name . '</h2></div> <div class = "body-content" style = "width:100%; float:left; padding:20px 20px 60px 20px; box-sizing:border-box; background:url(images/bg-body.jpg);">';
+        $data['footer'] = '</div><div class = "footer" style = "width:100%; float:left; background-color:#0000FF; padding:20px 30px; box-sizing:border-box;"><div style = "float:left; width:100%; "><p style = "color:#fff; text-align:center; font-style:italic; line-height:normal; font-family: "Open Sans", sans-serif; font-weight:600; font-size:14px;"><a style = "color:#fff; text-decoration:none;" href = "' . STORE_PROTOCOL . $domain_name . '">' . $domain_name . '</a></p></div></div></div>';
+        return $data;
+    }
+}
+
+
+if (!function_exists('log_and_sendEmail')) {
+
+    function log_and_sendEmail($from, $to, $subject, $body, $senderName)
+    {
+        $CI = &get_instance();
+        if (empty($to) || $to == NULL) return 0;
+        //
+        $emailData = array(
+            'date' => date('Y-m-d H:i:s'),
+            'subject' => $subject,
+            'email' => $to,
+            'message' => $body,
+            'username' => $senderName,
+        );
+        //
+        $CI->db->insert('email_log', $emailData);
+        $result = $CI->db->insert_id();
+        //
+        if (base_url() != STAGING_SERVER_URL)
+            sendMail($from, $to, $subject, $body, $senderName);
+    }
+}
+
+if (!function_exists('sendResponse')) {
+
+function sendResponse($response){
+    header('Content-Type: application/json');
+    echo json_encode($response);
+}
+
+
+if(!function_exists('res')){
+    function res($in){
+        header('Content-Type: application/json');
+        echo json_encode($in);
+        exit(0);
+    }
+}
+
+}
