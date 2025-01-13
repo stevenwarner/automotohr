@@ -15,9 +15,9 @@
                     <!-- Page title -->
                     <div class="row">
                         <div class="col-sm-12 text-right">
-                            <a href="<?= base_url("my_settings"); ?>" class="btn btn-black">
+                            <a href="<?= base_url("dashboard"); ?>" class="btn btn-black">
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
-                                &nbsp;Settings
+                                &nbsp;Dashboard
                             </a>
                             <a href="<?= base_url("settings/shifts/manage"); ?>" class="btn btn-black">
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
