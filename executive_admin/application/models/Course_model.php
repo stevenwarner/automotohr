@@ -188,14 +188,15 @@ class Course_model extends CI_Model
                 $a = $a->free_result();
                 //
                 $status = 0;
+                
                 //
                 if (empty($b)) {
                     $result["pendingCount"]++;
                     $result["readyToStart"]++;
-                } else if ($b['lesson_status'] == 'completed') {
+                } else if ($b['course_status'] == 'passed') {
                     $status = 1;
                     $result["completedCount"]++;
-                } else if ($b['lesson_status'] == 'incomplete') {
+                } else{
                     $result["pendingCount"]++;
                     $result["inProgressCount"]++;
                 }
