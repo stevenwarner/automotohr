@@ -835,7 +835,8 @@ class Course_model extends CI_Model
                 "completed" => 0,
                 "started" => 0,
                 "pending" => 0,
-            ]
+            ],
+            "employee" => []
         ];
         // get the company courses with job titles
         $results = $this
@@ -919,6 +920,15 @@ class Course_model extends CI_Model
             $returnArray["totals"]["started"] += $completedPendingCount;
             $returnArray["totals"]["pending"] += count($courseEmployeeIds)
                 - ($completedPendingCount + $completedCoursesCount);
+
+            //
+            $returnArray["courses"][$v0["sid"]] = [
+                "total" => count($courseEmployeeIds),
+                "completed" => $completedCoursesCount,
+                "started" => $completedPendingCount,
+                "pending" => (count($courseEmployeeIds)
+                    - ($completedPendingCount + $completedCoursesCount)),
+            ];
         }
 
         //
