@@ -842,14 +842,13 @@ class Course_model extends CI_Model
             ->db
             ->select("sid")
             ->where("company_sid", $companyId)
+            ->where("is_active", 1)
             ->get("lms_default_courses")
             ->result_array();
         //
         if (!$results) {
             return $returnArray;
         }
-        //
-        $employeeIdsHolder = [];
         //
         foreach ($results as $v0) {
             // get the job title
@@ -872,6 +871,7 @@ class Course_model extends CI_Model
                 ->where([
                     "active" => 1,
                     "terminated_status" => 0,
+                    "is_executive_admin" => 0,
                     "parent_sid" => $companyId,
                 ]);
             if (in_array("-1", $jobTitlesList)) {
