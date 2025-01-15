@@ -648,7 +648,7 @@ class Testing extends CI_Controller
         //
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->where_in('employee_type', ['fulltime','full-time']);
+        $this->db->where_in('employee_type', ['fulltime', 'full-time']);
         $this->db->where('parent_sid <>', 0);
         $this->db->where('employment_date', null);
         $this->db->where('is_executive_admin', 0);
@@ -688,7 +688,7 @@ class Testing extends CI_Controller
         echo "All Done";
     }
 
-     /**
+    /**
      * 
      */
     private function addLastRead($sid)
@@ -1077,7 +1077,7 @@ class Testing extends CI_Controller
                 $totalJobsForFeed++;
             }
         }
-        _e($totalJobsForFeed,true,true);
+        _e($totalJobsForFeed, true, true);
 
         // Post data to browser
         header('Content-type: text/xml');
@@ -1111,9 +1111,10 @@ class Testing extends CI_Controller
 
         return $validSlug;
     }
-   
 
-    function addScormCourses () {
+
+    function addScormCourses()
+    {
         //
         $results = $this->db->select("sid, course_file_name, Imsmanifist_json")
             ->where("company_sid", 0)
@@ -1134,6 +1135,89 @@ class Testing extends CI_Controller
             //
             $this->db->insert('lms_scorm_courses', $insert_data);
         }
+    }
+
+
+
+
+
+
+    //
+    public function setCompanyModules()
+    {
+        $moduleSlug = [
+            'applicanttrackingsystem',
+            'privatemessage',
+            'ems',
+            'emsdocumentmanagement',
+            'onboardingconfiguration',
+            'employeeemsnotification',
+            'announcements',
+            'learningcenter',
+            'safetysheets',
+            'departmentmanagement',
+            'onboardinghelpbox',
+            'companyhelpbox',
+            'createnewjob',
+            'marketplace',
+            'myjobs',
+            'calendarevents',
+            'etm',
+            'candidatequestionnaires',
+            'interviewquestionnaires',
+            'backgroundchecksreport',
+            'supporttickets',
+            'approvaldocuments',
+            'pendingauthorizeddocuments',
+            'employeeinformationchange',
+            'accountactivity',
+            'settings'
+        ];
+
+        $modules = $this->db->select("sid")
+            ->where_in("module_slug", $moduleSlug)
+            ->get("modules")
+            ->result_array();
+
+        // Companies
+        $this->db->select('sid');
+        $this->db->from('users');
+        //$this->db->where('active', 1);
+        $this->db->where('parent_sid', 0);
+        $this->db->where('career_page_type', 'standard_career_site');
+        $this->db->order_by('sid', 'desc');
+        $record_obj = $this->db->get();
+        $companies = $record_obj->result_array();
+
+
+        if (!empty($companies)) {
+
+            foreach ($companies as $row) {
+
+
+                if (!empty($modules)) {
+                    foreach ($modules as $modulerow) {
+                        // check if module exist
+                        $this->db->select('*');
+                        $this->db->where('module_sid', $modulerow['sid']);
+                        $this->db->where('company_sid', $row['sid']);
+                        $count = $this->db->get('company_modules')->num_rows();
+
+                        if ($count <= 0) {
+                            $insert_data = array();
+                            $insert_data['module_sid'] = $modulerow['sid'];
+                            $insert_data['company_sid'] = $row['sid'];
+                            $insert_data['is_active'] = 1;
+                            $insert_data['created_at'] = getSystemDate();
+                            $insert_data['updated_at'] = getSystemDate();
+                            $this->db->insert('company_modules', $insert_data);
+                        }
+                    }
+                }
+            }
+        }
+
+        echo "Done";
     }
 }
 
@@ -1162,5 +1246,3 @@ if (!function_exists('remakeSalary')) {
         return $salary;
     }
 }
-
-
