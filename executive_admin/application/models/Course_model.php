@@ -177,7 +177,7 @@ class Course_model extends CI_Model
         if (!empty($employeeAssignCoursesList)) {
             foreach ($employeeAssignCoursesList as $courseId) {
                 //
-                $this->db->select("course_status");
+                $this->db->select("lesson_status");
                 $this->db->where('company_sid', $companyId);
                 $this->db->where('employee_sid', $employeeId);
                 $this->db->where('course_sid', $courseId);
@@ -193,10 +193,10 @@ class Course_model extends CI_Model
                 if (empty($b)) {
                     $result["pendingCount"]++;
                     $result["readyToStart"]++;
-                } else if ($b['course_status'] == 'passed') {
+                } else if ($b['lesson_status'] == 'completed') {
                     $status = 1;
                     $result["completedCount"]++;
-                } else{
+                } else if ($b['lesson_status'] == 'incomplete') {
                     $result["pendingCount"]++;
                     $result["inProgressCount"]++;
                 }
@@ -205,7 +205,7 @@ class Course_model extends CI_Model
             }
             //
             if ($result["completedCount"] > 0) {
-                $result["percentage"] = number_format(($result["completedCount"] / $result["courseCount"]) * 100, 2, ".", "");
+                $result["percentage"] = round(($result["completedCount"] / $result["courseCount"]) * 100, 2);
             }
         }
         //
