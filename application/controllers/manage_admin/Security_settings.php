@@ -283,15 +283,12 @@ class Security_settings extends Admin_Controller
                 } elseif ($val['module_slug'] == 'assurehire') {
                     $status = $this->security_model->get_company_module_status($sid, 'assurehire');
                     $available_modules[$key]['module_chiled'][0] = array('heading' => 'Assure Hire', 'slug' => 'assurehire', 'status' => $status);
-                } elseif ($val['module_slug'] == 'createnewjob') {
-                    $status = $this->security_model->get_company_module_status($sid, 'createnewjob');
-                    $available_modules[$key]['module_chiled'][0] = array('heading' => 'Create New Job', 'slug' => 'createnewjob', 'status' => $status);
-                } elseif ($val['module_slug'] == 'marketplace') {
+                }  elseif ($val['module_slug'] == 'marketplace') {
                     $status = $this->security_model->get_company_module_status($sid, 'marketplace');
                     $available_modules[$key]['module_chiled'][0] = array('heading' => 'My Marketplace', 'slug' => 'marketplace', 'status' => $status);
-                } elseif ($val['module_slug'] == 'myjobs') {
-                    $status = $this->security_model->get_company_module_status($sid, 'myjobs');
-                    $available_modules[$key]['module_chiled'][0] = array('heading' => 'My Jobs', 'slug' => 'myjobs', 'status' => $status);
+                } elseif ($val['module_slug'] == 'jobs') {
+                    $status = $this->security_model->get_company_module_status($sid, 'jobs');
+                    $available_modules[$key]['module_chiled'][0] = array('heading' => 'Jobs', 'slug' => 'jobs', 'status' => $status);
                 } elseif ($val['module_slug'] == 'calendarevents') {
                     $status = $this->security_model->get_company_module_status($sid, 'calendarevents');
                     $available_modules[$key]['module_chiled'][0] = array('heading' => 'Calendar / Events', 'slug' => 'calendarevents', 'status' => $status);

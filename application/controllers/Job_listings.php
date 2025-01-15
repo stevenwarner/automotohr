@@ -39,7 +39,7 @@ class Job_listings extends Public_Controller
     {
         if ($this->session->has_userdata('logged_in')) {
             //
-            if (!checkIfAppIsEnabled('createnewjob')) {
+            if (!checkIfAppIsEnabled('jobs')) {
                 $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
                 redirect(base_url('dashboard'), "refresh");
             }
@@ -679,7 +679,7 @@ class Job_listings extends Public_Controller
     {
         if ($this->session->has_userdata('logged_in')) {
 
-            if (!checkIfAppIsEnabled('myjobs')) {
+            if (!checkIfAppIsEnabled('jobs')) {
                 $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
                 redirect(base_url('dashboard'), "refresh");
             }
@@ -848,6 +848,12 @@ class Job_listings extends Public_Controller
             redirect('my_listings', 'refresh');
         } else {
             if ($this->session->userdata('logged_in')) {
+
+                if (!checkIfAppIsEnabled('jobs')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+
                 $data['jobSid'] = $id;
                 $data['session']                                                = $this->session->userdata('logged_in');
                 $security_sid                                                   = $data['session']['employer_detail']['sid'];
@@ -1480,6 +1486,12 @@ class Job_listings extends Public_Controller
             redirect('my_listings', 'refresh');
         } else {
             if ($this->session->userdata('logged_in')) {
+
+                if (!checkIfAppIsEnabled('jobs')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+                
                 $data['session']                                                = $this->session->userdata('logged_in');
                 $security_sid                                                   = $data['session']['employer_detail']['sid'];
                 $security_details                                               = db_get_access_level_details($security_sid);
@@ -2401,6 +2413,12 @@ class Job_listings extends Public_Controller
         if (!$this->session->has_userdata('logged_in')) { //cheking the user is 
             return redirect(base_url('login'));
         }
+
+        if (!checkIfAppIsEnabled('jobs')) {
+            $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+            redirect(base_url('dashboard'), "refresh");
+        }
+
         //
         if ($jobId == NULL) { // checking the job id Exists
             $this->session->set_flashdata('message', '<b>Error:</b> Please select a valid job to advertise.');
@@ -2594,6 +2612,12 @@ class Job_listings extends Public_Controller
         if ($this->session->userdata('logged_in')) {
             //echo file_get_contents('http://automotosocial.com/display-job/9399/');
             $data['session'] = $this->session->userdata('logged_in');
+
+            if (!checkIfAppIsEnabled('jobs')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
             $security_sid = $data['session']['employer_detail']['sid'];
             $employer_id = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);

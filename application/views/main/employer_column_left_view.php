@@ -7,7 +7,7 @@
                 <figure><i class="fa fa-th"></i></figure>Dashboard
             </a>
         </li>
-        <?php if (checkIfAppIsEnabled('createnewjob')) { ?>
+        <?php if (checkIfAppIsEnabled('jobs')) { ?>
             <?php if (check_access_permissions_for_view($security_details, 'add_listing')) { ?>
                 <li>
                     <a <?php if (strpos(base_url(uri_string()), site_url('add_listing')) !== false) {
@@ -33,7 +33,7 @@
         <?php } ?>
         <!--2-->
 
-        <?php if (checkIfAppIsEnabled('myjobs')) { ?>
+        <?php if (checkIfAppIsEnabled('jobs')) { ?>
             <?php if (check_access_permissions_for_view($security_details, 'my_listings')) { ?>
                 <li>
                     <a <?php if (strpos(base_url(uri_string()), site_url('my_listings')) !== false || strpos(base_url(uri_string()), site_url('edit_listing')) !== false || strpos(base_url(uri_string()), site_url('clone_listing')) !== false) {

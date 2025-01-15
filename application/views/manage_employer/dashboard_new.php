@@ -211,7 +211,7 @@
                             <div class="box-wrapper">
                                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                 <div class="row">
-                                    <?php if (checkIfAppIsEnabled('createnewjob')) { ?>
+                                    <?php if (checkIfAppIsEnabled('jobs')) { ?>
                                         <?php if (check_access_permissions_for_view($security_details, 'add_listing')) { ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="dash-box">
@@ -255,7 +255,7 @@
                                         <?php } ?>
                                     <?php } ?>
                                     <!--2-->
-                                    <?php if (checkIfAppIsEnabled('myjobs')) { ?>
+                                    <?php if (checkIfAppIsEnabled('jobs')) { ?>
                                         <?php if (check_access_permissions_for_view($security_details, 'my_listings')) { ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="dash-box">
