@@ -177,7 +177,7 @@ class Course_model extends CI_Model
         if (!empty($employeeAssignCoursesList)) {
             foreach ($employeeAssignCoursesList as $courseId) {
                 //
-                $this->db->select("lesson_status");
+                $this->db->select("course_status");
                 $this->db->where('company_sid', $companyId);
                 $this->db->where('employee_sid', $employeeId);
                 $this->db->where('course_sid', $courseId);
