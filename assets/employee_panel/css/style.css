@@ -2897,3 +2897,16 @@ input[type='checkbox'].user_checkbox:checked:after {
 .jsStateDropDown{
   padding: 0px 20px !important;
 }
+
+
+
+.nav-tabs.btn-tabs > li.cybersecurity-it-incident-report a {
+  background-color: #5A4FCF ;
+  color: #fff;
+}
+.nav-tabs.btn-tabs > li.cybersecurity-it-incident-report.active a,
+.nav-tabs.btn-tabs > li.cybersecurity-it-incident-report.active > a:hover,
+.nav-tabs.btn-tabs > li.cybersecurity-it-incident-report.active > a:focus {
+  background-color: #5A4FCF ;
+  text-decoration: underline;
+}
