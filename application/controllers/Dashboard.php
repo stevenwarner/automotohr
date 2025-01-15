@@ -635,6 +635,10 @@ class Dashboard extends Public_Controller
                         $data['session']['company_detail']['sid'],
                         $data['session']['employer_detail']['sid']
                     );
+
+                $data["lmsCompanyStats"] =  $this->course_model->getCompanyStats(
+                    $data['session']['company_detail']['sid']
+                );
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;

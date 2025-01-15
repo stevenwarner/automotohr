@@ -214,7 +214,7 @@ class Course_model extends CI_Model
             ->where('is_active', 1)
             ->get()
             ->result_array();
-    }        
+    }
 
     /***
      * get employee pending course count
@@ -262,13 +262,12 @@ class Course_model extends CI_Model
             } else if ($start_diff < 0 && $end_diff > 0) {
                 if ($end_diff < 15) {
                     $result['expire_soon']++;
-                } 
+                }
                 //
                 $result['started']++;
             } else if ($start_diff < 0 && $end_diff < 0) {
                 $result['expired']++;
             }
-            
         }
         //
         return $result;
@@ -278,8 +277,7 @@ class Course_model extends CI_Model
         int $companyId,
         int $employeeId,
         array $subordinateInfo
-    )
-    {
+    ) {
         $dataToInsert = array();
         $dataToInsert['unique_key'] = generateRandomString(32);
         $dataToInsert['department_team_json'] = json_encode($subordinateInfo);
@@ -331,11 +329,11 @@ class Course_model extends CI_Model
             users.profile_picture,
             portal_job_title_templates.sid as job_title_sid
         ')
-        //     ->join(
-        //         "portal_job_title_templates",
-        //         "portal_job_title_templates.title = users.job_title",
-        //         "left"
-        //     )
+            //     ->join(
+            //         "portal_job_title_templates",
+            //         "portal_job_title_templates.title = users.job_title",
+            //         "left"
+            //     )
             ->join(
                 "portal_job_title_templates",
                 "portal_job_title_templates.sid = users.lms_job_title",
@@ -360,9 +358,10 @@ class Course_model extends CI_Model
         $a = $a->free_result();
         //
         return $b;
-    } 
+    }
 
-    public function getActiveCourseList ($companyId, $filter) {
+    public function getActiveCourseList($companyId, $filter)
+    {
         $this->db->select('
             sid,
             course_title,
@@ -385,7 +384,8 @@ class Course_model extends CI_Model
         return $b;
     }
 
-    public function getCompanyActiveDepartment ($companyId, $filter) {
+    public function getCompanyActiveDepartment($companyId, $filter)
+    {
         $this->db->select('
             sid,
             name
@@ -404,7 +404,7 @@ class Course_model extends CI_Model
         //
         return $b;
     }
-    
+
     public function fetchDepartmentTeams($employeeId)
     {
         //
@@ -417,8 +417,8 @@ class Course_model extends CI_Model
         $a->free_result();
         //
         $result = [
-          "departmentIds" => 0,
-          "teamIds" => 0  
+            "departmentIds" => 0,
+            "teamIds" => 0
         ];
         if ($records) {
             //
@@ -432,52 +432,53 @@ class Course_model extends CI_Model
                     }
                 }
                 //
-                $result['departmentIds'] = implode(',',$departmentIds);
+                $result['departmentIds'] = implode(',', $departmentIds);
                 $result['teamIds'] = implode(',', $teamIds);
             } else {
                 $result['departmentIds'] = $records[0]['department_sid'];
                 $result['teamIds'] = $records[0]['team_sid'];
-            }
-            
-        } 
-        //
-        return $result;
-    }
-
-    public function fetchCourses ($jobTitlesIds, $companyId) {
-        //
-        $result = [];
-        $today = date('Y-m-d');
-        //
-        if (!empty($jobTitlesIds)) {
-            foreach ($jobTitlesIds as $jkey => $jobTitleId) {
-                
-                $companyCourses = $this->db->select("
-                    lms_default_courses.sid
-                ")
-                ->join(
-                    "lms_default_courses_job_titles",
-                    "lms_default_courses_job_titles.lms_default_courses_sid = lms_default_courses.sid",
-                    "right"
-                )
-                ->where('lms_default_courses.company_sid', $companyId)
-                ->where('lms_default_courses.is_active', 1)
-                ->where('course_start_period <=', $today)
-                ->group_start()
-                ->where('lms_default_courses_job_titles.job_title_id', -1)
-                ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
-                ->group_end()
-                ->get('lms_default_courses')
-                ->result_array();
-                //
-                $result[$jobTitleId] = implode(',',array_column($companyCourses, "sid"));
             }
         }
         //
         return $result;
     }
 
-    public function checkEmployeeCoursesReport ($companyId, $employeeId, $employeeAssignCourses) {
+    public function fetchCourses($jobTitlesIds, $companyId)
+    {
+        //
+        $result = [];
+        $today = date('Y-m-d');
+        //
+        if (!empty($jobTitlesIds)) {
+            foreach ($jobTitlesIds as $jkey => $jobTitleId) {
+
+                $companyCourses = $this->db->select("
+                    lms_default_courses.sid
+                ")
+                    ->join(
+                        "lms_default_courses_job_titles",
+                        "lms_default_courses_job_titles.lms_default_courses_sid = lms_default_courses.sid",
+                        "right"
+                    )
+                    ->where('lms_default_courses.company_sid', $companyId)
+                    ->where('lms_default_courses.is_active', 1)
+                    ->where('course_start_period <=', $today)
+                    ->group_start()
+                    ->where('lms_default_courses_job_titles.job_title_id', -1)
+                    ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
+                    ->group_end()
+                    ->get('lms_default_courses')
+                    ->result_array();
+                //
+                $result[$jobTitleId] = implode(',', array_column($companyCourses, "sid"));
+            }
+        }
+        //
+        return $result;
+    }
+
+    public function checkEmployeeCoursesReport($companyId, $employeeId, $employeeAssignCourses)
+    {
         $employeeAssignCoursesList = explode(",", $employeeAssignCourses);
         //
         $result = [
@@ -516,10 +517,10 @@ class Course_model extends CI_Model
                     $result["inProgressCount"]++;
                 }
                 //
-                $result["coursesInfo"][$courseId] = $status;   
+                $result["coursesInfo"][$courseId] = $status;
             }
             //
-            if ($result["completedCount"]> 0) {
+            if ($result["completedCount"] > 0) {
                 $result["percentage"] = round(($result["completedCount"] / $result["courseCount"]) * 100, 2);
             }
         }
@@ -527,7 +528,8 @@ class Course_model extends CI_Model
         return $result;
     }
 
-    public function getemployeeDepartmentIds ($courseId, $employeeIds) {
+    public function getemployeeDepartmentIds($courseId, $employeeIds)
+    {
         $this->db->select('department_sid');
         $this->db->where_in('employee_sid', explode(",", $employeeIds));
         $a = $this->db->get('departments_employee_2_team');
@@ -542,7 +544,8 @@ class Course_model extends CI_Model
         }
     }
 
-    public function getAllDepartmentEmployees ($courseId, $departmentId) {
+    public function getAllDepartmentEmployees($courseId, $departmentId)
+    {
         $this->db->select('employee_sid');
         $this->db->where('department_sid', $departmentId);
         $a = $this->db->get('departments_employee_2_team');
@@ -557,7 +560,8 @@ class Course_model extends CI_Model
         }
     }
 
-    public function getCourseLanguageInfo ($courseId, $language) {
+    public function getCourseLanguageInfo($courseId, $language)
+    {
         $courseInfo = $this->db
             ->select('course_file_name, Imsmanifist_json')
             ->from('lms_scorm_courses')
@@ -567,26 +571,30 @@ class Course_model extends CI_Model
             ->get()
             ->row_array();
         //
-        return $courseInfo;    
+        return $courseInfo;
     }
 
-    public function deletePreviousAllLanguagesById ($courseId) {
+    public function deletePreviousAllLanguagesById($courseId)
+    {
         $this->db->where('course_sid', $courseId);
-        $this->db->delete('lms_scorm_courses');   
+        $this->db->delete('lms_scorm_courses');
     }
 
-    public function deletePreviousAllLanguagesByIdAndLanguage ($courseId, $language) {
+    public function deletePreviousAllLanguagesByIdAndLanguage($courseId, $language)
+    {
         $this->db->where('course_sid', $courseId);
         $this->db->where('course_file_language', $language);
-        $this->db->delete('lms_scorm_courses');   
+        $this->db->delete('lms_scorm_courses');
     }
 
-    function getEmployerDetail($id) {
+    function getEmployerDetail($id)
+    {
         $this->db->where('sid', $id);
         return $this->db->get('users')->row_array();
     }
 
-    public function getCourseIdByTitleAndType ($title, $type, $companyId) {
+    public function getCourseIdByTitleAndType($title, $type, $companyId)
+    {
         $this->db->select('sid');
         $this->db->where('course_title', $title);
         $this->db->where('course_type', $type);
@@ -603,11 +611,13 @@ class Course_model extends CI_Model
         }
     }
 
-    public function insertEmployeeCourseInfo ($dataToInsert) {
+    public function insertEmployeeCourseInfo($dataToInsert)
+    {
         $this->db->insert('lms_employee_course', $dataToInsert);
     }
 
-    public function getEmployeeCoursesHistory ($companyId, $employeeId) {
+    public function getEmployeeCoursesHistory($companyId, $employeeId)
+    {
         $this->db->select('sid, course_title, course_start_period, course_end_period');
         $this->db->where('company_sid', $companyId);
         $a = $this->db->get('lms_default_courses');
@@ -640,7 +650,8 @@ class Course_model extends CI_Model
         }
     }
 
-    public function getCourseHistoryInfo ($sid) {
+    public function getCourseHistoryInfo($sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $sid);
         $a = $this->db->get('lms_employee_course_history');
@@ -651,11 +662,12 @@ class Course_model extends CI_Model
         if (!empty($h)) {
             return $h;
         } else {
-           return [];
+            return [];
         }
     }
 
-    public function getCoursesHistoryTitle ($courseId) {
+    public function getCoursesHistoryTitle($courseId)
+    {
         $this->db->select('course_title');
         $this->db->where('sid', $courseId);
         $a = $this->db->get('lms_default_courses');
@@ -679,7 +691,8 @@ class Course_model extends CI_Model
         return $result;
     }
 
-    public function moveCourseIntoHistoryAndUpdate() {
+    public function moveCourseIntoHistoryAndUpdate()
+    {
         //
         $this->db->select('*');
         $this->db->where('lesson_status', "completed");
@@ -710,7 +723,8 @@ class Course_model extends CI_Model
         return true;
     }
 
-    public function getSelectedCourses ($coursesIds, $companyId) {
+    public function getSelectedCourses($coursesIds, $companyId)
+    {
         //
         $this->db->select('sid, course_title, course_type');
         //
@@ -719,7 +733,7 @@ class Course_model extends CI_Model
         //
         if (!in_array(0, $coursesIds)) {
             $this->db->where_in('sid', $coursesIds);
-        } 
+        }
         //
         $result = $this->db->get('lms_default_courses')->result_array();
         return $result;
@@ -743,28 +757,28 @@ class Course_model extends CI_Model
             users.employee_number,
             users.lms_job_title,
         ')
-        ->join(
-            "portal_job_title_templates",
-            "portal_job_title_templates.sid = users.lms_job_title",
-            "inner"
-        )
-        ->where([
-            "users.lms_job_title is not null" => null,
-            "users.parent_sid" => $companyId,
-            "users.active" => 1,
-            "users.terminated_status" => 0,
-            "users.is_executive_admin" => 0,
-            "portal_job_title_templates.status" => 1,
-        ]);
+            ->join(
+                "portal_job_title_templates",
+                "portal_job_title_templates.sid = users.lms_job_title",
+                "inner"
+            )
+            ->where([
+                "users.lms_job_title is not null" => null,
+                "users.parent_sid" => $companyId,
+                "users.active" => 1,
+                "users.terminated_status" => 0,
+                "users.is_executive_admin" => 0,
+                "portal_job_title_templates.status" => 1,
+            ]);
         //
-     
+
         $a = $this->db->get('users');
         //
         $b = $a->result_array();
         $a = $a->free_result();
         //
         return $b;
-    } 
+    }
 
     function getEmployeeCourseStatus(
         int $courseId,
@@ -791,7 +805,7 @@ class Course_model extends CI_Model
         return $courseInfo;
     }
 
-    public function getEmployeeCourseHistory (
+    public function getEmployeeCourseHistory(
         int $courseId,
         int $employeeId
     ): array {
@@ -807,4 +821,137 @@ class Course_model extends CI_Model
         return $courseInfo;
     }
 
+    public function getCompanyStats(int $companyId)
+    {
+        // set return array
+        $returnArray = [
+            "totalCourses" => 0,
+            "totals" => [
+                "completed" => 0,
+                "started" => 0,
+                "pending" => 0,
+            ],
+            "percentage" => [
+                "completed" => 0,
+                "started" => 0,
+                "pending" => 0,
+            ]
+        ];
+        // get the company courses with job titles
+        $results = $this
+            ->db
+            ->select("sid")
+            ->where("company_sid", $companyId)
+            ->get("lms_default_courses")
+            ->result_array();
+        //
+        if (!$results) {
+            return $returnArray;
+        }
+        //
+        $employeeIdsHolder = [];
+        //
+        foreach ($results as $v0) {
+            // get the job title
+            $results1 = $this
+                ->db
+                ->select("job_title_id")
+                ->where("lms_default_courses_sid", $v0["sid"])
+                ->get("lms_default_courses_job_titles")
+                ->result_array();
+            //
+            if (!$results1) {
+                continue;
+            }
+            //
+            $jobTitlesList = array_column($results1, "job_title_id");
+            // all employees with lms job title
+            $this
+                ->db
+                ->select("sid")
+                ->where([
+                    "active" => 1,
+                    "terminated_status" => 0,
+                    "parent_sid" => $companyId,
+                ]);
+            if (in_array("-1", $jobTitlesList)) {
+                $this->db->where("lms_job_title is not null", null);
+            } else {
+                // get specific employees with lms job title
+                $this->db->where_in("lms_job_title", $jobTitlesList);
+            }
+            //
+            $courseEmployees = $this
+                ->db
+                ->get("users")
+                ->result_array();
+            //
+            if (!$courseEmployees) {
+                continue;
+            }
+            // extract course ids
+            $courseEmployeeIds = array_column(
+                $courseEmployees,
+                "sid"
+            );
+            //
+            // get passed course count
+            $completedCoursesCount = $this
+                ->db
+                ->where([
+                    "course_sid" => $v0["sid"],
+                    "course_status" => "passed"
+                ])
+                ->count_all_results("lms_employee_course");
+
+            // get passed course count
+            $completedPendingCount = $this
+                ->db
+                ->where([
+                    "course_sid" => $v0["sid"],
+                    "course_status <> " => "passed"
+                ])
+                ->count_all_results("lms_employee_course");
+
+            // increment total count
+            $returnArray["totalCourses"] += count($courseEmployeeIds);
+            $returnArray["totals"]["completed"] += $completedCoursesCount;
+            $returnArray["totals"]["started"] += $completedPendingCount;
+            $returnArray["totals"]["pending"] += count($courseEmployeeIds)
+                - ($completedPendingCount + $completedCoursesCount);
+        }
+
+        //
+        if ($returnArray["totalCourses"] > 0) {
+            $returnArray["percentage"]["completed"] =
+                number_format(
+                    (
+                        ($returnArray["totals"]["completed"] * 100) / $returnArray["totalCourses"]
+                    ),
+                    2,
+                    ".",
+                    ""
+                );
+            $returnArray["percentage"]["started"] =
+                number_format(
+                    (
+                        ($returnArray["totals"]["started"] * 100) / $returnArray["totalCourses"]
+                    ),
+                    2,
+                    ".",
+                    ""
+                );
+            $returnArray["percentage"]["pending"] =
+                number_format(
+                    (
+                        ($returnArray["totals"]["pending"] * 100) / $returnArray["totalCourses"]
+                    ),
+                    2,
+                    ".",
+                    ""
+                );
+        }
+
+        return $returnArray;
+    }
 }
