@@ -205,7 +205,7 @@ class Course_model extends CI_Model
             }
             //
             if ($result["completedCount"] > 0) {
-                $result["percentage"] = round(($result["completedCount"] / $result["courseCount"]) * 100, 2);
+                $result["percentage"] = number_format(($result["completedCount"] / $result["courseCount"]) * 100, 2, ".", "");
             }
         }
         //
