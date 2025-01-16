@@ -17272,3 +17272,22 @@ if (!function_exists("getCompanyColumnById")) {
             ->row_array();
     }
 }
+
+if (!function_exists("isSafetyIncident")) {
+    function isSafetyIncident(int $incidentTypeId): bool
+    {
+        $CI = &get_instance();
+        $CI->db->select('is_safety_incident');
+        $CI->db->where('id', $incidentTypeId);
+        //
+        $records_obj = $CI->db->get("incident_type");
+        $isSafetyIncident = $records_obj->row_array()['is_safety_incident'];
+        $records_obj->free_result();
+
+        if ($isSafetyIncident == 1) {
+            return true;
+        } else {
+            return false;
+        }  
+    }
+}

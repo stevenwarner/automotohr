@@ -47,7 +47,11 @@
                                         <td><?php echo ucfirst($incident['report_type']); ?></td>
                                         <td><b><?= $incident['status'];?></b></td>
                                         <td class="text-center">
-                                            <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'Respond'; ?></a>
+                                            <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
+                                                <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_safety_incident/' . $incident['id']) ?>">Respond</a>
+                                            <?php } else { ?>
+                                                <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'Respond'; ?></a>
+                                            <?php } ?> 
                                         </td>
                                         <td class="text-center">
                                             <a class="btn btn-warning btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $incident['id']; ?>">Mark it Resolved</a>
@@ -97,7 +101,11 @@
                                         <td><?php echo ucfirst($incident['report_type']); ?></td>
                                         <td><b><?php echo $incident['status']; ?></b></td>
                                         <td class="text-center">
-                                            <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'Respond'; ?></a>
+                                            <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
+                                                <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_safety_incident/' . $incident['id']) ?>">Respond</a>
+                                            <?php } else { ?>
+                                                <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'Respond'; ?></a>
+                                            <?php } ?>
                                         </td>
                                         <td class="text-center">
                                             <a class="btn btn-warning btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $incident['id']; ?>">Mark it Resolved</a>
