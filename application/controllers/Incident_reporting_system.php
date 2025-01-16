@@ -95,11 +95,198 @@ class Incident_reporting_system extends Public_Controller
             $employer_sid = $data['session']['employer_detail']['sid'];
             $data['employee'] = $data['session']['employer_detail'];
             $incident_details = $this->incident_reporting_model->fetch_reports_user_guide($id);
-
+            //
             if (empty($incident_details)) {
                 $this->session->set_flashdata('message', '<b>Error:</b> No Incident found!');
                 redirect(base_url('incident_reporting_system'), 'refresh');
             }
+
+            if ($incident_details[0]['is_safety_incident'] == 1) {
+                $this->reportSafetyIncident($file, $id);
+            } else {
+                $report_type = 'anonymous';
+
+                if ($file == 'c') {
+                    $report_type = 'confidential';
+                }
+
+                $data['title'] = 'Reporting ' . $incident_details[0]['incident_name'];
+                $data['id'] = $id;
+                $data['report_type'] = $report_type;
+                $questions = $this->incident_reporting_model->fetch_all_question($id);
+                $incident_managers = $this->incident_reporting_model->fetch_incident_managers($id, $company_sid);
+                $data['incident_managers'] = $incident_managers;
+                // echo $report_type.'<pre>'; print_r($questions); echo '</pre>'; die();
+                $e_signature_data = get_e_signature($company_sid, $employer_sid, 'employee');
+                $data['e_signature_data'] = $e_signature_data;
+                $load_view = check_blue_panel_status(false, 'self');
+                $data['load_view'] =  $load_view;
+                $data['questions'] = $questions;
+                $data['company_sid'] = $company_sid;
+                $data['employer_sid'] = $employer_sid;
+                $data['employees'] = $this->incident_reporting_model->fetch_all_company_employees($company_sid);
+                //
+                $data['employees_new'] = $this->incident_reporting_model->get_all_employees($company_sid);
+
+                $this->form_validation->set_rules('submit', 'Form Submit', 'trim');
+
+                if ($this->form_validation->run() === FALSE) {
+                    $this->load->view('main/header', $data);
+                    $this->load->view('manage_employer/incident_reporting/add_new_incident_old');
+                    $this->load->view('main/footer');
+                } else {
+                    if (isset($_POST) && isset($_POST['submit'])) {
+
+                        $update_id = $_POST['inc-id'];
+                        $review_manager = $_POST['review_manager'];
+                        $reply_url = '';
+
+                        $on_behalf_employee_sid  = $_POST['incident_employee_id'];
+
+                        unset($_POST['submit']);
+                        unset($_POST['inc-id']);
+                        unset($_POST['review_manager']);
+                        //
+                        $incidentId = 0;
+
+                        if ($update_id != 0) {
+                            $update['report_type'] = $report_type;
+                            $update['incident_name'] = $incident_details[0]['incident_name'];
+                            $this->incident_reporting_model->update_incident_report($update_id, $update);
+                            $incident = $update_id;
+                            $video_to_update = array();
+                            $video_to_update['is_incident_reported'] = 1;
+                            $this->incident_reporting_model->update_incident_related_video($update_id, $video_to_update);
+                            //
+                            $incidentId = $update_id;
+                        } else {
+                            $insert = array();
+                            $insert['company_sid'] = $company_sid;
+                            $insert['employer_sid'] = $on_behalf_employee_sid;
+                            $insert['current_date'] = date('Y-m-d H:i:s');
+                            $insert['incident_type_id'] = $id;
+                            $insert['report_type'] = $report_type;
+                            $insert['incident_name'] = $incident_details[0]['incident_name'];
+                            $insert['on_behalf_employee_sid'] =  $employer_sid;
+                            $incident = $this->incident_reporting_model->insert_incident_reporting($insert);
+                            //
+                            $incidentId = $incident;
+                        }
+
+                        if (isset($_POST['any_witnesses']) && $_POST['any_witnesses'] == 1) {
+                            foreach ($_POST['witnesses'] as $key => $witness) {
+                                $witness_to_insert = array();
+                                $witness_to_insert['incident_type_id']          = $id;
+                                $witness_to_insert['incident_reporting_id']     = $incidentId;
+                                $witness_to_insert['company_sid']               = $company_sid;
+                                $witness_to_insert['witness_type']              = $witness['type'];
+                                $witness_to_insert['witness_name']              = $witness['full_name'];
+                                $witness_to_insert['witness_phone']             = $witness['phone'];
+                                $witness_to_insert['witness_email']             = $witness['email'];
+                                $witness_to_insert['witness_title']             = $witness['title'];
+                                $witness_to_insert['can_provide_info']          = $witness['can_provide_info'];
+                                $witness_to_insert['reported_date']             = date('Y-m-d H:i:s');
+                                $witness_to_insert['added_by']                  = $employer_sid;
+
+                                $this->incident_reporting_model->add_new_witness($witness_to_insert);
+                            }
+                        }
+
+
+                        unset($_POST['witnesses']);
+
+                        $insert = array();
+
+                        foreach ($_POST as $key => $val) {
+                            $exp = explode('_', $key);
+                            // echo '<pre>'; print_r($exp); exit;
+                            if (sizeof($exp) > 1 && !empty($val)) {
+                                $insert['question'] = $this->incident_reporting_model->get_specific_question($exp[1]);
+
+                                if ($exp[0] == 'multi-list') {
+                                    $val = serialize($val);
+                                }
+
+                                $insert['answer'] = strip_tags($val);
+                                $insert['incident_reporting_id'] = $incidentId;
+                                $this->incident_reporting_model->insert_inc_que_ans($insert);
+                            } elseif (sizeof($exp) == 1 && !empty($val) && $exp[0] == 'signature') {
+                                $insert['question'] = $exp[0];
+                                $insert['answer'] = strip_tags($val);
+                                $insert['incident_reporting_id'] = $incidentId;
+                                $this->incident_reporting_model->insert_inc_que_ans($insert);
+                            }
+                        }
+
+                        $replacement_array = array();
+                        $replacement_array['company_name'] = ucwords($data['session']['company_detail']['CompanyName']);
+                        $replacement_array['company-name'] = ucwords($data['session']['company_detail']['CompanyName']);
+                        // $employees = $this->incident_reporting_model->get_configured_employees($company_sid, $id);
+
+                        foreach ($review_manager as $manager) {
+                            $assigned_emp = array(
+                                'company_sid' => $company_sid,
+                                'employer_sid' => $manager,
+                                'assigned_date' => date('Y-m-d H:i:s'),
+                                'incident_sid' => $incidentId
+                            );
+
+                            $this->incident_reporting_model->assign_incident_to_emp($assigned_emp);     //Add the employees who are gonna receive this incident from employee reporting
+                            $emp = $this->incident_reporting_model->fetch_employee_name_by_sid($manager);
+
+                            $reply_url = base_url('incident_reporting_system/view_single_assign') . '/' . $incidentId;
+                            $viewIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $reply_url . '" target="_blank">View Report</a>';
+                            $replacement_array['applicant_name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
+                            $replacement_array['applicant-name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
+                            $replacement_array['first-name'] = ucwords($emp[0]['first_name']);
+                            $replacement_array['last-name'] = ucfirst($emp[0]['last_name']);
+                            $replacement_array['firstname'] = ucwords($emp[0]['first_name']);
+                            $replacement_array['lastname'] = ucfirst($emp[0]['last_name']);
+                            $replacement_array['first_name'] = ucwords($emp[0]['first_name']);
+                            $replacement_array['last_name'] = ucfirst($emp[0]['last_name']);
+                            $replacement_array['view_button'] = $viewIncidentBtn;
+                            //
+                            $message_hf = message_header_footer($company_sid, $data['session']['company_detail']['CompanyName']);
+                            //
+                            log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $emp[0]['email'], $replacement_array, $message_hf);
+                        }
+
+                        // Sending incident email to Steven start
+                        $viewAdminIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url("manage_admin/reports/incident_reporting/view_incident/".$incidentId) . '" target="_blank">View Report</a>';
+                        $stevendata = [
+                            'first_name' => 'Steven',
+                            'last_name' => 'Warner',
+                            'email' => FROM_EMAIL_STEVEN,
+                            'phone' => '',
+                            'firstname' => 'Steven',
+                            'lastname' => 'Warner',
+                            'company_name' => getCompanyNameBySid($company_sid),
+                            'view_button' => $viewAdminIncidentBtn
+                        ];
+
+                        log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $stevendata['email'], $stevendata);
+
+                        $this->session->set_flashdata('message', '<b>Success:</b> New ' . ucfirst($report_type) . ' Incident Reported');
+                        redirect(base_url('incident_reporting_system/list_incidents'), "refresh");
+                    }
+                }
+            }
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
+
+    public function reportSafetyIncident ($file, $id) {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+
+            $company_sid = $data['session']['company_detail']['sid'];
+            $employer_sid = $data['session']['employer_detail']['sid'];
+            $data['employee'] = $data['session']['employer_detail'];
+            $incident_details = $this->incident_reporting_model->fetch_reports_user_guide($id);
 
             $report_type = 'anonymous';
 
@@ -129,7 +316,7 @@ class Incident_reporting_system extends Public_Controller
 
             if ($this->form_validation->run() === FALSE) {
                 $this->load->view('main/header', $data);
-                $this->load->view('manage_employer/incident_reporting/add_new_incident_old');
+                $this->load->view('manage_employer/incident_reporting/add_safety_incident');
                 $this->load->view('main/footer');
             } else {
                 if (isset($_POST) && isset($_POST['submit'])) {
@@ -1057,16 +1244,6 @@ class Incident_reporting_system extends Public_Controller
                     redirect(current_url(), 'refresh');
                 }
 
-                // Fetch Document For Library
-                $library_documets = $this->incident_reporting_model->get_library_documents($id);
-
-                // Fetch Media For Media
-                $library_media = $this->incident_reporting_model->get_library_media($id);
-
-
-                $data['library_media']                  = $library_media;
-                $data['library_documets']               = $library_documets;
-
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/incident_reporting/view_incident_old');
                 $this->load->view('main/footer');
@@ -1078,6 +1255,8 @@ class Incident_reporting_system extends Public_Controller
             redirect(base_url('login'), "refresh");
         }
     }
+
+
 
     public function ajax_change_incident_type($incident_sid)
     {
@@ -1204,10 +1383,10 @@ class Incident_reporting_system extends Public_Controller
                 }
             }
 
-            // if (!in_array($employer_sid, $as_managers)) {
-            //     $this->session->set_flashdata('message', '<b>Error:</b> No assigned incident found!');
-            //     redirect(base_url('incident_reporting_system/list_incidents'), 'refresh');
-            // }
+            if (!in_array($employer_sid, $as_managers)) {
+                $this->session->set_flashdata('message', '<b>Error:</b> No assigned incident found!');
+                redirect(base_url('incident_reporting_system/list_incidents'), 'refresh');
+            }
 
             // Fetch All Incident Related Manager
             $incident_managers = $this->incident_reporting_model->fetch_incident_managers($incident_id, $company_sid);
@@ -2012,7 +2191,7 @@ class Incident_reporting_system extends Public_Controller
                 $user_type          = 'manual';
                 $company_sid        = $this->incident_reporting_model->get_company_sid_by_incident_id($inc_reported_id);
             } else if (str_replace('_wid', '', $receiver_id) != $receiver_id) {
-
+                
                 $receiver_id = str_replace('_wid', '', $receiver_id);
                 $user_info = $this->incident_reporting_model->get_witness_info_by_id($receiver_id, $inc_reported_id);
                 $company_sid        = $user_info['company_sid'];
@@ -2153,6 +2332,10 @@ class Incident_reporting_system extends Public_Controller
 
                     $email_hf = message_header_footer_domain($company_sid, $company_name);
 
+                    if ($user_type == 'witness') {
+                        $from_sid = $from_sid.'_wid';
+                    }
+
                     $manual_email_to_insert = array();
                     $manual_email_to_insert['incident_type_id']         = $inc_type;
                     $manual_email_to_insert['incident_reporting_id']    = $inc_reported_id;
@@ -2264,6 +2447,10 @@ class Incident_reporting_system extends Public_Controller
                     }
 
                     $email_hf = message_header_footer_domain($company_sid, $company_name);
+
+                    if ($user_type == 'witness') {
+                        $from_sid = $from_sid.'_wid';
+                    }
 
                     foreach ($receivers as $key => $receiver_id) {
                         $conversation_key = '';
@@ -3675,6 +3862,614 @@ class Incident_reporting_system extends Public_Controller
             echo json_encode($return_data);
         } else {
             echo 'success';
+        }
+    }
+
+    public function view_safety_incident($id)
+    {
+        if ($this->session->userdata('logged_in')) {
+            $session = $this->session->userdata('logged_in');
+            $security_sid = $session['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+
+            $employer_detail    = $session["employer_detail"];
+            $company_sid        = $session["company_detail"]["sid"];
+            $employer_sid       = $session["employer_detail"]["sid"];
+            $company_name       = $session["company_detail"]['CompanyName'];
+            $title              = "Assigned Compliance Safety - View Compliance Safety Details";
+
+            $as_managers = array();
+            $incident_all_emails = array();
+            $load_view = check_blue_panel_status(false, 'self');
+
+            // Fetch incident Type ID
+            $incident_id = $this->incident_reporting_model->get_incident_type_id($id, $company_sid);
+
+            // Fetch Incident Name
+            $incident_name = $this->incident_reporting_model->get_incident_name_by_id($id, $company_sid);
+
+            //fetch incident Type Name
+            $incident_type = $this->incident_reporting_model->get_reported_incident_type($id, $company_sid);
+
+            // Fetch Incident Assigned Manager
+            $incident_assigned_managers = $this->incident_reporting_model->fetch_incident_assigned_managers($id, $company_sid);
+
+            //Get All Assigned Manager For Getting All Incident Related Email
+            $incident_related_managers = $incident_assigned_managers;
+
+            // Replace Current Manager with Incident Reporter
+            if (!empty($incident_assigned_managers)) {
+                foreach ($incident_assigned_managers as $key => $incident_manager) {
+                    if ($incident_manager['employee_id'] == $employer_sid) {
+                        // Remove this below first if/else condition when Anonymous employee
+                        if ($incident_type != 'anonymous') {
+                            $incident_reporter_sid = $this->incident_reporting_model->fetch_incident_reporter($id);
+                            $reporter_info = db_get_employee_profile($incident_reporter_sid);
+                            $incident_assigned_managers[$key]['employee_id'] = $incident_reporter_sid . '_inc_rep';
+                            if ($incident_type == 'anonymous') {
+                                $incident_assigned_managers[$key]['employee_name'] = 'Anonymous ( Incident Reporter )';
+                            } else if ($incident_type = 'confidential') {
+                                $incident_assigned_managers[$key]['employee_name'] = $reporter_info[0]['first_name'] . ' ' . $reporter_info[0]['last_name'] . ' ( Incident Reporter )';
+                            }
+                        } else {
+                            unset($incident_assigned_managers[$key]);
+                        }
+                    } else {
+                        $incident_assigned_managers[$key]['employee_name'] = $incident_manager['employee_name'] . ' ( Manager )';
+                    }
+
+                    $as_managers[$key] = $incident_manager['employee_id'];
+                }
+            }
+
+            // Fetch All Incident Related Manager
+            $incident_managers = $this->incident_reporting_model->fetch_incident_managers($incident_id, $company_sid);
+
+            //Remove Incident Managers Those Are not Assigned This Reported Incident
+            if (!empty($incident_managers)) {
+                foreach ($incident_managers as $key => $incident_manager) {
+                    if (in_array($incident_manager['employee_id'], $as_managers)) {
+                        unset($incident_managers[$key]);
+                    }
+                }
+            }
+
+            // Fetch All Active Company Employees For Adding As Witness
+            $company_employees = $this->incident_reporting_model->fetch_all_company_employees($company_sid);
+
+            // Fetch Incident Question Answer
+            $assigned_incidents = $this->incident_reporting_model->view_single_assign($id);
+
+            // Fetch Incident Witnesses
+            $witnesses = $this->incident_reporting_model->get_reporter_incident_witnesses($id, $incident_id);
+
+            $count_incident_managers = count($incident_assigned_managers);
+
+            // Combine Assigned Manager And Incident Witnesses
+            foreach ($witnesses as $key => $witness) {
+                $employee_as_witness_id = 0;
+                if ($witness['witness_type'] == 'employee') {
+                    $witness_type = 'Company Witness';
+                    $employee_as_witness_id =  $this->incident_reporting_model->fetch_company_employee_id($company_sid, $witness['witness_email']);
+                } else if ($witness['witness_type'] == 'others') {
+                    $witness_type = 'Other Witness';
+                }
+
+                if (!in_array($employee_as_witness_id, $as_managers)) {
+                    $incident_assigned_managers[$count_incident_managers + $key]['employee_id'] = $witness['sid'] . '_wid';
+                    $incident_assigned_managers[$count_incident_managers + $key]['employee_name'] = $witness['witness_name'] . ' ( ' . $witness_type . ' )';
+                }
+            }
+
+            // Fetch Active Videos
+            $videos = $this->incident_reporting_model->get_incident_videos($id, "0");
+
+            // Fetch Archive Videos
+            $videos_archived = $this->incident_reporting_model->get_incident_videos($id, '1');
+
+            // Fetch Active Document
+            $get_incident_document_active = $this->incident_reporting_model->get_incident_report_docs($id, '0');
+
+            // Fetch Archive Document
+            $get_incident_document_archived = $this->incident_reporting_model->get_incident_report_docs($id, '1');
+
+            // Fetch My Emails
+            $my_emails = $this->incident_reporting_model->getMyEmails($id, $employer_sid);
+
+            
+
+            // Fetch All System Emails
+            foreach ($incident_related_managers as $email_key => $incident_related_manager) {
+                $manager_sid = $incident_related_manager['employee_id'];
+                $manager_name = $incident_related_manager['employee_name'];
+
+                $incident_manual_emails = $this->incident_reporting_model->get_manual_emails($manager_sid, $id, $manager_name);
+
+                $incident_emails = array();
+                //
+                foreach ($incident_assigned_managers as $key => $incident_manager) {
+                    $new_emails = '';
+                    $sender_sid = '';
+                    $reverse_check = 0;
+                    $receiver_id = $incident_manager['employee_id'];
+                    $receiver_name = $incident_manager['employee_name'];
+
+                    if (str_replace('_wid', '', $receiver_id) != $receiver_id) {
+
+                        $witness_id = str_replace('_wid', '', $receiver_id);
+                        $witness_info = $this->incident_reporting_model->get_witness_info_by_id($witness_id, $id);
+
+                        if ($witness_info['witness_type'] == 'employee') {
+                            $receiver_id =  $this->incident_reporting_model->fetch_company_employee_id($company_sid, $witness_info['witness_email']);
+                            $new_emails = $this->incident_reporting_model->get_incident_related_emails($receiver_id, $manager_sid, $id);
+                            $sender_sid = $receiver_id;
+                        } else {
+                            $new_emails = $this->incident_reporting_model->get_incident_related_emails($receiver_id, $manager_sid, $id);
+                            $sender_sid = $receiver_id;
+                        }
+                    } else if (str_replace('_inc_rep', '', $receiver_id) != $receiver_id) {
+
+                        $inc_reporter_id = str_replace('_inc_rep', '', $receiver_id);
+                        $new_emails = $this->incident_reporting_model->get_incident_related_emails($inc_reporter_id, $manager_sid, $id);
+                        $sender_sid = $inc_reporter_id;
+                    } else {
+                        if ($receiver_id == $manager_sid) {
+                            $receiver_id = $employer_sid;
+                            $reverse_check = 1;
+                            $receiver_name = $session['employer_detail']['first_name'] . ' ' . $session['employer_detail']['last_name'] . ' ( Manager )';
+                        }
+                        $new_emails = $this->incident_reporting_model->get_incident_related_emails($receiver_id, $manager_sid, $id);
+                        $sender_sid = $receiver_id;
+                    }
+
+                    if (!empty($new_emails)) {
+                        $incident_emails[$key]['name']          = $receiver_name;
+                        $incident_emails[$key]['user_one']      = $manager_sid;
+                        $incident_emails[$key]['user_two']      = $receiver_id;
+                        $incident_emails[$key]['sender_sid']    = $sender_sid;
+                        $incident_emails[$key]['incident_id']   = $id;
+                        $incident_emails[$key]['emails']        = $new_emails;
+                        $incident_emails[$key]['reverse_check'] = $reverse_check;
+                    }
+                }
+
+                if (!empty($incident_emails) || !empty($incident_manual_emails)) {
+
+                    $incident_all_emails[$email_key]['manager_sid']             = $manager_sid;
+                    $incident_all_emails[$email_key]['manager_name']            = $manager_name;
+                    $incident_all_emails[$email_key]['incident_emails']         = $incident_emails;
+                    $incident_all_emails[$email_key]['incident_manual_emails']  = $incident_manual_emails;
+
+                    if ($manager_sid == $employer_sid) {
+                        $incident_all_emails[$email_key]['manager_type'] = 'current';
+                    } else {
+                        $incident_all_emails[$email_key]['manager_type'] = 'other';
+                    }
+                }
+            }
+
+            // Fetch Document For Library
+            $library_documets = $this->incident_reporting_model->get_library_documents($id);
+
+            // Fetch Media For Media
+            $library_media = $this->incident_reporting_model->get_library_media($id);
+
+            // Fetch Incident Notes
+            $comments = $this->incident_reporting_model->get_incident_comments($id);
+
+            if (isset($_POST['submit']) && $_POST['submit'] == 'submit') {
+                //
+                $perform_action = $_POST['perform_action'];
+                //
+                if ($perform_action == 'send_email') {
+
+                    $send_email_type = $_POST['send_type'];
+                    $attachments = isset($_POST['attachment']) ? $_POST['attachment'] : '';
+
+                    if ($send_email_type == 'manual') {
+                        $manual_email   = $_POST['manual_email'];
+                        $subject        = $_POST['subject'];
+                        $message        = $_POST['message'];
+
+                        $email_hf = message_header_footer_domain($company_sid, $company_name);
+
+                        $manual_email_to_insert = array();
+                        $manual_email_to_insert['incident_type_id']         = $incident_id;
+                        $manual_email_to_insert['incident_reporting_id']    = $id;
+                        $manual_email_to_insert['manual_email']             = $manual_email;
+                        $manual_email_to_insert['sender_sid']               = $employer_sid;
+                        $manual_email_to_insert['receiver_sid']             = 0;
+                        $manual_email_to_insert['subject']                  = $subject;
+                        $manual_email_to_insert['message_body']             = $message;
+
+                        $inserted_email_sid = $this->incident_reporting_model->insert_incident_email_record($manual_email_to_insert);
+                        $isEmployee = $this->incident_reporting_model->checkManualUserIsAnEmployee($_POST['manual_email'], $company_sid);
+
+                        if (!empty($attachments)) {
+
+                            foreach ($attachments as $key => $attachment) {
+
+                                $attachment_type = $attachment['item_type'];
+                                $record_sid = $attachment['record_sid'];
+                                $item_title = '';
+                                $item_type = '';
+                                $item_path = '';
+
+                                if ($attachment_type == 'Media') {
+                                    $record_sid = str_replace("m_", "", $record_sid);
+                                    $item_info  = $this->incident_reporting_model->get_attach_file_info($record_sid, 'media');
+                                    $item_title = $item_info['video_title'];
+                                    $item_type  = $item_info['video_type'];
+                                    $item_path  = $item_info['video_url'];
+                                } else if ($attachment_type == 'Document') {
+                                    $record_sid = str_replace("d_", "", $record_sid);
+                                    $item_info  = $this->incident_reporting_model->get_attach_file_info($record_sid, 'document');
+                                    $item_title = $item_info['document_title'];
+                                    $item_type  = $item_info['type'];
+                                    $item_path  = $item_info['file_code'];
+                                }
+
+                                $insert_attachment                      = array();
+                                $insert_attachment['incident_sid']      = $id;
+                                $insert_attachment['email_sid']         = $inserted_email_sid;
+                                $insert_attachment['attachment_type']   = $attachment_type;
+                                $insert_attachment['attachment_sid']    = $record_sid;
+                                $insert_attachment['attached_by']       = $employer_sid;
+                                $insert_attachment['attached_date']     = date('Y-m-d H:i:s');
+                                $insert_attachment['item_title']        = $item_title;
+                                $insert_attachment['item_type']         = $item_type;
+                                $insert_attachment['item_path']         = $item_path;
+
+                                $this->incident_reporting_model->insert_email_attachment($insert_attachment);
+                            }
+                        }
+
+                        $conversation_key = $incident_id . '/' . $id . '/' . $manual_email . '/' . $employer_sid;
+                        $url = base_url('incident_reporting_system/view_incident_email/' . $conversation_key);
+                        $from_name = $session["employer_detail"]["first_name"] . ' ' . $session["employer_detail"]["last_name"];
+                        $name = explode("@", $manual_email);
+                        $receiver_name = $name[0];
+
+                        $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
+                        $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about incident.</p>' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+                        if ($isEmployee) {
+                            $employeeType = $this->incident_reporting_model->isIncidentManager($_POST['manual_email'], $company_sid, $id);
+                            //
+                            if($employeeType != "out_sider") {
+                                if ($employeeType == "reporter") {
+                                    $viewIncident = base_url('incident_reporting_system/view_incident/' . $id);
+                                } else if ($employeeType == "incident_manager") {
+                                    $viewIncident = base_url('incident_reporting_system/view_single_assign/' . $id);
+                                }
+                                //
+                                $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Incident</a>' . '<br>';
+                                $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                            }
+                        }
+                        $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email: Please Do Not reply!</strong>' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+
+                        $from = FROM_EMAIL_NOTIFICATIONS;
+                        $to = $manual_email;
+
+                        $body = $email_hf['header']
+                            . $emailTemplateBody
+                            . $email_hf['footer'];
+
+                        log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                    } else if ('system') {
+                        $receivers = $_POST['receivers'];
+                        $subject = $_POST['subject'];
+                        $from_name = $session["employer_detail"]["first_name"] . ' ' . $session["employer_detail"]["last_name"];
+                        $email_hf = message_header_footer_domain($company_sid, $company_name);
+
+                        foreach ($receivers as $key => $receiver_id) {
+                            $conversation_key = '';
+                            $message_body = $_POST['message'];
+
+                            $data_to_insert = array();
+                            $data_to_insert['incident_type_id'] = $incident_id;
+                            $data_to_insert['incident_reporting_id'] = $id;
+                            $data_to_insert['sender_sid'] = $employer_sid;
+                            $data_to_insert['subject'] = $subject;
+                            $data_to_insert['message_body'] = $message_body;
+
+                            if (str_replace('_wid', '', $receiver_id) != $receiver_id) {
+
+                                $witness_id = str_replace('_wid', '', $receiver_id);
+                                $witness_info = $this->incident_reporting_model->get_witness_info_by_id($witness_id, $id);
+                                $receiver_email = $witness_info['witness_email'];
+                                $receiver_name = $witness_info['witness_name'];
+
+                                if ($witness_info['witness_type'] == 'employee') {
+                                    $witness_id =  $this->incident_reporting_model->fetch_company_employee_id($company_sid, $witness_info['witness_email']);
+                                    $data_to_insert['receiver_sid'] = $witness_id;
+                                    $conversation_key = $incident_id . '/' . $id . '/' . $witness_id . '/' . $employer_sid;
+                                } else {
+                                    $data_to_insert['receiver_sid'] = $receiver_id;
+                                    $conversation_key = $incident_id . '/' . $id . '/' . $receiver_id . '/' . $employer_sid;
+                                }
+                            } else if (str_replace('_inc_rep', '', $receiver_id) != $receiver_id) {
+
+                                $inc_reporter_id = str_replace('_inc_rep', '', $receiver_id);
+                                $inc_reporter_info = db_get_employee_profile($inc_reporter_id);
+                                $receiver_email = $inc_reporter_info[0]['email'];
+                                $receiver_name = $inc_reporter_info[0]['first_name'] . ' ' . $inc_reporter_info[0]['last_name'];
+                                $conversation_key = $incident_id . '/' . $id . '/' . $inc_reporter_id . '/' . $employer_sid;
+                                $data_to_insert['receiver_sid'] = $inc_reporter_id;
+                            } else {
+
+                                $manager_info = db_get_employee_profile($receiver_id);
+                                $receiver_email = $manager_info[0]['email'];
+                                $receiver_name = $manager_info[0]['first_name'] . ' ' . $manager_info[0]['last_name'];
+                                $conversation_key = $incident_id . '/' . $id . '/' . $receiver_id . '/' . $employer_sid;
+                                $data_to_insert['receiver_sid'] = $receiver_id;
+                            }
+
+                            $inserted_email_sid = $this->incident_reporting_model->insert_incident_email_record($data_to_insert);
+
+                            if (!empty($attachments)) {
+                                foreach ($attachments as $key => $attachment) {
+
+                                    $attachment_type    = $attachment['item_type'];
+                                    $record_sid         = $attachment['record_sid'];
+                                    $item_title         = '';
+                                    $item_type          = '';
+                                    $item_path          = '';
+
+                                    if ($attachment_type == 'Media') {
+                                        $record_sid = str_replace("m_", "", $record_sid);
+                                        $item_info  = $this->incident_reporting_model->get_attach_file_info($record_sid, 'media');
+                                        $item_title = $item_info['video_title'];
+                                        $item_type  = $item_info['video_type'];
+                                        $item_path  = $item_info['video_url'];
+                                    } else if ($attachment_type == 'Document') {
+                                        $record_sid = str_replace("d_", "", $record_sid);
+                                        $item_info  = $this->incident_reporting_model->get_attach_file_info($record_sid, 'document');
+                                        $item_title = $item_info['document_title'];
+                                        $item_type  = $item_info['type'];
+                                        $item_path  = $item_info['file_code'];
+                                    }
+
+                                    $insert_attachment                      = array();
+                                    $insert_attachment['incident_sid']      = $id;
+                                    $insert_attachment['email_sid']         = $inserted_email_sid;
+                                    $insert_attachment['attachment_type']   = $attachment_type;
+                                    $insert_attachment['attachment_sid']    = $record_sid;
+                                    $insert_attachment['attached_by']       = $employer_sid;
+                                    $insert_attachment['attached_date']     = date('Y-m-d H:i:s');
+                                    $insert_attachment['item_title']        = $item_title;
+                                    $insert_attachment['item_type']         = $item_type;
+                                    $insert_attachment['item_path']         = $item_path;
+
+                                    $this->incident_reporting_model->insert_email_attachment($insert_attachment);
+                                }
+                            }
+
+                            $url = base_url('incident_reporting_system/view_incident_email/' . $conversation_key);
+                            $employeeType = $this->incident_reporting_model->isIncidentManager($receiver_email, $company_sid, $id);
+                            //
+                           
+
+                            $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
+                            $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about incident.</p>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+                            if($employeeType != "out_sider") {
+                                if ($employeeType == "reporter") {
+                                    $viewIncident = base_url('incident_reporting_system/view_incident/' . $id);
+                                } else if ($employeeType == "incident_manager") {
+                                    $viewIncident = base_url('incident_reporting_system/view_single_assign/' . $id);
+                                }
+                                //
+                                $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Incident</a>' . '<br>';
+                                $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                            }
+                            $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email: Please Do Not reply!</strong>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+
+                            $from = FROM_EMAIL_NOTIFICATIONS;
+                            $to = $receiver_email;
+
+                            $body = $email_hf['header']
+                                . $emailTemplateBody
+                                . $email_hf['footer'];
+
+                            log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                        }
+                    }
+
+                    $this->session->set_flashdata('message', '<strong>Success:</strong> Send Incident Email Successfully!');
+                } else if ($perform_action == 'add_comment') {
+                    $insert_data = array();
+                    $insert_data['incident_reporting_id'] = $id;
+                    $insert_data['applicant_sid'] = $employer_sid;
+                    $insert_data['comment'] = $_POST['response'];
+                    $insert_data['date_time'] = date('Y-m-d h:i:s');
+                    $insert_data['response_type'] = $_POST['response_type'];
+                    $this->incident_reporting_model->add_incident_comment($insert_data);
+                    $incident_status = array('status' => 'Responded');
+                    $this->incident_reporting_model->update_incident_report($id, $incident_status);
+                    //
+                    $this->session->set_flashdata('message', '<strong>Success:</strong> Send Incident Comment Successfully!');
+                } else if ($perform_action == 'add_video') {
+                    $video_id = '';
+                    $upload_file_type = 'Video';
+                    $video_source = $this->input->post('video_source');
+                    $video_title = $this->input->post('video_title');
+
+                    if (!empty($_FILES) && isset($_FILES['video_upload']) && $_FILES['video_upload']['size'] > 0) {
+                        $random = generateRandomString(5);
+                        $target_file_name = basename($_FILES["video_upload"]["name"]);
+                        $file_name = strtolower($company_sid . '/' . $random . '_' . $target_file_name);
+                        $target_dir = "assets/uploaded_videos/incident_videos/";
+                        $target_file = $target_dir . $file_name;
+                        $basePath = $target_dir . $company_sid;
+
+                        if (!is_dir($basePath)) {
+                            mkdir($basePath, 0777, true);
+                        }
+
+                        if (move_uploaded_file($_FILES["video_upload"]["tmp_name"], $target_file)) {
+
+                            $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["video_upload"]["name"]) . ' has been uploaded.');
+                        } else {
+
+                            $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                            redirect(current_url(), 'refresh');
+                        }
+
+                        $video_id = $file_name;
+                    } else if (!empty($_FILES) && isset($_FILES['audio_upload']) && $_FILES['audio_upload']['size'] > 0) {
+                        $random = generateRandomString(5);
+                        $target_file_name = basename($_FILES["audio_upload"]["name"]);
+                        $file_name = strtolower($company_sid . '/' . $random . '_' . $target_file_name);
+                        $target_dir = "assets/uploaded_videos/incident_videos/";
+                        $target_file = $target_dir . $file_name;
+                        $basePath = $target_dir . $company_sid;
+
+                        if (!is_dir($basePath)) {
+                            mkdir($basePath, 0777, true);
+                        }
+
+                        if (move_uploaded_file($_FILES["audio_upload"]["tmp_name"], $target_file)) {
+
+                            $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["audio_upload"]["name"]) . ' has been uploaded.');
+                        } else {
+
+                            $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                            redirect(current_url(), 'refresh');
+                        }
+
+                        $video_id = $file_name;
+                        $upload_file_type = 'Audio';
+                    } else {
+                        $video_id = $this->input->post('video_id');
+
+                        if ($video_source == 'youtube') {
+                            $url_prams = array();
+                            parse_str(parse_url($video_id, PHP_URL_QUERY), $url_prams);
+
+                            if (isset($url_prams['v'])) {
+                                $video_id = $url_prams['v'];
+                            } else {
+                                $video_id = '';
+                            }
+                        } else {
+                            $video_id = $this->vimeo_get_id($video_id);
+                        }
+                    }
+
+                    $video_to_insert                        = array();
+                    $video_to_insert['incident_sid']        = $id;
+                    $video_to_insert['video_title']         = $video_title;
+                    $video_to_insert['video_type']          = $video_source;
+                    $video_to_insert['video_url']           = $video_id;
+                    $video_to_insert['user_type']           = 'manager';
+                    $video_to_insert['uploaded_by']         = $employer_sid;
+                    $video_to_insert['is_incident_reported'] = 1;
+
+
+                    $this->incident_reporting_model->insert_incident_video_reccord($video_to_insert);
+
+                    $this->session->set_flashdata('message', '<strong>Success:</strong> ' . $upload_file_type . ' is save Successfully!');
+                } else if ($perform_action == 'add_document') {
+                    if (!empty($_FILES) && isset($_FILES['upload_document']) && $_FILES['upload_document']['size'] > 0) {
+                        $incident_document_s3_name = upload_file_to_aws('upload_document', $company_sid, 'incident_document', $employer_sid, AWS_S3_BUCKET_NAME);
+
+                        $last_index_of_dot = strrpos($_FILES["upload_document"]["name"], '.') + 1;
+                        $file_ext = substr($_FILES["upload_document"]["name"], $last_index_of_dot, strlen($_FILES["upload_document"]["name"]) - $last_index_of_dot);
+
+                        $document_title = $this->input->post('document_title');
+
+                        $document_to_insert = array();
+                        $document_to_insert['document_title']           = $document_title;
+                        $document_to_insert['file_name']                = $_FILES["upload_document"]["name"];
+                        $document_to_insert['type']                     = $file_ext;
+                        $document_to_insert['file_code']                = $incident_document_s3_name;
+                        $document_to_insert['user_type']                = 'manager';
+                        $document_to_insert['employer_id']              = $employer_sid;
+                        $document_to_insert['company_id']               = $company_sid;
+                        $document_to_insert['incident_reporting_id']    = $id;
+
+                        $this->incident_reporting_model->insert_incident_docs($document_to_insert);
+                        $this->session->set_flashdata('message', '<strong>Success:</strong> Document is Uploaded Successfully!');
+                    }
+                } else if ($perform_action == 'add_witness') {
+
+                    $witnesses = $this->input->post('witnesses');
+                    foreach ($witnesses as $key => $witness) {
+                        $witness_to_insert = array();
+                        $witness_to_insert['incident_type_id']          = $incident_id;
+                        $witness_to_insert['incident_reporting_id']     = $id;
+                        $witness_to_insert['company_sid']               = $company_sid;
+                        $witness_to_insert['witness_type']              = $witness['type'];
+                        $witness_to_insert['witness_name']              = $witness['full_name'];
+                        $witness_to_insert['witness_phone']             = $witness['phone'];
+                        $witness_to_insert['witness_email']             = $witness['email'];
+                        $witness_to_insert['witness_title']             = $witness['title'];
+                        $witness_to_insert['can_provide_info']          = $witness['can_provide_info'];
+                        $witness_to_insert['reported_date']             = date('Y-m-d H:i:s');
+                        $witness_to_insert['added_by']                  = $employer_sid;
+
+                        $this->incident_reporting_model->add_new_witness($witness_to_insert);
+                    }
+                    $this->session->set_flashdata('message', '<strong>Success:</strong> Witness is Added Successfully!');
+                }
+
+                // Fetch Manager Status About this Current Incident
+                $manager_info = $this->incident_reporting_model->get_assign_manager_info($employer_sid, $company_sid, $id);
+                //
+                if ($manager_info['incident_status'] == "Pending") {
+                    $status_to_update = array();
+                    $status_to_update['incident_status'] = 'Responded';
+
+                    // If status Is "pending" then Update It To "respond"
+                    $this->incident_reporting_model->update_assign_manager_status($manager_info['sid'], $status_to_update);
+                }
+
+                redirect(current_url(), 'refresh');
+            }
+
+            $data                                   = array();
+            $data['id']                             = $id;
+            $data['title']                          = $title;
+            $data['videos']                         = $videos;
+            $data['session']                        = $session;
+            $data['comments']                       = $comments;
+            $data['load_view']                      = $load_view;
+            $data['witnesses']                      = $witnesses;
+            $data['company_sid']                    = $company_sid;
+            $data['myEmails']                       = $my_emails;
+            $data['current_user']                   = $employer_sid;
+            $data['employee_sid']                   = $employer_sid;
+            $data['incident_name']                  = $incident_name;
+            $data['library_media']                  = $library_media;
+            $data['library_documets']               = $library_documets;
+            $data['employee']                       = $employer_detail;
+            $data['videos_archived']                = $videos_archived;
+            $data['security_details']               = $security_details;
+            $data['employees']                      = $company_employees;
+            $data['incident_managers']              = $incident_managers;
+            $data['assigned_incidents']             = $assigned_incidents;
+            $data['current_incident_type']          = $assigned_incidents;
+            // $data['incident_manual_emails']         = $incident_mnaual_emails;
+            $data['incident_all_emails']            = $incident_all_emails;
+            $data['incident_assigned_managers']     = $incident_assigned_managers;
+            $data['get_incident_document']          = $get_incident_document_active;
+            $data['get_incident_document_archived'] = $get_incident_document_archived;
+
+            $this->load->view('main/header', $data);
+            $this->load->view('manage_employer/incident_reporting/view_safety_incident');
+            $this->load->view('main/footer');
+        } else {
+            redirect(base_url('login'), "refresh");
         }
     }
 }

@@ -32,7 +32,7 @@
                                             <th class="col-xs-4">Report Name</th>
                                             <th class="col-xs-4">Report Type</th>
                                             <th class="col-xs-4">Status</th>
-                                            <th class="col-xs-2 text-center last-col" width="1%" colspan="3">Actions</th>
+                                            <th class="col-xs-2 text-center last-col" width="1%" colspan="3">Actions 1</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -44,7 +44,11 @@
                                                     <td><?php echo ucfirst($incident['report_type']); ?></td>
                                                     <td <?php echo $incident['status'] == 'RequireFeedback' ? 'style="color: red;"' : '' ?>><?php echo $incident['status'] == 'RequireFeedback' ? '<b>Require Feed Back</b>' : $incident['status']; ?></td>
                                                     <td class="text-center">
-                                                        <a class="btn btn-info" href="<?php echo base_url('incident_reporting_system/view_single_assign/' . $incident['id']) ?>">Respond</a>
+                                                        <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
+                                                            <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_safety_incident/' . $incident['id']) ?>">Respond</a>
+                                                        <?php } else { ?>
+                                                            <a class="btn btn-info" href="<?php echo base_url('incident_reporting_system/view_single_assign/' . $incident['id']) ?>">Respond</a>
+                                                        <?php } ?>  
                                                     </td>
                                                 </tr>
                                             <?php }

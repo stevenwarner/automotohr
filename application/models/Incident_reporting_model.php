@@ -220,7 +220,7 @@ class Incident_reporting_model extends CI_Model
 
 	function assigned_incidents_new_flow($id, $cid)
 	{
-		$this->db->select('incident_reporting.report_type,incident_reporting.status,incident_reporting.current_date,incident_reporting.id,incident_type.incident_name,incident_assigned_emp.incident_status');
+		$this->db->select('incident_reporting.report_type,incident_reporting.status,incident_reporting.current_date,incident_reporting.id,incident_type.incident_name,incident_assigned_emp.incident_status, incident_reporting.incident_type_id,');
 		$this->db->where('incident_assigned_emp.employer_sid', $id);
 		$this->db->where('incident_assigned_emp.company_sid', $cid);
 		$this->db->where('incident_assigned_emp.assigned_status', 1);
@@ -470,7 +470,7 @@ class Incident_reporting_model extends CI_Model
 
 	function get_incident_comments($id)
 	{
-		$this->db->select('comment,date_time,t1.username as user1,t2.username as user2,response_type, t1.profile_picture as pp1, t2.profile_picture as pp2, incident_reporting_comments.employer_sid as emp_id');
+		$this->db->select('comment,date_time,t1.username as user1,t2.username as user2,response_type, t1.profile_picture as pp1, t2.profile_picture as pp2, incident_reporting_comments.applicant_sid as emp_id');
 		$this->db->where('incident_reporting_id', $id);
 		$this->db->join('users as t1', 't1.sid = incident_reporting_comments.applicant_sid', 'left');
 		$this->db->join('users as t2', 't2.sid = incident_reporting_comments.employer_sid', 'left');
@@ -1417,5 +1417,82 @@ class Incident_reporting_model extends CI_Model
 		//
 		return "out_sider";
 		
+	}
+
+	public function getMyEmails ($incidentId, $employeeId) {
+		$where = "(sender_sid='" . $employeeId . "' OR receiver_sid='" . $employeeId . "')";
+		$this->db->select('*');
+		$this->db->where($where);
+		$this->db->where('incident_reporting_id', $incidentId);
+		$this->db->order_by('send_date', 'desc');
+		$records_obj = $this->db->get('incident_reporting_emails');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		$return_data = array();
+
+		$incident_emails = array();
+
+		if (!empty($records_arr)) {
+			foreach ($records_arr as $email) {
+				$email['reverse_check'] = 0;
+				$userId = 0;
+				//
+				if ($email['receiver_sid'] == $employeeId)  {
+					$email['email_status'] = 'received';
+					$userId = $email['sender_sid'];
+
+				} else {
+					$userId = $email['receiver_sid'];
+					$email['email_status'] = 'send';
+				}
+				//
+				if (!array_key_exists($userId, $incident_emails)) {
+					//
+					$userName = '';
+					//
+					if (str_replace('_wid', '', $userId) != $userId) {
+                        $witnessId = str_replace('_wid', '', $userId);
+                        $witnessInfo = $this->get_witness_info_by_id($witnessId, $incidentId);
+						$userName = $witnessInfo['witness_name'] . " (Other Witness)";
+						//
+						$email['manual_email'] = $witnessInfo['witness_email'];
+					} else {
+						$employeeInfo = $this->get_employee_info_by_id($userId);
+						$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
+						//
+						$userName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
+					}
+					//	
+					$incident_emails[$userId]['userName'] = $userName;
+					$incident_emails[$userId]['userId'] = $userId;
+					$incident_emails[$userId]['employeeId'] = $employeeId;
+					$incident_emails[$userId]['incidentId'] = $incidentId;
+				}
+				//
+				$incident_emails[$userId]['emails'][] = $email;
+			}
+		}
+		//
+		return $incident_emails;
+	}
+
+	public function getUserType ($userInfo, $incidentId, $userId) {
+		if (
+            $this->db
+            ->where('witness_email', $userInfo['email'])
+			->where('incident_reporting_id', $incidentId)
+            ->count_all_results('incident_related_witnesses')
+        ) {
+            return "Company Witness";
+        } else if (
+			$this->db
+            ->where('employer_sid', $userId)
+			->where('incident_sid', $incidentId)
+            ->count_all_results('incident_assigned_emp')
+		) {
+            return "Assigned Manager";
+        } else {
+			return "Company Employee";
+		}
 	}
 }
