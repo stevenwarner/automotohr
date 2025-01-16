@@ -312,6 +312,7 @@ class Incident_reporting_model extends CI_Model
 		$records_arr = $records_obj->result_array();
 		$records_obj->free_result();
 		$return_data = array();
+		echo $this->db->last_query();
 
 		if (!empty($records_arr)) {
 			$return_data = $records_arr;
@@ -1494,5 +1495,15 @@ class Incident_reporting_model extends CI_Model
         } else {
 			return "Company Employee";
 		}
+	}
+
+	public function getComplianceSafetyTitle ($incidentId) {
+		$this->db->select('compliance_safety_title');
+		$this->db->where('id', $incidentId);
+		//
+		$record_obj = $this->db->get('incident_reporting');
+		$record_arr = $record_obj->row_array();
+		$record_obj->free_result();
+		return $record_arr['compliance_safety_title'];
 	}
 }

@@ -17273,6 +17273,21 @@ if (!function_exists("getCompanyColumnById")) {
     }
 }
 
+if (!function_exists("getIncidentTypeId")) {
+    function getIncidentTypeId(int $incidentId): int
+    {
+        $CI = &get_instance();
+        $CI->db->select('incident_type_id');
+        $CI->db->where('id', $incidentId);
+        //dent
+        $record_obj = $CI->db->get("incidentId");
+        $record_data = $record_obj->row_array();
+        $record_obj->free_result();
+
+        return $record_data['incident_type_id'];
+    }
+}
+
 if (!function_exists("isSafetyIncident")) {
     function isSafetyIncident(int $incidentTypeId): bool
     {

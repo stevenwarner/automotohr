@@ -108,6 +108,21 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                         </div>
                     <?php } ?>
 
+                    <div class="table-responsive table-outer">
+                        <div class="table-wrp data-table">
+                            <table class="table table-bordered table-hover table-stripped" id="reference_network_table">
+                                <b>Compliance Safety Title</b>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <?php echo $complianceSafetyTitle; ?>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                     <!-- Question/Answer Section Start -->
                     <?php foreach ($assigned_incidents as $incident) { ?>
                         <div class="table-responsive table-outer">

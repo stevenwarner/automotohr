@@ -115,6 +115,14 @@ if (isset($applicant)) {
                                     </div>
                                 </div>
                             <?php } ?>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <div class="form-group">
+                                        <label>Compliance Safety Title:<span class="required">*</span></label>
+                                        <input type="text" class="form-control" name="compliance_safety_title" value="" id="jsComplianceSafetyTitle">
+                                    </div>
+                                </div>
+                            </div>
                             <?php foreach ($questions as $question) { ?>
                                 <?php echo '<div class="row"><div class="col-lg-12 col-md-12 col-xs-12 col-sm-12"><div class="form-group autoheight">'; ?>
 
@@ -2110,7 +2118,15 @@ if (isset($applicant)) {
     $("#inc-form").validate({
         ignore: ":hidden:not(select)",
         submitHandler: function(form) {
+
             var flag = 0;
+
+            if ($('#jsComplianceSafetyTitle').val().length == 0) {
+                alertify.alert('Please enter compliance safety title.');
+                flag = 1;
+                $('#submit').removeAttr('disabled');
+                return false;
+            }
 
             if ($("#yes_witnesses").is(':checked')) {
                 $('#add_inner_wirnesses_section > div').each(function(key) {
