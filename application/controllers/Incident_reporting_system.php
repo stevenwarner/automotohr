@@ -139,16 +139,16 @@ class Incident_reporting_system extends Public_Controller
 
                         $update_id = $_POST['inc-id'];
                         $review_manager = $_POST['review_manager'];
-                        $reply_url = '';
-
                         $on_behalf_employee_sid  = $_POST['incident_employee_id'];
-
+                        //
                         unset($_POST['submit']);
                         unset($_POST['inc-id']);
                         unset($_POST['review_manager']);
+                        unset($_POST['incident_employee_id']);
                         //
+                        $reply_url = '';
                         $incidentId = 0;
-
+                        //
                         if ($update_id != 0) {
                             $update['report_type'] = $report_type;
                             $update['incident_name'] = $incident_details[0]['incident_name'];
@@ -192,8 +192,12 @@ class Incident_reporting_system extends Public_Controller
                             }
                         }
 
-
                         unset($_POST['witnesses']);
+                        unset($_POST['video_source']);
+                        unset($_POST['video_title']);
+                        unset($_POST['document_title']);
+                        unset($_POST['any_witnesses']);
+                        unset($_POST['video_id']);
 
                         $insert = array();
 
@@ -324,20 +328,18 @@ class Incident_reporting_system extends Public_Controller
                     $update_id = $_POST['inc-id'];
                     $review_manager = $_POST['review_manager'];
                     $complianceSafetyTitle = $_POST['compliance_safety_title'];
-                    $reply_url = '';
-
                     $on_behalf_employee_sid  = $_POST['incident_employee_id'];
-
+                    //
                     unset($_POST['submit']);
                     unset($_POST['inc-id']);
                     unset($_POST['review_manager']);
                     unset($_POST['incident_employee_id']);
                     unset($_POST['compliance_safety_title']);
                     //
-
-                    //
+                    $reply_url = '';
                     $incidentId = 0;
-
+                    //
+                    //
                     if ($update_id != 0) {
                         $update['report_type'] = $report_type;
                         $update['incident_name'] = $incident_details[0]['incident_name'];
@@ -384,9 +386,14 @@ class Incident_reporting_system extends Public_Controller
                         }
                     }
 
-
+                    //
                     unset($_POST['witnesses']);
-
+                    unset($_POST['video_source']);
+                    unset($_POST['video_title']);
+                    unset($_POST['document_title']);
+                    unset($_POST['any_witnesses']);
+                    unset($_POST['video_id']);
+                    //
                     $insert = array();
 
                     foreach ($_POST as $key => $val) {
