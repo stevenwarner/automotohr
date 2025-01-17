@@ -4399,6 +4399,7 @@ class Incident_reporting_system extends Public_Controller
             }
 
             // Fetch All Incident Related Manager
+            _e($incident_id,true,true);
             $incident_managers = $this->incident_reporting_model->fetch_incident_managers($incident_id, $company_sid);
 
             //Remove Incident Managers Those Are not Assigned This Reported Incident

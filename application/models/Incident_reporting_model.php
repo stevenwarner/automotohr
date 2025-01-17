@@ -312,7 +312,6 @@ class Incident_reporting_model extends CI_Model
 		$records_arr = $records_obj->result_array();
 		$records_obj->free_result();
 		$return_data = array();
-		echo $this->db->last_query();
 
 		if (!empty($records_arr)) {
 			$return_data = $records_arr;
@@ -728,7 +727,7 @@ class Incident_reporting_model extends CI_Model
 		$records_obj = $this->db->get('incident_reporting');
 		$records_arr = $records_obj->result_array();
 		$records_obj->free_result();
-		$return_data = array();
+		$return_data = 0;
 
 		if (!empty($records_arr)) {
 			$return_data = $records_arr[0]['incident_type_id'];
