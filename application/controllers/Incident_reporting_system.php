@@ -2759,8 +2759,8 @@ class Incident_reporting_system extends Public_Controller
             //     // Fetch Media For Media
             //     $library_media = $this->incident_reporting_model->get_user_library_media($inc_reported_id, $from_sid, $user_type);
             // }
-            _e($library_media, true);
-            _e($library_documets, true, true);
+            // _e($library_media, true);
+            // _e($library_documets, true, true);
 
             $data                       = array();
             $data['emails']             = $emails;
@@ -4399,7 +4399,6 @@ class Incident_reporting_system extends Public_Controller
             }
 
             // Fetch All Incident Related Manager
-            _e($incident_id,true,true);
             $incident_managers = $this->incident_reporting_model->fetch_incident_managers($incident_id, $company_sid);
 
             //Remove Incident Managers Those Are not Assigned This Reported Incident
