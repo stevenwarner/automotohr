@@ -43,7 +43,15 @@
                                 foreach($pending as $incident){?>
                                     <tr>
                                         <td><?php echo my_date_format($incident['current_date']); ?></td>
-                                        <td><?php echo ucfirst($incident['incident_name']); ?></td>
+                                        <td>
+                                            <?php 
+                                                if ($incident['compliance_safety_title']) {
+                                                    echo $incident['compliance_safety_title'] .' ( '. ucfirst($incident['incident_name']).' )'; 
+                                                } else {
+                                                    echo ucfirst($incident['incident_name']); 
+                                                }
+                                            ?>
+                                        </td>
                                         <td><?php echo ucfirst($incident['report_type']); ?></td>
                                         <td><b><?= $incident['status'];?></b></td>
                                         <td class="text-center">
@@ -94,10 +102,18 @@
                             </thead>
                             <tbody>
                             <?php if(sizeof($responded)>0){
-                                foreach($responded as $incident){?>
+                                foreach($responded as $incident){ ?>
                                     <tr>
                                         <td><?php echo my_date_format($incident['current_date']); ?></td>
-                                        <td><?php echo ucfirst($incident['incident_name']); ?></td>
+                                        <td>
+                                            <?php 
+                                                if ($incident['compliance_safety_title']) {
+                                                    echo $incident['compliance_safety_title'] .' ( '. ucfirst($incident['incident_name']).' )'; 
+                                                } else {
+                                                    echo ucfirst($incident['incident_name']); 
+                                                }
+                                            ?>
+                                        </td>
                                         <td><?php echo ucfirst($incident['report_type']); ?></td>
                                         <td><b><?php echo $incident['status']; ?></b></td>
                                         <td class="text-center">
@@ -151,7 +167,15 @@
                                 foreach($read_only as $incident){?>
                                     <tr>
                                         <td><?php echo my_date_format($incident['current_date']); ?></td>
-                                        <td><?php echo ucfirst($incident['incident_name']); ?></td>
+                                        <td>
+                                            <?php 
+                                                if ($incident['compliance_safety_title']) {
+                                                    echo $incident['compliance_safety_title'] .' ( '. ucfirst($incident['incident_name']).' )'; 
+                                                } else {
+                                                    echo ucfirst($incident['incident_name']); 
+                                                }
+                                            ?>
+                                        </td>
                                         <td><?php echo ucfirst($incident['report_type']); ?></td>
                                         <td><b>Read Only</b></td>
                                         <td class="text-center">
@@ -195,7 +219,15 @@
                                 foreach($closed as $incident){?>
                                     <tr style="background-color: #cdf194;">
                                         <td><?php echo my_date_format($incident['current_date']); ?></td>
-                                        <td><?php echo ucfirst($incident['incident_name']); ?></td>
+                                        <td>
+                                            <?php 
+                                                if ($incident['compliance_safety_title']) {
+                                                    echo $incident['compliance_safety_title'] .' ( '. ucfirst($incident['incident_name']).' )'; 
+                                                } else {
+                                                    echo ucfirst($incident['incident_name']); 
+                                                }
+                                            ?>
+                                        </td>
                                         <td><?php echo ucfirst($incident['report_type']); ?></td>
                                         <td style="color: #446f00;"><b>Resolved</b></td>
                                         <td class="text-center">

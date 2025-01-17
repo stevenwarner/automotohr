@@ -40,7 +40,15 @@
                                             foreach ($assigned_incidents as $incident) { ?>
                                                 <tr <?php echo $incident['status'] == 'RequireFeedback' ? 'style="background-color: bisque;"' : '' ?>>
                                                     <td><?php echo my_date_format($incident['current_date']); ?></td>
-                                                    <td><?php echo ucfirst($incident['incident_name']); ?></td>
+                                                    <td>
+                                                        <?php 
+                                                            if ($incident['compliance_safety_title']) {
+                                                                echo $incident['compliance_safety_title'] .' ( '. ucfirst($incident['incident_name']).' )'; 
+                                                            } else {
+                                                                echo ucfirst($incident['incident_name']); 
+                                                            }
+                                                        ?>
+                                                    </td>
                                                     <td><?php echo ucfirst($incident['report_type']); ?></td>
                                                     <td <?php echo $incident['status'] == 'RequireFeedback' ? 'style="color: red;"' : '' ?>><?php echo $incident['status'] == 'RequireFeedback' ? '<b>Require Feed Back</b>' : $incident['status']; ?></td>
                                                     <td class="text-center">

@@ -73,32 +73,6 @@ if (isset($applicant)) {
 
                 <form method="post" action="" id="inc-form" enctype="multipart/form-data" autocomplete="off">
 
-                    <div class="create-job-wrap">
-                        <div class="universal-form-style-v2">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label>Select Employee:</label>
-                                    <p class="text-danger">Select employee on whose behalf you are creating an incident. Ignore it, if the incident is yours.</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="field-row">
-                                        <?php if (sizeof($employees_new) > 0) { ?>
-                                            <select class='invoice-fields' name="incident_employee_id" id="incident_employee_id">
-                                                <?php foreach ($employees_new as $employee) { ?>
-                                                    <option value="<?= $employee['sid']; ?>" <?= $employee['sid'] == $currentEmployeeId ? 'selected' : ''; ?> data-name="<?= $employee['first_name'] . ' ' . $employee['last_name']; ?>"><?= remakeEmployeeName($employee); ?></option>
-                                                <?php } ?>
-                                            </select>
-                                        <?php } else { ?>
-                                            <p>No Employee Found.</p>
-                                        <?php } ?>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="form-wrp">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
@@ -200,101 +174,11 @@ if (isset($applicant)) {
                                 <?php echo '</div> </div> </div>'; ?>
                             <?php } ?>
                             <div class="row">
-                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                    <div class="panel panel-blue">
-                                        <div class="panel-heading incident-panal-heading">
-                                            <b>Any Witnesses :</b>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="row">
-                                                <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
-                                                    <label class="control control--radio">
-                                                        Yes<input class="witnesses" type="radio" id="yes_witnesses" name="any_witnesses" value="1" style="position: relative;">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                                <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
-                                                    <label class="control control--radio">
-                                                        No<input class="witnesses" type="radio" id="no_witnesses" name="any_witnesses" value="0" checked="checked" style="position: relative;">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                    <div class="panel panel-info" id="add_wirnesses" style="display: none;">
-                                        <div class="panel-heading">
-                                            <strong>Add Witnesses</strong>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="row">
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="auto-height">
-                                                            Add Company Witnesses :
-                                                        </label>
-                                                        <?php if (sizeof($employees) > 0) { ?>
-                                                            <select id="employee_to_witness" src="1" class="form-control">
-                                                                <option>Please Select Employee as Witness</option>
-                                                                <?php foreach ($employees as $employee) { ?>
-                                                                    <?php
-                                                                    if ($employer_sid == $employee['sid']) {
-                                                                        continue;
-                                                                    }
-                                                                    $employee_full_name =  $employee['first_name'] . ' ' . $employee['last_name'];
-                                                                    $option_value = $employee_full_name . ',' . $employee['email'] . ',' . $employee['PhoneNumber'];
-                                                                    ?>
-
-                                                                    <option value="<?php echo $option_value; ?>"><?php echo $employee_full_name; ?></option>
-                                                                <?php } ?>
-                                                            </select>
-                                                        <?php } else { ?>
-                                                            <p>No Employee Found.</p>
-                                                        <?php } ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="auto-height">
-                                                            Add Outside Witnesses :
-                                                        </label>
-                                                        <a href="javascript:;" id="add_new_witrness" class="btn btn-info btn-block mb-2" src="1" onclick="add_new_witrness('outter');" style="height: : 30px; line-height: 30px">Add Witness</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    <div class="panel panel-info">
-                                                        <div class="panel-heading">
-                                                            <strong>Company Witnesses</strong>
-                                                        </div>
-                                                        <div class="panel-body">
-                                                            <div id="add_inner_wirnesses_section">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="panel panel-info">
-                                                        <div class="panel-heading">
-                                                            <strong>Outside Witnesses</strong>
-                                                        </div>
-                                                        <div class="panel-body">
-                                                            <div id="add_outter_wirnesses_section" style="background-color: #eee;">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" id="media_section">
                                     <div class="panel panel-blue">
                                         <div class="panel-heading incident-panal-heading">
-                                            <b>Upload Incident Supporting Video / Audio</b>
+                                            <b>Upload Compliance Safety Supporting Video / Audio</b>
                                         </div>
                                         <div class="panel-body">
                                             <div class="form-group edit_filter autoheight">
@@ -381,7 +265,7 @@ if (isset($applicant)) {
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" id="document_section">
                                     <div class="panel panel-blue">
                                         <div class="panel-heading incident-panal-heading">
-                                            <b>Upload Incident Supporting Documents</b>
+                                            <b>Upload Compliance Safety Supporting Documents</b>
                                         </div>
                                         <div class="panel-body">
                                             <div class="row">
@@ -429,17 +313,13 @@ if (isset($applicant)) {
                                 </div>
 
                                 <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12">
-                                    <label class="auto-height">The Incident will be received/responded by: <span class="required">*</span></label>
+                                    <label class="auto-height">Add Company Employees to Compliance Safety Report: <span class="required">*</span></label>
                                     <div class="row">
-                                        <?php foreach ($incident_managers as $im) {
-                                            // Skip if login employee id is same as manager id
-                                            //if($im['employee_id'] == $employer_sid) continue;
-                                        ?>
+                                        <?php foreach ($employees as $employee) { ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                 <label class="control control--checkbox">
-                                                    <?php echo $im['employee_name']; ?>
-                                                    <!--<input type="checkbox" name="manager_to_review[]" value="<?php echo $im['employee_id']; ?>" style="position: relative;">-->
-                                                    <input type="checkbox" name="review_manager[]" value="<?php echo $im['employee_id']; ?>" style="position: relative;">
+                                                    <?php echo getUserNameBySID($employee['sid']); ?>
+                                                    <input type="checkbox" name="review_manager[]" value="<?php echo $employee['sid']; ?>" style="position: relative;">
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </div>

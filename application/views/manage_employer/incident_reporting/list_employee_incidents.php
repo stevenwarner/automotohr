@@ -42,7 +42,13 @@
                                         <tr>
                                             <td>
                                                 <p>
-                                                    <?php echo ucfirst($incident['incident_name']); ?>
+                                                    <?php 
+                                                        if ($incident['compliance_safety_title']) {
+                                                            echo $incident['compliance_safety_title'] .' ( '. ucfirst($incident['incident_name']).' )'; 
+                                                        } else {
+                                                            echo ucfirst($incident['incident_name']); 
+                                                        }
+                                                    ?>
                                                     <?php if ($incident['pending'] > 0) { ?>
                                                         <img src="<?= base_url('assets/images/new_msg.gif') ?>">
                                                     <?php } ?>

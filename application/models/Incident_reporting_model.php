@@ -220,7 +220,7 @@ class Incident_reporting_model extends CI_Model
 
 	function assigned_incidents_new_flow($id, $cid)
 	{
-		$this->db->select('incident_reporting.report_type,incident_reporting.status,incident_reporting.current_date,incident_reporting.id,incident_type.incident_name,incident_assigned_emp.incident_status, incident_reporting.incident_type_id,');
+		$this->db->select('incident_reporting.report_type,incident_reporting.status,incident_reporting.current_date,incident_reporting.id,incident_type.incident_name,incident_assigned_emp.incident_status, incident_reporting.incident_type_id, incident_reporting.compliance_safety_title');
 		$this->db->where('incident_assigned_emp.employer_sid', $id);
 		$this->db->where('incident_assigned_emp.company_sid', $cid);
 		$this->db->where('incident_assigned_emp.assigned_status', 1);
@@ -923,6 +923,17 @@ class Incident_reporting_model extends CI_Model
 		return $result;
 	}
 
+	function getAllCompanyEmployeesForComplianceSafety($company_sid)
+	{
+		$this->db->select('sid,first_name, last_name, email, PhoneNumber');
+		$this->db->where('parent_sid', $company_sid);
+		$this->db->where('active', 1);
+		$this->db->where('terminated_status', 0);
+		$this->db->order_by("is_executive_admin", SORT_ORDER);
+		$result = $this->db->get('users')->result_array();
+		return $result;
+	}
+
 	function fetch_company_employee_id($company_sid, $email)
 	{
 		$this->db->select('sid');
@@ -1504,5 +1515,16 @@ class Incident_reporting_model extends CI_Model
 		$record_arr = $record_obj->row_array();
 		$record_obj->free_result();
 		return $record_arr['compliance_safety_title'];
+	}
+
+	public function getComplianceSafetyReportEmployees ($incidentId) {
+		$this->db->select('employer_sid');
+		$this->db->where('incident_sid', $incidentId);
+		//
+		$records_obj = $this->db->get('incident_assigned_emp');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		//
+		return array_column($records_arr, 'employer_sid');
 	}
 }

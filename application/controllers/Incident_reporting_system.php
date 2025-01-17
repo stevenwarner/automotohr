@@ -302,9 +302,7 @@ class Incident_reporting_system extends Public_Controller
             $data['id'] = $id;
             $data['report_type'] = $report_type;
             $questions = $this->incident_reporting_model->fetch_all_question($id);
-            $incident_managers = $this->incident_reporting_model->fetch_incident_managers($id, $company_sid);
-            $data['incident_managers'] = $incident_managers;
-            // echo $report_type.'<pre>'; print_r($questions); echo '</pre>'; die();
+            
             $e_signature_data = get_e_signature($company_sid, $employer_sid, 'employee');
             $data['e_signature_data'] = $e_signature_data;
             $load_view = check_blue_panel_status(false, 'self');
@@ -312,7 +310,7 @@ class Incident_reporting_system extends Public_Controller
             $data['questions'] = $questions;
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
-            $data['employees'] = $this->incident_reporting_model->fetch_all_company_employees($company_sid);
+            $data['employees'] = $this->incident_reporting_model->getAllCompanyEmployeesForComplianceSafety($company_sid);
             //
             $data['employees_new'] = $this->incident_reporting_model->get_all_employees($company_sid);
 
@@ -328,12 +326,10 @@ class Incident_reporting_system extends Public_Controller
                     $update_id = $_POST['inc-id'];
                     $review_manager = $_POST['review_manager'];
                     $complianceSafetyTitle = $_POST['compliance_safety_title'];
-                    $on_behalf_employee_sid  = $_POST['incident_employee_id'];
                     //
                     unset($_POST['submit']);
                     unset($_POST['inc-id']);
                     unset($_POST['review_manager']);
-                    unset($_POST['incident_employee_id']);
                     unset($_POST['compliance_safety_title']);
                     //
                     $reply_url = '';
@@ -354,7 +350,7 @@ class Incident_reporting_system extends Public_Controller
                         //
                         $insert = array();
                         $insert['company_sid'] = $company_sid;
-                        $insert['employer_sid'] = $on_behalf_employee_sid;
+                        $insert['employer_sid'] = $employer_sid;
                         $insert['current_date'] = date('Y-m-d H:i:s');
                         $insert['incident_type_id'] = $id;
                         $insert['report_type'] = $report_type;
@@ -367,31 +363,11 @@ class Incident_reporting_system extends Public_Controller
                         $incidentId = $incident;
                     }
 
-                    if (isset($_POST['any_witnesses']) && $_POST['any_witnesses'] == 1) {
-                        foreach ($_POST['witnesses'] as $key => $witness) {
-                            $witness_to_insert = array();
-                            $witness_to_insert['incident_type_id']          = $id;
-                            $witness_to_insert['incident_reporting_id']     = $incidentId;
-                            $witness_to_insert['company_sid']               = $company_sid;
-                            $witness_to_insert['witness_type']              = $witness['type'];
-                            $witness_to_insert['witness_name']              = $witness['full_name'];
-                            $witness_to_insert['witness_phone']             = $witness['phone'];
-                            $witness_to_insert['witness_email']             = $witness['email'];
-                            $witness_to_insert['witness_title']             = $witness['title'];
-                            $witness_to_insert['can_provide_info']          = $witness['can_provide_info'];
-                            $witness_to_insert['reported_date']             = date('Y-m-d H:i:s');
-                            $witness_to_insert['added_by']                  = $employer_sid;
-
-                            $this->incident_reporting_model->add_new_witness($witness_to_insert);
-                        }
-                    }
-
                     //
                     unset($_POST['witnesses']);
                     unset($_POST['video_source']);
                     unset($_POST['video_title']);
                     unset($_POST['document_title']);
-                    unset($_POST['any_witnesses']);
                     unset($_POST['video_id']);
                     //
                     $insert = array();
@@ -1319,7 +1295,7 @@ class Incident_reporting_system extends Public_Controller
                         }
                     }
                 }
-
+                
                 $data['assigned_incidents'] = $assigned_incidents;
                 $data['closed'] = $closed;
                 $data['responded'] = $responded;
@@ -4411,7 +4387,7 @@ class Incident_reporting_system extends Public_Controller
             }
 
             // Fetch All Active Company Employees For Adding As Witness
-            $company_employees = $this->incident_reporting_model->fetch_all_company_employees($company_sid);
+            $company_employees = $this->incident_reporting_model->getAllCompanyEmployeesForComplianceSafety($company_sid);
 
             // Fetch Incident Question Answer
             $assigned_incidents = $this->incident_reporting_model->view_single_assign($id);
@@ -4532,6 +4508,9 @@ class Incident_reporting_system extends Public_Controller
 
             // Fetch Incident Notes
             $comments = $this->incident_reporting_model->get_incident_comments($id);
+
+            // get Compliance Safety Employees
+            $assignedEmployees = $this->incident_reporting_model->getComplianceSafetyReportEmployees($id);
 
             if (isset($_POST['submit']) && $_POST['submit'] == 'submit') {
                 //
@@ -4877,26 +4856,41 @@ class Incident_reporting_system extends Public_Controller
                         $this->incident_reporting_model->insert_incident_docs($document_to_insert);
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Document is Uploaded Successfully!');
                     }
-                } else if ($perform_action == 'add_witness') {
+                } else if ($perform_action == 'add_employees') {
+                    //
+                    $employees = $this->input->post('add_employees');
+                    //
+                    foreach ($employees as $key => $employeeId) {
+                        $data_to_insert                     = array();
+                        $data_to_insert['company_sid']      = $company_sid;
+                        $data_to_insert['employer_sid']     = $employeeId;
+                        $data_to_insert['assigned_date']    = date('Y-m-d H:i:s');
+                        $data_to_insert['incident_sid']     = $id;
+                        $data_to_insert['assigned_status']  = 1;
+                        //
+                        $this->incident_reporting_model->insert_new_manager_to_incident($data_to_insert);
+                        //
+                        $emp = $this->incident_reporting_model->fetch_employee_name_by_sid($employeeId);
 
-                    $witnesses = $this->input->post('witnesses');
-                    foreach ($witnesses as $key => $witness) {
-                        $witness_to_insert = array();
-                        $witness_to_insert['incident_type_id']          = $incident_id;
-                        $witness_to_insert['incident_reporting_id']     = $id;
-                        $witness_to_insert['company_sid']               = $company_sid;
-                        $witness_to_insert['witness_type']              = $witness['type'];
-                        $witness_to_insert['witness_name']              = $witness['full_name'];
-                        $witness_to_insert['witness_phone']             = $witness['phone'];
-                        $witness_to_insert['witness_email']             = $witness['email'];
-                        $witness_to_insert['witness_title']             = $witness['title'];
-                        $witness_to_insert['can_provide_info']          = $witness['can_provide_info'];
-                        $witness_to_insert['reported_date']             = date('Y-m-d H:i:s');
-                        $witness_to_insert['added_by']                  = $employer_sid;
-
-                        $this->incident_reporting_model->add_new_witness($witness_to_insert);
+                        $reply_url = base_url('incident_reporting_system/view_single_assign') . '/' . $id;
+                        $viewIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $reply_url . '" target="_blank">View Report</a>';
+                        $replacement_array['applicant_name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
+                        $replacement_array['applicant-name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
+                        $replacement_array['first-name'] = ucwords($emp[0]['first_name']);
+                        $replacement_array['last-name'] = ucfirst($emp[0]['last_name']);
+                        $replacement_array['firstname'] = ucwords($emp[0]['first_name']);
+                        $replacement_array['lastname'] = ucfirst($emp[0]['last_name']);
+                        $replacement_array['first_name'] = ucwords($emp[0]['first_name']);
+                        $replacement_array['last_name'] = ucfirst($emp[0]['last_name']);
+                        $replacement_array['company_name'] = $company_name;
+                        $replacement_array['view_button'] = $viewIncidentBtn;
+                        //
+                        $message_hf = message_header_footer($company_sid, $company_name);
+                        //
+                        log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $emp[0]['email'], $replacement_array, $message_hf);
                     }
-                    $this->session->set_flashdata('message', '<strong>Success:</strong> Witness is Added Successfully!');
+                    //
+                    $this->session->set_flashdata('message', '<strong>Success:</strong> Employee(s) Added Successfully!');
                 }
 
                 // Fetch Manager Status About this Current Incident
@@ -4939,6 +4933,7 @@ class Incident_reporting_system extends Public_Controller
             $data['incident_all_emails']            = $incident_all_emails;
             $data['complianceSafetyTitle']          = $complianceSafetyTitle;
             $data['incident_assigned_managers']     = $incident_assigned_managers;
+            $data['assignedEmployees']              = $assignedEmployees;
             $data['get_incident_document']          = $get_incident_document_active;
             $data['get_incident_document_archived'] = $get_incident_document_archived;
 
