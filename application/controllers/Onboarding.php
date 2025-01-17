@@ -4638,6 +4638,13 @@ class Onboarding extends CI_Controller
 
             switch ($user_type) {
                 case 'employee':
+
+                    if (!checkIfAppIsEnabled('etm')) {
+                        $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                        redirect(base_url('dashboard'), "refresh");
+                    }
+
+
                     $data = employee_right_nav($user_sid);
                     $employee_info = $this->onboarding_model->get_employee_information($company_sid, $user_sid);
                     $user_info = array();
@@ -6360,6 +6367,12 @@ class Onboarding extends CI_Controller
 
                 $data['user_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($user_sid, $user_type);
             } else if ($user_type == 'employee') {
+
+                if (!checkIfAppIsEnabled('etm')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+
                 $user_info = $this->onboarding_model->get_employee_info($company_sid, $user_sid);
 
                 if (empty($user_info)) {

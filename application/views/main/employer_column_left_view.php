@@ -140,7 +140,6 @@
                     </li>-->
         <?php  //} 
         ?> <!--9-->
-        <?php if (checkIfAppIsEnabled('settings')) { ?>
             <?php if (check_access_permissions_for_view($security_details, 'my_settings')) { ?>
                 <li>
                     <a <?php if (strpos(base_url(uri_string()), site_url('my_settings')) !== false || strpos(base_url(uri_string()), site_url('order_history')) !== false || strpos(base_url(uri_string()), site_url('order_detail')) !== false || strpos(base_url(uri_string()), site_url('job_products_report')) !== false) {
@@ -150,7 +149,7 @@
                     </a>
                 </li>
             <?php } ?>
-        <?php } ?>
+       
         <!--10-->
         <?php if (checkIfAppIsEnabled('candidatequestionnaires')) { ?>
             <?php if (check_access_permissions_for_view($security_details, 'screening_questionnaires')) { ?>

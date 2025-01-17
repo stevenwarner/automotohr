@@ -835,6 +835,12 @@ class Eeo extends Public_Controller
             //
             switch ($user_type) {
                 case 'employee':
+
+                    if (!checkIfAppIsEnabled('etm')) {
+                        $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                        redirect(base_url('dashboard'), "refresh");
+                    }
+                    
                     $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $user_sid);
 
                     if (empty($user_info)) {

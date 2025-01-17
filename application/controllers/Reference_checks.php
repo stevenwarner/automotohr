@@ -31,6 +31,12 @@ class Reference_checks extends CI_Controller {
                 $type = 'employee';
                 $data['applicant_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($employer_id, 'employee'); //getting average rating of applicant
             } else if ($type == 'employee') {
+                
+                if (!checkIfAppIsEnabled('etm')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+
                 $data = employee_right_nav($sid);
                 $employer_id = $sid;
                 $data['return_title_heading'] = 'Employee Profile';

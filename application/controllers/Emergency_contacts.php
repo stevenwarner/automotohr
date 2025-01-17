@@ -43,6 +43,13 @@ class Emergency_contacts extends Public_Controller
                 $data['applicant_average_rating']                               = $this->emergency_contacts_model->getApplicantAverageRating($employer_id, 'employee'); // getting applicant ratings - getting average rating of applicant
                 $load_view                                                      = check_blue_panel_status(false, 'self');
             } else if ($type == 'employee') {
+
+
+                if (!checkIfAppIsEnabled('etm')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+                
                 check_access_permissions($security_details, 'employee_management', 'employee_emergency_contacts'); // Param2: Redirect URL, Param3: Function Name
                 $data                                                           = employee_right_nav($sid, $data);
                 $employer_id                                                    = $sid;

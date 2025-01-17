@@ -33,6 +33,12 @@ class Dependents extends Public_Controller
                 $data['applicant_average_rating'] = $this->dependents_model->getApplicantAverageRating($employer_id, 'employee');
                 $load_view = check_blue_panel_status(false, 'self');
             } elseif ($type == 'employee') {
+
+                if (!checkIfAppIsEnabled('etm')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+
                 check_access_permissions($security_details, 'employee_management', 'employee_dependants');  // Param2: Redirect URL, Param3: Function Name
                 $data = employee_right_nav($sid);
                 $employer_id = $sid;

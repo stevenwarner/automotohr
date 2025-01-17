@@ -32,6 +32,12 @@ class Direct_deposit extends Public_Controller
 
             //
             if ($type == 'employee') {
+
+                if (!checkIfAppIsEnabled('etm')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+
                 $exits = $this->direct_deposit_model->checkDDI($type, $sid, $company_sid);
                 //
                 if ($exits == 0) {

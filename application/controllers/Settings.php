@@ -40,12 +40,7 @@ class Settings extends Public_Controller
 
     public function my_settings()
     {
-        if ($this->session->userdata('logged_in')) {
-
-            if (!checkIfAppIsEnabled('settings')) {
-                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
-                redirect(base_url('dashboard'), "refresh");
-            }
+        if ($this->session->userdata('logged_in')) {          
 
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1226,6 +1221,13 @@ class Settings extends Public_Controller
     public function full_employment_application($sid = NULL)
     {
         if ($this->session->userdata('logged_in')) {
+
+            if (!checkIfAppIsEnabled('etm')) {
+                $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                redirect(base_url('dashboard'), "refresh");
+            }
+
+
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -1822,6 +1824,12 @@ class Settings extends Public_Controller
                 $data_function['applicant_average_rating'] = $this->application_tracking_model->getApplicantAverageRating($employer_id, 'employee');
                 $load_view = check_blue_panel_status(false, 'self');
             } elseif ($type == 'employee') {
+
+                if (!checkIfAppIsEnabled('etm')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+                
                 check_access_permissions($security_details, 'employee_management', 'employee_equipment_info');  // Param2: Redirect URL, Param3: Function Name
                 $data_function = employee_right_nav($sid);
                 $data_function['security_details'] = $security_details;
@@ -2301,6 +2309,12 @@ class Settings extends Public_Controller
                 $load_view = check_blue_panel_status(false, 'self');
                 $cancel_url = 'my_profile';
             } elseif ($type == 'employee') {
+
+                if (!checkIfAppIsEnabled('etm')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+                
                 check_access_permissions($security_details, 'employee_management', 'employee_drivers_license_info');  // Param2: Redirect URL, Param3: Function Name
                 $data_function = employee_right_nav($sid);
                 $data_function['session'] = $this->session->userdata('logged_in');
@@ -2624,6 +2638,13 @@ class Settings extends Public_Controller
                 $data_function["cancel_url"] = 'my_profile/';
                 $load_view = check_blue_panel_status(false, 'self');
             } elseif ($type == 'employee') {
+
+
+                if (!checkIfAppIsEnabled('etm')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+
                 check_access_permissions($security_details, 'employee_management', 'employee_occupational_license_info');  // Param2: Redirect URL, Param3: Function Name
                 $data_function = employee_right_nav($sid);
                 $data_function['security_details'] = $security_details;

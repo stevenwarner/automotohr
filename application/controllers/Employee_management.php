@@ -1194,6 +1194,13 @@ if (!checkIfAppIsEnabled('etm')) {
             redirect('employee_management', 'refresh');
         } else {
             if ($this->session->userdata('logged_in')) {
+
+                
+                if (!checkIfAppIsEnabled('etm')) {
+                    $this->session->set_flashdata('message', '<b>Error:</b> Access denied');
+                    redirect(base_url('dashboard'), "refresh");
+                }
+
                 $data = employee_right_nav($sid);
                 // Added on: 04-07-2019
                 $data['show_timezone'] = $data['session']['company_detail']['timezone'];

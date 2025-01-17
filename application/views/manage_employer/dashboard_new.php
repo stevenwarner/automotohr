@@ -428,7 +428,6 @@
                                     <?php //} 
                                     ?>
                                     <!--9-->
-                                    <?php if (checkIfAppIsEnabled('settings')) { ?>
                                         <?php if (check_access_permissions_for_view($security_details, 'my_settings')) { ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="dash-box">
@@ -449,7 +448,6 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
-                                    <?php } ?>
                                     <!--10-->
                                     <?php if (checkIfAppIsEnabled('candidatequestionnaires')) { ?>
                                         <?php if (check_access_permissions_for_view($security_details, 'screening_questionnaires')) { ?>
