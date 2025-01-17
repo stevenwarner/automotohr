@@ -163,6 +163,13 @@ class Job_approval_management extends Public_Controller
                                     );
                             }
 
+
+                            //
+                            setjobsLog($jobId, 'Green Panel Approvals Management', $status, $employer_sid);
+
+
+
+
                             if (!empty($notifications_status)) {
                                 $approval_management_email_notification         = $notifications_status['approval_rights_notifications'];
                             }

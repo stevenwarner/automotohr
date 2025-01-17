@@ -112,9 +112,16 @@ class Indeed_model extends CI_Model
      */
     function getIndeedPaidJobs($paidJobIds = array())
     {
+        $todaydate = date('Y-m-d');
+
         $result = $this->db->where('active', 1)
             // ->where_in('sid', $paidJobIds)
             ->where('indeed_sponsored', 1)
+            ->group_start()
+            ->where("expiration_date > '$todaydate'")
+            ->or_where('expiration_date IS NULL')
+            ->group_end()
+
             ->order_by('sid', 'desc')
             ->get('portal_job_listings');
         //
@@ -132,12 +139,23 @@ class Indeed_model extends CI_Model
      */
     function getIndeedOrganicJobs($paidJobIds = array())
     {
+
+        $todaydate = date('Y-m-d');
+
         $this->db->where('active', 1)
             ->where('organic_feed', 1);
         // ->where('indeed_sponsored', 0)
         if (!empty($paidJobIds)) {
             $this->db->where_not_in('sid', $paidJobIds);
         }
+
+        //
+        $this->db->group_start();
+        $this->db->where("expiration_date > '$todaydate'");
+        $this->db->or_where('expiration_date IS NULL');
+        $this->db->group_end();
+
+
         $this->db->order_by('sid', 'desc');
         $result = $this->db->get('portal_job_listings');
         //
@@ -721,7 +739,7 @@ class Indeed_model extends CI_Model
         bool $byPass = false
     ): array {
         if (!$byPass) {
-            return [];
+            // return [];
             // check if company is approved
             if (!$this->checkIfCompanyIsAllowed($companyId)) {
                 return [
@@ -738,6 +756,14 @@ class Indeed_model extends CI_Model
                 ]];
             }
         }
+
+
+        //
+        if ($this->getJobExpirationStatus($jobId) > 0) {
+            return [];
+        }
+
+
         // set current date and time
         $dateWithTime = getSystemDate();
         // add the job to the queue
@@ -780,7 +806,7 @@ class Indeed_model extends CI_Model
         bool $byPass = false
     ): array {
         if (!$byPass) {
-            return [];
+            // return [];
             // check if company is approved
             if (!$this->checkIfCompanyIsAllowed($companyId)) {
                 return [
@@ -809,6 +835,13 @@ class Indeed_model extends CI_Model
             return $this->addJobToQueue($jobId, $companyId, $byPass);
         }
         // check if the job is processed
+
+
+        if ($this->getJobExpirationStatus($jobId) > 0) {
+            return [];
+        }
+
+
         if ($this->db
             ->group_start()
             ->where("is_processed", 1)
@@ -2072,5 +2105,18 @@ class Indeed_model extends CI_Model
             ->db
             ->where_not_in("job_sid", $jobids)
             ->update("indeed_job_queue", $data);
+    }
+
+
+    //
+    public function getJobExpirationStatus($jobId)
+    {
+
+        $todaydate = date('Y-m-d');
+        return $this->db
+            ->where("expiration_date < '$todaydate'")
+            ->where('expiration_date is NOT NULL', NULL, FALSE)
+            ->where('sid', $jobId)
+            ->count_all_results('portal_job_listings');
     }
 }

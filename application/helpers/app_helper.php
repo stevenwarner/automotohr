@@ -4511,6 +4511,26 @@ if (!function_exists("manage_sitemap")) {
         // Save the updated sitemap back to the file only if there are changes
         return $xml->asXML($sitemap_file);
     }
+
+//
+    if (!function_exists("setjobsLog")) {
+
+        function setjobsLog($jobSid, $location = '', $action = '', $actionBy = 0)
+        {
+            //
+            $insertData = array();
+            $insertData['action_date'] = getSystemDate();
+            $insertData['job_sid'] = $jobSid;
+            $insertData['location'] = $location;
+            $insertData['action'] = $action;
+            $insertData['action_by'] = $actionBy;
+
+            $CI = &get_instance();
+
+            $result = $CI->db
+                ->insert('jobs_log', $insertData);
+        }
+    }
 }
 
 
