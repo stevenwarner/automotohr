@@ -316,6 +316,7 @@ if (isset($applicant)) {
                                     <label class="auto-height">Add Company Employees to Compliance Safety Report: <span class="required">*</span></label>
                                     <div class="row">
                                         <?php foreach ($employees as $employee) { ?>
+                                            <?php if ($employee['sid'] == $current_user) continue; ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                 <label class="control control--checkbox">
                                                     <?php echo getUserNameBySID($employee['sid']); ?>
