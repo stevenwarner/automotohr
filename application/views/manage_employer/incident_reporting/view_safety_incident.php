@@ -941,7 +941,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                 <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12">
                                                     <div class="row">
                                                         <?php foreach ($employees as $employee) { ?>
-                                                            <?php if (in_array($employee['sid'],$assignedEmployees) || $employee['sid'] == $current_user) continue; ?>
+                                                            <?php if (in_array($employee['sid'],$assignedEmployees) || $employee['sid'] == $current_user || $employee['sid'] == $incidentReporterId) continue; ?>
                                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                                 <label class="control control--checkbox">
                                                                     <?php echo getUserNameBySID($employee['sid']); ?>
