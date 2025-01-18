@@ -22,6 +22,8 @@ $affiliate_program_menu = false;
 $email_template_module = false;
 $job_feed = false;
 $modules = false;
+$compliance_safty_reporting_menu = false;
+
 
 if (
     base_url(uri_string()) == site_url('manage_admin/users') ||
@@ -255,6 +257,8 @@ if (
     $financial_reports_menu = true;
 } else if ($this->uri->segment(3) == 'incident_reporting') {
     $incident_reporting_menu = true;
+} elseif ($this->uri->segment(3) == 'compliance_reporting') {
+    $compliance_safty_reporting_menu = true;
 } else if ($this->uri->segment(2) == 'safety_data_sheet') {
     $safety_data_sheet_menu = true;
 } else if ($this->uri->segment(2) == 'default_categories') {
@@ -1349,6 +1353,32 @@ if (
                     </div>
                 </li>
             <?php } ?>
+
+
+
+            <!-- -->
+            <li>
+                <a class="hr-closed-menu <?php if ($compliance_safty_reporting_menu) {
+                                                echo 'hr-opened-menu';
+                                            } ?>" href="javascript:;">Compliance Safety Reports</a>
+                <div class="submenu" <?php if ($compliance_safty_reporting_menu) {
+                                            echo 'style="display:block;"';
+                                        } ?>>
+
+                    <?php if (check_access_permissions_for_view($security_details, 'list_types')) { ?>
+                        <div class="menu-item">
+                            <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/compliance_reporting')) !== false && ($this->uri->segment(4) == '')) {
+                                    echo 'class="active"';
+                                } ?> href="<?php echo site_url('manage_admin/reports/compliance_reporting'); ?>">Compliance Safety Types</a>
+                        </div>
+                    <?php } ?>
+
+                </div>
+            </li>
+
+
+
+
             <?php $functions_names = array('safety_sheet', 'category_management');
             if (check_access_permissions_for_view($security_details, $functions_names)) { ?>
                 <li>
