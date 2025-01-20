@@ -815,6 +815,10 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                     <?php if ($myEmails) { ?>
                         <?php $this->load->view('manage_employer/incident_reporting/manager_safety_incident_email_section', $myEmails); ?>
                     <?php } ?>
+
+                    <?php if ($complianceSafetyEmail) { ?>
+                        <?php $this->load->view('manage_employer/incident_reporting/other_manager_email_section', $complianceSafetyEmail); ?>
+                    <?php } ?>
                     <!-- Email Section End -->
 
                     <!-- Notes Section Start -->
@@ -926,9 +930,12 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                     <?php } ?>
                     <!-- Notes Section End -->
 
-                    <!-- Reassign Manager Section Start -->
+                    &nbsp;
+
+                    <!-- Assign Employees Section Start -->
                     <?php if ($assigned_incidents[0]['status'] != 'Closed') { ?>
                         <?php if (!empty($employees)) { ?>
+                            
                             <div class="table-responsive table-outer">
                                 <div class="panel panel-blue">
                                     <div class="panel-heading incident-panal-heading">
@@ -966,7 +973,36 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                             </div>
                         <?php } ?>
                     <?php } ?>
-                    <!-- Reassign Manager Section End -->
+
+                    <?php if (!empty($employees)) { ?>
+                        <div class="table-responsive table-outer">
+                            <div class="panel panel-blue">
+                                <div class="panel-heading incident-panal-heading">
+                                    <strong>Assigned Employee(s)</strong>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12">
+                                            <div class="row">
+                                                <?php foreach ($employees as $employee) { ?>
+                                                    <?php if (in_array($employee['sid'],$assignedEmployees) || $employee['sid'] == $current_user || $employee['sid'] == $incidentReporterId) { ?>
+                                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                            <label class="control control--checkbox">
+                                                                <?php echo getUserNameBySID($employee['sid']); ?>
+                                                                <input type="checkbox" name="add_employees[]" value="<?php echo $employee['sid']; ?>" checked="checked" disabled style="position: relative;">
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+                                                    <?php } ?>    
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                    <!-- Assign Employees Section End -->
 
                 <?php } else { ?>
                     <div id="show_no_jobs" class="table-wrp">
@@ -3154,7 +3190,9 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                 case 'jpeg':
                 case 'png':
                 case 'gif':
-                    modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
+                    modal_content += '<div style=" display: flex; justify-content: center; align-items: center; height: 100vh;">';
+                    modal_content += '<img src="' + document_preview_url + '" style="max-width:100%; max-height:100%; width: auto; height: auto; object-fit: contain;" />';
+                    modal_content += '</div>';
                     break;
                 default:
                     //using google docs

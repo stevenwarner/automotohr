@@ -1527,4 +1527,84 @@ class Incident_reporting_model extends CI_Model
 		//
 		return array_column($records_arr, 'employer_sid');
 	}
+
+	public function getOtherEmails ($incidentId, $employeeId) {
+		// get all user
+		$this->db->select('employer_sid');
+		$this->db->where('incident_sid', $incidentId);
+		$this->db->where('incident_sid !=', $employeeId);
+		//
+		$records_obj = $this->db->get('incident_assigned_emp');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		//
+		$incident_emails = array();
+		//
+		if ($records_arr) {
+			//
+			$otherEmployees = array_column($records_arr, 'employer_sid');
+			//
+			foreach ($otherEmployees as $otherEmployeeId) {
+				$where = "(sender_sid ='" . $otherEmployeeId . "' OR receiver_sid ='" . $otherEmployeeId . "')";
+				$this->db->select('*');
+				$this->db->where('sender_sid !=', $employeeId);
+				$this->db->where('receiver_sid !=', $employeeId);
+				$this->db->where($where);
+				$this->db->where('incident_reporting_id', $incidentId);
+				$this->db->order_by('send_date', 'desc');
+				$records_obj = $this->db->get('incident_reporting_emails');
+				$records_arr = $records_obj->result_array();
+				$records_obj->free_result();
+				//
+				$otherEmployeesEmails = [];
+				//
+				if (!empty($records_arr)) {
+					foreach ($records_arr as $email) {
+						$email['reverse_check'] = 0;
+						$userId = 0;
+						//
+						if ($email['receiver_sid'] == $otherEmployeeId)  {
+							$email['email_status'] = 'received';
+							$userId = $email['sender_sid'];
+		
+						} else {
+							$userId = $email['receiver_sid'];
+							$email['email_status'] = 'send';
+						}
+						//
+						if (!array_key_exists($userId, $otherEmployeesEmails)) {
+							//
+							$userName = '';
+							//
+							if (str_replace('_wid', '', $userId) != $userId) {
+								$witnessId = str_replace('_wid', '', $userId);
+								$witnessInfo = $this->get_witness_info_by_id($witnessId, $incidentId);
+								$userName = $witnessInfo['witness_name'] . " (Other Witness)";
+								//
+								$email['manual_email'] = $witnessInfo['witness_email'];
+							} else {
+								$employeeInfo = $this->get_employee_info_by_id($userId);
+								$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
+								//
+								$userName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
+							}
+							//	
+							$otherEmployeesEmails[$userId]['userName'] = $userName;
+							$otherEmployeesEmails[$userId]['userId'] = $userId;
+							$otherEmployeesEmails[$userId]['employeeId'] = $employeeId;
+							$otherEmployeesEmails[$userId]['incidentId'] = $incidentId;
+						}
+						//
+						$otherEmployeesEmails[$userId]['emails'][] = $email;
+					}
+					//
+					$incident_emails[$otherEmployeeId] = $otherEmployeesEmails;
+				}
+				//
+
+			}
+		}
+		//
+		return $incident_emails;
+	}
 }

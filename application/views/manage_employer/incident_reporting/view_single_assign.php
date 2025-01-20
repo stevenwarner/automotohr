@@ -1066,7 +1066,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                         </div>
                     <?php } ?>
                     <!-- Document Section End -->
-                </div>
+                        </div>
             </div>
         </div>
     </div>
@@ -3247,7 +3247,9 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                     case 'jpeg':
                     case 'png':
                     case 'gif':
-                        modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
+                        modal_content += '<div style=" display: flex; justify-content: center; align-items: center; height: 100vh; ">';
+                        modal_content += '<img src="' + document_preview_url + '" style="max-width:100%; max-height:100%; width: auto; height: auto; object-fit: contain;" />';
+                        modal_content += '</div>';
                         break;
                     default:
                         //using google docs

@@ -4428,7 +4428,7 @@ class Incident_reporting_system extends Public_Controller
             // Fetch My Emails
             $my_emails = $this->incident_reporting_model->getMyEmails($id, $employer_sid);
 
-            
+            $complianceSafetyEmail =  $this->incident_reporting_model->getOtherEmails($id, $employer_sid);
 
             // Fetch All System Emails
             foreach ($incident_related_managers as $email_key => $incident_related_manager) {
@@ -4936,6 +4936,7 @@ class Incident_reporting_system extends Public_Controller
             $data['assignedEmployees']              = $assignedEmployees;
             $data['get_incident_document']          = $get_incident_document_active;
             $data['get_incident_document_archived'] = $get_incident_document_archived;
+            $data['complianceSafetyEmail']          = $complianceSafetyEmail;
 
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/incident_reporting/view_safety_incident');
