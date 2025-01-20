@@ -539,6 +539,35 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             </div>
                         <?php } ?>
 
+
+
+
+
+
+                        <?php if (checkIfAppIsEnabled('compliancesafetyreporting')) { ?>
+
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <a href="<?php echo base_url('compliance_reporting_system'); ?>">
+                                        <div class="link-box bg-pink full-width">
+                                            <h2>Compliance Safety</h2>
+                                            <div class="text-center" style="position: relative; z-index: 99;">
+                                            </div>
+                                            <div class="current-date" style="position: relative; z-index: 99;">
+                                                <span>0<sub>Pending</sub></span>
+                                            </div>
+                                            <div class="status-panel">
+                                                <h3>Compliance Safety Reporting</h3>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        <?php } ?>
+
+
+
+
                         <?php if ($isLMSModuleEnabled) : ?>
                             <?php if (!isLoggedInPersonAnExecutiveAdmin()) { ?>
                                 <!-- LMS - Courses -->
@@ -1029,7 +1058,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
 
-                           <!--
+                            <!--
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
                                     <a href="<?php echo base_url('shifts/my/subordinates'); ?>">
@@ -1050,7 +1079,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             </div>
                         -->
 
-                        <!--
+                            <!--
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
                                     <a href="<?php echo base_url('shifts/myTrade'); ?>">

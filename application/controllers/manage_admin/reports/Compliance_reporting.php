@@ -15,7 +15,7 @@ class Compliance_reporting extends Admin_Controller {
 
     public function index(){
         $redirect_url       = 'manage_admin';
-        $function_name      = 'incident_reporting';
+        $function_name      = 'compliance_reporting';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
@@ -27,22 +27,9 @@ class Compliance_reporting extends Admin_Controller {
         $this->render('manage_admin/compliance_reporting/index');
     }
 
-    public function checklists(){
-        $redirect_url       = 'manage_admin';
-        $function_name      = 'incident_reporting';
-        $admin_id = $this->ion_auth->user()->row()->id;
-        $security_details = db_get_admin_access_level_details($admin_id);
-        $this->data['security_details'] = $security_details;
-        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
-        $this->data['page_title'] = "Incident Reporting System - Safety CheckList";
-        $incident_types = $this->compliance_report_model->get_all_check_list();
-        $this->data['incident_types'] = $incident_types;
-        $this->render('manage_admin/incident_reporting/index');
-    }
-
     public function add_new_type($id=''){
         $redirect_url       = 'manage_admin';
-        $function_name      = 'incident_reporting';
+        $function_name      = 'compliance_reporting';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
@@ -109,9 +96,9 @@ class Compliance_reporting extends Admin_Controller {
 
     public function view_compliance_questions($id){
         $name = $this->compliance_report_model->fetch_compliance_name($id);
-        $incident_name = $name[0]['compliance_name'];
+        $compliance_name = $name[0]['compliance_name'];
         $this->data['safety_checklist'] = $name[0]['safety_checklist'];
-        $this->data['page_title'] = "Compliance Safety Reporting  - ".$incident_name;
+        $this->data['page_title'] = "Compliance Safety Reporting  - ".$compliance_name;
         $this->data['inc_id'] = $id;
         $questions = $this->compliance_report_model->fetch_questions($id);
         $this->data['questions'] = $questions;
@@ -121,8 +108,8 @@ class Compliance_reporting extends Admin_Controller {
 
     public function add_new_question($id){
         $name = $this->compliance_report_model->fetch_compliance_name($id);
-        $incident_name = $name[0]['compliance_name'];
-        $this->data['sub_title'] = $incident_name;
+        $complaince_name = $name[0]['compliance_name'];
+        $this->data['sub_title'] = $complaince_name;
         $this->data['page_title'] = "Compliance Safety Reporting  - Add Compliance Questions";
         $this->data['fields'] = array('text','textarea','radio','single select','multi select');
         $this->data['status'] = 1;
@@ -157,11 +144,11 @@ class Compliance_reporting extends Admin_Controller {
         $this->data['page_title'] = "Compliance Safety Reporting - Update Compliance Questions";
         $this->data['fields'] = array('text','textarea','radio','single select','multi select');
         $question = $this->compliance_report_model->get_question($id);
-        $incident_type_id = $question[0]['compliance_type_id'];
-        $name = $this->compliance_report_model->fetch_compliance_name($incident_type_id);
-        $incident_name = $name[0]['incident_name'];
-        $this->data['sub_title'] = $incident_name;
-        $this->data['radio_questions'] = $this->compliance_report_model->get_all_radio_questions($incident_type_id);
+        $compliance_type_id = $question[0]['compliance_type_id'];
+        $name = $this->compliance_report_model->fetch_compliance_name($compliance_type_id);
+        $compliance_name = $name[0]['compliance_name'];
+        $this->data['sub_title'] = $compliance_name;
+        $this->data['radio_questions'] = $this->compliance_report_model->get_all_radio_questions($compliance_type_id);
         if(isset($_POST['form-submit']) && ($_POST['form-submit'] == 'Update')) {
             unset($_POST['form-submit']);
             
@@ -174,7 +161,7 @@ class Compliance_reporting extends Admin_Controller {
             if(!isset($_POST['is_required'])){
                 $_POST['is_required'] = 0;
             }
-            $this->compliance_report_model->update_incident_question($id, $_POST);
+            $this->compliance_report_model->update_compliance_question($id, $_POST);
             redirect('manage_admin/reports/compliance_reporting/view_compliance_questions/'.$question[0]['compliance_type_id']);
         }
         

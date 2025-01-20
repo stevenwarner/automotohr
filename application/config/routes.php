@@ -2443,3 +2443,11 @@ $route['lms/courses/move_recursive_into_history'] = 'v1/Courses/moveRecursiveCou
 $route['lms/manager_report/(:any)'] = 'v1/Courses/managerCoursesReport/$1';
 $route["cms/update_solutions_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateSolutionsSortOrder/$1";
 
+
+$route['compliance_reporting_system'] = 'compliance_reporting_system/index';
+
+
+$route['compliance_reporting_system'] = 'compliance_reporting_system/index';
+
+
+

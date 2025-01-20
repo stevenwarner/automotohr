@@ -45,3 +45,10 @@ $lang['i9_form_text_line_4'] = '<p><strong>I am aware that federal law provides 
 
 $lang['i9_form_text_line_5'] = '<p><strong>Check one of the following boxes to attest to your citizenship or immigration status (See page 2 and 3 of the instructions.):</strong></p>';
 $lang['i9_form_text_line_6'] = 'Supplement A, Preparer and/or Translator Certification (check one) <i class="fa fa-question-circle-o modalShow" src="section_4_preparer_translator_certification"></i>';
+
+
+
+//
+
+$lang['tab_my_compliance'] = "Complianc that I have Reported";
+$lang['tab_assigned_compliance'] = "Employee Reported Compliance";
