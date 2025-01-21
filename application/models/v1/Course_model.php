@@ -964,4 +964,126 @@ class Course_model extends CI_Model
 
         return $returnArray;
     }
+
+
+
+
+    //
+    public function getEmployeePendingCourseDetail(
+        int $companyId,
+        int $employeeId
+    ): array {
+        // get employee job title id
+        $jobTitleId = $this->db
+            ->select('portal_job_title_templates.sid')
+            ->from('users')
+            ->join('portal_job_title_templates', 'users.lms_job_title = portal_job_title_templates.sid', 'inner')
+            ->where('users.sid', $employeeId)
+            ->get()
+            ->row_array();
+        // when no job title is assigned
+        if (!$jobTitleId) {
+            return [];
+        }
+        //
+        $jobTitleId = $jobTitleId['sid'];
+        // get the courses
+        $assignedCourses = $this->db
+            ->select('lms_default_courses.sid,lms_default_courses.course_title')
+            ->from('lms_default_courses')
+            ->join(
+                'lms_default_courses_job_titles',
+                'lms_default_courses_job_titles.lms_default_courses_sid = lms_default_courses.sid',
+                'inner'
+            )
+            ->where('lms_default_courses.company_sid', $companyId)
+            ->where('lms_default_courses.is_active', 1)
+            ->group_start()
+            ->where('lms_default_courses_job_titles.job_title_id', -1)
+            ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
+            ->group_end()
+            ->get()
+            ->result_array();
+        // if no courses are found
+        if (empty($assignedCourses)) {
+            return [];
+        }
+        //
+        if (!empty($assignedCourses)) {
+
+            foreach ($assignedCourses as $key => $val) {
+                $courseData = $this->db
+                    ->select('course_status')
+                    ->from('lms_employee_course')
+                    ->where('lms_employee_course.course_sid', $val['sid'])
+                    ->where('lms_employee_course.employee_sid', $employeeId)
+                    ->get()
+                    ->row_array();
+
+                if (!empty($courseData)) {
+
+                    if ($courseData['course_status'] == 'completed') {
+                        unset($assignedCourses[$key]);
+                    } else {
+                        $assignedCourses[$key]['course_status'] = $courseData['course_status'];
+                    }
+                } else {
+                    $assignedCourses[$key]['course_status'] = 'not started';
+                }
+            }
+
+            return $assignedCourses;
+        } else {
+            return [];
+        }
+    }
+
+
+    //
+    public function manualCompleteCourse($companySid, $employeeSid, $courseSid)
+    {
+
+        $coursedata = $this->db
+            ->select('course_status')
+            ->from('lms_employee_course')
+            ->where('lms_employee_course.course_sid', $courseSid)
+            ->where('lms_employee_course.employee_sid', $employeeSid)
+            ->where('lms_employee_course.company_sid', $companySid)
+            ->get()
+            ->row_array();
+
+        if (!empty($coursedata)) {
+            //
+            $dataToUpdate['lesson_status'] = 'completed';
+            $dataToUpdate['course_status'] = 'completed';
+            $dataToUpdate['completed_at'] == getSystemDate();
+            $dataToUpdate['updated_at'] == getSystemDate();
+            $dataToUpdate['is_manual_completed'] = 1;
+
+            //
+            $this->db->where('course_sid', $courseSid);
+            $this->db->where('employee_sid', $employeeSid);
+            $this->db->where('company_sid', $companySid);
+            $this->db->update('lms_employee_course', $dataToUpdate);
+        } else {
+
+            //
+            $courseInfo = $this->getCourseInfo($courseSid);
+
+            $dataToInsert['lesson_status'] = 'completed';
+            $dataToInsert['course_status'] = 'completed';
+            $dataToInsert['completed_at'] = getSystemDate();
+            $dataToInsert['updated_at'] = getSystemDate();
+            $dataToInsert['is_manual_completed'] = 1;
+            $dataToInsert['course_sid'] = $courseSid;
+            $dataToInsert['company_sid'] = $companySid;
+            $dataToInsert['employee_sid'] = $employeeSid;
+
+            $dataToInsert['course_type'] = $courseInfo['course_type'];
+            $dataToInsert['Imsmanifist_json'] = $courseInfo['Imsmanifist_json'];
+            $dataToInsert['course_taken_count'] = 1;
+            //
+            $this->db->insert('lms_employee_course', $dataToInsert);
+        }
+    }
 }

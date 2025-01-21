@@ -2443,3 +2443,13 @@ $route['lms/courses/move_recursive_into_history'] = 'v1/Courses/moveRecursiveCou
 $route['lms/manager_report/(:any)'] = 'v1/Courses/managerCoursesReport/$1';
 $route["cms/update_solutions_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateSolutionsSortOrder/$1";
 
+//
+$route['manage_admin/lms_employees'] = 'manage_admin/Lms_employees/index';
+
+
+
+
+$route['lms/employeecourses/(:num)/(:num)'] = 'v1/Courses/employeeAllCourses/$1/$2';
+$route['lms/coursesmanualcompleted'] = 'v1/Courses/coursesManualcompleted';
+
+
