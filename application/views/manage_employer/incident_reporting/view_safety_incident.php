@@ -335,7 +335,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                             <a class="btn btn-info csRadius5 csF14 js-view-video"
                                                                                 title='<?php echo $video_source == 'upload_audio' ? "Play Audio" : "Watch Video"; ?>'
                                                                                 video-title="<?php echo $video['video_title']; ?>"
-                                                                                ideo-source="<?php echo $video_source; ?>"
+                                                                                video-source="<?php echo $video_source; ?>"
                                                                                 video-url="<?php echo $media_url; ?>"
                                                                                 href="javascript:;">
                                                                                 <?php echo $video_source == 'upload_audio' ? '<i class="fa fa-headphones"> </i>' : '<i class="fa fa-eye"> </i>'; ?>
