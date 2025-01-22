@@ -1528,6 +1528,20 @@ class Incident_reporting_model extends CI_Model
 		return array_column($records_arr, 'employer_sid');
 	}
 
+	public function isEmployeeInitiatedReport ($incidentId, $companyId, $employeeId) {
+		if (
+            $this->db
+			->where('id', $incidentId)
+            ->where('employer_sid', $employeeId)
+            ->where('company_sid', $companyId)
+            ->count_all_results('incident_reporting')
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+	}
+
 	public function getOtherEmails ($incidentId, $employeeId) {
 		// get all user
 		$this->db->select('employer_sid');

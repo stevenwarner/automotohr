@@ -305,7 +305,7 @@
                                                         <input type="hidden" id="perform_action" name="perform_action" value="send_email" />
                                                         <table class="table table-bordered table-hover table-stripped">
                                                             <tbody>
-                                                                <?php if (!empty($incident_users)) { ?>
+                                                                <?php if (!empty($incident_users) || $is_initiater) { ?>
                                                                     <tr>
                                                                         <td><b>Select Email Type</b></td>
                                                                         <td>
@@ -327,7 +327,7 @@
                                                                 <tr>
                                                                     <td><b>Message To</b> <span class="required">*</span></td>
                                                                     <td>
-                                                                        <?php if (empty($incident_users)) { ?>
+                                                                        <?php if (empty($incident_users) && !$is_initiater) { ?>
                                                                             <input type="text" id="email_to" name="receivers[]" value="<?php echo $sender_email; ?>" class="form-control invoice-fields" readonly>
                                                                         <?php } else { ?>
                                                                             <div id="system_email">
@@ -1061,7 +1061,7 @@
         var message_body = CKEDITOR.instances['message'].getData();
         var attachment_size = $('#attachment_listing_data > .manual_upload_items').size();
 
-        <?php if (empty($incident_users)) { ?>
+        <?php if (empty($incident_users) && !$is_initiater) { ?>
 
             if (message_subject == '' && message_body == '') {
                 message = 'Subject and Message body are required.';
@@ -1241,6 +1241,8 @@
 
             $('#library-document-section').show();
             if (item_type == 'document') {
+                
+                //
                 var document_content = $("<iframe />")
                 .attr("id", "library-document-iframe")
                 .attr("class", "uploaded-file-preview")
@@ -1251,7 +1253,7 @@
                 .attr("id", "library-image")
                 .attr("class", "img-responsive")
                 .attr("src", item_url);
-                $("#library-document-placeholder").append(image_content);
+                $("#library-document-section").append(image_content);
             }
             
         } else {
@@ -1783,10 +1785,13 @@
                 .attr("src", item_url);
                 $("#document-iframe-holder").html(document_content);
             } else {
-                var image_content = $("<img />")
-                .attr("id", "image-tag")
-                .attr("class", "img-responsive")
-                .attr("src", item_url);
+                var image_content = '<div style=" display: flex; justify-content: center; align-items: center; height: 100vh;">';
+                    image_content += '<img src="' + item_url + '" style="max-width:100%; max-height:100%; width: auto; height: auto; object-fit: contain;" />';
+                    image_content += '</div>';
+                // var image_content = $("<img />")
+                // .attr("id", "image-tag")
+                // .attr("class", "img-responsive")
+                // .attr("src", item_url);
                 $("#document-iframe-holder").html(image_content);
             }
             

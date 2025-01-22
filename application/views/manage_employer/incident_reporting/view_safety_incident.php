@@ -1,6 +1,8 @@
 <?php
 $incidentReporterId = $assigned_incidents[0]['reporter_id'];
 ?>
+<!-- Stylesheets -->
+<link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/2022/css/main.css?v=1737460488">
 <div class="main maincontent">
     <div class="container-fluid">
         <div class="row">
@@ -253,88 +255,124 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
 
                                             <div id="activeVideo" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                                 <div class="card-body">
-                                                    <div class="announcements-listing">
+                                                    <div class="row">
                                                         <?php $watch_video = base_url('incident_reporting_system/watch_video'); ?>
                                                         <?php foreach ($videos as $video) { ?>
-                                                            <article class="listing-article">
-                                                                <figure>
-                                                                    <?php
-                                                                    $video_source = $video['video_type'];
-                                                                    $media_url = '';
-                                                                    if ($video_source == 'upload_video') {
-                                                                        $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                    } else if ($video_source == 'upload_audio') {
-                                                                        $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                    } else {
-                                                                        $media_url = $video['video_url'];
-                                                                    }
-                                                                    ?>
-                                                                    <?php if ($video_source == 'youtube') { ?>
-                                                                        <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="js-view-video">
-                                                                            <img src="https://img.youtube.com/vi/<?php echo $video['video_url']; ?>/hqdefault.jpg" />
-                                                                        </a>
-                                                                    <?php } else if ($video_source == 'vimeo') {
-                                                                        $thumbnail_image = vimeo_video_data($video['video_url']); ?>
-                                                                        <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="js-view-video">
-                                                                            <img src="<?php echo $thumbnail_image; ?>" />
-                                                                        </a>
-                                                                    <?php } else if ($video_source == 'upload_video') { ?>
-                                                                        <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="js-view-video">
-                                                                            <video width="214" height="145">
-                                                                                <source src="<?php echo base_url('assets/uploaded_videos/incident_videos/' . $video['video_url']); ?>" type="video/mp4">
-                                                                            </video>
-                                                                        </a>
-                                                                    <?php } else if ($video_source == 'upload_audio') { ?>
-                                                                        <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="js-view-video">
-                                                                            <img src="<?php echo base_url('assets/images/incident_audio.png') ?>" />
-                                                                        </a>
-                                                                    <?php } ?>
-                                                                </figure>
-                                                                <div class="text">
-                                                                    <h3>
-                                                                        <?php
-                                                                        $title = !empty($video['video_title']) ? $video['video_title'] : 'No Title';
-                                                                        echo 'Title : ' . $title;
-                                                                        ?>
-                                                                    </h3>
-                                                                    <div class="post-options">
-                                                                        <ul>
-                                                                            <li><?php echo 'Uploaded Date : ' . reset_datetime(array('datetime' => $video['uploaded_date'], '_this' => $this)); ?></li>
-                                                                        </ul>
-                                                                        <span class="post-author">
-                                                                            <?php
-                                                                            $video_source = $video['video_type'];
-                                                                            $media_url = '';
-                                                                            if ($video_source == 'upload_video') {
-                                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                            } else if ($video_source == 'upload_audio') {
-                                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                            } else {
-                                                                                $media_url = $video['video_url'];
-                                                                            }
-                                                                            ?>
+                                                            <?php
+                                                            $video_source = $video['video_type'];
+                                                            $media_url = '';
+                                                            if ($video_source == 'upload_video') {
+                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
+                                                            } else if ($video_source == 'upload_audio') {
+                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
+                                                            } else {
+                                                                $media_url = $video['video_url'];
+                                                            }
+                                                            //
+                                                            $title = !empty($video['video_title']) ? $video['video_title'] : 'No Title';
+                                                            //
+                                                            ?>
 
-                                                                            <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="btn btn-block btn-info js-view-video">Watch Video</a>
-                                                                        </span>
-                                                                        <span class="post-author" style="margin-right: 10px;"><a href="javascript:void(0)" data-id="<?= $video['sid']; ?>" class="btn btn-block btn-info js-archive-video">Archive Video</a></span>
-
-                                                                        <span class="post-author" style="margin-right: 10px;"><a href="javascript:void(0)" data-id="<?php echo $video['sid']; ?>" data-title="<?php echo $video['video_title']; ?>" class="btn btn-block btn-info js-edit-video">Edit Video</a></span>
-                                                                        <?php if ($video['video_type'] == 'upload_audio' || $video['video_type'] == 'upload_video') { ?>
-                                                                            <span class="post-author" style="margin-right: 10px;">
-                                                                                <a target="_blank" href="<?php echo base_url('incident_reporting_system/download_media_file') . '/' . $video['sid']; ?>" class="btn btn-block btn-info">
-                                                                                    <i class="fa fa-download"></i>
+                                                            <div class="col-sm-3">
+                                                                <article class="article-sec">
+                                                                    <div class="row">
+                                                                        <div class="col-md-12 col-xs-12">
+                                                                            <?php if ($video_source == 'youtube') { ?>
+                                                                                <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" style="display: block; text-align: center;" class="js-view-video">
+                                                                                    <img src="https://img.youtube.com/vi/<?php echo $video['video_url']; ?>/hqdefault.jpg" style="height: 214px !important;" />
                                                                                 </a>
-                                                                            </span>
-                                                                        <?php } ?>
+                                                                            <?php } else if ($video_source == 'vimeo') {
+                                                                                $thumbnail_image = vimeo_video_data($video['video_url']); ?>
+                                                                                <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" style="display: block; text-align: center;" class="js-view-video">
+                                                                                    <img src="<?php echo $thumbnail_image; ?>" style="height: 214px !important;" />
+                                                                                </a>
+                                                                            <?php } else if ($video_source == 'upload_video') { ?>
+                                                                                <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" style="display: block; text-align: center;" class="js-view-video">
+                                                                                    <video width="214" height="145">
+                                                                                        <source src="<?php echo base_url('assets/uploaded_videos/incident_videos/' . $video['video_url']); ?>" type="video/mp4">
+                                                                                    </video>
+                                                                                </a>
+                                                                            <?php } else if ($video_source == 'upload_audio') { ?>
+                                                                                <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" style="display: block; text-align: center;" class="js-view-video">
+                                                                                    <img src="<?php echo base_url('assets/images/incident_audio.png') ?>" style="height: 214px !important;" />
+                                                                                </a>
+                                                                            <?php } ?>
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="full-width announcement-des" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-                                                                        <?php
-                                                                        $user_info = db_get_employee_profile($video['uploaded_by']);
-                                                                        echo 'Uploaded By : ' . strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
-                                                                        ?>
+
+                                                                    <h1 style="height: 58px;">
+                                                                        <?php echo $title; ?>
+                                                                    </h1>
+
+                                                                    <br>
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-6 col-xs-12">
+                                                                            <p class="csColumSection"> <strong>Uploaded DATE </strong></p>
+                                                                            <p>
+                                                                                <?php echo reset_datetime(array('datetime' => $video['uploaded_date'], '_this' => $this)); ?>
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="col-md-6 col-xs-12">
+                                                                            <p class="csColumSection"> <strong>Uploaded By </strong></p>
+                                                                            <p>
+                                                                                <?php
+                                                                                $user_info = db_get_employee_profile($video['uploaded_by']);
+                                                                                echo strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
+                                                                                ?>
+                                                                            </p>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </article>
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-12 col-xs-12 text-center">
+
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-12 col-xs-12 text-center">
+
+                                                                            <a class="btn btn-info csRadius5 csF14 js-view-video"
+                                                                                title='<?php echo $video_source == 'upload_audio' ? "Play Audio" : "Watch Video"; ?>'
+                                                                                video-title="<?php echo $video['video_title']; ?>"
+                                                                                ideo-source="<?php echo $video_source; ?>"
+                                                                                video-url="<?php echo $media_url; ?>"
+                                                                                href="javascript:;">
+                                                                                <?php echo $video_source == 'upload_audio' ? '<i class="fa fa-headphones"> </i>' : '<i class="fa fa-eye"> </i>'; ?>
+                                                                                <?php echo $video_source == 'upload_audio' ? "Play" : "Watch"; ?>
+                                                                            </a>
+
+                                                                            <a class="btn btn-info csRadius5 csF14 js-archive-video"
+                                                                                title='<?php echo $video_source == 'upload_audio' ? "Archive Audio" : "Archive Video"; ?>'
+                                                                                href="javascript:void(0)"
+                                                                                data-id="<?= $video['sid']; ?>">
+                                                                                <i class="fa fa-archive"> </i>
+                                                                                Archive
+                                                                            </a>
+
+                                                                            <a class="btn btn-info csRadius5 csF14 js-edit-video"
+                                                                                title='<?php echo $video_source == 'upload_audio' ? "Edit Audio" : "Edit Video"; ?>'
+                                                                                href="javascript:void(0)"
+                                                                                data-id="<?php echo $video['sid']; ?>"
+                                                                                data-title="<?php echo $video['video_title']; ?>">
+                                                                                <i class="fa fa-pencil"> </i>
+                                                                                Edit
+                                                                            </a>
+
+                                                                            <?php if ($video['video_type'] == 'upload_audio' || $video['video_type'] == 'upload_video') { ?>
+                                                                                <a target="_blank"
+                                                                                    title='<?php echo $video_source == 'upload_audio' ? "Download Audio" : "Download Video"; ?>'
+                                                                                    href="<?php echo base_url('incident_reporting_system/download_media_file') . '/' . $video['sid']; ?>"
+                                                                                    class="btn btn-info csRadius5 csF14">
+                                                                                    <i class="fa fa-download"></i>
+                                                                                    Download
+                                                                                </a>
+                                                                            <?php } ?>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
                                                         <?php } ?>
                                                     </div>
                                                 </div>
@@ -361,87 +399,123 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
 
                                             <div id="archiveVideo" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                                 <div class="card-body">
-                                                    <div class="announcements-listing">
+                                                    <div class="row">
                                                         <?php $watch_video = base_url('incident_reporting_system/watch_video'); ?>
                                                         <?php foreach ($videos_archived as $video) { ?>
-                                                            <article class="listing-article">
-                                                                <figure>
-                                                                    <?php
-                                                                    $video_source = $video['video_type'];
-                                                                    $media_url = '';
-                                                                    if ($video_source == 'upload_video') {
-                                                                        $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                    } else if ($video_source == 'upload_audio') {
-                                                                        $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                    } else {
-                                                                        $media_url = $video['video_url'];
-                                                                    }
-                                                                    ?>
-                                                                    <?php if ($video_source == 'youtube') { ?>
-                                                                        <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="js-view-video">
-                                                                            <img src="https://img.youtube.com/vi/<?php echo $video['video_url']; ?>/hqdefault.jpg" />
-                                                                        </a>
-                                                                    <?php } else if ($video_source == 'vimeo') {
-                                                                        $thumbnail_image = vimeo_video_data($video['video_url']); ?>
-                                                                        <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="js-view-video">
-                                                                            <img src="<?php echo $thumbnail_image; ?>" />
-                                                                        </a>
-                                                                    <?php } else if ($video_source == 'upload_video') { ?>
-                                                                        <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="js-view-video">
-                                                                            <video width="214" height="145">
-                                                                                <source src="<?php echo base_url('assets/uploaded_videos/incident_videos/' . $video['video_url']); ?>" type="video/mp4">
-                                                                            </video>
-                                                                        </a>
-                                                                    <?php } else if ($video_source == 'upload_audio') { ?>
-                                                                        <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="js-view-video">
-                                                                            <img src="<?php echo base_url('assets/images/incident_audio.png') ?>" />
-                                                                        </a>
-                                                                    <?php } ?>
-                                                                </figure>
-                                                                <div class="text">
-                                                                    <h3>
-                                                                        <?php
-                                                                        $title = !empty($video['video_title']) ? $video['video_title'] : 'No Title';
-                                                                        echo 'Title : ' . $title;
-                                                                        ?>
-                                                                    </h3>
-                                                                    <div class="post-options">
-                                                                        <ul>
-                                                                            <li><?php echo 'Uploaded Date : ' . reset_datetime(array('datetime' => $video['uploaded_date'], '_this' => $this)); ?></li>
-                                                                        </ul>
-                                                                        <span class="post-author">
-                                                                            <?php
-                                                                            $video_source = $video['video_type'];
-                                                                            $media_url = '';
-                                                                            if ($video_source == 'upload_video') {
-                                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                            } else if ($video_source == 'upload_audio') {
-                                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                            } else {
-                                                                                $media_url = $video['video_url'];
-                                                                            }
-                                                                            ?>
-
-                                                                            <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="btn btn-block btn-info js-view-video">Watch Video</a>
-                                                                        </span>
-                                                                        <span class="post-author" style="margin-right: 10px;"><a href="javascript:void(0)" data-id="<?= $video['sid']; ?>" class="btn btn-block btn-info js-active-video">Activate Video</a></span>
-                                                                        <span class="post-author" style="margin-right: 10px;"><a href="javascript:void(0)" data-id="<?php echo $video['sid']; ?>" data-title="<?php echo $video['video_title']; ?>" class="btn btn-block btn-info js-edit-video">Edit Video</a></span>
-                                                                        <?php if ($video['video_type'] == 'upload_audio' || $video['video_type'] == 'upload_video') { ?>
-                                                                            <span class="post-author" style="margin-right: 10px;">
-                                                                                <a target="_blank" href="<?php echo base_url('incident_reporting_system/download_media_file') . '/' . $video['sid']; ?>" class="btn btn-block btn-info">
-                                                                                    <i class="fa fa-download"></i>
+                                                            <?php
+                                                            $video_source = $video['video_type'];
+                                                            $media_url = '';
+                                                            if ($video_source == 'upload_video') {
+                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
+                                                            } else if ($video_source == 'upload_audio') {
+                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
+                                                            } else {
+                                                                $media_url = $video['video_url'];
+                                                            }
+                                                            //
+                                                            $title = !empty($video['video_title']) ? $video['video_title'] : 'No Title';
+                                                            //
+                                                            ?>
+                                                            <div class="col-sm-3">
+                                                                <article class="article-sec">
+                                                                    <div class="row">
+                                                                        <div class="col-md-12 col-xs-12">
+                                                                            <?php if ($video_source == 'youtube') { ?>
+                                                                                <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" style="display: block; text-align: center;" class="js-view-video">
+                                                                                    <img src="https://img.youtube.com/vi/<?php echo $video['video_url']; ?>/hqdefault.jpg" style="height: 214px !important;" />
                                                                                 </a>
-                                                                            </span>
-                                                                        <?php } ?>
+                                                                            <?php } else if ($video_source == 'vimeo') {
+                                                                                $thumbnail_image = vimeo_video_data($video['video_url']); ?>
+                                                                                <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" style="display: block; text-align: center;" class="js-view-video">
+                                                                                    <img src="<?php echo $thumbnail_image; ?>" style="height: 214px !important;" />
+                                                                                </a>
+                                                                            <?php } else if ($video_source == 'upload_video') { ?>
+                                                                                <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" style="display: block; text-align: center;" class="js-view-video">
+                                                                                    <video width="214" height="145">
+                                                                                        <source src="<?php echo base_url('assets/uploaded_videos/incident_videos/' . $video['video_url']); ?>" type="video/mp4">
+                                                                                    </video>
+                                                                                </a>
+                                                                            <?php } else if ($video_source == 'upload_audio') { ?>
+                                                                                <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" style="display: block; text-align: center;" class="js-view-video">
+                                                                                    <img src="<?php echo base_url('assets/images/incident_audio.png') ?>" style="height: 214px !important;" />
+                                                                                </a>
+                                                                            <?php } ?>
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="full-width announcement-des" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
-                                                                        <?php
-                                                                        $user_info = db_get_employee_profile($video['uploaded_by']);
-                                                                        echo 'Uploaded By : ' . strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
-                                                                        ?>
+
+                                                                    <h1 style="height: 58px;">
+                                                                        <?php echo $title; ?>
+                                                                    </h1>
+
+                                                                    <br>
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-6 col-xs-12">
+                                                                            <p class="csColumSection"> <strong>Uploaded DATE </strong></p>
+                                                                            <p>
+                                                                                <?php echo reset_datetime(array('datetime' => $video['uploaded_date'], '_this' => $this)); ?>
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="col-md-6 col-xs-12">
+                                                                            <p class="csColumSection"> <strong>Uploaded By </strong></p>
+                                                                            <p>
+                                                                                <?php
+                                                                                $user_info = db_get_employee_profile($video['uploaded_by']);
+                                                                                echo strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
+                                                                                ?>
+                                                                            </p>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            </article>
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-12 col-xs-12 text-center">
+
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-12 col-xs-12 text-center">
+
+                                                                            <a class="btn btn-info csRadius5 csF14 js-view-video"
+                                                                                title='<?php echo $video_source == 'upload_audio' ? "Play Audio" : "Watch Video"; ?>'
+                                                                                video-title="<?php echo $video['video_title']; ?>"
+                                                                                ideo-source="<?php echo $video_source; ?>"
+                                                                                video-url="<?php echo $media_url; ?>"
+                                                                                href="javascript:;">
+                                                                                <?php echo $video_source == 'upload_audio' ? '<i class="fa fa-headphones"> </i>' : '<i class="fa fa-eye"> </i>'; ?>
+                                                                                <?php echo $video_source == 'upload_audio' ? "Play" : "Watch"; ?>
+                                                                            </a>
+
+                                                                            <a class="btn btn-info csRadius5 csF14 js-active-video"
+                                                                                title='<?php echo $video_source == 'upload_audio' ? "Activate Audio" : "Activate Video"; ?>'
+                                                                                href="javascript:void(0)"
+                                                                                data-id="<?= $video['sid']; ?>">
+                                                                                <i class="fa fa-archive"> </i>
+                                                                                Activate
+                                                                            </a>
+
+                                                                            <a class="btn btn-info csRadius5 csF14 js-edit-video"
+                                                                                title='<?php echo $video_source == 'upload_audio' ? "Edit Audio" : "Edit Video"; ?>'
+                                                                                href="javascript:void(0)"
+                                                                                data-id="<?php echo $video['sid']; ?>"
+                                                                                data-title="<?php echo $video['video_title']; ?>">
+                                                                                <i class="fa fa-pencil"> </i>
+                                                                                Edit
+                                                                            </a>
+
+                                                                            <?php if ($video['video_type'] == 'upload_audio' || $video['video_type'] == 'upload_video') { ?>
+                                                                                <a target="_blank"
+                                                                                    title='<?php echo $video_source == 'upload_audio' ? "Download Audio" : "Download Video"; ?>'
+                                                                                    href="<?php echo base_url('incident_reporting_system/download_media_file') . '/' . $video['sid']; ?>"
+                                                                                    class="btn btn-info csRadius5 csF14">
+                                                                                    <i class="fa fa-download"></i>
+                                                                                    Download
+                                                                                </a>
+                                                                            <?php } ?>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </article>
+                                                            </div>
                                                         <?php } ?>
                                                     </div>
                                                 </div>
@@ -522,73 +596,114 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
 
                                             <div id="activeDocumentsTab" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                                 <div class="card-body">
-                                                    <div class="table-responsive table-outer">
-                                                        <div class="table-wrp data-table">
-                                                            <?php if (!empty($get_incident_document)) { ?>
-                                                                <table class="table table-bordered table-hover table-stripped">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th class="text-center">Document Title</th>
-                                                                            <th class="text-center">Uploaded By</th>
-                                                                            <th class="text-center">Action</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        <?php foreach ($get_incident_document as $key => $document) { ?>
-                                                                            <tr>
-                                                                                <td class="text-center">
-                                                                                    <?php echo $document['document_title']; ?>
-                                                                                </td>
-                                                                                <td class="text-center">
-                                                                                    <?php
-                                                                                    $user_info = db_get_employee_profile($document['employer_id']);
-                                                                                    echo strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
-                                                                                    ?>
-                                                                                    <br>
-                                                                                    <?php
-                                                                                    echo '<b>Uploaded Date : </b>' . reset_datetime(array('datetime' => $document['uploaded_date'], '_this' => $this));
-                                                                                    ?>
-                                                                                </td>
-                                                                                <td class="text-center">
-                                                                                    <?php
-                                                                                    $download_url = $document['file_code'];
-                                                                                    $file_name = explode(".", $download_url);
-                                                                                    $document_name = $file_name[0];
-                                                                                    $document_extension = $file_name[1];
-                                                                                    if ($document_extension == 'pdf') {
-                                                                                        $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
-                                                                                        $preview_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $download_url . '&embedded=true';
-                                                                                    } else if ($document_extension == 'doc') {
-                                                                                        $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
-                                                                                        $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
-                                                                                    } else if ($document_extension == 'docx') {
-                                                                                        $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
-                                                                                        $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
-                                                                                    } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
-                                                                                        $print_url = base_url('incident_reporting_system/print_image/' . $document['id']);
-                                                                                        $preview_url = AWS_S3_BUCKET_URL . $download_url;
-                                                                                    } else {
-                                                                                        $print_url = '';
-                                                                                    }
-                                                                                    ?>
-
-                                                                                    <a href="javascript:;" class="pull-right print-incident modify-comment-btn" onclick="view_incident_doc(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $download_url; ?>" data-preview-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-file"></i> View</a>
-
-                                                                                    <a target="_blank" href="<?php echo $print_url; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-print"></i> Print</a>
-
-                                                                                    <a target="_blank" href="<?php echo base_url('incident_reporting_system/download_incident_document') . '/' . $download_url; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-download"></i> Download</a>
-
-                                                                                    <a href="javascript:void(0)" class="js-edit-document print-incident pull-right modify-comment-btn" data-id="<?php echo $document['id']; ?>" data-url="<?php echo $preview_url; ?>" data-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-pencil"></i>&nbsp;Edit</a>
-
-                                                                                    <a href="javascript:void(0)" class="js-archive-document pull-right print-incident modify-comment-btn" data-id="<?php echo $document['id']; ?>"><i class="fa fa-archive"></i>&nbsp;Archive</a>
-                                                                                </td>
-                                                                            </tr>
-                                                                        <?php } ?>
-                                                                    </tbody>
-                                                                </table>
+                                                    <div class="row">
+                                                        <?php if (!empty($get_incident_document)) { ?>
+                                                            <?php foreach ($get_incident_document as $key => $document) { ?>
+                                                                <?php
+                                                                $download_url = $document['file_code'];
+                                                                $file_name = explode(".", $download_url);
+                                                                $document_name = $file_name[0];
+                                                                $document_extension = strtolower($file_name[1]);
+                                                                //
+                                                                $documentType = 'Document';
+                                                                //
+                                                                if ($document_extension == 'pdf') {
+                                                                    $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
+                                                                    $preview_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $download_url . '&embedded=true';
+                                                                } else if ($document_extension == 'doc') {
+                                                                    $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
+                                                                    $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
+                                                                } else if ($document_extension == 'docx') {
+                                                                    $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+                                                                    $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
+                                                                } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                                                    $print_url = base_url('incident_reporting_system/print_image/' . $document['id']);
+                                                                    $preview_url = AWS_S3_BUCKET_URL . $download_url;
+                                                                    $documentType = 'Image';
+                                                                } else {
+                                                                    $print_url = '';
+                                                                }
+                                                                //
+                                                                $user_info = db_get_employee_profile($document['employer_id']);
+                                                                $uploadedBy = strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
+                                                                $uploadedDate = reset_datetime(array('datetime' => $document['uploaded_date'], '_this' => $this));
+                                                                ?>
+                                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
+                                                                    <div class="widget-box">
+                                                                        <div class="documents-box full-width">
+                                                                            <h2>
+                                                                                <?php echo $documentType; ?>
+                                                                            </h2>
+                                                                            <div class="documents-title">
+                                                                                <span>Title : <sub><?php echo $document['document_title']; ?></sub></span>
+                                                                            </div>    
+                                                                            <div class="documents-title">
+                                                                                <span>Uploaded By : <sub><?php echo $uploadedBy; ?></sub></span>
+                                                                            </div>    
+                                                                            <div class="documents-title">
+                                                                                <span>Uploaded Date : <sub><?php echo $uploadedDate; ?></sub></span>
+                                                                            </div>
+                                                                            <div class="status-panel">
+                                                                                <div class="row">
+                                                                                    <div class="col-lg-1 col-md-1 col-xs-1 col-sm-1"></div>
+                                                                                    <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                                                                                        <a 
+                                                                                            href="javascript:;" 
+                                                                                            class="btn btn-block btn-info" 
+                                                                                            title="<?php echo $documentType == 'Image' ? 'Preview Image' : 'Preview Document'; ?>"
+                                                                                            onclick="view_incident_doc(this);" 
+                                                                                            data-preview-url="<?= AWS_S3_BUCKET_URL . $download_url; ?>" 
+                                                                                            data-preview-ext="<?php echo $document_extension; ?>" 
+                                                                                            data-title="<?php echo $document['document_title']; ?>">
+                                                                                            <i class="fa fa-eye"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                                                                                        <a 
+                                                                                            target="_blank" 
+                                                                                            title="<?php echo $documentType == 'Image' ? 'Print Image' : 'Print Document'; ?>"
+                                                                                            href="<?php echo $print_url; ?>" 
+                                                                                            class="btn btn-block btn-info">
+                                                                                            <i class="fa fa-print"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                                                                                        <a 
+                                                                                            target="_blank" 
+                                                                                            title="<?php echo $documentType == 'Image' ? 'Download Image' : 'Download Document'; ?>"
+                                                                                            href="<?php echo base_url('incident_reporting_system/download_incident_document') . '/' . $download_url; ?>" 
+                                                                                            class="btn btn-block btn-info">
+                                                                                            <i class="fa fa-download"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                                                                                        <a 
+                                                                                            href="javascript:void(0)" 
+                                                                                            title="<?php echo $documentType == 'Image' ? 'Edit Image' : 'Edit Document'; ?>"
+                                                                                            class="btn btn-block btn-info js-edit-document" 
+                                                                                            data-id="<?php echo $document['id']; ?>" 
+                                                                                            data-url="<?php echo $preview_url; ?>" 
+                                                                                            data-ext="<?php echo $document_extension; ?>" 
+                                                                                            data-title="<?php echo $document['document_title']; ?>">
+                                                                                            <i class="fa fa-pencil"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                                                                                        <a 
+                                                                                            href="javascript:void(0)" 
+                                                                                            title="<?php echo $documentType == 'Image' ? 'Archive Image' : 'Archive Document'; ?>"
+                                                                                            class="btn btn-block btn-info js-archive-document" 
+                                                                                            data-id="<?php echo $document['id']; ?>">
+                                                                                            <i class="fa fa-archive"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             <?php } ?>
-                                                            </table>
-                                                        </div>
+                                                        <?php } ?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -612,75 +727,113 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
 
                                                 <div id="archivedDocumentsTab" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                                     <div class="card-body">
-                                                        <div class="table-responsive table-outer">
-                                                            <div class="table-wrp data-table">
-                                                                <?php if (!empty($get_incident_document_archived)) { ?>
-                                                                    <table class="table table-bordered table-hover table-stripped">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th class="text-center">Document Title</th>
-                                                                                <th class="text-center">Uploaded By</th>
-                                                                                <th class="text-center">Action</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <?php foreach ($get_incident_document_archived as $key => $document) { ?>
-                                                                                <tr>
-                                                                                    <td class="text-center">
-                                                                                        <?php echo $document['document_title']; ?>
-                                                                                    </td>
-                                                                                    <td class="text-center">
-                                                                                        <?php
-                                                                                        $user_info = db_get_employee_profile($document['employer_id']);
-                                                                                        echo strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
-                                                                                        ?>
-                                                                                        <br>
-                                                                                        <?php
-                                                                                        echo '<b>Uploaded Date : </b>' . reset_datetime(array('datetime' => $document['uploaded_date'], '_this' => $this));
-                                                                                        ?>
-                                                                                    </td>
-                                                                                    <td class="text-center">
-                                                                                        <?php
-                                                                                        $download_url = $document['file_code'];
-                                                                                        $file_name = explode(".", $download_url);
-                                                                                        $document_name = $file_name[0];
-                                                                                        $document_extension = $file_name[1];
-
-                                                                                        if ($document_extension == 'pdf') {
-                                                                                            $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
-                                                                                            $preview_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $download_url . '&embedded=true';
-                                                                                        } else if ($document_extension == 'doc') {
-                                                                                            $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
-                                                                                            $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
-                                                                                        } else if ($document_extension == 'docx') {
-                                                                                            $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
-                                                                                            $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
-                                                                                        } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
-                                                                                            $print_url = base_url('incident_reporting_system/print_image/' . $document['id']);
-                                                                                            $preview_url = AWS_S3_BUCKET_URL . $download_url;
-                                                                                        } else {
-                                                                                            $print_url = '';
-                                                                                        }
-                                                                                        ?>
-
-                                                                                        <a href="javascript:;" class="pull-right print-incident modify-comment-btn" onclick="view_incident_doc(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $download_url; ?>" data-preview-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-file"></i> View</a>
-
-                                                                                        <a target="_blank" href="<?php echo $print_url; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-print"></i> Print</a>
-
-                                                                                        <a target="_blank" href="<?php echo base_url('incident_reporting_system/download_incident_document') . '/' . $download_url; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-download"></i> Download</a>
-
-                                                                                        <a href="javascript:void(0)" class="js-edit-document print-incident pull-right modify-comment-btn" data-id="<?php echo $document['id']; ?>" data-url="<?php echo $preview_url; ?>" data-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-pencil"></i>&nbsp;Edit</a>
-
-                                                                                        <a href="javascript:void(0)" class="js-active-document pull-right print-incident modify-comment-btn" data-id="<?php echo $document['id']; ?>"><i class="fa fa-archive"></i>&nbsp;Activate</a>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            <?php } ?>
-                                                                        </tbody>
-                                                                    </table>
-                                                                <?php } ?>
-                                                                </table>
-                                                            </div>
-                                                        </div>
+                                                        <?php if (!empty($get_incident_document_archived)) { ?>
+                                                            <?php foreach ($get_incident_document_archived as $key => $document) { ?>
+                                                                <?php
+                                                                $download_url = $document['file_code'];
+                                                                $file_name = explode(".", $download_url);
+                                                                $document_name = $file_name[0];
+                                                                $document_extension = strtolower($file_name[1]);
+                                                                //
+                                                                $documentType = 'Document';
+                                                                //
+                                                                if ($document_extension == 'pdf') {
+                                                                    $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
+                                                                    $preview_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $download_url . '&embedded=true';
+                                                                } else if ($document_extension == 'doc') {
+                                                                    $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
+                                                                    $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
+                                                                } else if ($document_extension == 'docx') {
+                                                                    $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+                                                                    $preview_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $download_url);
+                                                                } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                                                    $print_url = base_url('incident_reporting_system/print_image/' . $document['id']);
+                                                                    $preview_url = AWS_S3_BUCKET_URL . $download_url;
+                                                                    $documentType = 'Image';
+                                                                } else {
+                                                                    $print_url = '';
+                                                                }
+                                                                //
+                                                                $user_info = db_get_employee_profile($document['employer_id']);
+                                                                $uploadedBy = strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
+                                                                $uploadedDate = reset_datetime(array('datetime' => $document['uploaded_date'], '_this' => $this));
+                                                                ?>
+                                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
+                                                                    <div class="widget-box">
+                                                                        <div class="documents-box full-width">
+                                                                            <h2>
+                                                                                <?php echo $documentType; ?>
+                                                                            </h2>
+                                                                            <div class="documents-title">
+                                                                                <span>Title : <sub><?php echo $document['document_title']; ?></sub></span>
+                                                                            </div>    
+                                                                            <div class="documents-title">
+                                                                                <span>Uploaded By : <sub><?php echo $uploadedBy; ?></sub></span>
+                                                                            </div>    
+                                                                            <div class="documents-title">
+                                                                                <span>Uploaded Date : <sub><?php echo $uploadedDate; ?></sub></span>
+                                                                            </div>
+                                                                            <div class="status-panel">
+                                                                                <div class="row">
+                                                                                    <div class="col-lg-1 col-md-1 col-xs-1 col-sm-1"></div>
+                                                                                    <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                                                                                        <a 
+                                                                                            href="javascript:;" 
+                                                                                            class="btn btn-block btn-info" 
+                                                                                            title="<?php echo $documentType == 'Image' ? 'Preview Image' : 'Preview Document'; ?>"
+                                                                                            onclick="view_incident_doc(this);" 
+                                                                                            data-preview-url="<?= AWS_S3_BUCKET_URL . $download_url; ?>" 
+                                                                                            data-preview-ext="<?php echo $document_extension; ?>" 
+                                                                                            data-title="<?php echo $document['document_title']; ?>">
+                                                                                            <i class="fa fa-eye"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                                                                                        <a 
+                                                                                            target="_blank" 
+                                                                                            title="<?php echo $documentType == 'Image' ? 'Print Image' : 'Print Document'; ?>"
+                                                                                            href="<?php echo $print_url; ?>" 
+                                                                                            class="btn btn-block btn-info">
+                                                                                            <i class="fa fa-print"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                                                                                        <a 
+                                                                                            target="_blank" 
+                                                                                            title="<?php echo $documentType == 'Image' ? 'Download Image' : 'Download Document'; ?>"
+                                                                                            href="<?php echo base_url('incident_reporting_system/download_incident_document') . '/' . $download_url; ?>" 
+                                                                                            class="btn btn-block btn-info">
+                                                                                            <i class="fa fa-download"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                                                                                        <a 
+                                                                                            href="javascript:void(0)" 
+                                                                                            title="<?php echo $documentType == 'Image' ? 'Edit Image' : 'Edit Document'; ?>"
+                                                                                            class="btn btn-block btn-info js-edit-document" 
+                                                                                            data-id="<?php echo $document['id']; ?>" 
+                                                                                            data-url="<?php echo $preview_url; ?>" 
+                                                                                            data-ext="<?php echo $document_extension; ?>" 
+                                                                                            data-title="<?php echo $document['document_title']; ?>">
+                                                                                            <i class="fa fa-pencil"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                                                                                        <a 
+                                                                                            href="javascript:void(0)" 
+                                                                                            title="<?php echo $documentType == 'Image' ? 'Activate Image' : 'Activate Document'; ?>"
+                                                                                            class="btn btn-block btn-info js-active-document" 
+                                                                                            data-id="<?php echo $document['id']; ?>">
+                                                                                            <i class="fa fa-archive"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            <?php } ?> 
+                                                        <?php } ?> 
                                                     </div>
                                                 </div>
                                             </div>
@@ -935,7 +1088,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                     <!-- Assign Employees Section Start -->
                     <?php if ($assigned_incidents[0]['status'] != 'Closed') { ?>
                         <?php if (!empty($employees)) { ?>
-                            
+
                             <div class="table-responsive table-outer">
                                 <div class="panel panel-blue">
                                     <div class="panel-heading incident-panal-heading">
@@ -948,7 +1101,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                 <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12">
                                                     <div class="row">
                                                         <?php foreach ($employees as $employee) { ?>
-                                                            <?php if (in_array($employee['sid'],$assignedEmployees) || $employee['sid'] == $current_user || $employee['sid'] == $incidentReporterId) continue; ?>
+                                                            <?php if (in_array($employee['sid'], $assignedEmployees) || $employee['sid'] == $current_user || $employee['sid'] == $incidentReporterId) continue; ?>
                                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                                 <label class="control control--checkbox">
                                                                     <?php echo getUserNameBySID($employee['sid']); ?>
@@ -957,7 +1110,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                 </label>
                                                             </div>
                                                         <?php } ?>
-                                                        
+
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -985,7 +1138,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                         <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12">
                                             <div class="row">
                                                 <?php foreach ($employees as $employee) { ?>
-                                                    <?php if (in_array($employee['sid'],$assignedEmployees) || $employee['sid'] == $current_user || $employee['sid'] == $incidentReporterId) { ?>
+                                                    <?php if (in_array($employee['sid'], $assignedEmployees) || $employee['sid'] == $current_user || $employee['sid'] == $incidentReporterId) { ?>
                                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                             <label class="control control--checkbox">
                                                                 <?php echo getUserNameBySID($employee['sid']); ?>
@@ -993,7 +1146,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                 <div class="control__indicator"></div>
                                                             </label>
                                                         </div>
-                                                    <?php } ?>    
+                                                    <?php } ?>
                                                 <?php } ?>
                                             </div>
                                         </div>

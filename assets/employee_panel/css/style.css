@@ -2910,3 +2910,53 @@ input[type='checkbox'].user_checkbox:checked:after {
   background-color: #5A4FCF ;
   text-decoration: underline;
 }
+
+.documents-title span {
+  font-size: 20px;
+}
+.documents-title {
+  padding: 4px 15px;
+  color: #fff;
+}
+.documents-title sub {
+  font-size: 18px;
+  bottom: 0;
+}
+.documents-box {
+  height: 275px;
+  position: relative;
+  overflow: hidden;
+}
+.documents-box h2 {
+  font-size: 32px;
+  margin-bottom: 40px !important;
+  color: #fff;
+  padding: 10px 15px;
+  line-height: 30px;
+  margin: 0;
+}
+.documents-box {
+  position: relative;
+  background-color: #3554dc;
+}
+.documents-box .status-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  color: #fff;
+  padding: 10px 15px;
+  z-index: 2;
+}
+.documents-box:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background: url("../images/bg-docs.png") center 0 no-repeat;
+  width: 100%;
+  height: 235px;
+}
+.documents-box .status-panel {
+  background: rgba(16, 50, 195, 0.6);
+}
