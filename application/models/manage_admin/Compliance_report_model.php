@@ -226,4 +226,42 @@
         return $result;
     }
 
+
+    //
+    function add_compliance_incident_type($data) {
+        $this->db->insert('compliance_incident_type', $data);
+        return $this->db->insert_id();
+    }
+
+    
+    //
+    function update_compliance_incident_type($id, $data) {
+        $this->db->where('id', $id);
+        $type = $this->db->update('compliance_incident_type', $data);
+        return $type;
+    }
+
+
+    //
+    function get_all_compliance_incidents() {
+        $this->db->select('*');
+        $types = $this->db->get('compliance_incident_type')->result_array();
+        return $types;
+    }
+
+    //
+    function get_compliance_incident_type($id) {
+        $this->db->select('*');
+        $this->db->where('id', $id);
+        $type = $this->db->get('compliance_incident_type')->result_array();
+        return $type;
+    }
+    
+
+    //
+    function update_incident_type($id, $data) {
+        $this->db->where('id', $id);
+        $type = $this->db->update('compliance_incident_type', $data);
+        return $type;
+    }
 }

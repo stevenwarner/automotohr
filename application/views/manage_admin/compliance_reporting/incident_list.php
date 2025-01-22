@@ -21,8 +21,8 @@
                                                 <?php if (check_access_permissions_for_view($security_details, 'add_new_type')) { ?>
                                                     <a id="search_btn" href="<?php echo base_url('manage_admin/reports/compliance_reporting/add_new_compliance_type')?>" class="btn btn-success"><i class="fa fa-plus-square"> </i> Add New  Compliance Incident</a>
                                                 <?php } ?>
-                                                <a id="search_btn" href="<?php echo base_url('manage_admin/reports/compliance_reporting/incident_list')?>" class="btn btn-success"><i class="fa fa-eye"> </i> Compliance Incident List</a>
 
+                                                    <a id="search_btn" href="<?php echo base_url('manage_admin/reports/compliance_reporting/incident_list')?>" class="btn btn-success"><i class="fa fa-eye"> </i> Compliance Incident List</a>
 
                                                 <?php if (check_access_permissions_for_view($security_details, 'view_incidents')) { ?>
                                                     <a id="back_btn" href="<?php echo base_url('manage_admin/reports/compliance_reporting/reported_incidents')?>" class="btn btn-success"><i class="fa fa-eye"> </i> View Compliance</a>
@@ -44,12 +44,12 @@
                                                         <tbody>
                                                         <!--All records-->
 
-                                                        <?php if(sizeof($compliance_types)>0) {
-                                                            foreach ($compliance_types as $type) {
+                                                        <?php if(sizeof($compliance_incidents_types)>0) {
+                                                            foreach ($compliance_incidents_types as $type) {
                                                                 ?>
                                                                 <tr>
                                                                     <td>
-                                                                        <?= $type['compliance_name']?>
+                                                                        <?= $type['incident_name']?>
                                                                     </td>
 
                                                                     <td id="status-<?=$type['id']?>">
@@ -58,7 +58,7 @@
                                                                     
                                                                     <?php if (check_access_permissions_for_view($security_details, 'edit_type')) { ?>
                                                                         <td>
-                                                                            <a title="Edit Type" href="<?php echo base_url()?>manage_admin/reports/compliance_reporting/add_new_type/<?php echo $type['id']; ?>" class="btn btn-info btn-sm pencil_useful_link">
+                                                                            <a title="Edit Type" href="<?php echo base_url()?>manage_admin/reports/compliance_reporting/add_new_compliance_type/<?php echo $type['id']; ?>" class="btn btn-info btn-sm pencil_useful_link">
                                                                                 <i class="fa fa-pencil"></i>
                                                                             </a>
                                                                         </td>
@@ -75,13 +75,7 @@
                                                                                title="Enable Type" src="Enable"><i class="fa fa-toggle-on"></i></a>
                                                                             <?php } ?>
                                                                         </td>
-                                                                    <?php } ?>
-                                                                    <?php if (check_access_permissions_for_view($security_details, 'view_question')) { ?>
-                                                                        <td><a href="<?php echo base_url('manage_admin/reports/compliance_reporting/view_compliance_questions/'.$type['id'])?>"
-                                                                               class="btn btn-warning btn-sm"
-                                                                               title="Delete Employer">View Questions</a>
-                                                                        </td>
-                                                                    <?php } ?>
+                                                                    <?php } ?>                                                                 
 
                                                                 </tr>
                                                             <?php }
@@ -89,7 +83,7 @@
                                                         else{ ?>
                                                             <tr>
                                                                 <td colspan="8" class="text-center">
-                                                                    <span class="no-data">No Compliance Type Found</span>
+                                                                    <span class="no-data">No Compliance incident_Type Found</span>
                                                                 </td>
                                                             </tr>
                                                         <?php }?>
@@ -128,7 +122,7 @@
                     data:{
                         status:0
                     },
-                    url: '<?= base_url('manage_admin/reports/compliance_reporting/enable_disable_type')?>/' + id,
+                    url: '<?= base_url('manage_admin/reports/compliance_reporting/enable_disable_incident_type')?>/' + id,
                     success: function(data){
                         data = JSON.parse(data);
                         if(data.message == 'updated'){

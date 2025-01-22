@@ -15,7 +15,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                            <a id="back_btn" href="<?php echo base_url('manage_admin/reports/compliance_reporting') ?>" class="btn btn-success"><i class="fa fa-arrow-left"> </i> Go Back</a>
+                                            <a id="back_btn" href="<?php echo base_url('manage_admin/reports/compliance_reporting/incident_list') ?>" class="btn btn-success"><i class="fa fa-arrow-left"> </i> Go Back</a>
                                         </div>
                                     </div>
                                     <div class="add-new-company">
@@ -26,11 +26,16 @@
                                                         <h1 class="page-title"><?= $form == 'add' ? 'New Incident Type' : $name; ?></h1>
                                                     </div>
                                                 </div>
+
+                                            </div>
+
+
+                                            <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="field-row field-row-autoheight">
-                                                        <label for="compliance_name">Compliance Name <span class="hr-required">*</span></label>
-                                                        <?php echo form_input('compliance_name', set_value('compliance_name', $name), 'class="hr-form-fileds"'); ?>
-                                                        <?php echo form_error('compliance_name'); ?>
+                                                        <label for="compliance_name">Incident Name <span class="hr-required">*</span></label>
+                                                        <?php echo form_input('incident_name', set_value('incident_name', $name), 'class="hr-form-fileds"'); ?>
+                                                        <?php echo form_error('incident_name'); ?>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -43,77 +48,53 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    <div class="description-editor">
-                                                        <label>Add Instructions: <span class="hr-required">*</span></label>
-                                                        <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
-                                                        <textarea class="ckeditor" name="instructions" rows="8" cols="60" required>
-                                                                <?php echo set_value('instructions', $ins); ?>
-                                                            </textarea>
+                                            </div>
+
+
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label for="compliance_name">Code</label>
+                                                        <?php echo form_input('code', set_value('code', $code), 'class="hr-form-fileds"'); ?>
+                                                    
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    <div class="description-editor">
-                                                        <label>Add Reasons: <span class="hr-required">*</span></label>
-                                                        <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
-                                                        <textarea class="ckeditor" name="reasons" rows="8" cols="60" required>
-                                                                <?php echo set_value('reasons', $rsn); ?>
-                                                            </textarea>
+
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label for="compliance_name">Priority </label>
+                                                        <?php echo form_input('priority', set_value('priority', $priority), 'class="hr-form-fileds"'); ?>
+                                                
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div class="hr-box">
-                                                <div class="heading-title page-title">
-                                                    <h1 class="page-title"><i class=""></i>Available Incidents</h1>
-                                                </div>
-                                                <div class="hr-innerpadding">
-                                                    <div class="table-responsive">
-                                                            <table class="table table-bordered table-hover table-striped">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th><input type="checkbox" id="jsCheckAll"></th>
-                                                                        <th>Incident Name</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <?php if (sizeof($compliance_incidents_types) > 0) {
-                                                                        foreach ($compliance_incidents_types as $type) {
-                                                                    ?>
-                                                                            <tr>
-                                                                                <th><input type="checkbox" name="incidents[]" value="<?php echo $type; ?>"></th>
-                                                                                <td>
-                                                                                    <?= $type['incident_name'] ?>
-                                                                                </td>
 
-                                                                            </tr>
-                                                                        <?php }
-                                                                    } else { ?>
-                                                                        <tr>
-                                                                            <td colspan="8" class="text-center">
-                                                                                <span class="no-data">No Compliance incident_Type Found</span>
-                                                                            </td>
-                                                                        </tr>
-                                                                    <?php } ?>
-                                                                </tbody>
-                                                            </table>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    <div class="description-editor">
+                                                        <label>Description <span class="hr-required">*</span></label>
+                                                        <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
+                                                        <textarea class="ckeditor" name="description" rows="8" cols="60" required>
+                                                                <?php echo set_value('description', $ins); ?>
+                                                            </textarea>
                                                     </div>
                                                 </div>
+
                                             </div>
 
+
+                                        <div class="row">
                                             <input type="hidden" value="<?= $form ?>">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center hr-btn-panel">
                                                 <input type="submit" class="search-btn" value="<?= $form == 'add' ? 'Add' : 'Update' ?>" name="form-submit">
-                                                <?php if (isset($safety_checklist) && $safety_checklist == '1') { ?>
-                                                    <input type="button" value="Cancel" class="search-btn bg-dark-cancel_btn" onclick="document.location.href = '<?php echo base_url("manage_admin/reports/compliance_reporting/checklists") ?>'">
-                                                <?php } else { ?>
-                                                    <input type="button" value="Cancel" class="search-btn bg-dark-cancel_btn" onclick="document.location.href = '<?php echo base_url("manage_admin/reports/compliance_reporting") ?>'">
-                                                <?php } ?>
+                                               
                                             </div>
+                                        </div>
+
                                     </div>
                                     </form>
                                 </div>
-
 
                             </div>
                         </div>
@@ -226,12 +207,5 @@
                 $('#link_to_manager').show();
             }
         });
-    });
-
-
-
-
-    $('#jsCheckAll').click(function() {
-        $('[name="incidents[]"]').prop('checked', $(this).prop('checked'))
     });
 </script>
