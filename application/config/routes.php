@@ -2443,3 +2443,12 @@ $route['lms/courses/move_recursive_into_history'] = 'v1/Courses/moveRecursiveCou
 $route['lms/manager_report/(:any)'] = 'v1/Courses/managerCoursesReport/$1';
 $route["cms/update_solutions_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateSolutionsSortOrder/$1";
 
+
+// Compliance Report Links
+$route['compliance_report/(:any)/(:num)']['get'] = 'v1/Compliance_reports/index/$1/$2';
+$route['compliance_report/validate_vimeo']['post'] = 'v1/Compliance_reports/validate_vimeo_video';
+$route['compliance_report/add_compliance_video']['post'] = 'v1/Compliance_reports/add_compliance_video';
+$route['compliance_report/update_compliance_video']['post'] = 'v1/Compliance_reports/update_compliance_video';
+$route['compliance_report/add_compliance_document']['post'] = 'v1/Compliance_reports/add_compliance_document';
+$route['compliance_report/update_compliance_document']['post'] = 'v1/Compliance_reports/update_compliance_document';
+$route['compliance_report/ajax_handler']['post'] = 'v1/Compliance_reports/ajax_handler';

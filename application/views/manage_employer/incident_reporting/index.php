@@ -86,7 +86,11 @@
                                             <div class="panel-body">
                                                 <p>Providing your identity allows us to obtain further information, if necessary, to continue our investigation if questions arise. It allows us to conduct you to discuss our findings and our proposed course of action. If you provide your identity, your report will remain as confidential as possible. We will only share the information as needed during our investigation and to prevent further problems. In addition, your report will not subject you to any adverse consequences, as retaliation by managers or co-workers is strictly prohibited.</p>
                                                 <div class="btn-wrp full-width mrg-top-20 text-right">
-                                                    <a href="<?php echo base_url('incident_reporting_system/report/c/' . $type['id']) ?>" class="btn btn-info"> File Confidential </a>
+                                                    <?php if ($type['is_safety_incident'] == 1) { ?>
+                                                        <a href="<?php echo base_url('compliance_report/c/' . $type['id']) ?>" class="btn btn-info"> File Confidential </a>
+                                                    <?php } else { ?>
+                                                        <a href="<?php echo base_url('incident_reporting_system/report/c/' . $type['id']) ?>" class="btn btn-info"> File Confidential </a>
+                                                    <?php } ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -97,7 +101,12 @@
                                             <div class="panel-body">
                                                 <p>Employees can file a report of complaint without being identified beyond being an employee of the company. No other information is collected for or shared with other third parties except as may be required by law wherein we have a good-faith belief that such action is necessary to comply with a current judicial proceeding, a court order or legal process. No information is collected about your report or response that would identify you as an individual beyond being an employee of your company</p>
                                                 <div class="btn-wrp full-width mrg-top-20 text-right">
-                                                    <a href="<?php echo base_url('incident_reporting_system/report/a/' . $type['id']) ?>" class="btn btn-info"> File Anonymous </a>
+                                                    
+                                                    <?php if ($type['is_safety_incident'] == 1) { ?>
+                                                        <a href="<?php echo base_url('compliance_report/a/' . $type['id']) ?>" class="btn btn-info"> File Anonymous </a>
+                                                    <?php } else { ?>
+                                                        <a href="<?php echo base_url('incident_reporting_system/report/a/' . $type['id']) ?>" class="btn btn-info"> File Anonymous </a>
+                                                    <?php } ?>
                                                 </div>
                                             </div>
                                         </div>
