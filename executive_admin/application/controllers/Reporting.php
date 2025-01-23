@@ -122,7 +122,6 @@ class Reporting extends CI_Controller
                     $start_time,
                     $end_time
                 );
-
             //
             if (!$employees) {
                 continue;
@@ -130,7 +129,6 @@ class Reporting extends CI_Controller
 
             // loop through employees
             foreach ($employees as $key => $employee) {
-                $header = [];
                 // add department
                 if ($employee['department_sid'] != 0) {
                     $department_name = $this->reporting_model->get_department_name($employee['department_sid']);
@@ -352,11 +350,12 @@ class Reporting extends CI_Controller
                         }
                     }
                 }
+                //
+                $rows .= implode(",", $export_data[$i]) . PHP_EOL;
+                //
+                $i++;
             }
-            //
-            $rows .= implode(",", $export_data[$i]) . PHP_EOL;
-            //
-            $i++;
+           
         }
         //
         $columnsToBeAdded = array_keys(
