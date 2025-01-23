@@ -622,7 +622,11 @@ class Onboarding_model extends CI_Model
 
             if (isset($record_arr['extra_info']) && !empty($record_arr['extra_info'])) {
                 $extra_info = unserialize($record_arr['extra_info']);
-                $record_arr = array_merge($record_arr, $extra_info);
+                // it will check if the array is empty or not
+                // then stop the flush of the array
+                if ($extra_info) {
+                    $record_arr = array_merge($record_arr, $extra_info);
+                }
             }
 
             return $record_arr;
