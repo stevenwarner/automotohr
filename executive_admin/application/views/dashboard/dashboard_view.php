@@ -48,22 +48,15 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-lg-12">
-                            <div class="col-lg-8 col-md-6 col-xs-12 col-sm-6">
-                            </div>
-                            <div class="col-lg-2 col-md-3 col-xs-12 col-sm-3">
-                                <div class="form-group">
-                                    <label class="hidden-xs">&nbsp;</label>
-                                    <?php if ($applysignature == 1) { ?> <a id="apply_signature_btn" href="javascript:;" class="btn btn-success btn-block">Apply E-Signature</a> <?php } ?>
-                                </div>
-                            </div>
+                        <div class="col-lg-12 text-right">
 
-                            <div class="col-lg-2 col-md-3 col-xs-12 col-sm-3">
-                                <div class="form-group">
-                                    <label class="hidden-xs">&nbsp;</label>
-                                    <a id="manage_signature_btn" href="e_signature" class="btn btn-success btn-block">Manage E-Signature</a>
-                                </div>
-                            </div>
+                            <a href="<?= base_url("reports/all"); ?>" class="btn btn-success">Reports</a>
+
+                            <?php if ($applysignature == 1) : ?>
+                                <a id="apply_signature_btn" href="javascript:;" class="btn btn-success">Apply E-Signature</a>
+                            <?php endif; ?>
+
+                            <a id="manage_signature_btn" href="e_signature" class="btn btn-success">Manage E-Signature</a>
 
                         </div>
                     </div>
@@ -154,16 +147,16 @@
                                                                 <img class="icon-msg-new" src="<?= base_url() ?>assets/images/new_msg.gif">
                                                             <?php } ?>
 
-                                                            <?php 
-                                                                $adminPlusData = get_executive_administrator_admin_plus_status($user_company['executive_admin_sid'], $user_company['company_sid']);
-                                                                //
-                                                                $execAdminAccessLevelPlus = FALSE;
-                                                                if (!empty($adminPlusData)) {
-                                                                    $execAdminAccessLevelPlus =  $adminPlusData['access_level_plus'] ? TRUE : FALSE;
-                                                                }
+                                                            <?php
+                                                            $adminPlusData = get_executive_administrator_admin_plus_status($user_company['executive_admin_sid'], $user_company['company_sid']);
+                                                            //
+                                                            $execAdminAccessLevelPlus = FALSE;
+                                                            if (!empty($adminPlusData)) {
+                                                                $execAdminAccessLevelPlus =  $adminPlusData['access_level_plus'] ? TRUE : FALSE;
+                                                            }
                                                             ?>
 
-                                                            <?php if ($execAdminAccessLevelPlus && checkIfAppIsEnabled(MODULE_LMS,$user_company['company_sid'])) {?>
+                                                            <?php if ($execAdminAccessLevelPlus && checkIfAppIsEnabled(MODULE_LMS, $user_company['company_sid'])) { ?>
                                                                 <a class="btn btn-success btn-sm" href="<?php echo base_url() . 'lms_company_report/' . $user_company['company_sid']; ?>">LMS Company Report</a>
                                                             <?php } ?>
                                                         </div>

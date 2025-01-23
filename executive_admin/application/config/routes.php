@@ -143,3 +143,6 @@ $route['get_base64_image'] = 'reports/LMS_company_report/getBase64Image';
 
 
 $route['lms_company_report/emailReminder/(:any)'] = 'reports/LMS_company_report/emailReminder/$1';
+
+$route["reports/all"]["get"] = "Reporting/all";
+$route["reports/export_employees"]["get"] = "Reporting/exportEmployees";

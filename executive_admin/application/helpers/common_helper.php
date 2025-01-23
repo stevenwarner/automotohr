@@ -1713,7 +1713,11 @@ if (!function_exists('isImage')) {
         return in_array(
             strtolower(pathinfo($str, PATHINFO_EXTENSION)),
             [
-                'png', 'jpg', 'jpeg', 'gif', 'webp'
+                'png',
+                'jpg',
+                'jpeg',
+                'gif',
+                'webp'
             ]
         );
     }
@@ -2132,18 +2136,31 @@ if (!function_exists('log_and_sendEmail')) {
 
 if (!function_exists('sendResponse')) {
 
-function sendResponse($response){
-    header('Content-Type: application/json');
-    echo json_encode($response);
-}
-
-
-if(!function_exists('res')){
-    function res($in){
+    function sendResponse($response)
+    {
         header('Content-Type: application/json');
-        echo json_encode($in);
-        exit(0);
+        echo json_encode($response);
+    }
+
+
+    if (!function_exists('res')) {
+        function res($in)
+        {
+            header('Content-Type: application/json');
+            echo json_encode($in);
+            exit(0);
+        }
     }
 }
 
+
+if (!function_exists('get_employee_drivers_license')) {
+    function get_employee_drivers_license($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('license_details');
+        $CI->db->where('users_sid', $emp_id);
+        $CI->db->where('license_type ', 'drivers');
+        return $CI->db->get('license_information')->row_array();
+    }
 }
