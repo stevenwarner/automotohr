@@ -56,7 +56,7 @@
                                         <td><b><?= $incident['status'];?></b></td>
                                         <td class="text-center">
                                             <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
-                                                <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_safety_incident/' . $incident['id']) ?>">Respond</a>
+                                                <a class="btn btn-info btn-block" href="<?php echo base_url('compliance_report/view_compliance_report/' . $incident['id']) ?>">Respond</a>
                                             <?php } else { ?>
                                                 <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'Respond'; ?></a>
                                             <?php } ?> 
@@ -65,10 +65,19 @@
                                             <a class="btn btn-warning btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $incident['id']; ?>">Mark it Resolved</a>
                                         </td>
                                         <td>
-                                            <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/2').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2" src="<?php echo $incident['id']; ?>"><i class="fa fa-download"></i></a>
+                                            <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
+                                                <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/manager/0/all/2').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i></a>
+                                            <?php } else { ?>
+                                                <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/2').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i></a>
+                                            <?php } ?>
+                                            
                                         </td>
                                         <td>
-                                            <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/1').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-print"></i></a>
+                                            <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
+                                                <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/manager/0/all/1').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-print"></i></a>
+                                            <?php } else { ?>
+                                                <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/1').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-print"></i></a>
+                                            <?php } ?>
                                         </td>
                                     </tr>
                                 <?php }
@@ -118,7 +127,7 @@
                                         <td><b><?php echo $incident['status']; ?></b></td>
                                         <td class="text-center">
                                             <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
-                                                <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_safety_incident/' . $incident['id']) ?>">Respond</a>
+                                                <a class="btn btn-info btn-block" href="<?php echo base_url('compliance_report/view_compliance_report/' . $incident['id']) ?>">Respond</a>
                                             <?php } else { ?>
                                                 <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'Respond'; ?></a>
                                             <?php } ?>
@@ -127,10 +136,19 @@
                                             <a class="btn btn-warning btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $incident['id']; ?>">Mark it Resolved</a>
                                         </td>
                                         <td>
-                                            <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/2').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i></a>
+                                            <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
+                                                <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/manager/0/all/2').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i></a>
+                                            <?php } else { ?>
+                                                <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/2').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i></a>
+                                            <?php } ?>
+                                            
                                         </td>
                                         <td>
-                                            <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/1').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-print"></i></a>
+                                            <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
+                                                <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/manager/0/all/1').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-print"></i></a>
+                                            <?php } else { ?>
+                                                <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/1').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-print"></i></a>
+                                            <?php } ?>
                                         </td>
                                     </tr>
                                 <?php }
@@ -179,7 +197,11 @@
                                         <td><?php echo ucfirst($incident['report_type']); ?></td>
                                         <td><b>Read Only</b></td>
                                         <td class="text-center">
-                                            <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'View'; ?></a>
+                                            <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
+                                                <a class="btn btn-info btn-block" href="<?php echo base_url('compliance_report/view_compliance_report/' . $incident['id']) ?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'View'; ?><</a>
+                                            <?php } else { ?>
+                                                <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'Respond' : 'View'; ?></a>
+                                            <?php } ?>
                                         </td>
                                         <td class="text-center">
                                             <a class="btn btn-warning btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $incident['id']; ?>">Mark it Resolved</a>
@@ -231,13 +253,26 @@
                                         <td><?php echo ucfirst($incident['report_type']); ?></td>
                                         <td style="color: #446f00;"><b>Resolved</b></td>
                                         <td class="text-center">
-                                            <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'View' : 'View'; ?></a>
+                                            <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
+                                                <a class="btn btn-info btn-block" href="<?php echo base_url('compliance_report/view_compliance_report/' . $incident['id']) ?>">View</a>
+                                            <?php } else { ?>
+                                                <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_single_assign/'.$incident['id'])?>"><?php echo $incident['report_type'] == 'confidential' && $incident['status'] != 'Closed' ? 'View' : 'View'; ?></a>
+                                            <?php } ?>
                                         </td>
                                         <td>
-                                            <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/2').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2" src="<?php echo $incident['id']; ?>"><i class="fa fa-download"></i></a>
+                                            <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
+                                                <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/manager/0/all/2').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i></a>
+                                            <?php } else { ?>
+                                                <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/2').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i></a>
+                                            <?php } ?>
+                                            
                                         </td>
                                         <td>
-                                            <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/1').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-print"></i></a>
+                                            <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
+                                                <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/manager/0/all/1').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-print"></i></a>
+                                            <?php } else { ?>
+                                                <a target="_blank" href="<?php echo base_url('incident_reporting_system/print_and_download/manager/0/all/1').'/'.$incident['id']; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-print"></i></a>
+                                            <?php } ?>
                                         </td>
                                     </tr>
                                 <?php }

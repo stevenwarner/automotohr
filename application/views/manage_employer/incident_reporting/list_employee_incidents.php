@@ -62,7 +62,7 @@
                                             <td><?php echo my_date_format($incident['current_date']); ?></td>
                                             <td class="text-center">
                                                 <?php if (isSafetyIncident($incident['incident_type_id'])) { ?>
-                                                    <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_safety_incident/' . $incident['id']) ?>">View</a>
+                                                    <a class="btn btn-info btn-block" href="<?php echo base_url('compliance_report/view_compliance_report/' . $incident['id']) ?>">View</a>
                                                 <?php } else { ?>
                                                     <a class="btn btn-info btn-block" href="<?php echo base_url('incident_reporting_system/view_incident/' . $incident['id']) ?>">View</a>
                                                 <?php } ?>    

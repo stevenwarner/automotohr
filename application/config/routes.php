@@ -2445,10 +2445,27 @@ $route["cms/update_solutions_sort_order/(:num)"]["post"] = "manage_admin/Cms/upd
 
 
 // Compliance Report Links
+$route['compliance_report/view_compliance_report/(:num)']['get'] = 'v1/Compliance_reports/view_compliance_report/$1';
+$route['compliance_report/view_compliance_report/(:num)']['post'] = 'v1/Compliance_reports/view_compliance_report/$1';
 $route['compliance_report/(:any)/(:num)']['get'] = 'v1/Compliance_reports/index/$1/$2';
+$route['compliance_report/(:any)/(:num)']['post'] = 'v1/Compliance_reports/index/$1/$2';
 $route['compliance_report/validate_vimeo']['post'] = 'v1/Compliance_reports/validate_vimeo_video';
 $route['compliance_report/add_compliance_video']['post'] = 'v1/Compliance_reports/add_compliance_video';
 $route['compliance_report/update_compliance_video']['post'] = 'v1/Compliance_reports/update_compliance_video';
 $route['compliance_report/add_compliance_document']['post'] = 'v1/Compliance_reports/add_compliance_document';
 $route['compliance_report/update_compliance_document']['post'] = 'v1/Compliance_reports/update_compliance_document';
 $route['compliance_report/ajax_handler']['post'] = 'v1/Compliance_reports/ajax_handler';
+$route['compliance_report/print_and_download/(:num)/(:any)/(:num)/(:num)']['get'] = 'v1/Compliance_reports/print_and_download/$1/$2/$3/$4';
+$route['compliance_report/download_compliance_report_all_documents_and_videos/(:any)/(:num)/(:num)']['get'] = 'v1/Compliance_reports/download_incident_media/$1/$2/$3';
+$route['compliance_report/watch_video/(:num)/(:any)/(:num)']['get'] = 'v1/Compliance_reports/watch_video/$1/$2/$3';
+$route['compliance_report/download_media_file/(:num)']['get'] = 'v1/Compliance_reports/download_media_file/$1';
+$route['compliance_report/print_image/(:num)']['get'] = 'v1/Compliance_reports/print_image/$1';
+$route['compliance_report/download_compliance_report_document/(:any)']['get'] = 'v1/Compliance_reports/download_compliance_report_document/$1';
+$route['compliance_report/mark_resolved']['post'] = 'v1/Compliance_reports/mark_resolved';
+$route['compliance_report/save_email_manual_attachment']['post'] = 'v1/Compliance_reports/save_email_manual_attachment';
+$route['compliance_report/handler']['post'] = 'v1/Compliance_reports/handler';
+$route['compliance_report/update_email_read_flag']['post'] = 'v1/Compliance_reports/update_email_read_flag';
+$route['compliance_report/view_compliance_report_email/(:num)/(:num)/(:any)/(:any)']['get'] = 'v1/Compliance_reports/viewComplianceSafetyEmail/$1/$2/$3/$4';
+$route['compliance_report/view_compliance_report_email/(:num)/(:num)/(:any)/(:any)']['post'] = 'v1/Compliance_reports/viewComplianceSafetyEmail/$1/$2/$3/$4';
+$route['compliance_report/download_Compliance_report_media/(:any)']['get'] = 'v1/Compliance_reports/download_Compliance_report_media/$1';
+$route['compliance_report/save_compliance_report_pdf']['post'] = 'v1/Compliance_reports/save_compliance_report_pdf';
