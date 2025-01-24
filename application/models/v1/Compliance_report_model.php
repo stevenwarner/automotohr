@@ -284,7 +284,7 @@ class Compliance_report_model extends CI_Model
 		return $return_array;
 	}
 
-	function getComplianceReportInitiar($id)
+	function getComplianceReportInitiator($id)
 	{
 		$this->db->select('employer_sid');
 		$this->db->where('id', $id);
@@ -298,6 +298,17 @@ class Compliance_report_model extends CI_Model
 		}
 
 		return $return_data;
+	}
+
+	function getComplianceReportInitiatorName($id)
+	{
+		$this->db->select('employer_sid');
+		$this->db->where('id', $id);
+		$records_obj = $this->db->get('incident_reporting');
+		$records_arr = $records_obj->row_array();
+		$records_obj->free_result();
+
+		return getEmployeeOnlyNameBySID($records_arr['employer_sid']);
 	}
 
 	function fetchComplianceManagers($incident_id, $company_sid)

@@ -141,6 +141,7 @@ class Compliance_reports extends CI_Controller
                     $replacement_array = array();
                     $replacement_array['company_name'] = ucwords($data['session']['company_detail']['CompanyName']);
                     $replacement_array['company-name'] = ucwords($data['session']['company_detail']['CompanyName']);
+                    $initiated_by = ucwords($data['session']['employer_detail']['first_name']).' '.ucwords($data['session']['employer_detail']['last_name']);
 
                     foreach ($review_manager as $manager) {
                         $assigned_emp = array(
@@ -154,36 +155,30 @@ class Compliance_reports extends CI_Controller
                         $emp = $this->compliance_report_model->fetch_employee_name_by_sid($manager);
 
                         $reply_url = base_url('compliance_report/view_compliance_report') . '/' . $incidentId;
-                        $viewIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $reply_url . '" target="_blank">View Report</a>';
-                        $replacement_array['applicant_name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
-                        $replacement_array['applicant-name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
-                        $replacement_array['first-name'] = ucwords($emp[0]['first_name']);
-                        $replacement_array['last-name'] = ucfirst($emp[0]['last_name']);
-                        $replacement_array['firstname'] = ucwords($emp[0]['first_name']);
-                        $replacement_array['lastname'] = ucfirst($emp[0]['last_name']);
+                        $viewComplianceReportBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $reply_url . '" target="_blank">View Report</a>';
+                        
+                        $replacement_array['initiated_by'] = $initiated_by;
                         $replacement_array['first_name'] = ucwords($emp[0]['first_name']);
                         $replacement_array['last_name'] = ucfirst($emp[0]['last_name']);
-                        $replacement_array['view_button'] = $viewIncidentBtn;
+                        $replacement_array['view_button'] = $viewComplianceReportBtn;
                         //
                         $message_hf = message_header_footer($company_sid, $data['session']['company_detail']['CompanyName']);
                         //
-                        log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $emp[0]['email'], $replacement_array, $message_hf);
+                        log_and_send_templated_email(COMPLIANCE_REPORT_NOTIFICATION, $emp[0]['email'], $replacement_array, $message_hf);
                     }
 
                     // Sending incident email to Steven start
                     $viewAdminIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url("manage_admin/reports/incident_reporting/view_incident/".$incidentId) . '" target="_blank">View Report</a>';
-                    $stevendata = [
+                    $stevenData = [
+                        'initiated_by' => $initiated_by,
                         'first_name' => 'Steven',
                         'last_name' => 'Warner',
                         'email' => FROM_EMAIL_STEVEN,
-                        'phone' => '',
-                        'firstname' => 'Steven',
-                        'lastname' => 'Warner',
                         'company_name' => getCompanyNameBySid($company_sid),
                         'view_button' => $viewAdminIncidentBtn
                     ];
 
-                    log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $stevendata['email'], $stevendata);
+                    log_and_send_templated_email(COMPLIANCE_REPORT_NOTIFICATION, $stevenData['email'], $stevenData);
 
                     $this->session->set_flashdata('message', '<b>Success:</b> New ' . ucfirst($report_type) . ' Incident Reported');
                     redirect(base_url('incident_reporting_system/list_incidents'), "refresh");
@@ -235,7 +230,7 @@ class Compliance_reports extends CI_Controller
                     if ($incident_manager['employee_id'] == $employer_sid) {
                         // Remove this below first if/else condition when Anonymous employee
                         if ($incident_type != 'anonymous') {
-                            $incident_reporter_sid = $this->compliance_report_model->getComplianceReportInitiar($id);
+                            $incident_reporter_sid = $this->compliance_report_model->getComplianceReportInitiator($id);
                             $reporter_info = db_get_employee_profile($incident_reporter_sid);
                             $incident_assigned_managers[$key]['employee_id'] = $incident_reporter_sid . '_inc_rep';
                             if ($incident_type == 'anonymous') {
@@ -445,7 +440,7 @@ class Compliance_reports extends CI_Controller
                         $receiver_name = $name[0];
 
                         $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
-                        $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about incident.</p>' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
                         $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
                         if ($isEmployee) {
                             $employeeType = $this->compliance_report_model->isComplianceReportManager($_POST['manual_email'], $company_sid, $id);
@@ -567,10 +562,8 @@ class Compliance_reports extends CI_Controller
                             $url = base_url('compliance_report/view_compliance_report_email/' . $conversation_key);
                             $employeeType = $this->compliance_report_model->isComplianceReportManager($receiver_email, $company_sid, $id);
                             //
-                           
-
                             $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
-                            $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about incident.</p>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
                             if($employeeType != "out_sider") {
                                 if ($employeeType == "reporter") {
@@ -733,20 +726,15 @@ class Compliance_reports extends CI_Controller
 
                         $reply_url = base_url('compliance_report/view_compliance_report') . '/' . $id;
                         $viewIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $reply_url . '" target="_blank">View Report</a>';
-                        $replacement_array['applicant_name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
-                        $replacement_array['applicant-name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
-                        $replacement_array['first-name'] = ucwords($emp[0]['first_name']);
-                        $replacement_array['last-name'] = ucfirst($emp[0]['last_name']);
-                        $replacement_array['firstname'] = ucwords($emp[0]['first_name']);
-                        $replacement_array['lastname'] = ucfirst($emp[0]['last_name']);
+                        
+                        $replacement_array['initiated_by'] = $this->compliance_report_model->getComplianceReportInitiatorName($id);
                         $replacement_array['first_name'] = ucwords($emp[0]['first_name']);
                         $replacement_array['last_name'] = ucfirst($emp[0]['last_name']);
-                        $replacement_array['company_name'] = $company_name;
                         $replacement_array['view_button'] = $viewIncidentBtn;
                         //
                         $message_hf = message_header_footer($company_sid, $company_name);
                         //
-                        log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $emp[0]['email'], $replacement_array, $message_hf);
+                        log_and_send_templated_email(COMPLIANCE_REPORT_NOTIFICATION, $emp[0]['email'], $replacement_array, $message_hf);
                     }
                     //
                     $this->session->set_flashdata('message', '<strong>Success:</strong> Employee(s) Added Successfully!');
@@ -1493,19 +1481,6 @@ class Compliance_reports extends CI_Controller
                 // Fetch Youtube/Vemio Videos Only
                 $videos = $this->compliance_report_model->getComplianceReportVideos($incident_sid, $report_type);
 
-                $count_incident_managers = count($incident_assigned_managers);
-
-                foreach ($witnesses as $key => $witness) {
-                    $employee_as_witness_id = 0;
-                    if ($witness['witness_type'] == 'employee') {
-                        $employee_as_witness_id =  $this->compliance_report_model->fetch_company_employee_id($company_sid, $witness['witness_email']);
-                    }
-
-                    if (!in_array($employee_as_witness_id, $assign_managers)) {
-                        $incident_assigned_managers[$count_incident_managers + $key]['employee_id'] = $witness['sid'] . '_wid';
-                    }
-                }
-
                 // Fetch All System Emails
                 foreach ($incident_related_managers as $email_key => $incident_related_manager) {
                     $manager_sid = $incident_related_manager['employee_id'];
@@ -2098,7 +2073,7 @@ class Compliance_reports extends CI_Controller
                     foreach ($assigned_managers as $key => $assigned_manager) {
                         if ($assigned_manager['employee_id'] == $receiver_id) {
                             $user_type              = 'manager';
-                            $incident_reporter_sid  = $this->compliance_report_model->getComplianceReportInitiar($inc_reported_id);
+                            $incident_reporter_sid  = $this->compliance_report_model->getComplianceReportInitiator($inc_reported_id);
                             $reporter_info          = db_get_employee_profile($incident_reporter_sid);
                             $assigned_managers[$key]['employee_id'] = $incident_reporter_sid . '_inc_rep';
                             if ($incident_type == 'anonymous') {
@@ -2238,7 +2213,7 @@ class Compliance_reports extends CI_Controller
                     $isEmployee = $this->compliance_report_model->checkManualUserIsAnEmployee($manual_email, $company_sid);
 
                     $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
-                    $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about incident.</p>' . '<br>';
+                    $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
                     $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
                     if ($isEmployee) {
                         $employeeType = $this->compliance_report_model->isComplianceReportManager($manual_email, $company_sid, $inc_reported_id);
@@ -2377,12 +2352,12 @@ class Compliance_reports extends CI_Controller
                         $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                         if ($is_manager == 1) {
                             if (in_array($receiver_id, $as_managers)) {
-                                $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email regarding an assigned incident.</p>' . '<br>';
+                                $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email regarding an assigned compliance report.</p>' . '<br>';
                             } else {
-                                $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about incident.</p>' . '<br>';
+                                $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
                             }
                         } else {
-                            $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email regarding an assigned incident.</p>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email regarding an assigned compliance report.</p>' . '<br>';
                         }
                         $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
                         if($employeeType != "out_sider") {

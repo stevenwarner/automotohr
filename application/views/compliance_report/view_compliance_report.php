@@ -332,30 +332,30 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                     <div class="row">
                                                                         <div class="col-md-12 col-xs-12 text-center">
 
-                                                                            <a class="btn btn-info csRadius5 csF14 js-view-video"
+                                                                            <a class="btn btn-info csRadius5 csF12 js-view-video"
                                                                                 title='<?php echo $video_source == 'upload_audio' ? "Play Audio" : "Watch Video"; ?>'
                                                                                 video-title="<?php echo $video['video_title']; ?>"
                                                                                 video-source="<?php echo $video_source; ?>"
                                                                                 video-url="<?php echo $media_url; ?>"
                                                                                 href="javascript:;">
-                                                                                <?php echo $video_source == 'upload_audio' ? '<i class="fa fa-headphones"> </i>' : '<i class="fa fa-eye"> </i>'; ?>
+                                                                                <?php echo $video_source == 'upload_audio' ? '<i class="fa fa-headphones csF12"> </i>' : '<i class="fa fa-eye csF12"> </i>'; ?>
                                                                                 <?php echo $video_source == 'upload_audio' ? "Play" : "Watch"; ?>
                                                                             </a>
 
-                                                                            <a class="btn btn-info csRadius5 csF14 js-archive-video"
+                                                                            <a class="btn btn-info csRadius5 csF12 js-archive-video"
                                                                                 title='<?php echo $video_source == 'upload_audio' ? "Archive Audio" : "Archive Video"; ?>'
                                                                                 href="javascript:void(0)"
                                                                                 data-id="<?= $video['sid']; ?>">
-                                                                                <i class="fa fa-archive"> </i>
+                                                                                <i class="fa fa-archive csF12"> </i>
                                                                                 Archive
                                                                             </a>
 
-                                                                            <a class="btn btn-info csRadius5 csF14 js-edit-video"
+                                                                            <a class="btn btn-info csRadius5 csF12 js-edit-video"
                                                                                 title='<?php echo $video_source == 'upload_audio' ? "Edit Audio" : "Edit Video"; ?>'
                                                                                 href="javascript:void(0)"
                                                                                 data-id="<?php echo $video['sid']; ?>"
                                                                                 data-title="<?php echo $video['video_title']; ?>">
-                                                                                <i class="fa fa-pencil"> </i>
+                                                                                <i class="fa fa-pencil csF12"> </i>
                                                                                 Edit
                                                                             </a>
 
@@ -363,8 +363,8 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                                 <a target="_blank"
                                                                                     title='<?php echo $video_source == 'upload_audio' ? "Download Audio" : "Download Video"; ?>'
                                                                                     href="<?php echo base_url('compliance_report/download_media_file') . '/' . $video['sid']; ?>"
-                                                                                    class="btn btn-info csRadius5 csF14">
-                                                                                    <i class="fa fa-download"></i>
+                                                                                    class="btn btn-info csRadius5 csF12">
+                                                                                    <i class="fa fa-download csF12"></i>
                                                                                     Download
                                                                                 </a>
                                                                             <?php } ?>
@@ -475,30 +475,30 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                     <div class="row">
                                                                         <div class="col-md-12 col-xs-12 text-center">
 
-                                                                            <a class="btn btn-info csRadius5 csF14 js-view-video"
+                                                                            <a class="btn btn-info csRadius5 csF12 js-view-video"
                                                                                 title='<?php echo $video_source == 'upload_audio' ? "Play Audio" : "Watch Video"; ?>'
                                                                                 video-title="<?php echo $video['video_title']; ?>"
                                                                                 ideo-source="<?php echo $video_source; ?>"
                                                                                 video-url="<?php echo $media_url; ?>"
                                                                                 href="javascript:;">
-                                                                                <?php echo $video_source == 'upload_audio' ? '<i class="fa fa-headphones"> </i>' : '<i class="fa fa-eye"> </i>'; ?>
+                                                                                <?php echo $video_source == 'upload_audio' ? '<i class="fa fa-headphones csF12"> </i>' : '<i class="fa fa-eye csF12"> </i>'; ?>
                                                                                 <?php echo $video_source == 'upload_audio' ? "Play" : "Watch"; ?>
                                                                             </a>
 
-                                                                            <a class="btn btn-info csRadius5 csF14 js-active-video"
+                                                                            <a class="btn btn-info csRadius5 csF12 js-active-video"
                                                                                 title='<?php echo $video_source == 'upload_audio' ? "Activate Audio" : "Activate Video"; ?>'
                                                                                 href="javascript:void(0)"
                                                                                 data-id="<?= $video['sid']; ?>">
-                                                                                <i class="fa fa-archive"> </i>
+                                                                                <i class="fa fa-archive csF12"> </i>
                                                                                 Activate
                                                                             </a>
 
-                                                                            <a class="btn btn-info csRadius5 csF14 js-edit-video"
+                                                                            <a class="btn btn-info csRadius5 csF12 js-edit-video"
                                                                                 title='<?php echo $video_source == 'upload_audio' ? "Edit Audio" : "Edit Video"; ?>'
                                                                                 href="javascript:void(0)"
                                                                                 data-id="<?php echo $video['sid']; ?>"
                                                                                 data-title="<?php echo $video['video_title']; ?>">
-                                                                                <i class="fa fa-pencil"> </i>
+                                                                                <i class="fa fa-pencil csF12"> </i>
                                                                                 Edit
                                                                             </a>
 
@@ -506,8 +506,8 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                                 <a target="_blank"
                                                                                     title='<?php echo $video_source == 'upload_audio' ? "Download Audio" : "Download Video"; ?>'
                                                                                     href="<?php echo base_url('compliance_report/download_media_file') . '/' . $video['sid']; ?>"
-                                                                                    class="btn btn-info csRadius5 csF14">
-                                                                                    <i class="fa fa-download"></i>
+                                                                                    class="btn btn-info csRadius5 csF12">
+                                                                                    <i class="fa fa-download csF12"></i>
                                                                                     Download
                                                                                 </a>
                                                                             <?php } ?>

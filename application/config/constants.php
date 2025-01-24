@@ -775,6 +775,7 @@ Form W-4 by February 17, 2026');
 
 define('W4_YEAR_25', '2025');
 define('I9_NEW_EXPIRES_2025', '05/31/2027');
+define('COMPLIANCE_REPORT_NOTIFICATION', 472);
 
 
 
