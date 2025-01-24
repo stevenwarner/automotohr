@@ -23,6 +23,12 @@ class Incident_reporting_model extends CI_Model
 		return $questions;
 	}
 
+	function insert_incident_docs($data)
+	{
+		$this->db->insert('incident_reporting_documents', $data);
+		return $this->db->insert_id();
+	}
+
 	function insert_incident_reporting($insert)
 	{
 		$this->db->insert('incident_reporting', $insert);
@@ -73,7 +79,7 @@ class Incident_reporting_model extends CI_Model
 		return $guide;
 	}
 
-	function insert_incident_docs($data)
+	function insertComplianceDocument($data)
 	{
 		$this->db->insert('incident_reporting_documents', $data);
 		return $this->db->insert_id();

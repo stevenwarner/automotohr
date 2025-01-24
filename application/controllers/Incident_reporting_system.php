@@ -101,197 +101,7 @@ class Incident_reporting_system extends Public_Controller
                 redirect(base_url('incident_reporting_system'), 'refresh');
             }
 
-            if ($incident_details[0]['is_safety_incident'] == 1) {
-                $this->reportSafetyIncident($file, $id);
-            } else {
-                $report_type = 'anonymous';
-
-                if ($file == 'c') {
-                    $report_type = 'confidential';
-                }
-
-                $data['title'] = 'Reporting ' . $incident_details[0]['incident_name'];
-                $data['id'] = $id;
-                $data['report_type'] = $report_type;
-                $questions = $this->incident_reporting_model->fetch_all_question($id);
-                $incident_managers = $this->incident_reporting_model->fetch_incident_managers($id, $company_sid);
-                $data['incident_managers'] = $incident_managers;
-                // echo $report_type.'<pre>'; print_r($questions); echo '</pre>'; die();
-                $e_signature_data = get_e_signature($company_sid, $employer_sid, 'employee');
-                $data['e_signature_data'] = $e_signature_data;
-                $load_view = check_blue_panel_status(false, 'self');
-                $data['load_view'] =  $load_view;
-                $data['questions'] = $questions;
-                $data['company_sid'] = $company_sid;
-                $data['employer_sid'] = $employer_sid;
-                $data['employees'] = $this->incident_reporting_model->fetch_all_company_employees($company_sid);
-                //
-                $data['employees_new'] = $this->incident_reporting_model->get_all_employees($company_sid);
-
-                $this->form_validation->set_rules('submit', 'Form Submit', 'trim');
-
-                if ($this->form_validation->run() === FALSE) {
-                    $this->load->view('main/header', $data);
-                    $this->load->view('manage_employer/incident_reporting/add_new_incident_old');
-                    $this->load->view('main/footer');
-                } else {
-                    if (isset($_POST) && isset($_POST['submit'])) {
-
-                        $update_id = $_POST['inc-id'];
-                        $review_manager = $_POST['review_manager'];
-                        $on_behalf_employee_sid  = $_POST['incident_employee_id'];
-                        //
-                        unset($_POST['submit']);
-                        unset($_POST['inc-id']);
-                        unset($_POST['review_manager']);
-                        unset($_POST['incident_employee_id']);
-                        //
-                        $reply_url = '';
-                        $incidentId = 0;
-                        //
-                        if ($update_id != 0) {
-                            $update['report_type'] = $report_type;
-                            $update['incident_name'] = $incident_details[0]['incident_name'];
-                            $this->incident_reporting_model->update_incident_report($update_id, $update);
-                            $incident = $update_id;
-                            $video_to_update = array();
-                            $video_to_update['is_incident_reported'] = 1;
-                            $this->incident_reporting_model->update_incident_related_video($update_id, $video_to_update);
-                            //
-                            $incidentId = $update_id;
-                        } else {
-                            $insert = array();
-                            $insert['company_sid'] = $company_sid;
-                            $insert['employer_sid'] = $on_behalf_employee_sid;
-                            $insert['current_date'] = date('Y-m-d H:i:s');
-                            $insert['incident_type_id'] = $id;
-                            $insert['report_type'] = $report_type;
-                            $insert['incident_name'] = $incident_details[0]['incident_name'];
-                            $insert['on_behalf_employee_sid'] =  $employer_sid;
-                            $incident = $this->incident_reporting_model->insert_incident_reporting($insert);
-                            //
-                            $incidentId = $incident;
-                        }
-
-                        if (isset($_POST['any_witnesses']) && $_POST['any_witnesses'] == 1) {
-                            foreach ($_POST['witnesses'] as $key => $witness) {
-                                $witness_to_insert = array();
-                                $witness_to_insert['incident_type_id']          = $id;
-                                $witness_to_insert['incident_reporting_id']     = $incidentId;
-                                $witness_to_insert['company_sid']               = $company_sid;
-                                $witness_to_insert['witness_type']              = $witness['type'];
-                                $witness_to_insert['witness_name']              = $witness['full_name'];
-                                $witness_to_insert['witness_phone']             = $witness['phone'];
-                                $witness_to_insert['witness_email']             = $witness['email'];
-                                $witness_to_insert['witness_title']             = $witness['title'];
-                                $witness_to_insert['can_provide_info']          = $witness['can_provide_info'];
-                                $witness_to_insert['reported_date']             = date('Y-m-d H:i:s');
-                                $witness_to_insert['added_by']                  = $employer_sid;
-
-                                $this->incident_reporting_model->add_new_witness($witness_to_insert);
-                            }
-                        }
-
-                        unset($_POST['witnesses']);
-                        unset($_POST['video_source']);
-                        unset($_POST['video_title']);
-                        unset($_POST['document_title']);
-                        unset($_POST['any_witnesses']);
-                        unset($_POST['video_id']);
-
-                        $insert = array();
-
-                        foreach ($_POST as $key => $val) {
-                            $exp = explode('_', $key);
-                            // echo '<pre>'; print_r($exp); exit;
-                            if (sizeof($exp) > 1 && !empty($val)) {
-                                $insert['question'] = $this->incident_reporting_model->get_specific_question($exp[1]);
-
-                                if ($exp[0] == 'multi-list') {
-                                    $val = serialize($val);
-                                }
-
-                                $insert['answer'] = strip_tags($val);
-                                $insert['incident_reporting_id'] = $incidentId;
-                                $this->incident_reporting_model->insert_inc_que_ans($insert);
-                            } elseif (sizeof($exp) == 1 && !empty($val) && $exp[0] == 'signature') {
-                                $insert['question'] = $exp[0];
-                                $insert['answer'] = strip_tags($val);
-                                $insert['incident_reporting_id'] = $incidentId;
-                                $this->incident_reporting_model->insert_inc_que_ans($insert);
-                            }
-                        }
-
-                        $replacement_array = array();
-                        $replacement_array['company_name'] = ucwords($data['session']['company_detail']['CompanyName']);
-                        $replacement_array['company-name'] = ucwords($data['session']['company_detail']['CompanyName']);
-                        // $employees = $this->incident_reporting_model->get_configured_employees($company_sid, $id);
-
-                        foreach ($review_manager as $manager) {
-                            $assigned_emp = array(
-                                'company_sid' => $company_sid,
-                                'employer_sid' => $manager,
-                                'assigned_date' => date('Y-m-d H:i:s'),
-                                'incident_sid' => $incidentId
-                            );
-
-                            $this->incident_reporting_model->assign_incident_to_emp($assigned_emp);     //Add the employees who are gonna receive this incident from employee reporting
-                            $emp = $this->incident_reporting_model->fetch_employee_name_by_sid($manager);
-
-                            $reply_url = base_url('incident_reporting_system/view_single_assign') . '/' . $incidentId;
-                            $viewIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $reply_url . '" target="_blank">View Report</a>';
-                            $replacement_array['applicant_name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
-                            $replacement_array['applicant-name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
-                            $replacement_array['first-name'] = ucwords($emp[0]['first_name']);
-                            $replacement_array['last-name'] = ucfirst($emp[0]['last_name']);
-                            $replacement_array['firstname'] = ucwords($emp[0]['first_name']);
-                            $replacement_array['lastname'] = ucfirst($emp[0]['last_name']);
-                            $replacement_array['first_name'] = ucwords($emp[0]['first_name']);
-                            $replacement_array['last_name'] = ucfirst($emp[0]['last_name']);
-                            $replacement_array['view_button'] = $viewIncidentBtn;
-                            //
-                            $message_hf = message_header_footer($company_sid, $data['session']['company_detail']['CompanyName']);
-                            //
-                            log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $emp[0]['email'], $replacement_array, $message_hf);
-                        }
-
-                        // Sending incident email to Steven start
-                        $viewAdminIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url("manage_admin/reports/incident_reporting/view_incident/".$incidentId) . '" target="_blank">View Report</a>';
-                        $stevendata = [
-                            'first_name' => 'Steven',
-                            'last_name' => 'Warner',
-                            'email' => FROM_EMAIL_STEVEN,
-                            'phone' => '',
-                            'firstname' => 'Steven',
-                            'lastname' => 'Warner',
-                            'company_name' => getCompanyNameBySid($company_sid),
-                            'view_button' => $viewAdminIncidentBtn
-                        ];
-
-                        log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $stevendata['email'], $stevendata);
-
-                        $this->session->set_flashdata('message', '<b>Success:</b> New ' . ucfirst($report_type) . ' Incident Reported');
-                        redirect(base_url('incident_reporting_system/list_incidents'), "refresh");
-                    }
-                }
-            }
-        } else {
-            redirect(base_url('login'), "refresh");
-        }
-    }
-
-    public function reportSafetyIncident ($file, $id) {
-        if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
-
-            $company_sid = $data['session']['company_detail']['sid'];
-            $employer_sid = $data['session']['employer_detail']['sid'];
-            $data['employee'] = $data['session']['employer_detail'];
-            $incident_details = $this->incident_reporting_model->fetch_reports_user_guide($id);
-
+            
             $report_type = 'anonymous';
 
             if ($file == 'c') {
@@ -302,7 +112,9 @@ class Incident_reporting_system extends Public_Controller
             $data['id'] = $id;
             $data['report_type'] = $report_type;
             $questions = $this->incident_reporting_model->fetch_all_question($id);
-            
+            $incident_managers = $this->incident_reporting_model->fetch_incident_managers($id, $company_sid);
+            $data['incident_managers'] = $incident_managers;
+            // echo $report_type.'<pre>'; print_r($questions); echo '</pre>'; die();
             $e_signature_data = get_e_signature($company_sid, $employer_sid, 'employee');
             $data['e_signature_data'] = $e_signature_data;
             $load_view = check_blue_panel_status(false, 'self');
@@ -310,7 +122,7 @@ class Incident_reporting_system extends Public_Controller
             $data['questions'] = $questions;
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
-            $data['employees'] = $this->incident_reporting_model->getAllCompanyEmployeesForComplianceSafety($company_sid);
+            $data['employees'] = $this->incident_reporting_model->fetch_all_company_employees($company_sid);
             //
             $data['employees_new'] = $this->incident_reporting_model->get_all_employees($company_sid);
 
@@ -318,23 +130,22 @@ class Incident_reporting_system extends Public_Controller
 
             if ($this->form_validation->run() === FALSE) {
                 $this->load->view('main/header', $data);
-                $this->load->view('manage_employer/incident_reporting/add_safety_incident');
+                $this->load->view('manage_employer/incident_reporting/add_new_incident_old');
                 $this->load->view('main/footer');
             } else {
                 if (isset($_POST) && isset($_POST['submit'])) {
 
                     $update_id = $_POST['inc-id'];
                     $review_manager = $_POST['review_manager'];
-                    $complianceSafetyTitle = $_POST['compliance_safety_title'];
+                    $on_behalf_employee_sid  = $_POST['incident_employee_id'];
                     //
                     unset($_POST['submit']);
                     unset($_POST['inc-id']);
                     unset($_POST['review_manager']);
-                    unset($_POST['compliance_safety_title']);
+                    unset($_POST['incident_employee_id']);
                     //
                     $reply_url = '';
                     $incidentId = 0;
-                    //
                     //
                     if ($update_id != 0) {
                         $update['report_type'] = $report_type;
@@ -347,29 +158,45 @@ class Incident_reporting_system extends Public_Controller
                         //
                         $incidentId = $update_id;
                     } else {
-                        //
                         $insert = array();
                         $insert['company_sid'] = $company_sid;
-                        $insert['employer_sid'] = $employer_sid;
+                        $insert['employer_sid'] = $on_behalf_employee_sid;
                         $insert['current_date'] = date('Y-m-d H:i:s');
                         $insert['incident_type_id'] = $id;
                         $insert['report_type'] = $report_type;
                         $insert['incident_name'] = $incident_details[0]['incident_name'];
                         $insert['on_behalf_employee_sid'] =  $employer_sid;
-                        $insert['compliance_safety_title'] =  $complianceSafetyTitle;
-                        //
                         $incident = $this->incident_reporting_model->insert_incident_reporting($insert);
                         //
                         $incidentId = $incident;
                     }
 
-                    //
+                    if (isset($_POST['any_witnesses']) && $_POST['any_witnesses'] == 1) {
+                        foreach ($_POST['witnesses'] as $key => $witness) {
+                            $witness_to_insert = array();
+                            $witness_to_insert['incident_type_id']          = $id;
+                            $witness_to_insert['incident_reporting_id']     = $incidentId;
+                            $witness_to_insert['company_sid']               = $company_sid;
+                            $witness_to_insert['witness_type']              = $witness['type'];
+                            $witness_to_insert['witness_name']              = $witness['full_name'];
+                            $witness_to_insert['witness_phone']             = $witness['phone'];
+                            $witness_to_insert['witness_email']             = $witness['email'];
+                            $witness_to_insert['witness_title']             = $witness['title'];
+                            $witness_to_insert['can_provide_info']          = $witness['can_provide_info'];
+                            $witness_to_insert['reported_date']             = date('Y-m-d H:i:s');
+                            $witness_to_insert['added_by']                  = $employer_sid;
+
+                            $this->incident_reporting_model->add_new_witness($witness_to_insert);
+                        }
+                    }
+
                     unset($_POST['witnesses']);
                     unset($_POST['video_source']);
                     unset($_POST['video_title']);
                     unset($_POST['document_title']);
+                    unset($_POST['any_witnesses']);
                     unset($_POST['video_id']);
-                    //
+
                     $insert = array();
 
                     foreach ($_POST as $key => $val) {
@@ -445,6 +272,7 @@ class Incident_reporting_system extends Public_Controller
                     redirect(base_url('incident_reporting_system/list_incidents'), "refresh");
                 }
             }
+            
         } else {
             redirect(base_url('login'), "refresh");
         }
