@@ -288,7 +288,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                                 </a>
                                                                             <?php } else if ($video_source == 'upload_video') { ?>
                                                                                 <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" style="display: block; text-align: center;" class="js-view-video">
-                                                                                    <video width="214" height="145">
+                                                                                    <video width="214" height="176">
                                                                                         <source src="<?php echo base_url('assets/uploaded_videos/incident_videos/' . $video['video_url']); ?>" type="video/mp4">
                                                                                     </video>
                                                                                 </a>
@@ -431,7 +431,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                                 </a>
                                                                             <?php } else if ($video_source == 'upload_video') { ?>
                                                                                 <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" style="display: block; text-align: center;" class="js-view-video">
-                                                                                    <video width="214" height="145">
+                                                                                    <video width="214" height="176">
                                                                                         <source src="<?php echo base_url('assets/uploaded_videos/incident_videos/' . $video['video_url']); ?>" type="video/mp4">
                                                                                     </video>
                                                                                 </a>
@@ -1633,7 +1633,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                             </div>
                         </div>
                         <div class="text-right" style="margin-top:15px;">
-                            <button type="button" class="btn btn-info incident-panal-button email_pop_up_back_to_library">Back To Libraray</button>
+                            <button type="button" class="btn btn-info incident-panal-button email_pop_up_back_to_library">Back To Library</button>
                         </div>
                     </div>
                 </div>
@@ -1865,7 +1865,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                         </div>
                     </div>
                     <div class="text-right" style="margin-top:15px;">
-                        <button type="button" class="btn btn-info incident-panal-button back_to_library">Back To Libraray</button>
+                        <button type="button" class="btn btn-info incident-panal-button back_to_library">Back To Library</button>
                     </div>
                 </div>
             </div>

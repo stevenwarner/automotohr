@@ -634,7 +634,7 @@
                             </div>
                         </div>                    
                         <div class="text-right" style="margin-top:15px;">
-                            <button type="button" class="btn btn-info incident-panal-button email_pop_up_back_to_library">Back To Libraray</button>
+                            <button type="button" class="btn btn-info incident-panal-button email_pop_up_back_to_library">Back To Library</button>
                         </div>
                     </div>
                 </div>
@@ -866,7 +866,7 @@
                         </div>
                     </div>                    
                     <div class="text-right" style="margin-top:15px;">
-                        <button type="button" class="btn btn-info incident-panal-button back_to_library">Back To Libraray</button>
+                        <button type="button" class="btn btn-info incident-panal-button back_to_library">Back To Library</button>
                     </div>
                 </div>
             </div>
