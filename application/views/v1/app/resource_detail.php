@@ -38,7 +38,7 @@
                 </div>
             </div>
         </div>
-
+        <?php if($blog["resources"]) {?>
         <div class="row">
             <div class="col-sm-12">
                 <div class="blog-main-image">
@@ -47,6 +47,7 @@
                 </div>
             </div>
         </div>
+        <?php } ?>
 
         <?php if ($downloadLink) { ?>
             <div class="row">
