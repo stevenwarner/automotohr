@@ -3524,6 +3524,7 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['confidential_employees'] = $document['confidential_employees'];
                             $data_to_insert['is_required'] = $document['is_required'];
                             $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
+                            $data_to_insert['assign_location'] = "assign_group_from_employee_document_management";
 
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
@@ -5622,6 +5623,7 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
                             $data_to_insert['is_required'] = $document['is_required'];
                             $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
+                            $data_to_insert['assign_location'] = "assign_group_from_employee_my_document";
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
