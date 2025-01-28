@@ -1133,9 +1133,45 @@ class Testing extends CI_Controller
                     ->result_array();
                 //
                 _e($results,true);
+                //
+                for($i=0; $i<(count($results)-1); $i++){
+                    $this->movedDocumentToHistory($results[$i]['sid']);
+                }
             }
         }
         _e(count($duplicateRows),true,true);
+    }
+
+    function movedDocumentToHistory($sid)
+    {
+        $this->db->select('*');
+        $this->db->where('sid', $sid);
+
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            // Add document to History
+            $record_arr['doc_sid'] = $record_arr['sid'];
+            unset($record_arr['sid']);
+            $this->db->insert('documents_assigned_history', $record_arr);
+            //
+            // Now delete the row
+            $this->db->where('sid', $sid);
+            $this->db->delete('documents_assigned');
+        }
+    }
+
+    function update_documents_assignment_record($documents_assigned_sid, $data_to_update)
+    {
+        $previous_record = $this->get_assigned_submitted_document($documents_assigned_sid);
+        $previous_record['doc_sid'] = $previous_record['sid'];
+        unset($previous_record['sid']);
+        $this->db->insert('documents_assigned_history', $previous_record);
+
+        $this->db->where('sid', $documents_assigned_sid);
+        $this->db->update('documents_assigned', $data_to_update);
     }
 
     function addScormCourses () {
