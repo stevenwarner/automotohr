@@ -1116,6 +1116,7 @@ class Testing extends CI_Controller
     public function duplicateDocumentFixer () {
         $this->db->select('sid, document_sid, user_sid, user_type');
         $this->db->from('documents_assigned');
+        $this->db->where('document_sid <>', 0);
         $this->db->group_by('user_sid, document_sid');
         $this->db->having('COUNT(*) >', 1);
         $this->db->limit(100);
