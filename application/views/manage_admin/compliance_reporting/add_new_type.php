@@ -33,6 +33,16 @@
                                                         <?php echo form_error('compliance_name'); ?>
                                                     </div>
                                                 </div>
+
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row field-row-autoheight">
+                                                        <label for="compliance_name">Tab Color</label>
+                                                        <?php echo form_input('tab_color', set_value('tab_color', $tab_color), 'class="hr-form-fileds"'); ?>
+                                                        <?php echo form_error('tab_color'); ?>
+                                                    </div>
+                                                </div>
+
+
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="field-row">
                                                         <label for="status">Status <span class="hr-required">*</span></label>
@@ -69,34 +79,34 @@
                                                 </div>
                                                 <div class="hr-innerpadding">
                                                     <div class="table-responsive">
-                                                            <table class="table table-bordered table-hover table-striped">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th><input type="checkbox" id="jsCheckAll"></th>
-                                                                        <th>Incident Name</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <?php if (sizeof($compliance_incidents_types) > 0) {
-                                                                        foreach ($compliance_incidents_types as $type) {
-                                                                    ?>
-                                                                            <tr>
-                                                                                <th><input type="checkbox" name="incidents[]" value="<?php echo $type; ?>"></th>
-                                                                                <td>
-                                                                                    <?= $type['incident_name'] ?>
-                                                                                </td>
-
-                                                                            </tr>
-                                                                        <?php }
-                                                                    } else { ?>
+                                                        <table class="table table-bordered table-hover table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th><input type="checkbox" id="jsCheckAll"></th>
+                                                                    <th>Incident Name</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php if (sizeof($compliance_incidents_types) > 0) {
+                                                                    foreach ($compliance_incidents_types as $type) {
+                                                                ?>
                                                                         <tr>
-                                                                            <td colspan="8" class="text-center">
-                                                                                <span class="no-data">No Compliance incident_Type Found</span>
+                                                                            <th><input type="checkbox" name="incidents[]" value="<?php echo $type['id']; ?>" <?php echo in_array($type['id'], $mapedIncidents) ? "checked" : "" ?>></th>
+                                                                            <td>
+                                                                                <?= $type['incident_name'] ?>
                                                                             </td>
+
                                                                         </tr>
-                                                                    <?php } ?>
-                                                                </tbody>
-                                                            </table>
+                                                                    <?php }
+                                                                } else { ?>
+                                                                    <tr>
+                                                                        <td colspan="8" class="text-center">
+                                                                            <span class="no-data">No Compliance incident_Type Found</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php } ?>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>

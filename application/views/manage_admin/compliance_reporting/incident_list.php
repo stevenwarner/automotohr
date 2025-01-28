@@ -122,7 +122,7 @@
                     data:{
                         status:0
                     },
-                    url: '<?= base_url('manage_admin/reports/compliance_reporting/enable_disable_incident_type')?>/' + id,
+                    url: '<?= base_url('manage_admin/reports/compliance_reporting/enable_disable_incident_type')?>/'+id,
                     success: function(data){
                         data = JSON.parse(data);
                         if(data.message == 'updated'){
@@ -144,9 +144,8 @@
                 $.ajax({
                     type: 'GET',
                     data:{
-                        status:1
-                    },
-                    url: '<?= base_url('manage_admin/reports/compliance_reporting/enable_disable_type')?>/' + id,
+                        status:1                   },
+                    url: '<?= base_url('manage_admin/reports/compliance_reporting/enable_disable_incident_type')?>/'+id,
                     success: function(data){
                         data = JSON.parse(data);
                         if(data.message == 'updated'){

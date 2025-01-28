@@ -33,7 +33,11 @@
     <link rel="stylesheet" href="<?= base_url() ?>assets/alertifyjs/css/alertify.min.css" />
     <!-- include a theme -->
     <link rel="stylesheet" href="<?= base_url() ?>assets/alertifyjs/css/themes/default.min.css" />
-    <script src="<?= base_url() ?>assets/ckeditor/ckeditor.js"></script>
+
+
+    <?php if ($this->uri->segment(4) != 'add_new_compliance_type') { ?>
+        <script src="<?= base_url() ?>assets/ckeditor/ckeditor.js"></script>
+    <?php } ?>
 
     <!--select2-->
     <?php
@@ -187,7 +191,7 @@
                                                 $notifications_count++;
                                             }
 
-                                            
+
 
                                             echo $notifications_count;
                                             ?>
@@ -313,7 +317,7 @@
                                                 </a>
                                             </li>
                                         <?php } ?>
-                                        
+
                                         <?php if ($header_notifications['indeed_pending_status'] > 0) { ?>
                                             <li>
                                                 <a href="<?php echo base_url('manage_admin/indeed/disposition/status/map'); ?>">

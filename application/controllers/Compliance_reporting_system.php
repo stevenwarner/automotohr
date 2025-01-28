@@ -7,7 +7,7 @@ class Compliance_reporting_system extends Public_Controller
         parent::__construct();
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library("pagination");
-        $this->load->model('incident_reporting_model');
+        $this->load->model('manage_admin/compliance_report_model');
         $this->load->model('notification_emails_model');
         //
         if (!checkIfAppIsEnabled('incidents')) {
@@ -24,27 +24,30 @@ class Compliance_reporting_system extends Public_Controller
                 $security_details = db_get_access_level_details($security_sid);
                 $data['security_details'] = $security_details;
 
-                $company_sid = $data['session']['company_detail']['sid'];
-                $employer_sid = $data['session']['employer_detail']['sid'];
                 $data['title'] = 'Compliance Safety Reporting';
-                $types = $this->incident_reporting_model->get_incident_types_company_specific($company_sid);
 
-                foreach ($types as $key => $value) {
-                    if ($value['count'] == 0) {
-                        unset($types[$key]);
+                $types = $this->compliance_report_model->get_all_compliance_types('1');
+
+
+                if (!empty($types)) {
+
+                    foreach ($types as $key => $val) {
+                        $types[$key]['incidentsDetail'] = $this->compliance_report_model->get_compliance_maped_incidents_detail($val['id']);
                     }
                 }
 
                 $data['types'] = $types;
+
                 $load_view = check_blue_panel_status(false, 'self');
-                $data['load_view'] = 1;$load_view;
+                $data['load_view'] = 1;
+                $load_view;
                 $data['employee'] = $data['session']['employer_detail'];
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/compliance_reporting/index_old');
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }  
+            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -256,7 +259,7 @@ class Compliance_reporting_system extends Public_Controller
                         }
 
                         // Sending incident email to Steven start
-                        $viewAdminIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url("manage_admin/reports/incident_reporting/view_incident/".$incidentId) . '" target="_blank">View Report</a>';
+                        $viewAdminIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url("manage_admin/reports/incident_reporting/view_incident/" . $incidentId) . '" target="_blank">View Report</a>';
                         $stevendata = [
                             'first_name' => 'Steven',
                             'last_name' => 'Warner',
@@ -280,7 +283,8 @@ class Compliance_reporting_system extends Public_Controller
         }
     }
 
-    public function reportSafetyIncident ($file, $id) {
+    public function reportSafetyIncident($file, $id)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -302,7 +306,7 @@ class Compliance_reporting_system extends Public_Controller
             $data['id'] = $id;
             $data['report_type'] = $report_type;
             $questions = $this->incident_reporting_model->fetch_all_question($id);
-            
+
             $e_signature_data = get_e_signature($company_sid, $employer_sid, 'employee');
             $data['e_signature_data'] = $e_signature_data;
             $load_view = check_blue_panel_status(false, 'self');
@@ -427,7 +431,7 @@ class Compliance_reporting_system extends Public_Controller
                     }
 
                     // Sending incident email to Steven start
-                    $viewAdminIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url("manage_admin/reports/incident_reporting/view_incident/".$incidentId) . '" target="_blank">View Report</a>';
+                    $viewAdminIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url("manage_admin/reports/incident_reporting/view_incident/" . $incidentId) . '" target="_blank">View Report</a>';
                     $stevendata = [
                         'first_name' => 'Steven',
                         'last_name' => 'Warner',
@@ -472,7 +476,7 @@ class Compliance_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }     
+            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -511,7 +515,7 @@ class Compliance_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }      
+            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -846,7 +850,7 @@ class Compliance_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }    
+            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -1080,12 +1084,12 @@ class Compliance_reporting_system extends Public_Controller
                             $url = base_url('incident_reporting_system/view_incident_email/' . $conversation_key);
                             $employeeType = $this->incident_reporting_model->isIncidentManager($receiver_email, $company_sid, $id);
                             //
-                        
+
 
                             $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                             $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email regarding an assigned incident.</p>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
-                            if($employeeType != "out_sider") {
+                            if ($employeeType != "out_sider") {
                                 if ($employeeType == "reporter") {
                                     $viewIncident = base_url('incident_reporting_system/view_incident/' . $id);
                                 } else if ($employeeType == "incident_manager") {
@@ -1295,7 +1299,7 @@ class Compliance_reporting_system extends Public_Controller
                         }
                     }
                 }
-                
+
                 $data['assigned_incidents'] = $assigned_incidents;
                 $data['closed'] = $closed;
                 $data['responded'] = $responded;
@@ -1309,7 +1313,7 @@ class Compliance_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }      
+            }
         } else {
             redirect(base_url('login'), 'refresh');
         }
@@ -1584,7 +1588,7 @@ class Compliance_reporting_system extends Public_Controller
                         if ($isEmployee) {
                             $employeeType = $this->incident_reporting_model->isIncidentManager($_POST['manual_email'], $company_sid, $id);
                             //
-                            if($employeeType != "out_sider") {
+                            if ($employeeType != "out_sider") {
                                 if ($employeeType == "reporter") {
                                     $viewIncident = base_url('incident_reporting_system/view_incident/' . $id);
                                 } else if ($employeeType == "incident_manager") {
@@ -1701,12 +1705,12 @@ class Compliance_reporting_system extends Public_Controller
                             $url = base_url('incident_reporting_system/view_incident_email/' . $conversation_key);
                             $employeeType = $this->incident_reporting_model->isIncidentManager($receiver_email, $company_sid, $id);
                             //
-                           
+
 
                             $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                             $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about incident.</p>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
-                            if($employeeType != "out_sider") {
+                            if ($employeeType != "out_sider") {
                                 if ($employeeType == "reporter") {
                                     $viewIncident = base_url('incident_reporting_system/view_incident/' . $id);
                                 } else if ($employeeType == "incident_manager") {
@@ -2183,7 +2187,7 @@ class Compliance_reporting_system extends Public_Controller
                 $user_type          = 'manual';
                 $company_sid        = $this->incident_reporting_model->get_company_sid_by_incident_id($inc_reported_id);
             } else if (str_replace('_wid', '', $receiver_id) != $receiver_id) {
-                
+
                 $receiver_id = str_replace('_wid', '', $receiver_id);
                 $user_info = $this->incident_reporting_model->get_witness_info_by_id($receiver_id, $inc_reported_id);
                 $company_sid        = $user_info['company_sid'];
@@ -2324,7 +2328,7 @@ class Compliance_reporting_system extends Public_Controller
                     $email_hf = message_header_footer_domain($company_sid, $company_name);
 
                     if ($user_type == 'witness') {
-                        $from_sid = $from_sid.'_wid';
+                        $from_sid = $from_sid . '_wid';
                     }
 
                     $manual_email_to_insert = array();
@@ -2390,7 +2394,7 @@ class Compliance_reporting_system extends Public_Controller
                     if ($isEmployee) {
                         $employeeType = $this->incident_reporting_model->isIncidentManager($manual_email, $company_sid, $inc_reported_id);
                         //
-                        if($employeeType != "out_sider") {
+                        if ($employeeType != "out_sider") {
                             if ($employeeType == "reporter") {
                                 $viewIncident = base_url('incident_reporting_system/view_incident/' . $inc_reported_id);
                             } else if ($employeeType == "incident_manager") {
@@ -2440,7 +2444,7 @@ class Compliance_reporting_system extends Public_Controller
                     $email_hf = message_header_footer_domain($company_sid, $company_name);
 
                     if ($user_type == 'witness') {
-                        $from_sid = $from_sid.'_wid';
+                        $from_sid = $from_sid . '_wid';
                     }
 
                     foreach ($receivers as $key => $receiver_id) {
@@ -2551,7 +2555,7 @@ class Compliance_reporting_system extends Public_Controller
                             $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email regarding an assigned incident.</p>' . '<br>';
                         }
                         $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
-                        if($employeeType != "out_sider") {
+                        if ($employeeType != "out_sider") {
                             if ($employeeType == "reporter") {
                                 $viewIncident = base_url('incident_reporting_system/view_incident/' . $inc_reported_id);
                             } else if ($employeeType == "incident_manager") {
@@ -2597,7 +2601,8 @@ class Compliance_reporting_system extends Public_Controller
         }
     }
 
-    public function viewComplianceSafetyEmail ($inc_type, $inc_reported_id, $receiver_id, $sender_sid) {
+    public function viewComplianceSafetyEmail($inc_type, $inc_reported_id, $receiver_id, $sender_sid)
+    {
         //
         $manual_user = 'no';
         //
@@ -2641,7 +2646,7 @@ class Compliance_reporting_system extends Public_Controller
                 $user_type          = 'manual';
                 $company_sid        = $this->incident_reporting_model->get_company_sid_by_incident_id($inc_reported_id);
             } else if (str_replace('_wid', '', $receiver_id) != $receiver_id) {
-                
+
                 $receiver_id = str_replace('_wid', '', $receiver_id);
                 $user_info = $this->incident_reporting_model->get_witness_info_by_id($receiver_id, $inc_reported_id);
                 $company_sid        = $user_info['company_sid'];
@@ -2720,11 +2725,11 @@ class Compliance_reporting_system extends Public_Controller
             $company_name = $this->incident_reporting_model->get_company_name_by_sid($company_sid);
 
             // if ($user_type == "manager") {
-                // Fetch Document For Media
-                $library_documets = $this->incident_reporting_model->get_library_documents($inc_reported_id);
+            // Fetch Document For Media
+            $library_documets = $this->incident_reporting_model->get_library_documents($inc_reported_id);
 
-                // Fetch Media For Media
-                $library_media = $this->incident_reporting_model->get_library_media($inc_reported_id);
+            // Fetch Media For Media
+            $library_media = $this->incident_reporting_model->get_library_media($inc_reported_id);
             // } else {
             //     if ($user_type == "witness") {
             //         $from_sid = str_replace('_wid', '', $from_sid);
@@ -2783,7 +2788,7 @@ class Compliance_reporting_system extends Public_Controller
                     $email_hf = message_header_footer_domain($company_sid, $company_name);
 
                     if ($user_type == 'witness') {
-                        $from_sid = $from_sid.'_wid';
+                        $from_sid = $from_sid . '_wid';
                     }
 
                     $manual_email_to_insert = array();
@@ -2849,7 +2854,7 @@ class Compliance_reporting_system extends Public_Controller
                     if ($isEmployee) {
                         $employeeType = $this->incident_reporting_model->isIncidentManager($manual_email, $company_sid, $inc_reported_id);
                         //
-                        if($employeeType != "out_sider") {
+                        if ($employeeType != "out_sider") {
                             if ($employeeType == "reporter") {
                                 $viewIncident = base_url('incident_reporting_system/view_incident/' . $inc_reported_id);
                             } else if ($employeeType == "incident_manager") {
@@ -2899,7 +2904,7 @@ class Compliance_reporting_system extends Public_Controller
                     $email_hf = message_header_footer_domain($company_sid, $company_name);
 
                     if ($user_type == 'witness') {
-                        $from_sid = $from_sid.'_wid';
+                        $from_sid = $from_sid . '_wid';
                     }
 
                     foreach ($receivers as $key => $receiver_id) {
@@ -3010,7 +3015,7 @@ class Compliance_reporting_system extends Public_Controller
                             $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email regarding an assigned incident.</p>' . '<br>';
                         }
                         $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
-                        if($employeeType != "out_sider") {
+                        if ($employeeType != "out_sider") {
                             if ($employeeType == "reporter") {
                                 $viewIncident = base_url('incident_reporting_system/view_incident/' . $inc_reported_id);
                             } else if ($employeeType == "incident_manager") {
@@ -3105,7 +3110,7 @@ class Compliance_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }    
+            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -3263,7 +3268,7 @@ class Compliance_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }    
+            }
         } else {
             redirect(base_url('login'), 'refresh');
         }
@@ -3315,7 +3320,7 @@ class Compliance_reporting_system extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('dashboard'), "refresh");
-            }      
+            }
         } else {
             redirect(base_url('login'), 'refresh');
         }
@@ -3336,7 +3341,7 @@ class Compliance_reporting_system extends Public_Controller
             $status_to_update['incident_status'] = 'Closed';
             $this->db->where('incident_sid', $id);
             $this->db->where('employer_sid', $session['employer_detail']['sid']);
-		    $this->db->update('incident_assigned_emp', $status_to_update);
+            $this->db->update('incident_assigned_emp', $status_to_update);
             // If status Is "pending" then Update It To "respond"
             //
             $data_to_insert = array();
@@ -4428,7 +4433,7 @@ class Compliance_reporting_system extends Public_Controller
             // Fetch My Emails
             $my_emails = $this->incident_reporting_model->getMyEmails($id, $employer_sid);
 
-            
+
 
             // Fetch All System Emails
             foreach ($incident_related_managers as $email_key => $incident_related_manager) {
@@ -4591,7 +4596,7 @@ class Compliance_reporting_system extends Public_Controller
                         if ($isEmployee) {
                             $employeeType = $this->incident_reporting_model->isIncidentManager($_POST['manual_email'], $company_sid, $id);
                             //
-                            if($employeeType != "out_sider") {
+                            if ($employeeType != "out_sider") {
                                 if ($employeeType == "reporter") {
                                     $viewIncident = base_url('incident_reporting_system/view_incident/' . $id);
                                 } else if ($employeeType == "incident_manager") {
@@ -4708,12 +4713,12 @@ class Compliance_reporting_system extends Public_Controller
                             $url = base_url('incident_reporting_system/view_incident_email/' . $conversation_key);
                             $employeeType = $this->incident_reporting_model->isIncidentManager($receiver_email, $company_sid, $id);
                             //
-                           
+
 
                             $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                             $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about incident.</p>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
-                            if($employeeType != "out_sider") {
+                            if ($employeeType != "out_sider") {
                                 if ($employeeType == "reporter") {
                                     $viewIncident = base_url('incident_reporting_system/view_incident/' . $id);
                                 } else if ($employeeType == "incident_manager") {

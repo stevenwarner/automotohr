@@ -1355,7 +1355,6 @@ if (
             <?php } ?>
 
 
-
             <!-- -->
             <li>
                 <a class="hr-closed-menu <?php if ($compliance_safty_reporting_menu) {
@@ -1367,7 +1366,7 @@ if (
 
                     <?php if (check_access_permissions_for_view($security_details, 'list_types')) { ?>
                         <div class="menu-item">
-                            <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/compliance_reporting')) !== false && ($this->uri->segment(4) == '')) {
+                            <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/compliance_reporting')) !== false ) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo site_url('manage_admin/reports/compliance_reporting'); ?>">Compliance Safety Types</a>
                         </div>
@@ -1375,7 +1374,6 @@ if (
 
                 </div>
             </li>
-
 
 
 

@@ -2447,7 +2447,3 @@ $route["cms/update_solutions_sort_order/(:num)"]["post"] = "manage_admin/Cms/upd
 $route['compliance_reporting_system'] = 'compliance_reporting_system/index';
 
 
-$route['compliance_reporting_system'] = 'compliance_reporting_system/index';
-
-
-

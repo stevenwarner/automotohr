@@ -26,9 +26,7 @@
                                                         <h1 class="page-title"><?= $form == 'add' ? 'New Incident Type' : $name; ?></h1>
                                                     </div>
                                                 </div>
-
                                             </div>
-
 
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -47,16 +45,14 @@
                                                         </select>
                                                     </div>
                                                 </div>
-
                                             </div>
-
 
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="field-row field-row-autoheight">
                                                         <label for="compliance_name">Code</label>
                                                         <?php echo form_input('code', set_value('code', $code), 'class="hr-form-fileds"'); ?>
-                                                    
+
                                                     </div>
                                                 </div>
 
@@ -64,35 +60,37 @@
                                                     <div class="field-row field-row-autoheight">
                                                         <label for="compliance_name">Priority </label>
                                                         <?php echo form_input('priority', set_value('priority', $priority), 'class="hr-form-fileds"'); ?>
-                                                
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    <div class="description-editor">
+                                                        <label>Description /label>
+                                                            <div id="editor1">
+                                                                <textarea class="editor" id="editor" name="description" rows="8" cols="60" required>
+                                                                <?php echo set_value('description', $ins); ?>
+                                                            </textarea>
+                                                            </div>
+
                                                     </div>
                                                 </div>
                                             </div>
 
 
                                             <div class="row">
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    <div class="description-editor">
-                                                        <label>Description <span class="hr-required">*</span></label>
-                                                        <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
-                                                        <textarea class="ckeditor" name="description" rows="8" cols="60" required>
-                                                                <?php echo set_value('description', $ins); ?>
-                                                            </textarea>
-                                                    </div>
+                                                <input type="hidden" value="<?= $form ?>">
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center hr-btn-panel">
+                                                    <input type="submit" class="search-btn" value="<?= $form == 'add' ? 'Add' : 'Update' ?>" name="form-submit">
+
                                                 </div>
-
                                             </div>
-
-
-                                        <div class="row">
-                                            <input type="hidden" value="<?= $form ?>">
-                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center hr-btn-panel">
-                                                <input type="submit" class="search-btn" value="<?= $form == 'add' ? 'Add' : 'Update' ?>" name="form-submit">
-                                               
-                                            </div>
-                                        </div>
 
                                     </div>
+
+
                                     </form>
                                 </div>
 
@@ -110,102 +108,25 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
-<script type="text/javascript">
-    $(function() {
-        $.validator.setDefaults({
-            debug: true,
-            success: "valid"
-        });
 
-        $("#add_type").validate({
-            ignore: ":hidden:not(select)",
-            debug: false,
-            rules: {
-                compliance_name: {
-                    required: true
-                },
-                instructions: {
-                    required: function() {
-                        CKEDITOR.instances.instructions.updateElement();
-                    }
-                },
-                reasons: {
-                    required: function() {
-                        CKEDITOR.instances.reasons.updateElement();
-                    }
-                }
+<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            ckfinder: {
+                uploadUrl: '<?= base_url('manage_admin/reports/compliance_reporting/ckImageUpload') ?>',
             },
-            messages: {
-                compliance_name: {
-                    required: 'Incident Type is required'
-                },
-                instructions: {
-                    required: 'Please provide some instructions for this report'
-                },
-                reasons: {
-                    required: 'Please provide some reasons for this report'
-                }
-            },
-            submitHandler: function(form) {
-
-                var instances = $.trim(CKEDITOR.instances.instructions.getData());
-                var reasons = $.trim(CKEDITOR.instances.reasons.getData());
-                if (instances.length === 0) {
-                    alertify.alert('Error! Instructions Missing', "Instructions cannot be Empty");
-                    return false;
-                }
-                if (reasons.length === 0) {
-                    alertify.alert('Error! Reasons Missing', "Reasons cannot be Empty");
-                    return false;
-                }
-
-                form.submit();
-            }
+            toolbar: [
+                'heading', '|',
+                'bulletedList', 'numberedList', 'blockQuote', 'insertTable',
+                'image', 'horizontalLine',
+                'video', 'audio', 'imageUpload', 'mediaEmbed',
+                'outdent', 'indent',
+                'subscript', 'superscript',
+                'bold', 'italic', 'horizontalLine', 'link', 'undo', 'redo'
+            ],
+        })
+        .catch(error => {
+            console.error(error);
         });
-    });
-
-    $(document).ready(function() {
-        CKEDITOR.replace('instructions');
-        CKEDITOR.replace('reasons');
-
-        var linkCheck = '<?= $form == 'add' ? 'team' : $fillable_by ?>';
-
-        var documenttype = document.getElementsByName('safety_checklist');
-        for (var i = 0, length = documenttype.length; i < length; i++) {
-            if (documenttype[i].checked) {
-                var value = documenttype[i].value;
-                if (value == 1) {
-                    $('#link_to_manager').hide();
-                    $('#div_fillable_by').hide();
-                } else {
-                    $('#link_to_manager').show();
-                    $('#div_fillable_by').show();
-                }
-                break;
-            }
-        }
-
-        $('input[type=radio][name=safety_checklist]').change(function() {
-            if (this.value == '1') {
-                $('#link_to_manager').hide();
-                $('#div_fillable_by').hide();
-            } else if (this.value == '0') {
-                $('#link_to_manager').show();
-                $('#div_fillable_by').show();
-            }
-        });
-
-        if (linkCheck != 'team') {
-            $('#link_to_manager').hide();
-        }
-
-
-        $('input[type=radio][name=fillable_by]').change(function() {
-            if (this.value == 'manager') {
-                $('#link_to_manager').hide();
-            } else if (this.value == 'team') {
-                $('#link_to_manager').show();
-            }
-        });
-    });
 </script>

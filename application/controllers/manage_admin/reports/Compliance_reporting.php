@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');
+<?php
+
+use Aws\DynamoDb\Model\BatchRequest\DeleteRequest;
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 class Compliance_reporting extends Admin_Controller
 {
@@ -52,6 +56,9 @@ class Compliance_reporting extends Admin_Controller
         $compliance_types = $this->compliance_report_model->get_all_compliance_incidents();
         $this->data['compliance_incidents_types'] = $compliance_types;
 
+        $mapedData = $this->compliance_report_model->get_compliance_incident_map($id);
+        $this->data['mapedIncidents'] = array_column($mapedData, 'compliance_incident_sid');
+
 
 
         if ($id != '') {
@@ -65,6 +72,8 @@ class Compliance_reporting extends Admin_Controller
                 $this->data['rsn'] = $inc_type[0]['reasons'];
                 $this->data['safety_checklist'] = $inc_type[0]['safety_checklist'];
                 $this->data['is_safety_incident'] = $inc_type[0]['is_safety_incident'];
+                $this->data['tab_color'] = $inc_type[0]['tab_color'];
+
                 // $this->data['fillable_by'] = $inc_type[0]['fillable_by'];
                 $this->data['parent_sid'] = $inc_type[0]['parent_sid'];
             }
@@ -80,26 +89,63 @@ class Compliance_reporting extends Admin_Controller
                 $inserData['compliance_name'] = $_POST['compliance_name'];
                 $inserData['status'] = $_POST['status'];
                 $inserData['instructions'] = $_POST['instructions'];
-                $inserData['reasons'] = $_POST[''];
-                $inserData['reasons'] = $_POST[''];
+                $inserData['reasons'] = $_POST['reasons'];
 
                 $complianceTypeId = $this->compliance_report_model->add_compliance_type($inserData);
 
                 //Attach incident to compliance type
                 if ($_POST['incidents']) {
+                    foreach ($_POST['incidents'] as $incident) {
+                        $inserData = [];
+                        $inserData['compliance_type_sid'] = $complianceTypeId;
+                        $inserData['compliance_incident_sid'] = $incident;
+                        $inserData['created_at'] = getSystemDate();
+                        $this->compliance_report_model->add_compliance_incident_map($inserData);
+                    }
                 }
             } else {
                 unset($_POST['form-submit']);
+
+                $mapedData = $this->compliance_report_model->get_compliance_incident_map($id);
+                $mapedIncidents = array_column($mapedData, 'compliance_incident_sid');
+
+                if ($_POST['incidents']) {
+                    if (empty($mapedIncidents)) {
+                        foreach ($_POST['incidents'] as $incident) {
+                            $inserData = [];
+                            $inserData['compliance_type_sid'] = $id;
+                            $inserData['compliance_incident_sid'] = $incident;
+                            $inserData['created_at'] = getSystemDate();
+                            $this->compliance_report_model->add_compliance_incident_map($inserData);
+                        }
+                    } else {
+
+                        foreach ($mapedIncidents as $incident) {
+                            if (!in_array($incident, $_POST['incidents'])) {
+                                $this->compliance_report_model->delete_compliance_incident_map($id, $incident);
+                            }
+                        }
+
+                        //add
+                        foreach ($_POST['incidents'] as $incident) {
+                            if (!in_array($incident, $mapedIncidents)) {
+                                $inserData = [];
+                                $inserData['compliance_type_sid'] = $id;
+                                $inserData['compliance_incident_sid'] = $incident;
+                                $inserData['created_at'] = getSystemDate();
+                                $this->compliance_report_model->add_compliance_incident_map($inserData);
+                            }
+                        }
+                    }
+                } else {
+                    $this->compliance_report_model->delete_compliance_incident_map($id);
+                }
+
+                unset($_POST['incidents']);
                 $this->compliance_report_model->update_compliance_type($id, $_POST);
             }
 
-            $redirect = $_POST['safety_checklist'];
-
-            if ($redirect == 1) {
-                redirect('manage_admin/reports/compliance_reporting/checklists');
-            } elseif ($redirect == 0) {
-                redirect('manage_admin/reports/compliance_reporting');
-            }
+            redirect('manage_admin/reports/compliance_reporting');
         }
 
         $this->render('manage_admin/compliance_reporting/add_new_type');
@@ -349,9 +395,30 @@ class Compliance_reporting extends Admin_Controller
 
     public function enable_disable_incident_type($id)
     {
-
         $data = array('status' => $this->input->get('status'));
         $this->compliance_report_model->update_incident_type($id, $data);
         print_r(json_encode(array('message' => 'updated')));
+    }
+
+
+    //
+    public function ckImageUpload()
+    {
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['upload'])) {
+            $file = $_FILES['upload'];
+            $uploadDir = 'assets/uploaded_videos/compliance_incident/';
+            $uploadFile = $uploadDir . basename($file['name']);
+            if (move_uploaded_file($file['tmp_name'], $uploadFile)) {
+
+                echo json_encode([
+                    'uploaded' => 1,
+                    'fileName' => basename($file['name']),
+                    'url' => base_url($uploadFile)
+                ]);
+            } else {
+                echo json_encode(['error' => 'Image upload failed']);
+            }
+        }
     }
 }

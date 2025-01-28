@@ -1,29 +1,37 @@
-<?php class Compliance_report_model extends CI_Model {
+<?php class Compliance_report_model extends CI_Model
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
-    function add_compliance_type($data) {
+    function add_compliance_type($data)
+    {
         $this->db->insert('compliance_type', $data);
         return $this->db->insert_id();
     }
 
-    function get_all_compliance_types() {
+    function get_all_compliance_types($status='all')
+    {
         $this->db->select('*');
-        $this->db->where('safety_checklist', '0');
+        if($status!='all'){
+        $this->db->where('status', $status);
+        }
         $types = $this->db->get('compliance_type')->result_array();
         return $types;
     }
 
-    function get_all_check_list() {
+    function get_all_check_list()
+    {
         $this->db->select('*');
         $this->db->where('safety_checklist', '1');
         $types = $this->db->get('compliance_type')->result_array();
         return $types;
     }
 
-    function get_incident_types_company_specific($cid) {
+    function get_incident_types_company_specific($cid)
+    {
         $this->db->select('id, incident_name, safety_checklist');
         $this->db->where('status', 1);
         $this->db->where('fillable_by', 'team');
@@ -44,14 +52,16 @@
         return $records_arr;
     }
 
-    function get_compliance_type($id) {
+    function get_compliance_type($id)
+    {
         $this->db->select('*');
         $this->db->where('id', $id);
         $type = $this->db->get('compliance_type')->result_array();
         return $type;
     }
 
-    function get_manager_list() {
+    function get_manager_list()
+    {
         $this->db->select('id, incident_name');
         $this->db->where('fillable_by', 'manager');
         $this->db->where('status', '1');
@@ -59,26 +69,30 @@
         return $managers;
     }
 
-    function update_compliance_type($id, $data) {
+    function update_compliance_type($id, $data)
+    {
         $this->db->where('id', $id);
         $type = $this->db->update('compliance_type', $data);
         return $type;
     }
 
-    function update_compliance_question($id, $data) {
+    function update_compliance_question($id, $data)
+    {
         $this->db->where('id', $id);
         $type = $this->db->update('compliance_questions', $data);
         return $type;
     }
 
-    function fetch_compliance_name($id) {
+    function fetch_compliance_name($id)
+    {
         $this->db->select('compliance_name, safety_checklist');
         $this->db->where('id', $id);
         $name = $this->db->get('compliance_type')->result_array();
         return $name;
     }
 
-    function fetch_questions($id) {
+    function fetch_questions($id)
+    {
         $this->db->select('compliance_questions.*', 'compliance_type.compliance_name');
         $this->db->where('compliance_type_id', $id);
         $this->db->join('compliance_type', 'compliance_questions.compliance_type_id = compliance_type.id', 'left');
@@ -86,18 +100,21 @@
         return $questions;
     }
 
-    function add_new_question($data) {
+    function add_new_question($data)
+    {
         $this->db->insert('compliance_questions', $data);
         return $this->db->insert_id();
     }
 
-    function get_question($id) {
+    function get_question($id)
+    {
         $this->db->where('id', $id);
         $result = $this->db->get('compliance_questions')->result_array();
         return $result;
     }
 
-    function get_all_incidents() {
+    function get_all_incidents()
+    {
         $this->db->select('incident_reporting.*');
         $this->db->select('table1.first_name');
         $this->db->select('table1.last_name');
@@ -111,7 +128,8 @@
         return $incidents;
     }
 
-    function get_specific_incident($id) {
+    function get_specific_incident($id)
+    {
         $this->db->select('que_ans.*,incident_reporting.company_sid');
         $this->db->select('incident_reporting.report_type');
         $this->db->where('incident_reporting.id', $id);
@@ -120,23 +138,26 @@
         return $incident;
     }
 
-    function incident_related_documents($id) {
+    function incident_related_documents($id)
+    {
         $this->db->where('incident_reporting_id', $id);
         $docs = $this->db->get('incident_reporting_documents')->result_array();
         return $docs;
     }
 
-    function get_all_admins($cid) {
+    function get_all_admins($cid)
+    {
         $this->db->select('first_name,last_name,sid');
         $this->db->where('parent_sid', $cid);
         $this->db->where('access_level', 'Admin');
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         return $this->db->get('users')->result_array();
     }
 
-    function update_assign_to($id, $admin, $flag) {
+    function update_assign_to($id, $admin, $flag)
+    {
         $this->db->where('id', $id);
         $this->db->update('incident_reporting', array('status' => 'Assigned'));
         if ($flag == 'in') {
@@ -152,41 +173,47 @@
         }
     }
 
-    function get_assigned_admins($id) {
+    function get_assigned_admins($id)
+    {
         $this->db->select('assigned_to');
         $this->db->where('incident_reporting_id', $id);
         $admins = $this->db->get('incident_assigned')->result_array();
         return $admins;
     }
 
-    function get_company_employees($cid) {
+    function get_company_employees($cid)
+    {
         $this->db->select('email,access_level,profile_picture,sid,first_name,last_name,registration_date,is_executive_admin');
         $this->db->where('parent_sid', $cid);
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         return $this->db->get('users')->result_array();
     }
 
-    function insert_incident_configuration($data) {
+    function insert_incident_configuration($data)
+    {
         $this->db->insert('incident_type_configuration', $data);
         return $this->db->insert_id();
     }
 
-    function get_configured_employees($cid, $inc_id) {
+    function get_configured_employees($cid, $inc_id)
+    {
         $this->db->select('employer_id');
         $this->db->where('company_id', $cid);
         $this->db->where('incident_type_id', $inc_id);
         return $this->db->get('incident_type_configuration')->result_array();
     }
 
-    function delete_incident_configuration($emp, $inc_id) {
+    function delete_incident_configuration($emp, $inc_id)
+    {
         $this->db->where('employer_id', $emp);
         $this->db->where('incident_type_id', $inc_id);
         $this->db->delete('incident_type_configuration');
     }
 
-    function get_company_incident_name($cid, $inc_id) {
+    function get_company_incident_name($cid, $inc_id)
+    {
         $this->db->select('CompanyName');
         $this->db->where('sid', $cid);
         $company = $this->db->get('users')->result_array()[0]['CompanyName'];
@@ -198,7 +225,8 @@
         return $result_array;
     }
 
-    function get_incident_comments($id) {
+    function get_incident_comments($id)
+    {
         $this->db->select('comment,date_time,t1.username as user1,t2.username as user2,response_type, t1.profile_picture as pp1, t2.profile_picture as pp2');
         $this->db->where('incident_reporting_id', $id);
         $this->db->join('users as t1', 't1.sid = incident_reporting_comments.applicant_sid', 'left');
@@ -208,7 +236,8 @@
         return $comments;
     }
 
-    function get_com_and_emp_name($id) {
+    function get_com_and_emp_name($id)
+    {
         $this->db->select('t1.first_name as fname, t1.last_name as lname, t2.CompanyName');
         $this->db->where('incident_reporting.id', $id);
         $this->db->join('users as t1', 't1.sid = incident_reporting.employer_sid', 'left');
@@ -217,10 +246,11 @@
         return $result;
     }
 
-    function get_all_radio_questions($incident_type_id = 0){
+    function get_all_radio_questions($incident_type_id = 0)
+    {
         $this->db->select('label,id');
-        $this->db->where('compliance_type_id',$incident_type_id);
-        $this->db->where('question_type','radio');
+        $this->db->where('compliance_type_id', $incident_type_id);
+        $this->db->where('question_type', 'radio');
         $result = $this->db->get('compliance_questions')->result_array();
 
         return $result;
@@ -228,14 +258,16 @@
 
 
     //
-    function add_compliance_incident_type($data) {
+    function add_compliance_incident_type($data)
+    {
         $this->db->insert('compliance_incident_type', $data);
         return $this->db->insert_id();
     }
 
-    
+
     //
-    function update_compliance_incident_type($id, $data) {
+    function update_compliance_incident_type($id, $data)
+    {
         $this->db->where('id', $id);
         $type = $this->db->update('compliance_incident_type', $data);
         return $type;
@@ -243,25 +275,75 @@
 
 
     //
-    function get_all_compliance_incidents() {
+    function get_all_compliance_incidents()
+    {
         $this->db->select('*');
         $types = $this->db->get('compliance_incident_type')->result_array();
         return $types;
     }
 
     //
-    function get_compliance_incident_type($id) {
+    function get_compliance_incident_type($id)
+    {
         $this->db->select('*');
         $this->db->where('id', $id);
         $type = $this->db->get('compliance_incident_type')->result_array();
         return $type;
     }
-    
+
 
     //
-    function update_incident_type($id, $data) {
+    function update_incident_type($id, $data)
+    {
         $this->db->where('id', $id);
         $type = $this->db->update('compliance_incident_type', $data);
         return $type;
     }
+
+
+
+    //
+    function get_compliance_incident_map($typeId)
+    {
+        $this->db->select('*');
+        $this->db->where('compliance_type_sid', $typeId);
+        $type = $this->db->get('compliance_incident_map')->result_array();
+        return $type;
+    }
+
+    //
+    function add_compliance_incident_map($data)
+    {
+        $this->db->insert('compliance_incident_map', $data);
+        return $this->db->insert_id();
+    }
+
+    //
+    function delete_compliance_incident_map($typeId, $incidentId = 0)
+    {
+        $this->db->where('compliance_type_sid', $typeId);
+        if ($incidentId != 0) {
+            $this->db->where('compliance_incident_sid', $incidentId);
+        }
+        $this->db->delete('compliance_incident_map');
+    }
+
+
+    //
+
+    function get_compliance_maped_incidents_detail($complianceTypeSid)
+    {
+        $this->db->select('compliance_incident_type.*');
+        $this->db->where('compliance_type_sid', $complianceTypeSid);
+        $this->db->join('compliance_incident_type', 'compliance_incident_type.id = compliance_incident_map.compliance_incident_sid', 'left');
+
+        $data = $this->db->get('compliance_incident_map')->result_array();
+        if(!empty($data)){
+            return $data;
+        }else{
+        return [];
+        }
+    }
+    
+
 }
