@@ -882,7 +882,7 @@ class Merge_employees_model extends CI_Model
         }
 
         //General Documents
-        $this->db->select('sid');
+        $this->db->select('sid, document_title');
         $this->db->where('user_sid', $primary_employee_sid);
         $this->db->where('user_type', 'employee');
         $primary_general_docs = $this->db->get('documents_assigned')->result_array();
@@ -911,6 +911,7 @@ class Merge_employees_model extends CI_Model
             //
             foreach ($primary_general_docs as $obj) {
                 $already_sid[] = $obj['sid'];
+                $alreadyAssignedDocumentTitles[] = $obj['document_title'];
             }
 
             //
@@ -921,7 +922,8 @@ class Merge_employees_model extends CI_Model
             //
             if (!empty($secondary_general_docs)) {
                 foreach ($secondary_general_docs as $secondary_doc) {
-                    if (!in_array($secondary_doc['sid'], $already_sid)) {
+                    // if (!in_array($secondary_doc['sid'], $already_sid)) {
+                    if (!in_array($secondary_doc['document_title'], $alreadyAssignedDocumentTitles)) {
                         unset($secondary_doc['sid']);
                         $secondary_doc['user_sid'] = $primary_employee_sid;
                         $secondary_doc['user_type'] = 'employee';

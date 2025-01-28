@@ -8862,6 +8862,19 @@ class Hr_documents_management extends Public_Controller
                         $document_to_update['authorized_signature_by'] = NULL;
                         $document_to_update['authorized_signature_date'] = NULL;
                         //
+                        $currentDocument = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document['document_sid']);
+                        //
+                        $document_to_update['document_original_name'] = $currentDocument ['uploaded_document_original_name'];
+                        $document_to_update['document_extension'] = $currentDocument ['uploaded_document_extension'];
+                        $document_to_update['document_s3_name'] = $currentDocument ['uploaded_document_s3_name'];
+                        $document_to_update['document_title'] = $currentDocument ['document_title'];
+                        $document_to_update['document_description'] = $currentDocument ['document_description'];
+                        $document_to_update['acknowledgment_required'] = $currentDocument ['acknowledgment_required'];
+                        $document_to_update['signature_required'] = $currentDocument ['signature_required'];
+                        $document_to_update['download_required'] = $currentDocument ['download_required'];
+                        $document_to_update['is_required'] = $currentDocument ['is_required'];
+                        $document_to_update['assign_location'] = "update document from reassign group";
+                        //
                         $this->hr_documents_management_model->reassign_group_document($document['document_sid'], $user_type, $user_sid, $document_to_update);
                         //
                         $original_document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document['document_sid']);
@@ -8900,6 +8913,7 @@ class Hr_documents_management extends Public_Controller
                         $document_to_insert['signature_required'] = $document['signature_required'];
                         $document_to_insert['download_required'] = $document['download_required'];
                         $document_to_insert['is_required'] = $document['is_required'];
+                        $document_to_update['assign_location'] = "insert document from reassign group";
                         //
                         $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($document_to_insert);
                         //

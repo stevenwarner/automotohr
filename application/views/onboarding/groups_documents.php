@@ -54,12 +54,11 @@
                                           <button type="button" style="margin-left: 5px;" class="btn btn-danger btn-xs pull-right" id="btn_group_<?php echo $active_group['sid']; ?>" onclick="func_revoke_document_group('<?php echo $active_group['sid']; ?>','<?php echo $user_type; ?>','<?php echo $user_sid; ?>', '<?php echo $active_group['name'] ?>')">
                                               Revoke Document Group
                                           </button>
-                                      <?php }  ?>
+                                      <?php } else { ?>
                                       <button type="button" class="btn btn-warning btn-xs pull-right" id="btn_group_<?php echo $active_group['sid']; ?>" onclick="func_reassign_document_group('<?php echo $active_group['sid']; ?>','<?php echo $user_type; ?>','<?php echo $user_sid; ?>', '<?php echo $active_group['name'] ?>')">
                                           Reassign Document Group
                                       </button>
-                                      <?php //} 
-                                        ?>
+                                      <?php } ?>
                                   <?php } else { ?>
                                       <button class="btn btn-primary btn-xs pull-right" id="btn_group_<?php echo $active_group['sid']; ?>" onclick="func_assign_document_group('<?php echo $active_group['sid']; ?>','<?php echo $user_type; ?>','<?php echo $user_sid; ?>', '<?php echo $active_group['name'] ?>')">
                                           Assign Document Group
