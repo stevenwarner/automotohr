@@ -1118,12 +1118,13 @@ class Testing extends CI_Controller
         $this->db->from('documents_assigned');
         $this->db->group_by('user_sid, document_sid');
         $this->db->having('COUNT(*) >', 1);
+        $this->db->limit(100);
         $query = $this->db->get();
         $duplicateRows = $query->result_array();
         //
         if ($duplicateRows) {
             foreach ($duplicateRows as $row) {
-                $results = $this->db->select("sid, document_title, user_consent, status, archive")
+                $results = $this->db->select("sid, document_title, document_sid, user_consent, status, archive")
                     ->where("document_sid", $row['document_sid'])
                     ->where("user_sid", $row['user_sid'])
                     ->where("user_type", $row['user_type'])
@@ -1133,7 +1134,7 @@ class Testing extends CI_Controller
                 _e($results,true);
             }
         }
-        _e($duplicateRows,true,true);
+        _e(count($duplicateRows),true,true);
     }
 
     function addScormCourses () {
