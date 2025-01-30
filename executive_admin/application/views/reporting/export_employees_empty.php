@@ -19,7 +19,7 @@
             <div class="col-sm-12">
                 <div class="alert alert-info text-center">
                     <strong>
-                        You need to be Plus in one of the companies.
+                        This Reporting Feature contains sensitive information and is only available to PLUS level Managers.
                     </strong>
                 </div>
             </div>
