@@ -28,7 +28,7 @@ foreach ($companies as $company)
                                                     <label>Companies<span class="cs-required">*</span></label>
                                                     <div class="hr-fields-wrap">
                                                         <select style="width: 100%;" id="js-from-company">
-                                                            <option value="0">Select Company</option>
+                                                            <option value="0">Select a Company</option>
                                                             <?php
                                                             foreach ($companies as $key => $company) {
                                                                 echo '<option id="from_' . ($company['sid']) . '" value="' . ($company['sid']) . '">' . ($company['CompanyName']) . '</option>';
@@ -38,10 +38,10 @@ foreach ($companies as $company)
                                                     </div>
                                                 </li>
                                                 <li>
-                                                    <label>employees <span class="cs-required">*</span></label>
+                                                    <label>Employees <span class="cs-required">*</span></label>
                                                     <div class="hr-fields-wrap">
                                                         <select style="width: 100%;" id="js-employee">
-                                                            <option value="0">Select employee</option>
+                                                            <option value="0">Select an Employee</option>
                                                         </select>
                                                     </div>
                                                 </li>
@@ -67,6 +67,8 @@ foreach ($companies as $company)
                                                             <tr>
                                                                 <th>Course Title</th>
                                                                 <th>Status</th>
+                                                                <th>Course Language</th>
+                                                                <th>Language</th>
                                                                 <th class="text-right">Action</th>
                                                             </tr>
                                                         </thead>
@@ -76,7 +78,6 @@ foreach ($companies as $company)
                                             </div>
                                         </div>
                                     </div>
-                                    <!--  -->
                                 </div>
                             </div>
                         </div>
@@ -165,205 +166,215 @@ foreach ($companies as $company)
 
 
     <script>
-        var old_corporates;
-        var old_companies = '<?php echo json_encode($companies); ?>';
-        var old_from_company = 0;
-        var old_to_company = 0;
-        var selected_employees = [];
-        var copy_employee_count = 0;
-        var coped_employees = 0;
-        $(document).on('click', '.js-copy-employees-btn', function(e) {
-            e.preventDefault();
-            start_copy_process()
-        });
+        $(function courseManagement() {
+            let companyId,
+                employeeId,
+                currentCourseIndex = 0,
+                courseIds = [];
 
-        // Select 2
-        $('#js-from-company').select2();
-        $('#js-employee').select2();
-
-        $('#js-from-company').on('change', function() {
-
-            var from_company_sid = this.value;
-            fetch_employee(from_company_sid);
-        });
-
-
-        //
-        $("#js-fetch-courses").on('click', function() {
-
-            var employee_sid = $("#js-employee").val();
-            var company_sid = $("#js-from-company").val();
-
-            if (employee_sid == 0 || company_sid == 0) {
-                alertify.alert('Please select company and employee');
-            } else {
-                loader();
-                $('#js-loader-text').html('Please wait, we are loading employees courses <br> which may take few minutes!');
-
-                fetch_employee_courses(company_sid, employee_sid);
-                return;
-            }
-        });
-
-
-
-        //
-        function fetch_employee(company_sid) {
-
-            var myurl = "<?php echo base_url('manage_admin/Lms_employees/get_companies_employees') ?>" + "/" + company_sid;
-            $.get(myurl, function(resp) {
-                resp = JSON.parse(resp)
-
-                $('#js-employee').empty();               
-
-               $('#js-employee').append('<option value="0">Select employee</option>');
-
-                $.each(resp, function(key, value) {
-                    employee_name = RemakeEmployeeName(value);
-                    var newOption = $('<option>', {
-                        value: value.sid,
-                        text: employee_name
-                    });
-
-                    $('#js-employee').append(newOption);
-
-                });
-
-                loader(false);
-
+            //[] bind selectors
+            $('#js-from-company').select2();
+            $('#js-employee').select2();
+            // when company is changed
+            $('#js-from-company').on('change', function() {
+                companyId = $(this).val();
+                resetData();
+                fetch_employee();
             });
-        }
 
+            //
+            $("#js-fetch-courses").on('click', function() {
 
-        //
-        function fetch_employee_courses(company_sid, employee_sid) {
+                employeeId = $("#js-employee").val();
 
-            var myurl = "<?php echo base_url('lms/employeecourses/') ?>" + "/" + company_sid + "/" + employee_sid;
-            $.get(myurl, function(resp) {
-                resp = JSON.parse(resp)
-
-                $('#js-enployees-list-block').show();
-                $('#js-courses-list-show-area').html('');
-
-                var newRow = '';
-                $.each(resp, function(key, value) {
-
-                    newRow += '<tr>';
-                    newRow += '<td>' + value.course_title + '</td>';
-                    newRow += '<td>' + value.course_status + '</td>';
-                    newRow += '<td> <button type="button" class="btn btn-success pull-right js-mark-course-completed-btn" data-employeeid=' + employee_sid + ' data-companyid=' + company_sid + ' data-courseid=' + value.sid + '>Mark Completed </button></td></tr>';
-                });
-
-                $('#js-courses-list-show-area').html(newRow);
-
-
-                loader(false);
-
-            });
-        }
-
-
-        //
-        $(document).on('click', '.js-mark-course-completed-btn', function() {
-
-            var _this = this;
-            let courseId = $(this).data("courseid");
-            let companyId = $(this).data("companyid");
-            let employeeId = $(this).data("employeeid");
-
-            alertify.confirm('Confirm Action', 'Are you sure you want to complete this course?',
-                function() {
-                    //
+                if (!employeeId || !companyId) {
+                    alertify.alert('Please select a company and an employee.');
+                } else {
                     loader(true);
-                    $.post("<?= base_url('lms/coursesmanualcompleted'); ?>", {
-                        company_sid: companyId,
-                        employee_sid: employeeId,
-                        course_sid: courseId,
+                    $('#js-loader-text').html('Please wait, we are loading employees courses <br> which may take few minutes!');
+                    fetch_employee_courses();
+                    return;
+                }
+            });
 
-                    }).done(function() {
-                        alertify.success('Course completed successfully!');
-                        _this.closest("tr").remove();
+            //
+            $(document).on('click', '.js-mark-course-completed-btn', function(event) {
+                event.preventDefault();
+                //
+                courseId = $(this).data("courseid");
+                courseLanguage = $(this).closest("tr").find("select.jsCourseLanguages option:selected").val();
+
+                alertify.confirm(
+                    'Are you sure you want to manually complete this course?',
+                    function() {
+                        markCourseCompleted(
+                            courseId, courseLanguage
+                        )
+
+                    }
+                )
+            });
+
+            function markCourseCompleted(courseId, courseLanguage) {
+                //
+                loader(true);
+                $
+                    .post("<?= base_url('manage_admin/lms/manual_course_complete'); ?>", {
+                        companyId: companyId,
+                        employeeId: employeeId,
+                        courseId: courseId,
+                        language: courseLanguage
+
+                    })
+                    .always(function() {
                         loader(false);
+                    })
+                    .fail(function(e) {
+                        console.log(e)
+                        if (e.responseJSON) {
+
+                            alertify.alert(
+                                "Errors!",
+                                e.responseJSON.errors.join("<br/>")
+                            )
+                            return;
+                        }
+                    })
+                    .done(function(resp) {
+                        alertify.alert(
+                            "Success!",
+                            resp.message,
+                            function() {
+                                fetch_employee_courses();
+                            }
+                        );
 
                     });
+            }
 
-                },
-                function() {});
+            //
+            function fetch_employee() {
+                loader(true);
+                $
+                    .ajax({
+                        url: "<?= base_url('manage_admin/Lms_employees/get_companies_employees'); ?>/" + companyId,
+                        method: "GET"
+                    })
+                    .fail(function(e) {
+                        console.log(e)
+                    })
+                    .done(function(resp) {
+                        $('#js-employee').append('<option value="0">Select employee</option>');
+                        $.each(resp, function(key, value) {
+                            employee_name = RemakeEmployeeName(value);
+                            var newOption = $('<option>', {
+                                value: value.sid,
+                                text: employee_name
+                            });
+
+                            $('#js-employee').append(newOption);
+                        });
+                        loader(false);
+                    });
+            }
+
+            //
+            function fetch_employee_courses() {
+                $
+                    .ajax({
+                        url: "<?= base_url('manage_admin/lms/employee_courses'); ?>/" + (companyId) + "/" + employeeId,
+                        method: "GET"
+                    })
+                    .fail(function(e) {
+                        console.log(e)
+                    })
+                    .done(function(resp) {
+                        var newRow = '';
+                        $.each(resp, function(key, value) {
+                            //
+                            let courseStatus = getCourseStatus(value);
+
+                            newRow += '<tr>';
+                            newRow += '<td>' + value.course_title + '</td>';
+                            newRow += '<td>' + (courseStatus.text) + '</td>';
+                            newRow += '<td>' + (value.course_language ? value.course_language.toUpperCase() : "No Language") + '</td>';
+                            newRow += '<td>';
+                            if (value.languages) {
+                                newRow += "<select class='jsCourseLanguages'>";
+                                value.languages.map(function(v) {
+                                    if (value.course_language && value.course_language != v) {} else {
+                                        newRow += '<option value="' + (v) + '" ' + (value.course_language && value.course_language == v ? "selected" : "") + '>' + (v.toUpperCase()) + '</option>';
+                                    }
+                                });
+                                newRow += "</select>";
+                            }
+                            newRow += '</td>';
+                            newRow += '<td> ';
+                            newRow += '<button type="button" class="btn btn-success pull-right js-mark-course-completed-btn" data-courseid=' + value.sid + '>Mark Course Completed</button>';
+                            newRow += '</td></tr>';
+                        });
+
+                        $('#js-courses-list-show-area').html(newRow);
+                        $('#js-enployees-list-block').show();
+
+                        loader(false);
+                    });
+            }
+
+            // Loader
+            function loader(show_it, msg) {
+                msg = msg === undefined ? 'Please, wait while we are processing your request.' : msg;
+                show_it = show_it === undefined || show_it == true || show_it === 'show' ? 'show' : show_it;
+                if (show_it === 'show') {
+                    $('#js-loader').show();
+                    $('#js-loader-text').html(msg);
+                } else {
+                    $('#js-loader').hide();
+                    $('#js-loader-text').html('');
+                }
+            }
+
+            //
+            function RemakeEmployeeName(emp) {
+                var row = '';
+                //
+                row += emp['first_name'];
+                row += ' ' + emp['last_name'];
+                row += ' (' + emp['access_level'];
+                row += emp['access_level_plus'] == 1 || emp['pay_plan_flag'] == 1 ? ' Plus' : '';
+                row += ' )';
+                row += emp['job_title'] ? ' [' + emp['job_title'] + ']' : '';
+                //
+                return row;
+            }
+
+            // reset all
+            function resetData() {
+                employeeId = undefined;
+                currentCourseIndex = 0;
+                courseIds = [];
+                $('#js-employee').empty();
+                $('#js-enployees-list-block').hide();
+                $('#js-courses-list-show-area').html('');
+            }
+
+            //
+            function getCourseStatus(course) {
+                //
+                const obj = {
+                    text: "",
+                    slug: ""
+                };
+                //
+                if (course.lesson_status === "ready_to_start") {
+                    obj.text = "Ready To Start";
+                    obj.slug = "ready_to_start";
+                } else {
+                    obj.text = "In Progress";
+                    obj.slug = "in_progress";
+                }
+                return obj;
+            }
 
         });
-
-
-
-        // Loader
-        function loader(show_it, msg) {
-            msg = msg === undefined ? 'Please, wait while we are processing your request.' : msg;
-            show_it = show_it === undefined || show_it == true || show_it === 'show' ? 'show' : show_it;
-            if (show_it === 'show') {
-                $('#js-loader').show();
-                $('#js-loader-text').html(msg);
-            } else {
-                $('#js-loader').hide();
-                $('#js-loader-text').html('');
-            }
-        }
-
-        $(document).on('click', '.js-check-all', selectAllInputs);
-        $(document).on('click', '.js-tr', selectSingleInput);
-
-
-        function RemakeEmployeeName(emp) {
-            var row = '';
-            //
-            row += emp['first_name'];
-            row += ' ' + emp['last_name'];
-            row += ' (' + emp['access_level'];
-            row += emp['access_level_plus'] == 1 || emp['pay_plan_flag'] == 1 ? ' Plus' : '';
-            row += ' )';
-            row += emp['job_title'] ? ' [' + emp['job_title'] + ']' : '';
-            //
-            return row;
-        }
-
-
-        let policyObj = {
-            hasErrors: []
-        };
-
-
-        function callLoader() {
-            // get the employees
-            let selectedEmployees = [];
-            $.each($('input[name="employees_ids[]"]:checked'), function() {
-                selectedEmployees.push(parseInt($(this).val()));
-            });
-            //
-            policyObj = {
-                hasErrors: []
-            };
-            // Get company policies
-            let fromCompanySid = $('#js-from-company').val();
-            let toCompanySid = $('#js-to-company').val();
-
-            if (fromCompanySid == 0 || toCompanySid == 0) {
-                return alertify.alert('Please select "From & To" company to proceed.');
-            }
-
-            //Get From and to Company Policies
-            var myurl = "<?php echo base_url('manage_admin/copy_employees/getCompaniesPolicies') ?>" + "/" + fromCompanySid + "/" + toCompanySid;
-            $.ajax({
-                type: "POST",
-                url: myurl,
-                async: false,
-                data: {
-                    employeeIds: selectedEmployees
-                },
-                success: function(data) {
-                    if (data.fromCompanyPolicies.length === 0) {
-                        return start_copy_process('bypass');
-                    }
-                    loadModal(data);
-                },
-                error: function(data) {}
-            });
-        }
     </script>

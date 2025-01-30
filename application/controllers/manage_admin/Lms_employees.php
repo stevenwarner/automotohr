@@ -7,6 +7,7 @@ class Lms_employees extends Admin_Controller
     {
         parent::__construct();
         $this->load->library('ion_auth');
+        $this->load->model('v1/course_model');
         $this->load->model('manage_admin/lms_employees_model');
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
@@ -23,8 +24,7 @@ class Lms_employees extends Admin_Controller
 
     public function index()
     {
-        $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
-        $page_title = 'Mark  Employee LMS  course as completed manually ';
+        $page_title = 'LMS :: Employee Course';
         $companies = $this->lms_employees_model->get_all_companies();
         $this->data['page_title'] = $page_title;
         $this->data['companies'] = $companies;
@@ -33,9 +33,6 @@ class Lms_employees extends Admin_Controller
 
     public function get_corporate_companies($corporate_sid)
     {
-        $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
-        check_access_permissions($security_details, 'manage_admin', 'copy_employees');
-
         $corporate_companies = $this->copy_employees_model->get_corporate_companies_by_id($corporate_sid);
 
         if (!empty($corporate_companies)) {
@@ -53,15 +50,38 @@ class Lms_employees extends Admin_Controller
 
     public function get_companies_employees($company_sid)
     {
+        return SendResponse(
+            200,
+            $this
+                ->lms_employees_model
+                ->get_company_employee($company_sid)
+        );
+    }
 
-        $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
-        check_access_permissions($security_details, 'manage_admin', 'copy_employees');
+    //
+    public function employeeAllCourses($companyId, $employeeId)
+    {
+        return SendResponse(
+            200,
+            $this
+                ->course_model
+                ->getEmployeePendingCourseDetail(
+                    $companyId,
+                    $employeeId
+                )
+        );
+    }
 
-        if (!$this->input->is_ajax_request() || $this->input->method(true) !== 'GET') {
-            exit(0);
-        }
-        //      
-        $company_employees = $this->lms_employees_model->get_company_employee($company_sid);
-        echo json_encode($company_employees);
+    public function manuallyCourseComplete()
+    {
+        // get the sanitized post
+        $this
+            ->course_model
+            ->manuallyCourseComplete(
+                $this->input->post("companyId", true),
+                $this->input->post("employeeId", true),
+                $this->input->post("courseId", true),
+                $this->input->post("language", true),
+            );
     }
 }

@@ -23,7 +23,7 @@ class Lms_employees_model extends CI_Model
 
         $this->db->select('sid, CompanyName');
         $this->db->where('active', 1);
-        $this->db->where('is_paid', 1);
+        // $this->db->where('is_paid', 1);
         $this->db->where('parent_sid', 0);
         $this->db->order_by('CompanyName', 'ASC');
         $this->db->from('users');
@@ -59,8 +59,8 @@ class Lms_employees_model extends CI_Model
     {
         $this->db->select('CompanyName');
         $this->db->where('sid', $sid);
-        $this->db->where('active', 1);
-        $this->db->where('terminated_status', 0);
+        // $this->db->where('active', 1);
+        // $this->db->where('terminated_status', 0);
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();

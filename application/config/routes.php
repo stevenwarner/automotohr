@@ -2445,11 +2445,5 @@ $route["cms/update_solutions_sort_order/(:num)"]["post"] = "manage_admin/Cms/upd
 
 //
 $route['manage_admin/lms_employees'] = 'manage_admin/Lms_employees/index';
-
-
-
-
-$route['lms/employeecourses/(:num)/(:num)'] = 'v1/Courses/employeeAllCourses/$1/$2';
-$route['lms/coursesmanualcompleted'] = 'v1/Courses/coursesManualcompleted';
-
-
+$route['manage_admin/lms/employee_courses/(:num)/(:num)'] = 'manage_admin/Lms_employees/employeeAllCourses/$1/$2';
+$route['manage_admin/lms/manual_course_complete'] = 'manage_admin/Lms_employees/manuallyCourseComplete';

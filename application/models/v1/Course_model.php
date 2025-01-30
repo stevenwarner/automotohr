@@ -965,9 +965,6 @@ class Course_model extends CI_Model
         return $returnArray;
     }
 
-
-
-
     //
     public function getEmployeePendingCourseDetail(
         int $companyId,
@@ -989,7 +986,10 @@ class Course_model extends CI_Model
         $jobTitleId = $jobTitleId['sid'];
         // get the courses
         $assignedCourses = $this->db
-            ->select('lms_default_courses.sid,lms_default_courses.course_title')
+            ->select('
+                lms_default_courses.sid,
+                lms_default_courses.course_title
+            ')
             ->from('lms_default_courses')
             ->join(
                 'lms_default_courses_job_titles',
@@ -1010,25 +1010,45 @@ class Course_model extends CI_Model
         }
         //
         if (!empty($assignedCourses)) {
-
             foreach ($assignedCourses as $key => $val) {
+                // get course languages
+                $courseLanguages = $this->getCourseLanguagesWithMain(
+                    $companyId,
+                    $val["sid"]
+                );
+                //
+                $assignedCourses[$key]["languages"] = [];
+                $assignedCourses[$key]["course_language"] = "english";
+
+                if ($courseLanguages) {
+                    $languages = array_column(
+                        $courseLanguages,
+                        "course_file_language"
+                    );
+                    $assignedCourses[$key]["languages"] = $languages;
+                }
+
                 $courseData = $this->db
-                    ->select('course_status')
+                    ->select('lesson_status, course_status, course_language, course_type')
                     ->from('lms_employee_course')
                     ->where('lms_employee_course.course_sid', $val['sid'])
                     ->where('lms_employee_course.employee_sid', $employeeId)
                     ->get()
                     ->row_array();
 
-                if (!empty($courseData)) {
-
-                    if ($courseData['course_status'] == 'completed') {
+                if ($courseData) {
+                    if ($courseData["course_status"] === "passed") {
                         unset($assignedCourses[$key]);
                     } else {
-                        $assignedCourses[$key]['course_status'] = $courseData['course_status'];
+                        $assignedCourses[$key]['lesson_status'] =
+                            $courseData['lesson_status'];
+                        $assignedCourses[$key]['course_language'] = $courseData["course_language"];
+                        $assignedCourses[$key]['course_type'] = $courseData["course_type"];
                     }
                 } else {
-                    $assignedCourses[$key]['course_status'] = 'not started';
+                    $assignedCourses[$key]['lesson_status'] = 'ready_to_start';
+                    $assignedCourses[$key]['course_language'] = $courseData["course_language"];
+                    $assignedCourses[$key]['course_type'] = $courseData["course_type"];
                 }
             }
 
@@ -1040,17 +1060,121 @@ class Course_model extends CI_Model
 
 
     //
-    public function manualCompleteCourse($companySid, $employeeSid, $courseSid)
-    {
+    public function manuallyCourseComplete(
+        $companyId,
+        $employeeId,
+        $courseId,
+        $language
+    ) {
+        //
+        $todayDateTime = getSystemDate();
+        // set where array
+        $whereArray = [
+            "lms_employee_course.company_sid" => $companyId,
+            "lms_employee_course.employee_sid" => $employeeId,
+            "lms_employee_course.course_sid" => $courseId,
+        ];
+        // get the required course data
+        $courseData = $this->getCourseLanguagesWithMain(
+            $companyId,
+            $courseId,
+            $language
+        );
 
-        $coursedata = $this->db
-            ->select('course_status')
-            ->from('lms_employee_course')
-            ->where('lms_employee_course.course_sid', $courseSid)
-            ->where('lms_employee_course.employee_sid', $employeeSid)
-            ->where('lms_employee_course.company_sid', $companySid)
-            ->get()
+        if (!$courseData) {
+            return sendResponse(
+                400,
+                [
+                    "errors" => [
+                        "Failed to verify course language."
+                    ]
+                ]
+            );
+        }
+        //
+        $courseData = $courseData[0];
+        // get course banner and version
+        $record = $this
+            ->db
+            ->select([
+                "course_version",
+                "course_banner",
+            ])
+            ->where("sid", $courseId)
+            ->limit(1)
+            ->get("lms_default_courses")
             ->row_array();
+
+        if (!$record || !$record["course_banner"]) {
+            return sendResponse(
+                400,
+                [
+                    "errors" => [
+                        "Failed to verify course banner."
+                    ]
+                ]
+            );
+        }
+        // check if course is in progress
+        if ($this->db->where($whereArray)->count_all_results("lms_employee_course")) {
+            // course exists
+            // needs to convert to completed
+            $updateArray = [
+                "lesson_status" => "completed",
+                "course_status" => "passed",
+                "course_banner" => $record["course_banner"],
+                "course_version" => $record["course_version"],
+                "Imsmanifist_json" => $courseData["Imsmanifist_json"],
+                "course_file_name" => $courseData["course_file_name"],
+                "updated_at" => $todayDateTime,
+                "completed_at" => $todayDateTime,
+                "is_manual_completed" => 1,
+            ];
+            //
+            $this
+                ->db
+                ->where($whereArray)
+                ->update(
+                    'lms_employee_course',
+                    $updateArray
+                );
+        } else {
+
+            $dataToInsert = [
+                "course_sid" => $courseId,
+                "company_sid" => $companyId,
+                "employee_sid" => $employeeId,
+                "lesson_status" => "completed",
+                "course_status" => "passed",
+                "course_type" => "scorm",
+                "course_banner" => $record["course_banner"],
+                "course_version" => $record["course_version"],
+                "course_language" => $language,
+                "course_file_name" => $courseData["course_file_name"],
+                "Imsmanifist_json" => $courseData["Imsmanifist_json"],
+                "course_taken_count" => 1,
+                "created_at" => $todayDateTime,
+                "updated_at" => $todayDateTime,
+                "completed_at" => $todayDateTime,
+                "is_manual_completed" => 1,
+            ];
+            //
+            $this
+                ->db
+                ->insert('lms_employee_course', $dataToInsert);
+        }
+
+        return sendResponse(
+            200,
+            [
+                "message" => "You have successfully marked the course as completed."
+            ]
+        );
+
+
+
+        die("SDas");
+
 
         if (!empty($coursedata)) {
             //
@@ -1085,5 +1209,47 @@ class Course_model extends CI_Model
             //
             $this->db->insert('lms_employee_course', $dataToInsert);
         }
+    }
+
+
+    public function getCourseLanguagesWithMain(
+        int $companyId,
+        int $courseId,
+        string $language = ""
+    ) {
+        // get the original course id
+        $record = $this
+            ->db
+            ->select("default_course_sid")
+            ->where([
+                "assigned_course_sid" => $courseId,
+                "assign_company_sid" => $companyId,
+            ])
+            ->limit(1)
+            ->get("lms_assign_course_log")
+            ->row_array();
+        //
+        if (!$record) {
+            return [];
+        }
+        // set where
+        $where = [
+            "course_sid" => $record["default_course_sid"]
+        ];
+        if ($language) {
+            $where["course_file_language"] = $language;
+        }
+        // fetch the languages
+        return $this
+            ->db
+            ->select("
+                course_file_language,
+                Imsmanifist_json,
+                course_file_name,
+            ")
+            ->order_by("course_file_language", "ASC")
+            ->where($where)
+            ->get("lms_scorm_courses")
+            ->result_array();
     }
 }

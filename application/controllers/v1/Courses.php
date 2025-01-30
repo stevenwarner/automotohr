@@ -2709,24 +2709,4 @@ class Courses extends Public_Controller
     //     $this->load->view('courses/manager_report', $data);
     //     ///
     // }
-
-
-
-    //
-    public function employeeAllCourses($companyId, $employeeId)
-    {
-        $cousesData = $this->course_model->getEmployeePendingCourseDetail($companyId, $employeeId);
-        echo json_encode($cousesData);
-    }
-
-    public function coursesManualcompleted()
-    {
-        //          
-        $companySid = $_POST['company_sid'];
-        $employeeSid = $_POST['employee_sid'];
-        $courseSid = $_POST['course_sid'];
-
-        $this->course_model->manualCompleteCourse($companySid, $employeeSid, $courseSid);
-        echo "ok";
-    }
 }
