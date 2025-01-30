@@ -2469,3 +2469,7 @@ $route['compliance_report/view_compliance_report_email/(:num)/(:num)/(:any)/(:an
 $route['compliance_report/view_compliance_report_email/(:num)/(:num)/(:any)/(:any)']['post'] = 'v1/Compliance_reports/viewComplianceSafetyEmail/$1/$2/$3/$4';
 $route['compliance_report/download_Compliance_report_media/(:any)']['get'] = 'v1/Compliance_reports/download_Compliance_report_media/$1';
 $route['compliance_report/save_compliance_report_pdf']['post'] = 'v1/Compliance_reports/save_compliance_report_pdf';
+//
+$route['manage_admin/lms_employees'] = 'manage_admin/Lms_employees/index';
+$route['manage_admin/lms/employee_courses/(:num)/(:num)'] = 'manage_admin/Lms_employees/employeeAllCourses/$1/$2';
+$route['manage_admin/lms/manual_course_complete'] = 'manage_admin/Lms_employees/manuallyCourseComplete';
