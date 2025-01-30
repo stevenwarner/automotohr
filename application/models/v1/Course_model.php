@@ -1015,6 +1015,7 @@ class Course_model extends CI_Model
         if (!empty($assignedCourses)) {
             foreach ($assignedCourses as $key => $val) {
                 if ($existingCourseIds[$val["sid"]]) {
+                    unset($assignedCourses[$key]);
                     continue;
                 }
                 //
