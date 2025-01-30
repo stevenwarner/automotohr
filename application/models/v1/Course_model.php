@@ -998,6 +998,7 @@ class Course_model extends CI_Model
             )
             ->where('lms_default_courses.company_sid', $companyId)
             ->where('lms_default_courses.is_active', 1)
+            ->where('lms_default_courses.course_type', "scorm")
             ->group_start()
             ->where('lms_default_courses_job_titles.job_title_id', -1)
             ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
@@ -1009,8 +1010,15 @@ class Course_model extends CI_Model
             return [];
         }
         //
+        $existingCourseIds = [];
+        //
         if (!empty($assignedCourses)) {
             foreach ($assignedCourses as $key => $val) {
+                if ($existingCourseIds[$val["sid"]]) {
+                    continue;
+                }
+                //
+                $existingCourseIds[$val["sid"]] = true;
                 // get course languages
                 $courseLanguages = $this->getCourseLanguagesWithMain(
                     $companyId,
