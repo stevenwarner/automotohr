@@ -28,7 +28,7 @@
                 <div class="job-dtails">
                     <h1><?php echo $job_details['Title']; ?></h1>
                     <div class="job-info">
-                        <ul>about:blank#blocked
+                        <ul>
                             <li><span>Job Type:</span><?php echo $job_details['JobType']; ?></li>
                             <li><span>Category:</span><?php echo $job_details['JobCategory']; ?></li>
                             <li><span>Published:</span><?php echo $job_details['activation_date']; ?></li>
