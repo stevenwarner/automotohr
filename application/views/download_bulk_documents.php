@@ -63,7 +63,8 @@
             'I9': "<?= isset($documents['I9']['sid']) ? "false" : "null"; ?>",
             'W9': "<?= isset($documents['W9']['sid']) ? "false" : "null"; ?>",
             'W4': "<?= isset($documents['W4']['sid']) ? "false" : "null"; ?>",
-          //  'W4MN': "<?//= isset($documents['W4MN']['sid']) ? "true" : "null"; ?>",
+            //  'W4MN': "<? //= isset($documents['W4MN']['sid']) ? "true" : "null"; 
+                            ?>",
 
             'direct_deposit': "<?= !empty($documents['direct_deposit']) ? "false" : "null"; ?>",
             'dependents': "<?= !empty($documents['dependents']) ? "false" : "null"; ?>",
@@ -108,7 +109,15 @@
             if (has['I9'] != "null") assignedLength++;
             if (has['W9'] != "null") assignedLength++;
             if (has['W4'] != "null") assignedLength++;
-           // if (has['W4MN'] != "null") assignedLength++;
+            // if (has['W4MN'] != "null") assignedLength++;
+
+
+            //
+            let lmsCourses = <?= json_encode($documents['lms_courses']); ?>;
+            assignedLength = assignedLength + lmsCourses.length;
+
+
+
 
             //
             $('#js-dt').text(assignedLength);
@@ -123,11 +132,13 @@
             } else if (has['W4'] != "null") {
                 // Check for if
                 checkW4('Adding W4 form to export');
-            } /*else if (has['W4MN'] != "null") {
-                // Check for if
-                checkW4MN('Adding W4MN form to export');
+            }
+            /*else if (has['W4MN'] != "null") {
+                           // Check for if
+                           checkW4MN('Adding W4MN form to export');
 
-            } */ else if (has['direct_deposit'] != "null") {
+                       } */
+            else if (has['direct_deposit'] != "null") {
                 //
                 exportGDocument('direct_deposit');
             } else if (has['dependents'] != "null") {
@@ -187,16 +198,16 @@
             //
             function checkW4(s) {
                 if (has['W4'] == "null" || has['W4'] == "false") {
-                      exportGDocument('direct_deposit');
-                     // checkW4MN('Adding W4 State form to export');
+                    exportGDocument('direct_deposit');
+                    // checkW4MN('Adding W4 State form to export');
                     return;
                 }
                 if (has['W4'] === true) {
                     dc++;
                     m(s);
                     exportGDocument('direct_deposit');
-                   // checkW4MN('Adding W4 State form to export');
-                   //
+                    // checkW4MN('Adding W4 State form to export');
+                    //
 
                     return;
                 }
@@ -314,8 +325,8 @@
                 if (
                     (has['I9'] != "null" && has['I9'] !== true) ||
                     (has['W9'] != "null" && has['W9'] !== true) ||
-                    (has['W4'] != "null" && has['W4'] !== true) 
-                   // (has['W4MN'] != "null" && has['W4MN'] !== true)
+                    (has['W4'] != "null" && has['W4'] !== true)
+                    // (has['W4MN'] != "null" && has['W4MN'] !== true)
 
                 ) {
                     setTimeout(startGeneratingPDFs, 2000);
@@ -595,7 +606,7 @@
                     'employeeSid' => $user_sid,
                     'userFullNameSlug' => $slug
                 ]);
-            }else{
+            } else {
 
                 $this->load->view('form_w4/' . ($assign_on >= $compare_date ? "form_w4_2020_pdf" : "form_w4_pdf") . '', [
                     'pre_form' => $documents['W4'],
@@ -604,13 +615,7 @@
                     'employeeSid' => $user_sid,
                     'userFullNameSlug' => $slug
                 ]);
-
             }
-
-
-           
-
-
         }
 
         //

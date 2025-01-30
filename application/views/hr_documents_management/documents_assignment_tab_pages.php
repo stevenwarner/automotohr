@@ -17,6 +17,10 @@ if ($session['employer_detail']['access_level_plus'] == 1 || $canAccessDocument)
 $ncd = count($userNotCompletedStateForms);
 $cd = count($userCompletedStateForms);
 
+$cdLmsCourse = count($userCompletedLMSCourses);
+
+$cd = $cd + $cdLmsCourse;
+
 // Modify Assigned document
 // only available for Access_level_plus
 // employees.
@@ -697,7 +701,7 @@ $noActionRequiredDocumentsList = [];
                                                         <button onclick="func_get_generated_document_preview(<?php echo $document['document_sid']; ?>, ' generated', 'modified' , 0);" class="btn btn-success btn-sm btn-block">Preview Assigned</button>
                                                         <!-- <button onclick="func_get_generated_document_preview(<?php //echo $document['document_sid']; 
                                                                                                                     ?>//, 'generated', 'modified', <?php //echo $document['sid']; 
-                                                                                                                                                            ?>//);" class="btn btn-success btn-sm btn-block">Preview Assigned</button>-->
+                                                                                                                                                    ?>//);" class="btn btn-success btn-sm btn-block">Preview Assigned</button>-->
                                                     <?php } ?>
                                                 </td>
                                                 <td class="col-lg-2">
@@ -1766,6 +1770,8 @@ $noActionRequiredDocumentsList = [];
                         <?php } ?>
                     <?php } ?>
 
+
+
                     <!-- Performance Documents Start -->
                     <?php if (checkIfAppIsEnabled('performanceevaluation') && $assignPerformanceDocument && !$pendingPerformanceSection) { ?>
                         <?php $cd++; ?>
@@ -1820,6 +1826,10 @@ $noActionRequiredDocumentsList = [];
                         </div>
                     <?php } ?>
                     <!-- Performance Documents End -->
+
+                    <?php $this->load->view("hr_documents_management/partials/tabs/completed_lms_courses"); ?>
+
+
                 </div>
             </div>
             <!-- Signed Document End -->
