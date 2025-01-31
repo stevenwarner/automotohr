@@ -574,7 +574,7 @@ class Calendar extends Public_Controller
 
 
                 if (!empty($event_details['address']) && $event_details['category'] != 'interview-phone' && $event_details['category'] != 'interview-voip') {
-                    $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($event_details['address']) . "&zoom=13&size=400x400&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($event_details['address']);
+                    $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($event_details['address']) . "&zoom=13&size=400x400&key=" . GOOGLE_MAP_API_KEY . "&markers=color:blue|label:|" . urlencode($event_details['address']);
                     $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($event_details['address']) . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
                     $email_message .= '<p><b>Address:</b> ' . $event_details['address'] . ' </p>';
                     $email_message .= '<p> ' . $map_anchor . ' </p>';
@@ -2445,7 +2445,7 @@ class Calendar extends Public_Controller
 
         if (!empty($event_details['address'])) {
             // if (!empty($event_details['address']) && $event_details['category'] != 'interview-phone' && $event_details['category'] != 'interview-voip' && $event_details['category'] != 'call' && $event_details['category'] != 'email') {
-            $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($event_details['address']) . "&zoom=13&size=400x400&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($event_details['address']);
+            $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($event_details['address']) . "&zoom=13&size=400x400&key=" . GOOGLE_MAP_API_KEY . "&markers=color:blue|label:|" . urlencode($event_details['address']);
             $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($event_details['address']) . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
             $email_message .= '<p><b>Address:</b> ' . $event_details['address'] . ' </p>';
             $email_message .= '<p> ' . $map_anchor . ' </p>';

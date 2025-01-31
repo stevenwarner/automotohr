@@ -165,7 +165,7 @@
 		$event_info_box .= '			</div>';
 		$event_info_box .= '			<div class="col-sm-12 col-xs-12">';
 		$event_info_box .= '				<a href="https://maps.google.com/maps?z=12&t=m&q='.(urlencode($event_details['event_address'])).'">';
-		$event_info_box .= '					<img src="https://maps.googleapis.com/maps/api/staticmap?center='.(urlencode($event_details['event_address'])).'&zoom=13&size=250x150&key='.GOOGLE_API_KEY.'&markers=color:blue|label:|' . urlencode($event_details['event_address']).'" />';
+		$event_info_box .= '					<img src="https://maps.googleapis.com/maps/api/staticmap?center='.(urlencode($event_details['event_address'])).'&zoom=13&size=250x150&key='.GOOGLE_MAP_API_KEY.'&markers=color:blue|label:|' . urlencode($event_details['event_address']).'" />';
 		$event_info_box .= '				</a>';
 		$event_info_box .= '			</div>';
 		$event_info_box .= '		</div>';

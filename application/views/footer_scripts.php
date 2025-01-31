@@ -19,7 +19,7 @@
          * @type {string}
          */
         var baseURI = "<?php echo rtrim(base_url(), '/'); ?>/";
-        var googleMapKey = '<?php echo GOOGLE_API_KEY ?>';
+        var googleMapKey = '<?php echo GOOGLE_MAP_API_KEY ?>';
     </script>
 <?php endif; ?>
 <?php if (isset($PageScripts)) {

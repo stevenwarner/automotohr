@@ -4254,7 +4254,7 @@ class Onboarding extends CI_Controller
                 case 'get_location_map':
                     $location_sid = $this->input->post('location_sid');
                     $location = $this->onboarding_model->get_single_office_locations($location_sid);
-                    $map = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($location['location_address']) . "&zoom=13&size=400x400&key=" . GOOGLE_API_KEY;
+                    $map = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($location['location_address']) . "&zoom=13&size=400x400&key=" . GOOGLE_MAP_API_KEY;
                     echo '<div class="img-thumbnail text-center"><img style="width: 100%;" src="' . $map . '" alt="Map no found!" class="img-responsive" /></div>';
                     break;
             }

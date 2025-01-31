@@ -6400,7 +6400,7 @@ if (!function_exists('ics_files')) {
 
         if (!empty($event_details['address'])) {
             // if (!empty($event_details['address']) && $event_details['category'] != 'interview-phone' && $event_details['category'] != 'interview-voip' && $event_details['category'] != 'call' && $event_details['category'] != 'email') {
-            $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($event_details['address']) . "&zoom=13&size=400x400&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($event_details['address']);
+            $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($event_details['address']) . "&zoom=13&size=400x400&key=" . GOOGLE_MAP_API_KEY . "&markers=color:blue|label:|" . urlencode($event_details['address']);
             $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($event_details['address']) . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
             $email_message .= '<p><b>Address:</b> ' . $event_details['address'] . ' </p>';
             $email_message .= '<p> ' . $map_anchor . ' </p>';
@@ -7255,7 +7255,7 @@ if (!function_exists('send_calendar_email')) {
         $event_address_row .= '<tr>';
         $event_address_row .= '     <td>';
         $event_address_row .= '         <a href="https://maps.google.com/maps?z=12&t=m&q=' . (urlencode($event_details['address'])) . '">';
-        $event_address_row .= '             <img src="https://maps.googleapis.com/maps/api/staticmap?center=' . (urlencode($event_details['address'])) . '&zoom=13&size=400x400&key=' . GOOGLE_API_KEY . '&markers=color:blue|label:|' . (urlencode($event_details['address'])) . '" alt="No Map Found!" >';
+        $event_address_row .= '             <img src="https://maps.googleapis.com/maps/api/staticmap?center=' . (urlencode($event_details['address'])) . '&zoom=13&size=400x400&key=' . GOOGLE_MAP_API_KEY . '&markers=color:blue|label:|' . (urlencode($event_details['address'])) . '" alt="No Map Found!" >';
         $event_address_row .= '         </a>';
         $event_address_row .= '     </td>';
         $event_address_row .= '</tr>';
@@ -8982,7 +8982,7 @@ if (!function_exists('send_admin_calendar_email_template')) {
         $address_heading_row = '<strong>Address</strong>';
         $address_para_row    = "<p>{$event_address}</p>";
         $address_map_row     = '<a href="https://maps.google.com/maps?z=12&t=m&q=' . (urlencode($event_address)) . '">';
-        $address_map_row    .= '    <img src="https://maps.googleapis.com/maps/api/staticmap?center=' . (urlencode($event_address)) . '&zoom=13&size=400x400&key=' . GOOGLE_API_KEY . '&markers=color:blue|label:|' . (urlencode($event_address)) . '" alt="No Map Found!" >';
+        $address_map_row    .= '    <img src="https://maps.googleapis.com/maps/api/staticmap?center=' . (urlencode($event_address)) . '&zoom=13&size=400x400&key=' . GOOGLE_MAP_API_KEY . '&markers=color:blue|label:|' . (urlencode($event_address)) . '" alt="No Map Found!" >';
         $address_map_row    .= '</a>';
 
         // Generate calendar download links

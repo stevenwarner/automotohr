@@ -1,4 +1,4 @@
-<script src="https://maps.google.com/maps/api/js?key=<?php echo GOOGLE_API_KEY ?>" type="text/javascript"></script>
+<script src="https://maps.google.com/maps/api/js?key=<?php echo GOOGLE_MAP_API_KEY ?>" type="text/javascript"></script>
 
 <div class="csPageWrap" style="background-color: #f1f1f1;">
     <!-- Nav bar -->
