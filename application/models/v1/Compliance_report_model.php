@@ -414,10 +414,16 @@ class Compliance_report_model extends CI_Model
 					//
 					$userName = '';
 					//
-					$employeeInfo = $this->get_employee_info_by_id($userId);
-					$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
-					//
-					$userName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
+					if ($email["manual_email"]) {
+						$split_email = explode('@', $email['manual_email']);
+                        $userName = $split_email[0].' (OutSider)';
+					} else {
+						$employeeInfo = $this->get_employee_info_by_id($userId);
+						$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
+						//
+						$userName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
+					}
+					
 					//	
 					$incident_emails[$userId]['userName'] = $userName;
 					$incident_emails[$userId]['userId'] = $userId;
@@ -436,7 +442,7 @@ class Compliance_report_model extends CI_Model
 		// get all user
 		$this->db->select('employer_sid');
 		$this->db->where('incident_sid', $incidentId);
-		$this->db->where('incident_sid !=', $employeeId);
+		$this->db->where('employer_sid !=', $employeeId);
 		//
 		$records_obj = $this->db->get('incident_assigned_emp');
 		$records_arr = $records_obj->result_array();
@@ -481,14 +487,146 @@ class Compliance_report_model extends CI_Model
 							$userName = '';
 							//
 							$employeeInfo = $this->get_employee_info_by_id($userId);
-							$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
-							//
-							$userName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
-							
+							if ($email["manual_email"]) {
+								$split_email = explode('@', $email['manual_email']);
+								$userName = $split_email[0].' (OutSider)';
+							} else {
+								$employeeInfo = $this->get_employee_info_by_id($userId);
+								$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
+								//
+								$userName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
+							}
 							//	
 							$otherEmployeesEmails[$userId]['userName'] = $userName;
 							$otherEmployeesEmails[$userId]['userId'] = $userId;
 							$otherEmployeesEmails[$userId]['employeeId'] = $employeeId;
+							$otherEmployeesEmails[$userId]['incidentId'] = $incidentId;
+						}
+						//
+						$otherEmployeesEmails[$userId]['emails'][] = $email;
+					}
+					//
+					$incident_emails[$otherEmployeeId] = $otherEmployeesEmails;
+				}
+				//
+
+			}
+		}
+		//
+		return $incident_emails;
+	}
+
+	public function getPrivateUserEmails ($incidentId, $emailId) {
+		$this->db->select('*');
+		$this->db->where('manual_email', $emailId);
+		$this->db->where('incident_reporting_id', $incidentId);
+		$this->db->order_by('send_date', 'desc');
+		$records_obj = $this->db->get('incident_reporting_emails');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		$return_data = array();
+
+		$incident_emails = array();
+
+		if (!empty($records_arr)) {
+			foreach ($records_arr as $email) {
+				$email['reverse_check'] = 0;
+				$userId = 0;
+				//
+				if ($email['receiver_sid'] == 0)  {
+					$email['email_status'] = 'received';
+					$userId = $email['sender_sid'];
+
+				} else {
+					$userId = $email['receiver_sid'];
+					$email['email_status'] = 'send';
+				}
+				//
+				if (!array_key_exists($userId, $incident_emails)) {
+					//
+					$userName = '';
+					//
+					if ($email["manual_email"]) {
+						$split_email = explode('@', $email['manual_email']);
+                        $userName = $split_email[0].' (OutSider)';
+					} else {
+						$employeeInfo = $this->get_employee_info_by_id($userId);
+						$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
+						//
+						$userName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
+					}
+					//	
+					$incident_emails[$userId]['userName'] = $userName;
+					$incident_emails[$userId]['userId'] = $userId;
+					$incident_emails[$userId]['employeeId'] = $emailId;
+					$incident_emails[$userId]['incidentId'] = $incidentId;
+				}
+				//
+				$incident_emails[$userId]['emails'][] = $email;
+			}
+		}
+		//
+		return $incident_emails;
+	}
+
+	function getOtherUsersEmails ($incidentId, $emailId) {
+		$this->db->select('employer_sid');
+		$this->db->where('incident_sid', $incidentId);
+		//
+		$records_obj = $this->db->get('incident_assigned_emp');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		//
+		$incident_emails = array();
+		//
+		if ($records_arr) {
+			//
+			$otherEmployees = array_column($records_arr, 'employer_sid');
+			//
+			foreach ($otherEmployees as $otherEmployeeId) {
+				$where = "(sender_sid ='" . $otherEmployeeId . "' OR receiver_sid ='" . $otherEmployeeId . "')";
+				$this->db->select('*');
+				$this->db->where('manual_email <>', $emailId);
+				$this->db->where($where);
+				$this->db->where('incident_reporting_id', $incidentId);
+				$this->db->order_by('send_date', 'desc');
+				$records_obj = $this->db->get('incident_reporting_emails');
+				$records_arr = $records_obj->result_array();
+				$records_obj->free_result();
+				//
+				$otherEmployeesEmails = [];
+				//
+				if (!empty($records_arr)) {
+					foreach ($records_arr as $email) {
+						$email['reverse_check'] = 0;
+						$userId = 0;
+						//
+						if ($email['receiver_sid'] == $otherEmployeeId)  {
+							$email['email_status'] = 'received';
+							$userId = $email['sender_sid'];
+		
+						} else {
+							$userId = $email['receiver_sid'];
+							$email['email_status'] = 'send';
+						}
+						//
+						if (!array_key_exists($userId, $otherEmployeesEmails)) {
+							//
+							$userName = '';
+							//
+							if ($email["manual_email"]) {
+								$split_email = explode('@', $email['manual_email']);
+								$userName = $split_email[0].' (OutSider)';
+							} else {
+								$employeeInfo = $this->get_employee_info_by_id($userId);
+								$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
+								//
+								$userName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
+							}
+							//	
+							$otherEmployeesEmails[$userId]['userName'] = $userName;
+							$otherEmployeesEmails[$userId]['userId'] = $userId;
+							$otherEmployeesEmails[$userId]['employeeId'] = $otherEmployeeId;
 							$otherEmployeesEmails[$userId]['incidentId'] = $incidentId;
 						}
 						//
@@ -670,13 +808,23 @@ class Compliance_report_model extends CI_Model
 
 	function getComplianceReportComments($id)
 	{
-		$this->db->select('comment,date_time,t1.username as user1,t2.username as user2,response_type, t1.profile_picture as pp1, t2.profile_picture as pp2, incident_reporting_comments.applicant_sid as emp_id');
+		$this->db->select('
+			comment,date_time,
+			t1.username as user1,
+			t2.username as user2,
+			response_type, 
+			t1.profile_picture as pp1,
+			t2.profile_picture as pp2,
+			incident_reporting_comments.applicant_sid as emp_id,
+			incident_reporting_comments.manual_email
+		');
 		$this->db->where('incident_reporting_id', $id);
 		$this->db->join('users as t1', 't1.sid = incident_reporting_comments.applicant_sid', 'left');
 		$this->db->join('users as t2', 't2.sid = incident_reporting_comments.employer_sid', 'left');
 		// $this->db->order_by("incident_reporting_comments.id", "asc");
 		$this->db->order_by("incident_reporting_comments.date_time", "desc");
 		$comments = $this->db->get('incident_reporting_comments')->result_array();
+		//
 		return $comments;
 	}
 
@@ -709,6 +857,18 @@ class Compliance_report_model extends CI_Model
         } else {
             return false;
         }
+	}
+
+	function getUserInfoByEmail ($email, $companyId) {
+		$this->db->select('sid, first_name, last_name');
+		$this->db->where('email', $email);
+		$this->db->where('parent_sid', $companyId);
+		//
+		$record_obj = $this->db->get('users');
+		$record_arr = $record_obj->row_array();
+		$record_obj->free_result();
+		//
+		return $record_arr;
 	}
 
 	function get_attach_file_info($sid, $type)
@@ -776,6 +936,7 @@ class Compliance_report_model extends CI_Model
 	function insertNewEmployeeToComplianceReport($data_to_insert)
 	{
 		$this->db->insert('incident_assigned_emp', $data_to_insert);
+		return $this->db->insert_id();
 	}
 
 	function get_assign_manager_info($employer_sid, $company_sid, $incident_sid)
@@ -998,6 +1159,30 @@ class Compliance_report_model extends CI_Model
 		$this->db->where('sid', $videoSid)->update('incident_related_videos', array('is_archived' => 0));
 	}
 
+	function getIncidentIDByVideoId($videoId)
+	{
+		//
+		$this->db->select('incident_sid');
+		$this->db->where('sid', $videoId);
+		$record_obj = $this->db->get('incident_related_videos');
+		$record_arr = $record_obj->row_array();
+		$record_obj->free_result();
+		//
+		return $record_arr['incident_sid'];
+	}
+
+	function getIncidentIDByDocumentId($documentId)
+	{
+		//
+		$this->db->select('incident_reporting_id');
+		$this->db->where('sid', $documentId);
+		$record_obj = $this->db->get('incident_reporting_documents');
+		$record_arr = $record_obj->row_array();
+		$record_obj->free_result();
+		//
+		return $record_arr['incident_reporting_id'];
+	}
+
 	function update_email_is_read_flag($sid, $data_to_update)
 	{
 		$this->db->where('sid', $sid);
@@ -1076,6 +1261,21 @@ class Compliance_report_model extends CI_Model
 		return $return_data;
 	}
 
-	
+	function insertComplianceTrackingRecord($dataToInsert)
+	{
+		$this->db->insert('compliance_report_tracking', $dataToInsert);
+	}
+
+	function insertVideoHistory($data)
+	{
+		$this->db->insert('compliance_report_videos_history', $data);
+		return $this->db->insert_id();
+	}
+
+	function insertDocumentHistory($data)
+	{
+		$this->db->insert('compliance_report_documents_history', $data);
+		return $this->db->insert_id();
+	}
 
 }

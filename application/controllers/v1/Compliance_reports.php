@@ -45,7 +45,7 @@ class Compliance_reports extends CI_Controller
             $data['id'] = $id;
             $data['report_type'] = $report_type;
             $questions = $this->compliance_report_model->fetch_all_question($id);
-            
+
             $e_signature_data = get_e_signature($company_sid, $employer_sid, 'employee');
             $data['e_signature_data'] = $e_signature_data;
             $load_view = check_blue_panel_status(false, 'self');
@@ -106,8 +106,28 @@ class Compliance_reports extends CI_Controller
                         $incident = $this->compliance_report_model->insertComplianceReport($insert);
                         //
                         $incidentId = $incident;
+                        //
+                        $trackingObj = array(
+                            'compliance_report_sid' => $incidentId,
+                            'employee_sid' => $employer_sid,
+                            'item_type' => "report",
+                            'action' => "add",
+                            'item_sid' => 0,
+                            'created_at' => date('Y-m-d H:i:s')
+                        );
+                        //
+                        $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
                     }
-
+                    //
+                    // insert compliance report initiator as manager
+                    $assigned_emp = array(
+                        'company_sid' => $company_sid,
+                        'employer_sid' => $employer_sid,
+                        'assigned_date' => date('Y-m-d H:i:s'),
+                        'incident_sid' => $incidentId
+                    );
+                    //
+                    $this->compliance_report_model->assignComplianceReportToEmployees($assigned_emp); 
                     //
                     unset($_POST['witnesses']);
                     unset($_POST['video_source']);
@@ -141,7 +161,7 @@ class Compliance_reports extends CI_Controller
                     $replacement_array = array();
                     $replacement_array['company_name'] = ucwords($data['session']['company_detail']['CompanyName']);
                     $replacement_array['company-name'] = ucwords($data['session']['company_detail']['CompanyName']);
-                    $initiated_by = ucwords($data['session']['employer_detail']['first_name']).' '.ucwords($data['session']['employer_detail']['last_name']);
+                    $initiated_by = ucwords($data['session']['employer_detail']['first_name']) . ' ' . ucwords($data['session']['employer_detail']['last_name']);
 
                     foreach ($review_manager as $manager) {
                         $assigned_emp = array(
@@ -150,13 +170,39 @@ class Compliance_reports extends CI_Controller
                             'assigned_date' => date('Y-m-d H:i:s'),
                             'incident_sid' => $incidentId
                         );
-
-                        $this->compliance_report_model->assignComplianceReportToEmployees($assigned_emp);     //Add the employees who are gonna receive this incident from employee reporting
+                        //
+                        $assignId = $this->compliance_report_model->assignComplianceReportToEmployees($assigned_emp);     //Add the employees who are gonna receive this incident from employee reporting
+                        //
+                        $trackingObj = array(
+                            'compliance_report_sid' => $incidentId,
+                            'employee_sid' => $employer_sid,
+                            'item_type' => "manager",
+                            'action' => "add",
+                            'item_sid' => $assignId,
+                            'created_at' => date('Y-m-d H:i:s')
+                        );
+                        //
+                        $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+                        //
                         $emp = $this->compliance_report_model->fetch_employee_name_by_sid($manager);
+
+                        $this->load->library('encryption');
+                        //
+                        $this->encryption->initialize(
+                            get_encryption_initialize_array()
+                        );
+                        //
+                        $viewComplianceCode = str_replace(
+                            ['/', '+'],
+                            ['$$ab$$', '$$ba$$'],
+                            $this->encryption->encrypt($incidentId . '/' . $manager . '/' . 'view')
+                        );
+                        //
+                        $approval_public_link_accept = base_url("compliance_report/view_compliance_report") . '/' . $viewComplianceCode;
 
                         $reply_url = base_url('compliance_report/view_compliance_report') . '/' . $incidentId;
                         $viewComplianceReportBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $reply_url . '" target="_blank">View Report</a>';
-                        
+
                         $replacement_array['initiated_by'] = $initiated_by;
                         $replacement_array['first_name'] = ucwords($emp[0]['first_name']);
                         $replacement_array['last_name'] = ucfirst($emp[0]['last_name']);
@@ -168,7 +214,7 @@ class Compliance_reports extends CI_Controller
                     }
 
                     // Sending incident email to Steven start
-                    $viewAdminIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url("manage_admin/reports/incident_reporting/view_incident/".$incidentId) . '" target="_blank">View Report</a>';
+                    $viewAdminIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url("manage_admin/reports/incident_reporting/view_incident/" . $incidentId) . '" target="_blank">View Report</a>';
                     $stevenData = [
                         'initiated_by' => $initiated_by,
                         'first_name' => 'Steven',
@@ -432,20 +478,31 @@ class Compliance_reports extends CI_Controller
                                 $this->compliance_report_model->insert_email_attachment($insert_attachment);
                             }
                         }
-
-                        $conversation_key = $complianceTypeId . '/' . $id . '/' . $manual_email . '/' . $employer_sid;
+                        //
+                        //
+                        $receiver_name = '';
+                        $conversation_key = '';
+                        //
+                        if ($isEmployee) {
+                            $manualUserInfo = $this->compliance_report_model->getUserInfoByEmail($_POST['manual_email'], $company_sid);
+                            $conversation_key = $complianceTypeId . '/' . $id . '/' . $manualUserInfo['sid'] . '/' . $employer_sid;
+                            $receiver_name = $manualUserInfo['first_name'].' '.$manualUserInfo['last_name'];
+                        } else {
+                            $conversation_key = $complianceTypeId . '/' . $id . '/' . $manual_email . '/' . $employer_sid;
+                            $name = explode("@", $manual_email);
+                            $receiver_name = $name[0];
+                        }
+                        //
                         $url = base_url('compliance_report/view_compliance_report_email/' . $conversation_key);
                         $from_name = $session["employer_detail"]["first_name"] . ' ' . $session["employer_detail"]["last_name"];
-                        $name = explode("@", $manual_email);
-                        $receiver_name = $name[0];
-
+                        //
                         $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                         $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
                         $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
                         if ($isEmployee) {
                             $employeeType = $this->compliance_report_model->isComplianceReportManager($_POST['manual_email'], $company_sid, $id);
                             //
-                            if($employeeType != "out_sider") {
+                            if ($employeeType != "out_sider") {
                                 if ($employeeType == "reporter") {
                                     $viewIncident = base_url('compliance_report/view_compliance_report/' . $id);
                                 } else if ($employeeType == "incident_manager") {
@@ -455,6 +512,24 @@ class Compliance_reports extends CI_Controller
                                 $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Compliance Report</a>' . '<br>';
                                 $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                             }
+                        } else {
+
+                            $this->load->library('encryption');
+                            //
+                            $this->encryption->initialize(
+                                get_encryption_initialize_array()
+                            );
+                            //
+                            $viewComplianceCode = str_replace(
+                                ['/', '+'],
+                                ['$$ab$$', '$$ba$$'],
+                                $this->encryption->encrypt($conversation_key)
+                            );
+                            //
+                            $approval_public_link_accept = base_url("compliance_report/view_compliance_report_public_link") . '/' . $viewComplianceCode;
+                            //
+                            $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $approval_public_link_accept . '">View Compliance Report</a>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                         }
                         $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
                         $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
@@ -470,6 +545,20 @@ class Compliance_reports extends CI_Controller
                             . $email_hf['footer'];
 
                         log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                        //
+                        // Add outsider user into compliance report outsider user table
+                        
+                        //
+                        $trackingObj = array(
+                            'compliance_report_sid' => $id,
+                            'employee_sid' => $employer_sid,
+                            'item_type' => "email",
+                            'action' => "send",
+                            'item_sid' => $inserted_email_sid,
+                            'created_at' => date('Y-m-d H:i:s')
+                        );
+                        //
+                        $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
                     } else if ('system') {
                         $receivers = $_POST['receivers'];
                         $subject = $_POST['subject'];
@@ -565,7 +654,7 @@ class Compliance_reports extends CI_Controller
                             $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                             $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
-                            if($employeeType != "out_sider") {
+                            if ($employeeType != "out_sider") {
                                 if ($employeeType == "reporter") {
                                     $viewIncident = base_url('compliance_report/view_compliance_report/' . $id);
                                 } else if ($employeeType == "incident_manager") {
@@ -589,6 +678,17 @@ class Compliance_reports extends CI_Controller
                                 . $email_hf['footer'];
 
                             log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                            //
+                            $trackingObj = array(
+                                'compliance_report_sid' => $id,
+                                'employee_sid' => $employer_sid,
+                                'item_type' => "email",
+                                'action' => "send",
+                                'item_sid' => $inserted_email_sid,
+                                'created_at' => date('Y-m-d H:i:s')
+                            );
+                            //
+                            $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
                         }
                     }
 
@@ -600,9 +700,20 @@ class Compliance_reports extends CI_Controller
                     $insert_data['comment'] = $_POST['response'];
                     $insert_data['date_time'] = date('Y-m-d h:i:s');
                     $insert_data['response_type'] = $_POST['response_type'];
-                    $this->compliance_report_model->addComplianceReportComment($insert_data);
+                    $commentId = $this->compliance_report_model->addComplianceReportComment($insert_data);
                     $incident_status = array('status' => 'Responded');
                     $this->compliance_report_model->updateComplianceReport($id, $incident_status);
+                    //
+                    $trackingObj = array(
+                        'compliance_report_sid' => $id,
+                        'employee_sid' => $employer_sid,
+                        'item_type' => "comment",
+                        'action' => "add",
+                        'item_sid' => $commentId,
+                        'created_at' => date('Y-m-d H:i:s')
+                    );
+                    //
+                    $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
                     //
                     $this->session->set_flashdata('message', '<strong>Success:</strong> Send Incident Comment Successfully!');
                 } else if ($perform_action == 'add_video') {
@@ -673,18 +784,29 @@ class Compliance_reports extends CI_Controller
                         }
                     }
 
-                    $video_to_insert                        = array();
-                    $video_to_insert['incident_sid']        = $id;
-                    $video_to_insert['video_title']         = $video_title;
-                    $video_to_insert['video_type']          = $video_source;
-                    $video_to_insert['video_url']           = $video_id;
-                    $video_to_insert['user_type']           = 'manager';
-                    $video_to_insert['uploaded_by']         = $employer_sid;
-                    $video_to_insert['is_incident_reported'] = 1;
-
-
-                    $this->compliance_report_model->insertComplianceVideoRecord($video_to_insert);
-
+                    $video_to_insert                            = array();
+                    $video_to_insert['incident_sid']            = $id;
+                    $video_to_insert['video_title']             = $video_title;
+                    $video_to_insert['video_type']              = $video_source;
+                    $video_to_insert['video_url']               = $video_id;
+                    $video_to_insert['user_type']               = 'manager';
+                    $video_to_insert['uploaded_by']             = $employer_sid;
+                    $video_to_insert['is_incident_reported']    = 1;
+                    $video_to_insert['file_type']               = 'compliance report file';
+                    //
+                    $videoId = $this->compliance_report_model->insertComplianceVideoRecord($video_to_insert);
+                    //
+                    $trackingObj = array(
+                        'compliance_report_sid' => $id,
+                        'employee_sid' => $employer_sid,
+                        'item_type' => "video",
+                        'action' => "add",
+                        'item_sid' => $videoId,
+                        'created_at' => date('Y-m-d H:i:s')
+                    );
+                    //
+                    $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+                    //
                     $this->session->set_flashdata('message', '<strong>Success:</strong> ' . $upload_file_type . ' is save Successfully!');
                 } else if ($perform_action == 'add_document') {
                     if (!empty($_FILES) && isset($_FILES['upload_document']) && $_FILES['upload_document']['size'] > 0) {
@@ -704,8 +826,21 @@ class Compliance_reports extends CI_Controller
                         $document_to_insert['employer_id']              = $employer_sid;
                         $document_to_insert['company_id']               = $company_sid;
                         $document_to_insert['incident_reporting_id']    = $id;
-
-                        $this->compliance_report_model->insertComplianceDocument($document_to_insert);
+                        $document_to_insert['file_type']                = 'compliance report file';
+                        //
+                        $documentId = $this->compliance_report_model->insertComplianceDocument($document_to_insert);
+                        //
+                        $trackingObj = array(
+                            'compliance_report_sid' => $id,
+                            'employee_sid' => $employer_sid,
+                            'item_type' => "document",
+                            'action' => "add",
+                            'item_sid' => $documentId,
+                            'created_at' => date('Y-m-d H:i:s')
+                        );
+                        //
+                        $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+                        //
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Document is Uploaded Successfully!');
                     }
                 } else if ($perform_action == 'add_employees') {
@@ -720,13 +855,24 @@ class Compliance_reports extends CI_Controller
                         $data_to_insert['incident_sid']     = $id;
                         $data_to_insert['assigned_status']  = 1;
                         //
-                        $this->compliance_report_model->insertNewEmployeeToComplianceReport($data_to_insert);
+                        $assignId = $this->compliance_report_model->insertNewEmployeeToComplianceReport($data_to_insert);
+                        //
+                        $trackingObj = array(
+                            'compliance_report_sid' => $id,
+                            'employee_sid' => $employer_sid,
+                            'item_type' => "manager",
+                            'action' => "add",
+                            'item_sid' => $assignId,
+                            'created_at' => date('Y-m-d H:i:s')
+                        );
+                        //
+                        $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
                         //
                         $emp = $this->compliance_report_model->fetch_employee_name_by_sid($employeeId);
 
                         $reply_url = base_url('compliance_report/view_compliance_report') . '/' . $id;
                         $viewIncidentBtn = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $reply_url . '" target="_blank">View Report</a>';
-                        
+
                         $replacement_array['initiated_by'] = $this->compliance_report_model->getComplianceReportInitiatorName($id);
                         $replacement_array['first_name'] = ucwords($emp[0]['first_name']);
                         $replacement_array['last_name'] = ucfirst($emp[0]['last_name']);
@@ -753,7 +899,7 @@ class Compliance_reports extends CI_Controller
 
                 redirect(current_url(), 'refresh');
             }
-
+            // _e($my_emails,true,true);
             $data                                   = array();
             $data['id']                             = $id;
             $data['title']                          = $title;
@@ -787,6 +933,420 @@ class Compliance_reports extends CI_Controller
             $this->load->view('main/header', $data);
             $this->load->view('compliance_report/view_compliance_report');
             $this->load->view('main/footer');
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
+
+    public function view_compliance_report_public_interface($token)
+    {
+        // 
+        $this->load->library('encryption');
+        //
+        $this->encryption->initialize(
+            get_encryption_initialize_array()
+        );
+        //
+        $decrypt_token = $this->encryption->decrypt(str_replace(['$$ab$$', '$$ba$$'], ['/', '+'], $token));
+        //
+        if (!empty($decrypt_token)) {
+            //
+            $decrypt_keys = explode("/", $decrypt_token);
+            //
+            $reportTypeId = $decrypt_keys[0];
+            $reportId = $decrypt_keys[1];
+            $currentUserEmailId = filter_var($decrypt_keys[2], FILTER_VALIDATE_EMAIL) ? $decrypt_keys[2] : '';
+            $responderId = $decrypt_keys[3];
+            $companyId = getEmployeeUserParent_sid($responderId);
+            $company_name = getCompanyNameBySid($companyId);
+            $user_first_name    = 'N/';
+            $user_last_name     = 'A';
+            $user_phone         = 'N/A';
+            $user_email         = $currentUserEmailId;
+            $user_type          = 'manual';
+            $user_picture       = '';
+            
+            $title = "Assigned Compliance Safety - View Compliance Safety Details";
+
+            $as_managers = array();
+            $incident_all_emails = array();
+            $load_view = check_blue_panel_status(false, 'self');
+
+            // Fetch incident Type ID
+            $complianceTypeId = $this->compliance_report_model->getComplianceTypeId($reportId, $companyId);
+
+            // Fetch compliance safety title
+            $complianceSafetyTitle = $this->compliance_report_model->getComplianceSafetyTitle($reportId);
+
+            // Fetch Incident Name
+            $incident_name = $this->compliance_report_model->getComplianceReportName($reportId, $companyId);
+
+            //fetch incident Type Name
+            $incident_type = $this->compliance_report_model->getReportedComplianceReportType($reportId, $companyId);
+
+            // Fetch Incident Assigned Manager
+            $incident_assigned_managers = $this->compliance_report_model->getComplianceReportAssignedManagers($reportId, $companyId);
+
+            // Replace Current Manager with Incident Reporter
+            if (!empty($incident_assigned_managers)) {
+                foreach ($incident_assigned_managers as $key => $incident_manager) {
+                    $incident_assigned_managers[$key]['employee_name'] = $incident_manager['employee_name'] . ' ( Manager )';
+                    $as_managers[$key] = $incident_manager['employee_id'];
+                }
+            }
+
+            // Fetch All Incident Related Manager
+            $incident_managers = $this->compliance_report_model->fetchComplianceManagers($complianceTypeId, $companyId);
+
+            //Remove Incident Managers Those Are not Assigned This Reported Incident
+            if (!empty($incident_managers)) {
+                foreach ($incident_managers as $key => $incident_manager) {
+                    if (in_array($incident_manager['employee_id'], $as_managers)) {
+                        unset($incident_managers[$key]);
+                    }
+                }
+            }
+
+            // Fetch All Active Company Employees For Adding As Witness
+            $company_employees = $this->compliance_report_model->getAllCompanyEmployeesForComplianceSafety($companyId);
+
+            // Fetch Incident Question Answer
+            $assigned_incidents = $this->compliance_report_model->view_single_assign($reportId);
+
+            // Fetch Active Videos
+            $videos = $this->compliance_report_model->getComplianceVideos($reportId, "0");
+
+            // Fetch Archive Videos
+            $videos_archived = $this->compliance_report_model->getComplianceVideos($reportId, '1');
+
+            // Fetch Active Document
+            $get_incident_document_active = $this->compliance_report_model->getComplianceDocuments($reportId, '0');
+
+            // Fetch Archive Document
+            $get_incident_document_archived = $this->compliance_report_model->getComplianceDocuments($reportId, '1');
+
+            // Fetch My Emails
+            $my_emails = $this->compliance_report_model->getPrivateUserEmails($reportId, $currentUserEmailId);
+            // _e($my_emails,true,true);
+
+            $complianceSafetyEmail =  $this->compliance_report_model->getOtherUsersEmails($reportId, $currentUserEmailId);
+
+            // Fetch Document For Library
+            $library_documents = $this->compliance_report_model->get_library_documents($reportId);
+
+            // Fetch Media For Media
+            $library_media = $this->compliance_report_model->get_library_media($reportId);
+
+            // Fetch Incident Notes
+            $comments = $this->compliance_report_model->getComplianceReportComments($reportId);
+
+            // get Compliance Safety Employees
+            $assignedEmployees = $this->compliance_report_model->getComplianceSafetyReportEmployees($reportId);
+
+            if (isset($_POST['submit']) && $_POST['submit'] == 'submit') {
+                //
+                $perform_action = $_POST['perform_action'];
+                //
+                if ($perform_action == 'send_email') {
+                    //
+                    $attachments = isset($_POST['attachment']) ? $_POST['attachment'] : '';
+                    //
+                    $receivers = $_POST['receivers'];
+                    $subject = $_POST['subject'];
+                    $from_name = $currentUserEmailId;
+                    $email_hf = message_header_footer_domain($companyId, $company_name);
+                    //
+                    foreach ($receivers as $key => $receiver_id) {
+                        $conversation_key = '';
+                        $message_body = $_POST['message'];
+
+                        $data_to_insert = array();
+                        $data_to_insert['incident_type_id'] = $complianceTypeId;
+                        $data_to_insert['incident_reporting_id'] = $reportId;
+                        $data_to_insert['sender_sid'] = 0;
+                        $data_to_insert['manual_email'] = $currentUserEmailId;
+                        $data_to_insert['subject'] = $subject;
+                        $data_to_insert['message_body'] = $message_body;
+                        $data_to_insert['receiver_sid'] = $receiver_id;
+
+                        
+
+                        $manager_info = db_get_employee_profile($receiver_id);
+                        $receiver_email = $manager_info[0]['email'];
+                        $receiver_name = $manager_info[0]['first_name'] . ' ' . $manager_info[0]['last_name'];
+                        $conversation_key = $complianceTypeId . '/' . $reportId . '/' . $receiver_id . '/' . $currentUserEmailId;
+
+                        $inserted_email_sid = $this->compliance_report_model->insertComplianceReportEmailRecord($data_to_insert);
+
+                        if (!empty($attachments)) {
+                            foreach ($attachments as $key => $attachment) {
+
+                                $attachment_type    = $attachment['item_type'];
+                                $record_sid         = $attachment['record_sid'];
+                                $item_title         = '';
+                                $item_type          = '';
+                                $item_path          = '';
+
+                                if ($attachment_type == 'Media') {
+                                    $record_sid = str_replace("m_", "", $record_sid);
+                                    $item_info  = $this->compliance_report_model->get_attach_file_info($record_sid, 'media');
+                                    $item_title = $item_info['video_title'];
+                                    $item_type  = $item_info['video_type'];
+                                    $item_path  = $item_info['video_url'];
+                                } else if ($attachment_type == 'Document') {
+                                    $record_sid = str_replace("d_", "", $record_sid);
+                                    $item_info  = $this->compliance_report_model->get_attach_file_info($record_sid, 'document');
+                                    $item_title = $item_info['document_title'];
+                                    $item_type  = $item_info['type'];
+                                    $item_path  = $item_info['file_code'];
+                                }
+
+                                $insert_attachment                      = array();
+                                $insert_attachment['incident_sid']      = $reportId;
+                                $insert_attachment['email_sid']         = $inserted_email_sid;
+                                $insert_attachment['attachment_type']   = $attachment_type;
+                                $insert_attachment['attachment_sid']    = $record_sid;
+                                $insert_attachment['attached_by']       = $employer_sid;
+                                $insert_attachment['attached_date']     = date('Y-m-d H:i:s');
+                                $insert_attachment['item_title']        = $item_title;
+                                $insert_attachment['item_type']         = $item_type;
+                                $insert_attachment['item_path']         = $item_path;
+
+                                $this->compliance_report_model->insert_email_attachment($insert_attachment);
+                            }
+                        }
+
+                        $url = base_url('compliance_report/view_compliance_report_email/' . $conversation_key);
+                        $employeeType = $this->compliance_report_model->isComplianceReportManager($receiver_email, $companyId, $reportId);
+                        //
+                        $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
+                        $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+                        if ($employeeType != "out_sider") {
+                            $viewIncident = base_url('compliance_report/view_compliance_report/' . $reportId);
+                            //
+                            $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Compliance Report</a>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                        }
+                        $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email: Please Do Not reply!</strong>' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+
+                        $from = FROM_EMAIL_NOTIFICATIONS;
+                        $to = $receiver_email;
+
+                        $body = $email_hf['header']
+                            . $emailTemplateBody
+                            . $email_hf['footer'];
+
+                        log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                        //
+                        $trackingObj = array(
+                            'compliance_report_sid' => $reportId,
+                            'manual_email' => $currentUserEmailId,
+                            'item_type' => "email",
+                            'action' => "send",
+                            'item_sid' => $inserted_email_sid,
+                            'created_at' => date('Y-m-d H:i:s')
+                        );
+                        //
+                        $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+                    }
+                    //
+                    $this->session->set_flashdata('message', '<strong>Success:</strong> Send Incident Email Successfully!');
+                } else if ($perform_action == 'add_comment') {
+                    $insert_data = array();
+                    $insert_data['incident_reporting_id'] = $reportId;
+                    $insert_data['manual_email'] = $currentUserEmailId;
+                    $insert_data['comment'] = $_POST['response'];
+                    $insert_data['date_time'] = date('Y-m-d h:i:s');
+                    $insert_data['response_type'] = $_POST['response_type'];
+                    $commentId = $this->compliance_report_model->addComplianceReportComment($insert_data);
+                    //
+                    $trackingObj = array(
+                        'compliance_report_sid' => $reportId,
+                        'manual_email' => $currentUserEmailId,
+                        'item_type' => "comment",
+                        'action' => "add",
+                        'item_sid' => $commentId,
+                        'created_at' => date('Y-m-d H:i:s')
+                    );
+                    //
+                    $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+                    //
+                    $this->session->set_flashdata('message', '<strong>Success:</strong> Send Incident Comment Successfully!');
+                } else if ($perform_action == 'add_video') {
+                    //
+                    $video_id = '';
+                    $upload_file_type = 'Video';
+                    $video_source = $this->input->post('video_source');
+                    $video_title = $this->input->post('video_title');
+
+                    if (!empty($_FILES) && isset($_FILES['video_upload']) && $_FILES['video_upload']['size'] > 0) {
+                        $random = generateRandomString(5);
+                        $target_file_name = basename($_FILES["video_upload"]["name"]);
+                        $file_name = strtolower($companyId . '/' . $random . '_' . $target_file_name);
+                        $target_dir = "assets/uploaded_videos/incident_videos/";
+                        $target_file = $target_dir . $file_name;
+                        $basePath = $target_dir . $companyId;
+
+                        if (!is_dir($basePath)) {
+                            mkdir($basePath, 0777, true);
+                        }
+
+                        if (move_uploaded_file($_FILES["video_upload"]["tmp_name"], $target_file)) {
+
+                            $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["video_upload"]["name"]) . ' has been uploaded.');
+                        } else {
+
+                            $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                            redirect(current_url(), 'refresh');
+                        }
+
+                        $video_id = $file_name;
+                    } else if (!empty($_FILES) && isset($_FILES['audio_upload']) && $_FILES['audio_upload']['size'] > 0) {
+                        $random = generateRandomString(5);
+                        $target_file_name = basename($_FILES["audio_upload"]["name"]);
+                        $file_name = strtolower($companyId . '/' . $random . '_' . $target_file_name);
+                        $target_dir = "assets/uploaded_videos/incident_videos/";
+                        $target_file = $target_dir . $file_name;
+                        $basePath = $target_dir . $companyId;
+
+                        if (!is_dir($basePath)) {
+                            mkdir($basePath, 0777, true);
+                        }
+
+                        if (move_uploaded_file($_FILES["audio_upload"]["tmp_name"], $target_file)) {
+
+                            $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["audio_upload"]["name"]) . ' has been uploaded.');
+                        } else {
+
+                            $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                            redirect(current_url(), 'refresh');
+                        }
+
+                        $video_id = $file_name;
+                        $upload_file_type = 'Audio';
+                    } else {
+                        $video_id = $this->input->post('video_id');
+
+                        if ($video_source == 'youtube') {
+                            $url_prams = array();
+                            parse_str(parse_url($video_id, PHP_URL_QUERY), $url_prams);
+
+                            if (isset($url_prams['v'])) {
+                                $video_id = $url_prams['v'];
+                            } else {
+                                $video_id = '';
+                            }
+                        } else {
+                            $video_id = $this->vimeo_get_id($video_id);
+                        }
+                    }
+
+                    $video_to_insert                            = array();
+                    $video_to_insert['incident_sid']            = $reportId;
+                    $video_to_insert['video_title']             = $video_title;
+                    $video_to_insert['video_type']              = $video_source;
+                    $video_to_insert['video_url']               = $video_id;
+                    $video_to_insert['user_type']               = 'manager';
+                    $video_to_insert['manual_email']            = $currentUserEmailId;
+                    $video_to_insert['is_incident_reported']    = 1;
+                    $video_to_insert['file_type']               = 'compliance report file';
+                    //
+                    $videoId = $this->compliance_report_model->insertComplianceVideoRecord($video_to_insert);
+                    //
+                    $trackingObj = array(
+                        'compliance_report_sid' => $reportId,
+                        'manual_email' => $currentUserEmailId,
+                        'item_type' => "video",
+                        'action' => "add",
+                        'item_sid' => $videoId,
+                        'created_at' => date('Y-m-d H:i:s')
+                    );
+                    //
+                    $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+                    //
+                    $this->session->set_flashdata('message', '<strong>Success:</strong> ' . $upload_file_type . ' is save Successfully!');
+                } else if ($perform_action == 'add_document') {
+                    if (!empty($_FILES) && isset($_FILES['upload_document']) && $_FILES['upload_document']['size'] > 0) {
+                        $incident_document_s3_name = upload_file_to_aws('upload_document', $companyId, 'incident_document', $employer_sid, AWS_S3_BUCKET_NAME);
+
+                        $last_index_of_dot = strrpos($_FILES["upload_document"]["name"], '.') + 1;
+                        $file_ext = substr($_FILES["upload_document"]["name"], $last_index_of_dot, strlen($_FILES["upload_document"]["name"]) - $last_index_of_dot);
+
+                        $document_title = $this->input->post('document_title');
+
+                        $document_to_insert = array();
+                        $document_to_insert['document_title']           = $document_title;
+                        $document_to_insert['file_name']                = $_FILES["upload_document"]["name"];
+                        $document_to_insert['type']                     = $file_ext;
+                        $document_to_insert['file_code']                = $incident_document_s3_name;
+                        $document_to_insert['user_type']                = 'outsider';
+                        $document_to_insert['manual_email']             = $currentUserEmailId;
+                        $document_to_insert['company_id']               = $companyId;
+                        $document_to_insert['incident_reporting_id']    = $reportId;
+                        $document_to_insert['file_type']                = 'compliance report file';
+                        //
+                        $documentId = $this->compliance_report_model->insertComplianceDocument($document_to_insert);
+                        //
+                        $trackingObj = array(
+                            'compliance_report_sid' => $reportId,
+                            'manual_email' => $currentUserEmailId,
+                            'item_type' => "document",
+                            'action' => "add",
+                            'item_sid' => $documentId,
+                            'created_at' => date('Y-m-d H:i:s')
+                        );
+                        //
+                        $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+                        //
+                        $this->session->set_flashdata('message', '<strong>Success:</strong> Document is Uploaded Successfully!');
+                    }
+                }
+
+                redirect(current_url(), 'refresh');
+            }
+
+            $data                                   = array();
+            $data['company_name']                   = $company_name;
+            $data['user_first_name']                = $user_first_name;
+            $data['user_last_name']                 = $user_last_name;
+            $data['user_email']                     = $user_email;
+            $data['user_picture']                   = $user_picture;
+            $data['user_phone']                     = $user_phone;
+            $data['user_type']                      = $user_type;
+            $data['id']                             = $reportId;
+            $data['title']                          = $title;
+            $data['videos']                         = $videos;
+            $data['comments']                       = $comments;
+            $data['load_view']                      = 1;
+            $data['company_sid']                    = $companyId;
+            $data['myEmails']                       = $my_emails;
+            $data['currentUserEmailId']             = $currentUserEmailId;
+            $data['incident_name']                  = $incident_name;
+            $data['library_media']                  = $library_media;
+            $data['library_documents']               = $library_documents;
+            $data['videos_archived']                = $videos_archived;
+            $data['employees']                      = $company_employees;
+            $data['incident_managers']              = $incident_managers;
+            $data['assigned_incidents']             = $assigned_incidents;
+            $data['current_incident_type']          = $assigned_incidents;
+            $data['incident_all_emails']            = $incident_all_emails;
+            $data['complianceSafetyTitle']          = $complianceSafetyTitle;
+            $data['incident_assigned_managers']     = $incident_assigned_managers;
+            $data['assignedEmployees']              = $assignedEmployees;
+            $data['get_incident_document']          = $get_incident_document_active;
+            $data['get_incident_document_archived'] = $get_incident_document_archived;
+            $data['complianceSafetyEmail']          = $complianceSafetyEmail;
+            //
+            $this->load->view('onboarding/onboarding_public_header', $data);
+            $this->load->view('compliance_report/public_compliance_report');
+            $this->load->view('onboarding/onboarding_public_footer');
+           
+            ///
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -896,10 +1456,21 @@ class Compliance_reports extends CI_Controller
                 $insert['current_date'] = date('Y-m-d H:i:s');
                 $insert['incident_type_id'] = $_POST['incident_type_sid'];
                 $incident_sid = $this->compliance_report_model->insertComplianceReport($insert);
+                //
+                $trackingObj = array(
+                    'compliance_report_sid' => $incident_sid,
+                    'employee_sid' => $employee_sid,
+                    'item_type' => "report",
+                    'action' => "add",
+                    'item_sid' => 0,
+                    'created_at' => date('Y-m-d H:i:s')
+                );
+                //
+                $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
             }
-
+            //
             $video_id = '';
-
+            //
             if (!empty($_FILES) && isset($_FILES['video']) && $_FILES['video']['size'] > 0 && $video_source == 'upload_video') {
                 $random = generateRandomString(5);
                 $target_file_name = basename($_FILES["video"]["name"]);
@@ -955,9 +1526,20 @@ class Compliance_reports extends CI_Controller
             $video_to_insert['user_type']               = 'employee';
             $video_to_insert['uploaded_by']             = $employee_sid;
             $video_to_insert['is_incident_reported']    = 0;
+            $video_to_insert['file_type']               = 'compliance report file';
 
             $insert_video_sid = $this->compliance_report_model->insertComplianceVideoRecord($video_to_insert);
-
+            //
+            $trackingObj = array(
+                'compliance_report_sid' => $incident_sid,
+                'employee_sid' => $employee_sid,
+                'item_type' => $video_source == 'upload_audio' ? 'audio' : 'video',
+                'action' => 'add',
+                'item_sid' => $insert_video_sid,
+                'created_at' => date('Y-m-d H:i:s')
+            );
+            $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+            //
             $return_data                    = array();
             $return_data['incident_sid']    = $incident_sid;
             $return_data['video_sid']       = $insert_video_sid;
@@ -1067,9 +1649,32 @@ class Compliance_reports extends CI_Controller
                     unlink($remove_media);
                 }
             }
-
+            //
+            $videoDetail = $this->compliance_report_model->getComplianceVideoById($video_sid);
+            //
+            $historyData = array();
+            $historyData = $videoDetail;
+            $historyData['video_sid'] = $video_sid;
+            unset($historyData['sid']);
+            //
+            $historyId = $this->compliance_report_model->insertVideoHistory($historyData);
+            //
             $this->compliance_report_model->updateComplianceVideo($video_sid, $incident_sid, $video_to_update);
-
+            //
+            //
+            $trackingObj = array(
+                'compliance_report_sid' => $incident_sid,
+                'employee_sid' => isset($_POST['employee_sid']) ? $_POST['employee_sid'] : 0,
+                'manual_email' => isset($_POST['manual_email']) ? $_POST['manual_email'] : '',
+                'item_type' => $video_source == 'upload_audio' ? 'audio' : 'video',
+                'action' => 'update '.$update_type,
+                'item_sid' => $video_sid,
+                'history_sid' => $historyId,
+                'created_at' => date('Y-m-d H:i:s')
+            );
+            //
+            $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+            //
             if ($user_type == 'employee') {
                 $incident_video = $this->compliance_report_model->getComplianceVideo($video_sid);
                 $rep_video_title    = $incident_video['video_title'];
@@ -1120,6 +1725,17 @@ class Compliance_reports extends CI_Controller
                 $insert['current_date'] = date('Y-m-d H:i:s');
                 $insert['incident_type_id'] = $_POST['incident_type_sid'];
                 $incident_sid = $this->compliance_report_model->insertComplianceReport($insert);
+                //
+                $trackingObj = array(
+                    'compliance_report_sid' => $incident_sid,
+                    'employee_sid' => $employee_sid,
+                    'item_type' => "report",
+                    'action' => "add",
+                    'item_sid' => 0,
+                    'created_at' => date('Y-m-d H:i:s')
+                );
+                //
+                $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
             }
 
             if (!empty($_FILES) && isset($_FILES['docs']) && $_FILES['docs']['size'] > 0) {
@@ -1137,8 +1753,20 @@ class Compliance_reports extends CI_Controller
                     $document_to_insert['company_id']               = $company_sid;
                     $document_to_insert['employer_id']              = $employee_sid;
                     $document_to_insert['incident_reporting_id']    = $incident_sid;
+                    $document_to_insert['file_type']                = 'compliance report file';
                     $insert_document_sid = $this->compliance_report_model->insertComplianceDocument($document_to_insert);
-
+                    //
+                    $trackingObj = array(
+                        'compliance_report_sid' => $incident_sid,
+                        'employee_sid' => $employee_sid,
+                        'item_type' => 'document',
+                        'action' => 'add',
+                        'item_sid' => $insert_document_sid,
+                        'created_at' => date('Y-m-d H:i:s')
+                    );
+                    //
+                    $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+                    //
                     $return_data                        = array();
                     $return_data['incident_sid']        = $incident_sid;
                     $return_data['document_sid']        = $insert_document_sid;
@@ -1193,8 +1821,30 @@ class Compliance_reports extends CI_Controller
                     }
                 }
             }
-
+            //
+            $documentDetail = $this->compliance_report_model->getComplianceDocument($document_sid);
+            //
+            $historyData = array();
+            $historyData = $documentDetail;
+            $historyData['document_sid'] = $document_sid;
+            unset($historyData['id']);
+            //
+            $historyId = $this->compliance_report_model->insertDocumentHistory($historyData);
+            //
             $this->compliance_report_model->updateComplianceDocument($document_sid, $incident_sid, $data_to_update);
+
+            $trackingObj = array(
+                'compliance_report_sid' => $incident_sid,
+                'employee_sid' => isset($_POST['employee_sid']) ? $_POST['employee_sid'] : 0,
+                'manual_email' => isset($_POST['manual_email']) ? $_POST['manual_email'] : '',
+                'item_type' => 'document',
+                'action' => 'update '.$update_type,
+                'item_sid' => $document_sid,
+                'history_sid' => $historyId,
+                'created_at' => date('Y-m-d H:i:s')
+            );
+            //
+            $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
 
             if ($user_type == 'employee') {
                 $incident_document = $this->compliance_report_model->getComplianceDocument($document_sid);
@@ -1246,7 +1896,19 @@ class Compliance_reports extends CI_Controller
             $docs['company_id'] = $company_sid;
             $docs['employer_id'] = $employer_sid;
             $docs['incident_reporting_id'] = $incident;
-            $this->compliance_report_model->insertComplianceDocument($docs);
+            $document_sid = $this->compliance_report_model->insertComplianceDocument($docs);
+            //
+            $trackingObj = array(
+                'compliance_report_sid' => $incident,
+                'employee_sid' => $employer_sid,
+                'item_type' => 'document',
+                'action' => 'add',
+                'item_sid' => $document_sid,
+                'created_at' => date('Y-m-d H:i:s')
+            );
+            //
+            $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+            //
             echo $incident;
         } else {
             echo 'error';
@@ -1433,7 +2095,6 @@ class Compliance_reports extends CI_Controller
                 // Fetch Incident Question Answer
                 $questions = $this->compliance_report_model->view_single_assign($incident_sid);
                 $data['questions'] = $questions;
-
             } else if ($section == 'all') {
 
                 $incident_all_emails    = array();
@@ -1778,7 +2439,7 @@ class Compliance_reports extends CI_Controller
             $status_to_update['incident_status'] = 'Closed';
             $this->db->where('incident_sid', $id);
             $this->db->where('employer_sid', $session['employer_detail']['sid']);
-		    $this->db->update('incident_assigned_emp', $status_to_update);
+            $this->db->update('incident_assigned_emp', $status_to_update);
             // If status Is "pending" then Update It To "respond"
             //
             $data_to_insert = array();
@@ -1786,6 +2447,17 @@ class Compliance_reports extends CI_Controller
             $data_to_insert['manager_id'] = $session['employer_detail']['sid'];
             //
             $this->compliance_report_model->insertComplianceReportLog($data_to_insert);
+            //
+            $trackingObj = array(
+                'compliance_report_sid' => $id,
+                'employee_sid' => $session['employer_detail']['sid'],
+                'item_type' => 'resolved',
+                'action' => 'close',
+                'item_sid' => 0,
+                'created_at' => date('Y-m-d H:i:s')
+            );
+            //
+            $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
             //
             echo 'Done';
         }
@@ -1929,36 +2601,76 @@ class Compliance_reports extends CI_Controller
     function handler()
     {
         $formpost = $this->input->post(NULL, TRUE);
+        _e($formpost,true,true);
+        //
         $resp = array();
         $resp['Status'] = FALSE;
         $resp['Response'] = 'Invalid Request.';
+        //
+        $compliance_report_sid = '';
+        $item_type = '';
+        $action = '';
+        $item_sid = '';
+        //
         switch ($formpost['action']) {
 
             case 'archive_document':
                 $this->compliance_report_model->moveDocumentToArchive($formpost['documentSid']);
+                //
+                $item_type = 'document';
+                $action = 'archive';
+                $item_sid = $formpost['documentSid'];
+                //
                 $resp['Status'] = TRUE;
                 $resp['Response'] = 'Document moved to archive.';
                 break;
 
             case 'active_document':
                 $this->compliance_report_model->moveDocumentToActive($formpost['documentSid']);
+                //
+                $item_type = 'document';
+                $action = 'active';
+                $item_sid = $formpost['documentSid'];
+                //
                 $resp['Status'] = TRUE;
                 $resp['Response'] = 'Document moved to active.';
                 break;
 
             case 'archive_video':
                 $this->compliance_report_model->moveVideoToArchive($formpost['videoSid']);
+                //
+                $item_type = 'video';
+                $action = 'archive';
+                $item_sid = $formpost['videoSid'];
+                //
                 $resp['Status'] = TRUE;
                 $resp['Response'] = 'Video moved to archive.';
                 break;
 
             case 'active_video':
+                //
                 $this->compliance_report_model->moveVideoToActive($formpost['videoSid']);
+                //
+                $item_type = 'video';
+                $action = 'active';
+                $item_sid = $formpost['videoSid'];
+                //
                 $resp['Status'] = TRUE;
                 $resp['Response'] = 'Video moved to active.';
                 break;
         }
-
+        //
+        $trackingObj = array(
+            'compliance_report_sid' => $formpost['reportSid'],
+            'employee_sid' => isset($formpost['employeeSid']) ? $formpost['employeeSid'] : 0,
+            'manual_email' => isset($formpost['manualEmail']) ? $formpost['manualEmail'] : '',
+            'item_type' => $item_type,
+            'action' => $action,
+            'item_sid' => $item_sid,
+            'created_at' => date('Y-m-d H:i:s')
+        );
+        //
+        $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
         //
         header("Content-Type: application/json");
         echo json_encode($resp);
@@ -2010,7 +2722,8 @@ class Compliance_reports extends CI_Controller
         }
     }
 
-    public function viewComplianceSafetyEmail ($inc_type, $inc_reported_id, $receiver_id, $sender_sid) {
+    public function viewComplianceSafetyEmail($inc_type, $inc_reported_id, $receiver_id, $sender_sid)
+    {
         //
         $manual_user = 'no';
         //
@@ -2091,7 +2804,7 @@ class Compliance_reports extends CI_Controller
                 }
             }
 
-            
+
             if ($manual_user == 'yes' && filter_var($sender_sid, FILTER_VALIDATE_EMAIL)) {
                 $sender_email = $to_sid;
             } else {
@@ -2100,13 +2813,13 @@ class Compliance_reports extends CI_Controller
             }
 
             $company_name = $this->compliance_report_model->get_company_name_by_sid($company_sid);
-           
+
             // Fetch Document For Media
             $library_documets = $this->compliance_report_model->get_library_documents($inc_reported_id);
 
             // Fetch Media For Media
             $library_media = $this->compliance_report_model->get_library_media($inc_reported_id);
-           
+
             // _e($library_media, true);
             // _e($library_documets, true, true);
 
@@ -2218,7 +2931,7 @@ class Compliance_reports extends CI_Controller
                     if ($isEmployee) {
                         $employeeType = $this->compliance_report_model->isComplianceReportManager($manual_email, $company_sid, $inc_reported_id);
                         //
-                        if($employeeType != "out_sider") {
+                        if ($employeeType != "out_sider") {
                             if ($employeeType == "reporter") {
                                 $viewIncident = base_url('compliance_report/view_compliance_report/' . $inc_reported_id);
                             } else if ($employeeType == "incident_manager") {
@@ -2245,6 +2958,17 @@ class Compliance_reports extends CI_Controller
                         . $email_hf['footer'];
 
                     log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                    //
+                    $trackingObj = array(
+                        'compliance_report_sid' => $inc_reported_id,
+                        'employee_sid' => $from_sid,
+                        'item_type' => "email",
+                        'action' => "send",
+                        'item_sid' => $inserted_email_sid,
+                        'created_at' => date('Y-m-d H:i:s')
+                    );
+                    //
+                    $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
                 } else {
 
                     $subject        = $this->input->post('subject');
@@ -2288,7 +3012,7 @@ class Compliance_reports extends CI_Controller
                         $data_to_insert['subject'] = $subject;
                         $data_to_insert['message_body'] = $message_body;
 
-                       if (str_replace('_inc_rep', '', $receiver_id) != $receiver_id) {
+                        if (str_replace('_inc_rep', '', $receiver_id) != $receiver_id) {
 
                             $inc_reporter_id = str_replace('_inc_rep', '', $receiver_id);
                             $inc_reporter_info = db_get_employee_profile($inc_reporter_id);
@@ -2360,7 +3084,7 @@ class Compliance_reports extends CI_Controller
                             $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email regarding an assigned compliance report.</p>' . '<br>';
                         }
                         $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
-                        if($employeeType != "out_sider") {
+                        if ($employeeType != "out_sider") {
                             if ($employeeType == "reporter") {
                                 $viewIncident = base_url('compliance_report/view_compliance_report/' . $inc_reported_id);
                             } else if ($employeeType == "incident_manager") {
@@ -2384,6 +3108,17 @@ class Compliance_reports extends CI_Controller
                             . $email_hf['footer'];
 
                         log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                        //
+                        $trackingObj = array(
+                            'compliance_report_sid' => $inc_reported_id,
+                            'employee_sid' => $from_sid,
+                            'item_type' => "email",
+                            'action' => "send",
+                            'item_sid' => $inserted_email_sid,
+                            'created_at' => date('Y-m-d H:i:s')
+                        );
+                        //
+                        $this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
                     }
                 }
                 //
@@ -2451,4 +3186,4 @@ class Compliance_reports extends CI_Controller
         fwrite($handler, base64_decode(str_replace('data:application/pdf;base64,', '', $dase_64)));
         fclose($handler);
     }
-}    
+}

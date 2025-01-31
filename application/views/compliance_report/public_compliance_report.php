@@ -6,40 +6,14 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
 <div class="main maincontent">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-12">
-                <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
-                <div class="row">
-
-                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
-                        <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
-                    </div>
-
-                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
-                        <a href="<?php echo base_url('incident_reporting_system') ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-angle-left"> </i> Incident Reporting</a>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php echo base_url('incident_reporting_system/list_incidents') ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-heartbeat"></i> <?= $this->lang->line('tab_my_incidents', false) ?></a>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php echo base_url('incident_reporting_system/assigned_incidents'); ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-stethoscope "></i> <?= $this->lang->line('tab_assigned_incidents', false) ?></a>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php echo base_url('incident_reporting_system/safety_check_list'); ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-book"></i> Safety Check List </a>
-                    </div>
-                </div>
-            </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                 <div class="page-header">
-                    <h2 class="section-ttile"><?php echo $title; ?> <span class="pull-right"><b><?php echo sizeof($assigned_incidents) ? '( ' . $incident_name . ' )' : ''; ?></b></span> </h2>
+                    <h2 class="section-ttile"><b><?php echo $incident_name; ?></b></h2>
                 </div>
                 <?php if (sizeof($assigned_incidents) > 0) { ?>
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
-                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                            <?php if ($assigned_incidents[0]['status'] !== "Closed") { ?>
-                                <a class="btn btn-warning btn-block jsMarkItResolved" href="javascript:;" data-incidentId="<?php echo $id; ?>">Mark it Resolved</a>
-                            <?php } ?>
-                        </div>
+                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                             <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/0/all/2') . '/' . $id; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i> Download Reported Incident </a>
                         </div>
@@ -323,7 +297,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                                 } else {
                                                                                     $split_email = explode('@', $video['manual_email']);
                                                                                     echo $split_email[0];
-                                                                                };
+                                                                                }
                                                                                 ?>
                                                                             </p>
                                                                         </div>
@@ -641,6 +615,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                     $split_email = explode('@', $document['manual_email']);
                                                                     $uploadedBy = $split_email[0];
                                                                 }
+                                                                
                                                                 $uploadedDate = reset_datetime(array('datetime' => $document['uploaded_date'], '_this' => $this));
                                                                 ?>
                                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
@@ -884,23 +859,6 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                                                 <table class="table table-bordered table-hover table-stripped">
                                                                     <tbody>
                                                                         <tr>
-                                                                            <td><b>Select Email Type</b></td>
-                                                                            <td>
-                                                                                <div class="form-group edit_filter autoheight">
-                                                                                    <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
-                                                                                        Internal System Email
-                                                                                        <input <?php echo !empty($incident_assigned_managers) ? 'checked="checked"' : ''; ?> name="send_type" class="email_type" type="radio" value="system" />
-                                                                                        <div class="control__indicator"></div>
-                                                                                    </label>
-                                                                                    <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
-                                                                                        Outside Email
-                                                                                        <input <?php echo empty($incident_assigned_managers) ? 'checked="checked"' : ''; ?> class="email_type" name="send_type" type="radio" value="manual" />
-                                                                                        <div class="control__indicator"></div>
-                                                                                    </label>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <tr>
                                                                             <td><b>Message To</b> ;</td>
                                                                             <td id="system_email">
                                                                                 <select multiple class="chosen-select" tabindex="8" name='receivers[]' id="receivers">
@@ -1108,80 +1066,6 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                         </div>
                     <?php } ?>
                     <!-- Notes Section End -->
-
-                    &nbsp;
-
-                    <!-- Assign Employees Section Start -->
-                    <?php if ($assigned_incidents[0]['status'] != 'Closed') { ?>
-                        <?php if (!empty($employees)) { ?>
-
-                            <div class="table-responsive table-outer">
-                                <div class="panel panel-blue">
-                                    <div class="panel-heading incident-panal-heading">
-                                        <strong>Add Employee(s)</strong>
-                                    </div>
-                                    <div class="panel-body">
-                                        <div class="row">
-                                            <form id="form_add_employee" enctype="multipart/form-data" method="post" action="" autocomplete="off">
-                                                <input type="hidden" id="perform_action" name="perform_action" value="add_employees" />
-                                                <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12">
-                                                    <div class="row">
-                                                        <?php foreach ($employees as $employee) { ?>
-                                                            <?php if (in_array($employee['sid'], $assignedEmployees) || $employee['sid'] == $current_user || $employee['sid'] == $incidentReporterId) continue; ?>
-                                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                                                <label class="control control--checkbox">
-                                                                    <?php echo getUserNameBySID($employee['sid']); ?>
-                                                                    <input type="checkbox" name="add_employees[]" value="<?php echo $employee['sid']; ?>" style="position: relative;">
-                                                                    <div class="control__indicator"></div>
-                                                                </label>
-                                                            </div>
-                                                        <?php } ?>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    <div class="form-group autoheight">
-                                                        <button type="submit" class="btn btn-info incident-panal-button pull-right" name="submit" value="submit">Add Employee(s)
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php } ?>
-                    <?php } ?>
-
-                    <?php if (!empty($employees)) { ?>
-                        <div class="table-responsive table-outer">
-                            <div class="panel panel-blue">
-                                <div class="panel-heading incident-panal-heading">
-                                    <strong>Assigned Employee(s)</strong>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12">
-                                            <div class="row">
-                                                <?php foreach ($employees as $employee) { ?>
-                                                    <?php if (in_array($employee['sid'], $assignedEmployees) || $employee['sid'] == $current_user || $employee['sid'] == $incidentReporterId) { ?>
-                                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                                            <label class="control control--checkbox">
-                                                                <?php echo getUserNameBySID($employee['sid']); ?>
-                                                                <input type="checkbox" name="add_employees[]" value="<?php echo $employee['sid']; ?>" checked="checked" disabled style="position: relative;">
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                        </div>
-                                                    <?php } ?>
-                                                <?php } ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php } ?>
-                    <!-- Assign Employees Section End -->
 
                 <?php } else { ?>
                     <div id="show_no_jobs" class="table-wrp">
@@ -2145,262 +2029,6 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
         $('#pop_up_attachment_upload_document_input_container').hide();
     });
 
-    // Witness JS Start
-    $("#employee_to_witness").on('change', function() {
-        var selected_witness = $("#employee_to_witness").val();
-        var selected_witness_info = selected_witness.split(',');
-        var selected_witness_name = selected_witness_info[0];
-        var selected_witness_email = selected_witness_info[1];
-        var selected_witness_phone = selected_witness_info[2];
-        var current = $('#employee_to_witness').attr('src');
-
-
-        add_new_witrness('inner');
-        $("#witnesses_name_0_" + current).val(selected_witness_name);
-        $("#witnesses_phone_0_" + current).val(selected_witness_phone);
-        $("#witnesses_email_0_" + current).val(selected_witness_email);
-        $("#witnesses_title_0_" + current).val('Office Colleague');
-        $("#employee_to_witness option[value='" + selected_witness + "']").remove();
-    });
-
-    function add_new_witrness(section) {
-
-        var current;
-        var div_color;
-        var read_only;
-        var field_color;
-        var div_id;
-        var btn_id;
-        var delete_witness;
-
-        if (section == 'inner') {
-            readonly = 'readonly';
-            current = $('#employee_to_witness').attr('src');
-            div_id = 'witness_inner_' + current;
-            field_id = 0 + "_" + current;
-            delete_witness = 0;
-        } else if (section == 'outter') {
-            readonly = '';
-            current = $('#add_new_witrness').attr('src');
-            div_id = 'witness_outter_' + current;
-            field_id = 1 + "_" + current;
-            delete_witness = 1;
-        }
-
-
-        if (current % 2 != 0) {
-            div_color = '#eee';
-            field_color = '#fff !important';
-        }
-
-        var witness = '';
-        witness += '<div class="full-width" id="' + div_id + '" src="' + current + '" style="border-top: 1px solid #ddd; padding :5px 0px; background-color:' + div_color + ';">';
-        if (section == 'inner') {
-            witness += '<input type="hidden" name="witnesses[' + field_name + '][type]" value="employee">';
-        } else if (section == 'outter') {
-            witness += '<input type="hidden" name="witnesses[' + field_name + '][type]" value="others">';
-        }
-
-        witness += '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
-        witness += '<div class="form-group">';
-        witness += '<label class="auto-height">';
-        witness += 'WITNESS FULL NAME : ';
-        witness += '<span class="required">*</span>';
-        witness += '</label>';
-        witness += '<input id="witnesses_name_' + field_id + '" type="text" name="witnesses[' + field_name + '][full_name]" value="" ' + readonly + ' class="form-control" style=" background-color:' + field_color + ';">';
-        witness += '</div>';
-        witness += '</div>';
-
-        witness += '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
-        witness += '<div class="form-group">';
-        witness += '<label class="auto-height">';
-        witness += 'WITNESS TELEPHONE NUMBER : ';
-        witness += '<span class="required">*</span>';
-        witness += '</label>';
-        witness += '<input id="witnesses_phone_' + field_id + '" type="text" name="witnesses[' + field_name + '][phone]" value="" class="form-control" style=" background-color:' + field_color + ';">';
-        witness += '</div>';
-        witness += '</div>';
-
-        witness += '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
-        witness += '<div class="form-group">';
-        witness += '<label class="auto-height">';
-        witness += 'WITNESS EMAIL : ';
-        witness += '<span class="required">*</span>';
-        witness += '</label>';
-        witness += '<input id="witnesses_email_' + field_id + '" type="text" name="witnesses[' + field_name + '][email]" value="" ' + readonly + ' class="form-control" style=" background-color:' + field_color + ';">';
-        witness += '</div>';
-        witness += '</div>';
-
-        witness += '<div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
-        witness += '<div class="form-group">';
-        witness += '<label class="auto-height">';
-        witness += 'WITNESS TITLE/RELATIONSHIP : ';
-        witness += '<span class="required">*</span>';
-        witness += '</label>';
-        witness += '<input id="witnesses_title_' + field_id + '" type="text" name="witnesses[' + field_name + '][title]" value="" ' + readonly + ' class="form-control" style=" background-color:' + field_color + ';">';
-        witness += '</div>';
-        witness += '</div>';
-
-        witness += '<div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">';
-        witness += '<div class="form-group">';
-        witness += '<label class="auto-height">';
-        witness += 'WITNESS, CAN PROVIDE INFORMATION REGARDING : ';
-        witness += '<span class="required">*</span> ';
-        witness += '</label>';
-        witness += '<div class="hr-select-dropdown">';
-        witness += '<select id="can_witness_provide_info_' + current + '" name="witnesses[' + field_name + '][can_provide_info]" class="form-control" style=" background-color:' + field_color + ';">';
-        witness += '<option value="yes" selected="selected">Yes</option>';
-        witness += '<option value="no">No</option>';
-        witness += '</select>';
-        witness += '</div>';
-        witness += '</div>';
-        witness += '</div>';
-
-        witness += '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
-        witness += '<div class="btn-wrp full-width text-right">';
-        witness += '<a href="javascript:;" class="btn btn-danger" onclick="delete_witrness(' + current + ',' + delete_witness + ');" style="margin-top: 16px;">';
-        witness += '<i class="fa fa-user-times" aria-hidden="true"></i>';
-        witness += '</a>';
-        witness += '</div>';
-        witness += '</div>';
-
-        witness += '</div>';
-
-        if (section == 'inner') {
-            $('#add_inner_wirnesses_section').prepend(witness);
-            $("#employee_to_witness").attr("src", ++current);
-
-        } else if (section == 'outter') {
-            $('#add_outter_wirnesses_section').prepend(witness);
-            $("#add_new_witrness").attr("src", ++current);
-        }
-        ++field_name;
-    }
-
-    function delete_witrness(id, type) {
-        if (type == 0) {
-            var inner_name = $("#witnesses_name_0_" + id).val();
-            var inner_phone = $("#witnesses_phone_0_" + id).val();
-            var inner_email = $("#witnesses_email_0_" + id).val();
-            var inner_title = $("#witnesses_title_0_" + id).val();
-
-            if (inner_name != '' || inner_phone != '' || inner_email != '' || inner_title != '') {
-                alertify.confirm(
-                    'Are you Sure?',
-                    'Are you sure you want to Delete this witness?',
-                    function() {
-                        var option_value = inner_name + ',' + inner_email + ',' + inner_phone;
-                        $('#employee_to_witness').append($("<option></option>").attr("value", option_value).text(inner_name));
-                        $("#witness_inner_" + id).remove();
-                    },
-                    function() {
-                        alertify.error('Cancelled!');
-                    }).set('labels', {
-                    ok: 'Yes!',
-                    cancel: 'Cancel'
-                });
-            } else {
-                $("#witness_inner_" + id).remove();
-            }
-
-        } else if (type == 1) {
-            var outter_name = $("#witnesses_name_1_" + id).val();
-            var outter_phone = $("#witnesses_phone_1_" + id).val();
-            var outter_email = $("#witnesses_email_1_" + id).val();
-            var outter_title = $("#witnesses_title_1_" + id).val();
-
-            if (outter_name != '' || outter_phone != '' || outter_email != '' || outter_title != '') {
-                alertify.confirm(
-                    'Are you Sure?',
-                    'Are you sure you want to Delete this witness?',
-                    function() {
-                        $("#witness_outter_" + id).remove();
-                    },
-                    function() {
-                        alertify.error('Cancelled!');
-                    }).set('labels', {
-                    ok: 'Yes!',
-                    cancel: 'Cancel'
-                });
-            } else {
-                $("#witness_outter_" + id).remove();
-            }
-        }
-    }
-
-    $('#form_new_witnesses').submit(function() {
-        var flag = 0;
-        var witnesses_message = '';
-
-        $('#add_inner_wirnesses_section > div').each(function(key) {
-            var i = key + 1;
-            var div = 0;
-            div = $(this).attr('src');
-            var email = /\S+@\S+\.\S+/;
-
-            var witness_name = $("#witnesses_name_0_" + div).val();
-            var witnesses_phone = $("#witnesses_phone_0_" + div).val();
-            var witnesses_email = $("#witnesses_email_0_" + div).val();
-            var witnesses_title = $("#witnesses_title_0_" + div).val();
-
-            if (witness_name == '' || witnesses_phone == '' || witnesses_email == '' || witnesses_title == '') {
-                if (witness_name == '') {
-                    witnesses_message = 'Please add witness full name at row ' + i + ' !';
-                } else if (witnesses_phone == '') {
-                    witnesses_message = 'Please add witness phone number at row ' + i + ' !';
-                } else if (witnesses_email == '') {
-                    witnesses_message = 'Please add witness email at row ' + i + ' !';
-                } else if (witnesses_title == '') {
-                    witnesses_message = 'Please add witness title / relationship at row ' + i + ' !';
-                }
-                $("#submit").removeAttr("disabled");
-                flag = 1;
-                return false;
-            } else if (witnesses_email != '' && !email.test(witnesses_email)) {
-                witnesses_message = 'Please add valid witness email at row ' + i + ' !';
-                flag = 1;
-                return false;
-            }
-        });
-
-        $('#add_outter_wirnesses_section > div').each(function(key) {
-            var i = key + 1;
-            var div = 0;
-            div = $(this).attr('src');
-            var email = /\S+@\S+\.\S+/;
-
-            var witness_name = $("#witnesses_name_1_" + div).val();
-            var witnesses_phone = $("#witnesses_phone_1_" + div).val();
-            var witnesses_email = $("#witnesses_email_1_" + div).val();
-            var witnesses_title = $("#witnesses_title_1_" + div).val();
-
-            if (witness_name == '' || witnesses_phone == '' || witnesses_email == '' || witnesses_title == '') {
-                if (witness_name == '') {
-                    witnesses_message = 'Please add witness full name at row ' + i + ' !';
-                } else if (witnesses_phone == '') {
-                    witnesses_message = 'Please add witness phone number at row ' + i + ' !';
-                } else if (witnesses_email == '') {
-                    witnesses_message = 'Please add witness email at row ' + i + ' !';
-                } else if (witnesses_title == '') {
-                    witnesses_message = 'Please add witness title / relationship at row ' + i + ' !';
-                }
-                $("#submit").removeAttr("disabled");
-                flag = 1;
-                return false;
-            } else if (witnesses_email != '' && !email.test(witnesses_email)) {
-                witnesses_message = 'Please add valid witness email at row ' + i + ' !';
-                flag = 1;
-                return false;
-            }
-        });
-
-        if (flag == 1) {
-            alertify.alert(witnesses_message);
-            return false;
-        }
-    });
-    // Witness JS End
-
     // Media JS Start
     $('.video_source').on('click', function() {
         var selected = $(this).val();
@@ -2971,7 +2599,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
             form_data.append('update_title', update_title);
             form_data.append('incident_sid', <?php echo $id; ?>);
             form_data.append('company_sid', <?php echo $company_sid; ?>);
-            form_data.append('employee_sid', <?php echo $current_user ?>);
+            form_data.append('manual_email', '<?php echo $currentUserEmailId; ?>');
 
             $.ajax({
                 url: update_url,
@@ -2986,8 +2614,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                     } else {
                         alertify.alert('Some error occurred while uploading video.');
                     }
-                    location.reload();
-
+                    // location.reload();
                 },
                 error: function() {}
             });
@@ -3002,7 +2629,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                 action: 'archive_video',
                 videoSid: videoSid,
                 reportSid: <?=$id?>,
-                employeeSid: <?=$current_user?>
+                manualEmail: '<?=$currentUserEmailId?>'
             }, function(resp) {
                 if (resp.Status === false) {
                     alertify.alert('ERROR!', resp.Response);
@@ -3026,7 +2653,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                 action: 'active_video',
                 videoSid: videoSid,
                 reportSid: <?=$id?>,
-                employeeSid: <?=$current_user?>
+                manualEmail: '<?=$currentUserEmailId?>'
             }, function(resp) {
                 if (resp.Status === false) {
                     alertify.alert('ERROR!', resp.Response);
@@ -3285,8 +2912,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
             form_data.append('file_name', fileName.replace('C:\\fakepath\\', ''));
             form_data.append('file_ext', file_ext);
             form_data.append('company_sid', <?php echo $company_sid; ?>);
-            form_data.append('user_type', 'manager');
-            form_data.append('employee_sid', <?php echo $current_user ?>);
+            form_data.append('manual_email', '<?php echo $currentUserEmailId; ?>');
 
             $.ajax({
                 url: update_url,
@@ -3312,7 +2938,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                 action: 'archive_document',
                 documentSid: documentSid,
                 reportSid: <?=$id?>,
-                employeeSid: <?=$current_user?>
+                manualEmail: '<?=$currentUserEmailId?>'
             }, function(resp) {
                 if (resp.Status === false) {
                     alertify.alert('ERROR!', resp.Response);
@@ -3336,7 +2962,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                 action: 'active_document',
                 documentSid: documentSid,
                 reportSid: <?=$id?>,
-                employeeSid: <?=$current_user?>
+                manualEmail: '<?=$currentUserEmailId?>'
             }, function(resp) {
                 if (resp.Status === false) {
                     alertify.alert('ERROR!', resp.Response);
