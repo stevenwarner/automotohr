@@ -182,7 +182,7 @@ define('REPLY_TO', 'notifications@' . STORE_DOMAIN); // Reply to Email for Appli
 
 
 define('GOOGLE_API_KEY', 'AIzaSyDDFZfLFBCSQmBgyIdcn91CWQ0M935psho');
-define('GOOGLE_MAP_API_KEY', 'AIzaSyAbODx02cE7VVn-ufkpSO9HwUoXfgXTCng');
+define('GOOGLE_MAP_API_KEY', 'AIzaSyAcktQ26-TuAGDbQxMRsYcQ9anvKeFazGI');
 
 //Email Template IDs
 define('EMPLOYER_WELCOME_EMAIL_ID', 48); // Employer register welcome email id
