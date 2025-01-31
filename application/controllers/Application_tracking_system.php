@@ -1706,7 +1706,7 @@ class Application_tracking_system extends Public_Controller
             $portalData = $this->application_tracking_system_model->get_portal_detail($data["session"]["company_detail"]["sid"]);
 
             if ($formpost['address'] != "") {
-                $address = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($formpost['address']) . "&zoom=13&size=400x400&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($formpost['address']);
+                $address = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($formpost['address']) . "&zoom=13&size=400x400&key=" . GOOGLE_MAP_API_KEY . "&markers=color:blue|label:|" . urlencode($formpost['address']);
                 $address = '<br><br>'
                     . '<b>Meeting Location:<b><br> ' . $formpost['address'] . '<br> <a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($formpost['address']) . '"> <img src = "' . $address . '" alt = "No Map Found!" > </a>';
             } else {

@@ -74,14 +74,14 @@
                                 $address = '';
                                 if (!empty($locations)) {
                                     $address = $locations[0]['location_address'];
-                                    $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($address) . "&zoom=13&size=300x200&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($address);
+                                    $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($address) . "&zoom=13&size=300x200&key=" . GOOGLE_MAP_API_KEY . "&markers=color:blue|label:|" . urlencode($address);
                                     $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($address) . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
                                     $show_map = '<p><b>Address:</b> ' . $address . ' </p>';
                                     $show_map .= '<p> ' . $map_anchor . ' </p>';
                                     echo $show_map;
                                 } elseif (!empty($company_info['Location_Address'])) {
                                     $address = $company_info['Location_Address'];
-                                    $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($address) . "&zoom=13&size=300x200&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($address);
+                                    $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($address) . "&zoom=13&size=300x200&key=" . GOOGLE_MAP_API_KEY . "&markers=color:blue|label:|" . urlencode($address);
                                     $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($address) . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
                                     $show_map = '<p><b>Address:</b> ' . $address . ' </p>';
                                     $show_map .= '<p> ' . $map_anchor . ' </p>';
