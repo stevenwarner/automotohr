@@ -528,8 +528,8 @@ class Compliance_reports extends CI_Controller
                             //
                             $approval_public_link_accept = base_url("compliance_report/view_compliance_report_public_link") . '/' . $viewComplianceCode;
                             //
-                            $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $approval_public_link_accept . '">View Compliance Report</a>' . '<br>';
-                            $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                            // $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $approval_public_link_accept . '">View Compliance Report</a>' . '<br>';
+                            // $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                         }
                         $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
                         $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
