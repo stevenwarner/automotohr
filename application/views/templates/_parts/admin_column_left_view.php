@@ -69,6 +69,7 @@ if (
     $this->uri->segment(2) == 'merge_employees' ||
     $this->uri->segment(1) == 'cn' ||
     $this->uri->segment(2) == 'pending_documents' ||
+    $this->uri->segment(2) == 'lms_employees' ||
     ($this->uri->segment(2) == 'documents' && $this->uri->segment(3) > 0)
 
 ) {
@@ -478,6 +479,14 @@ if (
                                     } ?> href="<?php echo site_url('cn/dashboard'); ?>">ComplyNet</a>
                             </div>
                         <?php } ?>
+
+                        <div class="menu-item">
+                            <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/lms_employees')) !== false) {
+                                    echo 'class="active"';
+                                } ?> href="<?php echo site_url('manage_admin/lms_employees'); ?>">LMS Courses</a>
+                        </div>
+
+
                     </div>
                 </li>
             <?php } ?>
