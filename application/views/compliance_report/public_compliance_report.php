@@ -15,10 +15,10 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                            <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/0/all/2') . '/' . $id; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i> Download Reported Incident </a>
+                            <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/0/all/2') . '/' . $id.'/'.NULL.'/'.NULL.'/'.$currentUserEmailId; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-download"></i> Download Reported Incident </a>
                         </div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                            <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/0/all/1') . '/' . $id; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-print"></i> Print Reported Incident</a>
+                            <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/0/all/1') . '/' . $id.'/'.NULL.'/'.NULL.'/'.$currentUserEmailId; ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-print"></i> Print Reported Incident</a>
                         </div>
                     </div>
 
@@ -230,7 +230,6 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                             <div id="activeVideo" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                                 <div class="card-body">
                                                     <div class="row">
-                                                        <?php $watch_video = base_url('compliance_report/watch_video'); ?>
                                                         <?php foreach ($videos as $video) { ?>
                                                             <?php
                                                             $video_source = $video['video_type'];
@@ -379,7 +378,6 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                                             <div id="archiveVideo" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                                                 <div class="card-body">
                                                     <div class="row">
-                                                        <?php $watch_video = base_url('compliance_report/watch_video'); ?>
                                                         <?php foreach ($videos_archived as $video) { ?>
                                                             <?php
                                                             $video_source = $video['video_type'];
@@ -1007,8 +1005,8 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                             <div class="panel panel-blue">
                                 <div class="panel-heading incident-panal-heading">
                                     <strong>Related Notes</strong>
-                                    <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/0/comments/1') . '/' . $id; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-print"></i> Print</a>
-                                    <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/comments/2') . '/' . $id; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-download"></i> Download</a>
+                                    <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/0/comments/1') . '/' . $id.'/'.NULL.'/'.NULL.'/'.$currentUserEmailId; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-print"></i> Print</a>
+                                    <a target="_blank" href="<?php echo base_url('compliance_report/print_and_download/0/comments/2') . '/' . $id.'/'.NULL.'/'.NULL.'/'.$currentUserEmailId; ?>" class="pull-right print-incident modify-comment-btn"><i class="fa fa-download"></i> Download</a>
                                 </div>
                                 <div class="panel-body">
                                     <div class="respond">
@@ -2614,7 +2612,7 @@ $incidentReporterId = $assigned_incidents[0]['reporter_id'];
                     } else {
                         alertify.alert('Some error occurred while uploading video.');
                     }
-                    // location.reload();
+                    location.reload();
                 },
                 error: function() {}
             });
