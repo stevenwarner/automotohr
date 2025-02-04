@@ -2,7 +2,7 @@
 $incidentReporterId = $assigned_incidents[0]['reporter_id'];
 ?>
 <!-- Stylesheets -->
-<link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/2022/css/main.css?v=1737460488">
+<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/2022/css/main.css?v=1737460488') ?>" />
 <div class="main maincontent">
     <div class="container-fluid">
         <div class="row">
