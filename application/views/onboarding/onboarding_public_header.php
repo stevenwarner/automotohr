@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css"
         href="<?php echo base_url('assets/employee_panel/css/jquery.datetimepicker.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/select2.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/2022/css/main.css?v=1737460488">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/style.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/responsive.css') ?>">
     <link rel="StyleSheet" type="text/css" href="<?php echo base_url('assets/css/chosen.css'); ?>"/>
