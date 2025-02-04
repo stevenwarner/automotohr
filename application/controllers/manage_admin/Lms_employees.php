@@ -84,4 +84,39 @@ class Lms_employees extends Admin_Controller
                 $this->input->post("language", true),
             );
     }
+
+
+
+
+    public function manualAssignCourses()
+    {
+        $page_title = 'LMS :: Manual Assign Courses';
+        $companies = $this->lms_employees_model->get_all_companies();
+        $this->data['page_title'] = $page_title;
+        $this->data['companies'] = $companies;
+
+      // $this->data['coursesList'] = $this->course_model->getActiveCourses();
+
+        $this->render('manage_admin/company/lms_default_course_list_for_manual_assign', 'admin_master');
+    }
+
+
+
+    public function getallCourses($companyId, $employeeId)
+    {
+
+
+        return SendResponse(
+            200,
+            $this
+                ->course_model
+                ->getAllCoursesForManualAssigne(
+                    $companyId,
+                    $employeeId
+                )
+        );
+    }
+
+
+
 }

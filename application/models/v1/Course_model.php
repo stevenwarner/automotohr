@@ -1261,4 +1261,59 @@ class Course_model extends CI_Model
             ->get("lms_scorm_courses")
             ->result_array();
     }
+
+    //
+    public function getActiveDefaultCourses(): array
+    {
+        // 
+        return $this->db
+            ->select('*')
+            ->from('lms_default_courses')
+            ->where('is_active', 1)
+            ->where('company_sid', 0)
+            ->get()
+            ->result_array();
+    }
+    //
+    public function getAllCoursesForManualAssigne(
+        $companyId,
+        $employeeId
+    ): array {
+
+        // 
+        $defaultCoursesList = $this->getActiveDefaultCourses();
+        $manualAssignedCoursesList = $this->getmanualAssignedCourses(
+            $companyId,
+            $employeeId
+        );
+
+        //
+        $assignedIds = array_column($manualAssignedCoursesList, 'default_course_sid');
+
+        foreach ($defaultCoursesList as $key => $val) {
+
+            if (in_array($val['sid'], $assignedIds)) {
+                $defaultCoursesList[$key]['assigned'] = 1;
+            } else {
+                $defaultCoursesList[$key]['assigned'] = 0;
+            }
+        }
+
+        return $defaultCoursesList;
+    }
+
+
+    public function getmanualAssignedCourses(
+        $companyId,
+        $employeeId
+    ): array {
+        // 
+        return $this->db
+            ->select('*')
+            ->from('lms_manual_assign_employee_course')
+            ->where('employee_sid', $employeeId)
+            ->where('company_sid', $companyId)
+            ->get()
+            ->result_array();
+    }
 }
