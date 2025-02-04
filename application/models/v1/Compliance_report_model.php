@@ -356,7 +356,7 @@ class Compliance_report_model extends CI_Model
 		$this->db->select('*');
 		$this->db->where('incident_sid', $incident_sid);
 		$this->db->where('is_incident_reported', 1);
-		$this->db->where('file_type', 'Incident file');
+		$this->db->where('file_type', 'compliance report file');
 		$this->db->order_by('uploaded_date', 'desc');
 		if ($type != 'all') $this->db->where('is_archived', $type);
 		$records_obj = $this->db->get('incident_related_videos');
@@ -374,7 +374,7 @@ class Compliance_report_model extends CI_Model
 	function getComplianceDocuments($id, $type = 'all')
 	{
 		$this->db->where('incident_reporting_id', $id);
-		$this->db->where('file_type', 'Incident file');
+		$this->db->where('file_type', 'compliance report file');
 		if ($type != 'all') {
 			$this->db->where('is_archived', $type);
 		}
