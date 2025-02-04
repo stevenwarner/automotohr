@@ -778,5 +778,7 @@ define('W4_YEAR_25', '2025');
 define('I9_NEW_EXPIRES_2025', '05/31/2027');
 define('COMPLIANCE_REPORT_NOTIFICATION', 472);
 
+define('DOCUMENTS_MESSAGE', 'The Managers will be notified about the documents reports of their team members.');
+
 
 

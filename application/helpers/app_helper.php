@@ -1614,7 +1614,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                     $employees[$employee['employee_sid']]["employee_sid"] = $employee['employee_sid'];
                     $employees[$employee['employee_sid']]["department_sid"] = $employee['department_sid'];
                     $employees[$employee['employee_sid']]["team_sid"] = $employee['team_sid'];
-                    $employees[$employee['employee_sid']]["lms_job_title"] = $employee['lms_job_title'];
+                    $employees[$employee['employee_sid']]["lms_job_title"] = '';//$employee['lms_job_title'];
                     $employees[$employee['employee_sid']]["email"] = $jobTitleInfo['email'];
                     //
                     $employeeData = [];
@@ -1973,6 +1973,9 @@ if (!function_exists('getEmployeeCourseStatus')) {
             return 'completed';
         } else if ($courseInfo['lesson_status'] == 'incomplete') {
             return 'started';
+        }else{
+                        return 'not_started';
+
         }
     }
 }
