@@ -2933,17 +2933,28 @@ class Compliance_reports extends CI_Controller
                         }
                     }
 
-                    $conversation_key = $inc_type . '/' . $inc_reported_id . '/' . $manual_email . '/' . $from_sid;
-                    $url = base_url('compliance_report/view_compliance_report_email/' . $conversation_key);
-                    $from_name = $user_first_name . ' ' . $user_last_name;
-                    $name = explode("@", $manual_email);
-                    $receiver_name = $name[0];
+                    $receiver_name = '';
+                    $conversation_key = '';
                     //
                     $isEmployee = $this->compliance_report_model->checkManualUserIsAnEmployee($manual_email, $company_sid);
+                    //
+                    if ($isEmployee) {
+                        $manualUserInfo = $this->compliance_report_model->getUserInfoByEmail($_POST['manual_email'], $company_sid);
+                        $conversation_key = $inc_type . '/' . $inc_reported_id . '/' . $manualUserInfo['sid'] . '/' . $from_sid;
+                        $receiver_name = $manualUserInfo['first_name'].' '.$manualUserInfo['last_name'];
+                    } else {
+                        $conversation_key = $inc_type . '/' . $inc_reported_id . '/' . $manual_email . '/' . $from_sid;
+                        $name = explode("@", $manual_email);
+                        $receiver_name = $name[0];
+                    }
+                    //
+                    $url = base_url('compliance_report/view_compliance_report_email/' . $conversation_key);
+                    $from_name = $user_first_name . ' ' . $user_last_name;
 
                     $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                     $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
                     $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+                    //
                     if ($isEmployee) {
                         $employeeType = $this->compliance_report_model->isComplianceReportManager($manual_email, $company_sid, $inc_reported_id);
                         //
@@ -2957,6 +2968,28 @@ class Compliance_reports extends CI_Controller
                             $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Compliance Report</a>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                         }
+                    } else {
+                        //
+                        //
+                        // Add outsider user into compliance report outsider user table
+                        $this->compliance_report_model->checkManualUserExist($_POST['manual_email'], $inc_reported_id);
+                        //
+                        $this->load->library('encryption');
+                        //
+                        $this->encryption->initialize(
+                            get_encryption_initialize_array()
+                        );
+                        //
+                        $viewComplianceCode = str_replace(
+                            ['/', '+'],
+                            ['$$ab$$', '$$ba$$'],
+                            $this->encryption->encrypt($conversation_key)
+                        );
+                        //
+                        $approval_public_link_accept = base_url("compliance_report/view_compliance_report_public_link") . '/' . $viewComplianceCode;
+                        //
+                        $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $approval_public_link_accept . '">View Compliance Report</a>' . '<br>';
+                        $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                     }
                     $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
                     $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
