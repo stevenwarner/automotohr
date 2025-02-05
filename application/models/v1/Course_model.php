@@ -1182,10 +1182,6 @@ class Course_model extends CI_Model
         );
 
 
-
-        die("SDas");
-
-
         if (!empty($coursedata)) {
             //
             $dataToUpdate['lesson_status'] = 'completed';
