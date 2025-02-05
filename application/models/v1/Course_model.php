@@ -1073,7 +1073,8 @@ class Course_model extends CI_Model
         $companyId,
         $employeeId,
         $courseId,
-        $language
+        $language,
+        $completionDate
     ) {
         //
         $todayDateTime = getSystemDate();
@@ -1136,7 +1137,7 @@ class Course_model extends CI_Model
                 "Imsmanifist_json" => $courseData["Imsmanifist_json"],
                 "course_file_name" => $courseData["course_file_name"],
                 "updated_at" => $todayDateTime,
-                "completed_at" => $todayDateTime,
+                "completed_at" => formatDateToDB($completionDate, 'm-d-Y', DB_DATE).' 00:00:00',
                 "is_manual_completed" => 1,
             ];
             //
@@ -1164,7 +1165,7 @@ class Course_model extends CI_Model
                 "course_taken_count" => 1,
                 "created_at" => $todayDateTime,
                 "updated_at" => $todayDateTime,
-                "completed_at" => $todayDateTime,
+                "completed_at" => formatDateToDB($completionDate, 'm-d-Y', DB_DATE).' 00:00:00',
                 "is_manual_completed" => 1,
             ];
             //

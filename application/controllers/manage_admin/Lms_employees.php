@@ -82,6 +82,7 @@ class Lms_employees extends Admin_Controller
                 $this->input->post("employeeId", true),
                 $this->input->post("courseId", true),
                 $this->input->post("language", true),
+                $this->input->post("completionDate", true),
             );
     }
 }
