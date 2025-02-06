@@ -1010,9 +1010,9 @@ class Cron_email_model extends CI_Model
         //
         $companies = $this->copy_employees_model->get_all_companies();
         //
-        foreach ($companies as $companyRow) {
+        // foreach ($companies as $companyRow) {
             //
-            $post['companySid'] = $companyRow['sid'];
+            $post['companySid'] = $companyRow['sid'] = 8578;
             $post['employeeSid'] = ['all'];
             $post['employeeStatus'] = [];
             $post['documentSid'] = ['all'];
@@ -1109,7 +1109,7 @@ class Cron_email_model extends CI_Model
                     }
                 }
             }
-        }
+        // }
 
         echo "done";
     }
