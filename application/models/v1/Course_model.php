@@ -901,16 +901,20 @@ class Course_model extends CI_Model
                 ->db
                 ->where([
                     "course_sid" => $v0["sid"],
-                    "course_status" => "passed"
+                    "course_status" => "completed",
+                    "lesson_status" => "passed",
+                    "company_sid" => $companyId
                 ])
                 ->count_all_results("lms_employee_course");
-
+              
             // get passed course count
             $completedPendingCount = $this
                 ->db
                 ->where([
                     "course_sid" => $v0["sid"],
-                    "course_status <> " => "passed"
+                    "company_sid" => $companyId,
+                    "course_status <> " => "completed"
+                    
                 ])
                 ->count_all_results("lms_employee_course");
 
