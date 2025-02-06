@@ -32,7 +32,7 @@ class Cron_lms_courses extends CI_Controller
      */
     public function sendCourseReportToManagers()
     {
-        // $this->cron_email_model->sendCourseReportToManagers();
+        $this->cron_email_model->sendCourseReportToManagers();
         $this->cron_email_model->sendDocumentReportToManagers();
     }
 }
