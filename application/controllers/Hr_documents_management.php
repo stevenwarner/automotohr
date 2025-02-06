@@ -17641,4 +17641,224 @@ class Hr_documents_management extends Public_Controller
             redirect('login', 'refresh');
         }
     }
+
+
+    /**
+     * public function for Manager Report
+     * 
+     * @version 1.0
+     * @date    12/23/2042
+     * 
+     * 
+     * @param string $token
+     */
+    function managerDocumentReport(
+        $token
+    ) {
+        // 
+        $this->load->library('encryption');
+        //
+        $this->encryption->initialize(
+            get_encryption_initialize_array()
+        );
+        //
+        $decrypt_token = $this->encryption->decrypt(str_replace(['$$ab$$', '$$ba$$'], ['/', '+'], $token));
+        //
+        if (!empty($decrypt_token)) {
+            $decrypt_keys = explode("/", $decrypt_token);
+            //
+            $employeeId = $decrypt_keys[1];
+            $action = $decrypt_keys[2];
+            $companyId = $decrypt_keys[0];
+            //
+            $post['companySid'] = $companyId;
+            $post['employeeSid'] = ['all'];
+            $post['employeeStatus'] = [];
+            $post['documentSid'] = ['all'];
+            $post['documentAction'] = 'all';
+            //
+            $this->load->model('reports_model');
+            $employeeDocument = $this->reports_model->getEmployeeAssignedDocumentForReport($post);
+            //
+            $reportData = [
+                "detail" => [],
+                "summary" => [
+                    "assignedEmployees" => 0,
+                    "notAssignedEmployees" => 0,
+                    "totalAssignedDocuments" => 0,
+                    "totalCompletedDocuments" => 0,
+                    "totalNotCompletedDocuments" => 0,
+                    "totalNoActionDocuments" => 0,
+                    "employeesWithCompletedDocuments" => 0,
+                    "employeesWithAttemptedDocuments" => 0,
+                    "employeesWithNotAttemptedDocuments" => 0,
+                ]
+            ];
+            //
+            if (sizeof($employeeDocument['Data'])) {
+                //
+                $rows = $employeeDocument['Data'];
+                //
+                foreach ($rows as $row) {
+                    //
+                    $totalAssignedDocs = count($row['assigneddocuments']);
+                    $totalAssignedGeneralDocs = count($row['assignedgeneraldocuments']);
+                    $totalDocs = $totalAssignedDocs + $totalAssignedGeneralDocs;
+
+                    $totalDocsNotCompleted = 0;
+                    $totalDocsCompleted = 0;
+                    $totalDocsNoAction = 0;
+                    $completedStatus = '';
+                    $doc = '';
+                    //
+                    if (!empty($row['assignedi9document'])) {
+                        $totalDocs = $totalDocs + 1;
+                        if ($row['assignedi9document'][0]['user_consent'] == 1) {
+                            $totalDocsCompleted = $totalDocsCompleted + 1;
+                            $completedStatus = ' (Completed) ';
+                        } else {
+                            $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                            $completedStatus = ' (Not Completed) ';
+                        }
+                        //
+                        $doc .= "I9 Fillable" . $completedStatus . "\n\n";
+                    }
+                    //
+                    if (!empty($row['assignedw9document'])) {
+                        $totalDocs = $totalDocs + 1;
+                        if ($row['assignedw9document'][0]['user_consent'] == 1) {
+                            $totalDocsCompleted = $totalDocsCompleted + 1;
+                            $completedStatus = ' (Completed) ';
+                        } else {
+                            $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                            $completedStatus = ' (Not Completed) ';
+                        }
+                        //
+                        $doc .= "W9 Fillable" . $completedStatus . "\n\n";
+                    }
+                    //
+                    if (!empty($row['assignedw4document'])) {
+                        $totalDocs = $totalDocs + 1;
+                        if ($row['assignedw4document'][0]['user_consent'] == 1) {
+                            $totalDocsCompleted = $totalDocsCompleted + 1;
+                            $completedStatus = ' (Completed) ';
+                        } else {
+                            $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                            $completedStatus = ' (Not Completed) ';
+                        }
+                        //
+                        $doc .= "W4 Fillable" . $completedStatus . "\n\n";
+                    }
+                    //
+                    if (!empty($row['assignedeeocdocument'])) {
+                        $totalDocs = $totalDocs + 1;
+                        if ($row['assignedeeocdocument'][0]['last_completed_on'] != '' && $row['assignedeeocdocument'][0]['last_completed_on'] != null) {
+                            $totalDocsCompleted = $totalDocsCompleted + 1;
+                            $completedStatus = ' (Completed) ';
+                        } else {
+                            $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                            $completedStatus = ' (Not Completed) ';
+                        }
+                        //
+                        $doc .= "EEOC Form" . $completedStatus . "\n\n";
+                    }
+                    //
+                    if (count($row['assignedgeneraldocuments']) > 0) {
+                        foreach ($row['assignedgeneraldocuments'] as $rowGeneral) {
+
+                            if ($rowGeneral['is_completed'] == 1) {
+                                $totalDocsCompleted = $totalDocsCompleted + 1;
+                                $completedStatus = ' (Completed) ';
+                            } else {
+                                $completedStatus = ' (Not Completed) ';
+                                $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                            }
+                            //
+                            $doc .= ucwords(str_replace('_', ' ', $rowGeneral['document_type'])) . $completedStatus . "\n\n";
+                        }
+                    }
+                    //
+                    if (count($row['assigneddocuments']) > 0) {
+                        foreach ($row['assigneddocuments'] as $assigned_row) {
+                            $completedStatus = '';
+                            if ($assigned_row['completedStatus'] == 'Not Completed') {
+                                $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                                $completedStatus = ' (Not Completed) ';
+                            }
+                            if ($assigned_row['completedStatus'] == 'Completed') {
+                                $totalDocsCompleted = $totalDocsCompleted + 1;
+                                $completedStatus = ' (Completed) ';
+                            }
+
+                            if ($assigned_row['completedStatus'] == 'No Action Required') {
+                                $totalDocsNoAction = $totalDocsNoAction  + 1;
+                                $completedStatus = ' (No Action Required) ';
+                            }
+
+                            if ($assigned_row['confidential_employees'] != null) {
+                                $confidentialEmployees = explode(',', $assigned_row['confidential_employees']);
+
+                                if (in_array($data['employerSid'], $confidentialEmployees)) {
+                                    $doc .= $assigned_row['document_title'] . $completedStatus . "\n\n";
+                                } else {
+                                    $totalDocs = $totalDocs - 1;
+                                }
+                            } else {
+                                $doc .= $assigned_row['document_title'] . $completedStatus . "\n\n";
+                            }
+                        }
+                    }
+                    //
+                    if ($row['assignedPerformanceDocument'] != 'Not Assigned' && !empty($row['assignedPerformanceDocument'])) {
+                        $doc .= "Performance Evaluation Document (" . $row['assignedPerformanceDocument'] . ")\n\n";
+                    }
+                    //
+                    $a = [];
+                    $a['employeeInfo'] = getEmployeeBasicInfo($row['sid']);
+                    $a['documentInfo'] = [
+                        'percentage' =>  $totalDocs > 0 ? round(($totalDocsCompleted / $totalDocs) * 100, 2)."%" : 'N/A',
+                        'assignedDocument' => $totalDocs,
+                        'completedDocument' => $totalDocsCompleted,
+                        'notCompletedDocument' => $totalDocsNotCompleted,
+                        'noActionDocument' => $totalDocsNoAction,
+                        'detail' => $doc
+                    ];
+                    //
+                    $reportData['detail'][$row['sid']] = $a;
+                    //
+                    if ($totalDocs == 0) {
+                        $reportData['summary']['notAssignedEmployees'] = $reportData['summary']['notAssignedEmployees'] + 1;
+                    } else {
+                        $reportData['summary']['assignedEmployees'] = $reportData['summary']['assignedEmployees'] + 1;
+                        //
+                        $reportData['summary']['totalAssignedDocuments'] = $reportData['summary']['totalAssignedDocuments'] + $totalDocs;
+                        $reportData['summary']['totalCompletedDocuments'] = $reportData['summary']['totalCompletedDocuments'] + $totalDocsCompleted;
+                        $reportData['summary']['totalNotCompletedDocuments'] = $reportData['summary']['totalNotCompletedDocuments'] + $totalDocsNotCompleted;
+                        $reportData['summary']['totalNoActionDocuments'] = $reportData['summary']['totalNoActionDocuments'] + $totalDocsNoAction;
+                        //
+                        if ($totalDocsCompleted == $totalDocs) {
+                            $reportData['summary']['employeesWithCompletedDocuments'] = $reportData['summary']['employeesWithCompletedDocuments'] + 1;
+                        } else if ($totalDocsCompleted > 0) {
+                            $reportData['summary']['employeesWithAttemptedDocuments'] = $reportData['summary']['employeesWithAttemptedDocuments'] + 1;
+                        } else if ($totalDocsCompleted == 0) {
+                            $reportData['summary']['employeesWithNotAttemptedDocuments'] = $reportData['summary']['employeesWithNotAttemptedDocuments'] + 1;
+                        }
+                    }
+                }
+
+            }
+            //
+            $data["employeeId"] = $employeeId;
+            $data["companyId"] = $companyId;
+            $data["companyName"] = getCompanyNameBySid($companyId);
+            $data["companyLogo"] = 'https://automotohrattachments.s3.amazonaws.com/' . getCompanyLogoBySid($companyId);
+            $data["reportData"] = $reportData;
+            $data["action"] = $action;
+            //
+            $this->load->view('hr_documents_management/manager_report', $data);
+            ///
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
 }

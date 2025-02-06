@@ -2475,3 +2475,4 @@ $route['compliance_report/view_compliance_report_public_link/(:any)']['post'] = 
 $route['manage_admin/lms_employees'] = 'manage_admin/Lms_employees/index';
 $route['manage_admin/lms/employee_courses/(:num)/(:num)'] = 'manage_admin/Lms_employees/employeeAllCourses/$1/$2';
 $route['manage_admin/lms/manual_course_complete'] = 'manage_admin/Lms_employees/manuallyCourseComplete';
+$route['hr_documents_management/manager_report/(:any)'] = 'Hr_documents_management/managerDocumentReport/$1';

@@ -38,6 +38,48 @@ if (!function_exists('getEmployeeOnlyNameBySID')) {
     }
 }
 
+if (!function_exists('getEmployeeBasicInfo')) {
+    function getEmployeeBasicInfo($sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('first_name, last_name, email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, timezone, middle_name, department_sid, team_sid, PhoneNumber, parent_sid, profile_picture');
+        $CI->db->where('sid', $sid);
+        $userInfo = $CI->db->get('users')->row_array();
+        //
+        $basicInfo = [];
+        //
+        if ($userInfo) {
+            //
+            $userBasicInfo = [
+                'first_name' => $userInfo['first_name'],
+                'last_name' => $userInfo['last_name'],
+                'access_level' => $userInfo['access_level'],
+                'timezone' => isset($userInfo['timezone']) ? $userInfo['timezone'] : '',
+                'access_level_plus' => $userInfo['access_level_plus'],
+                'is_executive_admin' => $userInfo['is_executive_admin'],
+                'pay_plan_flag' => $userInfo['pay_plan_flag'],
+                'job_title' => $userInfo['job_title'],
+            ];
+            //
+            $basicInfo['picture'] = $userInfo["profile_picture"];
+            $basicInfo['pictureURL'] = getImageURL($userInfo["profile_picture"]);
+            $basicInfo['phone'] = $basicInfo["PhoneNumber"];
+            $basicInfo["name"] = remakeEmployeeName($userBasicInfo, true, true);
+            $basicInfo["designation"] = remakeEmployeeName($userBasicInfo, false);
+            $basicInfo["employeeName"] = $basicInfo["name"] .' '. $basicInfo["designation"];
+            $basicInfo["departmentName"] = getDepartmentNameBySID($userInfo['department_sid']);
+            $basicInfo["teamName"] = getTeamNameBySID($userInfo['team_sid']);
+            $basicInfo["companyName"] = getCompanyNameBySid($userInfo['parent_sid']);
+            $basicInfo["departmentId"] = $userInfo['department_sid'];
+            $basicInfo["teamId"] = $userInfo['team_sid'];
+            $basicInfo["companyId"] = $userInfo['parent_sid'];
+            $basicInfo["email"] = $userInfo['email'];
+        }    
+        //
+        return $basicInfo;
+    }
+}
+
 
 if (!function_exists('getApplicantNameBySID')) {
     function getApplicantNameBySID($sid, $remake = true)
