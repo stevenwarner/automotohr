@@ -1267,7 +1267,7 @@ class Course_model extends CI_Model
     {
         // 
         return $this->db
-            ->select('*')
+            ->select('sid, course_title, course_type, course_version')
             ->from('lms_default_courses')
             ->where('is_active', 1)
             ->where('company_sid', 0)
@@ -1275,14 +1275,15 @@ class Course_model extends CI_Model
             ->result_array();
     }
     //
-    public function getAllCoursesForManualAssigne(
+    public function getAllCoursesForManualAssign(
         $companyId,
         $employeeId
     ): array {
 
         // 
         $defaultCoursesList = $this->getActiveDefaultCourses();
-        $manualAssignedCoursesList = $this->getmanualAssignedCourses(
+        //
+        $manualAssignedCoursesList = $this->getManualAssignedCourses(
             $companyId,
             $employeeId
         );
@@ -1291,14 +1292,13 @@ class Course_model extends CI_Model
             $companyId,
             $employeeId
         );
-
-        $courseIds = array_column($assignedCoursesList, 'course_sid');
-
+        //
+        $courseIds = array_column($assignedCoursesList, 'assigned_course_sid');
         //
         $assignedIds = array_column($manualAssignedCoursesList, 'default_course_sid');
-
+        //
         $assignedIds = array_merge($assignedIds, $courseIds);
-
+        //
         foreach ($defaultCoursesList as $key => $val) {
 
             if (in_array($val['sid'], $assignedIds)) {
@@ -1312,7 +1312,7 @@ class Course_model extends CI_Model
     }
 
 
-    public function getmanualAssignedCourses(
+    public function getManualAssignedCourses(
         $companyId,
         $employeeId
     ): array {
@@ -1350,13 +1350,40 @@ class Course_model extends CI_Model
         $companyId,
         $employeeId
     ): array {
-        // 
-        return $this->db
-            ->select('*')
-            ->from('lms_employee_course')
-            ->where('employee_sid', $employeeId)
-            ->where('company_sid', $companyId)
-            ->get()
+        //
+        $jobTitleInfo = $this->db->select("portal_job_title_templates.sid as job_title_sid")
+            ->join(
+                "portal_job_title_templates",
+                "portal_job_title_templates.sid = users.lms_job_title",
+                "left"
+            )
+            ->where('users.sid', $employeeId)
+            ->where([
+                "users.active" => 1,
+                "users.terminated_status" => 0,
+                "users.is_executive_admin" => 0
+            ])
+            ->get('users')
+            ->row_array();
+        //
+        $jobTitleId = !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
+        //
+        return $this->db->select("
+                lms_assign_course_log.default_course_sid as assigned_course_sid
+            ")
+            ->join(
+                "lms_default_courses_job_titles",
+                "lms_default_courses_job_titles.lms_default_courses_sid = lms_default_courses.sid",
+                "right"
+            )
+            ->join('lms_assign_course_log', 'lms_assign_course_log.assigned_course_sid = lms_default_courses.sid', 'left')
+            ->where('lms_default_courses.company_sid', $companyId)
+            ->where('lms_default_courses.is_active', 1)
+            ->group_start()
+            ->where('lms_default_courses_job_titles.job_title_id', -1)
+            ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
+            ->group_end()
+            ->get('lms_default_courses')
             ->result_array();
     }
 }

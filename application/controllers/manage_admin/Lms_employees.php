@@ -85,9 +85,6 @@ class Lms_employees extends Admin_Controller
             );
     }
 
-
-
-
     public function manualAssignCourses()
     {
         $page_title = 'LMS :: Manual Assign Courses';
@@ -116,8 +113,6 @@ class Lms_employees extends Admin_Controller
         $this->render('manage_admin/company/lms_default_course_list_for_manual_assign', 'admin_master');
     }
 
-
-
     public function getallCourses($companyId, $employeeId)
     {
 
@@ -125,7 +120,7 @@ class Lms_employees extends Admin_Controller
             200,
             $this
                 ->course_model
-                ->getAllCoursesForManualAssigne(
+                ->getAllCoursesForManualAssign(
                     $companyId,
                     $employeeId
                 )

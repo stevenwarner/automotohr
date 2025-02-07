@@ -17,7 +17,7 @@ foreach ($companies as $company)
 
 
 
-                            <?php echo form_open(base_url('manage_admin/lms_employees/manual_assign'), array('id' => 'manualAssigneForm')); ?>
+                            <?php echo form_open(base_url('manage_admin/lms_employees/manual_assign'), array('id' => 'manualAssignForm')); ?>
 
                             <div class="row">
                                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
@@ -74,6 +74,8 @@ foreach ($companies as $company)
                                                                 <th><input type="checkbox" class="js-check-all"></th>
                                                                 <th>Course Title</th>
                                                                 <th>Course Type</th>
+                                                                <th>Course Version</th>
+                                                                <th>Assign Status</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody id="js-courses-list-show-area"></tbody>
@@ -358,16 +360,19 @@ foreach ($companies as $company)
                             }
 
                             newRow += '<tr class="js-tr">';
-                            newRow += '<td><input type="checkbox" name="courses_ids[]" value="' + value.sid + '" ' + disabled + '>';
+                            newRow += '<td><input type="checkbox" name="courses_ids[]" value="' + value.sid + '" ' + disabled + '></td>';
                             newRow += '<td>' + value.course_title + '</td>';
-                            newRow += '<td>' + value.course_type + ' ' + value.course_version + '</td>';
-                            '</tr>';
+                            newRow += '<td>' + (value.course_type == "scorm" ? "Scorm" : "Manual")+ '</td>';
+                            newRow += '<td>' + value.course_version + '</td>';
+                            newRow += '<td>' + (value.assigned == 1 ? "Assigned" : "Not Assigned") + '</td>';
+                            newRow += '</tr>';
                         });
 
 
                         newRow += '<tr class="js-tr">';
-                        newRow += '<td colspan="3" class="text-center"><a class="site-btn text-center" id="js-save-courses" href="javascript:void(0)">Save</a></td>';
-                        '</tr>';
+                        newRow += '<td colspan="5"><a class="site-btn pull-right" id="js-save-courses" href="javascript:void(0)">Assign Course(s)</a></td>';
+                        newRow += '</tr>';
+                        console.log(newRow)
 
                         $('#js-courses-list-show-area').html(newRow);
                         $('#js-enployees-list-block').show();
@@ -453,10 +458,16 @@ foreach ($companies as $company)
             }
 
             //
-            alertify.confirm('Do you really want to assigne selected courses?', function() {
-                //
-                $('#manualAssigneForm').submit();
-            });
+            alertify.confirm(
+                'Confirmation!',
+                'Do you really want to manually assign selected course(s)?', 
+                function() {
+                    $('#manualAssignForm').submit();
+                },
+                function () {
+
+                }
+            );
 
         });
 
