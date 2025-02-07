@@ -901,17 +901,23 @@ class Course_model extends CI_Model
                 ->db
                 ->where([
                     "course_sid" => $v0["sid"],
-                    "course_status" => "passed"
+                    "course_status" => "passed",
+                    "lesson_status" => "completed",
+                    "company_sid" => $companyId
                 ])
+                ->where_in('employee_sid', $courseEmployeeIds)
                 ->count_all_results("lms_employee_course");
-
+              
             // get passed course count
             $completedPendingCount = $this
                 ->db
                 ->where([
                     "course_sid" => $v0["sid"],
-                    "course_status <> " => "passed"
+                    "company_sid" => $companyId,
+                    "lesson_status" => "incomplete"
+                    
                 ])
+                ->where_in('employee_sid', $courseEmployeeIds)
                 ->count_all_results("lms_employee_course");
 
             // increment total count
@@ -933,33 +939,9 @@ class Course_model extends CI_Model
 
         //
         if ($returnArray["totalCourses"] > 0) {
-            $returnArray["percentage"]["completed"] =
-                number_format(
-                    (
-                        ($returnArray["totals"]["completed"] * 100) / $returnArray["totalCourses"]
-                    ),
-                    2,
-                    ".",
-                    ""
-                );
-            $returnArray["percentage"]["started"] =
-                number_format(
-                    (
-                        ($returnArray["totals"]["started"] * 100) / $returnArray["totalCourses"]
-                    ),
-                    2,
-                    ".",
-                    ""
-                );
-            $returnArray["percentage"]["pending"] =
-                number_format(
-                    (
-                        ($returnArray["totals"]["pending"] * 100) / $returnArray["totalCourses"]
-                    ),
-                    2,
-                    ".",
-                    ""
-                );
+            $returnArray["percentage"]["completed"] = floor(($returnArray["totals"]["completed"] * 100) / $returnArray["totalCourses"]);
+            $returnArray["percentage"]["started"] = floor(($returnArray["totals"]["started"] * 100) / $returnArray["totalCourses"]);
+            $returnArray["percentage"]["pending"] = floor(($returnArray["totals"]["pending"] * 100) / $returnArray["totalCourses"]);
         }
 
         return $returnArray;
@@ -1073,7 +1055,8 @@ class Course_model extends CI_Model
         $companyId,
         $employeeId,
         $courseId,
-        $language
+        $language,
+        $completionDate
     ) {
         //
         $todayDateTime = getSystemDate();
@@ -1136,7 +1119,7 @@ class Course_model extends CI_Model
                 "Imsmanifist_json" => $courseData["Imsmanifist_json"],
                 "course_file_name" => $courseData["course_file_name"],
                 "updated_at" => $todayDateTime,
-                "completed_at" => $todayDateTime,
+                "completed_at" => formatDateToDB($completionDate, 'm-d-Y', DB_DATE).' 00:00:00',
                 "is_manual_completed" => 1,
             ];
             //
@@ -1164,7 +1147,7 @@ class Course_model extends CI_Model
                 "course_taken_count" => 1,
                 "created_at" => $todayDateTime,
                 "updated_at" => $todayDateTime,
-                "completed_at" => $todayDateTime,
+                "completed_at" => formatDateToDB($completionDate, 'm-d-Y', DB_DATE).' 00:00:00',
                 "is_manual_completed" => 1,
             ];
             //
@@ -1179,10 +1162,6 @@ class Course_model extends CI_Model
                 "message" => "You have successfully marked the course as completed."
             ]
         );
-
-
-
-        die("SDas");
 
 
         if (!empty($coursedata)) {

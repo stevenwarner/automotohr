@@ -2455,7 +2455,7 @@ $route['compliance_report/update_compliance_video']['post'] = 'v1/Compliance_rep
 $route['compliance_report/add_compliance_document']['post'] = 'v1/Compliance_reports/add_compliance_document';
 $route['compliance_report/update_compliance_document']['post'] = 'v1/Compliance_reports/update_compliance_document';
 $route['compliance_report/ajax_handler']['post'] = 'v1/Compliance_reports/ajax_handler';
-$route['compliance_report/print_and_download/(:num)/(:any)/(:num)/(:num)']['get'] = 'v1/Compliance_reports/print_and_download/$1/$2/$3/$4';
+$route['compliance_report/print_and_download/(:num)/(:any)/(:num)/(:num)/(:any)/(:num)/(:num)']['get'] = 'v1/Compliance_reports/print_and_download/$1/$2/$3/$4/$5/$6/$7';
 $route['compliance_report/download_compliance_report_all_documents_and_videos/(:any)/(:num)/(:num)']['get'] = 'v1/Compliance_reports/download_incident_media/$1/$2/$3';
 $route['compliance_report/watch_video/(:num)/(:any)/(:num)']['get'] = 'v1/Compliance_reports/watch_video/$1/$2/$3';
 $route['compliance_report/download_media_file/(:num)']['get'] = 'v1/Compliance_reports/download_media_file/$1';
@@ -2475,7 +2475,7 @@ $route['compliance_report/view_compliance_report_public_link/(:any)']['post'] = 
 $route['manage_admin/lms_employees'] = 'manage_admin/Lms_employees/index';
 $route['manage_admin/lms/employee_courses/(:num)/(:num)'] = 'manage_admin/Lms_employees/employeeAllCourses/$1/$2';
 $route['manage_admin/lms/manual_course_complete'] = 'manage_admin/Lms_employees/manuallyCourseComplete';
-
 //
 $route['manage_admin/lms_employees/manual_assign'] = 'manage_admin/Lms_employees/manualAssignCourses';
 $route['manage_admin/lms/getallcourses/(:num)/(:num)'] = 'manage_admin/Lms_employees/getallCourses/$1/$2';
+$route['hr_documents_management/manager_report/(:any)'] = 'Hr_documents_management/managerDocumentReport/$1';

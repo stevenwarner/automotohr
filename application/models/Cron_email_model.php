@@ -759,6 +759,7 @@ class Cron_email_model extends CI_Model
 
     private function sendCourseReportEmails(array $report, array $employee)
     {
+        // _e($report,true,true);
         // get the template
         $template = get_email_template(COURSE_REPORT_EMAILS);
         // get company details
@@ -994,5 +995,258 @@ class Cron_email_model extends CI_Model
         }
 
         return false;
+    }
+
+    public function sendDocumentReportToManagers () {
+        //
+        $this->load->library('encryption');
+        //
+        $this->encryption->initialize(
+            get_encryption_initialize_array()
+        );
+        //
+        $this->load->model('reports_model');
+        $this->load->model('manage_admin/copy_employees_model');
+        //
+        $companies = $this->copy_employees_model->get_all_companies();
+        //
+        foreach ($companies as $companyRow) {
+            //
+            $post['companySid'] = $companyRow['sid'];
+            $post['employeeSid'] = ['all'];
+            $post['employeeStatus'] = [];
+            $post['documentSid'] = ['all'];
+            $post['documentAction'] = 'all';
+            //
+            $employeeDocument = $this->reports_model->getEmployeeAssignedDocumentForReport($post);
+            //
+            if (sizeof($employeeDocument['Data'])) {
+                //
+                $report = $this->generateDocumentReport($employeeDocument);
+                //
+                // get notifiers
+                $managersList = get_notification_email_contacts(
+                    $companyRow['sid'],
+                    "documents_status"
+                );
+                //
+                if (!empty($managersList)) {
+                    //
+                    $companyDetails = getCompanyInfo($companyRow['sid']);
+                    // set common replace array
+                    $companyReplaceArray = [
+                        "{{company_name}}" => $companyDetails["company_name"],
+                        "{{company_address}}" => $companyDetails["company_address"],
+                        "{{company_phone}}" => $companyDetails["company_phone"],
+                        "{{career_site_url}}" => $companyDetails["career_site_url"],
+                    ];
+                    //
+                    foreach ($managersList as $empRow) {
+                        //
+                        $template = get_email_template(DOCUMENT_REPORT_EMAILS);
+                        //
+                        $templateSubject = $template["subject"];
+                        $templateFromName = $template["from_name"];
+                        $templateBody = $template["text"];
+                        // set replace array
+                        //
+                        $replaceArray = $companyReplaceArray;
+                        //
+                        $replaceArray["{{baseurl}}"] = base_url();
+                        $replaceArray["{{full_name}}"] =
+                            $replaceArray["{{contact_name}}"]
+                            = $empRow['contact_name'];
+                        //
+                        $viewCode = str_replace(
+                            ['/', '+'],
+                            ['$$ab$$', '$$ba$$'],
+                            $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'view')
+                        );
+                        //
+                        $downloadCode = str_replace(
+                            ['/', '+'],
+                            ['$$ab$$', '$$ba$$'],
+                            $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'download')
+                        );
+                        //
+                        $viewLink = base_url("hr_documents_management/manager_report") . '/' . $viewCode;
+                        $downloadLink = base_url("hr_documents_management/manager_report") . '/' . $downloadCode;
+                        //
+                        $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
+                        $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
+                        //
+                        $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
+                        $templateBody = str_replace('{{download_report}}', $downloadReport, $templateBody);
+                        // set keys
+                        $replaceKeys = array_keys($replaceArray);
+
+                        // replace
+                        $fromName = str_replace(
+                            $replaceKeys,
+                            $replaceArray,
+                            $templateFromName
+                        );
+                        $subject = str_replace(
+                            $replaceKeys,
+                            $replaceArray,
+                            $templateSubject
+                        );
+                        $body = str_replace(
+                            $replaceKeys,
+                            $replaceArray,
+                            $templateBody
+                        );
+                        //
+                        log_and_send_email_with_attachment(
+                            FROM_EMAIL_NOTIFICATIONS,
+                            $empRow['email'],
+                            $subject,
+                            $body,
+                            $fromName,
+                            $report,
+                            "sendMailWithAttachmentAsString"
+                        );
+                    }
+                }
+            }
+        }
+
+        echo "done";
+    }
+
+    /**
+     * generate courses report
+     * 
+     * @return array
+     */
+    private function generateDocumentReport($employeesDocument): array
+    {
+        //
+        $data = [];
+        // add header to the file
+        $data[] = ["Report Date/Time", getSystemDate(DATE_WITH_TIME) . " PST"];
+        $data[] = [];
+        // Add first section
+        $data[] = ["Report"];
+        // add headers
+        $data[] = ["Employee", "Documents", "Not Completed", "Completed", "No Action Required"];
+        //
+        $totals = [
+            "total" => 0,
+            "not_completed" => 0,
+            "completed" => 0,
+            "on_action_required" => 0,
+        ];
+        //
+        foreach ($employeesDocument['Data'] as $row) {
+            //
+            $totalAssignedDocs = count($row['assigneddocuments']);
+            $totalAssignedGeneralDocs = count($row['assignedgeneraldocuments']);
+            $totalDocs = $totalAssignedDocs + $totalAssignedGeneralDocs;
+            //
+            $totalDocsNotCompleted = 0;
+            $totalDocsCompleted = 0;
+            $totalDocsNoAction = 0;
+            //
+            if (!empty($row['assignedi9document'])) {
+                $totalDocs = $totalDocs + 1;
+                if ($row['assignedi9document'][0]['user_consent'] == 1) {
+                    $totalDocsCompleted = $totalDocsCompleted + 1;
+                } else {
+                    $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                }
+            }
+            //
+            if (!empty($row['assignedw9document'])) {
+                $totalDocs = $totalDocs + 1;
+                if ($row['assignedw9document'][0]['user_consent'] == 1) {
+                    $totalDocsCompleted = $totalDocsCompleted + 1;
+                } else {
+                    $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                }
+            }
+            //
+            if (!empty($row['assignedw4document'])) {
+                $totalDocs = $totalDocs + 1;
+                if ($row['assignedw4document'][0]['user_consent'] == 1) {
+                    $totalDocsCompleted = $totalDocsCompleted + 1;
+                } else {
+                    $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                }
+            }
+            //
+            if (!empty($row['assignedeeocdocument'])) {
+                $totalDocs = $totalDocs + 1;
+                if ($row['assignedeeocdocument'][0]['last_completed_on'] != '' && $row['assignedeeocdocument'][0]['last_completed_on'] != null) {
+                    $totalDocsCompleted = $totalDocsCompleted + 1;
+                } else {
+                    $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                }
+            }
+            //
+            if (count($row['assignedgeneraldocuments']) > 0) {
+                foreach ($row['assignedgeneraldocuments'] as $rowGeneral) {
+
+                    if ($rowGeneral['is_completed'] == 1) {
+                        $totalDocsCompleted = $totalDocsCompleted + 1;
+                    } else {
+                        $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                    }
+                }
+            }
+            //
+            if (count($row['assigneddocuments']) > 0) {
+                foreach ($row['assigneddocuments'] as $assigned_row) {
+                    
+                    if ($assigned_row['completedStatus'] == 'Not Completed') {
+                        $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                    }
+                    if ($assigned_row['completedStatus'] == 'Completed') {
+                        $totalDocsCompleted = $totalDocsCompleted + 1;
+                    }
+
+                    if ($assigned_row['completedStatus'] == 'No Action Required') {
+                        $totalDocsNoAction = $totalDocsNoAction  + 1;
+                    }
+
+                    if ($assigned_row['confidential_employees'] != null) {
+                        $confidentialEmployees = explode(',', $assigned_row['confidential_employees']);
+
+                        if (in_array($data['employerSid'], $confidentialEmployees)) {
+                            //
+                        } else {
+                            $totalDocs = $totalDocs - 1;
+                        }
+                    }
+                }
+            }
+            //
+            $tmp = [
+                getEmployeeOnlyNameBySID($row['sid'], true, true),
+                $totalDocs,
+                $totalDocsNotCompleted,
+                $totalDocsCompleted,
+                $totalDocsNoAction,
+            ];
+            //
+            $totals["total"] += $tmp[1];
+            $totals["not_completed"] += $tmp[2];
+            $totals["completed"] += $tmp[3];
+            $totals["on_action_required"] += $tmp[4];
+
+            $data[] = $tmp;
+        }
+
+        //
+        $data[] = [];
+        $data[] = [
+            "Summary",
+            $totals["total"],
+            $totals["not_completed"],
+            $totals["completed"],
+            $totals["on_action_required"],
+        ];
+
+        return ["name" => "document_report.csv", "data" => $data];
     }
 }

@@ -356,7 +356,7 @@ class Compliance_report_model extends CI_Model
 		$this->db->select('*');
 		$this->db->where('incident_sid', $incident_sid);
 		$this->db->where('is_incident_reported', 1);
-		$this->db->where('file_type', 'Incident file');
+		$this->db->where('file_type', 'compliance report file');
 		$this->db->order_by('uploaded_date', 'desc');
 		if ($type != 'all') $this->db->where('is_archived', $type);
 		$records_obj = $this->db->get('incident_related_videos');
@@ -374,7 +374,7 @@ class Compliance_report_model extends CI_Model
 	function getComplianceDocuments($id, $type = 'all')
 	{
 		$this->db->where('incident_reporting_id', $id);
-		$this->db->where('file_type', 'Incident file');
+		$this->db->where('file_type', 'compliance report file');
 		if ($type != 'all') {
 			$this->db->where('is_archived', $type);
 		}
@@ -1276,6 +1276,53 @@ class Compliance_report_model extends CI_Model
 	{
 		$this->db->insert('compliance_report_documents_history', $data);
 		return $this->db->insert_id();
+	}
+
+	public function checkManualUserExist ($emailId, $reportId) {
+		if (
+            !$this->db
+			->where('email', $emailId)
+            ->where('compliance_report_sid', $reportId)
+            ->count_all_results('compliance_report_outsider_user')
+        ) {
+			//
+			$session = $this->session->userdata('logged_in');
+            $employeeId = $session["employer_detail"]["sid"];
+			//
+			$outsiderUser = array();
+			$outsiderUser['compliance_report_sid'] = $reportId;
+			$outsiderUser['email'] = $emailId;
+			$outsiderUser['added_by'] = $employeeId;
+			$outsiderUser['created_at'] = date('Y-m-d H:i:s');
+			//
+			$this->db->insert('compliance_report_outsider_user', $outsiderUser);
+			$userId = $this->db->insert_id();
+			//
+			$trackingObj = array(
+				'compliance_report_sid' => $reportId,
+				'employee_sid' => $employeeId,
+				'item_type' => "outsider_user",
+				'action' => "add",
+				'item_sid' => $userId,
+				'created_at' => date('Y-m-d H:i:s')
+			);
+			//
+			$this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
+        }
+	}
+
+	public function checkUserHasPermissionToReport ($emailId, $reportId) {
+		if (
+            $this->db
+			->where('email', $emailId)
+            ->where('compliance_report_sid', $reportId)
+			->where('is_active', 1)
+            ->count_all_results('compliance_report_outsider_user')
+        ) {
+			return true;
+        } else {
+			return false;
+		}
 	}
 
 }

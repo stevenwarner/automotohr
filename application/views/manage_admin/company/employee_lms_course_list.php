@@ -5,6 +5,9 @@ $active_companies .= '<option value="0">[Select Company]</option>';
 foreach ($companies as $company)
     $active_companies .= '<option value="' . ($company['sid']) . '">' . ($company['CompanyName']) . '</option>';
 ?>
+<link rel="stylesheet" type="text/css" href="<?php echo base_url('assets') ?>/css/jquery.datetimepicker.css" />
+<script src="<?php echo base_url('assets') ?>/js/jquery.datetimepicker.js"></script>
+
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -69,6 +72,7 @@ foreach ($companies as $company)
                                                                 <th>Status</th>
                                                                 <th>Course Language</th>
                                                                 <th>Language</th>
+                                                                <th>Completion Date</th>
                                                                 <th class="text-right">Action</th>
                                                             </tr>
                                                         </thead>
@@ -182,6 +186,17 @@ foreach ($companies as $company)
                 fetch_employee();
             });
 
+            $('body').on('focus',".datetimepicker", function(){
+                //
+                $(this).datepicker({
+                    dateFormat: 'mm-dd-yy',
+                    changeMonth: true,
+                    changeYear: true,
+                    yearRange: "<?php echo DOB_LIMIT; ?>",
+                });
+            });
+           
+
             //
             $("#js-fetch-courses").on('click', function() {
 
@@ -203,19 +218,27 @@ foreach ($companies as $company)
                 //
                 courseId = $(this).data("courseid");
                 courseLanguage = $(this).closest("tr").find("select.jsCourseLanguages option:selected").val();
+                courseCompletionDate = $(this).closest("tr").find(".datetimepicker").val();
+                //
+                console.log(courseCompletionDate)
+                //
+                if (!courseCompletionDate.length) {
+                    alertify.alert('Warning!', "Please select course completion date.");
+                } else {
+                    alertify.confirm('Confirmation', "Are you sure you want to manually complete this course?",
+                        function () {
+                            markCourseCompleted(
+                                courseId, courseLanguage, courseCompletionDate
+                            )
+                        },
+                        function () {}
+                    );
+                }
 
-                alertify.confirm(
-                    'Are you sure you want to manually complete this course?',
-                    function() {
-                        markCourseCompleted(
-                            courseId, courseLanguage
-                        )
-
-                    }
-                )
+                
             });
 
-            function markCourseCompleted(courseId, courseLanguage) {
+            function markCourseCompleted(courseId, courseLanguage, courseCompletionDate) {
                 //
                 loader(true);
                 $
@@ -223,7 +246,8 @@ foreach ($companies as $company)
                         companyId: companyId,
                         employeeId: employeeId,
                         courseId: courseId,
-                        language: courseLanguage
+                        language: courseLanguage,
+                        completionDate: courseCompletionDate
 
                     })
                     .always(function() {
@@ -308,6 +332,9 @@ foreach ($companies as $company)
                                 });
                                 newRow += "</select>";
                             }
+                            newRow += '</td>';
+                            newRow += '<td>';
+                            newRow += '<input class="datetimepicker form-control " readonly type="text" name="completion_date" value="" />';
                             newRow += '</td>';
                             newRow += '<td> ';
                             newRow += '<button type="button" class="btn btn-success pull-right js-mark-course-completed-btn" data-courseid=' + value.sid + '>Mark Course Completed</button>';
