@@ -939,33 +939,9 @@ class Course_model extends CI_Model
 
         //
         if ($returnArray["totalCourses"] > 0) {
-            $returnArray["percentage"]["completed"] =
-                number_format(
-                    (
-                        ($returnArray["totals"]["completed"] * 100) / $returnArray["totalCourses"]
-                    ),
-                    2,
-                    ".",
-                    ""
-                );
-            $returnArray["percentage"]["started"] =
-                number_format(
-                    (
-                        ($returnArray["totals"]["started"] * 100) / $returnArray["totalCourses"]
-                    ),
-                    2,
-                    ".",
-                    ""
-                );
-            $returnArray["percentage"]["pending"] =
-                number_format(
-                    (
-                        ($returnArray["totals"]["pending"] * 100) / $returnArray["totalCourses"]
-                    ),
-                    2,
-                    ".",
-                    ""
-                );
+            $returnArray["percentage"]["completed"] = floor(($returnArray["totals"]["completed"] * 100) / $returnArray["totalCourses"]);
+            $returnArray["percentage"]["started"] = floor(($returnArray["totals"]["started"] * 100) / $returnArray["totalCourses"]);
+            $returnArray["percentage"]["pending"] = floor(($returnArray["totals"]["pending"] * 100) / $returnArray["totalCourses"]);
         }
 
         return $returnArray;
