@@ -901,8 +901,8 @@ class Course_model extends CI_Model
                 ->db
                 ->where([
                     "course_sid" => $v0["sid"],
-                    "course_status" => "completed",
-                    "lesson_status" => "passed",
+                    "course_status" => "passed",
+                    "lesson_status" => "completed",
                     "company_sid" => $companyId
                 ])
                 ->where_in('employee_sid', $courseEmployeeIds)
@@ -914,7 +914,7 @@ class Course_model extends CI_Model
                 ->where([
                     "course_sid" => $v0["sid"],
                     "company_sid" => $companyId,
-                    "course_status <> " => "completed"
+                    "lesson_status" => "incomplete"
                     
                 ])
                 ->where_in('employee_sid', $courseEmployeeIds)
