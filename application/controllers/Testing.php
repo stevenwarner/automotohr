@@ -1196,15 +1196,6 @@ class Testing extends CI_Controller
             $this->db->insert('lms_scorm_courses', $insert_data);
         }
     }
-
-    function showCompanyProgress () {
-        // load model
-        $this->load->model('v1/course_model');
-        //
-        $lmsCompanyStats =  $this->course_model->getCompanyStats(64187);
-        //
-        _e($lmsCompanyStats,true,true);
-    }
 }
 
 
