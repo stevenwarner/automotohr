@@ -13,6 +13,12 @@ foreach ($companies as $company)
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
                     <div class="dashboard-content">
                         <div class="dash-inner-block">
+
+
+
+
+                            <?php echo form_open(base_url('manage_admin/lms_employees/manual_assign'), array('id' => 'manualAssigneForm')); ?>
+
                             <div class="row">
                                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -22,12 +28,11 @@ foreach ($companies as $company)
                                     <!-- Main Page -->
                                     <div id="js-main-page">
                                         <div class="hr-setting-page">
-                                            <?php echo form_open(base_url('manage_admin/copy_applicants/'), array('id' => 'copy-form')); ?>
                                             <ul>
                                                 <li>
                                                     <label>Companies<span class="cs-required">*</span></label>
                                                     <div class="hr-fields-wrap">
-                                                        <select style="width: 100%;" id="js-from-company">
+                                                        <select style="width: 100%;" id="js-from-company" name="company">
                                                             <option value="0">Select a Company</option>
                                                             <?php
                                                             foreach ($companies as $key => $company) {
@@ -40,7 +45,7 @@ foreach ($companies as $company)
                                                 <li>
                                                     <label>Employees <span class="cs-required">*</span></label>
                                                     <div class="hr-fields-wrap">
-                                                        <select style="width: 100%;" id="js-employee">
+                                                        <select style="width: 100%;" id="js-employee" name="employee">
                                                             <option value="0">Select an Employee</option>
                                                         </select>
                                                     </div>
@@ -51,7 +56,7 @@ foreach ($companies as $company)
 
                                                 </li>
                                             </ul>
-                                            <?php echo form_close(); ?>
+
                                         </div>
                                     </div>
 
@@ -79,6 +84,13 @@ foreach ($companies as $company)
                                     </div>
                                 </div>
                             </div>
+
+
+                            <?php echo form_close(); ?>
+
+
+
+
                         </div>
                     </div>
                 </div>
@@ -346,12 +358,16 @@ foreach ($companies as $company)
                             }
 
                             newRow += '<tr class="js-tr">';
-                            newRow += '<td><input type="checkbox" name="courses_ids[]" value="88" '+disabled+'>';
+                            newRow += '<td><input type="checkbox" name="courses_ids[]" value="' + value.sid + '" ' + disabled + '>';
                             newRow += '<td>' + value.course_title + '</td>';
                             newRow += '<td>' + value.course_type + ' ' + value.course_version + '</td>';
-                            //  newRow += '<td>' + (value.course_language ? value.course_language.toUpperCase() : "No Language") + '</td>';
                             '</tr>';
                         });
+
+
+                        newRow += '<tr class="js-tr">';
+                        newRow += '<td colspan="3" class="text-center"><a class="site-btn text-center" id="js-save-courses" href="javascript:void(0)">Save</a></td>';
+                        '</tr>';
 
                         $('#js-courses-list-show-area').html(newRow);
                         $('#js-enployees-list-block').show();
@@ -359,6 +375,7 @@ foreach ($companies as $company)
                         loader(false);
                     });
             }
+
 
             // Loader
             function loader(show_it, msg) {
@@ -420,10 +437,39 @@ foreach ($companies as $company)
 
 
         $(document).on('click', '.js-check-all', selectAllInputs);
-        $(document).on('click', '.js-tr', selectSingleInput);
-
         // Select all input: checkbox
         function selectAllInputs() {
             $('.js-tr').find('input[name="courses_ids[]"]').prop('checked', $(this).prop('checked'));
+            $('input[type="checkbox"]:disabled').prop('checked', false);
+        }
+
+
+        //
+        $(document).on('click', '#js-save-courses', function() {
+            selected_employees = get_all_selected_courses();
+            if (selected_employees.length === 0) {
+                alertify.alert('ERROR!', 'Please select at least one course.');
+                return;
+            }
+
+            //
+            alertify.confirm('Do you really want to assigne selected courses?', function() {
+                //
+                $('#manualAssigneForm').submit();
+            });
+
+        });
+
+
+        //
+        function get_all_selected_courses() {
+            var tmp = [];
+            $.each($('input[name="courses_ids[]"]:checked'), function() {
+                var obj = {};
+                obj.course_sid = parseInt($(this).val());
+                obj.course_title = $(this).closest('tr').find('td.js-course-title').text();
+                tmp.push(obj);
+            });
+            return tmp;
         }
     </script>

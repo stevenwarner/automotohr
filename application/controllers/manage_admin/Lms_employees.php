@@ -95,7 +95,23 @@ class Lms_employees extends Admin_Controller
         $this->data['page_title'] = $page_title;
         $this->data['companies'] = $companies;
 
-      // $this->data['coursesList'] = $this->course_model->getActiveCourses();
+        $courseIds = $this->input->post("courses_ids", true);
+
+        if (!empty($courseIds)) {
+            $companyId = $this->input->post("company", true);
+            $employeeId = $this->input->post("employee", true);
+            $assignedBy = $this->ion_auth->user()->row()->id;
+
+            $this->course_model->assigneManualCourses(
+                $companyId,
+                $employeeId,
+                $courseIds,
+                $assignedBy
+            );
+            
+            $this->session->set_flashdata('message', '<strong>Success: </strong> Courses are successfully assigned.');
+
+        }
 
         $this->render('manage_admin/company/lms_default_course_list_for_manual_assign', 'admin_master');
     }
@@ -104,7 +120,6 @@ class Lms_employees extends Admin_Controller
 
     public function getallCourses($companyId, $employeeId)
     {
-
 
         return SendResponse(
             200,
@@ -116,7 +131,4 @@ class Lms_employees extends Admin_Controller
                 )
         );
     }
-
-
-
 }

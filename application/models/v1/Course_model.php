@@ -1286,9 +1286,18 @@ class Course_model extends CI_Model
             $companyId,
             $employeeId
         );
+        //
+        $assignedCoursesList = $this->getAssignedCourses(
+            $companyId,
+            $employeeId
+        );
+
+        $courseIds = array_column($assignedCoursesList, 'course_sid');
 
         //
         $assignedIds = array_column($manualAssignedCoursesList, 'default_course_sid');
+
+        $assignedIds = array_merge($assignedIds, $courseIds);
 
         foreach ($defaultCoursesList as $key => $val) {
 
@@ -1311,6 +1320,40 @@ class Course_model extends CI_Model
         return $this->db
             ->select('*')
             ->from('lms_manual_assign_employee_course')
+            ->where('employee_sid', $employeeId)
+            ->where('company_sid', $companyId)
+            ->get()
+            ->result_array();
+    }
+
+    //
+    public function assigneManualCourses(
+        $companyId,
+        $employeeId,
+        $courseIds,
+        $assignedBy
+    ) {
+        // 
+        foreach ($courseIds as $courseId) {
+            $dataToInsert = [];
+            $dataToInsert['company_sid'] = $companyId;
+            $dataToInsert['employee_sid'] = $employeeId;
+            $dataToInsert['default_course_sid'] = $courseId;
+            $dataToInsert['assigned_by'] = $assignedBy;
+            $dataToInsert['created_at'] = getSystemDate();
+            $this->db->insert('lms_manual_assign_employee_course', $dataToInsert);
+        }
+    }
+
+    //
+    public function getAssignedCourses(
+        $companyId,
+        $employeeId
+    ): array {
+        // 
+        return $this->db
+            ->select('*')
+            ->from('lms_employee_course')
             ->where('employee_sid', $employeeId)
             ->where('company_sid', $companyId)
             ->get()
