@@ -905,6 +905,7 @@ class Course_model extends CI_Model
                     "lesson_status" => "passed",
                     "company_sid" => $companyId
                 ])
+                ->where_in('employee_sid', $courseEmployeeIds)
                 ->count_all_results("lms_employee_course");
               
             // get passed course count
@@ -916,6 +917,7 @@ class Course_model extends CI_Model
                     "course_status <> " => "completed"
                     
                 ])
+                ->where_in('employee_sid', $courseEmployeeIds)
                 ->count_all_results("lms_employee_course");
 
             // increment total count
