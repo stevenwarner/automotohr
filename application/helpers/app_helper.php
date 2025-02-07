@@ -1645,10 +1645,25 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                                 ->group_end()
                                 ->get('lms_default_courses')
                                 ->result_array();
-                            //
+                            //                       
+
                             $assignCourses = !empty($companyCourses) ? implode(',', array_column($companyCourses, "sid")) : "";
+
+                            //manual AssignedCourses
+
+                            $manualAssigndCourses = $CI->db
+                                ->select('default_course_sid')
+                                ->from('lms_manual_assign_employee_course')
+                                ->where('employee_sid', $employee['employee_sid'])
+                                ->where('company_sid', $companyId)
+                                ->get()
+                                ->result_array();
+
+                            $manualAssigndCoursesList = !empty($manualAssigndCourses) ? ',' . implode(',', array_column($manualAssigndCourses, "default_course_sid")) : "";
+
                             //
-                            $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses;
+                            $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses . $manualAssigndCoursesList;
+                          //  _e($employees[$employee['employee_sid']]["assign_courses"],true);
                             $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($assignCourses, $employee['employee_sid']);
                             $employeeData["assign_courses"] =  $assignCourses;
                         } else {
@@ -1973,7 +1988,7 @@ if (!function_exists('getEmployeeCourseStatus')) {
             return 'completed';
         } else if ($courseInfo['lesson_status'] == 'incomplete') {
             return 'started';
-        }
+        } 
     }
 }
 
