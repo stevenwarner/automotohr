@@ -7,7 +7,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
-                            
+
                             <div class="page-header-area margin-top">
                                 <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('employee_status' . '/' . $employer['sid']) ?>"><i class="fa fa-chevron-left"></i>Employee Status Panel</a>
@@ -28,15 +28,17 @@
                                                 <?php echo form_label('Employee Status <span class="hr-required">*</span>', 'terminated_status'); ?>
                                                 <select name="status" id="status" class="invoice-fields" aria-required="true" aria-invalid="false">
                                                     <option value="">Please Select</option>
-                                                    <option value="5" <?= $status_data['employee_status'] == 5 ? 'selected="selected"': '';?>>Active</option>
-                                                    <option value="7" <?= $status_data['employee_status'] == 7 ? 'selected="selected"': '';?>>Leave</option>
-                                                    <option value="4" <?= $status_data['employee_status'] == 4 ? 'selected="selected"': '';?>>Suspended</option>
-                                                    <option value="2" <?= $status_data['employee_status'] == 2 ? 'selected="selected"': '';?>>Retired</option>
-                                                    <option value="8" <?= $status_data['employee_status'] == 8 ? 'selected="selected"': '';?>>Rehired</option>
-                                                    <option value="3" <?= $status_data['employee_status'] == 3 ? 'selected="selected"': '';?>>Deceased</option>
-                                                    <option value="1" <?= $status_data['employee_status'] == 1 ? 'selected="selected"': '';?>>Terminated</option>
-                                                    <option value="6" <?= $status_data['employee_status'] == 6 ? 'selected="selected"': '';?>>Inactive</option>
-                                                    <option value="9" <?= $status_data['employee_status'] == 9 ? 'selected="selected"': '';?>>Transferred</option>
+                                                    <option value="5" <?= $status_data['employee_status'] == 5 ? 'selected="selected"' : ''; ?>>Active</option>
+                                                    <option value="7" <?= $status_data['employee_status'] == 7 ? 'selected="selected"' : ''; ?>>Leave</option>
+                                                    <option value="4" <?= $status_data['employee_status'] == 4 ? 'selected="selected"' : ''; ?>>Suspended</option>
+                                                    <option value="2" <?= $status_data['employee_status'] == 2 ? 'selected="selected"' : ''; ?>>Retired</option>
+                                                    <option value="8" <?= $status_data['employee_status'] == 8 ? 'selected="selected"' : ''; ?>>Rehired</option>
+                                                    <option value="3" <?= $status_data['employee_status'] == 3 ? 'selected="selected"' : ''; ?>>Deceased</option>
+                                                    <option value="1" <?= $status_data['employee_status'] == 1 ? 'selected="selected"' : ''; ?>>Terminated</option>
+                                                    <?php if ($status_data['employee_status'] == 6) { ?>
+                                                        <option value="6" <?= $status_data['employee_status'] == 6 ? 'selected="selected"' : ''; ?>>Inactive</option>
+                                                    <?php } ?>
+                                                    <option value="9" <?= $status_data['employee_status'] == 9 ? 'selected="selected"' : ''; ?>>Transferred</option>
 
                                                 </select>
                                                 <?php echo form_error('status'); ?>
@@ -45,82 +47,82 @@
                                                 <?php echo form_label('Termination Reason <span class="hr-required">*</span>', 'terminated_status'); ?>
                                                 <select name="terminated_reason" id="terminated_reason" class="invoice-fields" aria-required="true" aria-invalid="false">
                                                     <option value="">Please Select</option>
-                                                    
+
                                                     <optgroup label="General">
-                                                        <option value="1" <?= $status_data['termination_reason'] == 1 ? 'selected="selected"': '';?>>Resignation</option>
-                                                        <option value="2" <?= $status_data['termination_reason'] == 2 ? 'selected="selected"': '';?>>Fired</option>
-                                                        <option value="3" <?= $status_data['termination_reason'] == 3 ? 'selected="selected"': '';?>>Tenure Completed</option>
-                                                        <option value="18" <?= $status_data['termination_reason'] == 18 ? 'selected="selected"': '';?>>Store Closure</option>
-                                                        <option value="19" <?= $status_data['termination_reason'] == 19 ? 'selected="selected"': '';?>>Did Not Hire</option>
-                                                        <option value="20" <?= $status_data['termination_reason'] == 20 ? 'selected="selected"': '';?>>Separation</option>
+                                                        <option value="1" <?= $status_data['termination_reason'] == 1 ? 'selected="selected"' : ''; ?>>Resignation</option>
+                                                        <option value="2" <?= $status_data['termination_reason'] == 2 ? 'selected="selected"' : ''; ?>>Fired</option>
+                                                        <option value="3" <?= $status_data['termination_reason'] == 3 ? 'selected="selected"' : ''; ?>>Tenure Completed</option>
+                                                        <option value="18" <?= $status_data['termination_reason'] == 18 ? 'selected="selected"' : ''; ?>>Store Closure</option>
+                                                        <option value="19" <?= $status_data['termination_reason'] == 19 ? 'selected="selected"' : ''; ?>>Did Not Hire</option>
+                                                        <option value="20" <?= $status_data['termination_reason'] == 20 ? 'selected="selected"' : ''; ?>>Separation</option>
                                                     </optgroup>
-                                                    
+
                                                     <optgroup label="Voluntary">
-                                                        <option value="4" <?= $status_data['termination_reason'] == 4 ? 'selected="selected"': '';?>>Personal</option>
-                                                        <option value="5" <?= $status_data['termination_reason'] == 5 ? 'selected="selected"': '';?>>Another Job</option>
-                                                        <option value="6" <?= $status_data['termination_reason'] == 6 ? 'selected="selected"': '';?>>Problem with Supervisor</option>
-                                                        <option value="7" <?= $status_data['termination_reason'] == 7 ? 'selected="selected"': '';?>>Relocation</option>
-                                                        <option value="8" <?= $status_data['termination_reason'] == 8 ? 'selected="selected"': '';?>>Work Schedule</option>
-                                                        <option value="9" <?= $status_data['termination_reason'] == 9 ? 'selected="selected"': '';?>>Retirement</option>
-                                                        <option value="10" <?= $status_data['termination_reason'] == 10 ? 'selected="selected"': '';?>>Return to School</option>
-                                                        <option value="11" <?= $status_data['termination_reason'] == 11 ? 'selected="selected"': '';?>>Pay</option>
-                                                        <option value="12" <?= $status_data['termination_reason'] == 12 ? 'selected="selected"': '';?>>Without Notice/Reason</option>
+                                                        <option value="4" <?= $status_data['termination_reason'] == 4 ? 'selected="selected"' : ''; ?>>Personal</option>
+                                                        <option value="5" <?= $status_data['termination_reason'] == 5 ? 'selected="selected"' : ''; ?>>Another Job</option>
+                                                        <option value="6" <?= $status_data['termination_reason'] == 6 ? 'selected="selected"' : ''; ?>>Problem with Supervisor</option>
+                                                        <option value="7" <?= $status_data['termination_reason'] == 7 ? 'selected="selected"' : ''; ?>>Relocation</option>
+                                                        <option value="8" <?= $status_data['termination_reason'] == 8 ? 'selected="selected"' : ''; ?>>Work Schedule</option>
+                                                        <option value="9" <?= $status_data['termination_reason'] == 9 ? 'selected="selected"' : ''; ?>>Retirement</option>
+                                                        <option value="10" <?= $status_data['termination_reason'] == 10 ? 'selected="selected"' : ''; ?>>Return to School</option>
+                                                        <option value="11" <?= $status_data['termination_reason'] == 11 ? 'selected="selected"' : ''; ?>>Pay</option>
+                                                        <option value="12" <?= $status_data['termination_reason'] == 12 ? 'selected="selected"' : ''; ?>>Without Notice/Reason</option>
                                                     </optgroup>
-                                                    
+
                                                     <optgroup label="Involuntary">
-                                                        <option value="13" <?= $status_data['termination_reason'] == 13 ? 'selected="selected"': '';?>>Involuntary</option>
-                                                        <option value="14" <?= $status_data['termination_reason'] == 14 ? 'selected="selected"': '';?>>Violating Company Policy</option>
-                                                        <option value="15" <?= $status_data['termination_reason'] == 15 ? 'selected="selected"': '';?>>Attendance Issues</option>
-                                                        <option value="16" <?= $status_data['termination_reason'] == 16 ? 'selected="selected"': '';?>>Performance</option>
-                                                        <option value="17" <?= $status_data['termination_reason'] == 17 ? 'selected="selected"': '';?>>Workforce Reduction</option>
-                                                    </optgroup>    
+                                                        <option value="13" <?= $status_data['termination_reason'] == 13 ? 'selected="selected"' : ''; ?>>Involuntary</option>
+                                                        <option value="14" <?= $status_data['termination_reason'] == 14 ? 'selected="selected"' : ''; ?>>Violating Company Policy</option>
+                                                        <option value="15" <?= $status_data['termination_reason'] == 15 ? 'selected="selected"' : ''; ?>>Attendance Issues</option>
+                                                        <option value="16" <?= $status_data['termination_reason'] == 16 ? 'selected="selected"' : ''; ?>>Performance</option>
+                                                        <option value="17" <?= $status_data['termination_reason'] == 17 ? 'selected="selected"' : ''; ?>>Workforce Reduction</option>
+                                                    </optgroup>
                                                 </select>
                                                 <?php echo form_error('terminated_status'); ?>
                                             </li>
                                             <li class="form-col-100 autoheight" id="termination_date_section">
                                                 <label>Termination Date <span class="hr-required">*</span></label>
-                                                <?php echo form_input('termination_date', set_value('termination_date',$status_data['termination_date'] != NULL ? date('m-d-Y',strtotime($status_data['termination_date'])) :''), 'class="invoice-fields" id="termination_date" autocomplete="off" readonly'); ?>
+                                                <?php echo form_input('termination_date', set_value('termination_date', $status_data['termination_date'] != NULL ? date('m-d-Y', strtotime($status_data['termination_date'])) : ''), 'class="invoice-fields" id="termination_date" autocomplete="off" readonly'); ?>
                                                 <?php echo form_error('termination_date'); ?>
                                             </li>
 
                                             <li class="form-col-100 autoheight" id="system_access_div">
                                                 <label class="control control--checkbox"> Deactivate this Employees Access to the System
-                                                    <input id="system_access" name="system_access" type="checkbox" value="1" <?= $employer['active'] == 0 ? 'checked' : ''?>>
+                                                    <input id="system_access" name="system_access" type="checkbox" value="1" <?= $employer['active'] == 0 ? 'checked' : '' ?>>
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </li>
                                             <li class="form-col-100 autoheight" id="inventary-termination">
                                                 <label class="control control--checkbox"> Involuntary Termination
-                                                    <input id="involuntary" name="involuntary" type="checkbox" value="1" <?= $status_data['involuntary_termination'] == 1 ? 'checked' : '';?>>
+                                                    <input id="involuntary" name="involuntary" type="checkbox" value="1" <?= $status_data['involuntary_termination'] == 1 ? 'checked' : ''; ?>>
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </li>
                                             <li class="form-col-100 autoheight" id="do-not-hire">
                                                 <label class="control control--checkbox"> Do Not Rehire
-                                                    <input id="rehire" name="rehire" type="checkbox" value="1" <?= $status_data['do_not_hire'] == 1 ? 'checked' : '';?>>
+                                                    <input id="rehire" name="rehire" type="checkbox" value="1" <?= $status_data['do_not_hire'] == 1 ? 'checked' : ''; ?>>
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </li>
                                             <li class="form-col-100 autoheight">
                                                 <label>Status Change Date <span class="hr-required">*</span></label>
-                                                <?php echo form_input('status_change_date', set_value('status_change_date',date('m-d-Y',strtotime($status_data['status_change_date']))), 'class="invoice-fields" id="status_change_date" autocomplete="off" readonly'); ?>
+                                                <?php echo form_input('status_change_date', set_value('status_change_date', date('m-d-Y', strtotime($status_data['status_change_date']))), 'class="invoice-fields" id="status_change_date" autocomplete="off" readonly'); ?>
                                                 <?php echo form_error('status_change_date'); ?>
                                             </li>
                                             <li class="form-col-100 autoheight">
                                                 <label>Status Change Details <span class="hr-required">*</span></label>
-                                                <textarea name="termination_details" rows="10" class="ckeditor" data-rulereuired="true"><?= $status_data['details']?></textarea>
+                                                <textarea name="termination_details" rows="10" class="ckeditor" data-rulereuired="true"><?= $status_data['details'] ?></textarea>
                                             </li>
                                             <li class="form-col-100 autoheight">
                                                 <label>Documents :</label>
-                                                <?php if(sizeof($status_documents)>0) {
+                                                <?php if (sizeof($status_documents) > 0) {
                                                     foreach ($status_documents as $file) { ?>
                                                         <div class="form-control full-width"
-                                                             style="height: auto; float: left;margin: 5px 0 0 0;">
+                                                            style="height: auto; float: left;margin: 5px 0 0 0;">
                                                             <div class="pull-left">
-                                                                <span class="uploaded-file-name"><a href="<?= base_url('hr_documents_management/download_upload_document/'.$file['file_code']); ?>" target="_blank"><?php echo $file['file_name']?></a></span>
+                                                                <span class="uploaded-file-name"><a href="<?= base_url('hr_documents_management/download_upload_document/' . $file['file_code']); ?>" target="_blank"><?php echo $file['file_name'] ?></a></span>
                                                             </div>
                                                             <div class="pull-right">
-                                                                <a  data-toggle="tooltip"
+                                                                <a data-toggle="tooltip"
                                                                     data-placement="top"
                                                                     class="btn btn-primary btn-sm"
                                                                     href="javascript:;"
@@ -131,18 +133,18 @@
                                                                     document_ext="<?php echo $file['file_type']; ?>">
                                                                     <i class="fa fa-eye"></i>
                                                                 </a>
-                                                                <a href="javascript:;" title="Delete File" class="btn btn-danger delete-record" data-attr="<?= $file['sid']?>"> <i class="fa fa-times"></i></a>
+                                                                <a href="javascript:;" title="Delete File" class="btn btn-danger delete-record" data-attr="<?= $file['sid'] ?>"> <i class="fa fa-times"></i></a>
                                                             </div>
                                                         </div>
                                                     <?php }
                                                 } else { ?>
                                                     <div class="form-control full-width"
-                                                         style="height: auto; float: left">
+                                                        style="height: auto; float: left">
                                                         <div class="pull-left">
                                                             <span class="uploaded-file-name">No documents founds</span>
                                                         </div>
                                                     </div>
-                                                <?php }?>
+                                                <?php } ?>
                                             </li>
                                             <li class="form-col-100 autoheight">
                                                 <label>Upload Related Document:</label>
@@ -198,11 +200,11 @@
 </div>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         $('#status').change();
-        <?php if($employer['active'] == 1){?>
+        <?php if ($employer['active'] == 1) { ?>
             $('#system_access').prop('checked', false);
-        <?php }?>
+        <?php } ?>
     });
     $('#termination_date').datepicker({
         dateFormat: 'mm-dd-yy',
@@ -216,6 +218,7 @@
         changeYear: true,
         yearRange: "<?php echo DOB_LIMIT; ?>"
     });
+
     function validate_form() {
         var emp_status = $('#status').val();
         var terminated_reason_check = '';
@@ -259,7 +262,7 @@
                     required: 'Status Change Date is required'
                 }
             },
-            submitHandler: function (form) {
+            submitHandler: function(form) {
                 var instances = $.trim(CKEDITOR.instances.termination_details.getData());
                 if (instances.length === 0) {
                     alertify.alert('Error! Details Missing', "Please provide some details");
@@ -308,7 +311,7 @@
     }
 
     // $('#status')
-    $(document).on('change', '#status', function () {
+    $(document).on('change', '#status', function() {
         var emp_status = $(this).val();
         if (emp_status != 1) {
             $('#termination_reason_section').hide();
@@ -317,10 +320,10 @@
             $('#do-not-hire').hide();
             $('#system_access_div').hide();
             $('#system_access').prop('checked', false);
-            if(emp_status == 6){
+            if (emp_status == 6) {
                 $('#inventary-termination').show();
                 $('#do-not-hire').show();
-            }else{
+            } else {
                 $('#involuntary').val(0);
                 $('#involuntary').prop('checked', false);
                 $('#rehire').val(0);
@@ -336,10 +339,10 @@
         }
     });
 
-    $(document).on('click','.delete-record',function() {
+    $(document).on('click', '.delete-record', function() {
         var id = $(this).attr('data-attr');
         alertify.confirm('Confirmation', "Are you sure you want to delete this file?",
-            function () {
+            function() {
                 $.ajax({
                     url: '<?= base_url('employee_status/ajax_handler') ?>',
                     type: 'post',
@@ -347,15 +350,14 @@
                         id: id,
                         perform_action: 'delete_file'
                     },
-                    success: function(data){
+                    success: function(data) {
                         alertify.success('File Deleted Successfully');
                         window.location.href = window.location.href;
                     },
-                    error: function(){
-                    }
+                    error: function() {}
                 });
             },
-            function () {
+            function() {
                 alertify.error('Canceled');
             });
     });
@@ -378,7 +380,7 @@
             processData: false,
             type: 'post',
             data: form_data,
-            success: function (data) {
+            success: function(data) {
                 $('#loader').hide();
                 $('#upload').removeClass('disabled-btn');
                 $('#upload').prop('disabled', false);
@@ -396,8 +398,7 @@
                     alert('Doc error');
                 }
             },
-            error: function () {
-            }
+            error: function() {}
         });
     }
 
@@ -449,7 +450,7 @@
                     modal_content = '<img src="' + document_url + '" style="width:100%; height:500px;" />';
                     footer_print_btn = '<a target="_blank" href="<?php echo base_url('onboarding/print_applicant_upload_img/') ?>' + document_file_name + '" class="btn btn-success">Print</a>';
                     break;
-                default :
+                default:
                     //using google docs
                     iframe_url = 'https://docs.google.com/gview?url=' + document_url + '&embedded=true';
                     modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
@@ -466,7 +467,7 @@
         $('#document_modal_footer').append(footer_print_btn);
         $('#document_modal_title').html(document_title);
         $('#document_modal').modal("toggle");
-        $('#document_modal').on("shown.bs.modal", function () {
+        $('#document_modal').on("shown.bs.modal", function() {
 
             if (iframe_url != '') {
                 $('#preview_iframe').attr('src', iframe_url);

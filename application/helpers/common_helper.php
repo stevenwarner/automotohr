@@ -66,7 +66,7 @@ if (!function_exists('getEmployeeBasicInfo')) {
             $basicInfo['phone'] = $basicInfo["PhoneNumber"];
             $basicInfo["name"] = remakeEmployeeName($userBasicInfo, true, true);
             $basicInfo["designation"] = remakeEmployeeName($userBasicInfo, false);
-            $basicInfo["employeeName"] = $basicInfo["name"] .' '. $basicInfo["designation"];
+            $basicInfo["employeeName"] = $basicInfo["name"] . ' ' . $basicInfo["designation"];
             $basicInfo["departmentName"] = getDepartmentNameBySID($userInfo['department_sid']);
             $basicInfo["teamName"] = getTeamNameBySID($userInfo['team_sid']);
             $basicInfo["companyName"] = getCompanyNameBySid($userInfo['parent_sid']);
@@ -74,7 +74,7 @@ if (!function_exists('getEmployeeBasicInfo')) {
             $basicInfo["teamId"] = $userInfo['team_sid'];
             $basicInfo["companyId"] = $userInfo['parent_sid'];
             $basicInfo["email"] = $userInfo['email'];
-        }    
+        }
         //
         return $basicInfo;
     }
@@ -6834,7 +6834,7 @@ if (!function_exists('log_and_send_email_with_attachment')) {
         //
         save_email_log_common($email_data);
         //
-        if (base_url() != STAGING_SERVER_URL){
+        if (base_url() != STAGING_SERVER_URL) {
             return $method($from, $to, $subject, $body, $sender_name, $file_path);
         }
     }
@@ -14993,6 +14993,7 @@ if (!function_exists('GetEmployeeStatus')) {
      */
     function GetEmployeeStatus($lastStatusText, $active)
     {
+
         if (!$active) {
             return "De-activated";
         }
@@ -17345,6 +17346,22 @@ if (!function_exists("isSafetyIncident")) {
             return true;
         } else {
             return false;
-        }  
+        }
+    }
+}
+
+
+if (!function_exists('GetEmployeeStatusNew')) {
+    /**
+     * Get employee last status
+     * 
+     * @param string $lastStatusText
+     * @param number $active
+     * @return
+     */
+    function GetEmployeeStatusNew($lastStatusText, $active)
+    {
+        //
+        return ucwords($lastStatusText ? $lastStatusText : ($active ? 'Active' : 'De-activated'));
     }
 }

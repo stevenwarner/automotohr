@@ -112,6 +112,7 @@
         }
         //
         $employeeIds = array_column($employees, 'sid');
+   
         //
         $statuses = $this->db
             ->select('employee_sid, termination_date, status_change_date, details, do_not_hire,termination_reason')
@@ -119,14 +120,17 @@
             ->where('employee_status', $status)
             ->get('terminated_employees')
             ->result_array();
+
+           // _e($statuses,true,true);
         //
         $last_statuses = $this->db
             ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status,termination_reason')
             ->where_in('employee_sid', $employeeIds)
-            ->where('employee_status <> ', 9)
+          //  ->where('employee_status <> ', 9)
             ->order_by('terminated_employees.sid', 'DESC')
             ->get('terminated_employees')
             ->result_array();
+
         //
         if (!empty($statuses)) {
             //
@@ -155,6 +159,11 @@
         //
         foreach ($employees as $index => $employee) {
             //
+
+           // if($last_statuses[$employee['sid']]==77){
+           //_e($last_statuses[$employee['sid']]['employee_status'],true);
+           // }
+
             $employees[$index]['last_status'] = isset($statuses[$employee['sid']]) ? $statuses[$employee['sid']] : [];
             $employees[$index]['last_status_2'] = isset($last_statuses[$employee['sid']]) ? $last_statuses[$employee['sid']] : [];
             $employees[$index]['last_status_text'] = isset($last_statuses[$employee['sid']]) ? GetEmployeeStatusText($last_statuses[$employee['sid']]['employee_status']) : '';
@@ -2007,6 +2016,7 @@
         $this->db->where('archived', $archive);
         */
 
+
         if ($status == 'active') {
             $this->db->where('active', 1);
             $this->db->where('terminated_status', 0);
@@ -2088,6 +2098,7 @@
         $all_employees = $this->db->get('users')->result_array();
 
         $all_employees = $this->verify_executive_admin_status($all_employees);
+
         $this->GetEmployeeStatus($all_employees);
 
         return $all_employees;
