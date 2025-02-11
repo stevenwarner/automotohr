@@ -2164,3 +2164,22 @@ if (!function_exists('get_employee_drivers_license')) {
         return $CI->db->get('license_information')->row_array();
     }
 }
+
+if (!function_exists("checkAnyManualCourseAssigned")) {
+    function checkAnyManualCourseAssigned(&$employeeId): bool
+    {
+        //
+        $ci = &get_instance();
+        //
+        $count = $ci
+            ->db
+            ->where('employee_sid', $employeeId)
+            ->count_all_results('lms_manual_assign_employee_course');
+        //
+        if ($count > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}

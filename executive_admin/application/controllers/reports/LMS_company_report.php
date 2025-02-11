@@ -216,6 +216,35 @@ class LMS_company_report extends CI_Controller
                                     }
                                 }
                                 //
+                            } else if (checkAnyManualCourseAssigned($employee['sid'])) {
+                                $employeesList[$employee['sid']]["courses_statistics"] = $this->course_model->checkEmployeeManualCoursesReport(
+                                    $companyId,
+                                    $employee['sid'],
+                                );
+                                //
+                                $companyReport["employee_have_courses"]++;
+                                //
+                                if ($employeesList[$employee['sid']]["courses_statistics"]) {
+                                    //
+                                    $companyReport["courses_report"]['total_assigned_courses'] = $companyReport["courses_report"]['total_assigned_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['courseCount'];
+                                    $companyReport["courses_report"]['total_completed_courses'] = $companyReport["courses_report"]['total_completed_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['completedCount'];
+                                    $companyReport["courses_report"]['total_inprogress_courses'] = $companyReport["courses_report"]['total_inprogress_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['inProgressCount'];
+                                    $companyReport["courses_report"]['total_rts_courses'] = $companyReport["courses_report"]['total_rts_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['readyToStart'];
+                                    //
+                                    foreach ($employeesList[$employee['sid']]["courses_statistics"]["coursesInfo"] as $cikey => $coursesStatus) {
+                                        //
+                                        if (isset($coursesList[$cikey])) {
+                                            $coursesList[$cikey]['assign_employee_count']++;
+                                            //
+                                            if ($coursesStatus == 0) {
+                                                $coursesList[$cikey]['assign_employee_pending_count']++;
+                                            } else {
+                                                $coursesList[$cikey]['assign_employee_completed_count']++;
+                                            }
+                                        }
+                                    }
+                                }
+                                //
                             } else {
                                 $employeesList[$employee['sid']]['job_title_sid'] = 0;
                                 $employeesList[$employee['sid']]["courses_sid"]  = 0;

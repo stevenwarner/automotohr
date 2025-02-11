@@ -328,7 +328,14 @@ class Courses extends Public_Controller
         //
         if ($courseInfo['course_type'] == "scorm") {
             $viewName = "scorm_course";
-            $courseLanguageInfo = $this->course_model->getCourseLanguageInfo($sid, $language);
+            $isManualAssign = $this->course_model->checkCourseIsManualAssigned($sid, $employeeId);
+            //
+            if ($isManualAssign) {
+                $courseLanguageInfo = $this->course_model->getManualAssignCourseLanguageInfo($sid, $language);
+            } else {
+                $courseLanguageInfo = $this->course_model->getCourseLanguageInfo($sid, $language);
+            }
+            //
             $scormInfo = json_decode($courseLanguageInfo['Imsmanifist_json'], true);
             $data['PageScripts'][] = 'v1/plugins/ms_scorm/main';
             //
@@ -515,7 +522,10 @@ class Courses extends Public_Controller
         $data['security_details'] = db_get_access_level_details($employeeId);
         //
         $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
+
+
         $subordinateInfo['courses'] = $this->course_model->getActiveCompanyCourses($companyId);
+           
         //
         $uniqueKey = '';
         $haveSubordinate = 'no';
@@ -633,6 +643,7 @@ class Courses extends Public_Controller
             ]);
             exit(0);
         }
+
         //
         $data['title'] = "My Courses :: " . STORE_NAME;
         $data['session'] = $session;
@@ -975,7 +986,14 @@ class Courses extends Public_Controller
         //
         if ($courseInfo['course_type'] == "scorm") {
             $viewName = "scorm_course";
-            $courseLanguageInfo = $this->course_model->getCourseLanguageInfo($courseId, $language);
+            //
+            $isManualAssign = $this->course_model->checkCourseIsManualAssigned($courseId, $subordinateId);
+            //
+            if ($isManualAssign) {
+                $courseLanguageInfo = $this->course_model->getManualAssignCourseLanguageInfo($courseId, $language);
+            } else {
+                $courseLanguageInfo = $this->course_model->getCourseLanguageInfo($courseId, $language);
+            }
             $scormInfo = json_decode($courseLanguageInfo['Imsmanifist_json'], true);
             $data['PageScripts'][] = 'v1/plugins/ms_scorm/main';
             //
@@ -1188,6 +1206,35 @@ class Courses extends Public_Controller
                                     $data['company_sid'],
                                     $employee['sid'],
                                     $jobRoleCourses[$job_title_sid]
+                                );
+                                //
+                                $companyReport["employee_have_courses"]++;
+                                //
+                                if ($employeesList[$employee['sid']]["courses_statistics"]) {
+                                    //
+                                    $companyReport["courses_report"]['total_assigned_courses'] = $companyReport["courses_report"]['total_assigned_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['courseCount'];
+                                    $companyReport["courses_report"]['total_completed_courses'] = $companyReport["courses_report"]['total_completed_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['completedCount'];
+                                    $companyReport["courses_report"]['total_inprogress_courses'] = $companyReport["courses_report"]['total_inprogress_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['inProgressCount'];
+                                    $companyReport["courses_report"]['total_rts_courses'] = $companyReport["courses_report"]['total_rts_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['readyToStart'];
+                                    //
+                                    foreach ($employeesList[$employee['sid']]["courses_statistics"]["coursesInfo"] as $cikey => $coursesStatus) {
+                                        //
+                                        if (isset($coursesList[$cikey])) {
+                                            $coursesList[$cikey]['assign_employee_count']++;
+                                            //
+                                            if ($coursesStatus == 0) {
+                                                $coursesList[$cikey]['assign_employee_pending_count']++;
+                                            } else {
+                                                $coursesList[$cikey]['assign_employee_completed_count']++;
+                                            }
+                                        }
+                                    }
+                                }
+                                //
+                            } else if (checkAnyManualCourseAssigned($employee['sid'])) {
+                                $employeesList[$employee['sid']]["courses_statistics"] = $this->course_model->checkEmployeeManualCoursesReport(
+                                    $data['company_sid'],
+                                    $employee['sid'],
                                 );
                                 //
                                 $companyReport["employee_have_courses"]++;
@@ -2483,6 +2530,35 @@ class Courses extends Public_Controller
                                     } else if ($employeesList[$employee['sid']]["courses_statistics"]['inProgressCount'] == 0) {
                                         $companyReport["employees_with_not_started_courses"]++;
                                     }
+                                    //
+                                    foreach ($employeesList[$employee['sid']]["courses_statistics"]["coursesInfo"] as $cikey => $coursesStatus) {
+                                        //
+                                        if (isset($coursesList[$cikey])) {
+                                            $coursesList[$cikey]['assign_employee_count']++;
+                                            //
+                                            if ($coursesStatus == 0) {
+                                                $coursesList[$cikey]['assign_employee_pending_count']++;
+                                            } else {
+                                                $coursesList[$cikey]['assign_employee_completed_count']++;
+                                            }
+                                        }
+                                    }
+                                }
+                                //
+                            } else if (checkAnyManualCourseAssigned($employee['sid'])) {
+                                $employeesList[$employee['sid']]["courses_statistics"] = $this->course_model->checkEmployeeManualCoursesReport(
+                                    $data['company_sid'],
+                                    $employee['sid'],
+                                );
+                                //
+                                $companyReport["employee_have_courses"]++;
+                                //
+                                if ($employeesList[$employee['sid']]["courses_statistics"]) {
+                                    //
+                                    $companyReport["courses_report"]['total_assigned_courses'] = $companyReport["courses_report"]['total_assigned_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['courseCount'];
+                                    $companyReport["courses_report"]['total_completed_courses'] = $companyReport["courses_report"]['total_completed_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['completedCount'];
+                                    $companyReport["courses_report"]['total_inprogress_courses'] = $companyReport["courses_report"]['total_inprogress_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['inProgressCount'];
+                                    $companyReport["courses_report"]['total_rts_courses'] = $companyReport["courses_report"]['total_rts_courses'] + $employeesList[$employee['sid']]["courses_statistics"]['readyToStart'];
                                     //
                                     foreach ($employeesList[$employee['sid']]["courses_statistics"]["coursesInfo"] as $cikey => $coursesStatus) {
                                         //

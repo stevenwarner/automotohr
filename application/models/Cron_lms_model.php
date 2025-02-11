@@ -317,9 +317,109 @@ class Cron_lms_model extends CI_Model {
                 $result["coursesInfo"][$courseId] = $count;   
             }
             //
-            if ($result["completedCount"]> 0) {
-                $result["percentage"] = round(($result["completedCount"] / $result["courseCount"]) * 100, 2);
+        }
+        //
+        if (checkAnyManualCourseAssigned($employeeId)) {
+            //
+            $manualAssignedCourses = $this->db
+                ->select('default_course_sid')
+                ->from('lms_manual_assign_employee_course')
+                ->where('employee_sid', $employeeId)
+                ->where('company_sid', $companyId)
+                ->get()
+                ->result_array();
+            //
+            $result["courseCount"] = $result["courseCount"] + count($manualAssignedCourses);
+            //
+            foreach ($manualAssignedCourses as $manualCourse) {
+                //
+                $this->db->select("lesson_status");
+                $this->db->where('company_sid', $companyId);
+                $this->db->where('employee_sid', $employeeId);
+                $this->db->where('course_sid', $manualCourse['default_course_sid']);
+                //
+                $a = $this->db->get('lms_employee_course');
+                //
+                $b = $a->row_array();
+                $a = $a->free_result();
+                //
+                $status = 0;
+                //
+                if (empty($b)) {
+                    $result["pendingCount"]++;
+                    $result["readyToStart"]++;
+                } else if ($b['lesson_status'] == 'completed') {
+                    $status = 1;
+                    $result["completedCount"]++;
+                } else if ($b['lesson_status'] == 'incomplete') {
+                    $result["pendingCount"]++;
+                    $result["inProgressCount"]++;
+                }
+                //
+                $result["coursesInfo"][$courseId] = $status;
             }
+        }
+        //
+        if ($result["completedCount"] > 0) {
+            $result["percentage"] = round(($result["completedCount"] / $result["courseCount"]) * 100, 2);
+        }
+        //
+        return $result;
+    }
+
+    public function checkEmployeeManualCoursesReport($companyId, $employeeId)
+    {
+        //
+        $result = [
+            "completedCount" => 0,
+            "inProgressCount" => 0,
+            "pendingCount" => 0,
+            "readyToStart" => 0,
+            "courseCount" => 0,
+            "percentage" => 0,
+            "coursesInfo" => []
+        ];
+        //
+        $manualAssignedCourses = $this->db
+            ->select('default_course_sid')
+            ->from('lms_manual_assign_employee_course')
+            ->where('employee_sid', $employeeId)
+            ->where('company_sid', $companyId)
+            ->get()
+            ->result_array();
+        //
+        $result["courseCount"] = count($manualAssignedCourses);
+        //
+        foreach ($manualAssignedCourses as $manualCourse) {
+            //
+            $this->db->select("lesson_status");
+            $this->db->where('company_sid', $companyId);
+            $this->db->where('employee_sid', $employeeId);
+            $this->db->where('course_sid', $manualCourse['default_course_sid']);
+            //
+            $a = $this->db->get('lms_employee_course');
+            //
+            $b = $a->row_array();
+            $a = $a->free_result();
+            //
+            $status = 0;
+            //
+            if (empty($b)) {
+                $result["pendingCount"]++;
+                $result["readyToStart"]++;
+            } else if ($b['lesson_status'] == 'completed') {
+                $status = 1;
+                $result["completedCount"]++;
+            } else if ($b['lesson_status'] == 'incomplete') {
+                $result["pendingCount"]++;
+                $result["inProgressCount"]++;
+            }
+            //
+            $result["coursesInfo"][$courseId] = $status;
+        }
+        //
+        if ($result["completedCount"] > 0) {
+            $result["percentage"] = round(($result["completedCount"] / $result["courseCount"]) * 100, 2);
         }
         //
         return $result;
