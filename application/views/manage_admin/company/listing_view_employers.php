@@ -274,14 +274,14 @@
                                                                         <?php } ?>
 
                                                                         <?php if (check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')) { ?>
-                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>">
+                                                                           <!-- <td class="<?php echo $doNotHireWarning['row']; ?>"> -->
                                                                                 <?php if ($value['active']) {
-                                                                                    echo '<a href="javascript:;" class="btn btn-warning btn-sm deactive_employee" id="' . $value['sid'] . '" title="Disable Employee" data-attr="' . $value['sid'] . '"><i class="fa fa-ban"></i></a>';
+                                                                               //     echo '<a href="javascript:;" class="btn btn-warning btn-sm deactive_employee" id="' . $value['sid'] . '" title="Disable Employee" data-attr="' . $value['sid'] . '"><i class="fa fa-ban"></i></a>';
                                                                                 } else {
-                                                                                    echo '<a href="javascript:;" class="btn btn-success btn-sm active_employee" id="' . $value['sid'] . '" title="Enable Employee" data-attr="' . $value['sid'] . '"><i class="fa fa-shield"></i></a>';
+                                                                                //    echo '<a href="javascript:;" class="btn btn-success btn-sm active_employee" id="' . $value['sid'] . '" title="Enable Employee" data-attr="' . $value['sid'] . '"><i class="fa fa-shield"></i></a>';
                                                                                 } ?>
                                                                                 <!--                                                                            <input class="hr-delete-btn" type="button" id="<?= $value['sid'] ?>" value="Delete" onclick="return deleteEmployer(this.id)" name="button">-->
-                                                                            </td>
+                                                                          <!--  </td> -->
                                                                         <?php   } ?>
 
                                                                         <?php if (check_access_permissions_for_view($security_details, 'employerlogin')) { ?>

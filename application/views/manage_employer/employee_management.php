@@ -219,6 +219,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                             <div class="col-xs-3" style="padding-right: 0px; padding-left: 5px">
                                                 <a class="btn btn-success btn-block" href="<?php echo base_url(); ?>invite_colleagues">+ Add Employee / Team Members</a>
                                             </div>
+
+
+                                            <!--
                                             <div class="col-xs-2 text-left" style="padding-right: 5px; padding-left: 5px">
                                                 <?php if ($offline) { ?>
                                                     <a class="btn btn-success btn-block" href="javascript:;" id="ej_controll_activate">Activate Selected</a>
@@ -226,6 +229,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                     <a class="btn btn-danger btn-block" href="javascript:;" id="ej_controll_deactivate">De-activate Selected</a>
                                                 <?php } ?>
                                             </div>
+                                                -->
+
+
                                         <?php } ?>
                                     </div>
 
@@ -536,7 +542,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                             <?php if ($canEMSPermission) { ?>
                                                                 <?php if ($employee['is_executive_admin'] == 0) { ?>
                                                                     <?php if ($employee['active'] == 1 && $employee['terminated_status'] == 0 && $employee['archived'] == 0) { ?>
-                                                                        <a title="Deactivate" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" onclick="deactivate_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;"><img style="width: 17px; height: 17px;" src="<?= base_url('assets/images/deactivate.png') ?>"></a>
+                                                                       <!-- <a title="Deactivate" data-toggle="tooltip" data-placement="bottom" class="btn btn-default btn-sm" onclick="deactivate_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;"><img style="width: 17px; height: 17px;" src="<?= base_url('assets/images/deactivate.png') ?>"></a> -->
                                                                     <?php } else if ($employee['active'] == 0 && $employee['terminated_status'] == 0 && $employee['archived'] == 0) { ?>
                                                                         <a title="Archive Employee" data-toggle="tooltip" data-placement="bottom" class="btn btn-warning btn-sm" onclick="archive_single_employee(<?php echo $employee['sid']; ?>)" href="javascript:;">
                                                                             <i class="fa fa-archive"></i>
