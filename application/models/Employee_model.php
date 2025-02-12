@@ -112,7 +112,7 @@
         }
         //
         $employeeIds = array_column($employees, 'sid');
-   
+
         //
         $statuses = $this->db
             ->select('employee_sid, termination_date, status_change_date, details, do_not_hire,termination_reason')
@@ -121,15 +121,17 @@
             ->get('terminated_employees')
             ->result_array();
 
-           // _e($statuses,true,true);
+        // _e($statuses,true,true);
         //
         $last_statuses = $this->db
             ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status,termination_reason')
             ->where_in('employee_sid', $employeeIds)
-          //  ->where('employee_status <> ', 9)
+            // ->where('employee_status <> ', 9)
             ->order_by('terminated_employees.sid', 'DESC')
             ->get('terminated_employees')
             ->result_array();
+        //  $str = $this->db->last_query();
+
 
         //
         if (!empty($statuses)) {
@@ -142,6 +144,9 @@
             }
             //
             $statuses = $tmp;
+
+
+            // _e($statuses,true,true);
             //
             $tmp = [];
             //
@@ -158,15 +163,14 @@
         }
         //
         foreach ($employees as $index => $employee) {
-            //
-
-           // if($last_statuses[$employee['sid']]==77){
-           //_e($last_statuses[$employee['sid']]['employee_status'],true);
-           // }
-
+            //                   
             $employees[$index]['last_status'] = isset($statuses[$employee['sid']]) ? $statuses[$employee['sid']] : [];
             $employees[$index]['last_status_2'] = isset($last_statuses[$employee['sid']]) ? $last_statuses[$employee['sid']] : [];
-            $employees[$index]['last_status_text'] = isset($last_statuses[$employee['sid']]) ? GetEmployeeStatusText($last_statuses[$employee['sid']]['employee_status']) : '';
+            if ($last_statuses[$employee['sid']]['employee_status'] == 9) {
+                $employees[$index]['last_status_text'] = isset($last_statuses[$employee['sid']]) ? GetEmployeeStatusText(5) : '';
+            } else {
+                $employees[$index]['last_status_text'] = isset($last_statuses[$employee['sid']]) ? GetEmployeeStatusText($last_statuses[$employee['sid']]['employee_status']) : '';
+            }
         }
         //
         return true;

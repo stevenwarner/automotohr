@@ -15001,6 +15001,11 @@ if (!function_exists('GetEmployeeStatus')) {
         if (strtolower($lastStatusText) === 'rehired') {
             return 'Active';
         }
+
+        if ($lastStatusText === 'Transferred' && $active == 1) {
+            return 'Active';
+        }
+
         //
         return ucwords($lastStatusText ? $lastStatusText : ($active ? 'Active' : 'De-activated'));
     }
@@ -17347,21 +17352,5 @@ if (!function_exists("isSafetyIncident")) {
         } else {
             return false;
         }
-    }
-}
-
-
-if (!function_exists('GetEmployeeStatusNew')) {
-    /**
-     * Get employee last status
-     * 
-     * @param string $lastStatusText
-     * @param number $active
-     * @return
-     */
-    function GetEmployeeStatusNew($lastStatusText, $active)
-    {
-        //
-        return ucwords($lastStatusText ? $lastStatusText : ($active ? 'Active' : 'De-activated'));
     }
 }
