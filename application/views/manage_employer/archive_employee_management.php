@@ -76,10 +76,17 @@
 <!--                                                        <i class="fa fa-remove"></i>-->
 <!--                                                    </a>-->
 <!--                                                </td>-->
-                                                <td class="text-center">
-                                                    <a title="Re Activate Employee" data-toggle="tooltip" data-placement="bottom" class="btn btn-info btn-sm" onclick="restore_employee(<?php echo $employee["sid"]; ?>)" href="javascript:;">
+                                                <td class="text-center">                                                
+                                                <a title="Re Activate Employee" data-toggle="tooltip" data-placement="bottom" class="btn btn-info btn-sm" href="<?= base_url() ?>employee_status/<?php echo $employee["sid"]; ?>">
+                                                        <i class="fa fa-undo"></i>
+                                                    </a>                                                  
+                                                <!--
+                                                   <a title="Re Activate Employee" data-toggle="tooltip" data-placement="bottom" class="btn btn-info btn-sm" onclick="restore_employee(<?php //echo $employee["sid"]; ?>)" href="javascript:;">
                                                         <i class="fa fa-undo"></i>
                                                     </a>
+
+                                                    -->
+
                                                 </td>
                                             </tr>
                                         <?php } ?>
