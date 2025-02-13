@@ -147,7 +147,7 @@ class Employee_management extends Public_Controller
                 $deactivate_fields = $_POST['ej_check'];
 
                 foreach ($deactivate_fields as $key => $value) {
-                    $this->employee_model->deactivate_employee_by_id($value);
+                   // $this->employee_model->deactivate_employee_by_id($value);
                 }
 
                 $this->session->set_flashdata('message', '<b>Success: </b>Employee(s) / Team Member(s) Deactivated!');
@@ -158,7 +158,7 @@ class Employee_management extends Public_Controller
                 $deactivate_fields = $_POST['ej_check'];
 
                 foreach ($deactivate_fields as $key => $value) {
-                    $this->employee_model->activate_employee_by_id($value);
+                   // $this->employee_model->activate_employee_by_id($value);
                 }
 
                 $this->session->set_flashdata('message', '<b>Success: </b>Employee(s) / Team Member(s) Activated!');

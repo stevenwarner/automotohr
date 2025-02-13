@@ -65,6 +65,8 @@
                         </div>
                     </div>
                     <div class="btn-panel text-right">
+
+                    <!--
                         <div class="row">
                             <div class="col-xs-4"></div>
                             <div class="col-xs-4">
@@ -74,6 +76,8 @@
                                 <a class="btn btn-danger btn-block" href="javascript:;" id="ej_controll_deactivate">De-activate Selected</a>
                             </div>
                         </div>
+-->
+
                     </div>
                     <?php   $employee_array = $employees; ?>
                     <div class="table-responsive table-outer">
@@ -86,7 +90,7 @@
                                         <tr>
                                             <th>
                                                 <label class="control control--checkbox checkallbtn">
-                                                    <input type="checkbox" id="selectall">
+                                                    <input type="checkbox" id="selectall" disabled>
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </th>
@@ -104,7 +108,7 @@
 
                                                 <td class="text-center">
                                                     <label class="control control--checkbox">
-                                                        <input name="ej_check[]" type="checkbox" value="<?php echo $employee['sid']; ?>" class="ej_checkbox" <?=$employer_id != $employee['sid'] ? '' : 'disabled="true"';?>>
+                                                        <input name="ej_check[]" type="checkbox" value="<?php echo $employee['sid']; ?>" class="ej_checkbox" <?=$employer_id != $employee['sid'] ? '' : 'disabled="true"';?> disabled>
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </td>

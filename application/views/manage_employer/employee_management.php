@@ -221,9 +221,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                             </div>
                                             <div class="col-xs-2 text-left" style="padding-right: 5px; padding-left: 5px">
                                                 <?php if ($offline) { ?>
-                                                    <a class="btn btn-success btn-block" href="javascript:;" id="ej_controll_activate">Activate Selected</a>
+                                                  <!--  <a class="btn btn-success btn-block" href="javascript:;" id="ej_controll_activate">Activate Selected</a> -->
                                                 <?php } else { ?>
-                                                    <a class="btn btn-danger btn-block" href="javascript:;" id="ej_controll_deactivate">De-activate Selected</a>
+                                                  <!--  <a class="btn btn-danger btn-block" href="javascript:;" id="ej_controll_deactivate">De-activate Selected</a> -->
                                                 <?php } ?>
                                             </div>
                                         <?php } ?>
@@ -767,31 +767,32 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
     }
 
     function archive_single_employee(id) {
-        alertify.confirm("Please Confirm Archive", "Are you sure you want to Archive employee?",
-            function() {
-                url = "<?= base_url() ?>employee_management/archive_single_employee";
-                $.post(url, {
-                        archive_id: id,
-                        action: "archive_single_employee"
-                    })
-                    .done(function(data) {
-                        $('#manual_row' + id).hide();
-                        var total_rows = $('#countainer_count').val();
-                        total_rows = total_rows - 1;
-                        $('#countainer_count').val(total_rows);
+        window.location.href = "<?= base_url() ?>employee_status/" + id
+        // alertify.confirm("Please Confirm Archive", "Are you sure you want to Archive employee?",
+        //     function() {
+        //         url = "<?= base_url() ?>employee_management/archive_single_employee";
+        //         $.post(url, {
+        //                 archive_id: id,
+        //                 action: "archive_single_employee"
+        //             })
+        //             .done(function(data) {
+        //                 $('#manual_row' + id).hide();
+        //                 var total_rows = $('#countainer_count').val();
+        //                 total_rows = total_rows - 1;
+        //                 $('#countainer_count').val(total_rows);
 
-                        if (total_rows <= 0) {
-                            show_no_jobs
-                            $('#hide_del_row').hide();
-                            $('#show_no_jobs').html('<span class="applicant-not-found">No Employees found!</span>');
-                        }
+        //                 if (total_rows <= 0) {
+        //                     show_no_jobs
+        //                     $('#hide_del_row').hide();
+        //                     $('#show_no_jobs').html('<span class="applicant-not-found">No Employees found!</span>');
+        //                 }
 
-                        alertify.notify(data, 'success');
-                    });
-            },
-            function() {
-                alertify.error('Cancelled');
-            });
+        //                 alertify.notify(data, 'success');
+        //             });
+        //     },
+        //     function() {
+        //         alertify.error('Cancelled');
+        //     });
     }
 
     function revert_applicant(revert_id, id) {
