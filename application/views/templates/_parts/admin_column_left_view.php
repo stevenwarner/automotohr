@@ -487,11 +487,11 @@ if (
                                 } ?> href="<?php echo site_url('manage_admin/lms_employees'); ?>">LMS Courses</a>
                         </div>
 
-                        <div class="menu-item">
+                        <!-- <div class="menu-item">
                             <a <?php if ($this->uri->segment(3) == 'manual_assign') {
                                     echo 'class="active"';
                                 } ?> href="<?php echo site_url('manage_admin/lms_employees/manual_assign'); ?>">LMS Manual Assign Courses</a>
-                        </div>
+                        </div> -->
 
                     </div>
                 </li>
