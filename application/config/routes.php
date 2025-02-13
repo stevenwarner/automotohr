@@ -2492,8 +2492,8 @@ $route["manage_admin/compliance_safety/report_types/edit/(:num)"]["post"] =
 // Edit status
 $route["manage_admin/compliance_safety/handle_status/(:num)"]["post"] =
   "manage_admin/Compliance_safety/handleStatus/$1";
-    // Incident Types
-  $route["manage_admin/compliance_safety/incident_types/add"]["get"] =
+// Incident Types
+$route["manage_admin/compliance_safety/incident_types/add"]["get"] =
   "manage_admin/Compliance_safety/incidentTypeAdd";
 $route["manage_admin/compliance_safety/incident_types/add"]["post"] =
   "manage_admin/Compliance_safety/incidentTypeAdd";
@@ -2501,3 +2501,19 @@ $route["manage_admin/compliance_safety/incident_types/edit/(:num)"]["get"] =
   "manage_admin/Compliance_safety/incidentTypeEdit/$1";
 $route["manage_admin/compliance_safety/incident_types/edit/(:num)"]["post"] =
   "manage_admin/Compliance_safety/incidentTypeEdit/$1";
+// Incident questions
+$route["manage_admin/compliance_safety/incident_types/view_incident_questions/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/view_incident_questions/$1";
+$route["manage_admin/compliance_safety/incident_types/add_new_question/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/add_new_question/$1";
+$route["manage_admin/compliance_safety/incident_types/add_new_question/(:num)"]["post"] =
+  "manage_admin/Compliance_safety/add_new_question/$1";
+
+$route["manage_admin/compliance_safety/incident_types/edit_question/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/edit_question/$1";
+$route["manage_admin/compliance_safety/incident_types/edit_question/(:num)"]["post"] =
+  "manage_admin/Compliance_safety/edit_question/$1";
+
+
+$route["manage_admin/compliance_safety/incident_types/enable_disable_question/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/enable_disable_question/$1";

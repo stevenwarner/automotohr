@@ -233,6 +233,82 @@ class Compliance_safety extends Admin_Controller
         }
     }
 
+    public function view_incident_questions($id)
+    {
+        $name = $this->compliance_safety_model->fetchIncidentTypeName($id);
+        $incident_name = $name[0]['compliance_incident_type_name'];
+        $this->data['page_title'] = "Incident Type Questions - " . $incident_name;
+        $this->data['inc_id'] = $id;
+        $questions = $this->compliance_safety_model->fetchQuestions($id);
+        $this->data['questions'] = $questions;
+        // $this->data
+        $this->render('manage_admin/compliance_safety/incidents/list_questions');
+    }
+
+    public function add_new_question($id)
+    {
+        $name = $this->compliance_safety_model->fetchIncidentTypeName($id);
+        $incident_name = $name[0]['incident_name'];
+        $this->data['sub_title'] = $incident_name;
+        $this->data['page_title'] = "Incident Types - Add Questions";
+        $this->data['fields'] = array('text', 'textarea', 'radio', 'single select', 'multi select');
+        $this->data['status'] = 1;
+        $this->data['form'] = 'add';
+        $this->data['inc_id'] = $id;
+        $this->data['radio_questions'] = $this->compliance_safety_model->getAllRadioQuestions($id);
+
+        if (isset($_POST['form-submit']) || isset($_POST['more'])) {
+            if (isset($_POST['form-submit'])) {
+                unset($_POST['form-submit']);
+                $link = 'manage_admin/compliance_safety/incident_types/view_incident_questions/' . $id;
+            } elseif (isset($_POST['more'])) {
+                unset($_POST['more']);
+                $link = 'manage_admin/compliance_safety/incident_types/add_new_question/' . $id;
+            }
+
+            if ($_POST['question_type'] == 'text' || $_POST['question_type'] == 'textarea' || $_POST['question_type'] == 'radio') {
+                $_POST['options'] = '';
+            } else {
+                $_POST['options'] = implode(',', array_filter($_POST['options']));
+            }
+
+            $this->compliance_safety_model->add_new_question($_POST);
+            return redirect($link);
+        }
+
+        $this->render('manage_admin/compliance_safety/incidents/add_new_question');
+    }
+
+    public function edit_question($id)
+    {
+        $this->data['page_title'] = "Incident Reporting System - Update Incident Questions";
+        $this->data['fields'] = array('text', 'textarea', 'radio', 'single select', 'multi select');
+        $question = $this->compliance_safety_model->get_question($id);
+        $incident_type_id = $question[0]['compliance_incident_types_id'];
+        $name = $this->compliance_safety_model->fetchIncidentTypeName($incident_type_id);
+        $incident_name = $name[0]['incident_name'];
+        $this->data['sub_title'] = $incident_name;
+        $this->data['radio_questions'] = $this->compliance_safety_model->getAllRadioQuestions($incident_type_id);
+        if (isset($_POST['form-submit']) && ($_POST['form-submit'] == 'Update')) {
+            unset($_POST['form-submit']);
+
+            if ($_POST['question_type'] == 'text' || $_POST['question_type'] == 'textarea' || $_POST['question_type'] == 'radio') {
+                $_POST['options'] = '';
+            } else {
+                $_POST['options'] = implode(',', array_filter($_POST['options']));
+            }
+
+            if (!isset($_POST['is_required'])) {
+                $_POST['is_required'] = 0;
+            }
+            $this->compliance_safety_model->update_incident_question($id, $_POST);
+            redirect('manage_admin/compliance_safety/incident_types/view_incident_questions/' . $question[0]['compliance_incident_types_id']);
+        }
+
+        $this->data['question'] = $question;
+        $this->render('manage_admin/compliance_safety/incidents/update_question');
+    }
+
 
     public function handleStatus(int $id)
     {
@@ -255,5 +331,12 @@ class Compliance_safety extends Admin_Controller
                 "message" => "You have successfully " . ($post["status"] === "off" ?  "Deactivated" : "Activated") . " the " . ($post["type"] === "report" ? "Report Type" : "Report Incident Type") . "."
             ]
         );
+    }
+
+    public function enable_disable_question($id)
+    {
+        $data = array('status' => $this->input->get('status'));
+        $this->compliance_safety_model->update_incident_question($id, $data);
+        print_r(json_encode(array('message' => 'updated')));
     }
 }

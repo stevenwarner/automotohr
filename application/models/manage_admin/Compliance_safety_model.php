@@ -110,4 +110,51 @@ class Compliance_safety_model extends CI_Model
             ->get("compliance_incident_types")
             ->row_array();
     }
+
+
+    public function fetchIncidentTypeName($id)
+    {
+        $this->db->select('compliance_incident_type_name');
+        $this->db->where('id', $id);
+        return $this->db->get('compliance_incident_types')->result_array();
+    }
+
+    public function fetchQuestions($id)
+    {
+        $this->db->select('compliance_incident_types_questions.*', 'compliance_incident_types.compliance_incident_type_name');
+        $this->db->where('compliance_incident_types_id', $id);
+        $this->db->join('compliance_incident_types', 'compliance_incident_types_questions.compliance_incident_types_id = compliance_incident_types.id', 'left');
+        $questions = $this->db->get('compliance_incident_types_questions')->result_array();
+        return $questions;
+    }
+
+    public function getAllRadioQuestions($incident_type_id = 0)
+    {
+        $this->db->select('label,id');
+        $this->db->where('compliance_incident_types_id', $incident_type_id);
+        $this->db->where('question_type', 'radio');
+        $result = $this->db->get('compliance_incident_types_questions')->result_array();
+
+        return $result;
+    }
+
+    public function get_question($id)
+    {
+        $this->db->where('id', $id);
+        $result = $this->db->get('compliance_incident_types_questions')->result_array();
+        return $result;
+    }
+
+    public function add_new_question($data)
+    {
+        $this->db->insert('compliance_incident_types_questions', $data);
+        return $this->db->insert_id();
+    }
+
+    function update_incident_question($id, $data)
+    {
+        $this->db->where('id', $id);
+        $type = $this->db->update('compliance_incident_types_questions', $data);
+        return $type;
+    }
 }
