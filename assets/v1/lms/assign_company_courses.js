@@ -1,6 +1,19 @@
 $(function LMSStoreCourses() {
 	// set the xhr
 	let XHR = null;
+	/**
+	 * set the course id
+	 */
+	let courseCode = 0;
+	/**
+	 * set the modal reference
+	 */
+	let modalId = "jsEditCourseJobRoleModel";
+
+	/**
+	 * set the model loader
+	 */
+	let modalLoaderId = "jsEditCourseJobRoleModelLoader";
 	// set the default filter
 	let filterObj = {
 		title: "",
@@ -91,6 +104,162 @@ $(function LMSStoreCourses() {
 			}
 		)
 	});
+
+	/**
+	 * Edit company course jobRole
+	 */
+	$(document).on("click", ".jsManageJobRole", function (event) {
+		// stop the default functionality
+		// event.preveentDefault();
+		var sid = $(this).closest("tr").data("id");
+		var courseId = $(this).data("course_id");
+		var courseTitle = $(this).data("course_title");
+		//
+		startEditCourseJobRoleProcess(courseId, courseTitle)
+		
+	});
+
+	/**
+	 * Update save event
+	 */
+	$(document).on("click", ".jsEditCourseJobRoleBtn", function (event) {
+		// stop the default event
+		event.preventDefault();
+		// create the course object
+		courseObj = {
+			job_titles: $("#jsEditCourseJobTitles").val() || [],
+		};
+		//
+		handleCourseJobRoleUpdate(courseObj);
+	});
+
+	/**
+	 * Handle course update process
+	 *
+	 * @param {*} courseObj
+	 */
+	async function handleCourseJobRoleUpdate(courseObj) {
+		//
+		const errorArray = [];
+		//
+		if (!courseObj.job_titles.length) {
+			errorArray.push("Select at least one job title.");
+		}
+		//
+		if (errorArray.length) {
+			// make the user notify of errors
+			return alertify.alert(
+				"ERROR!",
+				getErrorsStringFromArray(errorArray),
+				CB
+			);
+		}
+		// start the loader and upload the file
+		ml(true, modalLoaderId);
+		//
+		try {
+			//
+			console.log("please call update call")
+			const updateCourseResponse = await updateCourseJobRollCall(courseObj);
+			//
+			return alertify.alert(
+				"SUCCESS!",
+				updateCourseResponse.data,
+				function () {
+					$("#" + modalId).remove();
+				}
+			);
+		} catch (err) {
+			//
+			ml(false, modalLoaderId);
+			return alertify.alert(
+				"ERROR!",
+				getErrorsStringFromArray(err.errors, "Errors!!"),
+				CB
+			);
+		}
+	}
+
+	/**
+	 * Update company job role call
+	 *
+	 * @param {*} courseObj
+	 * @returns
+	 */
+	function updateCourseJobRollCall(courseObj) {
+		console.log("update call")
+		return new Promise(function (resolve, reject) {
+			//
+			$.ajax({
+				url: apiURL + "lms/company/update_job_role/" + courseCode,
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+				},
+				data: JSON.stringify(courseObj),
+			})
+				.success(resolve)
+				.fail(function (response) {
+					reject(response.responseJSON);
+				});
+		});
+	}
+
+	/**
+	 * Create a course
+	 *
+	 * @param {int} companyId
+	 */
+	function startEditCourseJobRoleProcess(courseId, courseTitle) {
+		// set course id
+		courseCode = courseId;
+		// load view
+		Modal(
+			{
+				Id: modalId,
+				Title: 'Update Course <span>'+courseTitle+'</span>',
+				Loader: modalLoaderId,
+				Cl: "container",
+				Ask: true,
+				Body: '<div id="' + modalId + 'Body"></div>',
+			},
+			loadJobRoleView
+		);
+	}
+
+	/**
+	 * get the view from server
+	 */
+	function loadJobRoleView() {
+		// check the call
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		//
+		XHR = $.ajax({
+			url: apiURL + "lms/company/view/edit_job_role/"+courseCode,
+			method: "GET",
+		})
+			.success(function (resp) {
+				//
+				XHR = null;
+				// load the view
+				$("#" + modalId + "Body").html(resp);
+				//
+				$("#jsEditCourseJobTitles").select2({
+					closeOnSelect: false,
+				});
+				//
+			})
+			.fail(handleErrorResponse)
+			.done(function () {
+				// empty the call
+				XHR = null;
+				//
+				ml(false, modalLoaderId);
+			});
+	}
 
 	// Change course status
 	function changeCourseStatus (id, status) {
