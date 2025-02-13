@@ -21,7 +21,7 @@ assets/tmp
 assets/performance_management/videos
 assets/performance_management/videos/*
 assets/shifts_ics_files
-assets/l
+assets/csv_reports
 
 # Exclude system folder
 #system

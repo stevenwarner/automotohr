@@ -520,9 +520,109 @@ class Course_model extends CI_Model
                 $result["coursesInfo"][$courseId] = $status;
             }
             //
-            if ($result["completedCount"] > 0) {
-                $result["percentage"] = round(($result["completedCount"] / $result["courseCount"]) * 100, 2);
+        }
+        //
+        if (checkAnyManualCourseAssigned($employeeId)) {
+            //
+            $manualAssignedCourses = $this->db
+                ->select('default_course_sid')
+                ->from('lms_manual_assign_employee_course')
+                ->where('employee_sid', $employeeId)
+                ->where('company_sid', $companyId)
+                ->get()
+                ->result_array();
+            //
+            $result["courseCount"] = $result["courseCount"] + count($manualAssignedCourses);
+            //
+            foreach ($manualAssignedCourses as $manualCourse) {
+                //
+                $this->db->select("lesson_status");
+                $this->db->where('company_sid', $companyId);
+                $this->db->where('employee_sid', $employeeId);
+                $this->db->where('course_sid', $manualCourse['default_course_sid']);
+                //
+                $a = $this->db->get('lms_employee_course');
+                //
+                $b = $a->row_array();
+                $a = $a->free_result();
+                //
+                $status = 0;
+                //
+                if (empty($b)) {
+                    $result["pendingCount"]++;
+                    $result["readyToStart"]++;
+                } else if ($b['lesson_status'] == 'completed') {
+                    $status = 1;
+                    $result["completedCount"]++;
+                } else if ($b['lesson_status'] == 'incomplete') {
+                    $result["pendingCount"]++;
+                    $result["inProgressCount"]++;
+                }
+                //
+                $result["coursesInfo"][$courseId] = $status;
             }
+        }
+        //
+        if ($result["completedCount"] > 0) {
+            $result["percentage"] = round(($result["completedCount"] / $result["courseCount"]) * 100, 2);
+        }
+        //
+        return $result;
+    }
+
+    public function checkEmployeeManualCoursesReport($companyId, $employeeId)
+    {
+        //
+        $result = [
+            "completedCount" => 0,
+            "inProgressCount" => 0,
+            "pendingCount" => 0,
+            "readyToStart" => 0,
+            "courseCount" => 0,
+            "percentage" => 0,
+            "coursesInfo" => []
+        ];
+        //
+        $manualAssignedCourses = $this->db
+            ->select('default_course_sid')
+            ->from('lms_manual_assign_employee_course')
+            ->where('employee_sid', $employeeId)
+            ->where('company_sid', $companyId)
+            ->get()
+            ->result_array();
+        //
+        $result["courseCount"] = count($manualAssignedCourses);
+        //
+        foreach ($manualAssignedCourses as $manualCourse) {
+            //
+            $this->db->select("lesson_status");
+            $this->db->where('company_sid', $companyId);
+            $this->db->where('employee_sid', $employeeId);
+            $this->db->where('course_sid', $manualCourse['default_course_sid']);
+            //
+            $a = $this->db->get('lms_employee_course');
+            //
+            $b = $a->row_array();
+            $a = $a->free_result();
+            //
+            $status = 0;
+            //
+            if (empty($b)) {
+                $result["pendingCount"]++;
+                $result["readyToStart"]++;
+            } else if ($b['lesson_status'] == 'completed') {
+                $status = 1;
+                $result["completedCount"]++;
+            } else if ($b['lesson_status'] == 'incomplete') {
+                $result["pendingCount"]++;
+                $result["inProgressCount"]++;
+            }
+            //
+            $result["coursesInfo"][$courseId] = $status;
+        }
+        //
+        if ($result["completedCount"] > 0) {
+            $result["percentage"] = round(($result["completedCount"] / $result["courseCount"]) * 100, 2);
         }
         //
         return $result;
@@ -573,6 +673,33 @@ class Course_model extends CI_Model
         //
         return $courseInfo;
     }
+
+    public function getManualAssignCourseLanguageInfo ($courseId, $language) {
+        $courseInfo = $this->db
+            ->select('course_file_name, Imsmanifist_json')
+            ->from('lms_scorm_courses')
+            ->where('course_sid', $courseId)
+            ->where('course_file_language', $language)
+            ->get()
+            ->row_array();
+        //
+        return $courseInfo;
+    }
+    
+    public function checkCourseIsManualAssigned ($courseId, $employeeId) {
+        $count = $this
+                ->db
+                ->where('employee_sid', $employeeId)
+                ->where('default_course_sid', $courseId)
+                ->count_all_results('lms_manual_assign_employee_course');
+        //
+        if ($count > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
 
     public function deletePreviousAllLanguagesById($courseId)
     {
@@ -1239,5 +1366,144 @@ class Course_model extends CI_Model
             ->where($where)
             ->get("lms_scorm_courses")
             ->result_array();
+    }
+
+    //
+    public function getActiveDefaultCourses(): array
+    {
+        // 
+        return $this->db
+            ->select('sid, course_title, course_type, course_version')
+            ->from('lms_default_courses')
+            ->where('is_active', 1)
+            ->where('company_sid', 0)
+            ->get()
+            ->result_array();
+    }
+    //
+    public function getAllCoursesForManualAssign(
+        $companyId,
+        $employeeId
+    ): array {
+
+        // 
+        $defaultCoursesList = $this->getActiveDefaultCourses();
+        //
+        $manualAssignedCoursesList = $this->getManualAssignedCourses(
+            $companyId,
+            $employeeId
+        );
+        //
+        $assignedCoursesList = $this->getAssignedCourses(
+            $companyId,
+            $employeeId
+        );
+        //
+        $courseIds = array_column($assignedCoursesList, 'assigned_course_sid');
+        //
+        $assignedIds = array_column($manualAssignedCoursesList, 'default_course_sid');
+        //
+        $assignedIds = array_merge($assignedIds, $courseIds);
+        //
+        foreach ($defaultCoursesList as $key => $val) {
+
+            if (in_array($val['sid'], $assignedIds)) {
+                $defaultCoursesList[$key]['assigned'] = 1;
+            } else {
+                $defaultCoursesList[$key]['assigned'] = 0;
+            }
+        }
+
+        return $defaultCoursesList;
+    }
+
+
+    public function getManualAssignedCourses(
+        $companyId,
+        $employeeId
+    ): array {
+        // 
+        return $this->db
+            ->select('*')
+            ->from('lms_manual_assign_employee_course')
+            ->where('employee_sid', $employeeId)
+            ->where('company_sid', $companyId)
+            ->get()
+            ->result_array();
+    }
+
+    //
+    public function assigneManualCourses(
+        $companyId,
+        $employeeId,
+        $courseIds,
+        $assignedBy
+    ) {
+        // 
+        foreach ($courseIds as $courseId) {
+            if (
+                !$this
+                    ->db
+                    ->where('employee_sid', $employeeId)
+                    ->where('default_course_sid', $courseId)
+                    ->count_all_results('lms_manual_assign_employee_course')
+            ) {
+                $dataToInsert = [];
+                $dataToInsert['company_sid'] = $companyId;
+                $dataToInsert['employee_sid'] = $employeeId;
+                $dataToInsert['default_course_sid'] = $courseId;
+                $dataToInsert['assigned_by'] = $assignedBy;
+                $dataToInsert['created_at'] = getSystemDate();
+                $this->db->insert('lms_manual_assign_employee_course', $dataToInsert);  
+            }
+        }
+    }
+
+    //
+    public function getAssignedCourses(
+        $companyId,
+        $employeeId
+    ): array {
+        //
+        $jobTitleInfo = $this->db->select("portal_job_title_templates.sid as job_title_sid")
+            ->join(
+                "portal_job_title_templates",
+                "portal_job_title_templates.sid = users.lms_job_title",
+                "left"
+            )
+            ->where('users.sid', $employeeId)
+            ->where([
+                "users.active" => 1,
+                "users.terminated_status" => 0,
+                "users.is_executive_admin" => 0
+            ])
+            ->get('users')
+            ->row_array();
+        //
+        $jobTitleId = !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
+        //
+        if ($jobTitleId != 0) {
+            return $this->db->select("
+                lms_assign_course_log.default_course_sid as assigned_course_sid
+            ")
+            ->join(
+                "lms_default_courses_job_titles",
+                "lms_default_courses_job_titles.lms_default_courses_sid = lms_default_courses.sid",
+                "right"
+            )
+            ->join('lms_assign_course_log', 'lms_assign_course_log.assigned_course_sid = lms_default_courses.sid', 'left')
+            ->where('lms_default_courses.company_sid', $companyId)
+            ->where('lms_default_courses.is_active', 1)
+            ->group_start()
+            ->where('lms_default_courses_job_titles.job_title_id', -1)
+            ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
+            ->group_end()
+            ->get('lms_default_courses')
+            ->result_array();
+        } else {
+            return [];
+        }
+        //
+     
     }
 }

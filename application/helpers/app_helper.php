@@ -1645,12 +1645,40 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                                 ->group_end()
                                 ->get('lms_default_courses')
                                 ->result_array();
-                            //
+                            //                       
+
                             $assignCourses = !empty($companyCourses) ? implode(',', array_column($companyCourses, "sid")) : "";
+
+                            //manual AssignedCourses
+
+                            $manualAssignedCourses = $CI->db
+                                ->select('default_course_sid')
+                                ->from('lms_manual_assign_employee_course')
+                                ->where('employee_sid', $employee['employee_sid'])
+                                ->where('company_sid', $companyId)
+                                ->get()
+                                ->result_array();
+
+                            $manualAssignedCoursesList = !empty($manualAssignedCourses) ? ',' . implode(',', array_column($manualAssignedCourses, "default_course_sid")) : "";
+
                             //
-                            $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses;
-                            $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($assignCourses, $employee['employee_sid']);
-                            $employeeData["assign_courses"] =  $assignCourses;
+                            $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses . $manualAssignedCoursesList;
+                            $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($assignCourses . $manualAssignedCoursesList, $employee['employee_sid']);
+                            $employeeData["assign_courses"] =  array_merge($assignCourses, $manualAssignedCourses);
+                        } else if (checkAnyManualCourseAssigned($employee['employee_sid'])) {
+                            $manualAssignedCourses = $CI->db
+                                ->select('default_course_sid')
+                                ->from('lms_manual_assign_employee_course')
+                                ->where('employee_sid', $employee['employee_sid'])
+                                ->where('company_sid', $companyId)
+                                ->get()
+                                ->result_array();
+                            //
+                            $manualAssignedCoursesList = !empty($manualAssignedCourses) ? implode(',', array_column($manualAssignedCourses, "default_course_sid")) : "";
+                            //
+                            $employees[$employee['employee_sid']]["assign_courses"] = $manualAssignedCoursesList;
+                            $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($manualAssignedCoursesList, $employee['employee_sid']);
+                            $employeeData["assign_courses"] =  $manualAssignedCoursesList;
                         } else {
                             $employees[$employee['employee_sid']]["assign_courses"] = "";
                             $employeeData["assign_courses"] =  "";
@@ -1844,10 +1872,36 @@ if (!function_exists('getLMSManagerDepartmentAndTeams')) {
                             ->result_array();
                         //
                         $assignCourses = !empty($companyCourses) ? implode(',', array_column($companyCourses, "sid")) : "";
+                        //manual AssignedCourses
+
+                        $manualAssignedCourses = $CI->db
+                        ->select('default_course_sid')
+                        ->from('lms_manual_assign_employee_course')
+                        ->where('employee_sid', $employee['employee_sid'])
+                        ->where('company_sid', $companyId)
+                        ->get()
+                        ->result_array();
+
+                        $manualAssignedCoursesList = !empty($manualAssignedCourses) ? ',' . implode(',', array_column($manualAssignedCourses, "default_course_sid")) : "";
+
                         //
-                        $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses;
-                        $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($assignCourses, $employee['employee_sid']);
-                        $employeeData["assign_courses"] =  $assignCourses;
+                        $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses . $manualAssignedCoursesList;
+                        $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($assignCourses . $manualAssignedCoursesList, $employee['employee_sid']);
+                        $employeeData["assign_courses"] =  array_merge($assignCourses, $manualAssignedCourses);
+                    } else if (checkAnyManualCourseAssigned($employee['employee_sid'])) {
+                        $manualAssignedCourses = $CI->db
+                            ->select('default_course_sid')
+                            ->from('lms_manual_assign_employee_course')
+                            ->where('employee_sid', $employee['employee_sid'])
+                            ->where('company_sid', $companyId)
+                            ->get()
+                            ->result_array();
+                        //
+                        $manualAssignedCoursesList = !empty($manualAssignedCourses) ? implode(',', array_column($manualAssignedCourses, "default_course_sid")) : "";
+                        //
+                        $employees[$employee['employee_sid']]["assign_courses"] = $manualAssignedCoursesList;
+                        $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($manualAssignedCoursesList, $employee['employee_sid']);
+                        $employeeData["assign_courses"] =  $manualAssignedCoursesList;
                     } else {
                         $employees[$employee['employee_sid']]["assign_courses"] = "";
                         $employeeData["assign_courses"] =  "";
@@ -1869,6 +1923,26 @@ if (!function_exists('getLMSManagerDepartmentAndTeams')) {
         }
         //
         return $r;
+    }
+}
+
+
+if (!function_exists("checkAnyManualCourseAssigned")) {
+    function checkAnyManualCourseAssigned(&$employeeId): bool
+    {
+        //
+        $ci = &get_instance();
+        //
+        $count = $ci
+            ->db
+            ->where('employee_sid', $employeeId)
+            ->count_all_results('lms_manual_assign_employee_course');
+        //
+        if ($count > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
@@ -1973,7 +2047,7 @@ if (!function_exists('getEmployeeCourseStatus')) {
             return 'completed';
         } else if ($courseInfo['lesson_status'] == 'incomplete') {
             return 'started';
-        }
+        } 
     }
 }
 
