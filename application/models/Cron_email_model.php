@@ -1027,7 +1027,7 @@ class Cron_email_model extends CI_Model
                 // get notifiers
                 $managersList = get_notification_email_contacts(
                     $companyRow['sid'],
-                    "documents_status"
+                    "document_report"
                 );
                 //
                 if (!empty($managersList)) {
