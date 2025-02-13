@@ -2475,3 +2475,29 @@ $route['compliance_report/view_compliance_report_public_link/(:any)']['post'] = 
 $route['manage_admin/lms_employees'] = 'manage_admin/Lms_employees/index';
 $route['manage_admin/lms/employee_courses/(:num)/(:num)'] = 'manage_admin/Lms_employees/employeeAllCourses/$1/$2';
 $route['manage_admin/lms/manual_course_complete'] = 'manage_admin/Lms_employees/manuallyCourseComplete';
+
+
+// Compliance Safety
+$route["manage_admin/compliance_safety/dashboard"]["get"] =
+  "manage_admin/Compliance_safety/dashboard";
+// Report types
+$route["manage_admin/compliance_safety/report_types/add"]["get"] =
+  "manage_admin/Compliance_safety/reportAdd";
+$route["manage_admin/compliance_safety/report_types/add"]["post"] =
+  "manage_admin/Compliance_safety/reportAdd";
+$route["manage_admin/compliance_safety/report_types/edit/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/reportEdit/$1";
+$route["manage_admin/compliance_safety/report_types/edit/(:num)"]["post"] =
+  "manage_admin/Compliance_safety/reportEdit/$1";
+// Edit status
+$route["manage_admin/compliance_safety/handle_status/(:num)"]["post"] =
+  "manage_admin/Compliance_safety/handleStatus/$1";
+    // Incident Types
+  $route["manage_admin/compliance_safety/incident_types/add"]["get"] =
+  "manage_admin/Compliance_safety/incidentTypeAdd";
+$route["manage_admin/compliance_safety/incident_types/add"]["post"] =
+  "manage_admin/Compliance_safety/incidentTypeAdd";
+$route["manage_admin/compliance_safety/incident_types/edit/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/incidentTypeEdit/$1";
+$route["manage_admin/compliance_safety/incident_types/edit/(:num)"]["post"] =
+  "manage_admin/Compliance_safety/incidentTypeEdit/$1";

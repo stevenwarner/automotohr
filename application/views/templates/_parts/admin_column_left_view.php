@@ -16,6 +16,7 @@ $reports_menu = false;
 $activity_reports_menu = false;
 $financial_reports_menu = false;
 $incident_reporting_menu = false;
+$complianceSafetyReport = false;
 $safety_data_sheet_menu = false;
 $documents_library_menu = false;
 $affiliate_program_menu = false;
@@ -256,6 +257,8 @@ if (
     $financial_reports_menu = true;
 } else if ($this->uri->segment(3) == 'incident_reporting') {
     $incident_reporting_menu = true;
+} else if ($this->uri->segment(2) == 'compliance_safety') {
+    $complianceSafetyReport = true;
 } else if ($this->uri->segment(2) == 'safety_data_sheet') {
     $safety_data_sheet_menu = true;
 } else if ($this->uri->segment(2) == 'default_categories') {
@@ -1347,6 +1350,38 @@ if (
                                     } ?> href="<?php echo site_url('manage_admin/reports/incident_reporting'); ?>">List Incident Types</a>
                             </div>
                         <?php } ?>
+
+                        <?php if (check_access_permissions_for_view($security_details, 'reported_incident')) { ?>
+                            <div class="menu-item">
+                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/incident_reporting/reported_incidents')) !== false || ($this->uri->segment(4) == 'reported_incidents')) {
+                                        echo 'class="active"';
+                                    } ?> href="<?php echo site_url('manage_admin/reports/incident_reporting/reported_incidents'); ?>">Reported Incidents</a>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </li>
+            <?php } ?>
+            <?php $functions_names = [
+                "compliance_safety_dashboard",
+                "compliance_safety_report_add",
+                "compliance_safety_report_edit",
+                "compliance_safety_incident_add",
+                "compliance_safety_incident_edit",
+            ]; ?>
+            <?php if (check_access_permissions_for_view($security_details, $functions_names)) { ?>
+                <li>
+                    <a class="hr-closed-menu <?php if ($complianceSafetyReport) {
+                                                    echo 'hr-opened-menu';
+                                                } ?>" href="javascript:;">Compliance Safety</a>
+                    <div class="submenu" <?php if ($complianceSafetyReport) {
+                                                echo 'style="display:block;"';
+                                            } ?>>
+
+                            <div class="menu-item">
+                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/compliance_safety')) !== false) {
+                                        echo 'class="active"';
+                                    } ?> href="<?php echo site_url('manage_admin/compliance_safety/dashboard'); ?>">Overview</a>
+                            </div>
 
                         <?php if (check_access_permissions_for_view($security_details, 'reported_incident')) { ?>
                             <div class="menu-item">
