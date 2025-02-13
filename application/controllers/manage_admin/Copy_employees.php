@@ -272,13 +272,8 @@ class Copy_employees extends Admin_Controller
                         'active' => 0,
                         'username' => $secondary_employee_data['username'] . '_' . time()
                     ]);
-                // Update the transfer date
-                $transferDate = getSystemDate(DB_DATE);
-                $this->db->where('sid', $primary_employee_sid)->update('users', ['transfer_date' => $transferDate]);
-                $this->db->where('sid', $secondary_employee_sid)->update('users', ['transfer_date' => $transferDate]);
-
-
-                // Add transferred status to moved employee
+                
+                // Add transferred status to new employee
                 $ins = [];
                 $ins['status_change_date'] = date('Y-m-d', strtotime('now'));
                 $ins['details'] = $transferredNote . '<br/>' . 'Employee is moved from "' . (getUserColumnById($from_company, 'CompanyName')) . '".';
@@ -295,7 +290,7 @@ class Copy_employees extends Admin_Controller
 
 
 
-                // Add transferred status to primary employee
+                // Add transferred status to old employee
                 $ins = [];
                 $ins['status_change_date'] = date('Y-m-d', strtotime('now'));
                 $ins['details'] = 'Employee is moved to "' . (getUserColumnById($to_company, 'CompanyName')) . '".';
@@ -308,6 +303,12 @@ class Copy_employees extends Admin_Controller
                 $ins['termination_date'] = null;
 
                 $this->copy_employees_model->add_terminate_user_table($ins);
+                
+
+                // Update the transfer date
+                $transferDate = getSystemDate(DB_DATE);
+                $this->db->where('sid', $primary_employee_sid)->update('users', ['transfer_date' => $transferDate]);
+                $this->db->where('sid', $secondary_employee_sid)->update('users', ['transfer_date' => $transferDate]);
 
                 //
                 $array['status'] = "success";
@@ -345,10 +346,7 @@ class Copy_employees extends Admin_Controller
 
                 $user_to_insert = array();
 
-
                 $adminId = getCompanyAdminSid($to_company);
-
-
 
                 foreach ($employee as $key => $value) {
                     if ($key == 'username') {
@@ -817,7 +815,7 @@ class Copy_employees extends Admin_Controller
 
 
                 // Add transferred status to moved employee if last status is terminated
-                $lemployeeStatusRecord = get_instance()->db
+                $employeeStatusRecord = get_instance()->db
                     ->select('*')
                     ->from('terminated_employees')
                     ->where('employee_sid', $employee_sid)
@@ -825,9 +823,9 @@ class Copy_employees extends Admin_Controller
                     ->get()
                     ->result_array();
 
-                if (!empty($lemployeeStatusRecord)) {
+                if (!empty($employeeStatusRecord)) {
 
-                    foreach ($lemployeeStatusRecord as $statusRow) {
+                    foreach ($employeeStatusRecord as $statusRow) {
                         $ins = [];
                         $ins['employee_status'] = $statusRow['employee_status'];
                         $ins['termination_reason'] = $statusRow['termination_reason'];
@@ -852,6 +850,7 @@ class Copy_employees extends Admin_Controller
 
 
                 //
+                // Add transferred status to new employee
                 $insert_employee_change_status = array();
                 $insert_employee_change_status['status_change_date'] = date('Y-m-d', strtotime('now'));
                 $insert_employee_change_status['details'] = $transferredNote . '<br/>' . 'Employee is moved from "' . (getUserColumnById($from_company, 'CompanyName')) . '".';;
@@ -865,7 +864,7 @@ class Copy_employees extends Admin_Controller
 
                 $this->copy_employees_model->add_terminate_user_table($insert_employee_change_status);
 
-                // Add transferred status to primary employee
+                // Add transferred status to old employee
                 $ins = [];
                 $ins['status_change_date'] = date('Y-m-d', strtotime('now'));
                 $ins['details'] = 'Employee is moved to "' . (getUserColumnById($to_company, 'CompanyName')) . '".';
