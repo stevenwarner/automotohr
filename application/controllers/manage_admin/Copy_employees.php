@@ -817,38 +817,38 @@ class Copy_employees extends Admin_Controller
 
 
                 // Add transferred status to moved employee if last status is terminated
-                $lastEmployeeStatus = get_instance()->db
-                    ->select('employee_status')
+                $lemployeeStatusRecord = get_instance()->db
+                    ->select('*')
                     ->from('terminated_employees')
                     ->where('employee_sid', $employee_sid)
-                    ->order_by('sid', 'DESC')
+                    ->order_by('sid', 'ASC')
                     ->get()
-                    ->row_array();
+                    ->result_array();
 
-                if (!empty($lastEmployeeStatus)) {
+                if (!empty($lemployeeStatusRecord)) {
 
-                    if ($lastEmployeeStatus['employee_status'] == 1) {
-
+                    foreach ($lemployeeStatusRecord as $statusRow) {
                         $ins = [];
-                        $ins['status_change_date'] = date('Y-m-d', strtotime('now'));
-                        $ins['details'] = 'Employee is moved from "' . (getUserColumnById($from_company, 'CompanyName')) . '". and Activated';
-                        $ins['employee_status'] = 5;
+                        $ins['employee_status'] = $statusRow['employee_status'];
+                        $ins['termination_reason'] = $statusRow['termination_reason'];
+                        $ins['termination_date'] = $statusRow['termination_date'];
+                        $ins['involuntary_termination'] = $statusRow['involuntary_termination'];
+                        $ins['do_not_hire'] = $statusRow['do_not_hire'];
+                        $ins['status_change_date'] = $statusRow['status_change_date'];
+                        $ins['details'] = $statusRow['details'];
                         $ins['employee_sid'] = $new_employee_sid;
-                        $ins['changed_by'] = 0;
-                        $ins['ip_address'] = getUserIP();
-                        $ins['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
-                        $ins['termination_reason'] = 0;
-                        $ins['termination_date'] = null;
+                        $ins['changed_by'] = $statusRow['changed_by'];
+                        $ins['ip_address'] = $statusRow['ip_address'];
+                        $ins['user_agent'] = $statusRow['user_agent'];
+                        $ins['payroll_version'] = $statusRow['payroll_version'];
+                        $ins['payroll_object'] = $statusRow['payroll_object'];
+                        $ins['created_at'] = $statusRow['created_at'];
+                        $ins['source'] = $statusRow['source'];
 
                         $this->copy_employees_model->add_terminate_user_table($ins);
 
-                        $updateUser['active'] = 1;
-                        $this->db->where('sid', $new_employee_sid);
-                        $this->db->update('users', $updateUser);
                     }
                 }
-
-
 
 
                 //
