@@ -1247,7 +1247,7 @@ class Time_off extends Public_Controller
         }
         //
         $data['company_employees'] = $company_employees;
-        
+
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
         $data['theme'] = $this->theme;
         //
@@ -2512,12 +2512,12 @@ class Time_off extends Public_Controller
      */
     function handler()
     {
+
         // Check for ajax request
         if (!$this->input->is_ajax_request()) $this->resp();
         ///
         $post = $this->input->post(NULL, TRUE);
         // Check post size and action
-
         if (!sizeof($post) || !isset($post['action'])) $this->resp();
         if (!isset($post['companyId']) || $post['companyId'] == '') $this->resp();
         if (!isset($post['employerId']) || $post['employerId'] == '') $this->resp();
@@ -2535,7 +2535,7 @@ class Time_off extends Public_Controller
         //
         $this->res['Redirect'] = FALSE;
         //
-
+        //_e($post['action'],true,true);
         switch (strtolower($post['action'])) {
                 // Fetch company all policy types
             case 'get_company_types_list':
@@ -3794,7 +3794,6 @@ class Time_off extends Public_Controller
                     $post['employeeId']
                 );
                 //
-
                 $this->res['Status'] = true;
                 $this->res['Code'] = 'SUCCESS';
                 $this->res['Response'] = 'Proceed...';
@@ -3917,7 +3916,7 @@ class Time_off extends Public_Controller
                     $post['fromDate'] = DateTime::createfromformat('m/d/Y', $post['fromDate'])->format('Y-m-d');
                 }
                 //
-               
+
                 $policies = $this->timeoff_model->getEmployeePoliciesByDate(
                     $post['companyId'],
                     $post['employeeId'],
@@ -3931,11 +3930,11 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
                 break;
-            
+
             case "check_timeoff_request":
                 $request_from_date = DateTime::createfromformat('m/d/Y', $post['startDate'])->format('Y-m-d');
                 $request_to_date = DateTime::createfromformat('m/d/Y', $post['endDate'])->format('Y-m-d');
-                $response = $this->timeoff_model->checkEmployeeTimeoffRequestExist($post['employeeId'], $request_from_date, $request_to_date,$post['dateRows']);
+                $response = $this->timeoff_model->checkEmployeeTimeoffRequestExist($post['employeeId'], $request_from_date, $request_to_date, $post['dateRows']);
                 //
                 $this->res['Response'] = $response;
                 $this->res['Status'] = TRUE;
@@ -3992,7 +3991,8 @@ class Time_off extends Public_Controller
                     ]);
                 } else {
                     $in['note'] = json_encode([
-                        'status' => 'pending', 'comment' => $post['reason'],
+                        'status' => 'pending',
+                        'comment' => $post['reason'],
                         'details' => [
                             'startDate' => $post['startDate'],
                             'endDate' => $post['endDate'],
@@ -4011,7 +4011,9 @@ class Time_off extends Public_Controller
                     $in['action'] = 'update';
                     $in['comment'] = $post['comment'];
                     $in['note'] = json_encode([
-                        'status' => $post['status'], 'canApprove' => $canApprove, 'comment' => $post['comment'],
+                        'status' => $post['status'],
+                        'canApprove' => $canApprove,
+                        'comment' => $post['comment'],
                         'details' => [
                             'startDate' => $post['startDate'],
                             'endDate' => $post['endDate'],
@@ -7608,7 +7610,6 @@ class Time_off extends Public_Controller
             $employeeIds = strpos($employeeId, ',') !== false ? explode(',', $employeeId) : $employeeId;
         }
 
-
         $data['data'] = $this->timeoff_model->getEmployeesTimeOffNew(
             $data['company_sid'],
             $employeeIds,
@@ -7616,6 +7617,7 @@ class Time_off extends Public_Controller
             $this->input->get('end', true),
             $filter_policy
         );
+
         //
         $start = '';
         $period = '';
@@ -7640,7 +7642,7 @@ class Time_off extends Public_Controller
 
         $header_row . PHP_EOL;
 
-        $header_row = 'Employee,Employee Status,Policy,Time Taken,Start Date,End Date,Status,Joining Date,Rehire Date';
+        $header_row = 'Employee,Employee Status,Policy,Time Taken,Start Date,End Date,Status,Joining Date,Rehire Date,Anniversary Date,Time Off Type';
 
         $file_content = '';
         $file_content .= $header_row . PHP_EOL;
@@ -7654,7 +7656,6 @@ class Time_off extends Public_Controller
         }
 
         $rows = '';
-
 
         if (!empty($data['data'])) {
             foreach ($data['data'] as $row) {
@@ -7677,7 +7678,6 @@ class Time_off extends Public_Controller
                 }
                 //
 
-
                 if ($row['employee_type'] == 'fulltime') {
 
                     $joiningDate = $employee['employment_date'];
@@ -7693,7 +7693,22 @@ class Time_off extends Public_Controller
                 }
 
                 $rehireDate = get_employee_latest_joined_date("", "", $row["rehire_date"], false);
+
+
                 //
+                $todayDate = date('Y-m-d', strtotime('now'));
+                //
+
+
+                if (empty($rehireDate) && $joiningDate != 'N/A') {
+                    $anniversaryDate = getEmployeeAnniversary($joiningDate, $todayDate);
+                } else if (!empty($rehireDate)) {
+                    $anniversaryDate = getEmployeeAnniversary($rehireDate, $todayDate);
+                } else {
+                    $anniversaryDate = "N/A";
+                }
+
+
                 if (empty($rehireDate)) {
                     $rehireDate = "N/A";
                 } else {
@@ -7702,6 +7717,8 @@ class Time_off extends Public_Controller
 
 
                 $processRequest = splitTimeoffRequest($row);
+
+
                 //
                 if ($processRequest['type'] == 'multiple') {
                     //
@@ -7734,7 +7751,7 @@ class Time_off extends Public_Controller
                             $rows .= 'PENDING (PENDING)' . ',';
                         }
 
-                        $rows  .=  $joiningDate . ',' . $rehireDate;
+                        $rows  .=  $joiningDate . ',' . $rehireDate . ',' . $anniversaryDate['lastAnniversaryDate'] . ',' . $processRequest['type'];
 
                         $rows .= PHP_EOL;
                     }
@@ -7753,32 +7770,32 @@ class Time_off extends Public_Controller
                     $status = $processRequest['requestData']['status'];
                     //
                     if ($status == 'approved') {
-                        $rows .= 'APPROVED' . ' (' . strip_tags($processRequest['requestData']['request_status']) . ')'.',';
+                        $rows .= 'APPROVED' . ' (' . strip_tags($processRequest['requestData']['request_status']) . ')' . ',';
                     } else if ($status == 'rejected') {
-                        $rows .= 'REJECTED (PENDING)'.',';
+                        $rows .= 'REJECTED (PENDING)' . ',';
                     } else if ($status == 'pending') {
-                        $rows .= 'PENDING (PENDING)'.',';
+                        $rows .= 'PENDING (PENDING)' . ',';
                     }
-                    $rows  .=  $joiningDate . ',' . $rehireDate;
+                    $rows  .=  $joiningDate . ',' . $rehireDate . ',' . $anniversaryDate['lastAnniversaryDate'] . ',' . $processRequest['type'];
 
                     $rows .= PHP_EOL;
                 }
             }
         }
 
-        $outputFile = $companyHeader. PHP_EOL;
-        $outputFile .= $header_row. PHP_EOL;
-        $outputFile .= $rows. PHP_EOL;
+        $outputFile = $companyHeader . PHP_EOL;
+        $outputFile .= $header_row . PHP_EOL;
+        $outputFile .= $rows . PHP_EOL;
 
         //
-        $fileName = 'employees_time_off/Company_Name:'.str_replace(" ", "_", $data['session']['company_detail']['CompanyName'])."/Generated_By:". $data['session']['employer_detail']['first_name'] . '_' . $data['session']['employer_detail']['last_name'] ."/Report_Period:".$period."/Generated_Date:". date('Y_m_d-H:i:s') . '.csv';
+        $fileName = 'employees_time_off/Company_Name:' . str_replace(" ", "_", $data['session']['company_detail']['CompanyName']) . "/Generated_By:" . $data['session']['employer_detail']['first_name'] . '_' . $data['session']['employer_detail']['last_name'] . "/Report_Period:" . $period . "/Generated_Date:" . date('Y_m_d-H:i:s') . '.csv';
 
         header('Pragma: public');     // required
         header('Expires: 0');         // no cache
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Cache-Control: private', false);
         header('Content-Type: text/csv');  // Add the mime type from Code igniter.
-        header('Content-Disposition: attachment; filename="'.$fileName.'"');  // Add the file name
+        header('Content-Disposition: attachment; filename="' . $fileName . '"');  // Add the file name
         header('Content-Transfer-Encoding: binary');
         header('Content-Length: ' . strlen($outputFile)); // provide file size
         header('Connection: close');
