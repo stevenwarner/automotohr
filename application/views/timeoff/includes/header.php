@@ -80,13 +80,14 @@ $tabs = [
                 'icon' => 'upload',
                 'segment' => 'import',
             ],
+            /*
             [
                 'title' => 'Export',
                 'url' => 'export',
                 'slug' => 'export_time_off',
                 'icon' => 'download',
                 'segment' => 'export',
-            ],
+            ],*/
             [
                 'title' => 'Download Report',
                 'url' => 'report',
