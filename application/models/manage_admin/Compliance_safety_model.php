@@ -15,6 +15,8 @@ class Compliance_safety_model extends CI_Model
             ->select([
                 "id",
                 "compliance_report_name",
+                "color_code",
+                "bg_color_code",
                 "updated_at",
                 "status",
             ])
@@ -30,6 +32,8 @@ class Compliance_safety_model extends CI_Model
             ->db
             ->select([
                 "compliance_report_name",
+                "color_code",
+                "bg_color_code",
                 "instructions",
                 "reasons",
                 "updated_at",

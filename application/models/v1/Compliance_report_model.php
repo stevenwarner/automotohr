@@ -2,12 +2,12 @@
 
 class Compliance_report_model extends CI_Model
 {
-    function __construct()
-    {
-        parent::__construct();
-    }
+	function __construct()
+	{
+		parent::__construct();
+	}
 
-    function fetch_reports_user_guide($id)
+	function fetch_reports_user_guide($id)
 	{
 		$this->db->select('*');
 		$this->db->where('id', $id);
@@ -15,7 +15,7 @@ class Compliance_report_model extends CI_Model
 		return $guide;
 	}
 
-    function fetch_all_question($id)
+	function fetch_all_question($id)
 	{
 		$this->db->where('incident_type_id', $id);
 		$this->db->where('status', 1);
@@ -23,7 +23,7 @@ class Compliance_report_model extends CI_Model
 		return $questions;
 	}
 
-    function getAllCompanyEmployeesForComplianceSafety($company_sid)
+	function getAllCompanyEmployeesForComplianceSafety($company_sid)
 	{
 		$this->db->select('sid,first_name, last_name, email, PhoneNumber');
 		$this->db->where('parent_sid', $company_sid);
@@ -34,7 +34,7 @@ class Compliance_report_model extends CI_Model
 		return $result;
 	}
 
-    function get_all_employees($company_sid)
+	function get_all_employees($company_sid)
 	{
 		$this->db->select('sid');
 		$this->db->select('first_name');
@@ -60,26 +60,26 @@ class Compliance_report_model extends CI_Model
 		return $records_arr;
 	}
 
-    function updateComplianceReport($id, $data)
+	function updateComplianceReport($id, $data)
 	{
 		$this->db->where('id', $id);
 		$this->db->update('incident_reporting', $data);
 	}
 
-    function updateComplianceRelatedVideo($incident_sid, $video_to_update)
+	function updateComplianceRelatedVideo($incident_sid, $video_to_update)
 	{
 		$this->db->where('incident_sid', $incident_sid);
 		$this->db->where('is_incident_reported', 0);
 		$this->db->update('incident_related_videos', $video_to_update);
 	}
 
-    function insertComplianceReport($insert)
+	function insertComplianceReport($insert)
 	{
 		$this->db->insert('incident_reporting', $insert);
 		return $this->db->insert_id();
 	}
 
-    function get_specific_question($id)
+	function get_specific_question($id)
 	{
 		$this->db->where('id', $id);
 		$this->db->select('label');
@@ -93,19 +93,19 @@ class Compliance_report_model extends CI_Model
 		return $label;
 	}
 
-    function insertComplianceQuestionAnswer($insert)
+	function insertComplianceQuestionAnswer($insert)
 	{
 		$this->db->insert('incident_reporting_question_answer', $insert);
 		return $this->db->insert_id();
 	}
 
-    function assignComplianceReportToEmployees($data)
+	function assignComplianceReportToEmployees($data)
 	{
 		$this->db->insert('incident_assigned_emp', $data);
 		return $this->db->insert_id();
 	}
 
-    function fetch_employee_name_by_sid($sid, $model_flag = 0)
+	function fetch_employee_name_by_sid($sid, $model_flag = 0)
 	{
 		$this->db->select('first_name, last_name, email');
 		$this->db->where('sid', $sid);
@@ -212,7 +212,8 @@ class Compliance_report_model extends CI_Model
 		return $return_data;
 	}
 
-	public function getComplianceSafetyTitle ($incidentId) {
+	public function getComplianceSafetyTitle($incidentId)
+	{
 		$this->db->select('compliance_safety_title');
 		$this->db->where('id', $incidentId);
 		//
@@ -383,7 +384,8 @@ class Compliance_report_model extends CI_Model
 		return $result;
 	}
 
-	public function getMyEmails ($incidentId, $employeeId) {
+	public function getMyEmails($incidentId, $employeeId)
+	{
 		$where = "(sender_sid='" . $employeeId . "' OR receiver_sid='" . $employeeId . "')";
 		$this->db->select('*');
 		$this->db->where($where);
@@ -401,10 +403,9 @@ class Compliance_report_model extends CI_Model
 				$email['reverse_check'] = 0;
 				$userId = 0;
 				//
-				if ($email['receiver_sid'] == $employeeId)  {
+				if ($email['receiver_sid'] == $employeeId) {
 					$email['email_status'] = 'received';
 					$userId = $email['sender_sid'];
-
 				} else {
 					$userId = $email['receiver_sid'];
 					$email['email_status'] = 'send';
@@ -416,14 +417,14 @@ class Compliance_report_model extends CI_Model
 					//
 					if ($email["manual_email"]) {
 						$split_email = explode('@', $email['manual_email']);
-                        $userName = $split_email[0].' (OutSider)';
+						$userName = $split_email[0] . ' (OutSider)';
 					} else {
 						$employeeInfo = $this->get_employee_info_by_id($userId);
 						$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
 						//
 						$userName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
 					}
-					
+
 					//	
 					$incident_emails[$userId]['userName'] = $userName;
 					$incident_emails[$userId]['userId'] = $userId;
@@ -438,7 +439,8 @@ class Compliance_report_model extends CI_Model
 		return $incident_emails;
 	}
 
-	public function getOtherEmails ($incidentId, $employeeId) {
+	public function getOtherEmails($incidentId, $employeeId)
+	{
 		// get all user
 		$this->db->select('employer_sid');
 		$this->db->where('incident_sid', $incidentId);
@@ -473,10 +475,9 @@ class Compliance_report_model extends CI_Model
 						$email['reverse_check'] = 0;
 						$userId = 0;
 						//
-						if ($email['receiver_sid'] == $otherEmployeeId)  {
+						if ($email['receiver_sid'] == $otherEmployeeId) {
 							$email['email_status'] = 'received';
 							$userId = $email['sender_sid'];
-		
 						} else {
 							$userId = $email['receiver_sid'];
 							$email['email_status'] = 'send';
@@ -489,7 +490,7 @@ class Compliance_report_model extends CI_Model
 							$employeeInfo = $this->get_employee_info_by_id($userId);
 							if ($email["manual_email"]) {
 								$split_email = explode('@', $email['manual_email']);
-								$userName = $split_email[0].' (OutSider)';
+								$userName = $split_email[0] . ' (OutSider)';
 							} else {
 								$employeeInfo = $this->get_employee_info_by_id($userId);
 								$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
@@ -516,7 +517,8 @@ class Compliance_report_model extends CI_Model
 		return $incident_emails;
 	}
 
-	public function getPrivateUserEmails ($incidentId, $emailId) {
+	public function getPrivateUserEmails($incidentId, $emailId)
+	{
 		$this->db->select('*');
 		$this->db->where('manual_email', $emailId);
 		$this->db->where('incident_reporting_id', $incidentId);
@@ -533,10 +535,9 @@ class Compliance_report_model extends CI_Model
 				$email['reverse_check'] = 0;
 				$userId = 0;
 				//
-				if ($email['receiver_sid'] == 0)  {
+				if ($email['receiver_sid'] == 0) {
 					$email['email_status'] = 'received';
 					$userId = $email['sender_sid'];
-
 				} else {
 					$userId = $email['receiver_sid'];
 					$email['email_status'] = 'send';
@@ -548,7 +549,7 @@ class Compliance_report_model extends CI_Model
 					//
 					if ($email["manual_email"]) {
 						$split_email = explode('@', $email['manual_email']);
-                        $userName = $split_email[0].' (OutSider)';
+						$userName = $split_email[0] . ' (OutSider)';
 					} else {
 						$employeeInfo = $this->get_employee_info_by_id($userId);
 						$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
@@ -569,7 +570,8 @@ class Compliance_report_model extends CI_Model
 		return $incident_emails;
 	}
 
-	function getOtherUsersEmails ($incidentId, $emailId) {
+	function getOtherUsersEmails($incidentId, $emailId)
+	{
 		$this->db->select('employer_sid');
 		$this->db->where('incident_sid', $incidentId);
 		//
@@ -601,10 +603,9 @@ class Compliance_report_model extends CI_Model
 						$email['reverse_check'] = 0;
 						$userId = 0;
 						//
-						if ($email['receiver_sid'] == $otherEmployeeId)  {
+						if ($email['receiver_sid'] == $otherEmployeeId) {
 							$email['email_status'] = 'received';
 							$userId = $email['sender_sid'];
-		
 						} else {
 							$userId = $email['receiver_sid'];
 							$email['email_status'] = 'send';
@@ -616,7 +617,7 @@ class Compliance_report_model extends CI_Model
 							//
 							if ($email["manual_email"]) {
 								$split_email = explode('@', $email['manual_email']);
-								$userName = $split_email[0].' (OutSider)';
+								$userName = $split_email[0] . ' (OutSider)';
 							} else {
 								$employeeInfo = $this->get_employee_info_by_id($userId);
 								$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
@@ -663,22 +664,23 @@ class Compliance_report_model extends CI_Model
 		return $return_data;
 	}
 
-	public function getUserType ($userInfo, $incidentId, $userId) {
+	public function getUserType($userInfo, $incidentId, $userId)
+	{
 		if (
-            $this->db
-            ->where('witness_email', $userInfo['email'])
-			->where('incident_reporting_id', $incidentId)
-            ->count_all_results('incident_related_witnesses')
-        ) {
-            return "Company Witness";
-        } else if (
 			$this->db
-            ->where('employer_sid', $userId)
-			->where('incident_sid', $incidentId)
-            ->count_all_results('incident_assigned_emp')
+			->where('witness_email', $userInfo['email'])
+			->where('incident_reporting_id', $incidentId)
+			->count_all_results('incident_related_witnesses')
 		) {
-            return "Assigned Manager";
-        } else {
+			return "Company Witness";
+		} else if (
+			$this->db
+			->where('employer_sid', $userId)
+			->where('incident_sid', $incidentId)
+			->count_all_results('incident_assigned_emp')
+		) {
+			return "Assigned Manager";
+		} else {
 			return "Company Employee";
 		}
 	}
@@ -828,7 +830,8 @@ class Compliance_report_model extends CI_Model
 		return $comments;
 	}
 
-	public function getComplianceSafetyReportEmployees ($incidentId) {
+	public function getComplianceSafetyReportEmployees($incidentId)
+	{
 		$this->db->select('employer_sid');
 		$this->db->where('incident_sid', $incidentId);
 		//
@@ -848,18 +851,19 @@ class Compliance_report_model extends CI_Model
 	function checkManualUserIsAnEmployee($email, $companyId)
 	{
 		if (
-            $this->db
-            ->where('email', $email)
-            ->where('parent_sid', $companyId)
-            ->count_all_results('users')
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+			$this->db
+			->where('email', $email)
+			->where('parent_sid', $companyId)
+			->count_all_results('users')
+		) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	function getUserInfoByEmail ($email, $companyId) {
+	function getUserInfoByEmail($email, $companyId)
+	{
 		$this->db->select('sid, first_name, last_name');
 		$this->db->where('email', $email);
 		$this->db->where('parent_sid', $companyId);
@@ -908,23 +912,22 @@ class Compliance_report_model extends CI_Model
 		$record_obj->free_result();
 		//
 		if (
-            $this->db
-            ->where('employer_sid', $employeeId)
-			->where('id', $incidentId)
-            ->count_all_results('incident_reporting')
-        ) {
-            return "reporter";
-        } else if (
 			$this->db
-            ->where('employer_sid', $employeeId)
-			->where('incident_sid', $incidentId)
-            ->count_all_results('incident_assigned_emp')
+			->where('employer_sid', $employeeId)
+			->where('id', $incidentId)
+			->count_all_results('incident_reporting')
 		) {
-            return "incident_manager";
-        }
+			return "reporter";
+		} else if (
+			$this->db
+			->where('employer_sid', $employeeId)
+			->where('incident_sid', $incidentId)
+			->count_all_results('incident_assigned_emp')
+		) {
+			return "incident_manager";
+		}
 		//
 		return "out_sider";
-		
 	}
 
 	function addComplianceReportComment($data)
@@ -1135,7 +1138,8 @@ class Compliance_report_model extends CI_Model
 		return $return_data;
 	}
 
-	function insertComplianceReportLog ($insert) {
+	function insertComplianceReportLog($insert)
+	{
 		$this->db->insert('incident_report_log', $insert);
 	}
 
@@ -1229,18 +1233,19 @@ class Compliance_report_model extends CI_Model
 		return $this->db->get('incident_assigned_emp')->num_rows();
 	}
 
-	public function isEmployeeInitiatedReport ($incidentId, $companyId, $employeeId) {
+	public function isEmployeeInitiatedReport($incidentId, $companyId, $employeeId)
+	{
 		if (
-            $this->db
+			$this->db
 			->where('id', $incidentId)
-            ->where('employer_sid', $employeeId)
-            ->where('company_sid', $companyId)
-            ->count_all_results('incident_reporting')
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+			->where('employer_sid', $employeeId)
+			->where('company_sid', $companyId)
+			->count_all_results('incident_reporting')
+		) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	function get_company_name_by_sid($sid)
@@ -1278,16 +1283,17 @@ class Compliance_report_model extends CI_Model
 		return $this->db->insert_id();
 	}
 
-	public function checkManualUserExist ($emailId, $reportId) {
+	public function checkManualUserExist($emailId, $reportId)
+	{
 		if (
-            !$this->db
-			->where('email', $emailId)
-            ->where('compliance_report_sid', $reportId)
-            ->count_all_results('compliance_report_outsider_user')
-        ) {
+			!$this->db
+				->where('email', $emailId)
+				->where('compliance_report_sid', $reportId)
+				->count_all_results('compliance_report_outsider_user')
+		) {
 			//
 			$session = $this->session->userdata('logged_in');
-            $employeeId = $session["employer_detail"]["sid"];
+			$employeeId = $session["employer_detail"]["sid"];
 			//
 			$outsiderUser = array();
 			$outsiderUser['compliance_report_sid'] = $reportId;
@@ -1308,21 +1314,38 @@ class Compliance_report_model extends CI_Model
 			);
 			//
 			$this->compliance_report_model->insertComplianceTrackingRecord($trackingObj);
-        }
+		}
 	}
 
-	public function checkUserHasPermissionToReport ($emailId, $reportId) {
+	public function checkUserHasPermissionToReport($emailId, $reportId)
+	{
 		if (
-            $this->db
+			$this->db
 			->where('email', $emailId)
-            ->where('compliance_report_sid', $reportId)
+			->where('compliance_report_sid', $reportId)
 			->where('is_active', 1)
-            ->count_all_results('compliance_report_outsider_user')
-        ) {
+			->count_all_results('compliance_report_outsider_user')
+		) {
 			return true;
-        } else {
+		} else {
 			return false;
 		}
 	}
 
+	public function getAllReportTypes()
+	{
+		return $this
+			->db
+			->select([
+				"id",
+				"compliance_report_name",
+				"instructions",
+				"color_code",
+				"bg_color_code",
+			])
+			->where("status", 1)
+			->order_by("compliance_report_name", "ASC")
+			->get("compliance_report_types")
+			->result_array();
+	}
 }

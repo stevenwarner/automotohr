@@ -2517,3 +2517,8 @@ $route["manage_admin/compliance_safety/incident_types/edit_question/(:num)"]["po
 
 $route["manage_admin/compliance_safety/incident_types/enable_disable_question/(:num)"]["get"] =
   "manage_admin/Compliance_safety/enable_disable_question/$1";
+
+
+// Employee Compliance Safety Reporting
+$route["compliance_safety_reporting/listing"]["get"] =
+  "v1/Compliance_safety_reporting/listing";

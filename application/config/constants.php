@@ -409,6 +409,7 @@ $blue_panel_modules[] = 'general_info';
 $blue_panel_modules[] = 'add_ems_notification';
 $blue_panel_modules[] = 'edit_ems_notification';
 $blue_panel_modules[] = 'complynet';
+$blue_panel_modules[] = 'compliance_safety_reporting';
 // 
 $blue_panel_modules[] = 'authorized_document';
 define('BLUE_PANEL_MODULES', implode(',', $blue_panel_modules));
@@ -742,8 +743,8 @@ Form W-4 by February 15, 2025');
 
 define('W4_YEAR_24', '2024');
 
-define('SHIFTS_SWAP_ADMIN_REJECTED', 439); 
-define('SHIFTS_SWAP_AWAITING_CONFIRMATION', 440); 
+define('SHIFTS_SWAP_ADMIN_REJECTED', 439);
+define('SHIFTS_SWAP_AWAITING_CONFIRMATION', 440);
 define('SHIFTS_SWAP_EMPLOYEE_REJECTION', 449);
 define('SHIFTS_SWAP_ADMIN_APPROVAL', 450);
 define('SHIFTS_SWAP_ADMIN_APPROVED', 451);
@@ -778,5 +779,5 @@ define('W4_YEAR_25', '2025');
 define('I9_NEW_EXPIRES_2025', '05/31/2027');
 define('COMPLIANCE_REPORT_NOTIFICATION', 472);
 
-
-
+// Compliance Safety
+define("MODULE_COMPLIANCE_SAFETY", "compliancesafety");

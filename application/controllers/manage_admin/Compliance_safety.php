@@ -41,6 +41,8 @@ class Compliance_safety extends Admin_Controller
         // add rules
         $this->form_validation->set_rules('report_name', 'Report Name', 'required|trim');
         $this->form_validation->set_rules('status', 'Status', 'required');
+        $this->form_validation->set_rules('bg_color_code', 'Background Color Code', 'required');
+        $this->form_validation->set_rules('color_code', 'Color Code', 'required');
         $this->form_validation->set_rules('instructions', 'Instructions', 'required');
         //
         if (!$this->form_validation->run()) {
@@ -59,6 +61,8 @@ class Compliance_safety extends Admin_Controller
                     "compliance_report_name" => $post["report_name"],
                     "status" => $post["status"],
                     "instructions" => $post["instructions"],
+                    "color_code" => $post["color_code"],
+                    "bg_color_code" => $post["bg_color_code"],
                     "reasons" => $post["reasons"],
                     "created_at" => $todayDateTime,
                     "updated_at" => $todayDateTime,
@@ -100,6 +104,8 @@ class Compliance_safety extends Admin_Controller
         // add rules
         $this->form_validation->set_rules('report_name', 'Report Name', 'required|trim');
         $this->form_validation->set_rules('status', 'Status', 'required');
+        $this->form_validation->set_rules('color_code', 'Color Code', 'required');
+        $this->form_validation->set_rules('bg_color_code', 'Background Color Code', 'required');
         $this->form_validation->set_rules('instructions', 'Instructions', 'required');
         //
         if (!$this->form_validation->run()) {
@@ -117,6 +123,8 @@ class Compliance_safety extends Admin_Controller
                 ->update("compliance_report_types", [
                     "compliance_report_name" => $post["report_name"],
                     "status" => $post["status"],
+                    "color_code" => $post["color_code"],
+                    "bg_color_code" => $post["bg_color_code"],
                     "instructions" => $post["instructions"],
                     "reasons" => $post["reasons"],
                     "updated_at" => $todayDateTime,

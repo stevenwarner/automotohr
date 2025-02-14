@@ -1193,6 +1193,27 @@
                                         </div>
                                     <?php } ?>
 
+                                    <?php if (checkIfAppIsEnabled(MODULE_COMPLIANCE_SAFETY)) { ?>
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure>
+                                                        <i class="fa fa-building <?= false != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
+                                                    </figure>
+                                                    <h2 class="post-title">
+                                                        <a href="<?php echo base_url('compliance_safety_reporting/listing'); ?>">Compliance Safety Reporting</a>
+                                                    </h2>
+                                                    <div class="count-box" style="font-size: 12px">
+                                                        <span class="green"><?= 0 ?? 0; ?> pending</span><br>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a href="<?php echo base_url('compliance_safety_reporting/listing'); ?>" class="site-btn">Show</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+
                                     <!-- Account Activity -->
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box activity-box-wrp">

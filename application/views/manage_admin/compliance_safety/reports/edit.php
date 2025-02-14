@@ -43,13 +43,27 @@
                                                             <?php echo form_error('report_name'); ?>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                         <div class="field-row">
                                                             <label for="status">Status <span class="hr-required">*</span></label>
                                                             <select name="status" class="hr-form-fileds">
                                                                 <option <?= $report_type["status"] == "0" ? "selected" : ""; ?> value="0">In Active</option>
                                                                 <option <?= $report_type["status"] == "1" ? "selected" : ""; ?> value="1">Active</option>
                                                             </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
+                                                        <div class="field-row">
+                                                            <label for="status">BG Color <span class="hr-required">*</span></label>
+                                                            <input type="color" name="bg_color_code" id="bg_color_code" class="hr-form-fileds" value="<?=$report_type["bg_color_code"];?>">
+                                                            <?php echo form_error('bg_color_code'); ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                        <div class="field-row">
+                                                            <label for="status">Color <span class="hr-required">*</span></label>
+                                                            <input type="color" name="color_code" id="color_code" class="hr-form-fileds" value="<?=$report_type["color_code"];?>">
+                                                            <?php echo form_error('color_code'); ?>
                                                         </div>
                                                     </div>
 

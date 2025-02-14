@@ -43,13 +43,28 @@
                                                             <?php echo form_error('report_name'); ?>
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+
+                                                    <div class="col-lg-3 col-md-12 col-xs-12 col-sm-3">
                                                         <div class="field-row">
                                                             <label for="status">Status <span class="hr-required">*</span></label>
                                                             <select name="status" class="hr-form-fileds">
                                                                 <option value="0">In Active</option>
                                                                 <option value="1">Active</option>
                                                             </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
+                                                        <div class="field-row">
+                                                            <label for="status">BG Color <span class="hr-required">*</span></label>
+                                                            <input type="color" name="bg_color_code" id="bg_color_code" class="hr-form-fileds">
+                                                            <?php echo form_error('bg_color_code'); ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                                                        <div class="field-row">
+                                                            <label for="status">Color <span class="hr-required">*</span></label>
+                                                            <input type="color" name="color_code" id="color_code" class="hr-form-fileds">
+                                                            <?php echo form_error('color_code'); ?>
                                                         </div>
                                                     </div>
 
@@ -70,6 +85,8 @@
                                                             </textarea>
                                                         </div>
                                                     </div>
+
+
                                                 </div>
                                         </div>
                                     </div>
@@ -87,8 +104,8 @@
                                                 <?php foreach ($incident_types as $item) { ?>
                                                     <div class="form-group">
                                                         <label class="control control--checkbox">
-                                                            <input type="checkbox" name="incident_types[]" value="<?=$item["id"];?>">
-                                                            <?= $item["compliance_incident_type_name"]; ?> <?= $item["code"] ? "(".($item["code"]).")" : ""; ?>
+                                                            <input type="checkbox" name="incident_types[]" value="<?= $item["id"]; ?>">
+                                                            <?= $item["compliance_incident_type_name"]; ?> <?= $item["code"] ? "(" . ($item["code"]) . ")" : ""; ?>
                                                             <div class="control__indicator"></div>
                                                         </label>
                                                     </div>
@@ -160,7 +177,18 @@
     });
 
     $(document).ready(function() {
-        CKEDITOR.replace('instructions');
+        // CKEDITOR.replace('instructions', {
+        //     extraPlugins: "clipboard",
+        //     filebrowserUploadUrl: '/uploader/upload.php', // Your upload script URL
+        //     filebrowserUploadMethod: 'form', // How the upload should be handled
+        // });
+        CKEDITOR.replace('instructions', {
+            extraPlugins: 'clipboard,image', // Add image and clipboard plugins
+            allowedContent: true, // Allow more content
+            filebrowserUploadUrl: '/uploader/upload.php', // Replace with your server-side upload URL
+            filebrowserUploadMethod: 'form', // Upload method
+        });
+
         CKEDITOR.replace('reasons');
     });
 </script>
