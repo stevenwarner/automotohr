@@ -2481,3 +2481,7 @@ $route['manage_admin/lms/manual_course_complete'] = 'manage_admin/Lms_employees/
 $route['manage_admin/lms_employees/manual_assign'] = 'manage_admin/Lms_employees/manualAssignCourses';
 $route['manage_admin/lms/getallcourses/(:num)/(:num)'] = 'manage_admin/Lms_employees/getallCourses/$1/$2';
 $route['hr_documents_management/manager_report/(:any)'] = 'Hr_documents_management/managerDocumentReport/$1';
+
+
+//
+$route["webhook/indeed/applicant"] = "Indeed_feed/indeedPostUrl";
