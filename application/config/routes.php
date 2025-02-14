@@ -198,6 +198,8 @@ $route['timeoff/print/(:any)/(:any)'] = 'Time_off/print_and_download/print/$1/$2
 $route['timeoff/download/(:any)/(:any)'] = 'Time_off/print_and_download/download/$1/$2';
 $route['timeoff/print/(:any)/(:any)/(:any)'] = 'Time_off/print_and_download/print/$1/$2/$3';
 $route['timeoff/download/(:any)/(:any)/(:any)'] = 'Time_off/print_and_download/download/$1/$2/$3';
+$route['timeoff/export/(:any)/(:any)'] = 'Time_off/print_and_download/export/$1/$2';
+$route['timeoff/export/(:any)/(:any)/(:any)'] = 'Time_off/print_and_download/export/$1/$2/$3';
 
 // $route['timeoff/print/(:any)/(:num)'] = 'Time_off/print_document/$1/$2';
 // $route['timeoff/download/(:any)/(:num)'] = 'Time_off/download/$1/$2';
