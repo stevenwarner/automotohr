@@ -85,7 +85,7 @@
                                                         </a>
                                                     </div>
                                                     <div class="col-lg-6">
-                                                        <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black btn-block csRadius5 csF16">
+                                                        <a href="<?php echo base_url('executive_admin/lms_subordinate_report/'.$companyId); ?>" class="btn btn-black btn-block csRadius5 csF16">
                                                             <i class="fa fa-times" aria-hidden="true"></i> Clear
                                                         </a>
                                                     </div>
