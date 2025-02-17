@@ -198,6 +198,8 @@ $route['timeoff/print/(:any)/(:any)'] = 'Time_off/print_and_download/print/$1/$2
 $route['timeoff/download/(:any)/(:any)'] = 'Time_off/print_and_download/download/$1/$2';
 $route['timeoff/print/(:any)/(:any)/(:any)'] = 'Time_off/print_and_download/print/$1/$2/$3';
 $route['timeoff/download/(:any)/(:any)/(:any)'] = 'Time_off/print_and_download/download/$1/$2/$3';
+$route['timeoff/export/(:any)/(:any)'] = 'Time_off/print_and_download/export/$1/$2';
+$route['timeoff/export/(:any)/(:any)/(:any)'] = 'Time_off/print_and_download/export/$1/$2/$3';
 
 // $route['timeoff/print/(:any)/(:num)'] = 'Time_off/print_document/$1/$2';
 // $route['timeoff/download/(:any)/(:num)'] = 'Time_off/download/$1/$2';
@@ -2479,3 +2481,7 @@ $route['manage_admin/lms/manual_course_complete'] = 'manage_admin/Lms_employees/
 $route['manage_admin/lms_employees/manual_assign'] = 'manage_admin/Lms_employees/manualAssignCourses';
 $route['manage_admin/lms/getallcourses/(:num)/(:num)'] = 'manage_admin/Lms_employees/getallCourses/$1/$2';
 $route['hr_documents_management/manager_report/(:any)'] = 'Hr_documents_management/managerDocumentReport/$1';
+
+
+//
+$route["webhook/indeed/applicant"] = "Indeed_feed/indeedPostUrl";

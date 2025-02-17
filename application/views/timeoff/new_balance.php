@@ -14,6 +14,7 @@
                         <span class="pull-right">
                             <a href="<?= base_url('timeoff/print/balance/0'); ?>" target="_blank" class="btn btn-orange"><i class="fa fa-print"></i> Print</a>
                             <a href="<?= base_url('timeoff/download/balance/0'); ?>" target="_blank" class="btn btn-orange"><i class="fa fa-download"></i> Download</a>
+                            <a href="<?= base_url('timeoff/export/balance/0'); ?>" target="_blank" class="btn btn-orange"><i class="fa fa-file"></i> Export</a>
                             <button class="btn btn-orange manage_my_team"><i class="fa fa-users"></i> Manage Teams</button>
                         </span>
                     </div>

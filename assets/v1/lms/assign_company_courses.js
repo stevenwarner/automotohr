@@ -72,16 +72,14 @@ $(function LMSStoreCourses() {
 		var sid = $(this).closest("tr").data("id");
 		//
 		alertify.confirm(
-			'Are You Sure?',
-			'Are you sure want to disable this course?',
+			"Are You Sure?",
+			"Are you sure want to disable this course?",
 			function () {
 				// call the function
-				changeCourseStatus(sid, 'disable');
+				changeCourseStatus(sid, "disable");
 			},
-			function () {
-
-			}
-		)
+			function () {}
+		);
 	});
 
 	/**
@@ -93,16 +91,14 @@ $(function LMSStoreCourses() {
 		var sid = $(this).closest("tr").data("id");
 		//
 		alertify.confirm(
-			'Are You Sure?',
-			'Are you sure want to enable this course?',
+			"Are You Sure?",
+			"Are you sure want to enable this course?",
 			function () {
 				// call the function
-				changeCourseStatus(sid, 'enable');
+				changeCourseStatus(sid, "enable");
 			},
-			function () {
-
-			}
-		)
+			function () {}
+		);
 	});
 
 	/**
@@ -115,8 +111,7 @@ $(function LMSStoreCourses() {
 		var courseId = $(this).data("course_id");
 		var courseTitle = $(this).data("course_title");
 		//
-		startEditCourseJobRoleProcess(courseId, courseTitle)
-		
+		startEditCourseJobRoleProcess(courseId, courseTitle);
 	});
 
 	/**
@@ -128,6 +123,11 @@ $(function LMSStoreCourses() {
 		// create the course object
 		courseObj = {
 			job_titles: $("#jsEditCourseJobTitles").val() || [],
+			revertJobTitles: $("#jsEditCourseJobTitleRevertOption").prop(
+				"checked"
+			)
+				? "on"
+				: "off",
 		};
 		//
 		handleCourseJobRoleUpdate(courseObj);
@@ -159,8 +159,10 @@ $(function LMSStoreCourses() {
 		//
 		try {
 			//
-			console.log("please call update call")
-			const updateCourseResponse = await updateCourseJobRollCall(courseObj);
+			console.log("please call update call");
+			const updateCourseResponse = await updateCourseJobRollCall(
+				courseObj
+			);
 			//
 			return alertify.alert(
 				"SUCCESS!",
@@ -187,7 +189,7 @@ $(function LMSStoreCourses() {
 	 * @returns
 	 */
 	function updateCourseJobRollCall(courseObj) {
-		console.log("update call")
+		console.log("update call");
 		return new Promise(function (resolve, reject) {
 			//
 			$.ajax({
@@ -218,7 +220,7 @@ $(function LMSStoreCourses() {
 		Modal(
 			{
 				Id: modalId,
-				Title: 'Update Course <span>'+courseTitle+'</span>',
+				Title: "Update Course <span>" + courseTitle + "</span>",
 				Loader: modalLoaderId,
 				Cl: "container",
 				Ask: true,
@@ -238,7 +240,7 @@ $(function LMSStoreCourses() {
 		}
 		//
 		XHR = $.ajax({
-			url: apiURL + "lms/company/view/edit_job_role/"+courseCode,
+			url: apiURL + "lms/company/view/edit_job_role/" + courseCode,
 			method: "GET",
 		})
 			.success(function (resp) {
@@ -262,7 +264,7 @@ $(function LMSStoreCourses() {
 	}
 
 	// Change course status
-	function changeCourseStatus (id, status) {
+	function changeCourseStatus(id, status) {
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();
@@ -461,8 +463,7 @@ $(function LMSStoreCourses() {
 			});
 	}
 	//
-	function sendCourseToSave(CMIElements) {
-	}
+	function sendCourseToSave(CMIElements) {}
 	//
 	window.sendCourseToSave = sendCourseToSave;
 	//

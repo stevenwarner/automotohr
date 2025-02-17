@@ -1116,6 +1116,8 @@ class Time_off extends Public_Controller
     // Export timeoff
     public function export()
     {
+
+        return redirect("timeoff/report");
         $data = array();
         $this->check_login($data);
         //
@@ -1247,7 +1249,7 @@ class Time_off extends Public_Controller
         }
         //
         $data['company_employees'] = $company_employees;
-        
+
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
         $data['theme'] = $this->theme;
         //
@@ -3917,7 +3919,7 @@ class Time_off extends Public_Controller
                     $post['fromDate'] = DateTime::createfromformat('m/d/Y', $post['fromDate'])->format('Y-m-d');
                 }
                 //
-               
+
                 $policies = $this->timeoff_model->getEmployeePoliciesByDate(
                     $post['companyId'],
                     $post['employeeId'],
@@ -3931,11 +3933,11 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
                 break;
-            
+
             case "check_timeoff_request":
                 $request_from_date = DateTime::createfromformat('m/d/Y', $post['startDate'])->format('Y-m-d');
                 $request_to_date = DateTime::createfromformat('m/d/Y', $post['endDate'])->format('Y-m-d');
-                $response = $this->timeoff_model->checkEmployeeTimeoffRequestExist($post['employeeId'], $request_from_date, $request_to_date,$post['dateRows']);
+                $response = $this->timeoff_model->checkEmployeeTimeoffRequestExist($post['employeeId'], $request_from_date, $request_to_date, $post['dateRows']);
                 //
                 $this->res['Response'] = $response;
                 $this->res['Status'] = TRUE;
@@ -3992,7 +3994,8 @@ class Time_off extends Public_Controller
                     ]);
                 } else {
                     $in['note'] = json_encode([
-                        'status' => 'pending', 'comment' => $post['reason'],
+                        'status' => 'pending',
+                        'comment' => $post['reason'],
                         'details' => [
                             'startDate' => $post['startDate'],
                             'endDate' => $post['endDate'],
@@ -4011,7 +4014,9 @@ class Time_off extends Public_Controller
                     $in['action'] = 'update';
                     $in['comment'] = $post['comment'];
                     $in['note'] = json_encode([
-                        'status' => $post['status'], 'canApprove' => $canApprove, 'comment' => $post['comment'],
+                        'status' => $post['status'],
+                        'canApprove' => $canApprove,
+                        'comment' => $post['comment'],
                         'details' => [
                             'startDate' => $post['startDate'],
                             'endDate' => $post['endDate'],
@@ -7463,6 +7468,10 @@ class Time_off extends Public_Controller
         // $domain_name = $this->timeoff_model->getCompanyDomainName($company_id);
         // $data['company_name'] = $company_name;
         // $data['domain_name'] = $domain_name;
+
+        if ($action === "export") {
+            return $this->generateCSV($data);
+        }
         //
         $this->load->view('timeoff/print_and_download/' . ($page) . '', $data);
     }
@@ -7753,11 +7762,11 @@ class Time_off extends Public_Controller
                     $status = $processRequest['requestData']['status'];
                     //
                     if ($status == 'approved') {
-                        $rows .= 'APPROVED' . ' (' . strip_tags($processRequest['requestData']['request_status']) . ')'.',';
+                        $rows .= 'APPROVED' . ' (' . strip_tags($processRequest['requestData']['request_status']) . ')' . ',';
                     } else if ($status == 'rejected') {
-                        $rows .= 'REJECTED (PENDING)'.',';
+                        $rows .= 'REJECTED (PENDING)' . ',';
                     } else if ($status == 'pending') {
-                        $rows .= 'PENDING (PENDING)'.',';
+                        $rows .= 'PENDING (PENDING)' . ',';
                     }
                     $rows  .=  $joiningDate . ',' . $rehireDate;
 
@@ -7766,19 +7775,128 @@ class Time_off extends Public_Controller
             }
         }
 
-        $outputFile = $companyHeader. PHP_EOL;
-        $outputFile .= $header_row. PHP_EOL;
-        $outputFile .= $rows. PHP_EOL;
+        $outputFile = $companyHeader . PHP_EOL;
+        $outputFile .= $header_row . PHP_EOL;
+        $outputFile .= $rows . PHP_EOL;
 
         //
-        $fileName = 'employees_time_off/Company_Name:'.str_replace(" ", "_", $data['session']['company_detail']['CompanyName'])."/Generated_By:". $data['session']['employer_detail']['first_name'] . '_' . $data['session']['employer_detail']['last_name'] ."/Report_Period:".$period."/Generated_Date:". date('Y_m_d-H:i:s') . '.csv';
+        $fileName = 'employees_time_off/Company_Name:' . str_replace(" ", "_", $data['session']['company_detail']['CompanyName']) . "/Generated_By:" . $data['session']['employer_detail']['first_name'] . '_' . $data['session']['employer_detail']['last_name'] . "/Report_Period:" . $period . "/Generated_Date:" . date('Y_m_d-H:i:s') . '.csv';
 
         header('Pragma: public');     // required
         header('Expires: 0');         // no cache
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Cache-Control: private', false);
         header('Content-Type: text/csv');  // Add the mime type from Code igniter.
-        header('Content-Disposition: attachment; filename="'.$fileName.'"');  // Add the file name
+        header('Content-Disposition: attachment; filename="' . $fileName . '"');  // Add the file name
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . strlen($outputFile)); // provide file size
+        header('Connection: close');
+        echo $outputFile;
+    }
+
+
+    private function generateCSV($data)
+    {
+        extract($data);
+        //
+        $employees = [];
+        //
+        if (count($balances['Employees'])) {
+            foreach ($balances['Employees'] as $his) {
+                $employees[$his['userId']] = $his;
+            }
+        }
+
+        // set header
+        $header = "Employee Name" . PHP_EOL;
+        $header = "Employee Name" . PHP_EOL;
+        $rows = "";
+        //
+        $todayDate = getSystemDate("Y-m-d");
+
+        if ($balances["Balances"]) {
+            foreach ($balances["Balances"] as $balance) {
+                //
+                $userId = $balance['total']['UserId'];
+                $joinedDate = get_employee_latest_joined_date(
+                    $employees[$userId]["registration_date"],
+                    $employees[$userId]["joined_at"],
+                    $employees[$userId]["rehire_date"],
+                );
+                $anniversory = getEmployeeAnniversary(
+                    $joinedDate,
+                    $todayDate
+                );
+                //
+                $rows .= "Employee, ";
+                $rows .= remakeEmployeeName($employees[$userId], true, true) . PHP_EOL;
+                //
+                $rows .= "Employee Number, ";
+                $rows .=
+                    (!empty($employees[$userId]['employee_number'])
+                        ? $employees[$userId]['employee_number']
+                        : $employees[$userId]['userId']) . PHP_EOL;
+                //
+                $rows .= "Joined Date, ";
+                $rows .= ($joinedDate
+                    ? formatDateToDB(
+                        $joinedDate,
+                        "Y-m-d",
+                        SITE_DATE
+                    )
+                    : "") . PHP_EOL;
+                //
+                $rows .= "Anniversory Date, ";
+                $rows .= ($anniversory["upcomingAnniversaryDate"]
+                    ? formatDateToDB(
+                        $anniversory["upcomingAnniversaryDate"],
+                        "Y-m-d",
+                        SITE_DATE
+                    )
+                    : "") . PHP_EOL;
+                //
+                $rows .= "Policy, Allowed Time, Paid Consumed Time, Unpaid Consumed Time, Remaining Time" . PHP_EOL;
+                //
+                foreach ($balance as $k0 => $v0) {
+                    //
+                    if ($k0 == "total") {
+                        continue;
+                    }
+                    //
+                    $rows .= $k0;
+                    $rows .= ", " . ($v0['AllowedTime']['text'] == '' ? '0 hours' : $v0['AllowedTime']['text']);
+                    $rows .= ", " . ($v0['ConsumedTime']['text'] == '' ? '0 hours' : $v0['ConsumedTime']['text']);
+                    $rows .= ", " . ($v0['UnpaidConsumedTime']['text'] == '' ? '0 hours' : $v0['UnpaidConsumedTime']['text']);
+                    $rows .= ", " . ($v0['RemainingTime']['text'] == '' ? '0 hours' : $v0['RemainingTime']['text']);
+                    //
+                    $rows .= PHP_EOL;
+                }
+                $rows .= PHP_EOL;
+                $rows .= PHP_EOL;
+            }
+        }
+
+        $filename = "export_balance_" . time() . "_" . (preg_replace("/[^a-z]/i", "", $companyName)) . "_data.csv";
+        //
+        $employeeName = remakeEmployeeName(
+            $session["employer_detail"]
+        );
+        //
+        $companyName = $session["company_detail"]["CompanyName"];
+        //
+        $header = "Company, " . $companyName . PHP_EOL;
+        $header .= "Exporter, " . $employeeName . PHP_EOL;
+        $header .= "Date/Time, " . getSystemDate(DATE_WITH_TIME) . PHP_EOL;
+
+        $outputFile = $header . PHP_EOL;
+        $outputFile .= $rows;
+
+        header('Pragma: public');     // required
+        header('Expires: 0');         // no cache
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');  // Add the mime type from Code igniter.
+        header('Content-Disposition: attachment; filename="' . $filename . '"');  // Add the file name
         header('Content-Transfer-Encoding: binary');
         header('Content-Length: ' . strlen($outputFile)); // provide file size
         header('Connection: close');
