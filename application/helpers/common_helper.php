@@ -17021,6 +17021,7 @@ if (!function_exists('get_executive_administrator_admin_plus_status')) {
     {
         $CI = &get_instance();
         $CI->db->select('users.access_level_plus');
+        $CI->db->select('users.can_access_compliance_safety_report');
         $CI->db->where('executive_admin_sid', $executiveAdminSid);
         $CI->db->where('company_sid', $companySid);
         $CI->db->join('users', 'executive_user_companies.logged_in_sid = users.sid', 'left');

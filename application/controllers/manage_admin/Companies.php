@@ -886,6 +886,22 @@ class Companies extends Admin_Controller
                     echo 'success';
                     break;
 
+                case 'grant_access':
+
+                    $company_sid = $this->input->post('company_sid');
+                    $executive_admin_sid = $this->input->post('executive_admin_sid');
+                    $this->company_model->set_executive_access_csp_single_company($executive_admin_sid, $company_sid, 'grant_access');
+                    echo 'success';
+                    break;
+
+                case 'revoke_access':
+
+                    $company_sid = $this->input->post('company_sid');
+                    $executive_admin_sid = $this->input->post('executive_admin_sid');
+                    $this->company_model->set_executive_access_csp_single_company($executive_admin_sid, $company_sid, 'revoke_access');
+                    echo 'success';
+                    break;
+
                 case 'configure_corporate_company_access':
                     $executive_admin_sid = $this->input->post('executive_admin_sid');
                     $company_sid = $this->input->post('company_sid');

@@ -3119,6 +3119,30 @@ class Company_model extends CI_Model
             $this->db->update('users', $data);
         }
     }
+    
+    //
+    function set_executive_access_csp_single_company($executiveAdminSid, $companySid, $action)
+    {
+
+        $this->db->select('logged_in_sid');
+        $this->db->where('executive_admin_sid', $executiveAdminSid);
+        $this->db->where('company_sid', $companySid);
+        $result = $this->db->get('executive_user_companies')->row_array();
+
+        if (!empty($result)) {
+
+            $data = array();
+            if ($action == 'grant_access') {
+                $data['can_access_compliance_safety_report'] =  1;
+            } elseif ($action == 'revoke_access') {
+                $data['can_access_compliance_safety_report'] =  0;
+            }
+
+            $this->db->where('sid', $result['logged_in_sid']);
+            $this->db->where('parent_sid', $companySid);
+            $this->db->update('users', $data);
+        }
+    }
 
 
 
