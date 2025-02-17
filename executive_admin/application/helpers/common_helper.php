@@ -2259,7 +2259,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
      * @param string $flag
      * @param string $method
      */
-    function getMyDepartmentAndTeams(int $employeeId, string $flag = "", string $method = "get", int $companyId = 0): array
+    function getMyDepartmentAndTeams(int $employeeId, string $flag = "", string $method = "get", int $companyId = 0, array $filters): array
     {
         //
         $CI = &get_instance();
@@ -2402,23 +2402,29 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                         if ($jobTitleInfo['lms_job_title'] != 0) {
                             $today = date('Y-m-d');
                             //
-                            $companyCourses = $CI->db->select("
+                            $CI->db->select("
                                     lms_default_courses.sid
-                                ")
-                                ->join(
+                                ");
+                            $CI->db->join(
                                     "lms_default_courses_job_titles",
                                     "lms_default_courses_job_titles.lms_default_courses_sid = lms_default_courses.sid",
                                     "right"
-                                )
-                                ->where('lms_default_courses.company_sid', $companyId)
-                                ->where('lms_default_courses.is_active', 1)
-                                ->where('course_start_period <=', $today)
-                                ->group_start()
-                                ->where('lms_default_courses_job_titles.job_title_id', -1)
-                                ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
-                                ->group_end()
-                                ->get('lms_default_courses')
-                                ->result_array();
+                            );
+                            //
+                            if ($filters['courses'] != "all") {
+                                $CI->db->where_in('lms_default_courses.sid', $filters['courses']);
+                            }
+                            //
+                            $CI->db->where('lms_default_courses.company_sid', $companyId);
+                            $CI->db->where('lms_default_courses.is_active', 1);
+                            $CI->db->where('course_start_period <=', $today);
+                            $CI->db->group_start();
+                            $CI->db->where('lms_default_courses_job_titles.job_title_id', -1);
+                            $CI->db->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId);
+                            $CI->db->group_end();
+                                // ->get('lms_default_courses')
+                                // ->result_array();
+                            $companyCourses = $CI->db->get('lms_default_courses')->result_array();    
                             //                       
                             $assignCourses = !empty($companyCourses) ? implode(',', array_column($companyCourses, "sid")) : "";
                             //

@@ -404,7 +404,30 @@ class LMS_company_report extends CI_Controller
             $data['executiveUserId'] = $executiveUserId;
             $data['logged_in_view'] = true;
             //
-            $subordinateInfo = getMyDepartmentAndTeams($loginId, "courses", "get" , $companyId);
+            $filters = [
+                "departments" => "all",
+                "teams" => "all",
+                "employees" => "all",
+                "courses" => "all"
+            ];
+            //
+            if (isset($_GET['departments'])) {
+                $filters["departments"] = $_GET['departments'];
+            }
+            //
+            if (isset($_GET['teams'])) {
+                $filters["teams"] = $_GET['teams'];
+            }
+            //
+            if (isset($_GET['employees'])) {
+                $filters["employees"] = $_GET['employees'];
+            }
+            //
+            if (isset($_GET['courses'])) {
+                $filters["courses"] = $_GET['courses'];
+            }
+            //
+            $subordinateInfo = getMyDepartmentAndTeams($loginId, "courses", "get" , $companyId, $filters);
             $subordinateInfo['courses'] = $this->course_model->getActiveCompanyCourses($companyId);
             //
             $uniqueKey = '';
@@ -453,29 +476,7 @@ class LMS_company_report extends CI_Controller
                 //
             }
             //
-            $filters = [
-                "departments" => "all",
-                "teams" => "all",
-                "employees" => "all",
-                "courses" => "all"
-            ];
-            //
             if ($this->input->is_ajax_request()) {
-                if (isset($_GET['departments'])) {
-                    $filters["departments"] = $_GET['departments'];
-                }
-                //
-                if (isset($_GET['teams'])) {
-                    $filters["teams"] = $_GET['teams'];
-                }
-                //
-                if (isset($_GET['employees'])) {
-                    $filters["employees"] = $_GET['employees'];
-                }
-                //
-                if (isset($_GET['courses'])) {
-                    $filters["courses"] = $_GET['courses'];
-                }
                 //
                 $selectedEmployeesList = [];
                 $selectedEmployeesIds = [];
@@ -487,19 +488,19 @@ class LMS_company_report extends CI_Controller
                         //
                         if ($subordinateEmployee["job_title_sid"] > 0) {
                             //
-                            if (in_array($subordinateEmployee["employee_sid"], $filters["employees"])) {
+                            if (in_array($subordinateEmployee["employee_sid"], $filters["employees"]) || $filters["employees"] == 'all') {
                                 $selectedEmployeesList[] = $subordinateEmployee;
                                 array_push($selectedEmployeesIds, $subordinateEmployee["employee_sid"]);
                             }
                             //
-                            if (in_array($subordinateEmployee["team_sid"], $filters["teams"])) {
+                            if (in_array($subordinateEmployee["team_sid"], $filters["teams"]) || $filters["teams"] == 'all') {
                                 if (!in_array($subordinateEmployee["employee_sid"], $selectedEmployeesIds)) {
                                     $selectedEmployeesList[] = $subordinateEmployee;
                                     array_push($selectedEmployeesIds, $subordinateEmployee["employee_sid"]);
                                 }
                             }
                             //
-                            if (in_array($subordinateEmployee["department_sid"], $filters["departments"])) {
+                            if (in_array($subordinateEmployee["department_sid"], $filters["departments"]) || $filters["departments"] == 'all') {
                                 if (!in_array($subordinateEmployee["employee_sid"], $selectedEmployeesIds)) {
                                     $selectedEmployeesList[] = $subordinateEmployee;
                                     array_push($selectedEmployeesIds, $subordinateEmployee["employee_sid"]);
