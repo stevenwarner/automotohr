@@ -151,13 +151,21 @@
                                                             $adminPlusData = get_executive_administrator_admin_plus_status($user_company['executive_admin_sid'], $user_company['company_sid']);
                                                             //
                                                             $execAdminAccessLevelPlus = FALSE;
+                                                            $isLMSManager = FALSE;
                                                             if (!empty($adminPlusData)) {
                                                                 $execAdminAccessLevelPlus =  $adminPlusData['access_level_plus'] ? TRUE : FALSE;
                                                             }
+                                                            
+                                                            if (checkEmployeeIsLMSManager($user_company['logged_in_sid'], $user_company['company_sid'])) {
+                                                                $isLMSManager = TRUE;
+                                                            }
+
                                                             ?>
 
                                                             <?php if ($execAdminAccessLevelPlus && checkIfAppIsEnabled(MODULE_LMS, $user_company['company_sid'])) { ?>
                                                                 <a class="btn btn-success btn-sm" href="<?php echo base_url() . 'lms_company_report/' . $user_company['company_sid']; ?>">LMS Company Report</a>
+                                                            <?php } else if ($isLMSManager && checkIfAppIsEnabled(MODULE_LMS, $user_company['company_sid'])) { ?>
+                                                                <a class="btn btn-success btn-sm" href="<?php echo base_url() . 'lms_subordinate_report/' . $user_company['company_sid']; ?>">LMS Subordinate Report</a>
                                                             <?php } ?>
                                                         </div>
                                                     </td>

@@ -1926,6 +1926,58 @@ if (!function_exists('getLMSManagerDepartmentAndTeams')) {
     }
 }
 
+if (!function_exists('checkEmployeeIsLMSManager')) {
+    /**
+     * get lms employee teams and departments
+     *
+     * @param int $employeeId
+     * @param int $companyId
+     */
+    function checkEmployeeIsLMSManager(int $employeeId, $companyId): bool
+    {
+        // set default
+        $r = [
+            'departments' => [],
+            'teams' => [],
+            'employees' => []
+        ];
+        //
+        $CI = &get_instance();
+        //
+        $CI->db->select("
+            departments_team_management.sid as team_sid, 
+            departments_team_management.name as team_name,
+            departments_management.sid,
+            departments_management.name,
+            departments_management.lms_managers_ids
+        ")
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_team_management.department_sid",
+                "inner"
+            )
+            ->where("departments_management.company_sid", $companyId)
+            ->where("departments_management.is_deleted", 0)
+            ->where("departments_team_management.is_deleted", 0);
+
+
+        $CI->db->group_start()
+            ->where("FIND_IN_SET({$employeeId}, departments_management.lms_managers_ids) > 0", null, null)
+            ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.lms_managers_ids) > 0", null, null)
+            ->group_end();
+
+        $departmentAndTeams = $CI->db->get('departments_team_management');
+        //
+        $departmentAndTeams = $departmentAndTeams->result_array(); 
+        //
+        if ($departmentAndTeams) {echo "up";
+            return true;
+        } else {echo "down";
+            return false;
+        }
+    }
+}        
+
 
 if (!function_exists("checkAnyManualCourseAssigned")) {
     function checkAnyManualCourseAssigned(&$employeeId): bool

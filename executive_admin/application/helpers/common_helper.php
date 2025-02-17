@@ -2183,3 +2183,402 @@ if (!function_exists("checkAnyManualCourseAssigned")) {
         }
     }
 }
+
+if (!function_exists('checkEmployeeIsLMSManager')) {
+    /**
+     * get lms employee teams and departments
+     *
+     * @param int $employeeId
+     * @param int $companyId
+     */
+    function checkEmployeeIsLMSManager(int $employeeId, $companyId): bool
+    {
+        // set default
+        $r = [
+            'departments' => [],
+            'teams' => [],
+            'employees' => []
+        ];
+        //
+        $CI = &get_instance();
+        //
+        $CI->db->select("
+            departments_team_management.sid as team_sid, 
+            departments_team_management.name as team_name,
+            departments_management.sid,
+            departments_management.name,
+            departments_management.lms_managers_ids
+        ")
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_team_management.department_sid",
+                "inner"
+            )
+            ->where("departments_management.company_sid", $companyId)
+            ->where("departments_management.is_deleted", 0)
+            ->where("departments_team_management.is_deleted", 0);
+
+
+        $CI->db->group_start()
+            ->where("FIND_IN_SET({$employeeId}, departments_management.lms_managers_ids) > 0", null, null)
+            ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.lms_managers_ids) > 0", null, null)
+            ->group_end();
+
+        $departmentAndTeams = $CI->db->get('departments_team_management');
+        //
+        $departmentAndTeams = $departmentAndTeams->result_array(); 
+        //
+        if ($departmentAndTeams) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}    
+
+if (!function_exists('getEmployeeLoginId')) {
+    function getEmployeeLoginId($employeeId, $companyId)
+    {
+        $CI = &get_instance();
+        $CI->db->select('logged_in_sid');
+        $CI->db->where('executive_admin_sid', $employeeId);
+        $CI->db->where('company_sid', $companyId);
+        $record_obj = $CI->db->get('executive_user_companies');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+     
+        return $record_arr['logged_in_sid'];
+    }
+}
+
+if (!function_exists('getMyDepartmentAndTeams')) {
+    /**
+     * get employee teams and departments
+     *
+     * @param int $employeeId
+     * @param string $flag
+     * @param string $method
+     */
+    function getMyDepartmentAndTeams(int $employeeId, string $flag = "", string $method = "get", int $companyId = 0): array
+    {
+        //
+        $CI = &get_instance();
+        //
+        // set default
+        $r = [
+            'departments' => [],
+            'teams' => [],
+            'employees' => []
+        ];
+
+        //
+        $CI->db->select("
+            departments_team_management.sid as team_sid, 
+            departments_team_management.name as team_name,
+            departments_management.sid,
+            departments_management.name,
+            departments_management.lms_managers_ids
+        ")
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_team_management.department_sid",
+                "inner"
+            )
+            ->where("departments_management.company_sid", $companyId)
+            ->where("departments_management.is_deleted", 0)
+            ->where("departments_team_management.is_deleted", 0);
+        // 
+        $CI->db->group_start()
+            ->where("FIND_IN_SET({$employeeId}, departments_management.lms_managers_ids) > 0", null, null)
+            ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.lms_managers_ids) > 0", null, null)
+            ->group_end();
+        //
+        if ($method == "count_all_results") {
+            $CI->db->limit(1);
+        }
+        //
+        $departmentAndTeams = $CI->db->$method('departments_team_management');
+        //
+        if ($method == "count_all_results") {
+            return $departmentAndTeams  ? [1] : [];
+        }
+        //
+        $departmentAndTeams = $departmentAndTeams->result_array();
+        //
+        if (!empty($departmentAndTeams)) {
+            //
+            foreach ($departmentAndTeams as $team) {
+                $r['teams'][$team["team_sid"]] = array(
+                    "department_sid" => $team["sid"],
+                    "department_name" => $team["name"],
+                    "sid" => $team["team_sid"],
+                    "name" => $team["team_name"],
+                    "employees_ids" => []
+                );
+                //
+            }
+            //
+            $teamSids = array_column($departmentAndTeams, "team_sid");
+            //
+            $TeamEmployees = $CI->db->select("
+                            department_sid, 
+                            team_sid, 
+                            employee_sid
+                        ")
+                ->where_in('team_sid', $teamSids)
+                ->get('departments_employee_2_team')
+                ->result_array();
+            //
+            $alreadyExist = [];
+            $employees = [];
+            //
+            foreach ($TeamEmployees as $employee) {
+                //
+                if (!in_array($employee['employee_sid'], $alreadyExist)) {
+                    array_push($alreadyExist, $employee['employee_sid']);
+                    $jobTitleInfo = $CI->db->select("
+                        users.job_title,
+                        users.first_name,
+                        users.last_name,
+                        users.access_level,
+                        users.timezone,
+                        users.access_level_plus,
+                        users.is_executive_admin,
+                        users.pay_plan_flag,
+                        users.lms_job_title,
+                        users.profile_picture,
+                        users.email,
+                        portal_job_title_templates.sid as job_title_sid
+                    ")
+                        ->join(
+                            "portal_job_title_templates",
+                            "portal_job_title_templates.sid = users.lms_job_title",
+                            "left"
+                        )
+                        ->where('users.sid', $employee['employee_sid'])
+                        ->where([
+                            "users.active" => 1,
+                            "users.terminated_status" => 0,
+                            "users.is_executive_admin" => 0
+                        ])
+                        ->get('users')
+                        ->row_array();
+                    if (!$jobTitleInfo || !$jobTitleInfo["first_name"]) {
+                        continue;
+                    }
+                    //
+                    $jobTitleId = !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
+                    //  
+                    $employeeName = remakeEmployeeName([
+                        'first_name' => $jobTitleInfo['first_name'],
+                        'last_name' => $jobTitleInfo['last_name'],
+                        'access_level' => $jobTitleInfo['access_level'],
+                        'timezone' => isset($jobTitleInfo['timezone']) ? $jobTitleInfo['timezone'] : '',
+                        'access_level_plus' => $jobTitleInfo['access_level_plus'],
+                        'is_executive_admin' => $jobTitleInfo['is_executive_admin'],
+                        'pay_plan_flag' => $jobTitleInfo['pay_plan_flag'],
+                        'job_title' => $jobTitleInfo['job_title'],
+                    ]);
+                   
+                    //
+                    $employees[$employee['employee_sid']]["job_title_sid"] =  !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
+                    $employees[$employee['employee_sid']]["full_name"] = $employeeName;
+                    $employees[$employee['employee_sid']]["profile_picture_url"] = getImageURL($jobTitleInfo["profile_picture"]);
+                    $employees[$employee['employee_sid']]["only_name"] = remakeEmployeeName($jobTitleInfo, true, true);
+                    $employees[$employee['employee_sid']]["designation"] = remakeEmployeeName($jobTitleInfo, false);
+                    $employees[$employee['employee_sid']]["employee_sid"] = $employee['employee_sid'];
+                    $employees[$employee['employee_sid']]["department_sid"] = $employee['department_sid'];
+                    $employees[$employee['employee_sid']]["team_sid"] = $employee['team_sid'];
+                    $employees[$employee['employee_sid']]["lms_job_title"] = $employee['lms_job_title'];
+                    $employees[$employee['employee_sid']]["email"] = $jobTitleInfo['email'];
+                    //
+                    $employeeData = [];
+                    $employeeData["employee_sid"] = $employee['employee_sid'];
+                    $employeeData["job_title_sid"] =  $jobTitleId;
+                    $employeeData["employee_name"] =  $employeeName;
+                    //
+                    if ($flag == 'courses') {
+                        //
+                        if ($jobTitleInfo['lms_job_title'] != 0) {
+                            $today = date('Y-m-d');
+                            //
+                            $companyCourses = $CI->db->select("
+                                    lms_default_courses.sid
+                                ")
+                                ->join(
+                                    "lms_default_courses_job_titles",
+                                    "lms_default_courses_job_titles.lms_default_courses_sid = lms_default_courses.sid",
+                                    "right"
+                                )
+                                ->where('lms_default_courses.company_sid', $companyId)
+                                ->where('lms_default_courses.is_active', 1)
+                                ->where('course_start_period <=', $today)
+                                ->group_start()
+                                ->where('lms_default_courses_job_titles.job_title_id', -1)
+                                ->or_where('lms_default_courses_job_titles.job_title_id', $jobTitleId)
+                                ->group_end()
+                                ->get('lms_default_courses')
+                                ->result_array();
+                            //                       
+                            $assignCourses = !empty($companyCourses) ? implode(',', array_column($companyCourses, "sid")) : "";
+                            //
+                            //manual AssignedCourses
+                            //
+                            $manualAssignedCourses = $CI->db
+                                ->select('default_course_sid')
+                                ->from('lms_manual_assign_employee_course')
+                                ->where('employee_sid', $employee['employee_sid'])
+                                ->where('company_sid', $companyId)
+                                ->get()
+                                ->result_array();
+                            //
+                            $manualAssignedCoursesList = !empty($manualAssignedCourses) ? ',' . implode(',', array_column($manualAssignedCourses, "default_course_sid")) : "";
+                            //
+                            $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses . $manualAssignedCoursesList;
+                            $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($assignCourses . $manualAssignedCoursesList, $employee['employee_sid']);
+                            $employeeData["assign_courses"] =  array_merge($assignCourses, $manualAssignedCourses);
+                        } else if (checkAnyManualCourseAssigned($employee['employee_sid'])) {
+                            //
+                            $manualAssignedCourses = $CI->db
+                                ->select('default_course_sid')
+                                ->from('lms_manual_assign_employee_course')
+                                ->where('employee_sid', $employee['employee_sid'])
+                                ->where('company_sid', $companyId)
+                                ->get()
+                                ->result_array();
+                            //
+                            $manualAssignedCoursesList = !empty($manualAssignedCourses) ? implode(',', array_column($manualAssignedCourses, "default_course_sid")) : "";
+                            //
+                            $employees[$employee['employee_sid']]["assign_courses"] = $manualAssignedCoursesList;
+                            $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($manualAssignedCoursesList, $employee['employee_sid']);
+                            $employeeData["assign_courses"] =  $manualAssignedCoursesList;
+                            
+                        } else {
+                            $employees[$employee['employee_sid']]["assign_courses"] = "";
+                            $employeeData["assign_courses"] =  "";
+                        }
+                    }
+
+                    //
+                    if (isset($r['departments'][$employee['department_sid']])) {
+                        $r['departments'][$employee['department_sid']]['employees_ids'][] = $employeeData;
+                    }
+                    //
+                    if (isset($r['teams'][$employee['team_sid']])) {
+                        $r['teams'][$employee['team_sid']]['employees_ids'][] = $employeeData;
+                    }
+                    //
+                }
+            }
+            //
+            $r['employees'] = $employees;
+        }
+        //
+        return $r;
+    }
+}
+
+if (!function_exists('getCoursesInfo')) {
+    /**
+     * Prefill he form data
+     * 
+     * @param string $ids,
+     * @param int $employeeId,
+     * @return array
+     */
+    function getCoursesInfo(
+        string $ids,
+        int $employeeId
+    ): array {
+        //
+        $result = [
+            'total_course' => 0,
+            'expire_soon' => 0,
+            'expired' => 0,
+            'started' => 0,
+            'completed' => 0,
+            'ready_to_start' => 0
+        ];
+        //
+        // get the company courses
+        $assignCourses = get_instance()->db
+            ->select('sid, course_start_period, course_end_period')
+            ->from('lms_default_courses')
+            ->where_in('sid', explode(',', $ids))
+            ->get()
+            ->result_array();
+        //
+        // if no courses are found
+        if (!$assignCourses) {
+            return $result;
+        }
+        //
+        $now = new DateTime(date("Y-m-d"));
+        // loop through courses
+        foreach ($assignCourses as $course) {
+            //
+            $courseStatus = getEmployeeCourseStatus($course['sid'], $employeeId);
+            //
+            $start_period = new DateTime($course['course_start_period']);
+            $end_period = new DateTime($course['course_end_period']);
+            //
+            $start_diff = $now->diff($start_period)->format("%r%a");
+            $end_diff = $now->diff($end_period)->format("%r%a");
+            //
+            if ($courseStatus == 'not_started') {
+                if ($start_diff < 0 && $end_diff > 0) {
+                    //
+                    if ($end_diff < 15) {
+                        $result['expire_soon']++;
+                    }
+                    //
+                } else if ($start_diff < 0 && $end_diff < 0) {
+                    $result['expired']++;
+                }
+                //
+                $result['ready_to_start']++;
+            } else if ($courseStatus == 'started') {
+                $result['started']++;
+            } else if ($courseStatus == 'completed') {
+                $result['completed']++;
+            }
+            //
+            $result['total_course']++;
+            //
+        }
+        //
+        return $result;
+    }
+}
+
+if (!function_exists('getEmployeeCourseStatus')) {
+    /**
+     * Prefill he form data
+     * 
+     * @param int $courseId,
+     * @param int $employeeId,
+     * @return string
+     */
+    function getEmployeeCourseStatus(
+        int $courseId,
+        int $employeeId
+    ): string {
+        // get the company courses
+        $courseInfo = get_instance()->db
+            ->select('lesson_status')
+            ->from('lms_employee_course')
+            ->where('course_sid', $courseId)
+            ->where('employee_sid', $employeeId)
+            ->get()
+            ->row_array();
+        //
+        // if no courses are found
+        if (!$courseInfo) {
+            return 'not_started';
+        } else if ($courseInfo['lesson_status'] == 'completed') {
+            return 'completed';
+        } else if ($courseInfo['lesson_status'] == 'incomplete') {
+            return 'started';
+        } 
+    }
+}

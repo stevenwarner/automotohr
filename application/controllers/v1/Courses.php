@@ -522,10 +522,7 @@ class Courses extends Public_Controller
         $data['security_details'] = db_get_access_level_details($employeeId);
         //
         $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
-
-
         $subordinateInfo['courses'] = $this->course_model->getActiveCompanyCourses($companyId);
-           
         //
         $uniqueKey = '';
         $haveSubordinate = 'no';
@@ -643,7 +640,6 @@ class Courses extends Public_Controller
             ]);
             exit(0);
         }
-
         //
         $data['title'] = "My Courses :: " . STORE_NAME;
         $data['session'] = $session;

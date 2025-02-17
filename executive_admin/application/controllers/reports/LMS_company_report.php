@@ -371,7 +371,162 @@ class LMS_company_report extends CI_Controller
             }
             //
             $this->load->view('main/header', $data);
-            $this->load->view('reports/lms_employees_report');
+            $this->load->view('reports/lms_company_employees_report');
+            $this->load->view('main/footer');
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
+
+    public function subordinateReport($companyId, $departments = "all", $teams = "all", $employees = "all", $courses = "all")
+    {
+        if ($this->session->userdata('executive_loggedin')) {
+            // Added on: 28-08-2023
+            $data = $this->session->userdata('executive_loggedin');
+            $executiveUserId =  $data['executive_user']['sid'];
+            $data['companyName'] = getCompanyNameBySid($companyId);
+            //
+            $loginId = getEmployeeLoginId($data['executive_user']['sid'], $companyId);
+            //
+            $isLMSManager = FALSE;
+            //
+            if (checkEmployeeIsLMSManager($loginId, $companyId)) {
+                $isLMSManager = TRUE;
+            }
+            //                                              
+            if (!$isLMSManager || !checkIfAppIsEnabled(MODULE_LMS, $companyId)) {
+                $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessible!');
+                redirect('dashboard', 'refresh');
+            }
+            //
+            $data['title'] = "LMS Employees Report [ " . $data['companyName'] . " ]";
+            $data['companyId'] = $companyId;
+            $data['executiveUserId'] = $executiveUserId;
+            $data['logged_in_view'] = true;
+            //
+            $subordinateInfo = getMyDepartmentAndTeams($loginId, "courses", "get" , $companyId);
+            $subordinateInfo['courses'] = $this->course_model->getActiveCompanyCourses($companyId);
+            //
+            $uniqueKey = '';
+            $haveSubordinate = 'no';
+            //
+            if (!empty($subordinateInfo['employees'])) {
+                //
+                $haveSubordinate = 'yes';
+                //
+                $subordinateInfo['total_course'] = 0;
+                $subordinateInfo['expire_soon'] = 0;
+                $subordinateInfo['expired'] = 0;
+                $subordinateInfo['started'] = 0;
+                $subordinateInfo['completed'] = 0;
+                $subordinateInfo['ready_to_start'] = 0;
+                //
+                unset($subordinateInfo['employees'][$loginId]);
+                //
+                foreach ($subordinateInfo['employees'] as $key => $subordinateEmployee) {
+                    //
+                    $teamId = $subordinateEmployee['team_sid'];
+                    $subordinateInfo['employees'][$key]['department_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
+                    $subordinateInfo['employees'][$key]['team_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
+                    //
+                    if (isset($subordinateEmployee['coursesInfo'])) {
+                        //
+                        if (isset($_GET['courses']) && $_GET['courses'][0] != "all") {
+                            $filterCourses = getCoursesInfo(implode(',', $_GET['courses']), $key);
+                            //
+                            $subordinateInfo['employees'][$key]['coursesInfo']['total_course'] = $filterCourses['total_course'];
+                            $subordinateInfo['employees'][$key]['coursesInfo']['expire_soon'] = $filterCourses['expire_soon'];
+                            $subordinateInfo['employees'][$key]['coursesInfo']['expired'] = $filterCourses['expired'];
+                            $subordinateInfo['employees'][$key]['coursesInfo']['started'] = $filterCourses['started'];
+                            $subordinateInfo['employees'][$key]['coursesInfo']['completed'] = $filterCourses['completed'];
+                            $subordinateInfo['employees'][$key]['coursesInfo']['ready_to_start'] = $filterCourses['ready_to_start'];
+                        }
+                        //
+                        $subordinateInfo['total_course'] = $subordinateInfo['total_course'] + $subordinateEmployee['coursesInfo']['total_course'];
+                        $subordinateInfo['expire_soon'] = $subordinateInfo['expire_soon'] + $subordinateEmployee['coursesInfo']['expire_soon'];
+                        $subordinateInfo['expired'] = $subordinateInfo['expired'] + $subordinateEmployee['coursesInfo']['expired'];
+                        $subordinateInfo['started'] = $subordinateInfo['started'] + $subordinateEmployee['coursesInfo']['started'];
+                        $subordinateInfo['completed'] = $subordinateInfo['completed'] + $subordinateEmployee['coursesInfo']['completed'];
+                        $subordinateInfo['ready_to_start'] = $subordinateInfo['ready_to_start'] + $subordinateEmployee['coursesInfo']['ready_to_start'];
+                    }
+                }
+                //
+            }
+            //
+            $filters = [
+                "departments" => "all",
+                "teams" => "all",
+                "employees" => "all",
+                "courses" => "all"
+            ];
+            //
+            if ($this->input->is_ajax_request()) {
+                if (isset($_GET['departments'])) {
+                    $filters["departments"] = $_GET['departments'];
+                }
+                //
+                if (isset($_GET['teams'])) {
+                    $filters["teams"] = $_GET['teams'];
+                }
+                //
+                if (isset($_GET['employees'])) {
+                    $filters["employees"] = $_GET['employees'];
+                }
+                //
+                if (isset($_GET['courses'])) {
+                    $filters["courses"] = $_GET['courses'];
+                }
+                //
+                $selectedEmployeesList = [];
+                $selectedEmployeesIds = [];
+                //
+                if ($filters["departments"][0] == 'all' && $filters["teams"][0] == 'all' && $filters["employees"][0] == 'all') {
+                    $selectedEmployeesList = $subordinateInfo['employees'];
+                } else {
+                    foreach ($subordinateInfo['employees'] as $subordinateEmployee) {
+                        //
+                        if ($subordinateEmployee["job_title_sid"] > 0) {
+                            //
+                            if (in_array($subordinateEmployee["employee_sid"], $filters["employees"])) {
+                                $selectedEmployeesList[] = $subordinateEmployee;
+                                array_push($selectedEmployeesIds, $subordinateEmployee["employee_sid"]);
+                            }
+                            //
+                            if (in_array($subordinateEmployee["team_sid"], $filters["teams"])) {
+                                if (!in_array($subordinateEmployee["employee_sid"], $selectedEmployeesIds)) {
+                                    $selectedEmployeesList[] = $subordinateEmployee;
+                                    array_push($selectedEmployeesIds, $subordinateEmployee["employee_sid"]);
+                                }
+                            }
+                            //
+                            if (in_array($subordinateEmployee["department_sid"], $filters["departments"])) {
+                                if (!in_array($subordinateEmployee["employee_sid"], $selectedEmployeesIds)) {
+                                    $selectedEmployeesList[] = $subordinateEmployee;
+                                    array_push($selectedEmployeesIds, $subordinateEmployee["employee_sid"]);
+                                }
+                            }
+                        }
+                    }
+                }
+                //
+                header('Content-Type: application/json');
+                echo json_encode([
+                    "employees" => $selectedEmployeesList
+                ]);
+                exit(0);
+            }
+            //
+            $data['companyId'] = $companyId;
+            $data['employee_sid'] = $loginId;
+            $data['load_view'] = 1;
+            $data['uniqueKey'] = $uniqueKey;
+            $data['haveSubordinate'] = $haveSubordinate;
+            $data['subordinateInfo'] = $subordinateInfo;
+            $data['title'] = "Employee(s) Report";
+            $data['filters'] = $filters;
+            //
+            $this->load->view('main/header', $data);
+            $this->load->view('reports/lms_subordinate_employees_report');
             $this->load->view('main/footer');
         } else {
             redirect(base_url('login'), "refresh");
@@ -412,13 +567,8 @@ class LMS_company_report extends CI_Controller
                 "courses" => urldecode($courses),
                 "employees" => urldecode($employees)
             ];
-
-            error_reporting(E_ALL);
-            ini_set('display_errors', 1);
-            // _e("pakistan",true);
-            // echo $companyId;
+            // 
             $companyEmployeesList = $this->course_model->getAllActiveEmployees($companyId, false);
-            // _e($companyEmployeesList,true,true);
             //
             $filterData = [];
             $filterData["employees"] = $companyEmployeesList;
