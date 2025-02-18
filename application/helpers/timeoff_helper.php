@@ -2074,21 +2074,23 @@ if (!function_exists('processESTAPolicy')) {
         // get CI instance
         $CI = &get_instance();
         //
-        $CI->db->select('policy_start_date');
-        $CI->db->where('sid', $policyId);
-        $result = $CI->db->get('timeoff_policies')->row_array();
-        //
         $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
         $todayDate = getFormatedDate($todayDate);
-        //
-        // $employeeJoiningDate = '2024-06-24';
-        // $todayDate = '2024-09-24';
-        //
-        if ($employeeJoiningDate < $result['policy_start_date']) {
-            $employeeAnniversaryDate = getEmployeeAnniversary($result['policy_start_date'], $todayDate);
-        } else {
-            $employeeAnniversaryDate = getEmployeeAnniversary($employeeJoiningDate, $todayDate);
+
+        $todayDateObj = new DateTime($todayDate);
+        $employeeJoiningDateObj = new DateTime($employeeJoiningDate);
+        if ($todayDateObj < $employeeJoiningDateObj) {
+            $r['Reason'] = "The employee doesn't meet the policy 'Effective Date'.";
+            return $r;
         }
+        //
+        $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate, "%y");
+        if ($difference >= 1) {
+            $r['Reason'] = 'Employee has worked for more than 1 year.';
+            return $r;
+        }
+        //
+        $employeeAnniversaryDate = getEmployeeAnniversary($employeeJoiningDate, $todayDate);
         //
         $difference = dateDifferenceInDays($employeeAnniversaryDate['lastAnniversaryDate'], $todayDate);
         //
@@ -2099,7 +2101,7 @@ if (!function_exists('processESTAPolicy')) {
             return $r;
         } else {
             $allowedHours = 40;
-            $difference = $difference - 90;
+            $difference = $difference - 90; // this needs to be fixed
         }
         //
         $allowedHours  = $allowedHours + round($difference / 7);
