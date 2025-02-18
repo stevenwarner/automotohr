@@ -49,10 +49,13 @@
                     <th scope="col">Employee</th>
                     <th scope="col">Employee Status</th>
                     <th scope="col">Policy</th>
+                    <th scope="col">Category</th>
                     <th scope="col">Time Taken</th>
                     <th scope="col">Start Date</th>
                     <th scope="col">End Date</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Allowed Balance</th>
+                    <th scope="col">Anniversary Date</th>
                 </tr>
             </thead>
             <tbody>

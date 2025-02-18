@@ -1955,7 +1955,7 @@ class Timeoff_model extends CI_Model
             user_shift_minutes,
             employee_status,
             employee_type,
-             terminated_status,
+            terminated_status,
             active,
             employment_date
 
@@ -5642,6 +5642,7 @@ class Timeoff_model extends CI_Model
             rehire_date,
             active,
             terminated_status,
+            employment_date
         ');
 
         // echo '<pre>';
@@ -6169,6 +6170,7 @@ class Timeoff_model extends CI_Model
 
         $this->db->select('
         tp.title,
+        tr.timeoff_policy_sid,
         tr.request_from_date,
         tr.request_to_date,
         tr.requested_time,
@@ -6241,23 +6243,35 @@ class Timeoff_model extends CI_Model
                 );
                 //
                 $b[$k]['consumed_time'] = $tmp['text'];
+                $b[$k]['timeoff_category'] = $this->getTimeOffPolicyType($request['timeoff_policy_sid'], $companyId);
+                //
+                $policiesDetail  = $this->getEmployeePoliciesByDate(
+                    $companyId,
+                    $request['employeeId'],
+                    $request['request_from_date'],
+                    [$request['timeoff_policy_sid']]
+                );
+                //
+                if ($request['employment_date'] && ($request['employee_type'] == 'fulltime' || $request['employee_type'] == 'full-time')) {
+                    $effectedDate = $request['employment_date'];
+                } else {
+                    $effectedDate = get_employee_latest_joined_date($request['registration_date'], $request['joined_at'], $request['rehire_date']);
+                }
+                //
+                $employeeAnniversaryDate = getEmployeeAnniversary($effectedDate, $request['request_from_date']);
+                //
+                $b[$k]['allowed_time'] = $policiesDetail[0]['AllowedTime']['text'];
+                $b[$k]['remaining_time'] = $policiesDetail[0]['RemainingTime']['text'];
+                $b[$k]['anniversary_date'] = DateTime::createfromformat('Y-m-d', $employeeAnniversaryDate['upcomingAnniversaryDate'])->format('m/d/Y');;
+                //
             }
         }
         return $b;
     }
 
-
-
-
-
-
-
-
-
     //
     function getDataForExport($post)
     {
-
         //
         $this->db->distinct();
 
@@ -7945,5 +7959,25 @@ class Timeoff_model extends CI_Model
             ])
             ->get('timeoff_holidays')
             ->result_array();
+    }
+
+    public function getTimeOffPolicyType ($policyId, $companyId) {
+      
+        $this->db
+            ->select('
+            timeoff_category_list.category_name
+        ')
+            ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
+            ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
+            ->where('timeoff_policies.company_sid', $companyId)
+            ->where('timeoff_policies.is_archived', 0)
+            ->order_by('timeoff_policies.sort_order', 'ASC');
+        //
+        $this->db->where('timeoff_policies.sid', $policyId);
+        //
+        $policyInfo = $this->db->get('timeoff_policies')
+            ->row_array();
+        //
+        return $policyInfo['category_name'];
     }
 }

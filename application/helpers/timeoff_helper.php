@@ -1785,6 +1785,7 @@ if (!function_exists('generateTimeoffRequestSlot')) {
         }
         //
         $html .= '  <td>' . ($request['title']) . '</td>';
+        $html .= '  <td>' . ($request['timeoff_category']) . '</td>';
         $html .= '  <td>' . ($consumed_time) . '</td>';
         $html .= '  <td>' . (DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('m/d/Y')) . '</td>';
         $html .= '  <td>' . (DateTime::createfromformat('Y-m-d', $request['request_to_date'])->format('m/d/Y')) . '</td>';
@@ -1798,6 +1799,9 @@ if (!function_exists('generateTimeoffRequestSlot')) {
         } else if ($status == 'pending') {
             $html .= '<td><strong class="text-warning">PENDING</strong> (<strong class="text-warning">PENDING</strong>)</td>';
         }
+        //
+        $html .= '  <td>' . ($request['allowed_time']) . '</td>';
+        $html .= '  <td>' . ($request['anniversary_date']) . '</td>';
         $html .= '</tr>';
         //
         return $html;
