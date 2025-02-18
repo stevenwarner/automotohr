@@ -2530,6 +2530,7 @@ class Timeoff_model extends CI_Model
         $result->free_result();
         //
         $consumedTime = 0;
+
         //
         foreach ($records as $record) {
             $timeoffDays = json_decode($record['timeoff_days'], true)['days'];

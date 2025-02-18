@@ -839,6 +839,23 @@ if (!function_exists('getEmployeeAccrual')) {
                 $r
             );
         }
+
+        if (checkPolicyESTA($policyId) == 1) {
+            //
+            return processESTAPolicy(
+                $policyId,
+                $employeeId,
+                $employementStatus,
+                $employeeJoiningDate,
+                $durationInMinutes,
+                $accruals,
+                $balanceInMinutes,
+                $asOfToday,
+                $slug,
+                $categoryType,
+                $r
+            );
+        }
         // Check if employee is on probation
         if ($employementStatus == 'probation') {
             // Probation
@@ -1921,9 +1938,35 @@ if (!function_exists('checkPolicyESST')) {
     }
 }
 
+if (!function_exists('checkPolicyESTA')) {
+    /**
+     * Check is policy is ESTA
+     * 
+     * @param int $policyId
+     * 
+     * @return int
+     */
+    function checkPolicyESTA(
+        int $policyId
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $CI->db->select('is_esta');
+        $CI->db->where('sid', $policyId);
+        $result = $CI->db->get('timeoff_policies')->row_array();
+        //
+        return $result['is_esta'];
+    }
+}
+
 if (!function_exists('processESSTPolicy')) {
     /**
-     * 
+     * In Minnesota, employers are required to provide employees with paid sick and safe time (ESST). 
+     * For every 30 hours worked, employees must earn at least one hour of paid ESST, 
+     * with a maximum of 48 hours of accrued ESST per year. 
+     * An employee is defined as anyone who is expected to work at least 80 hours in a year for an employer in Minnesota,
+     * and this does not include independent contractors.
      */
     function processESSTPolicy(
         $policyId,
@@ -1983,6 +2026,11 @@ if (!function_exists('processESSTPolicy')) {
             }
         }
         //
+        // After 90 Days: Frontload 40 Hours
+        // After 91 Days: Accrue 1 Hour Every Week Until 72 Hour Cap
+        // 1 Year: Frontload 40 Hours
+        // 1 Year: Accrue 1 Hour Every Week Until 72 Hours
+        //
         if ($totalShiftMinutes < 4800) {
             $r['Reason'] = 'Employee do not meet accrual of 80 hours for this policy';
             return $r;
@@ -1996,6 +2044,82 @@ if (!function_exists('processESSTPolicy')) {
         //
         $r['AllowedTime'] = $allowedTime;
         $r['RemainingTime'] = $allowedTime;
+        $r['EmployementStatus'] = $employementStatus;
+        $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
+        $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
+        //
+        return $r;
+    }
+}
+
+if (!function_exists('processESTAPolicy')) {
+    /**
+     * In Minnesota, employers are required to provide employees with paid sick and safe time (ESTA). 
+     * For every 91 days worked, employees must earn at least one hour after each week of paid ESTA, 
+     * with a maximum of 72 hours of accrued ESTA per year.
+     */
+    function processESTAPolicy(
+        $policyId,
+        $employeeId,
+        $employementStatus,
+        $employeeJoiningDate,
+        $durationInMinutes,
+        $accruals,
+        $balanceInMinutes,
+        $asOfToday,
+        $slug,
+        $categoryType,
+        $r
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $CI->db->select('policy_start_date');
+        $CI->db->where('sid', $policyId);
+        $result = $CI->db->get('timeoff_policies')->row_array();
+        //
+        $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
+        $todayDate = getFormatedDate($todayDate);
+        //
+        // $employeeJoiningDate = '2024-06-24';
+        // $todayDate = '2024-09-24';
+        //
+        if ($employeeJoiningDate < $result['policy_start_date']) {
+            $employeeAnniversaryDate = getEmployeeAnniversary($result['policy_start_date'], $todayDate);
+        } else {
+            $employeeAnniversaryDate = getEmployeeAnniversary($employeeJoiningDate, $todayDate);
+        }
+        //
+        $difference = dateDifferenceInDays($employeeAnniversaryDate['lastAnniversaryDate'], $todayDate);
+        //
+        $allowedHours = 0;
+        //
+        if ($difference < 90) {
+            $r['Reason'] = 'Employee do not meet accrual of 90 days for this policy';
+            return $r;
+        } else {
+            $allowedHours = 40;
+            $difference = $difference - 90;
+        }
+        //
+        $allowedHours  = $allowedHours + round($difference / 7);
+        //
+        if ($allowedHours > 72) {
+            $allowedHours = 72;
+        }
+        //
+        $consumedTimeInMinutes = $CI->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
+            $policyId,
+            $employeeId,
+            $employeeAnniversaryDate['lastAnniversaryDate'],
+            $employeeAnniversaryDate['upcomingAnniversaryDate']
+        );
+        //
+        $allowedTimeInMinutes = $allowedHours * 60;
+        //
+        $r['AllowedTime'] = $allowedTimeInMinutes;
+        $r['ConsumedTime'] = $consumedTimeInMinutes;
+        $r['RemainingTime'] = $allowedTimeInMinutes - $consumedTimeInMinutes;
         $r['EmployementStatus'] = $employementStatus;
         $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
         $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];

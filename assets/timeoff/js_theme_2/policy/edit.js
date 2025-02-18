@@ -20,6 +20,7 @@ $(function () {
             deactivate: 0,
             include: 1,
             isESST:0,
+            isESTA:0,
             method: 'yearly',
             time: 'none',
             frequency: 'none',
@@ -539,6 +540,7 @@ $(function () {
         policy.deactivate = resp.Data.is_archived;
         policy.include = resp.Data.is_included;
         policy.isESST = resp.Data.is_esst;
+        policy.isESTA = resp.Data.is_esta;
         policy.method = accruals.method;
         policy.time = accruals.time;
         policy.frequency = accruals.frequency;
@@ -606,6 +608,7 @@ $(function () {
         $('#js-include-check-edit').prop('checked', policy.include == 1 ? true : false);
         //
         $('#js-is-esst-edit').prop('checked', policy.isESST == 1 ? true : false);
+        $('#js-is-esta-edit').prop('checked', policy.isESTA == 1 ? true : false);
         // Set accrual method
         // $('#js-accrual-method-edit').select2('val', policy.method);
         // $('#js-accrual-method-edit').trigger('change');
@@ -822,6 +825,8 @@ $(function () {
             policyOBJ.deactivate = $('#js-archive-check-edit').prop('checked') === true ? 1 : 0;
             //
             policyOBJ.isESST = $('#js-is-esst-edit').prop('checked') === true ? 1 : 0;
+            //
+            policyOBJ.isESTA = $('#js-is-esta-edit').prop('checked') === true ? 1 : 0;
             // Set deactivate check
             policyOBJ.include = $('#js-include-check-edit').prop('checked') == true ? 1 : 0;
             //
