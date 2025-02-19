@@ -2084,8 +2084,8 @@ if (!function_exists('processESTAPolicy')) {
             return $r;
         }
         //
-        $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate, "%y");
-        if ($difference >= 1) {
+        $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate, "%a");
+        if ($difference >= 365) {
             $r['Reason'] = 'Employee has worked for more than 1 year.';
             return $r;
         }
@@ -2100,11 +2100,19 @@ if (!function_exists('processESTAPolicy')) {
             $r['Reason'] = 'Employee do not meet accrual of 90 days for this policy';
             return $r;
         } else {
+            if ($difference >= 90) {
+                $upcomingSunday = date('Y-m-d', strtotime('next Sunday', strtotime($employeeJoiningDate . ' + 90 days')));
+                $start = new DateTime($upcomingSunday);
+                $end = new DateTime($todayDate);
+                $interval = new DateInterval('P7D');
+                $period = new DatePeriod($start, $interval, $end);
+
+                $difference = iterator_count($period);
+            }
             $allowedHours = 40;
-            $difference = $difference - 90; // this needs to be fixed
         }
         //
-        $allowedHours  = $allowedHours + round($difference / 7);
+        $allowedHours  = $allowedHours + round($difference);
         //
         if ($allowedHours > 72) {
             $allowedHours = 72;
@@ -2122,6 +2130,8 @@ if (!function_exists('processESTAPolicy')) {
         $r['AllowedTime'] = $allowedTimeInMinutes;
         $r['ConsumedTime'] = $consumedTimeInMinutes;
         $r['RemainingTime'] = $allowedTimeInMinutes - $consumedTimeInMinutes;
+        $r['MaxNegativeTime'] =
+            $r['RemainingTime'];
         $r['EmployementStatus'] = $employementStatus;
         $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
         $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
