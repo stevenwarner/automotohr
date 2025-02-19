@@ -2079,13 +2079,15 @@ if (!function_exists('processESTAPolicy')) {
 
         $todayDateObj = new DateTime($todayDate);
         $employeeJoiningDateObj = new DateTime($employeeJoiningDate);
+        //
         if ($todayDateObj < $employeeJoiningDateObj) {
             $r['Reason'] = "The employee doesn't meet the policy 'Effective Date'.";
             return $r;
         }
         //
-        $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate, "%y");
-        if ($difference >= 1) {
+        $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
+        //
+        if ($difference >= 365) {
             $r['Reason'] = 'Employee has worked for more than 1 year.';
             return $r;
         }
@@ -2100,11 +2102,21 @@ if (!function_exists('processESTAPolicy')) {
             $r['Reason'] = 'Employee do not meet accrual of 90 days for this policy';
             return $r;
         } else {
+            //
             $allowedHours = 40;
             $difference = $difference - 90; // this needs to be fixed
+            //
+            $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +91 days'));
+            //
+            $startTimestamp = strtotime($earningHoursStartDate);
+            $endTimestamp = strtotime($todayDate);
+            //
+            for ($currentDate = $startTimestamp; $currentDate <= $endTimestamp; $currentDate = strtotime("+1 day", $currentDate)) {
+                if (date('w', $currentDate) == 0) { // 0 means Sunday
+                    $allowedHours  = $allowedHours + 1;
+                }
+            }
         }
-        //
-        $allowedHours  = $allowedHours + round($difference / 7);
         //
         if ($allowedHours > 72) {
             $allowedHours = 72;

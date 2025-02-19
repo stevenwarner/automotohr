@@ -662,6 +662,7 @@ $(function () {
                 $('#jsAddPolicy').prop('disabled', false);
                 //
                 let newPolicies = [];
+                let newPoliciesObj = {};
                 //
                 if (resp.Data.length > 0) {
                     //
@@ -671,7 +672,10 @@ $(function () {
                         if (policy.Reason != '') return;
                         //
                         newPolicies.push(policy);
-
+                        //
+                        if (newPoliciesObj[policy['Category']] === undefined) newPoliciesObj[policy['Category']] = [];
+                        newPoliciesObj[policy['Category']].push(policy);
+                        //
                         rows += `
                         <div class="p10">
                         <strong>${policy.Title} (<strong class="text-${
@@ -710,15 +714,25 @@ $(function () {
                         <hr />
                         `;
                     });
-
-
-                    
-
-
                     //
                     window.timeoff.cPolicies = newPolicies;
                     //
                     $('#jsAsOfTodayPolicies').html(rows);
+                    //
+                    // add policy dropdown with selected date.
+                    let policyRows = '<option value="0" selected="true">[Select a policy]</option>';
+                    //
+                    $.each(newPoliciesObj, (category, policies) => {
+                        policyRows += `<optgroup label="${category}">`;
+                        //
+                        policies.map((policy) => {
+                            policyRows += `<option value="${policy.PolicyId}">${policy.Title} (<strong class="text-${policy.categoryType == 1 ? 'success' : 'danger'}">${policy.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</option>`;
+                        });
+                        policyRows += `</optgroup>`;
+                    });
+                    //
+                    $('#jsAddPolicy').html(policyRows);
+                    $('#jsAddPolicy').select2();
                 }
                 //
                 if (window.timeoff.cPolicies.length == 0) {

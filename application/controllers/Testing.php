@@ -1196,6 +1196,12 @@ class Testing extends CI_Controller
             $this->db->insert('lms_scorm_courses', $insert_data);
         }
     }
+
+    function testESTA () {
+        $this->load->model('timeoff_model');
+        $employees = $this->timeoff_model->getPolicyEmployees(25, 15708);
+        _e($employees,true,true);
+    }
 }
 
 
