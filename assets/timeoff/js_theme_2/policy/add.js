@@ -13,6 +13,7 @@ $(function () {
         deactivate: 0,
         include: 1,
         isESST:0,
+        isESTA:0,
         employeeTypes: [],
         method: 'none',
         time: 'none',
@@ -293,6 +294,8 @@ $(function () {
             policyOBJ.include = $('#js-include-check-add').prop('checked') === true ? 1 : 0;
             // // Set deactivate check
             policyOBJ.isESST = $('#js-is-esst-add').prop('checked') === true ? 1 : 0;
+            //
+            policyOBJ.isESTA = $('#js-is-esta-add').prop('checked') === true ? 1 : 0;
             //
             policyOBJ.isEntitledEmployees = $('.jsIsEntitledEmployee:checked').val();
             //

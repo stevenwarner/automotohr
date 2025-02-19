@@ -2744,6 +2744,7 @@ class Time_off extends Public_Controller
                 $in['is_archived'] = $post['deactivate'];
                 $in['is_included'] = $post['include'];
                 $in['is_esst'] = $post['isESST'];
+                $in['is_esta'] = $post['isESTA'];
                 $in['is_unlimited'] = $post['rate'] == 0 ? 1 : 0;
                 $in['creator_type'] = 'employee';
                 $in['status'] = 1;
@@ -2845,6 +2846,7 @@ class Time_off extends Public_Controller
                 $up['is_included'] = $post['include'];
                 $up['is_unlimited'] = $post['rate'] == 0 ? 1 : 0;
                 $up['is_esst'] = $post['isESST'];
+                $up['is_esta'] = $post['isESTA'];
                 $up['sort_order'] = $post['order'];
                 $up['off_days'] = implode(',', $post['offDays']);
                 $up['accruals'] = json_encode($accruals);
