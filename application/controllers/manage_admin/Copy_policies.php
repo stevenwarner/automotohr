@@ -118,6 +118,14 @@ class Copy_policies extends Admin_Controller {
         $this->response();
     }
 
+    public function copyTimeoffPolicies () {
+        $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
+        check_access_permissions($security_details, 'manage_admin', 'copy_policies');
+        $this->data['page_title'] = 'Copy Documents To Another Company Account';
+
+        $this->render('manage_admin/company/copy_timeoff_policies', 'admin_master');
+    }
+
     /**
      * Handles AJAX requests
      * @accepts POST

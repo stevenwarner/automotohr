@@ -2485,3 +2485,5 @@ $route['hr_documents_management/manager_report/(:any)'] = 'Hr_documents_manageme
 
 //
 $route["webhook/indeed/applicant"] = "Indeed_feed/indeedPostUrl";
+$route["manage_admin/copy_timeoff_policies"] = "manage_admin/Copy_policies/copyTimeoffPolicies";
+
