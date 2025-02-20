@@ -1199,7 +1199,7 @@ class Testing extends CI_Controller
 
     function testESTA () {
         $this->load->model('timeoff_model');
-        $employees = $this->timeoff_model->getPolicyEmployees(25, 15708);
+        $employees = $this->timeoff_model->getPolicyEmployees(24, 15708);
         _e($employees,true,true);
     }
 }

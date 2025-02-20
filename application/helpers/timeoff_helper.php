@@ -2000,50 +2000,69 @@ if (!function_exists('processESSTPolicy')) {
             $employeeAnniversaryDate = getEmployeeAnniversary($employeeJoiningDate, $todayDate);
         }
         //
-        $totalShiftMinutes = 0;
+        $joinningDifference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
         //
-        if (!checkIfAppIsEnabled(SCHEDULE_MODULE)) {
-            // todo
-        } else {
-            $CI->db->select('start_time,end_time');
-            $CI->db->where('shift_date >=', $employeeAnniversaryDate['lastAnniversaryDate']);
-            $CI->db->where('shift_date <=', $todayDate);
-            $CI->db->where('employee_sid', $employeeId);
-            $result = $CI->db->get('cl_shifts')->result_array();
-            //
-            if (!$result) {
-                $r['Reason'] = 'Employee do not have a shift between ' . $employeeAnniversaryDate['lastAnniversaryDate'] . ' and ' . $todayDate;
-                return $r;
-            }
-            //
-            foreach ($result as $row) {
-                $startTime = DateTime::createFromFormat("H:i:s", $row['start_time']);
-                $endTime = DateTime::createFromFormat("H:i:s", $row['end_time']);
-                $difference = $endTime->diff($startTime);
-                //
-                $totalShiftMinutes += ($difference->h * 60) + $difference->i;
-                //
-            }
-        }
-        //
-        // After 90 Days: Frontload 40 Hours
-        // After 91 Days: Accrue 1 Hour Every Week Until 72 Hour Cap
-        // 1 Year: Frontload 40 Hours
-        // 1 Year: Accrue 1 Hour Every Week Until 72 Hours
-        //
-        if ($totalShiftMinutes < 4800) {
+        // check if employee work for 80 hours 8 * 10 = 80 hours so we check employee worked more the 10 days
+        if ($joinningDifference < 10) {
             $r['Reason'] = 'Employee do not meet accrual of 80 hours for this policy';
             return $r;
         }
         //
-        $allowedTime  = (($totalShiftMinutes / 60) / 30) * 60;
+        $currentYearDifference = dateDifferenceInDays($employeeAnniversaryDate['lastAnniversaryDate'], $todayDate);
         //
-        if ($allowedTime > 2880) {
-            $allowedTime = 2880;
+        $totalHoursWork = $currentYearDifference * 8;
+        $earnHours = round($totalHoursWork / 30);
+        //
+        if ($earnHours > 48) {
+            $earnHours = 48;
         }
         //
-        $r['AllowedTime'] = $allowedTime;
-        $r['RemainingTime'] = $allowedTime;
+        $allowedTimeInMinutes = $earnHours * 60;
+        //
+        $consumedTimeInMinutes = $CI->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
+            $policyId,
+            $employeeId,
+            $employeeAnniversaryDate['lastAnniversaryDate'],
+            $employeeAnniversaryDate['upcomingAnniversaryDate']
+        );
+        //
+        // comment out old logic which is based on employee shifts
+        // $totalShiftMinutes = 0;
+        // //
+        // if (!checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+        //     // todo
+        // } else {
+        //     $CI->db->select('start_time,end_time');
+        //     $CI->db->where('shift_date >=', $employeeAnniversaryDate['lastAnniversaryDate']);
+        //     $CI->db->where('shift_date <=', $todayDate);
+        //     $CI->db->where('employee_sid', $employeeId);
+        //     $result = $CI->db->get('cl_shifts')->result_array();
+        //     //
+        //     if (!$result) {
+        //         $r['Reason'] = 'Employee do not have a shift between ' . $employeeAnniversaryDate['lastAnniversaryDate'] . ' and ' . $todayDate;
+        //         return $r;
+        //     }
+        //     //
+        //     foreach ($result as $row) {
+        //         $startTime = DateTime::createFromFormat("H:i:s", $row['start_time']);
+        //         $endTime = DateTime::createFromFormat("H:i:s", $row['end_time']);
+        //         $difference = $endTime->diff($startTime);
+        //         //
+        //         $totalShiftMinutes += ($difference->h * 60) + $difference->i;
+        //         //
+        //     }
+        //     //
+        //     if ($totalShiftMinutes < 4800) {
+        //         $r['Reason'] = 'Employee do not meet accrual of 80 hours for this policy';
+        //         return $r;
+        //     }
+        // }
+        //
+        $r['AllowedTime'] = $allowedTimeInMinutes;
+        $r['ConsumedTime'] = $consumedTimeInMinutes;
+        $r['RemainingTime'] = $allowedTimeInMinutes - $consumedTimeInMinutes;
+        $r['MaxNegativeTime'] = $r['RemainingTime'];
+        $r['RemainingTimeWithNegative'] = $r['RemainingTime'];
         $r['EmployementStatus'] = $employementStatus;
         $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
         $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
@@ -2092,10 +2111,6 @@ if (!function_exists('processESTAPolicy')) {
             return $r;
         }
         //
-        $employeeAnniversaryDate = getEmployeeAnniversary($employeeJoiningDate, $todayDate);
-        //
-        $difference = dateDifferenceInDays($employeeAnniversaryDate['lastAnniversaryDate'], $todayDate);
-        //
         $allowedHours = 0;
         //
         if ($difference < 90) {
@@ -2121,6 +2136,8 @@ if (!function_exists('processESTAPolicy')) {
         if ($allowedHours > 72) {
             $allowedHours = 72;
         }
+        //
+        $employeeAnniversaryDate = getEmployeeAnniversary($employeeJoiningDate, $todayDate);
         //
         $consumedTimeInMinutes = $CI->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
             $policyId,
