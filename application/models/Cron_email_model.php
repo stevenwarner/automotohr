@@ -10,6 +10,8 @@ class Cron_email_model extends CI_Model
     private $companyEmployees;
     private $testingCompanyIds;
 
+    private $executiveAdminsList = [];
+
     public function __construct()
     {
         parent::__construct();
@@ -212,9 +214,82 @@ class Cron_email_model extends CI_Model
             exit("No companies found!");
         }
         // iterate
+
         foreach ($companyIds as $companyId) {
             // send emails
             $this->generateAndSendReport($companyId);
+        }
+
+        if (!empty($this->executiveAdminsList)) {
+          
+          foreach($this->executiveAdminsList as $exRow){
+
+           $companyReplaceArray = [
+                "{{company_name}}" => '',
+                "{{company_address}}" => '',
+                "{{company_phone}}" => '',
+                "{{career_site_url}}" => '',
+            ];
+
+            $template = get_email_template(COURSE_REPORT_EMAILS);
+            //
+            $templateSubject = $template["subject"];
+            $templateFromName = $template["from_name"];
+            $templateBody = $template["text"];
+            // set replace array
+            //
+
+            //_e($exRow,true);
+
+            $replaceArray = $companyReplaceArray;
+            //
+            $replaceArray["{{baseurl}}"] = base_url();
+            $replaceArray["{{full_name}}"] =
+                $replaceArray["{{contact_name}}"]
+                = $exRow['data']['contact_name'];
+
+
+            $viewReport = '';
+            foreach ($exRow['data']['buttons'] as $buttonRow) {
+                $viewReport .= "<br><br>" . $buttonRow;
+            }
+
+            $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
+            $templateBody = str_replace('{{download_report}}', '', $templateBody);
+
+            // set keys
+            $replaceKeys = array_keys($replaceArray);
+
+            // replace
+            $fromName = str_replace(
+                $replaceKeys,
+                $replaceArray,
+                $templateFromName
+            );
+            $subject = str_replace(
+                $replaceKeys,
+                $replaceArray,
+                $templateSubject
+            );
+            $body = str_replace(
+                $replaceKeys,
+                $replaceArray,
+                $templateBody
+            );
+
+           // _e($exRow['email'],true);
+            log_and_send_email_with_attachment(
+                FROM_EMAIL_NOTIFICATIONS,
+                $exRow['data']['email'],
+                $subject,
+                $body,
+                $fromName,
+                '',
+                "sendMailWithAttachmentAsString"
+            );
+
+          }         
+          
         }
     }
 
@@ -247,6 +322,14 @@ class Cron_email_model extends CI_Model
             return ["errors" => ["No notifiers found"]];
         }
         // loop through the 
+
+
+        $this->load->library('encryption');
+        //
+        $this->encryption->initialize(
+            get_encryption_initialize_array()
+        );
+
         foreach ($this->notifiers as $v0) {
             // skip in case of non-employee contact
             // as we don't have team members
@@ -254,41 +337,83 @@ class Cron_email_model extends CI_Model
                 echo "Employer Id 0 \n";
                 continue;
             }
-            // get the ream member ids
-            $response = getMyDepartmentAndTeams($v0["employer_sid"], "courses", "get", $this->companyId);
-            //
-            $teamEmployeeIds = $response
-                ? array_column(
-                    $response["employees"],
-                    "employee_sid"
-                )
-                : [];
-            //
-            if (!$teamEmployeeIds) {
-                echo "No teams found \n";
-                continue;
-            }
-            // get the company employees by course
-            $employeesWithCourseList = $this
-                ->getCompanyEmployeesWithCourses(
-                    $types,
-                    $courseIds,
-                    $teamEmployeeIds
+
+
+            // check is executive admin
+            if ($this->checkExecutiveAdmin($v0["employer_sid"]) == 1) {
+
+                //
+                $viewCode = str_replace(
+                    ['/', '+'],
+                    ['$$ab$$', '$$ba$$'],
+                    $this->encryption->encrypt($v0["employer_sid"] . '/' . 'view')
                 );
-            // no team members found
-            if (!$employeesWithCourseList) {
-                echo "No employees with courses found \n";
-                continue;
+                //
+                $downloadCode = str_replace(
+                    ['/', '+'],
+                    ['$$ab$$', '$$ba$$'],
+                    $this->encryption->encrypt($v0["employer_sid"] . '/' . 'download')
+                );
+
+                //
+                $viewLink = base_url("lms/manager_report") . '/' . $viewCode;
+                $downloadLink = base_url("lms/manager_report") . '/' . $downloadCode;
+
+                $companyDetails = getCompanyInfo($v0["company_sid"]);
+
+                $buttons = '';
+                $forCompany = "From: " . $companyDetails["company_name"] . "<br>";
+                $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
+                $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
+                $buttons .= $forCompany . $viewReport . '&nbsp;&nbsp;&nbsp;' . $downloadReport;
+
+                $this->executiveAdminsList[$v0['email']]['data']['buttons'][] = $buttons;
+                $this->executiveAdminsList[$v0['email']]['data']['contact_name'] = $v0['contact_name'];
+                $this->executiveAdminsList[$v0['email']]['data']['email'] = $v0['email'];
+
+
+            } else {
+
+                // get the ream member ids
+                $response = getMyDepartmentAndTeams($v0["employer_sid"], "courses", "get", $this->companyId);
+                //
+                $teamEmployeeIds = $response
+                    ? array_column(
+                        $response["employees"],
+                        "employee_sid"
+                    )
+                    : [];
+                //
+                if (!$teamEmployeeIds) {
+                    echo "No teams found \n";
+                    continue;
+                }
+                // get the company employees by course
+                $employeesWithCourseList = $this
+                    ->getCompanyEmployeesWithCourses(
+                        $types,
+                        $courseIds,
+                        $teamEmployeeIds
+                    );
+                // no team members found
+                if (!$employeesWithCourseList) {
+                    echo "No employees with courses found \n";
+                    continue;
+                }
+                //
+                $this->companyEmployees = $employeesWithCourseList;
+                //
+                $report = $this->generateReport();
+                echo "Report generated \n";
+                //
+                $this->sendCourseReportEmails($report, $v0);
+                echo "Report Sent \n\n";
             }
-            //
-            $this->companyEmployees = $employeesWithCourseList;
-            //
-            $report = $this->generateReport();
-            echo "Report generated \n";
-            //
-            $this->sendCourseReportEmails($report, $v0);
-            echo "Report Sent \n\n";
+
+            //      
+
         }
+
         //
         return ["success"];
     }
@@ -782,65 +907,65 @@ class Cron_email_model extends CI_Model
         );
         //
         // foreach ($this->notifiers as $employee) {
-            $templateBody = $template["text"];
-            // set replace array
-            $replaceArray = $companyReplaceArray;
-            //
-            $replaceArray["{{baseurl}}"] = base_url();
-            $replaceArray["{{full_name}}"] =
-                $replaceArray["{{contact_name}}"]
-                = $employee["contact_name"];
-            //
-            $viewCode = str_replace(
-                ['/', '+'],
-                ['$$ab$$', '$$ba$$'],
-                $this->encryption->encrypt($employee['employer_sid'] . '/' . 'view')
-            );
-            //
-            $downloadCode = str_replace(
-                ['/', '+'],
-                ['$$ab$$', '$$ba$$'],
-                $this->encryption->encrypt($employee['employer_sid'] . '/' . 'download')
-            );
-            //
-            $viewLink = base_url("lms/manager_report") . '/' . $viewCode;
-            $downloadLink = base_url("lms/manager_report") . '/' . $downloadCode;
-            //
-            $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
-            $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
-            //
-            $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
-            $templateBody = str_replace('{{download_report}}', $downloadReport, $templateBody);
-            // set keys
-            $replaceKeys = array_keys($replaceArray);
+        $templateBody = $template["text"];
+        // set replace array
+        $replaceArray = $companyReplaceArray;
+        //
+        $replaceArray["{{baseurl}}"] = base_url();
+        $replaceArray["{{full_name}}"] =
+            $replaceArray["{{contact_name}}"]
+            = $employee["contact_name"];
+        //
+        $viewCode = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($employee['employer_sid'] . '/' . 'view')
+        );
+        //
+        $downloadCode = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($employee['employer_sid'] . '/' . 'download')
+        );
+        //
+        $viewLink = base_url("lms/manager_report") . '/' . $viewCode;
+        $downloadLink = base_url("lms/manager_report") . '/' . $downloadCode;
+        //
+        $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
+        $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
+        //
+        $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
+        $templateBody = str_replace('{{download_report}}', $downloadReport, $templateBody);
+        // set keys
+        $replaceKeys = array_keys($replaceArray);
 
-            // replace
-            $fromName = str_replace(
-                $replaceKeys,
-                $replaceArray,
-                $templateFromName
-            );
-            $subject = str_replace(
-                $replaceKeys,
-                $replaceArray,
-                $templateSubject
-            );
-            $body = str_replace(
-                $replaceKeys,
-                $replaceArray,
-                $templateBody
-            );
-            echo "Sending Email \n\n";
-            //
-            log_and_send_email_with_attachment(
-                FROM_EMAIL_NOTIFICATIONS,
-                $employee["email"],
-                $subject,
-                $body,
-                $fromName,
-                $report,
-                "sendMailWithAttachmentAsString"
-            );
+        // replace
+        $fromName = str_replace(
+            $replaceKeys,
+            $replaceArray,
+            $templateFromName
+        );
+        $subject = str_replace(
+            $replaceKeys,
+            $replaceArray,
+            $templateSubject
+        );
+        $body = str_replace(
+            $replaceKeys,
+            $replaceArray,
+            $templateBody
+        );
+        echo "Sending Email \n\n";
+        //
+        log_and_send_email_with_attachment(
+            FROM_EMAIL_NOTIFICATIONS,
+            $employee["email"],
+            $subject,
+            $body,
+            $fromName,
+            $report,
+            "sendMailWithAttachmentAsString"
+        );
         // }
     }
 
@@ -997,7 +1122,8 @@ class Cron_email_model extends CI_Model
         return false;
     }
 
-    public function sendDocumentReportToManagers () {
+    public function sendDocumentReportToManagers()
+    {
         //
         $this->load->library('encryption');
         //
@@ -1010,6 +1136,9 @@ class Cron_email_model extends CI_Model
         //
         $companies = $this->copy_employees_model->get_all_companies();
         //
+
+        $executiveAdminsList = [];
+
         foreach ($companies as $companyRow) {
             //
             $post['companySid'] = $companyRow['sid'];
@@ -1040,74 +1169,177 @@ class Cron_email_model extends CI_Model
                         "{{company_phone}}" => $companyDetails["company_phone"],
                         "{{career_site_url}}" => $companyDetails["career_site_url"],
                     ];
-                    //
-                    foreach ($managersList as $empRow) {
-                        //
-                        $template = get_email_template(DOCUMENT_REPORT_EMAILS);
-                        //
-                        $templateSubject = $template["subject"];
-                        $templateFromName = $template["from_name"];
-                        $templateBody = $template["text"];
-                        // set replace array
-                        //
-                        $replaceArray = $companyReplaceArray;
-                        //
-                        $replaceArray["{{baseurl}}"] = base_url();
-                        $replaceArray["{{full_name}}"] =
-                            $replaceArray["{{contact_name}}"]
-                            = $empRow['contact_name'];
-                        //
-                        $viewCode = str_replace(
-                            ['/', '+'],
-                            ['$$ab$$', '$$ba$$'],
-                            $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'view')
-                        );
-                        //
-                        $downloadCode = str_replace(
-                            ['/', '+'],
-                            ['$$ab$$', '$$ba$$'],
-                            $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'download')
-                        );
-                        //
-                        $viewLink = base_url("hr_documents_management/manager_report") . '/' . $viewCode;
-                        $downloadLink = base_url("hr_documents_management/manager_report") . '/' . $downloadCode;
-                        //
-                        $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
-                        $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
-                        //
-                        $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
-                        $templateBody = str_replace('{{download_report}}', $downloadReport, $templateBody);
-                        // set keys
-                        $replaceKeys = array_keys($replaceArray);
 
-                        // replace
-                        $fromName = str_replace(
-                            $replaceKeys,
-                            $replaceArray,
-                            $templateFromName
-                        );
-                        $subject = str_replace(
-                            $replaceKeys,
-                            $replaceArray,
-                            $templateSubject
-                        );
-                        $body = str_replace(
-                            $replaceKeys,
-                            $replaceArray,
-                            $templateBody
-                        );
+                    //
+                    foreach ($managersList as $key => $empRow) {
                         //
-                        log_and_send_email_with_attachment(
-                            FROM_EMAIL_NOTIFICATIONS,
-                            $empRow['email'],
-                            $subject,
-                            $body,
-                            $fromName,
-                            $report,
-                            "sendMailWithAttachmentAsString"
-                        );
+
+                        if ($this->checkExecutiveAdmin($empRow['employer_sid']) == 1) {
+
+                            //
+                            $viewCode = str_replace(
+                                ['/', '+'],
+                                ['$$ab$$', '$$ba$$'],
+                                $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'view')
+                            );
+                            //
+                            $downloadCode = str_replace(
+                                ['/', '+'],
+                                ['$$ab$$', '$$ba$$'],
+                                $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'download')
+                            );
+
+                            //
+                            $viewLink = base_url("hr_documents_management/manager_report") . '/' . $viewCode;
+                            $downloadLink = base_url("hr_documents_management/manager_report") . '/' . $downloadCode;
+
+
+                            $buttons = '';
+                            $forCompany = "From: " . $companyDetails["company_name"] . "<br>";
+                            $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
+                            $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
+                            $buttons .= $forCompany . $viewReport . '&nbsp;&nbsp;&nbsp;' . $downloadReport;
+
+                            $executiveAdminsList[$empRow['email']]['data']['buttons'][] = $buttons;
+                            $executiveAdminsList[$empRow['email']]['data']['contact_name'] = $empRow['contact_name'];
+                        } else {
+
+                            $template = get_email_template(DOCUMENT_REPORT_EMAILS);
+                            //
+                            $templateSubject = $template["subject"];
+                            $templateFromName = $template["from_name"];
+                            $templateBody = $template["text"];
+
+                            // set replace array
+                            //
+                            $replaceArray = $companyReplaceArray;
+                            //
+                            $replaceArray["{{baseurl}}"] = base_url();
+                            $replaceArray["{{full_name}}"] =
+                                $replaceArray["{{contact_name}}"]
+                                = $empRow['contact_name'];
+                            //
+                            $viewCode = str_replace(
+                                ['/', '+'],
+                                ['$$ab$$', '$$ba$$'],
+                                $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'view')
+                            );
+                            //
+                            $downloadCode = str_replace(
+                                ['/', '+'],
+                                ['$$ab$$', '$$ba$$'],
+                                $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'download')
+                            );
+                            //
+                            $viewLink = base_url("hr_documents_management/manager_report") . '/' . $viewCode;
+                            $downloadLink = base_url("hr_documents_management/manager_report") . '/' . $downloadCode;
+                            //
+                            $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
+                            $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
+
+                            //
+                            $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
+                            $templateBody = str_replace('{{download_report}}', $downloadReport, $templateBody);
+
+
+                            // set keys
+                            $replaceKeys = array_keys($replaceArray);
+
+                            // replace
+                            $fromName = str_replace(
+                                $replaceKeys,
+                                $replaceArray,
+                                $templateFromName
+                            );
+                            $subject = str_replace(
+                                $replaceKeys,
+                                $replaceArray,
+                                $templateSubject
+                            );
+                            $body = str_replace(
+                                $replaceKeys,
+                                $replaceArray,
+                                $templateBody
+                            );
+                            //
+                            log_and_send_email_with_attachment(
+                                FROM_EMAIL_NOTIFICATIONS,
+                                $empRow['email'],
+                                $subject,
+                                $body,
+                                $fromName,
+                                $report,
+                                "sendMailWithAttachmentAsString"
+                            );
+                        }
                     }
                 }
+            }
+        }
+
+        //
+        if (!empty($executiveAdminsList)) {
+            foreach ($executiveAdminsList as $exRow) {
+
+                $companyReplaceArray = [
+                    "{{company_name}}" => '',
+                    "{{company_address}}" => '',
+                    "{{company_phone}}" => '',
+                    "{{career_site_url}}" => '',
+                ];
+
+                $template = get_email_template(DOCUMENT_REPORT_EMAILS);
+                //
+                $templateSubject = $template["subject"];
+                $templateFromName = $template["from_name"];
+                $templateBody = $template["text"];
+                // set replace array
+                //
+                $replaceArray = $companyReplaceArray;
+                //
+                $replaceArray["{{baseurl}}"] = base_url();
+                $replaceArray["{{full_name}}"] =
+                    $replaceArray["{{contact_name}}"]
+                    = $exRow['data']['contact_name'];
+
+
+                $viewReport = '';
+                foreach ($exRow['data']['buttons'] as $buttonRow) {
+                    $viewReport .= "<br><br>" . $buttonRow;
+                }
+
+                $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
+                $templateBody = str_replace('{{download_report}}', '', $templateBody);
+
+                // set keys
+                $replaceKeys = array_keys($replaceArray);
+
+                // replace
+                $fromName = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateFromName
+                );
+                $subject = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateSubject
+                );
+                $body = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateBody
+                );
+
+                log_and_send_email_with_attachment(
+                    FROM_EMAIL_NOTIFICATIONS,
+                    $empRow['email'],
+                    $subject,
+                    $body,
+                    $fromName,
+                    $report,
+                    "sendMailWithAttachmentAsString"
+                );
             }
         }
 
@@ -1197,7 +1429,7 @@ class Cron_email_model extends CI_Model
             //
             if (count($row['assigneddocuments']) > 0) {
                 foreach ($row['assigneddocuments'] as $assigned_row) {
-                    
+
                     if ($assigned_row['completedStatus'] == 'Not Completed') {
                         $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
                     }
@@ -1248,5 +1480,24 @@ class Cron_email_model extends CI_Model
         ];
 
         return ["name" => "document_report.csv", "data" => $data];
+    }
+
+
+    private function checkExecutiveAdmin($employeeSid)
+    {
+
+        $record = $this
+            ->db
+            ->select("is_executive_admin")
+            ->where("sid", $employeeSid)
+            ->limit(1)
+            ->get("users")
+            ->row_array();
+
+        if ($record['is_executive_admin'] == 1) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
