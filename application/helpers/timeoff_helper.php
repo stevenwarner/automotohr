@@ -2134,6 +2134,8 @@ if (!function_exists('processESTAPolicy')) {
         $r['AllowedTime'] = $allowedTimeInMinutes;
         $r['ConsumedTime'] = $consumedTimeInMinutes;
         $r['RemainingTime'] = $allowedTimeInMinutes - $consumedTimeInMinutes;
+        $r['MaxNegativeTime'] = $r['RemainingTime'];
+        $r['RemainingTimeWithNegative'] = $r['RemainingTime'];
         $r['EmployementStatus'] = $employementStatus;
         $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
         $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];

@@ -218,6 +218,15 @@ class Copy_employees extends Admin_Controller
 
                 // 16) Employee EEOC Form
                 $eeoc = $this->merge_employees_model->update_employee_eeoc_form($primary_employee_sid, $secondary_employee_sid, $adminId);
+
+                // transfer the employee history as well
+                $this
+                    ->copy_employees_model
+                    ->moveEmployeeStatus(
+                        $secondary_employee_sid,
+                        $primary_employee_sid,
+                        $adminId
+                    );
                 //
                 $merge_secondary_employee_data = [
                     'user_profile' => $secondary_employee_data,
@@ -272,7 +281,7 @@ class Copy_employees extends Admin_Controller
                         'active' => 0,
                         'username' => $secondary_employee_data['username'] . '_' . time()
                     ]);
-                
+
                 // Add transferred status to new employee
                 $ins = [];
                 $ins['status_change_date'] = date('Y-m-d', strtotime('now'));
@@ -303,7 +312,7 @@ class Copy_employees extends Admin_Controller
                 $ins['termination_date'] = null;
 
                 $this->copy_employees_model->add_terminate_user_table($ins);
-                
+
 
                 // Update the transfer date
                 $transferDate = getSystemDate(DB_DATE);
@@ -804,6 +813,15 @@ class Copy_employees extends Admin_Controller
                     }
                 }
 
+                // transfer the employee history as well
+                $this
+                    ->copy_employees_model
+                    ->moveEmployeeStatus(
+                        $employee_sid,
+                        $new_employee_sid,
+                        $adminId
+                    );
+
                 $insert_employee_log = array();
                 $insert_employee_log['from_company_sid'] = $from_company;
                 $insert_employee_log['previous_employee_sid'] = $employee_sid;
@@ -812,42 +830,6 @@ class Copy_employees extends Admin_Controller
                 $insert_employee_log['employee_copy_date'] = $date;
 
                 $this->copy_employees_model->maintain_employee_log_data($insert_employee_log);
-
-
-                // Add transferred status to moved employee if last status is terminated
-                $employeeStatusRecord = get_instance()->db
-                    ->select('*')
-                    ->from('terminated_employees')
-                    ->where('employee_sid', $employee_sid)
-                    ->order_by('sid', 'ASC')
-                    ->get()
-                    ->result_array();
-
-                if (!empty($employeeStatusRecord)) {
-
-                    foreach ($employeeStatusRecord as $statusRow) {
-                        $ins = [];
-                        $ins['employee_status'] = $statusRow['employee_status'];
-                        $ins['termination_reason'] = $statusRow['termination_reason'];
-                        $ins['termination_date'] = $statusRow['termination_date'];
-                        $ins['involuntary_termination'] = $statusRow['involuntary_termination'];
-                        $ins['do_not_hire'] = $statusRow['do_not_hire'];
-                        $ins['status_change_date'] = $statusRow['status_change_date'];
-                        $ins['details'] = $statusRow['details'];
-                        $ins['employee_sid'] = $new_employee_sid;
-                        $ins['changed_by'] = $statusRow['changed_by'];
-                        $ins['ip_address'] = $statusRow['ip_address'];
-                        $ins['user_agent'] = $statusRow['user_agent'];
-                        $ins['payroll_version'] = $statusRow['payroll_version'];
-                        $ins['payroll_object'] = $statusRow['payroll_object'];
-                        $ins['created_at'] = $statusRow['created_at'];
-                        $ins['source'] = $statusRow['source'];
-
-                        $this->copy_employees_model->add_terminate_user_table($ins);
-
-                    }
-                }
-
 
                 //
                 // Add transferred status to new employee

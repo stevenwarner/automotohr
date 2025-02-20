@@ -14993,7 +14993,7 @@ if (!function_exists('GetEmployeeStatus')) {
      */
     function GetEmployeeStatus($lastStatusText, $active)
     {
-        if (!$active) {
+        if (!$active && strtolower($lastStatusText) !== "terminated") {
             return "De-activated";
         }
         //

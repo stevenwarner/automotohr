@@ -1536,4 +1536,40 @@ class Copy_employees_model extends CI_Model
     }
 
 
+    public function moveEmployeeStatus($employeeId, $newEmployeeId, $adminId)
+    {
+        // Add transferred status to moved employee if last status is terminated
+        $employeeStatusRecord = $this->db
+            ->select('*')
+            ->from('terminated_employees')
+            ->where('employee_sid', $employeeId)
+            ->order_by('sid', 'ASC')
+            ->get()
+            ->result_array();
+
+        if (!empty($employeeStatusRecord)) {
+
+            foreach ($employeeStatusRecord as $statusRow) {
+                $ins = [];
+                $ins['employee_status'] = $statusRow['employee_status'];
+                $ins['termination_reason'] = $statusRow['termination_reason'];
+                $ins['termination_date'] = $statusRow['termination_date'];
+                $ins['involuntary_termination'] = $statusRow['involuntary_termination'];
+                $ins['do_not_hire'] = $statusRow['do_not_hire'];
+                $ins['status_change_date'] = $statusRow['status_change_date'];
+                $ins['details'] = $statusRow['details'];
+                $ins['employee_sid'] = $newEmployeeId;
+                $ins['changed_by'] = $adminId;
+                $ins['ip_address'] = $statusRow['ip_address'];
+                $ins['user_agent'] = $statusRow['user_agent'];
+                $ins['payroll_version'] = $statusRow['payroll_version'];
+                $ins['payroll_object'] = $statusRow['payroll_object'];
+                $ins['created_at'] = $statusRow['created_at'];
+
+                $this->add_terminate_user_table($ins);
+            }
+        }
+    }
+
+
 }
