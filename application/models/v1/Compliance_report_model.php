@@ -1607,6 +1607,7 @@ class Compliance_report_model extends CI_Model
 			->db
 			->select("csp_reports_incidents.*")
 			->select("compliance_incident_types.compliance_incident_type_name")
+			->select("compliance_incident_types.description")
 			->select($this->userFields)
 			->join(
 				"compliance_incident_types",
@@ -1956,6 +1957,14 @@ class Compliance_report_model extends CI_Model
 			"updated_at" => $todayDateTime,
 			"disable_answers" => 1
 		];
+		if ($post["dynamicInput"]) {
+			$reportData["fields_json"] = [
+				"dynamicInput" => $post["dynamicInput"]
+			];
+
+			//
+			$reportData["fields_json"] = json_encode($reportData["fields_json"]);
+		}
 		//
 		$this
 			->db

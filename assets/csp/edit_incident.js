@@ -85,12 +85,8 @@ $(function Overview() {
 
 	//
 	$("#jsAddReportForm").validate({
-		rules: {
-			
-		},
-		messages: {
-			
-		},
+		rules: {},
+		messages: {},
 		submitHandler: function (form) {
 			handleFormSubmission(form);
 		},
@@ -145,20 +141,6 @@ $(function Overview() {
 		}
 		//
 		addNoteToReport(obj);
-	});
-
-	$(".jsAddIncident").click(function (event) {
-		event.preventDefault();
-		const obj = {
-			type: $("#jsReportIncidentType").val(),
-		};
-		//
-		if (obj.type == "0") {
-			_error("Please select an incident type.");
-			return;
-		}
-		//
-		addIncidentToReport(obj.type);
 	});
 
 	$(".jsAddDocument").click(function (event) {
@@ -515,6 +497,13 @@ $(function Overview() {
 		}
 
 		return fileCategory;
+	}
+
+	//
+	if (descriptionFieldsObj && descriptionFieldsObj.dynamicInput) {
+		descriptionFieldsObj.dynamicInput.map(function (v, i) {
+			$('[name="dynamicInput[]"]').eq(i).val(v);
+		});
 	}
 
 	ml(false, "jsPageLoader");

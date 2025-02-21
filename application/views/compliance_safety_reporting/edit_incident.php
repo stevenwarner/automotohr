@@ -12,7 +12,7 @@
                     <i class="fa fa-arrow-left"></i>
                     Back to Report
                 </a>
-                <a href="<?= base_url('compliance_safety_reporting/dashboard') ?>" class="btn btn-blue">
+                <a href="<?= base_url('compliance_safety_reporting/overview') ?>" class="btn btn-blue">
                     <i class="fa fa-pie-chart"></i>
                     Compliance Safety Reporting
                 </a>
@@ -52,6 +52,7 @@
                             </div>
                         </div>
                     </div>
+                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/description"); ?>
                     <?php if ($report["disable_answers"] == 1) : ?>
                         <?php $this->load->view("compliance_safety_reporting/partials/incidents/answers"); ?>
                     <?php else: ?>
@@ -228,7 +229,7 @@
                         <div class="col-sm-12 text-right">
                             <button class="btn btn-orange">
                                 <i class="fa fa-save jsCreateReportBtn"></i>
-                                Update Report
+                                Update Incident
                             </button>
                         </div>
                     </div>
