@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-lg-12 text-right">
                 <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-black"><i class="fa fa-arrow-left"> </i> Dashboard</a>
-                <a href="<?php echo base_url('compliance_safety_reporting/dashboard') ?>" class="btn btn-blue">
+                <a href="<?php echo base_url('compliance_safety_reporting/overview') ?>" class="btn btn-blue">
                     <i class="fa fa-pie-chart"></i>
                     Compliance Safety Reporting
                 </a>
