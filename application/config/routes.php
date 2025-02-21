@@ -2520,5 +2520,36 @@ $route["manage_admin/compliance_safety/incident_types/enable_disable_question/(:
 
 
 // Employee Compliance Safety Reporting
+// overview
+$route["compliance_safety_reporting/overview"]["get"] =
+  "v1/Compliance_safety_reporting/overview";
+// listing all
 $route["compliance_safety_reporting/listing"]["get"] =
   "v1/Compliance_safety_reporting/listing";
+// Add the report
+$route["compliance_safety_reporting/add/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/add/$1";
+$route["compliance_safety_reporting/add/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/processAdd/$1";
+// Edit the report
+$route["compliance_safety_reporting/edit/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/edit/$1";
+$route["compliance_safety_reporting/edit/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/processEdit/$1";
+// delete the external employee
+$route["compliance_safety_reporting/(:num)/(:num)"]["delete"] =
+  "v1/Compliance_safety_reporting/deleteExternalEmployee/$1/$2";
+
+// add notes
+$route["compliance_safety_reporting/notes/(:num)/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/processNotes/$1/$2";
+
+// add file
+$route["compliance_safety_reporting/file/(:num)/(:num)/(:any)"]["post"] =
+  "v1/Compliance_safety_reporting/processFiles/$1/$2/$3";
+// download file
+$route["compliance_safety_reporting/file/download/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/downloadFile/$1";
+// view file
+$route["compliance_safety_reporting/file/view/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/viewFile/$1";

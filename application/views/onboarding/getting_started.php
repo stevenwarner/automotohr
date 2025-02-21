@@ -1112,10 +1112,10 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             </div>
                         <?php } ?>
                         
-                        <?php if (checkIfAppIsEnabled(MODULE_COMPLIANCE_SAFETY)) { ?>
+                        <?php if (checkIfAppIsEnabled(MODULE_COMPLIANCE_SAFETY) && isAllowedForCSP()) { ?>
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
-                                    <a href="<?php echo base_url('compliance_safety_reporting/listing'); ?>">
+                                    <a href="<?php echo base_url('compliance_safety_reporting/overview'); ?>">
                                         <div class="link-box bg-red full-width">
                                             <h2>Compliance Safety Reporting</h2>
                                             <div class="current-date">

@@ -54,7 +54,7 @@
 		options["placeholderImage"] =
 			(opt !== undefined && opt.placeholderImage) || "";
 		options["fileLimit"] =
-			opt === undefined
+			opt === undefined	
 				? -1
 				: opt.fileLimit;
 		options["allowedTypes"] = (opt !== undefined && opt.allowedTypes) || [
@@ -398,7 +398,9 @@
 
 		// When file is uploaded
 		$(document).on("change", _this.selector, function (e) {
-			oFile = e.target.files[0];
+			if (e.target.files[0]) {
+				oFile = e.target.files[0];
+			}
 			validateFile(e);
 		});
 
