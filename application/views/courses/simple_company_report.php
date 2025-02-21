@@ -246,17 +246,17 @@
                         data: [
                             {
                                 category: 'In Progress',
-                                value: <?php echo round(($companyReport['courses_report']['total_inprogress_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2); ?>,
+                                value: <?php echo round(($companyReport['courses_report']['total_inprogress_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 0); ?>,
                                 color: '#DDDF0D'
                             },
                             {
                                 category: 'Ready To Start',
-                                value: <?php echo round(($companyReport['courses_report']['total_rts_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2); ?>,
+                                value: <?php echo round(($companyReport['courses_report']['total_rts_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 0); ?>,
                                 color: '#DF5353'
                             },
                             {
                                 category: 'Completed',
-                                value: <?php echo round(($companyReport['courses_report']['total_completed_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 2); ?>,
+                                value: <?php echo round(($companyReport['courses_report']['total_completed_courses'] / $companyReport['courses_report']['total_assigned_courses']) * 100, 0); ?>,
                                 color: '#00e272'
                             }
                         ],
