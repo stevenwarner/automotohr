@@ -31,13 +31,13 @@
             <div class="col-sm-3">
                 <div class="panel panel-default">
                     <div class="panel-body" style="background: #e6e7ff; border-radius: 4px;">
-                        <h2 style="">Completed: <span style="color: #ef6c34;" id="jsOverViewTrainings">0%</span></h2>
-                        <h3 style="margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon">0</span> Pending</h3>
-                        <h3 style="margin-top: 0px;"><span id="jsOverViewCourseTotal">0</span> Total</h3>
+                        <h2 style="">Completed: <span style="color: #ef6c34;" id="jsOverViewTrainings"><?= count($completedReports);?></span></h2>
+                        <h3 style="margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon"><?= count($pendingReports); ?></span> Pending</h3>
+                        <h3 style="margin-top: 0px;"><span id="jsOverViewCourseTotal"><?= count($pendingReports) + count($completedReports) + count($onHoldReports);; ?></span> Total</h3>
                     </div>
                 </div>
 
-                <div class="panel panel-default">
+                <!-- <div class="panel panel-default">
                     <div class="panel-heading">
                         <h1 class="panel-heading-text text-medium">
                             <strong>Progress Graph</strong>
@@ -46,7 +46,7 @@
                     <div class="panel-body">
                         <div id="container2"></div>
                     </div>
-                </div>
+                </div> -->
             </div>
             <!--  -->
             <div class="col-sm-9">
@@ -72,7 +72,21 @@
                                             </div>
                                         </div>
                                         <div class="panel-body">
-                                            <div class="row" id="jsCSPPending"></div>
+                                            <div class="row" id="jsCSPPending">
+                                                <?php if ($pendingReports) : ?>
+                                                    <?php foreach ($pendingReports as $item): ?>
+                                                        <?php $this->load->view("compliance_safety_reporting/partials/display_box", [
+                                                            "display_box_data" => $item
+                                                        ]); ?>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <div class="col-sm-12">
+                                                        <div class="alert alert-info text-center">
+                                                            No reports found.
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
                                     </div>
                                     <!-- Courses in Progress End -->
@@ -93,7 +107,21 @@
                                             </div>
                                         </div>
                                         <div class="panel-body">
-                                            <div class="row" id="jsCSPCompleted"></div>
+                                            <div class="row" id="jsCSPCompleted">
+                                                <?php if ($completedReports) : ?>
+                                                    <?php foreach ($completedReports as $item): ?>
+                                                        <?php $this->load->view("compliance_safety_reporting/partials/display_box", [
+                                                            "display_box_data" => $item
+                                                        ]); ?>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <div class="col-sm-12">
+                                                        <div class="alert alert-info text-center">
+                                                            No reports found.
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
                                     </div>
                                     <!-- Ready To Start End -->
@@ -114,11 +142,23 @@
                                             </div>
                                         </div>
                                         <div class="panel-body">
-                                            <div class="row" id="jsCSPHold"></div>
+                                            <div class="row" id="jsCSPHold">
+                                                <?php if ($onHoldReports) : ?>
+                                                    <?php foreach ($onHoldReports as $item): ?>
+                                                        <?php $this->load->view("compliance_safety_reporting/partials/display_box", [
+                                                            "display_box_data" => $item
+                                                        ]); ?>
+                                                    <?php endforeach; ?>
+                                                <?php else: ?>
+                                                    <div class="col-sm-12">
+                                                        <div class="alert alert-info text-center">
+                                                            No reports found.
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
                                     </div>
-                                    <!-- Past Due End -->
-
                                 </div>
                             </div>
                             <div class="clearfix"></div>
@@ -126,7 +166,6 @@
                     </div>
                 </div>
             </div>
-            <!--  -->
         </div>
     </div>
 </div>

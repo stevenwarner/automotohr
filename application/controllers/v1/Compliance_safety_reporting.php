@@ -23,10 +23,27 @@ class Compliance_safety_reporting extends Base_csp
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Overview';
         // get types
-        $this->data["types"] = $this
+        $this->data["pendingReports"] = $this
             ->compliance_report_model
-            ->getAllReportTypes(
-                $this->getLoggedInCompany("sid")
+            ->getCSPReport(
+                $this->getLoggedInCompany("sid"),
+                $this->getLoggedInEmployee("sid"),
+                "pending"
+            );
+        // get types
+        $this->data["completedReports"] = $this
+            ->compliance_report_model
+            ->getCSPReport(
+                $this->getLoggedInCompany("sid"),
+                $this->getLoggedInEmployee("sid"),
+                "completed"
+            );
+        $this->data["onHoldReports"] = $this
+            ->compliance_report_model
+            ->getCSPReport(
+                $this->getLoggedInCompany("sid"),
+                $this->getLoggedInEmployee("sid"),
+                "on_hold"
             );
         // load JS
         $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';

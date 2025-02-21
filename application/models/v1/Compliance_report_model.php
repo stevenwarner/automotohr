@@ -2328,8 +2328,16 @@ class Compliance_report_model extends CI_Model
 		];
 		//
 		$this->db->insert("csp_reports_incidents", $fileData);
+		$id = $this->db->insert_id();
+
 		//
-		return $this->db->insert_id();
+		$this
+			->db
+			->where("sid", $reportId)
+			->set("csp_incident_count", "csp_incident_count + 1", false)
+			->update("csp_reports");
+		//
+		return $id;
 	}
 
 	public function fetchQuestions($id)
@@ -2369,5 +2377,48 @@ class Compliance_report_model extends CI_Model
 
 		$incident = $this->db->get('csp_reports_incidents_answers')->result_array();
 		return $incident;
+	}
+
+
+	public function getCSPReport(
+		int $companyId,
+		int $employeeId,
+		string $status
+	) {
+		//
+		$records = $this
+			->db
+			->select([
+				"csp_reports.sid",
+				"csp_reports.title",
+				"csp_reports.report_date",
+				"csp_reports.completion_date",
+				"csp_reports.status",
+				"csp_reports.status",
+				"csp_reports.allowed_internal_system_count",
+				"csp_reports.allowed_external_employees_count",
+				"compliance_report_types.compliance_report_name",
+			])
+			->where([
+				"csp_reports.company_sid" => $companyId,
+				"csp_reports.created_by" => $employeeId,
+				"csp_reports.status" => $status
+			])->join(
+				"compliance_report_types",
+				"compliance_report_types.id = csp_reports.report_type_sid",
+				"left"
+			)
+			->get("csp_reports")
+			->result_array();
+		//
+		if ($records) {
+			foreach ($records as $k0 => $v0) {
+				$records[$k0]["incidents"] = $this->getCSPReportIncidents($v0["sid"], [
+					"compliance_incident_types.compliance_incident_type_name",
+				]);
+			}
+		}
+
+		return $records;
 	}
 }
