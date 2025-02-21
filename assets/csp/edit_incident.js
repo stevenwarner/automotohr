@@ -86,20 +86,10 @@ $(function Overview() {
 	//
 	$("#jsAddReportForm").validate({
 		rules: {
-			report_title: {
-				required: true,
-			},
-			report_date: {
-				required: true,
-			},
+			
 		},
 		messages: {
-			report_title: {
-				required: "Please enter report title",
-			},
-			report_date: {
-				required: "Please select report date",
-			},
+			
 		},
 		submitHandler: function (form) {
 			handleFormSubmission(form);
@@ -294,7 +284,10 @@ $(function Overview() {
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/edit/" + getSegment(2)
+					"compliance_safety_reporting/report/" +
+						getSegment(2) +
+						"/incident/edit/" +
+						getSegment(5)
 				),
 				method: "POST",
 				data: $(form).serializeArray(),
@@ -320,40 +313,13 @@ $(function Overview() {
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/notes/" + getSegment(2) + "/0"
+					"compliance_safety_reporting/notes/" +
+						getSegment(2) +
+						"/" +
+						getSegment(5)
 				),
 				method: "POST",
 				data: obj,
-			})
-				.always(function () {
-					XHR = null;
-					ml(false, "jsPageLoader");
-				})
-				.fail(handleErrorResponse)
-				.done(function (resp) {
-					_success(resp.message, function () {
-						window.location.refresh();
-					});
-				});
-		}
-	}
-
-	function addIncidentToReport(incidentId) {
-		//
-		if (XHR === null) {
-			//
-			ml(true, "jsPageLoader");
-			//
-			XHR = $.ajax({
-				url: baseUrl(
-					"compliance_safety_reporting/report/" +
-						getSegment(2) +
-						"/incident"
-				),
-				method: "POST",
-				data: {
-					incidentId: incidentId,
-				},
 			})
 				.always(function () {
 					XHR = null;
@@ -395,6 +361,8 @@ $(function Overview() {
 				url: baseUrl(
 					"compliance_safety_reporting/" +
 						getSegment(2) +
+						"/" +
+						getSegment(5) +
 						"/" +
 						external.data("id")
 				),
@@ -450,7 +418,9 @@ $(function Overview() {
 				url: baseUrl(
 					"compliance_safety_reporting/file/" +
 						getSegment(2) +
-						"/0/" +
+						"/" +
+						getSegment(5) +
+						"/" +
 						type
 				),
 				method: "POST",

@@ -398,10 +398,11 @@
 
 		// When file is uploaded
 		$(document).on("change", _this.selector, function (e) {
-			if (e.target.files[0]) {
+			if (e.target.files) {
+
 				oFile = e.target.files[0];
+				validateFile(e);
 			}
-			validateFile(e);
 		});
 
 		//

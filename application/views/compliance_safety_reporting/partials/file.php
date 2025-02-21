@@ -19,9 +19,12 @@
                         <button class="btn btn-info jsViewFile">
                             <i class="fa fa-eye"></i>
                         </button>
-                        <a target="_blank" href="<?= base_url("compliance_safety_reporting/file/download/" . $document["sid"]); ?>" class="btn btn-info btn-info">
-                            <i class="fa fa-download"></i>
-                        </a>
+                        <?php if ($document["file_type"] != "link"): ?>
+
+                            <a target="_blank" href="<?= base_url("compliance_safety_reporting/file/download/" . $document["sid"]); ?>" class="btn btn-info btn-info">
+                                <i class="fa fa-download"></i>
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

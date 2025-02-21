@@ -8,6 +8,10 @@
                     <i class="fa fa-arrow-left"></i>
                     Dashboard
                 </a>
+                <a href="<?= base_url('compliance_safety_reporting/edit/' . $report["csp_reports_sid"]) ?>" class="btn btn-black">
+                    <i class="fa fa-arrow-left"></i>
+                    Back to Report
+                </a>
                 <a href="<?= base_url('compliance_safety_reporting/dashboard') ?>" class="btn btn-blue">
                     <i class="fa fa-pie-chart"></i>
                     Compliance Safety Reporting
@@ -17,36 +21,27 @@
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                 <div class="page-header">
                     <h2 class="section-ttile">
-                        <?= $report["compliance_report_name"]; ?>
+                        <?= $report["compliance_incident_type_name"]; ?>
                     </h2>
+                </div>
+                <div class="alert alert-info">
+                    <div class="row">
+                        <div class="col-sm-12 text-left">
+                            Last modified by <strong><?= remakeEmployeeName($report); ?></strong> at <strong><?= formatDateToDB($report['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></strong>.
+                        </div>
+                    </div>
                 </div>
                 <!--  -->
                 <form method="post" enctype="multipart/form-data" autocomplete="off" id="jsAddReportForm">
                     <div class="row">
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group">
-                                <label for="report_title">Report Title <strong class="text-danger">*</strong></label>
-                                <input type="text" class="form-control" id="report_title" name="report_title" value="<?= $report['title'] ?>" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
-                            <div class="form-group">
-                                <label for="report_date">Report Date <strong class="text-danger">*</strong></label>
-                                <input type="text" class="form-control" id="report_date" name="report_date" value="<?= formatDateToDB($report['report_date'], DB_DATE, "m/d/Y"); ?>" />
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
+                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                             <div class="form-group">
                                 <label for="report_completion_date">Completion Date</label>
-                                <input type="text" class="form-control" id="report_completion_date" name="report_completion_date" value="<?= $report['report_completion_date'] ? formatDateToDB($report['report_completion_date'], DB_DATE, "m/d/Y") : ""; ?>" />
+                                <input type="text" class="form-control" id="report_completion_date" name="report_completion_date" value="<?= $report['completed_at'] ? formatDateToDB($report['completed_at'], DB_DATE_WITH_TIME, "m/d/Y") : ""; ?>" />
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
+                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                             <div class="form-group">
                                 <label for="report_status">Status</label>
                                 <select name="report_status" id="report_status" style="width: 100%;">
@@ -58,7 +53,6 @@
                         </div>
                     </div>
 
-                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/listing"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/documents"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/audio"); ?>
 

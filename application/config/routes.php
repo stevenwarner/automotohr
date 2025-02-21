@@ -2553,3 +2553,14 @@ $route["compliance_safety_reporting/file/download/(:num)"]["get"] =
 // view file
 $route["compliance_safety_reporting/file/view/(:num)"]["get"] =
   "v1/Compliance_safety_reporting/viewFile/$1";
+
+// add incidents
+$route["compliance_safety_reporting/report/(:num)/incident"]["post"] =
+  "v1/Compliance_safety_reporting/addIncidentToReport/$1";
+
+// edit incidents
+$route["compliance_safety_reporting/report/(:num)/incident/edit/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/editReportIncident/$1/$2";
+// Edit the report
+$route["compliance_safety_reporting/report/(:num)/incident/edit/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/processIncidentEdit/$1/$2";

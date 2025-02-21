@@ -19,6 +19,8 @@
                 <?php else: ?>
                     <iframe style="width: 100%; height: 700px;" src="<?= (AWS_S3_BUCKET_URL . $file["s3_file_value"]); ?>" frameborder="0"></iframe>
                 <?php endif; ?>
+            <?php elseif ($file["file_type"] === "link"): ?>
+                <iframe style="width: 100%; height: 700px;" src="<?= ($file["s3_file_value"]); ?>" frameborder="0"></iframe>
             <?php endif; ?>
         </div>
     </div>

@@ -1566,7 +1566,119 @@ class Compliance_report_model extends CI_Model
 			"csp_reports_files.s3_file_value",
 			"csp_reports_files.file_type",
 			"csp_reports_files.created_at",
-		], "document");
+		], [
+			"document",
+			"file",
+			"image",
+		]);
+		//
+		$report["audios"] = $this->getCSPReportFilesByType($reportId, [
+			$this->userFields,
+			"csp_reports_files.file_value",
+			"csp_reports_files.sid",
+			"csp_reports_files.title",
+			"csp_reports_files.s3_file_value",
+			"csp_reports_files.file_type",
+			"csp_reports_files.created_at",
+		], [
+			"audio",
+			"video",
+			"link",
+		]);
+		//
+		$report["incidents"] = $this->getCSPReportIncidents($reportId, [
+			$this->userFields,
+			"compliance_incident_types.compliance_incident_type_name",
+			"csp_reports_incidents.sid",
+			"csp_reports_incidents.updated_at",
+		]);
+		return $report;
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @return array
+	 */
+	public function getCSPIncident(int $reportId, int $incidentId)
+	{
+		$report =  $this
+			->db
+			->select("csp_reports_incidents.*")
+			->select("compliance_incident_types.compliance_incident_type_name")
+			->select($this->userFields)
+			->join(
+				"compliance_incident_types",
+				"compliance_incident_types.id = csp_reports_incidents.incident_type_sid",
+				"inner"
+			)
+			->join(
+				"users",
+				"users.sid = csp_reports_incidents.last_modified_by",
+				"left"
+			)
+			->where("csp_reports_incidents.sid", $incidentId)
+			->get("csp_reports_incidents")
+			->row_array();
+		//
+		if (!$report) {
+			return [];
+		}
+		//
+		$report["internal_employees"] = $this
+			->getCSPIncidentInternalEmployeesById($reportId, $incidentId, [
+				"employee_sid"
+			]);
+		//
+		$report["external_employees"] = $this
+			->getCSPIncidentExternalEmployeesById($reportId, $incidentId, [
+				"sid",
+				"external_name",
+				"external_email",
+			]);
+		//
+		$report["notes"] = $this->getCSPIncidentNotesById($reportId, $incidentId, [
+			$this->userFields,
+			"users.profile_picture",
+			"csp_reports_notes.note_type",
+			"csp_reports_notes.notes",
+			"csp_reports_notes.updated_at",
+		]);
+		//
+		$report["documents"] = $this->getCSPIncidentFilesByType(
+			$reportId,
+			$incidentId,
+			[
+				$this->userFields,
+				"csp_reports_files.file_value",
+				"csp_reports_files.sid",
+				"csp_reports_files.title",
+				"csp_reports_files.s3_file_value",
+				"csp_reports_files.file_type",
+				"csp_reports_files.created_at",
+			],
+			[
+				"document",
+				"file",
+				"image",
+			]
+		);
+		//
+		$report["audios"] = $this->getCSPIncidentFilesByType($reportId, $incidentId, [
+			$this->userFields,
+			"csp_reports_files.file_value",
+			"csp_reports_files.sid",
+			"csp_reports_files.title",
+			"csp_reports_files.s3_file_value",
+			"csp_reports_files.file_type",
+			"csp_reports_files.created_at",
+		], [
+			"audio",
+			"video",
+			"link",
+		]);
+
 		return $report;
 	}
 
@@ -1582,6 +1694,43 @@ class Compliance_report_model extends CI_Model
 			->select($columns)
 			->where("csp_reports_sid", $reportId)
 			->where("is_external_employee", 0)
+			->where("csp_report_incident_sid", 0)
+			->where("status", 1)
+			->get("csp_reports_employees")
+			->result_array();
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @return array
+	 */
+	public function getCSPIncidentInternalEmployeesById(int $reportId, $incidentId, array $columns)
+	{
+		return $this->db
+			->select($columns)
+			->where("csp_reports_sid", $reportId)
+			->where("is_external_employee", 0)
+			->where("csp_report_incident_sid", $incidentId)
+			->where("status", 1)
+			->get("csp_reports_employees")
+			->result_array();
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @return array
+	 */
+	public function getCSPIncidentExternalEmployeesById(int $reportId, $incidentId, array $columns)
+	{
+		return $this->db
+			->select($columns)
+			->where("csp_reports_sid", $reportId)
+			->where("is_external_employee", 1)
+			->where("csp_report_incident_sid", $incidentId)
 			->where("status", 1)
 			->get("csp_reports_employees")
 			->result_array();
@@ -1599,6 +1748,7 @@ class Compliance_report_model extends CI_Model
 			->select($columns)
 			->where("csp_reports_sid", $reportId)
 			->where("is_external_employee", 1)
+			->where("csp_report_incident_sid", 0)
 			->where("status", 1)
 			->get("csp_reports_employees")
 			->result_array();
@@ -1661,6 +1811,7 @@ class Compliance_report_model extends CI_Model
 		$this
 			->db
 			->where("csp_reports_sid", $reportId)
+			->where("csp_report_incident_sid", 0)
 			->delete("csp_reports_employees");
 		// add internal employees
 		if ($post["report_employees"]) {
@@ -1668,6 +1819,7 @@ class Compliance_report_model extends CI_Model
 			foreach ($post["report_employees"] as $employeeId) {
 				$reportEmployees[] = [
 					"csp_reports_sid" => $reportId,
+					"csp_report_incident_sid" => 0,
 					"employee_sid" => $employeeId,
 					"created_by" => $loggedInEmployeeId,
 					"created_at" => $todayDateTime,
@@ -1699,6 +1851,7 @@ class Compliance_report_model extends CI_Model
 			foreach ($post["external_employees_names"] as $key => $item) {
 				$externalEmployees[] = [
 					"csp_reports_sid" => $reportId,
+					"csp_report_incident_sid" => 0,
 					"is_external_employee" => 1,
 					"external_name" => $item[0],
 					"external_email" => $post["external_employees_emails"][$key][0],
@@ -1721,6 +1874,117 @@ class Compliance_report_model extends CI_Model
 				->db
 				->where("sid", $reportId)
 				->update("csp_reports", [
+					"allowed_external_employees_count" => 0,
+				]);
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportTypeId
+	 * @param int $companyId
+	 * @param int $loggedInEmployeeId
+	 * @param array $post
+	 * @return array
+	 */
+	public function editIncidentReport(
+		int $reportId,
+		int $incidentId,
+		int $loggedInEmployeeId,
+		array $post
+	) {
+		//
+		$todayDateTime = getSystemDate();
+		// lets first edit the report
+		$reportData = [
+			"last_modified_by" => $loggedInEmployeeId,
+			"completed_by" => $post["report_completion_date"]
+				? $loggedInEmployeeId
+				: null,
+			"completed_at" => $post["report_completion_date"] ? formatDateToDB(
+				$post["report_completion_date"],
+				"m/d/Y",
+				DB_DATE
+			) : null,
+			"status" => $post["report_status"],
+			"updated_at" => $todayDateTime,
+		];
+		//
+		$this
+			->db
+			->where("sid", $incidentId)
+			->update("csp_reports_incidents", $reportData);
+		// flush employees
+		$this
+			->db
+			->where("csp_reports_sid", $reportId)
+			->where("csp_report_incident_sid", $incidentId)
+			->delete("csp_reports_employees");
+		// add internal employees
+		if ($post["report_employees"]) {
+			$reportEmployees = [];
+			foreach ($post["report_employees"] as $employeeId) {
+				$reportEmployees[] = [
+					"csp_reports_sid" => $reportId,
+					"csp_report_incident_sid" => $incidentId,
+					"employee_sid" => $employeeId,
+					"created_by" => $loggedInEmployeeId,
+					"created_at" => $todayDateTime,
+					"updated_at" => $todayDateTime,
+				];
+			}
+			// insert new employees
+			$this->db->insert_batch("csp_reports_employees", $reportEmployees);
+			// update the count
+			$this
+				->db
+				->where("sid", $incidentId)
+				->update("csp_reports_incidents", [
+					"allowed_internal_system_count" => count($reportEmployees),
+				]);
+		} else {
+			// update the count
+			$this
+				->db
+				->where("sid", $incidentId)
+				->update("csp_reports_incidents", [
+					"allowed_internal_system_count" => 0,
+				]);
+		}
+
+		// add external employees
+		if ($post["external_employees_names"]) {
+			$externalEmployees = [];
+			foreach ($post["external_employees_names"] as $key => $item) {
+				$externalEmployees[] = [
+					"csp_reports_sid" => $reportId,
+					"csp_report_incident_sid" => $incidentId,
+					"is_external_employee" => 1,
+					"external_name" => $item[0],
+					"external_email" => $post["external_employees_emails"][$key][0],
+					"created_by" => $loggedInEmployeeId,
+					"created_at" => $todayDateTime,
+					"updated_at" => $todayDateTime,
+				];
+			}
+			$this->db->insert_batch("csp_reports_employees", $externalEmployees);
+			//
+			$this
+				->db
+				->where("sid", $incidentId)
+				->update("csp_reports_incidents", [
+					"allowed_external_employees_count" => count($externalEmployees),
+				]);
+		} else {
+			//
+			$this
+				->db
+				->where("sid", $incidentId)
+				->update("csp_reports_incidents", [
 					"allowed_external_employees_count" => 0,
 				]);
 		}
@@ -1773,6 +2037,29 @@ class Compliance_report_model extends CI_Model
 		return $this->db
 			->select($columns, false)
 			->where("csp_reports_sid", $reportId)
+			->where("csp_incident_type_sid", 0)
+			->join(
+				"users",
+				"users.sid = csp_reports_notes.created_by",
+				"left"
+			)
+			->get("csp_reports_notes")
+			->result_array();
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @param array $columns
+	 * @return array
+	 */
+	public function getCSPIncidentNotesById(int $reportId, int $incidentId, array $columns)
+	{
+		return $this->db
+			->select($columns, false)
+			->where("csp_reports_sid", $reportId)
+			->where("csp_incident_type_sid", $incidentId)
 			->join(
 				"users",
 				"users.sid = csp_reports_notes.created_by",
@@ -1827,22 +2114,69 @@ class Compliance_report_model extends CI_Model
 	 *
 	 * @param int $reportId
 	 * @param array $columns
-	 * @param string $type
+	 * @param array $type
 	 * @return array
 	 */
-	public function getCSPReportFilesByType(int $reportId, array $columns, string $type = "all")
+	public function getCSPReportFilesByType(int $reportId, array $columns, array $type)
 	{
 		$this->db->select($columns, false);
 		$this->db->where("csp_reports_sid", $reportId);
-		if ($type !== "all") {
-			$this->db->where("file_type", $type);
-		}
+		$this->db->where("csp_incident_type_sid", 0);
+		$this->db->where_in("file_type", $type);
 		$this->db->join(
 			"users",
 			"users.sid = csp_reports_files.created_by",
 			"left"
 		);
 		return $this->db->get("csp_reports_files")->result_array();
+	}
+
+	/**
+	 * Get report files by type
+	 *
+	 * @param int $reportId
+	 * @param array $columns
+	 * @param array $type
+	 * @return array
+	 */
+	public function getCSPIncidentFilesByType(int $reportId, int $incidentId, array $columns, array $type)
+	{
+		$this->db->select($columns, false);
+		$this->db->where("csp_reports_sid", $reportId);
+		$this->db->where("csp_incident_type_sid", $incidentId);
+		$this->db->where_in("file_type", $type);
+		$this->db->join(
+			"users",
+			"users.sid = csp_reports_files.created_by",
+			"left"
+		);
+		return $this->db->get("csp_reports_files")->result_array();
+	}
+
+
+	/**
+	 * Get report files by type
+	 *
+	 * @param int $reportId
+	 * @param array $columns
+	 * @param array $type
+	 * @return array
+	 */
+	public function getCSPReportIncidents(int $reportId, array $columns)
+	{
+		$this->db->select($columns, false);
+		$this->db->where("csp_reports_incidents.csp_reports_sid", $reportId);
+		$this->db->join(
+			"users",
+			"users.sid = csp_reports_incidents.created_by",
+			"left"
+		);
+		$this->db->join(
+			"compliance_incident_types",
+			"compliance_incident_types.id = csp_reports_incidents.incident_type_sid",
+			"inner"
+		);
+		return $this->db->get("csp_reports_incidents")->result_array();
 	}
 
 	/**
@@ -1896,6 +2230,52 @@ class Compliance_report_model extends CI_Model
 		];
 		//
 		$this->db->insert("csp_reports_files", $fileData);
+		//
+		return $this->db->insert_id();
+	}
+
+	/**
+	 * 
+	 */
+	public function getReportMapping(int $reportTypeId)
+	{
+		return $this
+			->db
+			->select([
+				"compliance_incident_types.id",
+				"compliance_incident_types.compliance_incident_type_name",
+			])
+			->join(
+				"compliance_incident_types",
+				"compliance_incident_types.id = compliance_report_incident_types_mapping.incident_sid",
+				"inner"
+			)
+			->where("compliance_report_incident_types_mapping.report_sid", $reportTypeId)
+			->where("compliance_incident_types.status", 1)
+			->get("compliance_report_incident_types_mapping")
+			->result_array();
+	}
+
+	/**
+	 * 
+	 */
+	public function attachIncidentToReport(
+		int $reportId,
+		int $incidentId,
+		int $loggedInEmployeeId
+	) {
+		//
+		$todayDateTime = getSystemDate();
+		// lets first add the report
+		$fileData = [
+			"csp_reports_sid" => $reportId,
+			"incident_type_sid" => $incidentId,
+			"created_by" => $loggedInEmployeeId,
+			"created_at" => $todayDateTime,
+			"updated_at" => $todayDateTime,
+		];
+		//
+		$this->db->insert("csp_reports_incidents", $fileData);
 		//
 		return $this->db->insert_id();
 	}

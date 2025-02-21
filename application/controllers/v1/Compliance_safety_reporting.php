@@ -134,8 +134,10 @@ class Compliance_safety_reporting extends Base_csp
             ->getCSPReportById(
                 $reportId,
                 [
+                    "csp_reports.sid",
                     "csp_reports.title",
                     "csp_reports.report_date",
+                    "csp_reports.report_type_sid",
                     "csp_reports.completion_date",
                     "csp_reports.status",
                     "csp_reports.updated_at",
@@ -164,8 +166,47 @@ class Compliance_safety_reporting extends Base_csp
                 $this->getLoggedInCompany("sid"),
                 $this->getLoggedInEmployee("sid")
             );
+        // get the report incident types
+        $this->data["incidentTypes"] = $this
+            ->compliance_report_model
+            ->getReportMapping(
+                $this->data["report"]["report_type_sid"]
+            );
         //
         $this->renderView('compliance_safety_reporting/edit_report');
+    }
+
+    /**
+     * edit
+     *
+     * @param int $reportId
+     */
+    public function editReportIncident(int $reportId, int $incidentId)
+    {
+        // get types
+        $this->data["report"] = $this
+            ->compliance_report_model
+            ->getCSPIncident(
+                $reportId,
+                $incidentId
+            );
+
+        // set the title
+        $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
+        $this->data['PageCSS'][] = 'v1/plugins/ms_uploader/main.min';
+        $this->data['PageCSS'][] = 'v1/plugins/ms_modal/main.min';
+        $this->data['pageJs'][] = 'v1/plugins/ms_uploader/main.min';
+        $this->data['pageJs'][] = 'v1/plugins/ms_modal/main.min';
+        $this->data['pageJs'][] = 'csp/edit_incident';
+        // get the employees
+        $this->data["employees"] = $this
+            ->compliance_report_model
+            ->getActiveEmployees(
+                $this->getLoggedInCompany("sid"),
+                $this->getLoggedInEmployee("sid")
+            );
+        //
+        $this->renderView('compliance_safety_reporting/edit_incident');
     }
 
     /**
@@ -196,6 +237,29 @@ class Compliance_safety_reporting extends Base_csp
         return sendResponse(
             200,
             ["message" => "Report updated successfully."]
+        );
+    }
+
+    /**
+     * process edit
+     * 
+     * @param int $reportTypeId
+     */
+    public function processIncidentEdit(int $reportId, int $incidentId)
+    {
+        // get the post
+        $post = $this->input->post(null, true);
+        //allowed_internal_system_count
+        $this->compliance_report_model->editIncidentReport(
+            $reportId,
+            $incidentId,
+            $this->getLoggedInEmployee("sid"),
+            $post
+        );
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Incident updated successfully."]
         );
     }
 
@@ -251,6 +315,30 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
+
+    /**
+     * process edit
+     * 
+     * @param int $reportId
+     * @param int $incidentId
+     */
+    public function addIncidentToReport(int $reportId)
+    {
+        // get the post
+        $post = $this->input->post("incidentId", true);
+        //allowed_internal_system_count
+        $this->compliance_report_model->attachIncidentToReport(
+            $reportId,
+            $post["incidentId"],
+            $this->getLoggedInEmployee("sid")
+        );
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Incident added to report successfully."]
+        );
+    }
+
     public function processFiles(int $reportId, int $incidentId, string $type)
     {
         //
@@ -264,7 +352,7 @@ class Compliance_safety_reporting extends Base_csp
                     $incidentId,
                     $this->getLoggedInEmployee("sid"),
                     $post["link"],
-                    $post["file_type"],
+                    $post["type"],
                     $this->input->post("title")
                 );
             // return the success

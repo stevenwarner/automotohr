@@ -2,7 +2,7 @@
  <div class="panel panel-default">
      <div class="panel-heading">
          <h1 class="panel-heading-text text-medium">
-             <strong>Upload Documents</strong>
+             <strong>Upload Files </strong>
          </h1>
      </div>
      <div class="panel-body">
@@ -17,7 +17,7 @@
          <div class="row">
              <div class="col-lg-12">
                  <div class="form-group">
-                     <input type="file" class="form-control hidden" id="report_documents" name="report_documents" />
+                     <input type="file" class="hidden" id="report_documents" name="report_documents" />
                  </div>
              </div>
          </div>
@@ -25,7 +25,7 @@
      <div class="panel-footer text-right">
          <button class="btn btn-orange jsAddDocument" type="button">
              <i class="fa fa-plus"></i>
-             Add Document
+             Add File
          </button>
      </div>
  </div>
