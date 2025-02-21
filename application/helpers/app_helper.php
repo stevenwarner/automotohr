@@ -4664,3 +4664,31 @@ if (!function_exists("create_sitemap_structure")) {
         return $xml;
     }
 }
+
+
+/*******************************************
+ * Compliance Safety System helpers
+ *******************************************/
+
+if (!function_exists("isAllowedForCSP")) {
+    /**
+     * check if the employee is allowed for CSP
+     *
+     * @param int $employeeId
+     * default -> 0
+     * @return bool
+     */
+    function isAllowedForCSP(int $employeeId = 0): bool
+    {
+        // set the employee id
+        $employeeId = $employeeId != 0 ? $employeeId : getLoggedInPersonId();
+        // check if employee id is still null
+        if (!$employeeId) {
+            return false;
+        }
+        // get the access column
+        $hasAccess = getUserColumnById($employeeId, "can_access_compliance_safety_report");
+        //
+        return (int)$hasAccess === 1;
+    }
+}

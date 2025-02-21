@@ -212,8 +212,9 @@
                                                                 <tr>
                                                                     <th class="text-left col-xs-4">Corporate Company Name</th>
                                                                     <th class="text-left col-xs-4">Corporate Company URL</th>
-                                                                    <th class="text-center col-xs-2">Has Access</th>
-                                                                    <th class="text-center col-xs-2">Admin Plus</th>
+                                                                    <th class="text-center col-xs-1">Has Access</th>
+                                                                    <th class="text-center col-xs-1">Admin Plus</th>
+                                                                    <th class="text-center col-xs-1"><abbr title="Compliance Safety Report Access">CSP Access</abbr></th>
 
                                                                 </tr>
                                                             </thead>
@@ -225,8 +226,10 @@
 
                                                                     $adminPlusData = get_executive_administrator_admin_plus_status($exec_admin_id, $company['sid']);
                                                                     $execAdminAccessLevelPlus = FALSE;
+                                                                    $can_access_compliance_safety_report = FALSE;
                                                                     if (!empty($adminPlusData)) {
                                                                         $execAdminAccessLevelPlus =  $adminPlusData['access_level_plus'] ? TRUE : FALSE;
+                                                                        $can_access_compliance_safety_report =  $adminPlusData['can_access_compliance_safety_report'] ? TRUE : FALSE;
                                                                     }
 
                                                                 ?>
@@ -272,6 +275,17 @@
                                                                                     <?php $standard_company_sid = $company['sid'];
                                                                                     ?>
                                                                                     <input <?php echo set_checkbox('is_admin_plus', 1, $execAdminAccessLevelPlus); ?> class="is_admin_plus" id="is_admin_plus<?php echo $corporate_company_sid; ?>" data-company-sid="<?php echo $standard_company_sid; ?>" data-executive-admin-sid="<?php echo $administrator['sid']; ?>" name="access_level_plus" value="1" type="checkbox">
+                                                                                    <div class="control__indicator"></div>
+                                                                                </label>
+
+                                                                            <?php } ?>
+                                                                        </td>
+                                                                        <td class="exec-admin-access text-center">
+                                                                            <?php if ($exec_admin_has_standard_co_access == TRUE) { ?>
+                                                                                <label id="lbl_is_csp_access" class="control control--checkbox">
+                                                                                    <?php $standard_company_sid = $company['sid'];
+                                                                                    ?>
+                                                                                    <input <?php echo set_checkbox('is_csp_access', 1, $can_access_compliance_safety_report); ?> class="is_csp_access" id="is_csp_access<?php echo $corporate_company_sid; ?>" data-company-sid="<?php echo $standard_company_sid; ?>" data-executive-admin-sid="<?php echo $administrator['sid']; ?>" name="is_csp_access" value="1" type="checkbox">
                                                                                     <div class="control__indicator"></div>
                                                                                 </label>
 
@@ -515,6 +529,35 @@
             myRequest.done(function(response) {
                 if (response == 'success') {
                     alertify.success('Success: Admin Plus Status Successfully Updated!');
+                } else {
+                    alertify.success('Error: something went wrong!');
+                }
+            });
+        });
+    });
+
+    //
+    $('.is_csp_access').each(function() {
+        $(this).on('click', function() {
+            var is_checked = $(this).prop('checked');
+            var company_sid = $(this).attr('data-company-sid');
+            var executive_admin_sid = $(this).attr('data-executive-admin-sid');
+
+            var myUrl = '<?php echo current_url(); ?>';
+            var myRequest = $.ajax({
+                url: myUrl,
+                type: 'POST',
+                data: {
+                    is_ajax_request: 1,
+                    'company_sid': company_sid,
+                    'executive_admin_sid': executive_admin_sid,
+                    'perform_action': (is_checked == true ? 'grant_access' : 'revoke_access')
+                }
+            });
+
+            myRequest.done(function(response) {
+                if (response == 'success') {
+                    alertify.success('Success: Compliance Safety Report access Successfully Updated!');
                 } else {
                     alertify.success('Error: something went wrong!');
                 }

@@ -2487,3 +2487,92 @@ $route['hr_documents_management/manager_report/(:any)'] = 'Hr_documents_manageme
 $route["webhook/indeed/applicant"] = "Indeed_feed/indeedPostUrl";
 $route["manage_admin/copy_timeoff_policies"] = "manage_admin/Copy_policies/copyTimeoffPolicies";
 
+
+
+// Compliance Safety
+$route["manage_admin/compliance_safety/dashboard"]["get"] =
+  "manage_admin/Compliance_safety/dashboard";
+// Report types
+$route["manage_admin/compliance_safety/report_types/add"]["get"] =
+  "manage_admin/Compliance_safety/reportAdd";
+$route["manage_admin/compliance_safety/report_types/add"]["post"] =
+  "manage_admin/Compliance_safety/reportAdd";
+$route["manage_admin/compliance_safety/report_types/edit/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/reportEdit/$1";
+$route["manage_admin/compliance_safety/report_types/edit/(:num)"]["post"] =
+  "manage_admin/Compliance_safety/reportEdit/$1";
+// Edit status
+$route["manage_admin/compliance_safety/handle_status/(:num)"]["post"] =
+  "manage_admin/Compliance_safety/handleStatus/$1";
+// Incident Types
+$route["manage_admin/compliance_safety/incident_types/add"]["get"] =
+  "manage_admin/Compliance_safety/incidentTypeAdd";
+$route["manage_admin/compliance_safety/incident_types/add"]["post"] =
+  "manage_admin/Compliance_safety/incidentTypeAdd";
+$route["manage_admin/compliance_safety/incident_types/edit/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/incidentTypeEdit/$1";
+$route["manage_admin/compliance_safety/incident_types/edit/(:num)"]["post"] =
+  "manage_admin/Compliance_safety/incidentTypeEdit/$1";
+// Incident questions
+$route["manage_admin/compliance_safety/incident_types/view_incident_questions/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/view_incident_questions/$1";
+$route["manage_admin/compliance_safety/incident_types/add_new_question/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/add_new_question/$1";
+$route["manage_admin/compliance_safety/incident_types/add_new_question/(:num)"]["post"] =
+  "manage_admin/Compliance_safety/add_new_question/$1";
+
+$route["manage_admin/compliance_safety/incident_types/edit_question/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/edit_question/$1";
+$route["manage_admin/compliance_safety/incident_types/edit_question/(:num)"]["post"] =
+  "manage_admin/Compliance_safety/edit_question/$1";
+
+
+$route["manage_admin/compliance_safety/incident_types/enable_disable_question/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/enable_disable_question/$1";
+
+
+// Employee Compliance Safety Reporting
+// overview
+$route["compliance_safety_reporting/overview"]["get"] =
+  "v1/Compliance_safety_reporting/overview";
+// listing all
+$route["compliance_safety_reporting/listing"]["get"] =
+  "v1/Compliance_safety_reporting/listing";
+// Add the report
+$route["compliance_safety_reporting/add/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/add/$1";
+$route["compliance_safety_reporting/add/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/processAdd/$1";
+// Edit the report
+$route["compliance_safety_reporting/edit/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/edit/$1";
+$route["compliance_safety_reporting/edit/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/processEdit/$1";
+// delete the external employee
+$route["compliance_safety_reporting/(:num)/(:num)"]["delete"] =
+  "v1/Compliance_safety_reporting/deleteExternalEmployee/$1/$2";
+
+// add notes
+$route["compliance_safety_reporting/notes/(:num)/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/processNotes/$1/$2";
+
+// add file
+$route["compliance_safety_reporting/file/(:num)/(:num)/(:any)"]["post"] =
+  "v1/Compliance_safety_reporting/processFiles/$1/$2/$3";
+// download file
+$route["compliance_safety_reporting/file/download/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/downloadFile/$1";
+// view file
+$route["compliance_safety_reporting/file/view/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/viewFile/$1";
+
+// add incidents
+$route["compliance_safety_reporting/report/(:num)/incident"]["post"] =
+  "v1/Compliance_safety_reporting/addIncidentToReport/$1";
+
+// edit incidents
+$route["compliance_safety_reporting/report/(:num)/incident/edit/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/editReportIncident/$1/$2";
+// Edit the report
+$route["compliance_safety_reporting/report/(:num)/incident/edit/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/processIncidentEdit/$1/$2";
