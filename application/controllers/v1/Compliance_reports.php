@@ -127,7 +127,7 @@ class Compliance_reports extends CI_Controller
                         'incident_sid' => $incidentId
                     );
                     //
-                    $this->compliance_report_model->assignComplianceReportToEmployees($assigned_emp); 
+                    $this->compliance_report_model->assignComplianceReportToEmployees($assigned_emp);
                     //
                     unset($_POST['witnesses']);
                     unset($_POST['video_source']);
@@ -486,7 +486,7 @@ class Compliance_reports extends CI_Controller
                         if ($isEmployee) {
                             $manualUserInfo = $this->compliance_report_model->getUserInfoByEmail($_POST['manual_email'], $company_sid);
                             $conversation_key = $complianceTypeId . '/' . $id . '/' . $manualUserInfo['sid'] . '/' . $employer_sid;
-                            $receiver_name = $manualUserInfo['first_name'].' '.$manualUserInfo['last_name'];
+                            $receiver_name = $manualUserInfo['first_name'] . ' ' . $manualUserInfo['last_name'];
                         } else {
                             $conversation_key = $complianceTypeId . '/' . $id . '/' . $manual_email . '/' . $employer_sid;
                             $name = explode("@", $manual_email);
@@ -970,7 +970,7 @@ class Compliance_reports extends CI_Controller
                 $user_email         = $currentUserEmailId;
                 $user_type          = 'manual';
                 $user_picture       = '';
-                
+
                 $title = "Assigned Compliance Safety - View Compliance Safety Details";
 
                 $as_managers = array();
@@ -1073,7 +1073,7 @@ class Compliance_reports extends CI_Controller
                             $data_to_insert['message_body'] = $message_body;
                             $data_to_insert['receiver_sid'] = $receiver_id;
 
-                            
+
 
                             $manager_info = db_get_employee_profile($receiver_id);
                             $receiver_email = $manager_info[0]['email'];
@@ -1351,7 +1351,7 @@ class Compliance_reports extends CI_Controller
                 $this->load->view('onboarding/onboarding_public_footer');
             } else {
                 redirect(base_url('login'), "refresh");
-            }    
+            }
             //
         } else {
             redirect(base_url('login'), "refresh");
@@ -1679,7 +1679,7 @@ class Compliance_reports extends CI_Controller
                 'employee_sid' => isset($_POST['employee_sid']) ? $_POST['employee_sid'] : 0,
                 'manual_email' => isset($_POST['manual_email']) ? $_POST['manual_email'] : '',
                 'item_type' => $video_source == 'upload_audio' ? 'audio' : 'video',
-                'action' => 'update '.$update_type,
+                'action' => 'update ' . $update_type,
                 'item_sid' => $video_sid,
                 'history_sid' => $historyId,
                 'created_at' => date('Y-m-d H:i:s')
@@ -1856,7 +1856,7 @@ class Compliance_reports extends CI_Controller
                 'employee_sid' => isset($_POST['employee_sid']) ? $_POST['employee_sid'] : 0,
                 'manual_email' => isset($_POST['manual_email']) ? $_POST['manual_email'] : '',
                 'item_type' => 'document',
-                'action' => 'update '.$update_type,
+                'action' => 'update ' . $update_type,
                 'item_sid' => $document_sid,
                 'history_sid' => $historyId,
                 'created_at' => date('Y-m-d H:i:s')
@@ -1941,7 +1941,7 @@ class Compliance_reports extends CI_Controller
             $outsiderUserPermission = $this->compliance_report_model->checkUserHasPermissionToReport($manual_email, $incident_sid);
         }
         //
-        if ($this->session->userdata('logged_in') || $outsiderUserPermission ) {
+        if ($this->session->userdata('logged_in') || $outsiderUserPermission) {
             $session        = $this->session->userdata('logged_in');
             $employee       = $session['employer_detail'];
             $company_sid    = $session["company_detail"]['sid'];
@@ -2941,7 +2941,7 @@ class Compliance_reports extends CI_Controller
                     if ($isEmployee) {
                         $manualUserInfo = $this->compliance_report_model->getUserInfoByEmail($_POST['manual_email'], $company_sid);
                         $conversation_key = $inc_type . '/' . $inc_reported_id . '/' . $manualUserInfo['sid'] . '/' . $from_sid;
-                        $receiver_name = $manualUserInfo['first_name'].' '.$manualUserInfo['last_name'];
+                        $receiver_name = $manualUserInfo['first_name'] . ' ' . $manualUserInfo['last_name'];
                     } else {
                         $conversation_key = $inc_type . '/' . $inc_reported_id . '/' . $manual_email . '/' . $from_sid;
                         $name = explode("@", $manual_email);
@@ -3235,5 +3235,4 @@ class Compliance_reports extends CI_Controller
         fwrite($handler, base64_decode(str_replace('data:application/pdf;base64,', '', $dase_64)));
         fclose($handler);
     }
-
 }

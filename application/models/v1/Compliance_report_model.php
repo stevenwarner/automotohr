@@ -1678,6 +1678,8 @@ class Compliance_report_model extends CI_Model
 			"video",
 			"link",
 		]);
+		//
+		$report["question_answers"] = $this->getCSPQuestionAnswers($incidentId);
 
 		return $report;
 	}
@@ -1897,6 +1899,46 @@ class Compliance_report_model extends CI_Model
 		int $loggedInEmployeeId,
 		array $post
 	) {
+
+		if (!$this->db->where([
+			"disable_answers" => 1,
+			"sid" => $incidentId,
+		])->count_all_results("csp_reports_incidents")) {
+			//
+			$insert = array();
+
+			foreach ($post as $key => $val) {
+				if (in_array($key, [
+					"report_completion_date",
+					"report_status",
+					"document_title",
+					"report_note_type",
+					"report_note",
+					"report_employees",
+					"external_employees_names",
+					"external_employees_emails",
+				])) {
+					continue;
+				}
+				$exp = explode('_', $key);
+				if (sizeof($exp) > 1 && !empty($val)) {
+					$insert['question'] = $this->getSpecificQuestion($exp[1]);
+
+					if ($exp[0] == 'multi-list') {
+						$val = serialize($val);
+					}
+
+					$insert['answer'] = strip_tags($val);
+					$insert['csp_report_incident_sid'] = $incidentId;
+					$this->insertCSPIncidentAnswer($insert);
+				} elseif (sizeof($exp) == 1 && !empty($val) && $exp[0] == 'signature') {
+					$insert['question'] = $exp[0];
+					$insert['answer'] = strip_tags($val);
+					$insert['csp_report_incident_sid'] = $incidentId;
+					$this->insertCSPIncidentAnswer($insert);
+				}
+			}
+		}
 		//
 		$todayDateTime = getSystemDate();
 		// lets first edit the report
@@ -1912,6 +1954,7 @@ class Compliance_report_model extends CI_Model
 			) : null,
 			"status" => $post["report_status"],
 			"updated_at" => $todayDateTime,
+			"disable_answers" => 1
 		];
 		//
 		$this
@@ -2278,5 +2321,44 @@ class Compliance_report_model extends CI_Model
 		$this->db->insert("csp_reports_incidents", $fileData);
 		//
 		return $this->db->insert_id();
+	}
+
+	public function fetchQuestions($id)
+	{
+		$this->db->select('compliance_incident_types_questions.*', 'compliance_incident_types.compliance_incident_type_name');
+		$this->db->where('compliance_incident_types_id', $id);
+		$this->db->join('compliance_incident_types', 'compliance_incident_types_questions.compliance_incident_types_id = compliance_incident_types.id', 'left');
+		$questions = $this->db->get('compliance_incident_types_questions')->result_array();
+		return $questions;
+	}
+
+	public function getQuestion($id)
+	{
+		$this->db->where('id', $id);
+		$result = $this->db->get('compliance_incident_types_questions')->result_array();
+		return $result;
+	}
+
+	public function getSpecificQuestion($id)
+	{
+		$this->db->where('id', $id);
+		$this->db->select("label");
+		$result = $this->db->get('compliance_incident_types_questions')->row_array();
+		return $result["label"];
+	}
+
+	function insertCSPIncidentAnswer($insert)
+	{
+		$this->db->insert('csp_reports_incidents_answers', $insert);
+		return $this->db->insert_id();
+	}
+
+	function getCSPQuestionAnswers($incidentId)
+	{
+		$this->db->select('csp_reports_incidents_answers.*');
+		$this->db->where('csp_reports_incidents_answers.csp_report_incident_sid', $incidentId);
+
+		$incident = $this->db->get('csp_reports_incidents_answers')->result_array();
+		return $incident;
 	}
 }

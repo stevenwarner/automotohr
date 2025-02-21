@@ -1,8 +1,4 @@
-<?php
-
-use Aws\Common\Facade\S3;
-
-defined('BASEPATH') or exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 require_once APPPATH . 'controllers/csp/Base_csp.php';
 
 /**
@@ -205,6 +201,16 @@ class Compliance_safety_reporting extends Base_csp
                 $this->getLoggedInCompany("sid"),
                 $this->getLoggedInEmployee("sid")
             );
+        if ($this->data["report"]["disable_answers"] != 1) {
+            // get incident questions and content
+            $this->data["questions"] = $this
+                ->compliance_report_model
+                ->fetchQuestions(
+                    $this->data["report"]["incident_type_sid"]
+                );
+        } else {
+            $this->data["questions"] = [];
+        }
         //
         $this->renderView('compliance_safety_reporting/edit_incident');
     }
