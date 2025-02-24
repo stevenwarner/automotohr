@@ -175,8 +175,8 @@
                                                             <?php foreach ($companyReport["departments_report"] as $department) { ?>
                                                                 <tr>
                                                                     <th><?php echo $department['name']; ?></th>
-                                                                    <td><?php echo $department['completed_courses'] > 0 ? (($department['completed_courses'] / $department['total_courses']) * 100) : 0; ?></td>
-                                                                    <td><?php echo $department['pending_courses'] > 0 ? (($department['pending_courses'] / $department['total_courses']) * 100) : 0; ?></td>
+                                                                    <td><?php echo $department['completed_courses'] > 0 ? (round(($department['completed_courses'] / $department['total_courses']) * 100,0,PHP_ROUND_HALF_UP)) : 0; ?></td>
+                                                                    <td><?php echo $department['pending_courses'] > 0 ? (round(($department['pending_courses'] / $department['total_courses']) * 100,0,PHP_ROUND_HALF_UP)) : 0; ?></td>
                                                                 </tr>
                                                             <?php } ?>
                                                         <? } ?>
@@ -396,8 +396,8 @@ $haveCourses = $companyReport['employee_have_courses'];
 $NotHaveCourses = $companyReport['employee_not_have_courses'];
 $TotalEmployees = $companyReport['total_employees'];
 //
-$percentageHaveCourses = ($haveCourses / $TotalEmployees) * 100;
-$percentageNotHaveCourses = ($NotHaveCourses / $TotalEmployees) * 100;
+$percentageHaveCourses = (round(($haveCourses / $TotalEmployees) * 100,0,PHP_ROUND_HALF_UP));
+$percentageNotHaveCourses = (round(($NotHaveCourses / $TotalEmployees) * 100,0,PHP_ROUND_HALF_UP));
 ?>
 
 
@@ -523,7 +523,7 @@ $percentageNotHaveCourses = ($NotHaveCourses / $TotalEmployees) * 100;
             y: 60
         },
         tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            pointFormat: '{series.name}: <b>{point.percentage:.0f}%</b>'
         },
         accessibility: {
             point: {

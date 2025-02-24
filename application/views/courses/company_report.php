@@ -30,8 +30,8 @@
                                                     <?php if (!empty($filterData['departments'])) { ?>
                                                         <?php foreach ($filterData['departments'] as $departments) { ?>
                                                             <option value="<?php echo $departments["sid"]; ?>"><?php echo $departments["name"]; ?></option>
-                                                        <?php } ?> 
-                                                    <?php } ?>     
+                                                        <?php } ?>
+                                                    <?php } ?>
                                                 </select>
                                             </div>
                                             <!-- Courses Filter -->
@@ -42,8 +42,8 @@
                                                     <?php if (!empty($filterData['courses'])) { ?>
                                                         <?php foreach ($filterData['courses'] as $course) { ?>
                                                             <option value="<?php echo $course["sid"]; ?>"><?php echo $course["course_title"]; ?></option>
-                                                        <?php } ?> 
-                                                    <?php } ?> 
+                                                        <?php } ?>
+                                                    <?php } ?>
                                                 </select>
                                             </div>
                                             <!-- Employee Filter  -->
@@ -66,11 +66,11 @@
                                                                         'job_title' => $employee['job_title'],
                                                                     ]); ?>
                                                                 </option>
-                                                            <?php } ?>    
-                                                        <?php } ?>  
-                                                    <?php } ?>    
+                                                            <?php } ?>
+                                                        <?php } ?>
+                                                    <?php } ?>
                                                 </select>
-                                            </div>    
+                                            </div>
                                             <!-- Filter Buttons  -->
                                             <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8"></div>
 
@@ -120,7 +120,7 @@
                                         <figure class="highcharts-figure">
                                             <div id="jsDepartmentsGraph"></div>
                                             <p class="highcharts-description">
-                                            This graph illustrates the distribution of employees in different departments who have been assigned courses versus those who have not been assigned courses yet.
+                                                This graph illustrates the distribution of employees in different departments who have been assigned courses versus those who have not been assigned courses yet.
                                             </p>
                                             <table class="dn" id="datatable">
                                                 <thead>
@@ -138,16 +138,16 @@
                                                                 <td><?php echo $department['employee_have_courses']; ?></td>
                                                                 <td><?php echo $department['employee_not_have_courses']; ?></td>
                                                             </tr>
-                                                        <?php } ?>    
+                                                        <?php } ?>
                                                     <? } ?>
                                                 </tbody>
                                             </table>
-                                        </figure>    
+                                        </figure>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <strong>Progress</strong>
@@ -173,14 +173,14 @@
                                                         <?php foreach ($companyReport["departments_report"] as $department) { ?>
                                                             <tr>
                                                                 <th><?php echo $department['name']; ?></th>
-                                                                <td><?php echo $department['completed_courses'] > 0 ? (($department['completed_courses'] / $department['total_courses']) * 100) : 0; ?></td>
-                                                                <td><?php echo $department['pending_courses'] > 0 ? (($department['pending_courses'] / $department['total_courses']) * 100) : 0; ?></td>
+                                                                <td><?php echo $department['completed_courses'] > 0 ? (round(($department['completed_courses'] / $department['total_courses']) * 100,0,PHP_ROUND_HALF_UP)) : 0; ?></td>
+                                                                <td><?php echo $department['pending_courses'] > 0 ? (round(($department['pending_courses'] / $department['total_courses']) * 100,0,PHP_ROUND_HALF_UP)) : 0; ?></td>
                                                             </tr>
-                                                        <?php } ?>    
+                                                        <?php } ?>
                                                     <? } ?>
                                                 </tbody>
                                             </table>
-                                        </figure>    
+                                        </figure>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                         <figure class="highcharts-figure">
@@ -204,16 +204,16 @@
                                                                 <td><?php echo $course['assign_employee_completed_count']; ?></td>
                                                                 <td><?php echo $course['assign_employee_pending_count']; ?></td>
                                                             </tr>
-                                                        <?php } ?>    
+                                                        <?php } ?>
                                                     <? } ?>
                                                 </tbody>
                                             </table>
-                                        </figure>    
+                                        </figure>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <strong>Report</strong>
@@ -229,7 +229,7 @@
                                             <div class="col-lg-2 bg-warning" style="padding: 16px;"></div>
                                             <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has started their assigned courses, but has not yet completed all of them.</div>
                                         </div>
-                                        
+
                                         <div class="row" style="margin: 5px 5px;">
                                             <div class="col-lg-2 bg-danger" style="padding: 16px;"></div>
                                             <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The employee has either not begun their assigned courses or has not been assigned any courses at this time.</div>
@@ -271,25 +271,25 @@
                                                         <tbody>
                                                             <?php foreach ($department['employees'] as $employee) { ?>
                                                                 <?php
-                                                                    $employeeInfo = get_employee_profile_info($employee);
-                                                                    $assignCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['courseCount'];
-                                                                    $pendingCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['pendingCount'];
-                                                                    $completedCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['completedCount'];
-                                                                    $completedCoursesPercentage = $companyReport["EmployeeList"][$employee]["courses_statistics"]['percentage'];
-                                                                    //
-                                                                    $assignText = $assignCourses > 1 ? $assignCourses." courses assigned" : $assignCourses." courses assigned";
-                                                                    $pendingText = $pendingCourses > 1 ? $pendingCourses." courses pending" : $pendingCourses." courses pending";
-                                                                    $completedText = $completedCourses > 1 ? $completedCourses." courses completed" : $completedCourses." courses completed";
-                                                                    //
-                                                                    $rowColor = "bg-danger";
-                                                                    //
-                                                                    if ($completedCoursesPercentage == "100") {
-                                                                        $rowColor = "bg-success";
-                                                                    } else if ($completedCoursesPercentage < "99" && $completedCoursesPercentage > "1") {
-                                                                        $rowColor = "bg-warning";
-                                                                    }
+                                                                $employeeInfo = get_employee_profile_info($employee);
+                                                                $assignCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['courseCount'];
+                                                                $pendingCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['pendingCount'];
+                                                                $completedCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['completedCount'];
+                                                                $completedCoursesPercentage = $companyReport["EmployeeList"][$employee]["courses_statistics"]['percentage'];
+                                                                //
+                                                                $assignText = $assignCourses > 1 ? $assignCourses . " courses assigned" : $assignCourses . " courses assigned";
+                                                                $pendingText = $pendingCourses > 1 ? $pendingCourses . " courses pending" : $pendingCourses . " courses pending";
+                                                                $completedText = $completedCourses > 1 ? $completedCourses . " courses completed" : $completedCourses . " courses completed";
+                                                                //
+                                                                $rowColor = "bg-danger";
+                                                                //
+                                                                if ($completedCoursesPercentage == "100") {
+                                                                    $rowColor = "bg-success";
+                                                                } else if ($completedCoursesPercentage < "99" && $completedCoursesPercentage > "1") {
+                                                                    $rowColor = "bg-warning";
+                                                                }
                                                                 ?>
-                                                                <tr class="<?php echo $rowColor; ?>">    
+                                                                <tr class="<?php echo $rowColor; ?>">
                                                                     <td class="_csVm">
                                                                         <div class="row">
                                                                             <div class="col-sm-3">
@@ -306,31 +306,31 @@
                                                                                     <?= $employeeInfo['email']; ?>
                                                                                 </p>
                                                                             </div>
-                                                                        </div>   
+                                                                        </div>
                                                                     </td>
                                                                     <td class="_csVm"><?php echo $assignText; ?></td>
                                                                     <td class="_csVm"><?php echo $pendingText; ?></td>
                                                                     <td class="_csVm"><?php echo $completedText; ?></td>
-                                                                    <td class="_csVm stepText2"><?php echo $completedCoursesPercentage." %"; ?></td>
+                                                                    <td class="_csVm stepText2"><?php echo $completedCoursesPercentage . " %"; ?></td>
                                                                     <td class="_csVm">
-                                                                        <!-- <a href="<?php echo base_url('lms/employee/courses/'.$employee); ?>" class="btn btn-info btn-block csRadius5">
+                                                                        <!-- <a href="<?php echo base_url('lms/employee/courses/' . $employee); ?>" class="btn btn-info btn-block csRadius5">
                                                                             <i class="fa fa-eye"></i>
                                                                             View
                                                                         </a> -->
-                                                                        <a href="<?php echo base_url('lms/employee/courses/dashboard/'.$employee); ?>" class="btn btn-info btn-block csRadius5">
+                                                                        <a href="<?php echo base_url('lms/employee/courses/dashboard/' . $employee); ?>" class="btn btn-info btn-block csRadius5">
                                                                             <i class="fa fa-eye"></i>
                                                                             View
                                                                         </a>
                                                                     </td>
                                                                 </tr>
-                                                            <?php } ?> 
+                                                            <?php } ?>
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
                                         </div>
                                     <?php } ?>
-                                <?php } ?>          
+                                <?php } ?>
                             </div>
                         </div>
 
@@ -343,8 +343,8 @@
                                 </p>
                             </div>
                         </div>
-                        
-                    <?php } ?>    
+
+                    <?php } ?>
 
                 </div>
             </div>
@@ -353,9 +353,13 @@
 </div>
 
 <style>
-    ._csVm{ vertical-align: middle !important; } 
+    ._csVm {
+        vertical-align: middle !important;
+    }
 
-    .stepText2 { text-align: center; }
+    .stepText2 {
+        text-align: center;
+    }
 
     .btn-black {
         background-color: #000;
@@ -376,11 +380,11 @@
     .bg-success {
         background-color: #dff0d8 !important;
     }
-    
+
     .bg-warning {
         background-color: #fcf8e3 !important;
     }
-    
+
     .bg-danger {
         background-color: #f2dede !important;
     }
@@ -450,13 +454,16 @@
         window.location = url;
     }
 </script>
-<?php 
-    $haveCourses = $companyReport['employee_have_courses'];
-    $NotHaveCourses = $companyReport['employee_not_have_courses'];
-    $TotalEmployees = $companyReport['total_employees'];
-    //
-    $percentageHaveCourses = ($haveCourses / $TotalEmployees) * 100;
-    $percentageNotHaveCourses = ($NotHaveCourses / $TotalEmployees) * 100;
+<?php
+$haveCourses = $companyReport['employee_have_courses'];
+$NotHaveCourses = $companyReport['employee_not_have_courses'];
+$TotalEmployees = $companyReport['total_employees'];
+//
+$percentageHaveCourses = round(($haveCourses / $TotalEmployees) * 100, 0, PHP_ROUND_HALF_UP);
+$percentageNotHaveCourses = round(($NotHaveCourses / $TotalEmployees) * 100, 0, PHP_ROUND_HALF_UP);
+
+
+
 ?>
 <script>
     // //
@@ -473,7 +480,7 @@
             y: 60
         },
         tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            pointFormat: '{series.name}: <b>{point.percentage:.0f}%</b>'
         },
         accessibility: {
             point: {
@@ -520,8 +527,7 @@
             text: 'Department Distribution'
         },
         subtitle: {
-            text:
-                ''
+            text: ''
         },
         xAxis: {
             type: 'category'
@@ -539,6 +545,7 @@
     });
     // //
     Highcharts.chart('jsDepartmentsCoursesProgressGraph', {
+        
         data: {
             table: 'jsDepartmentsCoursesProgressGraphTable'
         },
@@ -549,8 +556,7 @@
             text: 'Department Courses Completion Distribution'
         },
         subtitle: {
-            text:
-                ''
+            text: ''
         },
         xAxis: {
             type: 'category'
@@ -575,8 +581,7 @@
             text: 'Courses Completion Distribution'
         },
         subtitle: {
-            text:
-                ''
+            text: ''
         },
         xAxis: {
             type: 'category'
