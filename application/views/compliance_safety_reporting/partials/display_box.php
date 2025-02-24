@@ -1,6 +1,5 @@
-<div class="rows">
     <div class="col-sm-4">
-        <article class="article-sec">
+        <article class="article-sec" style="padding: 0 10px 10px;overflow-x: hidden">
             <h1>
                 <?= $display_box_data["title"]; ?>
                 <br>
@@ -9,7 +8,7 @@
             <div class="row">
                 <div class="col-md-6 col-xs-12">
                     <p class="csColumSection"><strong>Report Date</strong></p>
-                    <p>
+                    <p class="text-small">
                         <?= formatDateToDB(
                             $display_box_data["report_date"],
                             DB_DATE,
@@ -26,7 +25,7 @@
                                 DB_DATE,
                                 DATE
                             )
-                            : ""; ?>
+                            : "-"; ?>
                     </p>
                 </div>
             </div>
@@ -44,12 +43,15 @@
             <div class="row">
                 <hr>
                 <div class="col-md-12 col-xs-12 text-center">
-                    <a class="btn btn-orange" href="<?= base_url("compliance_safety_reporting/edit/".$display_box_data["sid"]); ?>">
+                    <a class="btn btn-orange" href="<?= base_url("compliance_safety_reporting/edit/" . $display_box_data["sid"]); ?>">
                         <i class="fa fa-pencil"></i>
                         Edit
+                    </a>
+                    <a class="btn btn-red" href="<?= base_url("compliance_safety_reporting/report/" . $display_box_data["sid"] . "/incidents"); ?>">
+                        <i class="fa fa-eye"></i>
+                        Incidents
                     </a>
                 </div>
             </div>
         </article>
     </div>
-</div>

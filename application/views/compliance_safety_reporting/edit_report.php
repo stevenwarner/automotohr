@@ -42,7 +42,7 @@
                         <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
                             <div class="form-group">
                                 <label for="report_completion_date">Completion Date</label>
-                                <input type="text" class="form-control" id="report_completion_date" name="report_completion_date" value="<?= $report['report_completion_date'] ? formatDateToDB($report['report_completion_date'], DB_DATE, "m/d/Y") : ""; ?>" />
+                                <input type="text" class="form-control" id="report_completion_date" name="report_completion_date" value="<?= $report['completion_date'] ? formatDateToDB($report['completion_date'], DB_DATE, "m/d/Y") : ""; ?>" />
                             </div>
                         </div>
 

@@ -63,13 +63,20 @@ class Base_csp extends CI_Controller
                     $this->loggedInEmployee["sid"]
                 ),
                 "loadView" => true,
-                "PageCSS" => [
+                "pageCSS" => [
                     "2022/css/main",
+                    "css/select2",
+                    "css/jquery.datetimepicker",
+                    "v1/plugins/ms_uploader/main.min",
+                    "v1/plugins/ms_modal/main.min"
                 ],
                 "pageJs" => [
                     "js/select2",
                     "js/jquery.validate.min",
                     "js/jquery.datetimepicker",
+                    "v1/plugins/ms_uploader/main.min",
+                    "v1/plugins/ms_modal/main.min",
+                    "ckeditor/ckeditor"
                 ],
             ];
             //
@@ -88,9 +95,9 @@ class Base_csp extends CI_Controller
     {
         if ($this->isSecureUrl) {
             $this->load
-                ->view("main/header_2022", $this->data)
+                ->view("main/header_sanitized", $this->data)
                 ->view($path)
-                ->view("main/footer");
+                ->view("main/footer_sanitized");
         } else {
             $this->load->view($path);
         }

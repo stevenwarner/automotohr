@@ -47,11 +47,72 @@ class Compliance_safety_reporting extends Base_csp
             );
         // load JS
         $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
         $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
         $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
         $this->data['pageJs'][] = 'csp/overview';
         //
         $this->renderView('compliance_safety_reporting/overview');
+    }
+
+    /**
+     * Report incidents
+     *
+     * @param int $reportId
+     */
+    public function reportIncidents(int $reportId)
+    {
+        // get types
+        $this->data["report"] = $this
+            ->compliance_report_model
+            ->getCSPReportById(
+                $reportId,
+                [
+                    "csp_reports.sid",
+                    "csp_reports.title",
+                    "csp_reports.report_date",
+                    "csp_reports.completion_date",
+                    "csp_reports.status",
+                ]
+            );
+        // set the title
+        $this->data['title'] = 'Compliance Safety Reporting | Incidents of report ' . $this->data["report"]["title"];
+        // get types
+        $this->data["pendingReports"] = $this
+            ->compliance_report_model
+            ->getCSPReportIncidents($reportId, [
+                "compliance_incident_types.compliance_incident_type_name",
+                "csp_reports_incidents.sid",
+                "csp_reports_incidents.completed_at",
+                "csp_reports_incidents.status",
+            ], "pending");
+        // get types
+        $this->data["completedReports"] = $this
+            ->compliance_report_model
+            ->getCSPReportIncidents($reportId, [
+                "compliance_incident_types.compliance_incident_type_name",
+                "csp_reports_incidents.sid",
+                "csp_reports_incidents.completed_at",
+                "csp_reports_incidents.status",
+            ], "completed");
+        $this->data["onHoldReports"] = $this
+            ->compliance_report_model
+            ->getCSPReportIncidents($reportId, [
+                "compliance_incident_types.compliance_incident_type_name",
+                "csp_reports_incidents.sid",
+                "csp_reports_incidents.completed_at",
+                "csp_reports_incidents.status",
+            ], "on_hold");
+        // load JS
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
+        $this->data['pageJs'][] = 'csp/overview_incidents';
+        //
+        $this->renderView('compliance_safety_reporting/reports/incidents');
     }
 
     /**
@@ -86,7 +147,7 @@ class Compliance_safety_reporting extends Base_csp
             );
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Add ' . $this->data["type"]["compliance_report_name"];
-        $this->data['PageCSS'][] = 'v1/plugins/ms_uploader/main.min';
+        $this->data['pageCSS'][] = 'v1/plugins/ms_uploader/main.min';
         $this->data['pageJs'][] = 'v1/plugins/ms_uploader/main.min';
         $this->data['pageJs'][] = 'csp/add_report.min';
         // get the employees
@@ -167,10 +228,6 @@ class Compliance_safety_reporting extends Base_csp
             );
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
-        $this->data['PageCSS'][] = 'v1/plugins/ms_uploader/main.min';
-        $this->data['PageCSS'][] = 'v1/plugins/ms_modal/main.min';
-        $this->data['pageJs'][] = 'v1/plugins/ms_uploader/main.min';
-        $this->data['pageJs'][] = 'v1/plugins/ms_modal/main.min';
         $this->data['pageJs'][] = 'csp/edit_report';
         // get the employees
         $this->data["employees"] = $this
@@ -212,10 +269,6 @@ class Compliance_safety_reporting extends Base_csp
 
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
-        $this->data['PageCSS'][] = 'v1/plugins/ms_uploader/main.min';
-        $this->data['PageCSS'][] = 'v1/plugins/ms_modal/main.min';
-        $this->data['pageJs'][] = 'v1/plugins/ms_uploader/main.min';
-        $this->data['pageJs'][] = 'v1/plugins/ms_modal/main.min';
         $this->data['pageJs'][] = 'csp/edit_incident';
         // get the employees
         $this->data["employees"] = $this

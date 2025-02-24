@@ -1875,12 +1875,12 @@ if (!function_exists('getLMSManagerDepartmentAndTeams')) {
                         //manual AssignedCourses
 
                         $manualAssignedCourses = $CI->db
-                        ->select('default_course_sid')
-                        ->from('lms_manual_assign_employee_course')
-                        ->where('employee_sid', $employee['employee_sid'])
-                        ->where('company_sid', $companyId)
-                        ->get()
-                        ->result_array();
+                            ->select('default_course_sid')
+                            ->from('lms_manual_assign_employee_course')
+                            ->where('employee_sid', $employee['employee_sid'])
+                            ->where('company_sid', $companyId)
+                            ->get()
+                            ->result_array();
 
                         $manualAssignedCoursesList = !empty($manualAssignedCourses) ? ',' . implode(',', array_column($manualAssignedCourses, "default_course_sid")) : "";
 
@@ -1968,15 +1968,17 @@ if (!function_exists('checkEmployeeIsLMSManager')) {
 
         $departmentAndTeams = $CI->db->get('departments_team_management');
         //
-        $departmentAndTeams = $departmentAndTeams->result_array(); 
+        $departmentAndTeams = $departmentAndTeams->result_array();
         //
-        if ($departmentAndTeams) {echo "up";
+        if ($departmentAndTeams) {
+            echo "up";
             return true;
-        } else {echo "down";
+        } else {
+            echo "down";
             return false;
         }
     }
-}        
+}
 
 
 if (!function_exists("checkAnyManualCourseAssigned")) {
@@ -2099,7 +2101,7 @@ if (!function_exists('getEmployeeCourseStatus')) {
             return 'completed';
         } else if ($courseInfo['lesson_status'] == 'incomplete') {
             return 'started';
-        } 
+        }
     }
 }
 
@@ -4670,13 +4672,36 @@ if (!function_exists("create_sitemap_structure")) {
  * Compliance Safety System helpers
  *******************************************/
 
-if (!function_exists("isAllowedForCSP")) {
+if (!function_exists("isMainAllowedForCSP")) {
     /**
      * check if the employee is allowed for CSP
      *
      * @param int $employeeId
      * default -> 0
      * @return bool
+     */
+    function isMainAllowedForCSP(int $employeeId = 0): bool
+    {
+        // set the employee id
+        $employeeId = $employeeId != 0 ? $employeeId : getLoggedInPersonId();
+        // check if employee id is still null
+        if (!$employeeId) {
+            return false;
+        }
+        // get the access column
+        $hasMainAccess = getUserColumnById($employeeId, "can_access_compliance_safety_report");
+        // check if has access to the main module
+        return (int)$hasMainAccess === 1;
+    }
+}
+
+if (!function_exists("isAllowedForCSP")) {
+    /**
+     * get access for CSP
+     *
+     * @param int $employeeId
+     * default -> 0
+     * @return array
      */
     function isAllowedForCSP(int $employeeId = 0): bool
     {
@@ -4686,9 +4711,28 @@ if (!function_exists("isAllowedForCSP")) {
         if (!$employeeId) {
             return false;
         }
-        // get the access column
-        $hasAccess = getUserColumnById($employeeId, "can_access_compliance_safety_report");
-        //
-        return (int)$hasAccess === 1;
+        // check if has access to the specific report
+        // or incident
+        // load the CI insatnce
+        $CI = get_instance();
+        // load the model
+        $CI->load->model("v1/compliance_report_model");
+        // check the permission
+        return (int)$CI->compliance_report_model->hasAccess($employeeId) === 1;
+    }
+}
+
+
+if (!function_exists("hasCSPAccess")) {
+    /**
+     * get access for CSP
+     *
+     * @param int $employeeId
+     * default -> 0
+     * @return array
+     */
+    function hasCSPAccess(int $employeeId = 0): bool
+    {
+        return isMainAllowedForCSP($employeeId) || isAllowedForCSP($employeeId);
     }
 }

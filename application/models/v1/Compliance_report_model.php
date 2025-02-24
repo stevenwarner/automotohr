@@ -2212,9 +2212,11 @@ class Compliance_report_model extends CI_Model
 	 * @param int $reportId
 	 * @param array $columns
 	 * @param array $type
+	 * @param string $status
+	 * default -> all
 	 * @return array
 	 */
-	public function getCSPReportIncidents(int $reportId, array $columns)
+	public function getCSPReportIncidents(int $reportId, array $columns, string $status = "all")
 	{
 		$this->db->select($columns, false);
 		$this->db->where("csp_reports_incidents.csp_reports_sid", $reportId);
@@ -2228,6 +2230,12 @@ class Compliance_report_model extends CI_Model
 			"compliance_incident_types.id = csp_reports_incidents.incident_type_sid",
 			"inner"
 		);
+		if ($status !== "all") {
+			$this->db->where(
+				"csp_reports_incidents.status",
+				$status
+			);
+		}
 		return $this->db->get("csp_reports_incidents")->result_array();
 	}
 
@@ -2408,6 +2416,7 @@ class Compliance_report_model extends CI_Model
 				"compliance_report_types.id = csp_reports.report_type_sid",
 				"left"
 			)
+			->order_by("csp_reports.sid", "DESC")
 			->get("csp_reports")
 			->result_array();
 		//
@@ -2420,5 +2429,63 @@ class Compliance_report_model extends CI_Model
 		}
 
 		return $records;
+	}
+
+	/**
+	 * check the access of employee
+	 *
+	 * @param int $employeeId
+	 * @return int
+	 */
+	public function hasAccess(int $employeeId): int
+	{
+		//
+		return $this
+			->db
+			->where(
+				"csp_reports_employees.employee_sid",
+				$employeeId
+			)
+			->count_all_results("csp_reports_employees");
+	}
+
+	/**
+	 * check the access of employee
+	 *
+	 * @param int $employeeId
+	 * @param int $companyId
+	 * @param bool $hasMainAccess
+	 * @return int
+	 */
+	public function getPendingCountReportsByEmployeeId(
+		int $employeeId,
+		int $companyId,
+		bool $hasMainAccess
+	): int {
+		//
+		$where = [
+			"csp_reports.status" => "pending",
+			"csp_reports.company_sid" => $companyId,
+		];
+		//
+		if (!$hasMainAccess) {
+			$where["csp_reports_employees.employee_sid"] = $employeeId;
+		}
+		//
+		$record = $this
+			->db
+			->select("DISTINCT(csp_reports_employees.csp_reports_sid) AS total")
+			->where($where)
+			->join(
+				"csp_reports",
+				"csp_reports.sid = csp_reports_employees.csp_reports_sid",
+				"inner"
+			)
+			->get("csp_reports_employees")
+			->row_array();
+		//
+		return $record
+			? $record["total"]
+			: 0;
 	}
 }

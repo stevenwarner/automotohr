@@ -1029,7 +1029,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
 
-                           <!--
+                            <!--
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
                                     <a href="<?php echo base_url('shifts/my/subordinates'); ?>">
@@ -1050,7 +1050,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             </div>
                         -->
 
-                        <!--
+                            <!--
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
                                     <a href="<?php echo base_url('shifts/myTrade'); ?>">
@@ -1111,15 +1111,17 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
                         <?php } ?>
-                        
-                        <?php if (checkIfAppIsEnabled(MODULE_COMPLIANCE_SAFETY) && isAllowedForCSP()) { ?>
+
+                        <?php if (checkIfAppIsEnabled(MODULE_COMPLIANCE_SAFETY) && hasCSPAccess()) { ?>
+                            <?php $cspUrl = isMainAllowedForCSP() ? "overview" : "employee/overview"; ?>
+
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
-                                    <a href="<?php echo base_url('compliance_safety_reporting/overview'); ?>">
+                                    <a href="<?php echo base_url('compliance_safety_reporting/' . $cspUrl); ?>">
                                         <div class="link-box bg-red full-width">
                                             <h2>Compliance Safety Reporting</h2>
                                             <div class="current-date">
-                                                <span><?= 0 ?? 0; ?><sub>Pending</sub></span>
+                                                <span><?= $cspPendingCount ?? 0; ?><sub>Pending</sub></span>
                                             </div>
                                             <div class="status-panel">
                                                 <h3>Show</h3>

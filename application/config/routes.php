@@ -2576,3 +2576,7 @@ $route["compliance_safety_reporting/report/(:num)/incident/edit/(:num)"]["get"] 
 // Edit the report
 $route["compliance_safety_reporting/report/(:num)/incident/edit/(:num)"]["post"] =
   "v1/Compliance_safety_reporting/processIncidentEdit/$1/$2";
+
+// view report incidents
+$route["compliance_safety_reporting/report/(:num)/incidents"]["get"] =
+  "v1/Compliance_safety_reporting/reportIncidents/$1";
