@@ -485,7 +485,11 @@
 
                                                 <div class="table-outer">
                                                     <div class="info-row">
-                                                        <p><strong>Indeed Job Sync & Disposition API</strong></p>
+                                                        <p><strong>Indeed Job Sync & Disposition API</strong> <span class="pull-right">
+                                                                <button class="btn btn-success jsModifyFeedEmail">
+                                                                    <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update Details
+                                                                </button>
+                                                            </span></p>
                                                         <ul>
                                                             <form enctype="multipart/form-data" method="post" action="<?= base_url('manage_admin/companies/manage_company/' . ($company_sid) . ''); ?>" id="form_set_indeed_api_status">
                                                                 <input type="hidden" id="perform_action" name="perform_action" value="set_indeed_api_status" />
@@ -1559,45 +1563,45 @@
                                             <!-- Dynamic Modules -->
                                             <?php if (sizeof($dynamicModules)) {
                                                 foreach ($dynamicModules as $k => $v) { ?>
-                                                <?php if($v['module_slug']!='incidents'){?>
-                                                    <article class="col-sm-6 information-box">
-                                                        <header class="hr-box-header">
-                                                            <?= $v['module_name']; ?>
-                                                            <?php if ($v['sid'] == 3) : ?>
-                                                                <span class="pull-right">
-                                                                    <button class="btn btn-success jsModifyFeedEmail">
-                                                                        <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update Details
-                                                                    </button>
-                                                                </span>
-                                                            <?php endif; ?>
-                                                            <?php if ($v['module_name'] == "Learning Management System") { ?>
-                                                                <a href="<?php echo base_url('sa/lms/courses/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
-                                                            <?php } ?>
-                                                            <?php if ($v['module_name'] == "Payroll") { ?>
-                                                                <a href="<?php echo base_url('sa/payrolls/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
-                                                            <?php } ?>
-                                                        </header>
-                                                        <div class="clearfix"></div>
-                                                        <div class="table-outer">
-                                                            <div class="info-row">
-                                                                <ul>
-                                                                    <li class="<?= $v['status'] == 1 ? 'inclueded-state' : 'exclueded-state'; ?>">
-                                                                        <label>Status</label>
-                                                                        <div class="text" style="<?= $v['status'] == 1 ? 'color:green;' : 'color:red;'; ?>">
-                                                                            <?= $v['status'] == 0 ? 'Disabled' : 'Enabled'; ?>
-                                                                        </div>
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="text">
-                                                                            <a data-id="<?= $v['sid']; ?>" data-status="<?= $v['status']; ?>" class="site-btn <?= $v['status'] == 1 ? 'btn-danger' : ''; ?> pull-right js-dynamic-module-btn"><?= $v['status'] == 1 ? 'Disable' : 'Enable'; ?></a>
-                                                                        </div>
-                                                                    </li>
-                                                                </ul>
+                                                    <?php if ($v['module_slug'] != 'incidents') { ?>
+                                                        <article class="col-sm-6 information-box">
+                                                            <header class="hr-box-header">
+                                                                <?= $v['module_name']; ?>
+                                                                <?php if ($v['sid'] == 3) : ?>
+                                                                    <span class="pull-right">
+                                                                        <button class="btn btn-success jsModifyFeedEmail">
+                                                                            <i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update Details
+                                                                        </button>
+                                                                    </span>
+                                                                <?php endif; ?>
+                                                                <?php if ($v['module_name'] == "Learning Management System") { ?>
+                                                                    <a href="<?php echo base_url('sa/lms/courses/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                                <?php } ?>
+                                                                <?php if ($v['module_name'] == "Payroll") { ?>
+                                                                    <a href="<?php echo base_url('sa/payrolls/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                                <?php } ?>
+                                                            </header>
+                                                            <div class="clearfix"></div>
+                                                            <div class="table-outer">
+                                                                <div class="info-row">
+                                                                    <ul>
+                                                                        <li class="<?= $v['status'] == 1 ? 'inclueded-state' : 'exclueded-state'; ?>">
+                                                                            <label>Status</label>
+                                                                            <div class="text" style="<?= $v['status'] == 1 ? 'color:green;' : 'color:red;'; ?>">
+                                                                                <?= $v['status'] == 0 ? 'Disabled' : 'Enabled'; ?>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li>
+                                                                            <div class="text">
+                                                                                <a data-id="<?= $v['sid']; ?>" data-status="<?= $v['status']; ?>" class="site-btn <?= $v['status'] == 1 ? 'btn-danger' : ''; ?> pull-right js-dynamic-module-btn"><?= $v['status'] == 1 ? 'Disable' : 'Enable'; ?></a>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <header class="hr-box-header hr-box-footer"></header>
-                                                    </article>
-                                                    <?php }?>
+                                                            <header class="hr-box-header hr-box-footer"></header>
+                                                        </article>
+                                                    <?php } ?>
                                             <?php }
                                             } ?>
                                         </div>
@@ -2229,7 +2233,7 @@
                         if (status == 0) {
                             window.location.href = '<?php echo base_url('setup_default_config') . '/' ?>' + id;
                         } else {
-                             window.location.href = '<?php echo current_url() ?>';
+                            window.location.href = '<?php echo current_url() ?>';
                         }
                     },
                     error: function() {}
