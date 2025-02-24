@@ -163,7 +163,7 @@ class Compliance_safety_reporting extends Base_csp
             ->getActiveEmployees(
                 $this->getLoggedInCompany("sid"),
                 $this->getLoggedInEmployee("sid")
-            );
+            );   
         //
         $this->renderView('compliance_safety_reporting/edit_report');
     }
@@ -424,5 +424,251 @@ class Compliance_safety_reporting extends Base_csp
                 "data" => $file
             ]
         );
+    }
+
+    public function save_email_manual_attachment()
+    {
+        $session = $this->session->userdata('logged_in');
+        $employee_sid   = $session["employer_detail"]["sid"];
+        $company_sid    = $session['company_detail']['sid'];
+
+        $item_title     = $_POST['attachment_title'];
+        $company_sid    = $_POST['company_sid'];
+        $report_sid     = $_POST['report_sid'];
+        $incident_sid   = $_POST['incident_sid'];
+        $item_source    = $_POST['file_type'];
+        $uploaded_by    = $_POST['uploaded_by'];
+        $user_type      = $_POST['user_type'];
+
+        if ($item_source == 'upload_document') {
+            if (!empty($_FILES) && isset($_FILES['file']) && $_FILES['file']['size'] > 0) {
+
+                $file_name          = $_POST['file_name'];
+                $file_extension     = $_POST['file_ext'];
+                $upload_incident_doc = upload_file_to_aws('file', $company_sid, 'file', '', AWS_S3_BUCKET_NAME);
+
+                if (!empty($upload_incident_doc) && $upload_incident_doc != 'error') {
+                    //
+                    $insert_document_sid = $this
+                        ->compliance_report_model
+                        ->addFilesLinkToReport(
+                            $report_sid,
+                            $incident_sid,
+                            $this->getLoggedInEmployee("sid"),
+                            $upload_incident_doc,
+                            "document",
+                            $item_title
+                        );
+
+                    $return_data                    = array();
+                    $return_data['item_sid']        = $insert_document_sid;
+                    $return_data['item_title']      = $item_title;
+                    $return_data['item_type']       = 'Document';
+                    $return_data['item_source']     = strtoupper($file_extension);
+
+                    echo json_encode($return_data);
+                }
+            } else {
+                echo 'error';
+            }
+        } else {
+            $video_id = '';
+
+            if (!empty($_FILES) && isset($_FILES['file']) && $_FILES['file']['size'] > 0 && $item_source == 'upload_video') {
+                $random = generateRandomString(5);
+                $target_file_name = basename($_FILES["file"]["name"]);
+                $file_name = strtolower($company_sid . '/' . $random . '_' . $target_file_name);
+                $target_dir = "assets/uploaded_videos/incident_videos/";
+                $target_file = $target_dir . $file_name;
+                $basePath = $target_dir . $company_sid;
+
+                if (!is_dir($basePath)) {
+                    mkdir($basePath, 0777, true);
+                }
+
+                move_uploaded_file($_FILES["file"]["tmp_name"], $target_file);
+
+                $video_id = $file_name;
+            } else if (!empty($_FILES) && isset($_FILES['file']) && $_FILES['file']['size'] > 0 && $item_source == 'upload_audio') {
+                $random = generateRandomString(5);
+                $target_file_name = basename($_FILES["file"]["name"]);
+                $file_name = strtolower($company_sid . '/' . $random . '_' . $target_file_name);
+                $target_dir = "assets/uploaded_videos/incident_videos/";
+                $target_file = $target_dir . $file_name;
+                $basePath = $target_dir . $company_sid;
+
+                if (!is_dir($basePath)) {
+                    mkdir($basePath, 0777, true);
+                }
+
+                move_uploaded_file($_FILES["file"]["tmp_name"], $target_file);
+
+                $video_id = $file_name;
+            } else {
+                if ($item_source == 'youtube') {
+                    $youtube_video_link = $_POST['social_url'];
+                    $url_prams = array();
+                    parse_str(parse_url($youtube_video_link, PHP_URL_QUERY), $url_prams);
+
+                    if (isset($url_prams['v'])) {
+                        $video_id = $url_prams['v'];
+                    } else {
+                        $video_id = '';
+                    }
+                } else {
+                    $vimeo_video_link = $_POST['social_url'];
+                    $video_id = $this->vimeo_get_id($vimeo_video_link);
+                }
+            }
+            //
+            $insert_video_sid = $this
+                ->compliance_report_model
+                ->addFilesLinkToReport(
+                    $report_sid,
+                    $incident_sid,
+                    $this->getLoggedInEmployee("sid"),
+                    $video_id,
+                    $item_source,
+                    $item_title
+                );
+
+            $return_data                    = array();
+            $return_data['item_sid']        = $insert_video_sid;
+            $return_data['item_title']      = $item_title;
+            $return_data['item_type']       = 'Media';
+            $return_data['item_source']     = $item_source;
+
+            echo json_encode($return_data);
+        }
+    }
+
+    public function validate_vimeo_video()
+    {
+        $str = $this->input->post('url');
+        if ($str != "") {
+            if ($_SERVER['HTTP_HOST'] == 'localhost') {
+                $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
+                $response = @file_get_contents($api_url);
+
+                if (!empty($response)) {
+                    $response = json_decode($response, true);
+
+                    if (isset($response['video_id'])) {
+                        echo TRUE;
+                    } else {
+                        $this->form_validation->set_message('validate_vimeo', 'In-valid Vimeo video URL');
+                        $this->session->set_flashdata('message', '<b>Error:</b> In-valid Vimeo video URL');
+                        echo FALSE;
+                    }
+                } else {
+                    $this->form_validation->set_message('validate_vimeo', 'In-valid Vimeo video URL');
+                    $this->session->set_flashdata('message', '<b>Error:</b> In-valid Vimeo video URL');
+                    echo FALSE;
+                }
+            } else {
+                $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
+                $cSession = curl_init();
+                curl_setopt($cSession, CURLOPT_URL, $api_url);
+                curl_setopt($cSession, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($cSession, CURLOPT_HEADER, false);
+                $response = curl_exec($cSession);
+                curl_close($cSession);
+                $response = json_decode($response, true); //$response = @file_get_contents($api_url);
+
+                if (isset($response['video_id'])) {
+                    echo TRUE;
+                } else {
+                    $this->form_validation->set_message('validate_vimeo', 'In-valid Vimeo video URL');
+                    $this->session->set_flashdata('message', '<b>Error:</b> In-valid Vimeo video URL');
+                    echo FALSE;
+                }
+            }
+        } else {
+            echo FALSE;
+        }
+    }
+
+    public function vimeo_get_id($str)
+    {
+        if ($str != "") {
+            if ($_SERVER['HTTP_HOST'] == 'localhost') {
+                $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
+                $response = @file_get_contents($api_url);
+
+                if (!empty($response)) {
+                    $response = json_decode($response, true);
+
+                    if (isset($response['video_id'])) {
+                        return $response['video_id'];
+                    } else {
+                        return 0;
+                    }
+                } else {
+                    return 0;
+                }
+            } else {
+                $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
+                $cSession = curl_init();
+                curl_setopt($cSession, CURLOPT_URL, $api_url);
+                curl_setopt($cSession, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($cSession, CURLOPT_HEADER, false);
+                $response = curl_exec($cSession);
+                curl_close($cSession);
+                $response = json_decode($response, true); //$response = @file_get_contents($api_url);
+
+                if (isset($response['video_id'])) {
+                    return $response['video_id'];
+                } else {
+                    return 0;
+                }
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    function update_email_read_flag()
+    {
+        $email_sid              = $_POST['email_sid'];
+
+        $data_to_update             = array();
+        $data_to_update['is_read']  = 1;
+        $this->compliance_report_model->update_email_is_read_flag($email_sid, $data_to_update);
+
+
+
+        if (isset($_POST['receiver_sid'])) {
+            $receiver_sid           = $_POST['receiver_sid'];
+            $sender_info            = $this->compliance_report_model->get_email_sender_info($email_sid);
+
+            $incident_sid           = $sender_info['incident_reporting_id'];
+            $sender_sid             = $sender_info['sender_sid'] == 0 ? $sender_info['manual_email'] : $sender_info['sender_sid'];
+
+            $log_in_user_status     = is_manager_have_new_email($receiver_sid, $incident_sid);
+            $status_one = 0;
+            if ($log_in_user_status > 0) {
+                $status_one = 1;
+            }
+
+            $current_user_status    = is_user_have_unread_message($receiver_sid, $sender_sid, $incident_sid);
+            $status_two = 0;
+            if ($current_user_status > 0) {
+                $status_two = 1;
+            }
+
+            if (filter_var($sender_sid, FILTER_VALIDATE_EMAIL)) {
+                $split_email = explode('@', $sender_sid);
+                $sender_sid = $split_email[0];
+            }
+
+            $return_data                = array();
+            $return_data['status_one']  = $status_one;
+            $return_data['status_two']  = $status_two;
+            $return_data['sender_sid']  = $sender_sid;
+
+            echo json_encode($return_data);
+        } else {
+            echo 'success';
+        }
     }
 }
