@@ -66,7 +66,7 @@ class Base_csp extends CI_Controller
                 "js/jquery.datetimepicker",
                 "v1/plugins/ms_uploader/main.min",
                 "v1/plugins/ms_modal/main.min",
-                "ckeditor",
+                "js/ckeditor",
                 "alertifyjs/alertify.min",
             ],
         ];
