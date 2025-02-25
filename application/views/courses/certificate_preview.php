@@ -1,6 +1,4 @@
-
-
-    <style>
+ <style>
         @font-face {
             font-family: 'Open Sans';
             font-style: normal;
@@ -69,12 +67,8 @@
         .pm-empty-space {
             height: 16px;
             width: 100%;
-        }
-         
-        body {
-            padding: 20px 0;
-            background: #ccc;
-        }
+        }         
+     
 
         .cssMain {
             background-color: #0000FF;

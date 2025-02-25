@@ -218,7 +218,7 @@
     .image-responsive {
         margin: 20px auto;
         max-width: 100%;
-        display: block;
+        /*display: block;*/
     }
 </style>
 

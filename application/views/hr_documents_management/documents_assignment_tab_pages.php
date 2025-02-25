@@ -17,9 +17,16 @@ if ($session['employer_detail']['access_level_plus'] == 1 || $canAccessDocument)
 $ncd = count($userNotCompletedStateForms);
 $cd = count($userCompletedStateForms);
 
-$cdLmsCourse = count($userCompletedLMSCourses);
 
-$cd = $cd + $cdLmsCourse;
+
+
+if (checkIfAppIsEnabled(MODULE_LMS)) {
+    if (isPayrollOrPlus() || isLMSManagerDepartmentAndTeams($employer["sid"])) {
+        $cdLmsCourse = count($userCompletedLMSCourses);
+
+        $cd = $cd + $cdLmsCourse;
+    }
+}
 
 // Modify Assigned document
 // only available for Access_level_plus
@@ -1827,7 +1834,13 @@ $noActionRequiredDocumentsList = [];
                     <?php } ?>
                     <!-- Performance Documents End -->
 
-                    <?php $this->load->view("hr_documents_management/partials/tabs/completed_lms_courses"); ?>
+                    <? if (checkIfAppIsEnabled(MODULE_LMS)) { ?>
+                        <?php if (isPayrollOrPlus() || isLMSManagerDepartmentAndTeams($employer["sid"])) {  ?>
+
+                            <?php $this->load->view("hr_documents_management/partials/tabs/completed_lms_courses"); ?>
+
+                    <?php }
+                    } ?>
 
 
                 </div>

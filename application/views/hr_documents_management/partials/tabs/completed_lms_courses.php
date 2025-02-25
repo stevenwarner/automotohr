@@ -59,6 +59,22 @@
     </div>
 <?php } ?>
 
+
+<div id="jsLMSEmployerView" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="jsCourseSection"></div>
+            </div>
+            <div class="modal-footer"> </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
 $('.jsPreviewlmsCertificate').on('click', function() {
             var courseSid = $(this).attr('course_sid');
@@ -69,8 +85,11 @@ $('.jsPreviewlmsCertificate').on('click', function() {
                     method: "GET",
                 })
                 .success(function(response) {
-                    $('#jsStateFormEmployerView').modal('show');
-                    $("#jsStateEmployerSection").html(response.view);
+                    $('#jsLMSEmployerView').modal('show');
+                    $("#jsCourseSection").html(response.view);
+
+                   // $("#jsCourseSection").html('sdfsdfsdfsdfsdf');
+
                 });
         });
 </script>

@@ -247,8 +247,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                     </li>
                                 <?php } ?>
 
-                                <?php if (checkIfAppIsEnabled('MODULE_LMS')) { ?>
-                                    <?php if (isPayrollOrPlus()) {  ?>
+                                <?php                                 
+                                if (checkIfAppIsEnabled(MODULE_LMS)) { ?>
+                                    <?php if (isPayrollOrPlus() || isLMSManagerDepartmentAndTeams($employer["sid"]) ) {  ?>
                                         <li>
                                             <span class="left-addon">
                                                 <i aria-hidden="true" class="fa fa-file"></i>
