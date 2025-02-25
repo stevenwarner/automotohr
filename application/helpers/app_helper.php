@@ -4736,3 +4736,49 @@ if (!function_exists("hasCSPAccess")) {
         return isMainAllowedForCSP($employeeId) || isAllowedForCSP($employeeId);
     }
 }
+
+
+if (!function_exists("convertCSPTags")) {
+    /**
+     * Convert CSP tags
+     *
+     * @param string $description
+     * @return string
+     */
+    function convertCSPTags($description): string
+    {
+        // replace inputs
+        $description =
+            preg_replace(
+                "/{{input}}/i",
+                '<input type="text" name="dynamicInput[]" style="width: 400px;" />',
+                $description
+            );
+        // replace checkboxes
+        $description =
+            preg_replace(
+                "/{{checkbox}}/i",
+                '<input type="checkbox" name="dynamicCheckbox[]" style="width: 20px; height: 20px;" />',
+                $description
+            );
+
+        //
+        return $description;
+    }
+}
+
+if (!function_exists("generateUniqueCode")) {
+    function generateUniqueCode($length = 15)
+    {
+        // Define the characters to choose from (letters and digits)
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        $code = '';
+
+        // Generate the code
+        for ($i = 0; $i < $length; $i++) {
+            $code .= $characters[rand(0, strlen($characters) - 1)];
+        }
+
+        return $code;
+    }
+}

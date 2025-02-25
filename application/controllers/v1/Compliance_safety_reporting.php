@@ -267,11 +267,7 @@ class Compliance_safety_reporting extends Base_csp
                 $incidentId
             );
         //
-        $this->data["report"]["description"] = preg_replace(
-            "/{{input}}/i",
-            '<input type="text" name="dynamicInput[]" style="width: 400px;" />',
-            $this->data["report"]["description"]
-        );
+        $this->data["report"]["description"] = convertCSPTags($this->data["report"]["description"]);
 
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];

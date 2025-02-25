@@ -505,6 +505,13 @@ $(function Overview() {
 			$('[name="dynamicInput[]"]').eq(i).val(v);
 		});
 	}
+	if (descriptionFieldsObj && descriptionFieldsObj.dynamicCheckbox) {
+		descriptionFieldsObj.dynamicCheckbox.map(function (v, i) {
+			$('[name="dynamicCheckbox[]"]')
+				.eq(i)
+				.prop("checked", v === "on");
+		});
+	}
 
 	ml(false, "jsPageLoader");
 });

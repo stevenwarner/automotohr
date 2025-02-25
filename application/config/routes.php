@@ -2589,3 +2589,7 @@ $route["compliance_safety_reporting/employee/overview/reports"]["get"] =
   "v1/Compliance_safety_reporting_employee/overview/reports";
 $route["compliance_safety_reporting/employee/overview/incidents"]["get"] =
   "v1/Compliance_safety_reporting_employee/overviewIncidents";
+
+
+  $route["compliance_safety_reporting/sendReminderEmails"]["get"] =
+  "v1/Compliance_safety_reporting/sendReminderEmails";
