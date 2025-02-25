@@ -21,7 +21,7 @@
                         </button>
                         <?php if ($document["file_type"] != "link"): ?>
 
-                            <a target="_blank" href="<?= base_url("compliance_safety_reporting/file/download/" . $document["sid"]); ?>" class="btn btn-info btn-info">
+                            <a target="_blank" href="<?= base_url(($public ? "csp" : "compliance_safety_reporting") ."/file/download/" . $document["sid"]); ?>" class="btn btn-info btn-info">
                                 <i class="fa fa-download"></i>
                             </a>
                         <?php endif; ?>

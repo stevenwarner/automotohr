@@ -2265,10 +2265,18 @@ class Compliance_report_model extends CI_Model
 		//
 		if (!isMainAllowedForCSP($employeeId)) {
 			$this->getAllowedCSPIds($employeeId);
-			if (!$this->allowedCSP["reports"]) {
+			if (!$this->allowedCSP["reports"] && !$this->allowedCSP["incidents"]) {
 				return [];
 			}
-			$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
+
+			if ($this->allowedCSP["reports"] && $this->allowedCSP["incidents"]) {
+				$this->db->where_in("csp_reports_incidents.sid", $this->allowedCSP["incidents"]);
+				$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
+			} else if ($this->allowedCSP["reports"] && !$this->allowedCSP["incidents"]) {
+				$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
+			} else if (!$this->allowedCSP["reports"] && $this->allowedCSP["incidents"]) {
+				$this->db->where_in("csp_reports_incidents.sid", $this->allowedCSP["incidents"]);
+			}
 		}
 		//
 		$this->db->select($columns, false);
@@ -2579,10 +2587,10 @@ class Compliance_report_model extends CI_Model
 			$incidents = [];
 			//
 			foreach ($records as $item) {
-				if (!in_array($item["csp_reports_sid"], $reports)) {
+				if (!in_array($item["csp_reports_sid"], $reports) && $item["csp_report_incident_sid"] == 0) {
 					$reports[] = $item["csp_reports_sid"];
 				}
-				if (!in_array($item["csp_report_incident_sid"], $incidents)) {
+				if (!in_array($item["csp_report_incident_sid"], $incidents) && $item["csp_report_incident_sid"] != 0) {
 					$incidents[] = $item["csp_report_incident_sid"];
 				}
 			}
@@ -2973,7 +2981,7 @@ class Compliance_report_model extends CI_Model
 			->join(
 				"users",
 				"users.sid = csp_reports_employees.employee_sid",
-				"inner"
+				"left"
 			)
 			->limit(1)
 			->get("csp_reports_employees")
@@ -2985,7 +2993,6 @@ class Compliance_report_model extends CI_Model
 	 */
 	public function getAllowedCSPIdsById(string $employeeIdOrEmail)
 	{
-
 		// get the 
 		$where = [
 			(int)$employeeIdOrEmail === 0
@@ -3006,10 +3013,10 @@ class Compliance_report_model extends CI_Model
 			$incidents = [];
 			//
 			foreach ($records as $item) {
-				if (!in_array($item["csp_reports_sid"], $reports)) {
+				if (!in_array($item["csp_reports_sid"], $reports) && $item["csp_report_incident_sid"] == 0) {
 					$reports[] = $item["csp_reports_sid"];
 				}
-				if (!in_array($item["csp_report_incident_sid"], $incidents)) {
+				if (!in_array($item["csp_report_incident_sid"], $incidents) && $item["csp_report_incident_sid"] != 0) {
 					$incidents[] = $item["csp_report_incident_sid"];
 				}
 			}
@@ -3083,11 +3090,19 @@ class Compliance_report_model extends CI_Model
 	{
 		//
 		$this->getAllowedCSPIdsById($employeeIdOrEmail);
-		if (!$this->allowedCSP["reports"]) {
+		if (!$this->allowedCSP["reports"] && !$this->allowedCSP["incidents"]) {
 			return [];
 		}
 
-		$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
+		if ($this->allowedCSP["reports"] && $this->allowedCSP["incidents"]) {
+			$this->db->where_in("csp_reports_incidents.sid", $this->allowedCSP["incidents"]);
+			$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
+		} else if ($this->allowedCSP["reports"] && !$this->allowedCSP["incidents"]) {
+			$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
+		} else if (!$this->allowedCSP["reports"] && $this->allowedCSP["incidents"]) {
+			$this->db->where_in("csp_reports_incidents.sid", $this->allowedCSP["incidents"]);
+		}
+
 		//
 		$this->db->select($columns, false);
 		$this->db->join(
