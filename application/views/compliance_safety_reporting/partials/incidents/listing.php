@@ -1,33 +1,4 @@
- <!-- Documents -->
- <div class="panel panel-default">
-     <div class="panel-heading">
-         <h1 class="panel-heading-text text-medium">
-             <strong>Incidents</strong>
-         </h1>
-     </div>
-     <div class="panel-body">
-         <div class="row">
-             <div class="col-lg-12">
-                 <div class="form-group">
-                     <select name="jsReportIncidentType" id="jsReportIncidentType">
-                         <option value="0">[Select Incident]</option>
-                         <?php if ($incidentTypes): ?>
-                             <?php foreach ($incidentTypes as $item): ?>
-                                 <option value="<?= $item["id"]; ?>"><?= $item["compliance_incident_type_name"]; ?></option>
-                             <?php endforeach; ?>
-                         <?php endif; ?>
-                     </select>
-                 </div>
-             </div>
-         </div>
-     </div>
-     <div class="panel-footer text-right">
-         <button class="btn btn-orange jsAddIncident" type="button">
-             <i class="fa fa-plus"></i>
-             Add Incident
-         </button>
-     </div>
- </div>
+
  <!-- Manage Documents -->
  <div class="panel panel-default">
      <div class="panel-heading">
@@ -58,7 +29,7 @@
                                      <?= formatDateToDB($item['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                  </td>
                                  <td style="vertical-align: middle;">
-                                     <a target="_blank" href="<?= base_url("compliance_safety_reporting/report/{$report["sid"]}/incident/edit/" . $item["sid"]); ?>" class="btn btn-orange">
+                                     <a target="_blank" href="<?= base_url("csp/report/{$report["sid"]}/incident/edit/" . $item["sid"]); ?>" class="btn btn-orange">
                                          <i class="fa fa-eye"></i>
                                      </a>
                                  </td>

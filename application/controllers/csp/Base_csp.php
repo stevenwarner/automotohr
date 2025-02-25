@@ -48,42 +48,46 @@ class Base_csp extends CI_Controller
         $this->data = [];
         $this->isSecureUrl = $isSecureUrl;
         //
+        // set the default data
+        $this->data = [
+            "sanitizedView" => true,
+            "loadView" => true,
+            "pageCSS" => [
+                "2022/css/main",
+                "css/select2",
+                "css/jquery.datetimepicker",
+                "v1/plugins/ms_uploader/main.min",
+                "v1/plugins/ms_modal/main.min",
+                "alertifyjs/css/alertify.min",
+            ],
+            "pageJs" => [
+                "js/select2",
+                "js/jquery.validate.min",
+                "js/jquery.datetimepicker",
+                "v1/plugins/ms_uploader/main.min",
+                "v1/plugins/ms_modal/main.min",
+                "ckeditor/ckeditor",
+                "alertifyjs/alertify.min",
+            ],
+        ];
+        //
         if ($this->isSecureUrl) {
             //
             $this->appSession = checkAndGetSession("all");
             $this->loggedInEmployee = $this->appSession["employer_detail"];
             $this->loggedInCompany = $this->appSession["company_detail"];
             // set the default data
-            $this->data = [
-                "session" => $this->appSession,
-                "loggedInEmployee" => $this->loggedInEmployee,
-                "employee" => $this->loggedInEmployee,
-                "sanitizedView" => true,
-                "securityDetails" => db_get_access_level_details(
-                    $this->loggedInEmployee["sid"]
-                ),
-                "loadView" => true,
-                "pageCSS" => [
-                    "2022/css/main",
-                    "css/select2",
-                    "css/jquery.datetimepicker",
-                    "v1/plugins/ms_uploader/main.min",
-                    "v1/plugins/ms_modal/main.min"
-                ],
-                "pageJs" => [
-                    "js/select2",
-                    "js/jquery.validate.min",
-                    "js/jquery.datetimepicker",
-                    "v1/plugins/ms_uploader/main.min",
-                    "v1/plugins/ms_modal/main.min",
-                    "ckeditor/ckeditor"
-                ],
-            ];
+            $this->data["session"] = $this->appSession;
+            $this->data["loggedInEmployee"] = $this->loggedInEmployee;
+            $this->data["employee"] = $this->loggedInEmployee;
+            $this->data["securityDetails"] = db_get_access_level_details(
+                $this->loggedInEmployee["sid"]
+            );
             //
             $this->data["security_details"] = $this->data["securityDetails"];
-            // load model
-            $this->load->model('v1/compliance_report_model');
         }
+        // load model
+        $this->load->model('v1/compliance_report_model');
     }
 
     /**
@@ -99,7 +103,10 @@ class Base_csp extends CI_Controller
                 ->view($path)
                 ->view("main/footer_sanitized");
         } else {
-            $this->load->view($path);
+            $this->load
+                ->view("main/public/header_public", $this->data)
+                ->view($path)
+                ->view("main/public/footer_public");
         }
     }
 
