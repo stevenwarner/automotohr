@@ -14,6 +14,11 @@ class Dashboard extends Public_Controller
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library('pagination');
+
+        if (checkIfAppIsEnabled(MODULE_COMPLIANCE_SAFETY) && hasCSPAccess()) {
+            // load model
+            $this->load->model("v1/Compliance_report_model", "compliance_report_model");
+        }
     }
 
     public function welcome()
@@ -721,9 +726,17 @@ class Dashboard extends Public_Controller
                     $data["awaitingShiftsApprovals"] = $this->shift_model->getAwaitingSwapShiftsApprovals();
                 }
             }
-
-
-            //   
+            //
+            if ($this->compliance_report_model) {
+                $data["cspPendingCount"]  = $this
+                    ->compliance_report_model
+                    ->getPendingCountReportsByEmployeeId(
+                        $employer_id,
+                        $company_id,
+                        isMainAllowedForCSP()
+                    );
+            }
+            //
             $subdata = $this->subordinatesReport();
             //
             $data['subordinateInfo'] = $subdata['subordinateInfo'];
@@ -1211,6 +1224,17 @@ class Dashboard extends Public_Controller
                 if (isPayrollOrPlus()) {
                     $data["awaitingShiftsApprovals"] = $this->shift_model->getAwaitingSwapShiftsApprovals();
                 }
+            }
+
+            //
+            if ($this->compliance_report_model) {
+                $data["cspPendingCount"]  = $this
+                    ->compliance_report_model
+                    ->getPendingCountReportsByEmployeeId(
+                        $employer_id,
+                        $company_id,
+                        isMainAllowedForCSP()
+                    );
             }
 
             $this->load->view('main/header', $data);

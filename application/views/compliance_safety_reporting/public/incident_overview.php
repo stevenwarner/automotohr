@@ -4,27 +4,26 @@
             <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
             <!--  -->
             <div class="row">
-                <div class="col-lg-12 text-right">
-                    <a href="<?php echo $employee['access_level'] == 'Employee' ?  base_url('employee_management_system') : base_url('dashboard'); ?>" class="btn btn-black">
-                        <i class="fa fa-arrow-left"></i>
-                        Dashboard
-                    </a>
-                    <a href="<?= base_url("compliance_safety_reporting/listing") ?>" class="btn btn-orange">
-                        <i class="fa fa-plus-circle"></i>
-                        Add New Report
-                    </a>
-                </div>
-            </div>
-            <!--  -->
-            <div class="row">
                 <div class="col-lg-12">
                     <div class="page-header">
                         <h1 class="section-ttile">
-                            Compliance Safety Reporting
+                            Compliance Safety Reporting - Incidents
                         </h1>
                     </div>
                 </div>
             </div>
+            <div role="tabpanel">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation">
+                        <a href="<?= base_url("csp/overview"); ?>">Reports</a>
+                    </li>
+                    <li role="presentation" class="active">
+                        <a href="<?= base_url("csp/overview/incidents"); ?>">Incidents</a>
+                    </li>
+                </ul>
+            </div>
+
             <!--  -->
             <div class="row">
                 <!--  -->
@@ -40,7 +39,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h1 class="panel-heading-text text-medium">
-                                <strong>Reports</strong>
+                                <strong>Incidents</strong>
                             </h1>
                         </div>
                         <div class="panel-body">
@@ -56,26 +55,26 @@
                                 <div class="csLisitingArea">
                                     <div class="csBoxWrap jsBoxWrap">
 
-                                        <?php $this->load->view("compliance_safety_reporting/partials/overview_panel", [
+                                        <?php $this->load->view("compliance_safety_reporting/public/incident_panel", [
                                             "panel" => [
                                                 "title" => "Pending",
-                                                "sub_title" => "Compliance Safety Reports that are currently in progress.",
+                                                "sub_title" => "Compliance Safety Incidents that are currently in progress.",
                                                 "data" => $pendingReports
                                             ]
                                         ]); ?>
 
-                                        <?php $this->load->view("compliance_safety_reporting/partials/overview_panel", [
+                                        <?php $this->load->view("compliance_safety_reporting/public/incident_panel", [
                                             "panel" => [
                                                 "title" => "Completed",
-                                                "sub_title" => "Compliance Safety Reports that have been completed",
+                                                "sub_title" => "Compliance Safety Incidents that have been completed",
                                                 "data" => $completedReports
                                             ]
                                         ]); ?>
 
-                                        <?php $this->load->view("compliance_safety_reporting/partials/overview_panel", [
+                                        <?php $this->load->view("compliance_safety_reporting/public/incident_panel", [
                                             "panel" => [
                                                 "title" => "On Hold",
-                                                "sub_title" => "Compliance Safety Reports that are on hold",
+                                                "sub_title" => "Compliance Safety Incidents that are on hold",
                                                 "data" => $onHoldReports
                                             ]
                                         ]); ?>

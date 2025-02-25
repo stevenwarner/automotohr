@@ -1193,21 +1193,22 @@
                                         </div>
                                     <?php } ?>
 
-                                    <?php if (checkIfAppIsEnabled(MODULE_COMPLIANCE_SAFETY) && isAllowedForCSP()) { ?>
+                                    <?php if (checkIfAppIsEnabled(MODULE_COMPLIANCE_SAFETY) && hasCSPAccess()) { ?>
+                                        <?php $cspUrl = isMainAllowedForCSP() ? "overview" : "employee/overview"; ?>
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure>
-                                                        <i class="fa fa-building <?= false != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
+                                                        <i class="fa fa-building <?= $cspPendingCount != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
                                                     </figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('compliance_safety_reporting/overview'); ?>">Compliance Safety Reporting</a>
+                                                        <a href="<?php echo base_url('compliance_safety_reporting/' . $cspUrl); ?>">Compliance Safety Reporting</a>
                                                     </h2>
                                                     <div class="count-box" style="font-size: 12px">
-                                                        <span class="green"><?= 0 ?? 0; ?> pending</span><br>
+                                                        <span class="green"><?= $cspPendingCount ?? 0; ?> pending</span><br>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a href="<?php echo base_url('compliance_safety_reporting/overview'); ?>" class="site-btn">Show</a>
+                                                        <a href="<?php echo base_url('compliance_safety_reporting/' . $cspUrl); ?>" class="site-btn">Show</a>
                                                     </div>
                                                 </div>
                                             </div>

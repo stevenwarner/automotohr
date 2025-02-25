@@ -49,10 +49,12 @@
                         <i class="fa fa-pencil"></i>
                         Edit
                     </a>
-                    <a class="btn btn-red" href="<?= base_url("{$firstSegment}/report/" . $display_box_data["sid"] . "/incidents"); ?>">
-                        <i class="fa fa-eye"></i>
-                        Incidents
-                    </a>
+                    <?php if ($firstSegment !== "csp") { ?>
+                        <a class="btn btn-red" href="<?= base_url("{$firstSegment}/report/" . $display_box_data["sid"] . "/incidents"); ?>">
+                            <i class="fa fa-eye"></i>
+                            Incidents
+                        </a>
+                    <?php } ?>
                 </div>
             </div>
         </article>

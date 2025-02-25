@@ -85,8 +85,22 @@ $(function Overview() {
 
 	//
 	$("#jsAddReportForm").validate({
-		rules: {},
-		messages: {},
+		rules: {
+			report_title: {
+				required: true,
+			},
+			report_date: {
+				required: true,
+			},
+		},
+		messages: {
+			report_title: {
+				required: "Please enter report title",
+			},
+			report_date: {
+				required: "Please select report date",
+			},
+		},
 		submitHandler: function (form) {
 			handleFormSubmission(form);
 		},
@@ -141,6 +155,20 @@ $(function Overview() {
 		}
 		//
 		addNoteToReport(obj);
+	});
+
+	$(".jsAddIncident").click(function (event) {
+		event.preventDefault();
+		const obj = {
+			type: $("#jsReportIncidentType").val(),
+		};
+		//
+		if (obj.type == "0") {
+			_error("Please select an incident type.");
+			return;
+		}
+		//
+		addIncidentToReport(obj.type);
 	});
 
 	$(".jsAddDocument").click(function (event) {
@@ -265,12 +293,7 @@ $(function Overview() {
 			ml(true, "jsPageLoader");
 			//
 			XHR = $.ajax({
-				url: baseUrl(
-					"compliance_safety_reporting/report/" +
-						getSegment(2) +
-						"/incident/edit/" +
-						getSegment(5)
-				),
+				url: baseUrl("csp/edit/" + getSegmentId(2)),
 				method: "POST",
 				data: $(form).serializeArray(),
 			})
@@ -294,12 +317,7 @@ $(function Overview() {
 			ml(true, "jsPageLoader");
 			//
 			XHR = $.ajax({
-				url: baseUrl(
-					"compliance_safety_reporting/notes/" +
-						getSegment(2) +
-						"/" +
-						getSegment(5)
-				),
+				url: baseUrl("csp/notes/" + getSegmentId(2) + "/0"),
 				method: "POST",
 				data: obj,
 			})
@@ -316,9 +334,35 @@ $(function Overview() {
 		}
 	}
 
+	function addIncidentToReport(incidentId) {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl("csp/report/" + getSegmentId(2) + "/incident"),
+				method: "POST",
+				data: {
+					incidentId: incidentId,
+				},
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message, function () {
+						window.location.refresh();
+					});
+				});
+		}
+	}
+
 	function loadView(fileId) {
 		$.ajax({
-			url: baseUrl("compliance_safety_reporting/file/view/" + fileId),
+			url: baseUrl("csp/file/view/" + fileId),
 			method: "GET",
 		})
 			.always(function () {
@@ -341,12 +385,7 @@ $(function Overview() {
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/" +
-						getSegment(2) +
-						"/" +
-						getSegment(5) +
-						"/" +
-						external.data("id")
+					"csp/" + getSegmentId(2) + "/" + external.data("id")
 				),
 				method: "DELETE",
 			})
@@ -397,14 +436,7 @@ $(function Overview() {
 			}
 			//
 			XHR = $.ajax({
-				url: baseUrl(
-					"compliance_safety_reporting/file/" +
-						getSegment(2) +
-						"/" +
-						getSegment(5) +
-						"/" +
-						type
-				),
+				url: baseUrl("csp/file/" + getSegmentId(2) + "/0/" + type),
 				method: "POST",
 				async: true,
 				cache: false,
@@ -499,18 +531,11 @@ $(function Overview() {
 		return fileCategory;
 	}
 
-	//
-	if (descriptionFieldsObj && descriptionFieldsObj.dynamicInput) {
-		descriptionFieldsObj.dynamicInput.map(function (v, i) {
-			$('[name="dynamicInput[]"]').eq(i).val(v);
-		});
-	}
-	if (descriptionFieldsObj && descriptionFieldsObj.dynamicCheckbox) {
-		descriptionFieldsObj.dynamicCheckbox.map(function (v, i) {
-			$('[name="dynamicCheckbox[]"]')
-				.eq(i)
-				.prop("checked", v === "on");
-		});
+	function getSegmentId(segmentId) {
+		if (segmentId === 2) {
+			return segments.reportId;
+		}
+		return segments.incidentId;
 	}
 
 	ml(false, "jsPageLoader");

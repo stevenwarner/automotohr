@@ -1,25 +1,13 @@
 <div class="main jsmaincontent" style="position:relative">
     <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
-    <?php $firstSegment = $this->uri->segment(1); ?>
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12 text-right">
-                <a href="<?php echo $employee['access_level'] == 'Employee' ?  base_url('employee_management_system') : base_url('dashboard'); ?>" class="btn btn-black">
-                    <i class="fa fa-arrow-left"></i>
-                    Dashboard
+                <a href="<?= base_url('csp/overview/') ?>" class="btn btn-blue">
+                    <i class="fa fa-pie-chart"></i>
+                    Compliance Safety Reporting
                 </a>
-                <?php if (isMainAllowedForCSP()) : ?>
-                    <a href="<?= base_url("{$firstSegment}/overview") ?>" class="btn btn-blue">
-                        <i class="fa fa-pie-chart"></i>
-                        Compliance Safety Reporting
-                    </a>
-                <?php else: ?>
-                    <a href="<?= base_url("{$firstSegment}/employee/overview") ?>" class="btn btn-blue">
-                        <i class="fa fa-pie-chart"></i>
-                        Compliance Safety Reporting
-                    </a>
-                <?php endif; ?>
 
             </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -248,3 +236,8 @@
 
     </div>
 </div>
+
+
+<script>
+    const segments = <?= json_encode($segments); ?>;
+</script>

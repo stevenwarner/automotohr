@@ -9,10 +9,17 @@
                         <i class="fa fa-arrow-left"></i>
                         Dashboard
                     </a>
-                    <a href="<?= base_url("compliance_safety_reporting/listing") ?>" class="btn btn-orange">
-                        <i class="fa fa-plus-circle"></i>
-                        Add New Report
-                    </a>
+                    <?php if (isMainAllowedForCSP()) { ?>
+                        <a href="<?= base_url('compliance_safety_reporting/overview') ?>" class="btn btn-blue">
+                            <i class="fa fa-pie-chart"></i>
+                            Compliance Safety Reporting
+                        </a>
+                    <?php } else { ?>
+                        <a href="<?= base_url('compliance_safety_reporting/employee/overview') ?>" class="btn btn-blue">
+                            <i class="fa fa-pie-chart"></i>
+                            Compliance Safety Reporting
+                        </a>
+                    <?php } ?>
                 </div>
             </div>
             <!--  -->
@@ -20,7 +27,7 @@
                 <div class="col-lg-12">
                     <div class="page-header">
                         <h1 class="section-ttile">
-                            Compliance Safety Reporting
+                            Incidents of "<?= $report["title"]; ?>"
                         </h1>
                     </div>
                 </div>
@@ -40,7 +47,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h1 class="panel-heading-text text-medium">
-                                <strong>Reports</strong>
+                                <strong>Incidents</strong>
                             </h1>
                         </div>
                         <div class="panel-body">
@@ -56,26 +63,26 @@
                                 <div class="csLisitingArea">
                                     <div class="csBoxWrap jsBoxWrap">
 
-                                        <?php $this->load->view("compliance_safety_reporting/partials/overview_panel", [
+                                        <?php $this->load->view("compliance_safety_reporting/reports/partials/overview", [
                                             "panel" => [
                                                 "title" => "Pending",
-                                                "sub_title" => "Compliance Safety Reports that are currently in progress.",
+                                                "sub_title" => "Compliance Safety Incidents that are currently in progress.",
                                                 "data" => $pendingReports
                                             ]
                                         ]); ?>
 
-                                        <?php $this->load->view("compliance_safety_reporting/partials/overview_panel", [
+                                        <?php $this->load->view("compliance_safety_reporting/reports/partials/overview", [
                                             "panel" => [
                                                 "title" => "Completed",
-                                                "sub_title" => "Compliance Safety Reports that have been completed",
+                                                "sub_title" => "Compliance Safety Incidents that have been completed",
                                                 "data" => $completedReports
                                             ]
                                         ]); ?>
 
-                                        <?php $this->load->view("compliance_safety_reporting/partials/overview_panel", [
+                                        <?php $this->load->view("compliance_safety_reporting/reports/partials/overview", [
                                             "panel" => [
                                                 "title" => "On Hold",
-                                                "sub_title" => "Compliance Safety Reports that are on hold",
+                                                "sub_title" => "Compliance Safety Incidents that are on hold",
                                                 "data" => $onHoldReports
                                             ]
                                         ]); ?>

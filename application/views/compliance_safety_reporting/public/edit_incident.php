@@ -1,60 +1,39 @@
 <div class="main jsmaincontent" style="position:relative">
     <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
-    <?php $firstSegment = $this->uri->segment(1); ?>
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12 text-right">
-                <a href="<?php echo $employee['access_level'] == 'Employee' ?  base_url('employee_management_system') : base_url('dashboard'); ?>" class="btn btn-black">
-                    <i class="fa fa-arrow-left"></i>
-                    Dashboard
+                <a href="<?= base_url('csp/overview/') ?>" class="btn btn-blue">
+                    <i class="fa fa-pie-chart"></i>
+                    Compliance Safety Reporting
                 </a>
-                <?php if (isMainAllowedForCSP()) : ?>
-                    <a href="<?= base_url("{$firstSegment}/overview") ?>" class="btn btn-blue">
-                        <i class="fa fa-pie-chart"></i>
-                        Compliance Safety Reporting
-                    </a>
-                <?php else: ?>
-                    <a href="<?= base_url("{$firstSegment}/employee/overview") ?>" class="btn btn-blue">
-                        <i class="fa fa-pie-chart"></i>
-                        Compliance Safety Reporting
-                    </a>
-                <?php endif; ?>
 
             </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                 <div class="page-header">
                     <h2 class="section-ttile">
-                        <?= $report["compliance_report_name"]; ?>
+                        <?= $report["compliance_incident_type_name"]; ?>
                     </h2>
+                </div>
+                <div class="alert alert-info">
+                    <div class="row">
+                        <div class="col-sm-12 text-left">
+                            Last modified by <strong><?= remakeEmployeeName($report); ?></strong> at <strong><?= formatDateToDB($report['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></strong>.
+                        </div>
+                    </div>
                 </div>
                 <!--  -->
                 <form method="post" enctype="multipart/form-data" autocomplete="off" id="jsAddReportForm">
                     <div class="row">
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="form-group">
-                                <label for="report_title">Report Title <strong class="text-danger">*</strong></label>
-                                <input type="text" class="form-control" id="report_title" name="report_title" value="<?= $report['title'] ?>" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
-                            <div class="form-group">
-                                <label for="report_date">Report Date <strong class="text-danger">*</strong></label>
-                                <input type="text" class="form-control" id="report_date" name="report_date" value="<?= formatDateToDB($report['report_date'], DB_DATE, "m/d/Y"); ?>" />
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
+                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                             <div class="form-group">
                                 <label for="report_completion_date">Completion Date</label>
-                                <input type="text" class="form-control" id="report_completion_date" name="report_completion_date" value="<?= $report['completion_date'] ? formatDateToDB($report['completion_date'], DB_DATE, "m/d/Y") : ""; ?>" />
+                                <input type="text" class="form-control" id="report_completion_date" name="report_completion_date" value="<?= $report['completed_at'] ? formatDateToDB($report['completed_at'], DB_DATE_WITH_TIME, "m/d/Y") : ""; ?>" />
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
+                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                             <div class="form-group">
                                 <label for="report_status">Status</label>
                                 <select name="report_status" id="report_status" style="width: 100%;">
@@ -65,7 +44,12 @@
                             </div>
                         </div>
                     </div>
-                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/listing"); ?>
+                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/description"); ?>
+                    <?php if ($report["disable_answers"] == 1) : ?>
+                        <?php $this->load->view("compliance_safety_reporting/partials/incidents/answers"); ?>
+                    <?php else: ?>
+                        <?php $this->load->view("compliance_safety_reporting/partials/incidents/questions"); ?>
+                    <?php endif; ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/documents"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/audio"); ?>
 
@@ -237,7 +221,7 @@
                         <div class="col-sm-12 text-right">
                             <button class="btn btn-orange">
                                 <i class="fa fa-save jsCreateReportBtn"></i>
-                                Update Report
+                                Update Incident
                             </button>
                         </div>
                     </div>
@@ -248,3 +232,7 @@
 
     </div>
 </div>
+
+<script>
+    const segments = <?= json_encode($segments); ?>;
+</script>

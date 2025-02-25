@@ -8,11 +8,35 @@ require_once APPPATH . 'controllers/csp/Base_csp.php';
  * @author  AutomotoHR Dev Team
  * @version 1.0
  */
-class Compliance_safety_reporting extends Base_csp
+class Compliance_safety_reporting_public extends Base_csp
 {
     public function __construct()
     {
-        parent::__construct(true);
+        parent::__construct(false);
+    }
+
+    /**
+     * check and set the proper data session
+     */
+    public function view(string $code)
+    {
+        // Verify token and get the record id
+        if (!$this->compliance_report_model->verifyToken($code)) {
+            return redirect("/");
+        }
+        // get the details by token
+        $tokenDetails = $this->compliance_report_model->getTokenDetails($code);
+
+        // Set session data
+        $this->session->set_userdata('tokenDetails', $tokenDetails);
+
+        // get the specific report or incident
+        if ((int)$tokenDetails["csp_report_incident_sid"] !== 0) {
+            //
+            return $this->editReportIncident($tokenDetails["csp_reports_sid"], $tokenDetails["csp_report_incident_sid"]);
+        } else {
+            return $this->edit($tokenDetails["csp_reports_sid"]);
+        }
     }
 
     /**
@@ -20,32 +44,36 @@ class Compliance_safety_reporting extends Base_csp
      */
     public function overview()
     {
-        if (!isMainAllowedForCSP()) {
-            return redirect("dashboard");
-        }
+        $this->checkPublicSession();
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Overview';
         // get types
         $this->data["pendingReports"] = $this
             ->compliance_report_model
-            ->getCSPReport(
-                $this->getLoggedInCompany("sid"),
-                $this->getLoggedInEmployee("sid"),
+            ->getCSPReportPublic(
+                $this->getPublicSessionData("company_sid"),
+                $this->getPublicSessionData("is_external_employee") == 1
+                    ? $this->getPublicSessionData("external_email")
+                    : $this->getPublicSessionData("employee_sid"),
                 "pending"
             );
         // get types
         $this->data["completedReports"] = $this
             ->compliance_report_model
-            ->getCSPReport(
-                $this->getLoggedInCompany("sid"),
-                $this->getLoggedInEmployee("sid"),
+            ->getCSPReportPublic(
+                $this->getPublicSessionData("company_sid"),
+                $this->getPublicSessionData("is_external_employee") == 1
+                    ? $this->getPublicSessionData("external_email")
+                    : $this->getPublicSessionData("employee_sid"),
                 "completed"
             );
         $this->data["onHoldReports"] = $this
             ->compliance_report_model
-            ->getCSPReport(
-                $this->getLoggedInCompany("sid"),
-                $this->getLoggedInEmployee("sid"),
+            ->getCSPReportPublic(
+                $this->getPublicSessionData("company_sid"),
+                $this->getPublicSessionData("is_external_employee") == 1
+                    ? $this->getPublicSessionData("external_email")
+                    : $this->getPublicSessionData("employee_sid"),
                 "on_hold"
             );
         // load JS
@@ -56,7 +84,79 @@ class Compliance_safety_reporting extends Base_csp
         $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
         $this->data['pageJs'][] = 'csp/overview';
         //
-        $this->renderView('compliance_safety_reporting/overview');
+        $this->renderView('compliance_safety_reporting/public/report_overview');
+    }
+
+    /**
+     * Report incidents
+     *
+     * @param int $reportId
+     */
+    public function overviewIncidents()
+    {
+        $this->checkPublicSession();
+
+        // set the title
+        $this->data['title'] = 'Compliance Safety Reporting | Incidents';
+        // get types
+        $this->data["pendingReports"] = $this
+            ->compliance_report_model
+            ->getCSPAllowedIncidentsPublic(
+                $this->getPublicSessionData("is_external_employee") == 1
+                    ? $this->getPublicSessionData("external_email")
+                    : $this->getPublicSessionData("employee_sid"),
+                [
+                    "compliance_incident_types.compliance_incident_type_name",
+                    "csp_reports.title",
+                    "csp_reports.sid as reportId",
+                    "csp_reports_incidents.sid",
+                    "csp_reports_incidents.completed_at",
+                    "csp_reports_incidents.status",
+                ],
+                "pending"
+            );
+        // get types
+        $this->data["completedReports"] = $this
+            ->compliance_report_model
+            ->getCSPAllowedIncidentsPublic(
+                $this->getPublicSessionData("is_external_employee") == 1
+                    ? $this->getPublicSessionData("external_email")
+                    : $this->getPublicSessionData("employee_sid"),
+                [
+                    "csp_reports.title",
+                    "csp_reports.sid as reportId",
+                    "compliance_incident_types.compliance_incident_type_name",
+                    "csp_reports_incidents.sid",
+                    "csp_reports_incidents.completed_at",
+                    "csp_reports_incidents.status",
+                ],
+                "completed"
+            );
+        $this->data["onHoldReports"] = $this
+            ->compliance_report_model
+            ->getCSPAllowedIncidentsPublic(
+                $this->getPublicSessionData("is_external_employee") == 1
+                    ? $this->getPublicSessionData("external_email")
+                    : $this->getPublicSessionData("employee_sid"),
+                [
+                    "compliance_incident_types.compliance_incident_type_name",
+                    "csp_reports.title",
+                    "csp_reports.sid as reportId",
+                    "csp_reports_incidents.sid",
+                    "csp_reports_incidents.completed_at",
+                    "csp_reports_incidents.status",
+                ],
+                "on_hold"
+            );
+        // load JS
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
+        $this->data['pageJs'][] = 'csp/overview_incidents';
+        //
+        $this->renderView('compliance_safety_reporting/public/incident_overview');
     }
 
     /**
@@ -66,6 +166,7 @@ class Compliance_safety_reporting extends Base_csp
      */
     public function reportIncidents(int $reportId)
     {
+        $this->checkPublicSession();
         // get types
         $this->data["report"] = $this
             ->compliance_report_model
@@ -136,78 +237,14 @@ class Compliance_safety_reporting extends Base_csp
     }
 
     /**
-     * add
-     *
-     * @param int $reportId
-     */
-    public function add(int $reportTypeId)
-    {
-        if (!isMainAllowedForCSP()) {
-            return redirect("dashboard");
-        }
-        // get types
-        $this->data["type"] = $this
-            ->compliance_report_model
-            ->getReportTypeById(
-                $reportTypeId
-            );
-        // set the title
-        $this->data['title'] = 'Compliance Safety Reporting | Add ' . $this->data["type"]["compliance_report_name"];
-        $this->data['pageCSS'][] = 'v1/plugins/ms_uploader/main.min';
-        $this->data['pageJs'][] = 'v1/plugins/ms_uploader/main.min';
-        $this->data['pageJs'][] = 'csp/add_report.min';
-        // get the employees
-        $this->data["employees"] = $this
-            ->compliance_report_model
-            ->getActiveEmployees(
-                $this->getLoggedInCompany("sid"),
-                $this->getLoggedInEmployee("sid")
-            );
-        //
-        $this->renderView('compliance_safety_reporting/add_report');
-    }
-
-    public function processAdd(int $reportTypeId)
-    {
-        $this->form_validation->set_rules('report_title', 'Report Title', 'required');
-        $this->form_validation->set_rules('report_date', 'Report Date', 'required');
-
-        if (!$this->form_validation->run()) {
-            return sendResponse(
-                400,
-                ["errors" => explode("\n", validation_errors())]
-            );
-        }
-        // get the post
-        $post = $this->input->post(null, true);
-        //allowed_internal_system_count
-        $reportId = $this->compliance_report_model->addReport(
-            $reportTypeId,
-            $this->getLoggedInCompany("sid"),
-            $this->getLoggedInEmployee("sid"),
-            $post
-        );
-
-        if (!$reportId) {
-            return sendResponse(
-                400,
-                ["errors" => ["Failed to add the report"]]
-            );
-        }
-        // return the success
-        return sendResponse(
-            200,
-            ["id" => $reportId, "message" => "Report added successfully."]
-        );
-    }
-
-    /**
      * edit
      *
      * @param int $reportId
      */
     public function edit(int $reportId)
     {
+        $this->checkPublicSession();
+
         // get types
         $this->data["report"] = $this
             ->compliance_report_model
@@ -216,6 +253,7 @@ class Compliance_safety_reporting extends Base_csp
                 [
                     "csp_reports.sid",
                     "csp_reports.title",
+                    "csp_reports.company_sid",
                     "csp_reports.report_date",
                     "csp_reports.report_type_sid",
                     "csp_reports.completion_date",
@@ -232,25 +270,31 @@ class Compliance_safety_reporting extends Base_csp
                     "users.is_executive_admin",
                 ]
             );
-        //
-        if (!$this->data["report"]) {
-            return redirect("/");
-        }
+
         if ($this->data["report"]["notes"]) {
             foreach ($this->data["report"]["notes"] as $k0 => $v0) {
-                if ($v0["note_type"] === "personal" && $v0["created_by"] != $this->getLoggedInEmployee("sid")) {
+                if ($v0["note_type"] === "personal" && $v0["created_by"] != $this->getPublicSessionData("employee_sid")) {
                     unset($this->data["report"]["notes"][$k0]);
                 }
             }
         }
+
         // set the title
+        $this->data['segments'] = [
+            "reportId" => $this->data["report"]["sid"],
+            "incidentId" => 0
+        ];
         $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
-        $this->data['pageJs'][] = 'csp/edit_report';
+        $this->data['pageJs'][] = 'csp/edit_report_public';
+        $this->data['template'] = message_header_footer(
+            $this->data["report"]["company_sid"],
+            getCompanyColumnById($this->data["report"]["company_sid"], "CompanyName")["CompanyName"]
+        );
         // get the employees
         $this->data["employees"] = $this
             ->compliance_report_model
             ->getActiveEmployees(
-                $this->getLoggedInCompany("sid"),
+                $this->data["report"]["company_sid"],
                 0
             );
         // get the report incident types
@@ -260,7 +304,7 @@ class Compliance_safety_reporting extends Base_csp
                 $this->data["report"]["report_type_sid"]
             );
         //
-        $this->renderView('compliance_safety_reporting/edit_report');
+        $this->renderView('compliance_safety_reporting/public/edit_report');
     }
 
     /**
@@ -270,6 +314,8 @@ class Compliance_safety_reporting extends Base_csp
      */
     public function editReportIncident(int $reportId, int $incidentId)
     {
+        $this->checkPublicSession();
+
         // get types
         $this->data["report"] = $this
             ->compliance_report_model
@@ -286,16 +332,20 @@ class Compliance_safety_reporting extends Base_csp
             }
         }
         //
+        $this->data['segments'] = [
+            "reportId" => $reportId,
+            "incidentId" => $incidentId
+        ];
         $this->data["report"]["description"] = convertCSPTags($this->data["report"]["description"]);
 
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
-        $this->data['pageJs'][] = 'csp/edit_incident';
+        $this->data['pageJs'][] = 'csp/edit_incident_public';
         // get the employees
         $this->data["employees"] = $this
             ->compliance_report_model
             ->getActiveEmployees(
-                $this->getLoggedInCompany("sid"),
+                $this->getPublicSessionData("company_sid"),
                 0
             );
         if ($this->data["report"]["disable_answers"] != 1) {
@@ -309,7 +359,7 @@ class Compliance_safety_reporting extends Base_csp
             $this->data["questions"] = [];
         }
         //
-        $this->renderView('compliance_safety_reporting/edit_incident');
+        $this->renderView('compliance_safety_reporting/public/edit_incident');
     }
 
     /**
@@ -319,6 +369,8 @@ class Compliance_safety_reporting extends Base_csp
      */
     public function processEdit(int $reportId)
     {
+        $this->checkPublicSession();
+        //
         $this->form_validation->set_rules('report_title', 'Report Title', 'required');
         $this->form_validation->set_rules('report_date', 'Report Date', 'required');
 
@@ -333,7 +385,9 @@ class Compliance_safety_reporting extends Base_csp
         //allowed_internal_system_count
         $this->compliance_report_model->editReport(
             $reportId,
-            $this->getLoggedInEmployee("sid"),
+            $this->getPublicSessionData("employee_sid")
+                ? $this->getPublicSessionData("employee_sid")
+                : 0,
             $post
         );
         // return the success
@@ -356,7 +410,9 @@ class Compliance_safety_reporting extends Base_csp
         $this->compliance_report_model->editIncidentReport(
             $reportId,
             $incidentId,
-            $this->getLoggedInEmployee("sid"),
+            $this->getPublicSessionData("employee_sid")
+                ?  $this->getPublicSessionData("employee_sid")
+                : 0,
             $post
         );
         // return the success
@@ -408,7 +464,9 @@ class Compliance_safety_reporting extends Base_csp
         $this->compliance_report_model->addNotesToReport(
             $reportId,
             $incidentId,
-            $this->getLoggedInEmployee("sid"),
+            $this->getPublicSessionData("employee_sid")
+                ? $this->getPublicSessionData("employee_sid")
+                : 0,
             $post
         );
         // return the success
@@ -418,34 +476,34 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
-
-    /**
-     * process edit
-     * 
-     * @param int $reportId
-     * @param int $incidentId
-     */
-    public function addIncidentToReport(int $reportId)
-    {
-        // get the post
-        $post = $this->input->post("incidentId", true);
-        //allowed_internal_system_count
-        $this->compliance_report_model->attachIncidentToReport(
-            $reportId,
-            $post["incidentId"],
-            $this->getLoggedInEmployee("sid")
-        );
-        // return the success
-        return sendResponse(
-            200,
-            ["message" => "Incident added to report successfully."]
-        );
-    }
-
     public function processFiles(int $reportId, int $incidentId, string $type)
     {
         //
         $post = $this->input->post(null, true);
+
+        if ($this->getPublicSessionData("employee_sid")) {
+            $main = [
+                "first_name" => $this->getPublicSessionData("first_name"),
+                "last_name" => $this->getPublicSessionData("last_name"),
+                "middle_name" => $this->getPublicSessionData("middle_name"),
+                "job_title" => $this->getPublicSessionData("job_title"),
+                "access_level" => $this->getPublicSessionData("access_level"),
+                "access_level_plus" => $this->getPublicSessionData("access_level_plus"),
+                "is_executive_admin" => $this->getPublicSessionData("is_executive_admin"),
+                "pay_plan_flag" => $this->getPublicSessionData("pay_plan_flag"),
+            ];
+        } else {
+            $main = [
+                "first_name" => $this->getPublicSessionData("external_name"),
+                "last_name" => "",
+                "middle_name" => "",
+                "job_title" => "",
+                "access_level" => "",
+                "access_level_plus" => "",
+                "is_executive_admin" => "",
+                "pay_plan_flag" => "",
+            ];
+        }
 
         if ($post["link"]) {
             $id = $this
@@ -453,11 +511,19 @@ class Compliance_safety_reporting extends Base_csp
                 ->addFilesLinkToReport(
                     $reportId,
                     $incidentId,
-                    $this->getLoggedInEmployee("sid"),
+                    $this->getPublicSessionData("employee_sid")
+                        ? $this->getPublicSessionData("employee_sid")
+                        : 0,
                     $post["link"],
                     $post["type"],
                     $this->input->post("title")
                 );
+            $sd = [
+                "sid" => $id,
+                "title" => $this->input->post("title"),
+                "created_at" => getSystemDate(),
+            ];
+            $sd = array_merge($sd, $main);
             // return the success
             return sendResponse(
                 200,
@@ -466,19 +532,8 @@ class Compliance_safety_reporting extends Base_csp
                     "view" => $this->load->view(
                         'compliance_safety_reporting/partials/file',
                         [
-                            "document" => [
-                                "sid" => $id,
-                                "title" => $this->input->post("title"),
-                                "created_at" => getSystemDate(),
-                                "first_name" => $this->getLoggedInEmployee("first_name"),
-                                "last_name" => $this->getLoggedInEmployee("last_name"),
-                                "middle_name" => $this->getLoggedInEmployee("middle_name"),
-                                "job_title" => $this->getLoggedInEmployee("job_title"),
-                                "access_level" => $this->getLoggedInEmployee("access_level"),
-                                "access_level_plus" => $this->getLoggedInEmployee("access_level_plus"),
-                                "is_executive_admin" => $this->getLoggedInEmployee("is_executive_admin"),
-                                "pay_plan_flag" => $this->getLoggedInEmployee("pay_plan_flag"),
-                            ]
+                            "document" => $sd,
+                            "public" => true
                         ],
                         true
                     ),
@@ -508,12 +563,21 @@ class Compliance_safety_reporting extends Base_csp
                     ->addFilesToReport(
                         $reportId,
                         $incidentId,
-                        $this->getLoggedInEmployee("sid"),
+                        $this->getPublicSessionData("employee_sid")
+                            ? $this->getPublicSessionData("employee_sid")
+                            : 0,
                         $fileName,
                         $_FILES["file"]["name"],
                         $type,
                         $this->input->post("title")
                     );
+                //
+                $sd = [
+                    "sid" => $id,
+                    "title" => $this->input->post("title"),
+                    "created_at" => getSystemDate(),
+                ];
+                $sd = array_merge($sd, $main);
                 // return the success
                 return sendResponse(
                     200,
@@ -522,19 +586,8 @@ class Compliance_safety_reporting extends Base_csp
                         "view" => $this->load->view(
                             'compliance_safety_reporting/partials/file',
                             [
-                                "document" => [
-                                    "sid" => $id,
-                                    "title" => $this->input->post("title"),
-                                    "created_at" => getSystemDate(),
-                                    "first_name" => $this->getLoggedInEmployee("first_name"),
-                                    "last_name" => $this->getLoggedInEmployee("last_name"),
-                                    "middle_name" => $this->getLoggedInEmployee("middle_name"),
-                                    "job_title" => $this->getLoggedInEmployee("job_title"),
-                                    "access_level" => $this->getLoggedInEmployee("access_level"),
-                                    "access_level_plus" => $this->getLoggedInEmployee("access_level_plus"),
-                                    "is_executive_admin" => $this->getLoggedInEmployee("is_executive_admin"),
-                                    "pay_plan_flag" => $this->getLoggedInEmployee("pay_plan_flag"),
-                                ]
+                                "document" => $sd,
+                                "public" => true
                             ],
                             true
                         ),
@@ -614,6 +667,31 @@ class Compliance_safety_reporting extends Base_csp
                 ),
                 "data" => $file
             ]
+        );
+    }
+
+    //
+    private function getPublicSessionData($index)
+    {
+        $sessionData = $this->session->userdata('tokenDetails');
+        return $sessionData[$index];
+    }
+
+    //
+    private function checkPublicSession()
+    {
+        $sessionData = $this->session->userdata('tokenDetails');
+        if (!$sessionData) {
+            if ($this->input->is_ajax_request()) {
+                return sendResponse(404, ["errors" => ["Session not found."]]);
+            } else {
+                return redirect("/");
+            }
+        }
+
+        $this->data['template'] = message_header_footer(
+            $this->getPublicSessionData("company_sid"),
+            getCompanyColumnById($this->getPublicSessionData("company_sid"), "CompanyName")["CompanyName"]
         );
     }
 }

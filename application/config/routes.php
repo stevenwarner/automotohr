@@ -2576,3 +2576,51 @@ $route["compliance_safety_reporting/report/(:num)/incident/edit/(:num)"]["get"] 
 // Edit the report
 $route["compliance_safety_reporting/report/(:num)/incident/edit/(:num)"]["post"] =
   "v1/Compliance_safety_reporting/processIncidentEdit/$1/$2";
+
+// view report incidents
+$route["compliance_safety_reporting/report/(:num)/incidents"]["get"] =
+  "v1/Compliance_safety_reporting/reportIncidents/$1";
+
+// Employees
+// overview
+$route["compliance_safety_reporting/employee/overview"]["get"] =
+  "v1/Compliance_safety_reporting_employee/overview";
+$route["compliance_safety_reporting/employee/overview/reports"]["get"] =
+  "v1/Compliance_safety_reporting_employee/overview/reports";
+$route["compliance_safety_reporting/employee/overview/incidents"]["get"] =
+  "v1/Compliance_safety_reporting_employee/overviewIncidents";
+
+// public view
+$route["csp/single/(:any)"]["get"] =
+  "v1/Compliance_safety_reporting_public/view/$1";
+$route["csp/edit/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting_public/processEdit/$1";
+
+// add file
+$route["csp/file/(:num)/(:num)/(:any)"]["post"] =
+  "v1/Compliance_safety_reporting_public/processFiles/$1/$2/$3";
+// download file
+$route["csp/file/download/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_public/downloadFile/$1";
+// view file
+$route["csp/file/view/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_public/viewFile/$1";
+
+// add notes
+$route["csp/notes/(:num)/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting_public/processNotes/$1/$2";
+// edit incidents
+$route["csp/report/(:num)/incident/edit/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_public/editReportIncident/$1/$2";
+// Edit the report
+$route["csp/report/(:num)/incident/edit/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting_public/processIncidentEdit/$1/$2";
+
+$route["csp/overview"]["get"] =
+  "v1/Compliance_safety_reporting_public/overview";
+
+  $route["csp/overview/incidents"]["get"] =
+  "v1/Compliance_safety_reporting_public/overviewIncidents";
+// Edit the report
+$route["csp/edit/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_public/edit/$1";

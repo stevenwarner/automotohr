@@ -266,10 +266,10 @@ $(function Overview() {
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/report/" +
-						getSegment(2) +
+					"csp/report/" +
+						getSegmentId(2) +
 						"/incident/edit/" +
-						getSegment(5)
+						getSegmentId(5)
 				),
 				method: "POST",
 				data: $(form).serializeArray(),
@@ -295,10 +295,7 @@ $(function Overview() {
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/notes/" +
-						getSegment(2) +
-						"/" +
-						getSegment(5)
+					"csp/notes/" + getSegmentId(2) + "/" + getSegmentId(5)
 				),
 				method: "POST",
 				data: obj,
@@ -318,7 +315,7 @@ $(function Overview() {
 
 	function loadView(fileId) {
 		$.ajax({
-			url: baseUrl("compliance_safety_reporting/file/view/" + fileId),
+			url: baseUrl("csp/file/view/" + fileId),
 			method: "GET",
 		})
 			.always(function () {
@@ -341,10 +338,10 @@ $(function Overview() {
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/" +
-						getSegment(2) +
+					"csp/" +
+						getSegmentId(2) +
 						"/" +
-						getSegment(5) +
+						getSegmentId(5) +
 						"/" +
 						external.data("id")
 				),
@@ -398,10 +395,10 @@ $(function Overview() {
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/file/" +
-						getSegment(2) +
+					"csp/file/" +
+						getSegmentId(2) +
 						"/" +
-						getSegment(5) +
+						getSegmentId(5) +
 						"/" +
 						type
 				),
@@ -511,6 +508,13 @@ $(function Overview() {
 				.eq(i)
 				.prop("checked", v === "on");
 		});
+	}
+
+	function getSegmentId(segmentId) {
+		if (segmentId === 2) {
+			return segments.reportId;
+		}
+		return segments.incidentId;
 	}
 
 	ml(false, "jsPageLoader");
