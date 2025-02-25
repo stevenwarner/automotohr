@@ -52,23 +52,11 @@
                                                                     <h4 class="panel-title">
                                                                         <?php
                                                                         
-                                                                            $email_type = '';
+                                                                            $email_type = 'Sent';
                                                                             $read_function = '';
-                                                                            if ($incident_email['sender_sid'] == $current_user || $incident_email['sender_sid'] == 0) {
-                                                                                if ($incident_email['sender_sid'] == 0 && $current_user !=  $incident_email['manual_email']) {
-                                                                                    $email_type = 'Received';
-                                                                                    if ($incident_email['is_read'] == 0) {
-                                                                                        $read_function = 'onclick="mark_read('.$incident_email['sid'].')"';
-                                                                                    }
-                                                                                } else {
-                                                                                    $email_type = 'Sent';
-                                                                                }
-                                                                                
-                                                                            } else {
-                                                                                $email_type = 'Received';
-                                                                                if ($incident_email['is_read'] == 0) {
-                                                                                    $read_function = 'onclick="mark_read('.$incident_email['sid'].')"';
-                                                                                }
+                                                                            
+                                                                            if ($incident_email['is_read'] == 0) {
+                                                                                $read_function = 'onclick="mark_read('.$incident_email['sid'].')"';
                                                                             }
                                                                         ?>
                                                                         <a class="collapsed" data-toggle="collapse" aria-expanded="false" data-parent="#accordion" href="#email_<?php echo $key.'_'.$email['userId']; ?>">

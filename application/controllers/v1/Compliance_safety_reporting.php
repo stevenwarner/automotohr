@@ -154,9 +154,11 @@ class Compliance_safety_reporting extends Base_csp
         $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
         $this->data['PageCSS'][] = 'v1/plugins/ms_uploader/main.min';
         $this->data['PageCSS'][] = 'v1/plugins/ms_modal/main.min';
+        // $this->data['PageCSS'][] = 'css/chosen';
         $this->data['pageJs'][] = 'v1/plugins/ms_uploader/main.min';
         $this->data['pageJs'][] = 'v1/plugins/ms_modal/main.min';
         $this->data['pageJs'][] = 'csp/edit_report';
+        // $this->data['pageJs'][] = 'js/chosen.jquery';
         // get the employees
         $this->data["employees"] = $this
             ->compliance_report_model
@@ -164,6 +166,9 @@ class Compliance_safety_reporting extends Base_csp
                 $this->getLoggedInCompany("sid"),
                 $this->getLoggedInEmployee("sid")
             );   
+        //
+        $this->data["reportId"] = $reportId; 
+        $this->data["incidentId"] = 0;    
         //
         $this->renderView('compliance_safety_reporting/edit_report');
     }
@@ -426,14 +431,259 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
+    public function sendComplianceReportEmail () {
+        //
+        $send_email_type = $_POST['send_type'];
+        $attachments = isset($_POST['attachment']) ? $_POST['attachment'] : '';
+        $reportId = $_POST['report_id'];
+        $incidentId = $_POST['incident_id'];
+        $companyId = $this->getLoggedInCompany("sid");
+        $companyName = $this->getLoggedInCompany("CompanyName");
+        $employeeId = $this->getLoggedInEmployee("sid");
+        $employeeName = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
+        //
+        if ($send_email_type == 'manual') {
+            $manual_email   = $_POST['manual_email'];
+            $subject        = $_POST['subject'];
+            $message        = $_POST['message'];
+
+            $email_hf = message_header_footer_domain($companyId, $companyName);
+
+            $manual_email_to_insert = array();
+            $manual_email_to_insert['csp_reports_sid']          = $reportId;
+            $manual_email_to_insert['csp_incident_type_sid']    = $incidentId;
+            $manual_email_to_insert['manual_email']             = $manual_email;
+            $manual_email_to_insert['sender_sid']               = $employeeId;
+            $manual_email_to_insert['receiver_sid']             = 0;
+            $manual_email_to_insert['subject']                  = $subject;
+            $manual_email_to_insert['message_body']             = $message;
+
+            $inserted_email_sid = $this->compliance_report_model->addComplianceReportEmail($manual_email_to_insert);
+            $isEmployee = $this->compliance_report_model->checkManualUserIsAnEmployee($_POST['manual_email'], $companyId);
+
+            if (!empty($attachments)) {
+
+                foreach ($attachments as $key => $attachment) {
+
+                    $attachment_type = $attachment['item_type'];
+                    $record_sid = $attachment['record_sid'];
+                    $item_title = '';
+                    $item_type = '';
+                    $item_path = '';
+
+                    if ($attachment_type == 'Media') {
+                        $record_sid = str_replace("m_", "", $record_sid);
+                        $item_info  = $this->compliance_report_model->get_attach_file_info($record_sid, 'media');
+                        $item_title = $item_info['video_title'];
+                        $item_type  = $item_info['video_type'];
+                        $item_path  = $item_info['video_url'];
+                    } else if ($attachment_type == 'Document') {
+                        $record_sid = str_replace("d_", "", $record_sid);
+                        $item_info  = $this->compliance_report_model->get_attach_file_info($record_sid, 'document');
+                        $item_title = $item_info['document_title'];
+                        $item_type  = $item_info['type'];
+                        $item_path  = $item_info['file_code'];
+                    }
+
+                    $insert_attachment                      = array();
+                    $insert_attachment['incident_sid']      = $id;
+                    $insert_attachment['email_sid']         = $inserted_email_sid;
+                    $insert_attachment['attachment_type']   = $attachment_type;
+                    $insert_attachment['attachment_sid']    = $record_sid;
+                    $insert_attachment['attached_by']       = $employeeId;
+                    $insert_attachment['attached_date']     = date('Y-m-d H:i:s');
+                    $insert_attachment['item_title']        = $item_title;
+                    $insert_attachment['item_type']         = $item_type;
+                    $insert_attachment['item_path']         = $item_path;
+
+                    $this->compliance_report_model->insert_email_attachment($insert_attachment);
+                }
+            }
+            //
+            //
+            $receiver_name = '';
+            $conversation_key = '';
+            //
+            if ($isEmployee) {
+                $manualUserInfo = $this->compliance_report_model->getUserInfoByEmail($_POST['manual_email'], $companyId);
+                $conversation_key = $reportId . '/' . $manualUserInfo['sid'] . '/' . $employeeId;
+                $receiver_name = $manualUserInfo['first_name'].' '.$manualUserInfo['last_name'];
+            } else {
+                $conversation_key = $reportId . '/' . $manual_email . '/' . $employeeId;
+                $name = explode("@", $manual_email);
+                $receiver_name = $name[0];
+            }
+            //
+            $url = base_url('compliance_safety_reporting/view_compliance_report_email/' . $conversation_key);
+            $from_name = $employeeName;
+            //
+            $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
+            $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
+            $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+            if ($isEmployee) {
+                $employeeType = $this->compliance_report_model->isComplianceReportManager($_POST['manual_email'], $companyId, $reportId);
+                //
+                if ($employeeType != "out_sider") {
+                    if ($employeeType == "reporter") {
+                        $viewIncident = base_url('compliance_safety_reporting/view_compliance_report/' . $reportId);
+                    } else if ($employeeType == "incident_manager") {
+                        $viewIncident = base_url('compliance_safety_reporting/view_compliance_report/' . $reportId);
+                    }
+                    //
+                    $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Compliance Report</a>' . '<br>';
+                    $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                }
+            } else {
+                //
+                //
+                // Add outsider user into compliance report outsider user table
+                $this->compliance_report_model->checkManualUserExist($_POST['manual_email'], $reportId);
+                //
+                $this->load->library('encryption');
+                //
+                $this->encryption->initialize(
+                    get_encryption_initialize_array()
+                );
+                //
+                $viewComplianceCode = str_replace(
+                    ['/', '+'],
+                    ['$$ab$$', '$$ba$$'],
+                    $this->encryption->encrypt($conversation_key)
+                );
+                //
+                $approval_public_link_accept = base_url("compliance_safety_reporting/view_compliance_report_public_link") . '/' . $viewComplianceCode;
+                //
+                $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $approval_public_link_accept . '">View Compliance Report</a>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+            }
+            $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
+            $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+            $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+            $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email: Please Do Not reply!</strong>' . '<br>';
+            $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+
+            $from = FROM_EMAIL_NOTIFICATIONS;
+            $to = $manual_email;
+
+            $body = $email_hf['header']
+                . $emailTemplateBody
+                . $email_hf['footer'];
+
+            log_and_sendEmail($from, $to, $subject, $body, $from_name);
+            //
+            
+        } else if ('system') {
+            $receivers = explode(',', $_POST['receivers']);
+            $subject = $_POST['subject'];
+            $from_name = $employeeName;
+            $email_hf = message_header_footer_domain($companyId, $companyName);
+            //
+            foreach ($receivers as $key => $receiver_id) {
+                //
+                $conversation_key = '';
+                $message_body = $_POST['message'];
+
+                $data_to_insert = array();
+                $data_to_insert['csp_reports_sid']          = $reportId;
+                $data_to_insert['csp_incident_type_sid']    = $incidentId;
+                $data_to_insert['sender_sid'] = $employeeId;
+                $data_to_insert['subject'] = $subject;
+                $data_to_insert['message_body'] = $message_body;
+                //
+                $manager_info = db_get_employee_profile($receiver_id);
+                $receiver_email = $manager_info[0]['email'];
+                $receiver_name = $manager_info[0]['first_name'] . ' ' . $manager_info[0]['last_name'];
+                $conversation_key = $reportId . '/' . $receiver_id . '/' . $employeeId;
+                $data_to_insert['receiver_sid'] = $receiver_id;
+                //
+                $inserted_email_sid = $this->compliance_report_model->addComplianceReportEmail($data_to_insert);
+
+                if (!empty($attachments)) {
+                    foreach ($attachments as $key => $attachment) {
+
+                        $attachment_type    = $attachment['item_type'];
+                        $record_sid         = $attachment['record_sid'];
+                        $item_title         = '';
+                        $item_type          = '';
+                        $item_path          = '';
+
+                        if ($attachment_type == 'Media') {
+                            $record_sid = str_replace("m_", "", $record_sid);
+                            $item_info  = $this->compliance_report_model->get_attach_file_info($record_sid, 'media');
+                            $item_title = $item_info['video_title'];
+                            $item_type  = $item_info['video_type'];
+                            $item_path  = $item_info['video_url'];
+                        } else if ($attachment_type == 'Document') {
+                            $record_sid = str_replace("d_", "", $record_sid);
+                            $item_info  = $this->compliance_report_model->get_attach_file_info($record_sid, 'document');
+                            $item_title = $item_info['document_title'];
+                            $item_type  = $item_info['type'];
+                            $item_path  = $item_info['file_code'];
+                        }
+
+                        $insert_attachment                      = array();
+                        $insert_attachment['incident_sid']      = $id;
+                        $insert_attachment['email_sid']         = $inserted_email_sid;
+                        $insert_attachment['attachment_type']   = $attachment_type;
+                        $insert_attachment['attachment_sid']    = $record_sid;
+                        $insert_attachment['attached_by']       = $employeeId;
+                        $insert_attachment['attached_date']     = date('Y-m-d H:i:s');
+                        $insert_attachment['item_title']        = $item_title;
+                        $insert_attachment['item_type']         = $item_type;
+                        $insert_attachment['item_path']         = $item_path;
+
+                        $this->compliance_report_model->insert_email_attachment($insert_attachment);
+                    }
+                }
+
+                $url = base_url('compliance_safety_reporting/view_compliance_report_email/' . $conversation_key);
+                $employeeType = $this->compliance_report_model->isComplianceReportManager($receiver_email, $companyId, $id);
+                //
+                $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
+                $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+                if ($employeeType != "out_sider") {
+                    if ($employeeType == "reporter") {
+                        $viewIncident = base_url('compliance_safety_reporting/view_compliance_report/' . $reportId);
+                    } else if ($employeeType == "incident_manager") {
+                        $viewIncident = base_url('compliance_safety_reporting/view_compliance_report/' . $reportId);
+                    }
+                    //
+                    $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Compliance Report</a>' . '<br>';
+                    $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                }
+                $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email: Please Do Not reply!</strong>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+
+                $from = FROM_EMAIL_NOTIFICATIONS;
+                $to = $receiver_email;
+
+                $body = $email_hf['header']
+                    . $emailTemplateBody
+                    . $email_hf['footer'];
+
+                log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                //
+            }
+        }
+        //
+        return sendResponse(
+            200,
+            ["message" => "Email send successfully."]
+        );
+    }
+
     public function save_email_manual_attachment()
     {
         $session = $this->session->userdata('logged_in');
         $employee_sid   = $session["employer_detail"]["sid"];
-        $company_sid    = $session['company_detail']['sid'];
+        $companyId    = $session['company_detail']['sid'];
 
         $item_title     = $_POST['attachment_title'];
-        $company_sid    = $_POST['company_sid'];
+        $companyId    = $_POST['companyId'];
         $report_sid     = $_POST['report_sid'];
         $incident_sid   = $_POST['incident_sid'];
         $item_source    = $_POST['file_type'];
@@ -445,7 +695,7 @@ class Compliance_safety_reporting extends Base_csp
 
                 $file_name          = $_POST['file_name'];
                 $file_extension     = $_POST['file_ext'];
-                $upload_incident_doc = upload_file_to_aws('file', $company_sid, 'file', '', AWS_S3_BUCKET_NAME);
+                $upload_incident_doc = upload_file_to_aws('file', $companyId, 'file', '', AWS_S3_BUCKET_NAME);
 
                 if (!empty($upload_incident_doc) && $upload_incident_doc != 'error') {
                     //
@@ -477,10 +727,10 @@ class Compliance_safety_reporting extends Base_csp
             if (!empty($_FILES) && isset($_FILES['file']) && $_FILES['file']['size'] > 0 && $item_source == 'upload_video') {
                 $random = generateRandomString(5);
                 $target_file_name = basename($_FILES["file"]["name"]);
-                $file_name = strtolower($company_sid . '/' . $random . '_' . $target_file_name);
+                $file_name = strtolower($companyId . '/' . $random . '_' . $target_file_name);
                 $target_dir = "assets/uploaded_videos/incident_videos/";
                 $target_file = $target_dir . $file_name;
-                $basePath = $target_dir . $company_sid;
+                $basePath = $target_dir . $companyId;
 
                 if (!is_dir($basePath)) {
                     mkdir($basePath, 0777, true);
@@ -492,10 +742,10 @@ class Compliance_safety_reporting extends Base_csp
             } else if (!empty($_FILES) && isset($_FILES['file']) && $_FILES['file']['size'] > 0 && $item_source == 'upload_audio') {
                 $random = generateRandomString(5);
                 $target_file_name = basename($_FILES["file"]["name"]);
-                $file_name = strtolower($company_sid . '/' . $random . '_' . $target_file_name);
+                $file_name = strtolower($companyId . '/' . $random . '_' . $target_file_name);
                 $target_dir = "assets/uploaded_videos/incident_videos/";
                 $target_file = $target_dir . $file_name;
-                $basePath = $target_dir . $company_sid;
+                $basePath = $target_dir . $companyId;
 
                 if (!is_dir($basePath)) {
                     mkdir($basePath, 0777, true);

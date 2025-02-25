@@ -2556,3 +2556,6 @@ $route["compliance_safety_reporting/file/view/(:num)"]["get"] =
 
 $route["compliance_safety_reporting/save_email_manual_attachment"]["post"] =
   "v1/Compliance_safety_reporting/save_email_manual_attachment";
+
+$route["compliance_safety_reporting/send_compliance_report_email"]["post"] =
+  "v1/Compliance_safety_reporting/sendComplianceReportEmail";  

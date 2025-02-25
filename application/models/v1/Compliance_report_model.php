@@ -1569,6 +1569,7 @@ class Compliance_report_model extends CI_Model
 		], "document");
 		//
 		$report["emails"] = $this->getComplianceEmails($reportId, 0);
+		$report["libraryItems"] = $this->getComplianceReportFiles($reportId, 0);
 		//
 		return $report;
 	}
@@ -1636,6 +1637,7 @@ class Compliance_report_model extends CI_Model
 		int $loggedInEmployeeId,
 		array $post
 	) {
+		_e($post,true,true);
 		//
 		$todayDateTime = getSystemDate();
 		// lets first edit the report
@@ -1727,6 +1729,8 @@ class Compliance_report_model extends CI_Model
 					"allowed_external_employees_count" => 0,
 				]);
 		}
+
+		// send email
 
 		return true;
 	}
@@ -1950,4 +1954,21 @@ class Compliance_report_model extends CI_Model
 		//
 		return $incident_emails;
 	}
+
+	function addComplianceReportEmail ($data_to_insert)
+	{
+		$this->db->insert('csp_reports_emails', $data_to_insert);
+		return $this->db->insert_id();
+	}
+
+	public function getComplianceReportFiles ($reportId, $incidentId = 0) {
+		$this->db->select('sid, file_type, file_value, s3_file_value, title');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_incident_type_sid', $incidentId);
+		$records_obj = $this->db->get('csp_reports_files');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		//
+		return $records_arr;
+	} 
 }
