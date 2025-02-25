@@ -840,7 +840,7 @@ if (!function_exists('getEmployeeAccrual')) {
             );
         }
 
-        if (checkPolicyESTA($policyId) == 1) {
+        if (checkPolicyESTA($policyId) == 1 && isAllowedESTAPolicy($asOfToday, $employeeJoiningDate) == 1) {
             //
             return processESTAPolicy(
                 $policyId,
@@ -856,6 +856,7 @@ if (!function_exists('getEmployeeAccrual')) {
                 $r
             );
         }
+        
         // Check if employee is on probation
         if ($employementStatus == 'probation') {
             // Probation
@@ -2230,4 +2231,28 @@ function hasAllowedTimeBeforePolicyImplements(
     $r["allowed"] = 1;
 
     return $r;
+}
+
+
+if (!function_exists('isAllowedESTAPolicy')) {
+    function isAllowedESTAPolicy($asOfToday, $employeeJoiningDate)
+    {
+        //
+        $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
+        $todayDate = getFormatedDate($todayDate);
+
+        $todayDateObj = new DateTime($todayDate);
+        $employeeJoiningDateObj = new DateTime($employeeJoiningDate);
+        //
+        if ($todayDateObj < $employeeJoiningDateObj) {
+            return 1;
+        }
+        //
+        $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
+        if ($difference >= 365) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
 }
