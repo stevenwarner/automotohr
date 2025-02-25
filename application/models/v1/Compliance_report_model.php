@@ -3,6 +3,7 @@
 class Compliance_report_model extends CI_Model
 {
 	private $userFields;
+	private $allowedCSP;
 	public function __construct()
 	{
 		parent::__construct();
@@ -15,6 +16,12 @@ class Compliance_report_model extends CI_Model
 			`users`.`access_level_plus`,
 			`users`.`is_executive_admin`,
 			`users`.`pay_plan_flag`";
+		//
+		$this->allowedCSP = [
+			"implements" => false,
+			"reports" => [],
+			"incidents" => [],
+		];
 	}
 
 	function fetch_reports_user_guide($id)
@@ -2240,6 +2247,49 @@ class Compliance_report_model extends CI_Model
 	}
 
 	/**
+	 * Get report files by type
+	 *
+	 * @param int $employeeId
+	 * @param array $columns
+	 * @param array $type
+	 * @param string $status
+	 * default -> all
+	 * @return array
+	 */
+	public function getCSPAllowedIncidents(int $employeeId, array $columns, string $status = "all")
+	{
+		//
+		if (!isMainAllowedForCSP($employeeId)) {
+			$this->getAllowedCSPIds($employeeId);
+			$this->db->where_in("csp_reports_incidents.csp_reports_sid", $this->allowedCSP["reports"]);
+		}
+		//
+		$this->db->select($columns, false);
+		$this->db->join(
+			"users",
+			"users.sid = csp_reports_incidents.created_by",
+			"left"
+		);
+		$this->db->join(
+			"compliance_incident_types",
+			"compliance_incident_types.id = csp_reports_incidents.incident_type_sid",
+			"inner"
+		);
+		$this->db->join(
+			"csp_reports",
+			"csp_reports.sid = csp_reports_incidents.csp_reports_sid",
+			"inner"
+		);
+		if ($status !== "all") {
+			$this->db->where(
+				"csp_reports_incidents.status",
+				$status
+			);
+		}
+		return $this->db->get("csp_reports_incidents")->result_array();
+	}
+
+	/**
 	 * Get file by id
 	 *
 	 * @param int $fileId
@@ -2394,6 +2444,13 @@ class Compliance_report_model extends CI_Model
 		string $status
 	) {
 		//
+		if (!isMainAllowedForCSP($employeeId)) {
+			$this->getAllowedCSPIds($employeeId);
+			$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
+		} else {
+			$this->db->where("csp_reports.created_by", $employeeId);
+		}
+		//
 		$records = $this
 			->db
 			->select([
@@ -2409,7 +2466,6 @@ class Compliance_report_model extends CI_Model
 			])
 			->where([
 				"csp_reports.company_sid" => $companyId,
-				"csp_reports.created_by" => $employeeId,
 				"csp_reports.status" => $status
 			])->join(
 				"compliance_report_types",
@@ -2487,5 +2543,44 @@ class Compliance_report_model extends CI_Model
 		return $record
 			? $record["total"]
 			: 0;
+	}
+
+	/**
+	 * get allowed CSP reports and incidents
+	 *
+	 * @param int $employeeId
+	 */
+	public function getAllowedCSPIds(int $employeeId)
+	{
+		//
+		$where = [
+			"csp_reports_employees.employee_sid" => $employeeId
+		];
+		//
+		$records = $this
+			->db
+			->select("csp_reports_employees.csp_reports_sid")
+			->select("csp_reports_employees.csp_report_incident_sid")
+			->where($where)
+			->get("csp_reports_employees")
+			->result_array();
+		//
+		if ($records) {
+			$reports = [];
+			$incidents = [];
+			//
+			foreach ($records as $item) {
+				if (!in_array($item["csp_reports_sid"], $reports)) {
+					$reports[] = $item["csp_reports_sid"];
+				}
+				if (!in_array($item["csp_report_incident_sid"], $incidents)) {
+					$incidents[] = $item["csp_report_incident_sid"];
+				}
+			}
+		}
+		//
+		$this->allowedCSP["implements"] = true;
+		$this->allowedCSP["reports"] = $reports;
+		$this->allowedCSP["incidents"] = $incidents;
 	}
 }

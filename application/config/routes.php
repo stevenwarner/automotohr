@@ -2580,3 +2580,12 @@ $route["compliance_safety_reporting/report/(:num)/incident/edit/(:num)"]["post"]
 // view report incidents
 $route["compliance_safety_reporting/report/(:num)/incidents"]["get"] =
   "v1/Compliance_safety_reporting/reportIncidents/$1";
+
+// Employees
+// overview
+$route["compliance_safety_reporting/employee/overview"]["get"] =
+  "v1/Compliance_safety_reporting_employee/overview";
+$route["compliance_safety_reporting/employee/overview/reports"]["get"] =
+  "v1/Compliance_safety_reporting_employee/overview/reports";
+$route["compliance_safety_reporting/employee/overview/incidents"]["get"] =
+  "v1/Compliance_safety_reporting_employee/overviewIncidents";

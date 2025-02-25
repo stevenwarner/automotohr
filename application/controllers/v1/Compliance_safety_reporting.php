@@ -20,6 +20,9 @@ class Compliance_safety_reporting extends Base_csp
      */
     public function overview()
     {
+        if (!isMainAllowedForCSP()) {
+            return redirect("dashboard");
+        }
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Overview';
         // get types
@@ -139,6 +142,9 @@ class Compliance_safety_reporting extends Base_csp
      */
     public function add(int $reportTypeId)
     {
+        if (!isMainAllowedForCSP()) {
+            return redirect("dashboard");
+        }
         // get types
         $this->data["type"] = $this
             ->compliance_report_model
