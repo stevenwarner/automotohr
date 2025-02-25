@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12 text-right">
-                <a href="<?= base_url('csp/overview/' . $code) ?>" class="btn btn-blue">
+                <a href="<?= base_url('csp/overview/') ?>" class="btn btn-blue">
                     <i class="fa fa-pie-chart"></i>
                     Compliance Safety Reporting
                 </a>

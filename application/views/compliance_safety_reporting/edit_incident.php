@@ -8,14 +8,22 @@
                     <i class="fa fa-arrow-left"></i>
                     Dashboard
                 </a>
-                <a href="<?= base_url('compliance_safety_reporting/edit/' . $report["csp_reports_sid"]) ?>" class="btn btn-black">
-                    <i class="fa fa-arrow-left"></i>
-                    Back to Report
-                </a>
-                <a href="<?= base_url('compliance_safety_reporting/overview') ?>" class="btn btn-blue">
-                    <i class="fa fa-pie-chart"></i>
-                    Compliance Safety Reporting
-                </a>
+                <?php if (isMainAllowedForCSP()) : ?>
+                    <a href="<?= base_url('compliance_safety_reporting/edit/' . $report["csp_reports_sid"]) ?>" class="btn btn-black">
+                        <i class="fa fa-arrow-left"></i>
+                        Back to Report
+                    </a>
+                    <a href="<?= base_url('compliance_safety_reporting/overview') ?>" class="btn btn-blue">
+                        <i class="fa fa-pie-chart"></i>
+                        Compliance Safety Reporting
+                    </a>
+                <?php else: ?>
+                    <a href="<?= base_url("compliance_safety_reporting/employee/overview") ?>" class="btn btn-blue">
+                        <i class="fa fa-pie-chart"></i>
+                        Compliance Safety Reporting
+                    </a>
+                <?php endif; ?>
+
 
             </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">

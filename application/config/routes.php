@@ -2621,3 +2621,6 @@ $route["csp/overview"]["get"] =
 
   $route["csp/overview/incidents"]["get"] =
   "v1/Compliance_safety_reporting_public/overviewIncidents";
+// Edit the report
+$route["csp/edit/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_public/edit/$1";

@@ -1,3 +1,5 @@
+    <?php $firstSegment = $this->uri->segment(1); ?>
+
     <div class="col-sm-4">
         <article class="article-sec" style="padding: 0 10px 10px;overflow-x: hidden">
             <h1>
@@ -43,11 +45,11 @@
             <div class="row">
                 <hr>
                 <div class="col-md-12 col-xs-12 text-center">
-                    <a class="btn btn-orange" href="<?= base_url("compliance_safety_reporting/edit/" . $display_box_data["sid"]); ?>">
+                    <a class="btn btn-orange" href="<?= base_url("{$firstSegment}/edit/" . $display_box_data["sid"]); ?>">
                         <i class="fa fa-pencil"></i>
                         Edit
                     </a>
-                    <a class="btn btn-red" href="<?= base_url("compliance_safety_reporting/report/" . $display_box_data["sid"] . "/incidents"); ?>">
+                    <a class="btn btn-red" href="<?= base_url("{$firstSegment}/report/" . $display_box_data["sid"] . "/incidents"); ?>">
                         <i class="fa fa-eye"></i>
                         Incidents
                     </a>

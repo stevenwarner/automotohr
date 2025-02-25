@@ -232,6 +232,17 @@ class Compliance_safety_reporting extends Base_csp
                     "users.is_executive_admin",
                 ]
             );
+        //
+        if (!$this->data["report"]) {
+            return redirect("/");
+        }
+        if ($this->data["report"]["notes"]) {
+            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
+                if ($v0["note_type"] === "personal" && $v0["created_by"] != $this->getLoggedInEmployee("sid")) {
+                    unset($this->data["report"]["notes"][$k0]);
+                }
+            }
+        }
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
         $this->data['pageJs'][] = 'csp/edit_report';
@@ -240,7 +251,7 @@ class Compliance_safety_reporting extends Base_csp
             ->compliance_report_model
             ->getActiveEmployees(
                 $this->getLoggedInCompany("sid"),
-                $this->getLoggedInEmployee("sid")
+                0
             );
         // get the report incident types
         $this->data["incidentTypes"] = $this
@@ -266,6 +277,14 @@ class Compliance_safety_reporting extends Base_csp
                 $reportId,
                 $incidentId
             );
+
+        if ($this->data["report"]["notes"]) {
+            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
+                if ($v0["note_type"] === "personal" && $v0["created_by"] != $this->getLoggedInEmployee("sid")) {
+                    unset($this->data["report"]["notes"][$k0]);
+                }
+            }
+        }
         //
         $this->data["report"]["description"] = convertCSPTags($this->data["report"]["description"]);
 
@@ -277,7 +296,7 @@ class Compliance_safety_reporting extends Base_csp
             ->compliance_report_model
             ->getActiveEmployees(
                 $this->getLoggedInCompany("sid"),
-                $this->getLoggedInEmployee("sid")
+                0
             );
         if ($this->data["report"]["disable_answers"] != 1) {
             // get incident questions and content

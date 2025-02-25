@@ -1,5 +1,6 @@
 <div class="main jsmaincontent" style="position:relative">
     <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
+    <?php $firstSegment = $this->uri->segment(1); ?>
 
     <div class="container-fluid">
         <div class="row">
@@ -8,10 +9,17 @@
                     <i class="fa fa-arrow-left"></i>
                     Dashboard
                 </a>
-                <a href="<?= base_url('compliance_safety_reporting/overview') ?>" class="btn btn-blue">
-                    <i class="fa fa-pie-chart"></i>
-                    Compliance Safety Reporting
-                </a>
+                <?php if (isMainAllowedForCSP()) : ?>
+                    <a href="<?= base_url("{$firstSegment}/overview") ?>" class="btn btn-blue">
+                        <i class="fa fa-pie-chart"></i>
+                        Compliance Safety Reporting
+                    </a>
+                <?php else: ?>
+                    <a href="<?= base_url("{$firstSegment}/employee/overview") ?>" class="btn btn-blue">
+                        <i class="fa fa-pie-chart"></i>
+                        Compliance Safety Reporting
+                    </a>
+                <?php endif; ?>
 
             </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -57,9 +65,7 @@
                             </div>
                         </div>
                     </div>
-                    <?php if (isMainAllowedForCSP()) : ?>
-                        <?php $this->load->view("compliance_safety_reporting/partials/incidents/listing"); ?>
-                    <?php endif; ?>
+                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/listing"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/documents"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/audio"); ?>
 

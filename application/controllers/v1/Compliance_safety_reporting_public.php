@@ -35,7 +35,7 @@ class Compliance_safety_reporting_public extends Base_csp
             //
             return $this->editReportIncident($tokenDetails["csp_reports_sid"], $tokenDetails["csp_report_incident_sid"]);
         } else {
-            return $this->edit($tokenDetails["csp_reports_sid"], $code);
+            return $this->edit($tokenDetails["csp_reports_sid"]);
         }
     }
 
@@ -44,6 +44,7 @@ class Compliance_safety_reporting_public extends Base_csp
      */
     public function overview()
     {
+        $this->checkPublicSession();
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Overview';
         // get types
@@ -93,6 +94,8 @@ class Compliance_safety_reporting_public extends Base_csp
      */
     public function overviewIncidents()
     {
+        $this->checkPublicSession();
+
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Incidents';
         // get types
@@ -163,6 +166,7 @@ class Compliance_safety_reporting_public extends Base_csp
      */
     public function reportIncidents(int $reportId)
     {
+        $this->checkPublicSession();
         // get types
         $this->data["report"] = $this
             ->compliance_report_model
@@ -237,8 +241,10 @@ class Compliance_safety_reporting_public extends Base_csp
      *
      * @param int $reportId
      */
-    public function edit(int $reportId, string $code)
+    public function edit(int $reportId)
     {
+        $this->checkPublicSession();
+
         // get types
         $this->data["report"] = $this
             ->compliance_report_model
@@ -265,8 +271,15 @@ class Compliance_safety_reporting_public extends Base_csp
                 ]
             );
 
+        if ($this->data["report"]["notes"]) {
+            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
+                if ($v0["note_type"] === "personal" && $v0["created_by"] != $this->getPublicSessionData("employee_sid")) {
+                    unset($this->data["report"]["notes"][$k0]);
+                }
+            }
+        }
+
         // set the title
-        $this->data['code'] = $code;
         $this->data['segments'] = [
             "reportId" => $this->data["report"]["sid"],
             "incidentId" => 0
@@ -301,6 +314,8 @@ class Compliance_safety_reporting_public extends Base_csp
      */
     public function editReportIncident(int $reportId, int $incidentId)
     {
+        $this->checkPublicSession();
+
         // get types
         $this->data["report"] = $this
             ->compliance_report_model
@@ -308,6 +323,14 @@ class Compliance_safety_reporting_public extends Base_csp
                 $reportId,
                 $incidentId
             );
+
+        if ($this->data["report"]["notes"]) {
+            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
+                if ($v0["note_type"] === "personal" && $v0["created_by"] != $this->getLoggedInEmployee("sid")) {
+                    unset($this->data["report"]["notes"][$k0]);
+                }
+            }
+        }
         //
         $this->data['segments'] = [
             "reportId" => $reportId,
@@ -323,7 +346,7 @@ class Compliance_safety_reporting_public extends Base_csp
             ->compliance_report_model
             ->getActiveEmployees(
                 $this->getPublicSessionData("company_sid"),
-                $this->getPublicSessionData("employee_sid")
+                0
             );
         if ($this->data["report"]["disable_answers"] != 1) {
             // get incident questions and content
@@ -640,5 +663,10 @@ class Compliance_safety_reporting_public extends Base_csp
                 return redirect("/");
             }
         }
+
+        $this->data['template'] = message_header_footer(
+            $this->getPublicSessionData("company_sid"),
+            getCompanyColumnById($this->getPublicSessionData("company_sid"), "CompanyName")["CompanyName"]
+        );
     }
 }

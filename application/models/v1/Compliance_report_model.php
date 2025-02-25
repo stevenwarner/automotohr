@@ -1516,7 +1516,7 @@ class Compliance_report_model extends CI_Model
 				]);
 		}
 
-		$this->sendEmailsForCSPReport($reportId);
+		$this->sendEmailsForCSPReport($reportId, CSP_ASSIGNED_EMAIL_TEMPLATE_ID);
 
 		return $reportId;
 	}
@@ -1565,6 +1565,7 @@ class Compliance_report_model extends CI_Model
 			"users.profile_picture",
 			"csp_reports_notes.note_type",
 			"csp_reports_notes.notes",
+			"csp_reports_notes.created_by",
 			"csp_reports_notes.updated_at",
 		]);
 		//
@@ -2104,6 +2105,7 @@ class Compliance_report_model extends CI_Model
 				"users.sid = csp_reports_notes.created_by",
 				"left"
 			)
+			->order_by("csp_reports_notes.sid", "DESC")
 			->get("csp_reports_notes")
 			->result_array();
 	}
@@ -2263,7 +2265,10 @@ class Compliance_report_model extends CI_Model
 		//
 		if (!isMainAllowedForCSP($employeeId)) {
 			$this->getAllowedCSPIds($employeeId);
-			$this->db->where_in("csp_reports_incidents.csp_reports_sid", $this->allowedCSP["reports"]);
+			if (!$this->allowedCSP["reports"]) {
+				return [];
+			}
+			$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
 		}
 		//
 		$this->db->select($columns, false);
@@ -3001,10 +3006,10 @@ class Compliance_report_model extends CI_Model
 			$incidents = [];
 			//
 			foreach ($records as $item) {
-				if (!in_array($item["csp_reports_sid"], $reports) && $item["csp_report_incident_sid"] == 0) {
+				if (!in_array($item["csp_reports_sid"], $reports)) {
 					$reports[] = $item["csp_reports_sid"];
 				}
-				if ($item["csp_report_incident_sid"] != 0 && !in_array($item["csp_report_incident_sid"], $incidents)) {
+				if (!in_array($item["csp_report_incident_sid"], $incidents)) {
 					$incidents[] = $item["csp_report_incident_sid"];
 				}
 			}
@@ -3052,8 +3057,6 @@ class Compliance_report_model extends CI_Model
 			->order_by("csp_reports.sid", "DESC")
 			->get("csp_reports")
 			->result_array();
-
-		_e($this->db->last_query());
 		//
 		if ($records) {
 			foreach ($records as $k0 => $v0) {
@@ -3080,10 +3083,11 @@ class Compliance_report_model extends CI_Model
 	{
 		//
 		$this->getAllowedCSPIdsById($employeeIdOrEmail);
-		if (!$this->allowedCSP["incidents"]) {
+		if (!$this->allowedCSP["reports"]) {
 			return [];
 		}
-		$this->db->where_in("csp_reports_incidents.sid", $this->allowedCSP["incidents"]);
+
+		$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
 		//
 		$this->db->select($columns, false);
 		$this->db->join(
