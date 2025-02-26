@@ -7,7 +7,7 @@
                     <i class="fa fa-arrow-left"></i>
                     Dashboard
                 </a>
-                <a href="<?= base_url('compliance_safety_reporting/dashboard') ?>" class="btn btn-blue">
+                <a href="<?= base_url('compliance_safety_reporting/overview') ?>" class="btn btn-blue">
                     <i class="fa fa-pie-chart"></i>
                     Compliance Safety Reporting
                 </a>
