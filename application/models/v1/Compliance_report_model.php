@@ -1603,6 +1603,10 @@ class Compliance_report_model extends CI_Model
 			"csp_reports_incidents.sid",
 			"csp_reports_incidents.updated_at",
 		]);
+		//
+		$report["emails"] = $this->getComplianceEmails($reportId, 0);
+		$report["libraryItems"] = $this->getComplianceReportFiles($reportId, 0);
+		//
 		return $report;
 	}
 
@@ -3127,5 +3131,75 @@ class Compliance_report_model extends CI_Model
 			);
 		}
 		return $this->db->get("csp_reports_incidents")->result_array();
+	}
+
+	public function getComplianceEmails($reportId, $incidentId = 0)
+	{
+		$this->db->select('*');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_incident_type_sid', $incidentId);
+		$this->db->order_by('send_date', 'desc');
+		$records_obj = $this->db->get('csp_reports_emails');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		//
+		$incident_emails = array();
+		//
+		if (!empty($records_arr)) {
+			foreach ($records_arr as $email) {
+				if ($email['sender_sid'] == 0) {
+					$split_email = explode('@', $email['manual_email']);
+					$userId =  $split_email[0];
+				} else {
+					$userId = $email['sender_sid'];
+				}
+				//
+				if (!array_key_exists($userId, $incident_emails)) {
+					//
+					$userName = '';
+					//
+					if ($email["manual_email"] && $email['sender_sid'] == 0) {
+						$split_email = explode('@', $email['manual_email']);
+						$userName = $split_email[0] . ' (OutSider)';
+					} else {
+						$employeeInfo = $this->get_employee_info_by_id($userId);
+						$userType = $this->getUserType($employeeInfo, $incidentId, $userId);
+						//
+						$userName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
+					}
+
+					//	
+					$incident_emails[$userId]['userName'] = $userName;
+					$incident_emails[$userId]['userId'] = $userId;
+				}
+				//
+				$incident_emails[$userId]['emails'][] = $email;
+				//
+			}
+		}
+		//
+		return $incident_emails;
+	}
+
+	function addComplianceReportEmail ($data_to_insert)
+	{
+		$this->db->insert('csp_reports_emails', $data_to_insert);
+		return $this->db->insert_id();
+	}
+
+	public function getComplianceReportFiles ($reportId, $incidentId = 0) {
+		$this->db->select('sid, file_type, file_value, s3_file_value, title');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_incident_type_sid', $incidentId);
+		$records_obj = $this->db->get('csp_reports_files');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		//
+		return $records_arr;
+	} 
+
+	function addComplianceEmailAttachment ($dataToInsert)
+	{
+		$this->db->insert('csp_reports_email_attachments', $dataToInsert);
 	}
 }

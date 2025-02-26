@@ -52,6 +52,7 @@ class Base_csp extends CI_Controller
         $this->data = [
             "sanitizedView" => true,
             "loadView" => true,
+            "loadJsFiles" => true,
             "pageCSS" => [
                 "2022/css/main",
                 "css/select2",
@@ -66,7 +67,7 @@ class Base_csp extends CI_Controller
                 "js/jquery.datetimepicker",
                 "v1/plugins/ms_uploader/main.min",
                 "v1/plugins/ms_modal/main.min",
-                "js/ckeditor",
+                "ckeditor/ckeditor",
                 "alertifyjs/alertify.min",
             ],
         ];
