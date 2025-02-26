@@ -3,6 +3,7 @@ $companyId = $session['company_detail']['sid'];
 $employeeId = $session['employer_detail']['sid'];
 ?>
 <!-- Email Section Start -->
+   	<script type="text/javascript" src="https://automotohr.com/assets/ckeditor/ckeditor.js?v=1.0.0"></script>
 
 <div class="table-responsive table-outer">
     <div class="panel panel-blue">

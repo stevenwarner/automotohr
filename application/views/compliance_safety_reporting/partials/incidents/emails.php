@@ -1,5 +1,4 @@
    
-   	<script type="text/javascript" src="https://automotohr.com/assets/ckeditor/ckeditor.js?v=1.0.0"></script>
    <div class="panel panel-default">
         <div class="panel-heading incident-panal-heading">
             <strong>Compose Message</strong>
