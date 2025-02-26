@@ -189,6 +189,9 @@ class Compliance_safety extends Admin_Controller
                     "updated_at" => $todayDateTime,
                 ]);
             //
+            // get the questions from main report and add them to the incident
+            $this->setIncidentQuestions();
+            //
             $this->session->set_flashdata('message', '<strong>Success</strong> Report Incident Type added.');
             return redirect(
                 "manage_admin/compliance_safety/dashboard"
@@ -233,6 +236,8 @@ class Compliance_safety extends Admin_Controller
                     "priority" => $post["priority"],
                     "updated_at" => $todayDateTime,
                 ]);
+            $this->setIncidentQuestions();
+
             //
             $this->session->set_flashdata('message', '<strong>Success</strong> Report Incident Type updated.');
             return redirect(
@@ -346,5 +351,59 @@ class Compliance_safety extends Admin_Controller
         $data = array('status' => $this->input->get('status'));
         $this->compliance_safety_model->update_incident_question($id, $data);
         print_r(json_encode(array('message' => 'updated')));
+    }
+
+    private function  setIncidentQuestions()
+    {
+        // get the questions of main
+        $questions = $this
+            ->db
+            ->select([
+                "label",
+                "question_type",
+                "options",
+                "placeholder",
+                "status",
+                "is_required",
+                "related_to_question",
+            ])
+            ->where("compliance_report_types_id", 1)
+            ->order_by("id", "ASC")
+            ->get("compliance_report_types_questions")
+            ->result_array();
+        //
+        if (!$questions) {
+            return false;
+        }
+        //
+
+        // get all the incident ids
+        $incidents =
+            $this
+            ->db
+            ->select([
+                "id"
+            ])
+            ->get("compliance_incident_types")
+            ->result_array();
+        //
+        if (!$incidents) {
+            return false;
+        }
+        //
+        foreach ($incidents as $item) {
+            //
+            if (
+                !$this
+                    ->db
+                    ->where("compliance_incident_types_id", $item["id"])
+                    ->count_all_results("compliance_incident_types_questions")
+            ) {
+                foreach ($questions as $question) {
+                    $question["compliance_incident_types_id"] = $item["id"];
+                    $this->db->insert("compliance_incident_types_questions", $question);
+                }
+            }
+        }
     }
 }
