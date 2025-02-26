@@ -438,7 +438,7 @@ class Compliance_safety_reporting extends Base_csp
         //allowed_internal_system_count
         $this->compliance_report_model->attachIncidentToReport(
             $reportId,
-            $post["incidentId"],
+            $post,
             $this->getLoggedInEmployee("sid")
         );
         // return the success
