@@ -61,9 +61,7 @@ $(function Overview() {
 	$("#report_note_type").select2({
 		minimumResultsForSearch: -1,
 	});
-	$("#jsReportIncidentType").select2({
-		minimumResultsForSearch: -1,
-	});
+	$("#jsReportIncidentType").select2({});
 
 	CKEDITOR.replace("report_note");
 
@@ -146,6 +144,16 @@ $(function Overview() {
 						' <div class="alert alert-info text-center">No External employees found</div>'
 					);
 				}
+			}
+		);
+	});
+
+	$(document).on("click", ".jsDeleteReportIncident", function () {
+		const id = $(this).closest("tr").data("id");
+		alertify.confirm(
+			"Are you sure you want to remove this incident type?",
+			function () {
+				removeReportIncidentById(id);
 			}
 		);
 	});
@@ -362,6 +370,31 @@ $(function Overview() {
 				data: {
 					incidentId: incidentId,
 				},
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message, function () {
+						window.location.refresh();
+					});
+				});
+		}
+	}
+
+	function removeReportIncidentById(incidentId) {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/incident/" + incidentId
+				),
+				method: "delete",
 			})
 				.always(function () {
 					XHR = null;

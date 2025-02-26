@@ -31,8 +31,8 @@
     </div>
 <?php endif; ?>
 
-<?php 
-    $firstSegment = $this->uri->segment(1);
+<?php
+$firstSegment = $this->uri->segment(1);
 ?>
 
 
@@ -69,6 +69,9 @@
                                     <a target="_blank" href="<?= base_url("{$firstSegment}/report/{$report["sid"]}/incident/edit/" . $item["sid"]); ?>" class="btn btn-orange">
                                         <i class="fa fa-eye"></i>
                                     </a>
+                                    <button type="button" class="btn btn-red jsDeleteReportIncident">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -2624,3 +2624,6 @@ $route["csp/overview"]["get"] =
 // Edit the report
 $route["csp/edit/(:num)"]["get"] =
   "v1/Compliance_safety_reporting_public/edit/$1";
+// delete
+$route["compliance_safety_reporting/incident/(:num)"]["delete"] =
+  "v1/Compliance_safety_reporting/detachReportIncidentById/$1";

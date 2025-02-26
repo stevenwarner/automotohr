@@ -2465,6 +2465,18 @@ class Compliance_report_model extends CI_Model
 		return $id;
 	}
 
+	/**
+	 * 
+	 */
+	public function detachReportIncidentById(
+		int $incidentId
+	) {
+		//
+		$this->db
+			->where("sid", $incidentId)
+			->delete("csp_reports_incidents");
+	}
+
 	public function fetchQuestions($id)
 	{
 		$this->db->select('compliance_incident_types_questions.*', 'compliance_incident_types.compliance_incident_type_name');

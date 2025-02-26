@@ -448,6 +448,26 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
+    /**
+     * process edit
+     * 
+     * @param int $reportId
+     * @param int $incidentId
+     */
+    public function detachReportIncidentById(int $incidentId)
+    {
+        // get the post
+        //allowed_internal_system_count
+        $this->compliance_report_model->detachReportIncidentById(
+            $incidentId
+        );
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Incident removed from the report successfully."]
+        );
+    }
+
     public function processFiles(int $reportId, int $incidentId, string $type)
     {
         //
