@@ -2619,7 +2619,7 @@ $route["csp/report/(:num)/incident/edit/(:num)"]["post"] =
 $route["csp/overview"]["get"] =
   "v1/Compliance_safety_reporting_public/overview";
 
-  $route["csp/overview/incidents"]["get"] =
+$route["csp/overview/incidents"]["get"] =
   "v1/Compliance_safety_reporting_public/overviewIncidents";
 // Edit the report
 $route["csp/edit/(:num)"]["get"] =
@@ -2627,3 +2627,12 @@ $route["csp/edit/(:num)"]["get"] =
 // delete
 $route["compliance_safety_reporting/incident/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting/detachReportIncidentById/$1";
+
+$route["compliance_safety_reporting/save_email_manual_attachment"]["post"] =
+  "v1/Compliance_safety_reporting/save_email_manual_attachment";
+
+$route["compliance_safety_reporting/send_compliance_report_email"]["post"] =
+  "v1/Compliance_safety_reporting/sendComplianceReportEmail";  
+
+$route["compliance_safety_reporting/validate_vimeo"]["post"] =
+  "v1/Compliance_safety_reporting/validate_vimeo_video";  

@@ -266,6 +266,9 @@ class Compliance_safety_reporting extends Base_csp
             ->compliance_report_model
             ->getAllIncidents();
         //
+        $this->data["reportId"] = $reportId; 
+        $this->data["incidentId"] = 0;
+        //
         $this->renderView('compliance_safety_reporting/edit_report');
     }
 
@@ -641,5 +644,438 @@ class Compliance_safety_reporting extends Base_csp
                 "data" => $file
             ]
         );
+    }
+
+    public function sendComplianceReportEmail () {
+        //
+        $send_email_type = $_POST['send_type'];
+        $attachments = isset($_POST['attach_files']) ? explode(',', $_POST['attach_files']) : [];
+        $reportId = $_POST['report_id'];
+        $incidentId = $_POST['incident_id'];
+        $companyId = $this->getLoggedInCompany("sid");
+        $companyName = $this->getLoggedInCompany("CompanyName");
+        $employeeId = $this->getLoggedInEmployee("sid");
+        $employeeName = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
+        //
+        if ($send_email_type == 'manual') {
+            $manual_email   = $_POST['manual_email'];
+            $subject        = $_POST['subject'];
+            $message        = $_POST['message'];
+
+            $email_hf = message_header_footer_domain($companyId, $companyName);
+
+            $manual_email_to_insert = array();
+            $manual_email_to_insert['csp_reports_sid']          = $reportId;
+            $manual_email_to_insert['csp_incident_type_sid']    = $incidentId;
+            $manual_email_to_insert['manual_email']             = $manual_email;
+            $manual_email_to_insert['sender_sid']               = $employeeId;
+            $manual_email_to_insert['receiver_sid']             = 0;
+            $manual_email_to_insert['subject']                  = $subject;
+            $manual_email_to_insert['message_body']             = $message;
+
+            $inserted_email_sid = $this->compliance_report_model->addComplianceReportEmail($manual_email_to_insert);
+            $isEmployee = $this->compliance_report_model->checkManualUserIsAnEmployee($_POST['manual_email'], $companyId);
+
+            if (!empty($attachments)) {
+                //
+                foreach ($attachments as $attachmentId) {
+
+                    $insert_attachment                      = array();
+                    $insert_attachment['csp_reports_email_sid'] = $inserted_email_sid;
+                    $insert_attachment['csp_reports_file_sid']  = $attachmentId;
+                    $insert_attachment['attached_by']           = $employeeId;
+                    $insert_attachment['attached_date']         = date('Y-m-d H:i:s');
+
+                    $this->compliance_report_model->addComplianceEmailAttachment($insert_attachment);
+                }
+            }
+            //
+            //
+            $receiver_name = '';
+            $conversation_key = '';
+            //
+            if ($isEmployee) {
+                $manualUserInfo = $this->compliance_report_model->getUserInfoByEmail($_POST['manual_email'], $companyId);
+                $conversation_key = $reportId . '/' . $manualUserInfo['sid'] . '/' . $employeeId;
+                $receiver_name = $manualUserInfo['first_name'].' '.$manualUserInfo['last_name'];
+            } else {
+                $conversation_key = $reportId . '/' . $manual_email . '/' . $employeeId;
+                $name = explode("@", $manual_email);
+                $receiver_name = $name[0];
+            }
+            //
+            $url = base_url('compliance_safety_reporting/view_compliance_report_email/' . $conversation_key);
+            $from_name = $employeeName;
+            //
+            $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
+            $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
+            $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+            if ($isEmployee) {
+                $employeeType = $this->compliance_report_model->isComplianceReportManager($_POST['manual_email'], $companyId, $reportId);
+                //
+                if ($employeeType != "out_sider") {
+                    if ($employeeType == "reporter") {
+                        $viewIncident = base_url('compliance_safety_reporting/view_compliance_report/' . $reportId);
+                    } else if ($employeeType == "incident_manager") {
+                        $viewIncident = base_url('compliance_safety_reporting/view_compliance_report/' . $reportId);
+                    }
+                    //
+                    $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Compliance Report</a>' . '<br>';
+                    $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                }
+            } else {
+                //
+                //
+                // Add outsider user into compliance report outsider user table
+                $this->compliance_report_model->checkManualUserExist($_POST['manual_email'], $reportId);
+                //
+                $this->load->library('encryption');
+                //
+                $this->encryption->initialize(
+                    get_encryption_initialize_array()
+                );
+                //
+                $viewComplianceCode = str_replace(
+                    ['/', '+'],
+                    ['$$ab$$', '$$ba$$'],
+                    $this->encryption->encrypt($conversation_key)
+                );
+                //
+                $approval_public_link_accept = base_url("compliance_safety_reporting/view_compliance_report_public_link") . '/' . $viewComplianceCode;
+                //
+                $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $approval_public_link_accept . '">View Compliance Report</a>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+            }
+            $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
+            $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+            $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+            $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email: Please Do Not reply!</strong>' . '<br>';
+            $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+
+            $from = FROM_EMAIL_NOTIFICATIONS;
+            $to = $manual_email;
+
+            $body = $email_hf['header']
+                . $emailTemplateBody
+                . $email_hf['footer'];
+
+            log_and_sendEmail($from, $to, $subject, $body, $from_name);
+            //
+            
+        } else if ('system') {
+            $receivers = explode(',', $_POST['receivers']);
+            $subject = $_POST['subject'];
+            $from_name = $employeeName;
+            $email_hf = message_header_footer_domain($companyId, $companyName);
+            //
+            foreach ($receivers as $key => $receiver_id) {
+                //
+                $conversation_key = '';
+                $message_body = $_POST['message'];
+
+                $data_to_insert = array();
+                $data_to_insert['csp_reports_sid']          = $reportId;
+                $data_to_insert['csp_incident_type_sid']    = $incidentId;
+                $data_to_insert['sender_sid'] = $employeeId;
+                $data_to_insert['subject'] = $subject;
+                $data_to_insert['message_body'] = $message_body;
+                //
+                $manager_info = db_get_employee_profile($receiver_id);
+                $receiver_email = $manager_info[0]['email'];
+                $receiver_name = $manager_info[0]['first_name'] . ' ' . $manager_info[0]['last_name'];
+                $conversation_key = $reportId . '/' . $receiver_id . '/' . $employeeId;
+                $data_to_insert['receiver_sid'] = $receiver_id;
+                //
+                $inserted_email_sid = $this->compliance_report_model->addComplianceReportEmail($data_to_insert);
+
+                if (!empty($attachments)) {
+                    //
+                    foreach ($attachments as $attachmentId) {
+    
+                        $insert_attachment                      = array();
+                        $insert_attachment['csp_reports_email_sid'] = $inserted_email_sid;
+                        $insert_attachment['csp_reports_file_sid']  = $attachmentId;
+                        $insert_attachment['attached_by']           = $employeeId;
+                        $insert_attachment['attached_date']         = date('Y-m-d H:i:s');
+    
+                        $this->compliance_report_model->addComplianceEmailAttachment($insert_attachment);
+                    }
+                }
+
+                $url = base_url('compliance_safety_reporting/view_compliance_report_email/' . $conversation_key);
+                $employeeType = $this->compliance_report_model->isComplianceReportManager($receiver_email, $companyId, $id);
+                //
+                $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
+                $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
+                if ($employeeType != "out_sider") {
+                    if ($employeeType == "reporter") {
+                        $viewIncident = base_url('compliance_safety_reporting/view_compliance_report/' . $reportId);
+                    } else if ($employeeType == "incident_manager") {
+                        $viewIncident = base_url('compliance_safety_reporting/view_compliance_report/' . $reportId);
+                    }
+                    //
+                    $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Compliance Report</a>' . '<br>';
+                    $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                }
+                $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email: Please Do Not reply!</strong>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+
+                $from = FROM_EMAIL_NOTIFICATIONS;
+                $to = $receiver_email;
+
+                $body = $email_hf['header']
+                    . $emailTemplateBody
+                    . $email_hf['footer'];
+
+                log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                //
+            }
+        }
+        //
+        return sendResponse(
+            200,
+            ["message" => "Email send successfully."]
+        );
+    }
+
+    public function save_email_manual_attachment()
+    {
+        $session = $this->session->userdata('logged_in');
+        $employee_sid   = $session["employer_detail"]["sid"];
+        $companyId    = $session['company_detail']['sid'];
+
+        $item_title     = $_POST['attachment_title'];
+        $companyId    = $_POST['companyId'];
+        $report_sid     = $_POST['report_sid'];
+        $incident_sid   = $_POST['incident_sid'];
+        $item_source    = $_POST['file_type'];
+        $uploaded_by    = $_POST['uploaded_by'];
+        $user_type      = $_POST['user_type'];
+
+        if ($item_source == 'upload_document') {
+            if (!empty($_FILES) && isset($_FILES['file']) && $_FILES['file']['size'] > 0) {
+
+                $file_name          = $_POST['file_name'];
+                $file_extension     = $_POST['file_ext'];
+                $upload_incident_doc = upload_file_to_aws('file', $companyId, 'file', '', AWS_S3_BUCKET_NAME);
+
+                if (!empty($upload_incident_doc) && $upload_incident_doc != 'error') {
+                    //
+                    $insert_document_sid = $this
+                        ->compliance_report_model
+                        ->addFilesLinkToReport(
+                            $report_sid,
+                            $incident_sid,
+                            $this->getLoggedInEmployee("sid"),
+                            $upload_incident_doc,
+                            "document",
+                            $item_title
+                        );
+
+                    $return_data                    = array();
+                    $return_data['item_sid']        = $insert_document_sid;
+                    $return_data['item_title']      = $item_title;
+                    $return_data['item_type']       = 'Document';
+                    $return_data['item_source']     = strtoupper($file_extension);
+
+                    echo json_encode($return_data);
+                }
+            } else {
+                echo 'error';
+            }
+        } else {
+            $video_id = '';
+            $fileType = 'link';
+
+            if (!empty($_FILES) && isset($_FILES['file']) && $_FILES['file']['size'] > 0 && $item_source == 'upload_video') {
+                $random = generateRandomString(5);
+                $target_file_name = basename($_FILES["file"]["name"]);
+                $file_name = strtolower($companyId . '/' . $random . '_' . $target_file_name);
+                $target_dir = "assets/uploaded_videos/incident_videos/";
+                $target_file = $target_dir . $file_name;
+                $basePath = $target_dir . $companyId;
+
+                if (!is_dir($basePath)) {
+                    mkdir($basePath, 0777, true);
+                }
+
+                move_uploaded_file($_FILES["file"]["tmp_name"], $target_file);
+
+                $video_id = $file_name;
+                $fileType = 'video';
+            } else if (!empty($_FILES) && isset($_FILES['file']) && $_FILES['file']['size'] > 0 && $item_source == 'upload_audio') {
+                $random = generateRandomString(5);
+                $target_file_name = basename($_FILES["file"]["name"]);
+                $file_name = strtolower($companyId . '/' . $random . '_' . $target_file_name);
+                $target_dir = "assets/uploaded_videos/incident_videos/";
+                $target_file = $target_dir . $file_name;
+                $basePath = $target_dir . $companyId;
+
+                if (!is_dir($basePath)) {
+                    mkdir($basePath, 0777, true);
+                }
+
+                move_uploaded_file($_FILES["file"]["tmp_name"], $target_file);
+
+                $video_id = $file_name;
+                $fileType = 'audio';
+            } else {
+                $video_id = $_POST['social_url'];
+                $item_source = 'link';
+            }
+            //
+            $insert_video_sid = $this
+                ->compliance_report_model
+                ->addFilesLinkToReport(
+                    $report_sid,
+                    $incident_sid,
+                    $this->getLoggedInEmployee("sid"),
+                    $video_id,
+                    $fileType,
+                    $item_title
+                );
+
+            $return_data                    = array();
+            $return_data['item_sid']        = $insert_video_sid;
+            $return_data['item_title']      = $item_title;
+            $return_data['item_type']       = 'Media';
+            $return_data['item_source']     = $item_source;
+
+            echo json_encode($return_data);
+        }
+    }
+
+    public function validate_vimeo_video()
+    {
+        $str = $this->input->post('url');
+        if ($str != "") {
+            if ($_SERVER['HTTP_HOST'] == 'localhost') {
+                $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
+                $response = @file_get_contents($api_url);
+
+                if (!empty($response)) {
+                    $response = json_decode($response, true);
+
+                    if (isset($response['video_id'])) {
+                        echo TRUE;
+                    } else {
+                        $this->form_validation->set_message('validate_vimeo', 'In-valid Vimeo video URL');
+                        $this->session->set_flashdata('message', '<b>Error:</b> In-valid Vimeo video URL');
+                        echo FALSE;
+                    }
+                } else {
+                    $this->form_validation->set_message('validate_vimeo', 'In-valid Vimeo video URL');
+                    $this->session->set_flashdata('message', '<b>Error:</b> In-valid Vimeo video URL');
+                    echo FALSE;
+                }
+            } else {
+                $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
+                $cSession = curl_init();
+                curl_setopt($cSession, CURLOPT_URL, $api_url);
+                curl_setopt($cSession, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($cSession, CURLOPT_HEADER, false);
+                $response = curl_exec($cSession);
+                curl_close($cSession);
+                $response = json_decode($response, true); //$response = @file_get_contents($api_url);
+
+                if (isset($response['video_id'])) {
+                    echo TRUE;
+                } else {
+                    $this->form_validation->set_message('validate_vimeo', 'In-valid Vimeo video URL');
+                    $this->session->set_flashdata('message', '<b>Error:</b> In-valid Vimeo video URL');
+                    echo FALSE;
+                }
+            }
+        } else {
+            echo FALSE;
+        }
+    }
+
+    public function vimeo_get_id($str)
+    {
+        if ($str != "") {
+            if ($_SERVER['HTTP_HOST'] == 'localhost') {
+                $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
+                $response = @file_get_contents($api_url);
+
+                if (!empty($response)) {
+                    $response = json_decode($response, true);
+
+                    if (isset($response['video_id'])) {
+                        return $response['video_id'];
+                    } else {
+                        return 0;
+                    }
+                } else {
+                    return 0;
+                }
+            } else {
+                $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
+                $cSession = curl_init();
+                curl_setopt($cSession, CURLOPT_URL, $api_url);
+                curl_setopt($cSession, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($cSession, CURLOPT_HEADER, false);
+                $response = curl_exec($cSession);
+                curl_close($cSession);
+                $response = json_decode($response, true); //$response = @file_get_contents($api_url);
+
+                if (isset($response['video_id'])) {
+                    return $response['video_id'];
+                } else {
+                    return 0;
+                }
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    function update_email_read_flag()
+    {
+        $email_sid              = $_POST['email_sid'];
+
+        $data_to_update             = array();
+        $data_to_update['is_read']  = 1;
+        $this->compliance_report_model->update_email_is_read_flag($email_sid, $data_to_update);
+
+
+
+        if (isset($_POST['receiver_sid'])) {
+            $receiver_sid           = $_POST['receiver_sid'];
+            $sender_info            = $this->compliance_report_model->get_email_sender_info($email_sid);
+
+            $incident_sid           = $sender_info['incident_reporting_id'];
+            $sender_sid             = $sender_info['sender_sid'] == 0 ? $sender_info['manual_email'] : $sender_info['sender_sid'];
+
+            $log_in_user_status     = is_manager_have_new_email($receiver_sid, $incident_sid);
+            $status_one = 0;
+            if ($log_in_user_status > 0) {
+                $status_one = 1;
+            }
+
+            $current_user_status    = is_user_have_unread_message($receiver_sid, $sender_sid, $incident_sid);
+            $status_two = 0;
+            if ($current_user_status > 0) {
+                $status_two = 1;
+            }
+
+            if (filter_var($sender_sid, FILTER_VALIDATE_EMAIL)) {
+                $split_email = explode('@', $sender_sid);
+                $sender_sid = $split_email[0];
+            }
+
+            $return_data                = array();
+            $return_data['status_one']  = $status_one;
+            $return_data['status_two']  = $status_two;
+            $return_data['sender_sid']  = $sender_sid;
+
+            echo json_encode($return_data);
+        } else {
+            echo 'success';
+        }
     }
 }

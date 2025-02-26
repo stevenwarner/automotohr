@@ -2076,6 +2076,29 @@ if (!function_exists('get_email_attachment')) {
     }
 }
 
+if (!function_exists('getComplianceSafetyReportEmailAttachment')) {
+    function getComplianceSafetyReportEmailAttachment($emailId)
+    {
+        $CI = &get_instance();
+        $CI->db->select('csp_reports_file_sid');
+        $CI->db->where('csp_reports_email_sid', $emailId);
+        $CI->db->from('csp_reports_email_attachments');
+        $attachmentsInfo = $CI->db->get()->result_array();
+        //
+        $return_data = array();
+        //
+        if ($attachmentsInfo) {
+            //
+            $CI->db->select('sid, title, file_type, s3_file_value');
+            $CI->db->where_in('sid', array_column($attachmentsInfo, 'csp_reports_file_sid'));
+            $CI->db->from('csp_reports_files');
+            $return_data = $CI->db->get()->result_array();
+        }
+        //
+        return $return_data;
+    }
+}
+
 if (!function_exists('is_manager_have_new_email')) {
     function is_manager_have_new_email($manager_sid, $incident_sid)
     {
