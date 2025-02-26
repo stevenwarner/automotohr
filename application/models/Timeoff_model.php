@@ -2054,6 +2054,13 @@ class Timeoff_model extends CI_Model
             }
 
             //
+            if (checkPolicyESTA($policy['sid']) == 1) {
+                if (!isset($accruals['employeeTypes'])) continue;
+                if (in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
+            }
+
+
+            //
             $t = getEmployeeAccrual(
                 $policy['sid'], // Policy id
                 $employeeId, // Employee id
@@ -2220,6 +2227,12 @@ class Timeoff_model extends CI_Model
                 if (!isset($accruals['employeeTypes'])) continue;
                 if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
             }
+
+            if (checkPolicyESTA($policy['sid']) == 1) {
+                if (!isset($accruals['employeeTypes'])) continue;
+                if (in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
+            }
+
             //
             $t = getEmployeeAccrual(
                 $policy['sid'], // Policy id
@@ -2325,6 +2338,11 @@ class Timeoff_model extends CI_Model
             if (checkPolicyESTA($policy['sid']) != 1) {
                 if (!isset($accruals['employeeTypes'])) continue;
                 if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
+            }
+
+            if (checkPolicyESTA($policy['sid']) == 1) {
+                if (!isset($accruals['employeeTypes'])) continue;
+                if (in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
             }
             //
             $t = getEmployeeAccrual(
@@ -3073,6 +3091,11 @@ class Timeoff_model extends CI_Model
             if (checkPolicyESTA($policy['sid']) != 1) {
                 if (!isset($accruals['employeeTypes'])) continue;
                 if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
+            }
+
+            if (checkPolicyESTA($policy['sid']) == 1) {
+                if (!isset($accruals['employeeTypes'])) continue;
+                if (in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
             }
             //
             $t = getEmployeeAccrual(
@@ -5177,6 +5200,11 @@ class Timeoff_model extends CI_Model
             if (checkPolicyESTA($policy['sid']) != 1) {
                 if (!isset($accruals['employeeTypes'])) continue;
                 if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
+            }
+
+            if (checkPolicyESTA($policy['sid']) == 1) {
+                if (!isset($accruals['employeeTypes'])) continue;
+                if (in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
             }
             //
             $t = getEmployeeAccrual(
