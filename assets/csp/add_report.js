@@ -14,6 +14,14 @@ $(function Overview() {
 		changeMonth: true,
 	});
 
+	$(".start_date").datetimepicker({
+		format: "m/d/Y",
+		datepicker: true,
+		timepicker: false,
+		changeYear: true,
+		changeMonth: true,
+	});
+
 	$("#report_completion_date").datetimepicker({
 		format: "m/d/Y",
 		datepicker: true,

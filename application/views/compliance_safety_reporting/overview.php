@@ -9,7 +9,7 @@
                         <i class="fa fa-arrow-left"></i>
                         Dashboard
                     </a>
-                    <a href="<?= base_url("compliance_safety_reporting/listing") ?>" class="btn btn-orange">
+                    <a href="<?= base_url("compliance_safety_reporting/add/1") ?>" class="btn btn-orange">
                         <i class="fa fa-plus-circle"></i>
                         Add New Report
                     </a>

@@ -57,6 +57,9 @@
                         </div>
                     </div>
 
+
+                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/questions"); ?>
+
                     <!-- Employees -->
                     <div class="panel panel-default">
                         <div class="panel-heading">

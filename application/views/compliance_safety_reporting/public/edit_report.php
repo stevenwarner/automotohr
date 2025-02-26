@@ -53,6 +53,9 @@
                             </div>
                         </div>
                     </div>
+                    <?php if ($report["question_answers"]) : ?>
+                        <?php $this->load->view("compliance_safety_reporting/partials/incidents/answers"); ?>
+                    <?php endif; ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/incidents/listing"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/documents"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/audio"); ?>

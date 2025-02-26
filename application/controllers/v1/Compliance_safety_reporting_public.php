@@ -300,9 +300,7 @@ class Compliance_safety_reporting_public extends Base_csp
         // get the report incident types
         $this->data["incidentTypes"] = $this
             ->compliance_report_model
-            ->getReportMapping(
-                $this->data["report"]["report_type_sid"]
-            );
+            ->getAllIncidents();
         //
         $this->renderView('compliance_safety_reporting/public/edit_report');
     }

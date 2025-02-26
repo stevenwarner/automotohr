@@ -1472,6 +1472,39 @@ class Compliance_report_model extends CI_Model
 			return false;
 		}
 		//
+		$insert = array();
+
+		foreach ($post as $key => $val) {
+			if (in_array($key, [
+				"report_title",
+				"report_date",
+				"report_completion_date",
+				"report_status",
+				"report_employees",
+				"external_employees_names",
+				"external_employees_emails",
+			])) {
+				continue;
+			}
+			$exp = explode('_', $key);
+			if (sizeof($exp) > 1 && !empty($val)) {
+				$insert['question'] = $this->getSpecificReportQuestion($exp[1]);
+
+				if ($exp[0] == 'multi-list') {
+					$val = serialize($val);
+				}
+
+				$insert['answer'] = strip_tags($val);
+				$insert['csp_report_sid'] = $reportId;
+				$this->insertCSPReportAnswer($insert);
+			} elseif (sizeof($exp) == 1 && !empty($val) && $exp[0] == 'signature') {
+				$insert['question'] = $exp[0];
+				$insert['answer'] = strip_tags($val);
+				$insert['csp_report_sid'] = $reportId;
+				$this->insertCSPReportAnswer($insert);
+			}
+		}
+		//
 		if ($post["report_employees"]) {
 			$reportEmployees = [];
 			foreach ($post["report_employees"] as $employeeId) {
@@ -1603,6 +1636,8 @@ class Compliance_report_model extends CI_Model
 			"csp_reports_incidents.sid",
 			"csp_reports_incidents.updated_at",
 		]);
+		$report["question_answers"] = $this->getCSPReportQuestionAnswers($reportId);
+
 		return $report;
 	}
 
@@ -2380,6 +2415,21 @@ class Compliance_report_model extends CI_Model
 			->get("compliance_report_incident_types_mapping")
 			->result_array();
 	}
+	/**
+	 * 
+	 */
+	public function getAllIncidents()
+	{
+		return $this
+			->db
+			->select([
+				"compliance_incident_types.id",
+				"compliance_incident_types.compliance_incident_type_name",
+			])
+			->where("compliance_incident_types.status", 1)
+			->get("compliance_incident_types")
+			->result_array();
+	}
 
 	/**
 	 * 
@@ -2424,6 +2474,14 @@ class Compliance_report_model extends CI_Model
 		return $questions;
 	}
 
+	public function getReportQuestionsById($id)
+	{
+		$this->db->select('compliance_report_types_questions.*');
+		$this->db->where('compliance_report_types_id', $id);
+		$questions = $this->db->get('compliance_report_types_questions')->result_array();
+		return $questions;
+	}
+
 	public function getQuestion($id)
 	{
 		$this->db->where('id', $id);
@@ -2439,9 +2497,23 @@ class Compliance_report_model extends CI_Model
 		return $result["label"];
 	}
 
+	public function getSpecificReportQuestion($id)
+	{
+		$this->db->where('id', $id);
+		$this->db->select("label");
+		$result = $this->db->get('compliance_report_types_questions')->row_array();
+		return $result["label"];
+	}
+
 	function insertCSPIncidentAnswer($insert)
 	{
 		$this->db->insert('csp_reports_incidents_answers', $insert);
+		return $this->db->insert_id();
+	}
+
+	function insertCSPReportAnswer($insert)
+	{
+		$this->db->insert('csp_reports_answers', $insert);
 		return $this->db->insert_id();
 	}
 
@@ -2451,6 +2523,16 @@ class Compliance_report_model extends CI_Model
 		$this->db->where('csp_reports_incidents_answers.csp_report_incident_sid', $incidentId);
 
 		$incident = $this->db->get('csp_reports_incidents_answers')->result_array();
+		return $incident;
+	}
+
+
+	function getCSPReportQuestionAnswers($reportId)
+	{
+		$this->db->select('csp_reports_answers.*');
+		$this->db->where('csp_reports_answers.csp_report_sid', $reportId);
+
+		$incident = $this->db->get('csp_reports_answers')->result_array();
 		return $incident;
 	}
 

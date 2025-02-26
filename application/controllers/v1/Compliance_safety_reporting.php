@@ -156,6 +156,13 @@ class Compliance_safety_reporting extends Base_csp
         $this->data['pageCSS'][] = 'v1/plugins/ms_uploader/main.min';
         $this->data['pageJs'][] = 'v1/plugins/ms_uploader/main.min';
         $this->data['pageJs'][] = 'csp/add_report.min';
+        // get the report questions
+        $this->data["questions"] =
+            $this
+            ->compliance_report_model
+            ->getReportQuestionsById(
+                $reportTypeId
+            );
         // get the employees
         $this->data["employees"] = $this
             ->compliance_report_model
@@ -217,6 +224,7 @@ class Compliance_safety_reporting extends Base_csp
                     "csp_reports.sid",
                     "csp_reports.title",
                     "csp_reports.report_date",
+                    "csp_reports.disable_answers",
                     "csp_reports.report_type_sid",
                     "csp_reports.completion_date",
                     "csp_reports.status",
@@ -256,9 +264,7 @@ class Compliance_safety_reporting extends Base_csp
         // get the report incident types
         $this->data["incidentTypes"] = $this
             ->compliance_report_model
-            ->getReportMapping(
-                $this->data["report"]["report_type_sid"]
-            );
+            ->getAllIncidents();
         //
         $this->renderView('compliance_safety_reporting/edit_report');
     }
