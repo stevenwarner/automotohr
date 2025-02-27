@@ -68,6 +68,7 @@
                     <?php endif; ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/documents"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/audio"); ?>
+                    <?php $this->load->view("compliance_safety_reporting/partials/files/emails"); ?>
 
                     <!-- Add Notes -->
                     <div class="panel panel-default">

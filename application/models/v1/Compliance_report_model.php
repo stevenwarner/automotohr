@@ -1743,7 +1743,10 @@ class Compliance_report_model extends CI_Model
 		]);
 		//
 		$report["question_answers"] = $this->getCSPQuestionAnswers($incidentId);
-
+		//
+		$report["emails"] = $this->getComplianceEmails($reportId, $incidentId);
+		$report["libraryItems"] = $this->getComplianceReportFiles($reportId, $incidentId);
+		//
 		return $report;
 	}
 

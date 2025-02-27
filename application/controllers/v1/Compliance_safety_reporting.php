@@ -246,6 +246,7 @@ class Compliance_safety_reporting extends Base_csp
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
         $this->data['pageJs'][] = 'csp/edit_report';
+        $this->data['pageJs'][] = 'csp/send_email';
         // get the employees
         $this->data["employees"] = $this
             ->compliance_report_model
@@ -294,6 +295,7 @@ class Compliance_safety_reporting extends Base_csp
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
         $this->data['pageJs'][] = 'csp/edit_incident';
+        $this->data['pageJs'][] = 'csp/send_email';
         // get the employees
         $this->data["employees"] = $this
             ->compliance_report_model
@@ -311,6 +313,9 @@ class Compliance_safety_reporting extends Base_csp
         } else {
             $this->data["questions"] = [];
         }
+        //
+        $this->data["reportId"] = $reportId; 
+        $this->data["incidentId"] = $incidentId;
         //
         $this->renderView('compliance_safety_reporting/edit_incident');
     }
