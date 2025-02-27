@@ -2265,6 +2265,9 @@ if (!function_exists('isAllowedESTAPolicy')) {
         if ($employeeType == "parttime") {
             return 1;
         }
+        if ($employeeType != "fulltime") {
+            return 0;
+        }
         //
         $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
         $todayDate = getFormatedDate($todayDate);
