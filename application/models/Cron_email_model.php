@@ -11,6 +11,7 @@ class Cron_email_model extends CI_Model
     private $testingCompanyIds;
 
     private $executiveAdminsList = [];
+    private $executiveAdminsLMSReport = [];
 
     public function __construct()
     {
@@ -221,75 +222,71 @@ class Cron_email_model extends CI_Model
         }
 
         if (!empty($this->executiveAdminsList)) {
-          
-          foreach($this->executiveAdminsList as $exRow){
 
-           $companyReplaceArray = [
-                "{{company_name}}" => '',
-                "{{company_address}}" => '',
-                "{{company_phone}}" => '',
-                "{{career_site_url}}" => '',
-            ];
+            foreach ($this->executiveAdminsList as $exRow) {
 
-            $template = get_email_template(COURSE_REPORT_EMAILS);
-            //
-            $templateSubject = $template["subject"];
-            $templateFromName = $template["from_name"];
-            $templateBody = $template["text"];
-            // set replace array
-            //
+                $companyReplaceArray = [
+                    "{{company_name}}" => '',
+                    "{{company_address}}" => '',
+                    "{{company_phone}}" => '',
+                    "{{career_site_url}}" => '',
+                ];
 
-            //_e($exRow,true);
+                $template = get_email_template(COURSE_REPORT_EMAILS);
+                //
+                $templateSubject = $template["subject"];
+                $templateFromName = $template["from_name"];
+                $templateBody = $template["text"];
+                // set replace array
 
-            $replaceArray = $companyReplaceArray;
-            //
-            $replaceArray["{{baseurl}}"] = base_url();
-            $replaceArray["{{full_name}}"] =
-                $replaceArray["{{contact_name}}"]
-                = $exRow['data']['contact_name'];
+                $replaceArray = $companyReplaceArray;
+                //
+                $replaceArray["{{baseurl}}"] = base_url();
+                $replaceArray["{{full_name}}"] =
+                    $replaceArray["{{contact_name}}"]
+                    = $exRow['data']['contact_name'];
 
 
-            $viewReport = '';
-            foreach ($exRow['data']['buttons'] as $buttonRow) {
-                $viewReport .= "<br><br>" . $buttonRow;
+                $viewReport = '';
+                foreach ($exRow['data']['buttons'] as $buttonRow) {
+                    $viewReport .= "<br><br>" . $buttonRow;
+                }
+
+                $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
+                $templateBody = str_replace('{{download_report}}', '', $templateBody);
+
+                // set keys
+                $replaceKeys = array_keys($replaceArray);
+
+                // replace
+                $fromName = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateFromName
+                );
+                $subject = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateSubject
+                );
+                $body = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateBody
+                );
+
+                
+                log_and_send_email_with_attachment(
+                    FROM_EMAIL_NOTIFICATIONS,
+                    $exRow['data']['email'],
+                    $subject,
+                    $body,
+                    $fromName,
+                    '',
+                    "sendMailWithAttachmentAsString"
+                );
+
             }
-
-            $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
-            $templateBody = str_replace('{{download_report}}', '', $templateBody);
-
-            // set keys
-            $replaceKeys = array_keys($replaceArray);
-
-            // replace
-            $fromName = str_replace(
-                $replaceKeys,
-                $replaceArray,
-                $templateFromName
-            );
-            $subject = str_replace(
-                $replaceKeys,
-                $replaceArray,
-                $templateSubject
-            );
-            $body = str_replace(
-                $replaceKeys,
-                $replaceArray,
-                $templateBody
-            );
-
-           // _e($exRow['email'],true);
-            log_and_send_email_with_attachment(
-                FROM_EMAIL_NOTIFICATIONS,
-                $exRow['data']['email'],
-                $subject,
-                $body,
-                $fromName,
-                '',
-                "sendMailWithAttachmentAsString"
-            );
-
-          }         
-          
         }
     }
 
@@ -339,6 +336,42 @@ class Cron_email_model extends CI_Model
             }
 
 
+
+
+            // get the ream member ids
+            $response = getMyDepartmentAndTeams($v0["employer_sid"], "courses", "get", $this->companyId);
+            //
+            $teamEmployeeIds = $response
+                ? array_column(
+                    $response["employees"],
+                    "employee_sid"
+                )
+                : [];
+            //
+            if (!$teamEmployeeIds) {
+                echo "No teams found \n";
+                continue;
+            }
+            // get the company employees by course
+            $employeesWithCourseList = $this
+                ->getCompanyEmployeesWithCourses(
+                    $types,
+                    $courseIds,
+                    $teamEmployeeIds
+                );
+            // no team members found
+            if (!$employeesWithCourseList) {
+                echo "No employees with courses found \n";
+                continue;
+            }
+            //
+            $this->companyEmployees = $employeesWithCourseList;
+            //
+            $report = $this->generateReport();
+
+            echo "Report generated \n";
+
+
             // check is executive admin
             if ($this->checkExecutiveAdmin($v0["employer_sid"]) == 1) {
 
@@ -362,7 +395,7 @@ class Cron_email_model extends CI_Model
                 $companyDetails = getCompanyInfo($v0["company_sid"]);
 
                 $buttons = '';
-                $forCompany = "From: " . $companyDetails["company_name"] . "<br>";
+                $forCompany = "Company Name: " . $companyDetails["company_name"] . "<br>";
                 $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
                 $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
                 $buttons .= $forCompany . $viewReport . '&nbsp;&nbsp;&nbsp;' . $downloadReport;
@@ -372,39 +405,26 @@ class Cron_email_model extends CI_Model
                 $this->executiveAdminsList[$v0['email']]['data']['email'] = $v0['email'];
 
 
+                //
+                $this->executiveAdminsLMSReport[$v0['email']]['name'] = $report['name'];
+                $this->executiveAdminsLMSReport[$v0['email']]['data'][0] = $report['data'][0];
+                $this->executiveAdminsLMSReport[$v0['email']]['data'][1] = [];
+
+                $temparray = [];
+                $temparray = $report;
+                unset($temparray['name']);
+                unset($temparray['data'][0]);
+                unset($temparray['data'][1]);
+                unset($temparray['data'][2]);
+
+                $temparray['data'][end(array_keys($temparray['data'])) + 1] = [];
+                array_push($this->executiveAdminsReport[$v0['email']]['data'], ["company Name", $companyDetails["company_name"]]);
+                foreach ($temparray['data'] as $reportdata) {
+                    array_push($this->executiveAdminsReport[$v0['email']]['data'], $reportdata);
+                }
             } else {
 
-                // get the ream member ids
-                $response = getMyDepartmentAndTeams($v0["employer_sid"], "courses", "get", $this->companyId);
-                //
-                $teamEmployeeIds = $response
-                    ? array_column(
-                        $response["employees"],
-                        "employee_sid"
-                    )
-                    : [];
-                //
-                if (!$teamEmployeeIds) {
-                    echo "No teams found \n";
-                    continue;
-                }
-                // get the company employees by course
-                $employeesWithCourseList = $this
-                    ->getCompanyEmployeesWithCourses(
-                        $types,
-                        $courseIds,
-                        $teamEmployeeIds
-                    );
-                // no team members found
-                if (!$employeesWithCourseList) {
-                    echo "No employees with courses found \n";
-                    continue;
-                }
-                //
-                $this->companyEmployees = $employeesWithCourseList;
-                //
-                $report = $this->generateReport();
-                echo "Report generated \n";
+
                 //
                 $this->sendCourseReportEmails($report, $v0);
                 echo "Report Sent \n\n";
@@ -1138,6 +1158,7 @@ class Cron_email_model extends CI_Model
         //
 
         $executiveAdminsList = [];
+        $executiveAdminsReport = [];
 
         foreach ($companies as $companyRow) {
             //
@@ -1193,15 +1214,33 @@ class Cron_email_model extends CI_Model
                             $viewLink = base_url("hr_documents_management/manager_report") . '/' . $viewCode;
                             $downloadLink = base_url("hr_documents_management/manager_report") . '/' . $downloadCode;
 
-
                             $buttons = '';
-                            $forCompany = "From: " . $companyDetails["company_name"] . "<br>";
+                            $forCompany = "Company Name: " . $companyDetails["company_name"] . "<br>";
                             $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
                             $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
                             $buttons .= $forCompany . $viewReport . '&nbsp;&nbsp;&nbsp;' . $downloadReport;
 
                             $executiveAdminsList[$empRow['email']]['data']['buttons'][] = $buttons;
                             $executiveAdminsList[$empRow['email']]['data']['contact_name'] = $empRow['contact_name'];
+                            $executiveAdminsList[$empRow['email']]['data']['email'] = $empRow['email'];
+
+
+                            $executiveAdminsReport[$empRow['email']]['name'] = $report['name'];
+                            $executiveAdminsReport[$empRow['email']]['data'][0] = $report['data'][0];
+                            $executiveAdminsReport[$empRow['email']]['data'][1] = [];
+
+                            $temparray = [];
+                            $temparray = $report;
+                            unset($temparray['name']);
+                            unset($temparray['data'][0]);
+                            unset($temparray['data'][1]);
+                            unset($temparray['data'][2]);
+
+                            $temparray['data'][end(array_keys($temparray['data'])) + 1] = [];
+                            array_push($executiveAdminsReport[$empRow['email']]['data'], ["company Name", $companyDetails["company_name"]]);
+                            foreach ($temparray['data'] as $reportdata) {
+                                array_push($executiveAdminsReport[$empRow['email']]['data'], $reportdata);
+                            }
                         } else {
 
                             $template = get_email_template(DOCUMENT_REPORT_EMAILS);
@@ -1279,7 +1318,10 @@ class Cron_email_model extends CI_Model
 
         //
         if (!empty($executiveAdminsList)) {
+
             foreach ($executiveAdminsList as $exRow) {
+
+                $executiveAdminsReportAttachement = [];
 
                 $companyReplaceArray = [
                     "{{company_name}}" => '',
@@ -1331,13 +1373,15 @@ class Cron_email_model extends CI_Model
                     $templateBody
                 );
 
+                $executiveAdminsReportAttachement = $executiveAdminsReport[$exRow['data']['email']];
+
                 log_and_send_email_with_attachment(
                     FROM_EMAIL_NOTIFICATIONS,
-                    $empRow['email'],
+                    $exRow['data']['email'],
                     $subject,
                     $body,
                     $fromName,
-                    $report,
+                    $executiveAdminsReportAttachement,
                     "sendMailWithAttachmentAsString"
                 );
             }
