@@ -2112,7 +2112,7 @@ if (!function_exists('processESTAPolicy')) {
         //
 
 
-        if (in_array('fulltime', $accruals['employeeType'])) {
+        if ($accruals['employee_type_original'] == 'fulltime') {
             if ($difference >= 730) {
                 $r['Reason'] = 'Employee has worked for more than 2 year.';
                 return $r;
@@ -2129,7 +2129,7 @@ if (!function_exists('processESTAPolicy')) {
         //
 
         $dayscheck = 90;
-        if (in_array('parttime', $accruals['employeeType'])) {
+        if ($accruals['employee_type_original'] == "parttime") {
 
             $dayscheck = 120;
         }
@@ -2142,7 +2142,7 @@ if (!function_exists('processESTAPolicy')) {
             $allowedHours = 40;
             $difference = $difference - $dayscheck; // this needs to be fixed
             //
-            if (in_array('parttime', $accruals['employeeType'])) {
+            if ($accruals['employee_type_original'] == "parttime") {
                 $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +121 days'));
             } else {
                 $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +91 days'));
