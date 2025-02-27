@@ -267,9 +267,6 @@
                                                                                                                                         <a href="javascript:;" class="btn btn-block btn-info" onclick="view_attach_item(this);" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
                                                                                                                                     </div>
                                                                                                                                     <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
-                                                                                                                                        <a target="_blank" href="<?php echo $print_url; ?>" class="btn btn-block btn-info"><i class="fa fa-print"></i></a>
-                                                                                                                                    </div>
-                                                                                                                                    <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
                                                                                                                                         <a target="_blank" href="<?php echo $download_url; ?>" class="btn btn-block btn-info"><i class="fa fa-download"></i></a>
                                                                                                                                     </div>
                                                                                                                                 <?php } else { ?>
