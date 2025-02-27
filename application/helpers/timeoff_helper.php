@@ -842,7 +842,7 @@ if (!function_exists('getEmployeeAccrual')) {
         // for the new ESTA policy
         if (
             checkPolicyESTA($policyId) == 1 &&
-            isAllowedESTAPolicy($asOfToday, $employeeJoiningDate, $accruals['employeeTypes']) == 1
+            isAllowedESTAPolicy($asOfToday, $employeeJoiningDate, $accruals['employee_type_original']) == 1
         ) {
             //
             return processESTAPolicy(
