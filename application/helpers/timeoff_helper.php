@@ -2262,11 +2262,8 @@ if (!function_exists('isAllowedESTAPolicy')) {
     function isAllowedESTAPolicy($asOfToday, $employeeJoiningDate, $employeeType)
     {
         //
-        if (in_array("parttime", $employeeType)) {
+        if ($employeeType == "parttime") {
             return 1;
-        }
-        if (!in_array("fulltime", $employeeType) && !in_array("full-time", $employeeType)) {
-            return 0;
         }
         //
         $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
