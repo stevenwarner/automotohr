@@ -2200,39 +2200,29 @@ class Timeoff_model extends CI_Model
                 'Reason' => ''
             ];
 
-            if (checkPolicyESTA($policy['sid']) != 1) {
 
-                if ($policy['is_entitled_employee'] == 1) {
-                    //
+            if ($policy['is_entitled_employee'] == 1) {
+                //
 
-                    if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                        continue;
-                    }
-
-                    if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
-                } else {
-                    //
-
-                    if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                        continue;
-                    }
-                    // Not-Entitled
-                    if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                    continue;
                 }
+
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            } else {
+                //
+
+                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                    continue;
+                }
+                // Not-Entitled
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             }
             //
             $accruals = json_decode($policy['accruals'], true);
             //
-            if (checkPolicyESTA($policy['sid']) != 1) {
-                if (!isset($accruals['employeeTypes'])) continue;
-                if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
-            }
-
-            if (checkPolicyESTA($policy['sid']) == 1) {
-                if (!isset($accruals['employeeTypes'])) continue;
-                if (in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
-            }
-
+            if (!isset($accruals['employeeTypes'])) continue;
+            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
             //
             $t = getEmployeeAccrual(
                 $policy['sid'], // Policy id
@@ -2311,39 +2301,30 @@ class Timeoff_model extends CI_Model
         foreach ($policies as $policy) {
             // Entitled
 
-            if (checkPolicyESTA($policy['sid']) != 1) {
 
-                if ($policy['is_entitled_employee'] == 1) {
-                    //
+            if ($policy['is_entitled_employee'] == 1) {
+                //
 
-                    if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                        continue;
-                    }
-                    //
-                    if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
-                } else {
-
-                    if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
-                        continue;
-                    }
-                    // Not-Entitled
-                    if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                    continue;
                 }
+                //
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            } else {
+
+                if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
+                    continue;
+                }
+                // Not-Entitled
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             }
 
             //
             //
             $accruals = json_decode($policy['accruals'], true);
             //
-            if (checkPolicyESTA($policy['sid']) != 1) {
-                if (!isset($accruals['employeeTypes'])) continue;
-                if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
-            }
-
-            if (checkPolicyESTA($policy['sid']) == 1) {
-                if (!isset($accruals['employeeTypes'])) continue;
-                if (in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
-            }
+            if (!isset($accruals['employeeTypes'])) continue;
+            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
             //
             $t = getEmployeeAccrual(
                 $policy['sid'], // Policy id

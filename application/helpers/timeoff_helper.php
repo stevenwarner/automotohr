@@ -839,9 +839,11 @@ if (!function_exists('getEmployeeAccrual')) {
                 $r
             );
         }
-
-
-        if (checkPolicyESTA($policyId) == 1 && isAllowedESTAPolicy($asOfToday, $employeeJoiningDate, $accruals['employeeTypes']) == 1) {
+        // for the new ESTA policy
+        if (
+            checkPolicyESTA($policyId) == 1 &&
+            isAllowedESTAPolicy($asOfToday, $employeeJoiningDate, $accruals['employeeTypes']) == 1
+        ) {
             //
             return processESTAPolicy(
                 $policyId,
@@ -2260,6 +2262,13 @@ if (!function_exists('isAllowedESTAPolicy')) {
     function isAllowedESTAPolicy($asOfToday, $employeeJoiningDate, $employeeType)
     {
         //
+        if (in_array("parttime", $employeeType)) {
+            return 1;
+        }
+        if (!in_array("fulltime", $employeeType)) {
+            return 0;
+        }
+        //
         $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
         $todayDate = getFormatedDate($todayDate);
 
@@ -2271,23 +2280,7 @@ if (!function_exists('isAllowedESTAPolicy')) {
         }
         //
         $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
-
         //
-
-        if (in_array("fulltime", $employeeType)) {
-
-            if ($difference >= 730) {
-                return 0;
-            } else {
-                return 1;
-            }
-        } else {
-
-            if ($difference >= 365) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
+        return $difference >= 730 ? 0 : 1;
     }
 }
