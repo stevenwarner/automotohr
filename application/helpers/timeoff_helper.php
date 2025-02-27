@@ -2271,13 +2271,6 @@ if (!function_exists('isAllowedESTAPolicy')) {
         //
         $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
         $todayDate = getFormatedDate($todayDate);
-
-        $todayDateObj = new DateTime($todayDate);
-        $employeeJoiningDateObj = new DateTime($employeeJoiningDate);
-        //
-        if ($todayDateObj < $employeeJoiningDateObj) {
-            return 1;
-        }
         //
         $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
         //
