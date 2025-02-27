@@ -2265,7 +2265,7 @@ if (!function_exists('isAllowedESTAPolicy')) {
         if (in_array("parttime", $employeeType)) {
             return 1;
         }
-        if (!in_array("fulltime", $employeeType)) {
+        if (!in_array("fulltime", $employeeType) && !in_array("full-time", $employeeType)) {
             return 0;
         }
         //
