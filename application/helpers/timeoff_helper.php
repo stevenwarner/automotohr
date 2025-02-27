@@ -839,8 +839,11 @@ if (!function_exists('getEmployeeAccrual')) {
                 $r
             );
         }
-
-        if (checkPolicyESTA($policyId) == 1 && isAllowedESTAPolicy($asOfToday, $employeeJoiningDate) == 1) {
+        // for the new ESTA policy
+        if (
+            checkPolicyESTA($policyId) == 1 &&
+            isAllowedESTAPolicy($asOfToday, $employeeJoiningDate, $accruals['employeeTypes']) == 1
+        ) {
             //
             return processESTAPolicy(
                 $policyId,
@@ -856,7 +859,7 @@ if (!function_exists('getEmployeeAccrual')) {
                 $r
             );
         }
-        
+
         // Check if employee is on probation
         if ($employementStatus == 'probation') {
             // Probation
@@ -2107,22 +2110,43 @@ if (!function_exists('processESTAPolicy')) {
         //
         $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
         //
-        if ($difference >= 365) {
-            $r['Reason'] = 'Employee has worked for more than 1 year.';
-            return $r;
+
+
+        if (in_array('fulltime', $accruals['employeeType'])) {
+            if ($difference >= 730) {
+                $r['Reason'] = 'Employee has worked for more than 2 year.';
+                return $r;
+            }
+        } else {
+
+            if ($difference >= 365) {
+                $r['Reason'] = 'Employee has worked for more than 1 year.';
+                return $r;
+            }
         }
         //
         $allowedHours = 0;
         //
-        if ($difference < 90) {
+
+        $dayscheck = 90;
+        if (in_array('parttime', $accruals['employeeType'])) {
+
+            $dayscheck = 120;
+        }
+
+        if ($difference < $dayscheck) {
             $r['Reason'] = 'Employee do not meet accrual of 90 days for this policy';
             return $r;
         } else {
             //
             $allowedHours = 40;
-            $difference = $difference - 90; // this needs to be fixed
+            $difference = $difference - $dayscheck; // this needs to be fixed
             //
-            $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +91 days'));
+            if (in_array('parttime', $accruals['employeeType'])) {
+                $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +121 days'));
+            } else {
+                $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +91 days'));
+            }
             //
             $startTimestamp = strtotime($earningHoursStartDate);
             $endTimestamp = strtotime($todayDate);
@@ -2235,8 +2259,15 @@ function hasAllowedTimeBeforePolicyImplements(
 
 
 if (!function_exists('isAllowedESTAPolicy')) {
-    function isAllowedESTAPolicy($asOfToday, $employeeJoiningDate)
+    function isAllowedESTAPolicy($asOfToday, $employeeJoiningDate, $employeeType)
     {
+        //
+        if (in_array("parttime", $employeeType)) {
+            return 1;
+        }
+        if (!in_array("fulltime", $employeeType)) {
+            return 0;
+        }
         //
         $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
         $todayDate = getFormatedDate($todayDate);
@@ -2249,10 +2280,7 @@ if (!function_exists('isAllowedESTAPolicy')) {
         }
         //
         $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
-        if ($difference >= 365) {
-            return 0;
-        } else {
-            return 1;
-        }
+        //
+        return $difference >= 730 ? 0 : 1;
     }
 }
