@@ -648,7 +648,7 @@ class Testing extends CI_Controller
         //
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->where_in('employee_type', ['fulltime','full-time']);
+        $this->db->where_in('employee_type', ['fulltime', 'full-time']);
         $this->db->where('parent_sid <>', 0);
         $this->db->where('employment_date', null);
         $this->db->where('is_executive_admin', 0);
@@ -688,7 +688,7 @@ class Testing extends CI_Controller
         echo "All Done";
     }
 
-     /**
+    /**
      * 
      */
     private function addLastRead($sid)
@@ -1077,7 +1077,7 @@ class Testing extends CI_Controller
                 $totalJobsForFeed++;
             }
         }
-        _e($totalJobsForFeed,true,true);
+        _e($totalJobsForFeed, true, true);
 
         // Post data to browser
         header('Content-type: text/xml');
@@ -1111,9 +1111,10 @@ class Testing extends CI_Controller
 
         return $validSlug;
     }
-   
 
-    public function duplicateDocumentFixer () {
+
+    public function duplicateDocumentFixer()
+    {
         $this->db->select('sid, document_sid, user_sid, user_type');
         $this->db->from('documents_assigned');
         $this->db->where('document_sid <>', 0);
@@ -1132,14 +1133,14 @@ class Testing extends CI_Controller
                     ->get("documents_assigned")
                     ->result_array();
                 //
-                _e($results,true);
+                _e($results, true);
                 //
-                for($i=0; $i<(count($results)-1); $i++){
+                for ($i = 0; $i < (count($results) - 1); $i++) {
                     $this->movedDocumentToHistory($results[$i]['sid']);
                 }
             }
         }
-        _e(count($duplicateRows),true,true);
+        _e(count($duplicateRows), true, true);
     }
 
     function movedDocumentToHistory($sid)
@@ -1174,7 +1175,8 @@ class Testing extends CI_Controller
         $this->db->update('documents_assigned', $data_to_update);
     }
 
-    function addScormCourses () {
+    function addScormCourses()
+    {
         //
         $results = $this->db->select("sid, course_file_name, Imsmanifist_json")
             ->where("company_sid", 0)
@@ -1197,10 +1199,54 @@ class Testing extends CI_Controller
         }
     }
 
-    function testESTA () {
-        $this->load->model('timeoff_model');
-        $employees = $this->timeoff_model->getPolicyEmployees(24, 15708);
-        _e($employees,true,true);
+    function testESTA()
+    {
+        $array = [
+            'method' => 'hours_per_month',
+            'time' => 'none',
+            'frequency' => 'none',
+            'frequencyVal' => 1,
+            'rate' => 40,
+            'rateType' => 'total_hours',
+            'applicableTime' => 0,
+            'applicableTimeType' => 'hours',
+            'carryOverCheck' => 'yes',
+            'carryOverType' => 'total_hours',
+            'carryOverVal' => 72,
+            'carryOverCycle' => 72,
+            'negativeBalanceCheck' => 'no',
+            'negativeBalanceType' => 'hours',
+            'negativeBalanceVal' => 0,
+            'applicableDate' => 0,
+            'applicableDateType' => 'hireDate',
+            'resetDate' => 0,
+            'resetDateType' => 'policyDate',
+            'newHireTime' => 0,
+            'newHireTimeType' => 'hours',
+            'newHireRate' => 0,
+            'employeeTypes' => [
+                0 => 'parttime',
+            ],
+            'plans' => [],
+            'defaultFlow' => 1,
+            'employee_type_original' => 'fulltime'
+        ];
+        $this->load->helper("timeoff");
+
+        $response = getEmployeeAccrual(
+            2,
+            59,
+            "permanent",
+            "2024-02-28",
+            480,
+            $array,
+            0,
+            "2025-04-28",
+            "H:M",
+            1
+        );
+
+        _e($response);
     }
 }
 
@@ -1229,5 +1275,3 @@ if (!function_exists('remakeSalary')) {
         return $salary;
     }
 }
-
-

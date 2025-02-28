@@ -2110,77 +2110,83 @@ if (!function_exists('processESTAPolicy')) {
         //
         $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
         //
-
-
-        if ($accruals['employee_type_original'] == 'fulltime') {
-            if ($difference >= 730) {
-                $r['Reason'] = 'Employee has worked for more than 2 year.';
-                return $r;
-            }
-        } else {
-
-            if ($difference >= 365) {
-                $r['Reason'] = 'Employee has worked for more than 1 year.';
-                return $r;
-            }
-        }
-        //
-        $allowedHours = 0;
-        //
-
-        $dayscheck = 90;
-        if ($accruals['employee_type_original'] == "parttime") {
-
-            $dayscheck = 120;
-        }
-
-        if ($difference < $dayscheck) {
-            $r['Reason'] = 'Employee do not meet accrual of 90 days for this policy';
+        if ($accruals['employee_type_original'] == 'fulltime' && $difference >= (365 * 2)) {
+            $r['Reason'] = 'Employee has worked for more than 2 year.';
             return $r;
-        } else {
-            //
-            $allowedHours = 40;
-            $difference = $difference - $dayscheck; // this needs to be fixed
-            //
-            if ($accruals['employee_type_original'] == "parttime") {
-                $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +121 days'));
-            } else {
-                $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +91 days'));
-            }
-            //
-            $startTimestamp = strtotime($earningHoursStartDate);
-            $endTimestamp = strtotime($todayDate);
-            //
-            for ($currentDate = $startTimestamp; $currentDate <= $endTimestamp; $currentDate = strtotime("+1 day", $currentDate)) {
-                if (date('w', $currentDate) == 0) { // 0 means Sunday
-                    $allowedHours  = $allowedHours + 1;
-                }
-            }
         }
-        //
-        if ($allowedHours > 72) {
-            $allowedHours = 72;
+        // set the default hours
+        $allowedHours = 0;
+        // set for full time employees
+        $dayscheck = $accruals['employee_type_original'] == "parttime"
+            ? 120
+            : 90;
+        // check if policy is applicable
+        // after completing the accrual time
+        if ($difference < $dayscheck) {
+            $r['Reason'] = 'Employee do not meet accrual of ' . ($dayscheck) . ' days for this policy';
+            return $r;
         }
+        // get the list of worked years and
+        // current year
+        $anniversaryList = getAnniversaryPeriods($employeeJoiningDate, $todayDate);
+        // allow default 40 hours
+        $allowedHours = 0;
         //
         $employeeAnniversaryDate = getEmployeeAnniversary($employeeJoiningDate, $todayDate);
         //
-        $consumedTimeInMinutes = $CI->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
-            $policyId,
-            $employeeId,
-            $employeeAnniversaryDate['lastAnniversaryDate'],
-            $employeeAnniversaryDate['upcomingAnniversaryDate']
-        );
+        $balanceHolder = [];
         //
-        $allowedTimeInMinutes = $allowedHours * 60;
+        foreach ($anniversaryList as $k0 => $item) {
+            // get the time between periods
+            $consumedTimeInMinutes = $CI
+                ->timeoff_model
+                ->getEmployeeConsumedTimeByResetDateNew(
+                    $policyId,
+                    $employeeId,
+                    $item['start'],
+                    $item['end']
+                );
+            // get the difference
+            $periodDiff = dateDifferenceInDays($item["start"], $todayDate);
+            //
+            $allowedHours = getTheAllowedTimeForSpecificYear(
+                $periodDiff,
+                $dayscheck,
+                $item["start"],
+                $todayDate,
+                $accruals,
+            );
+            // for first year
+            if ($k0 != 0) {
+                // get the time from last year
+                $allowedHours =
+                    $allowedHours + $balanceHolder["remaining"];
+                //
+                if ($allowedHours > 72) {
+                    $allowedHours = 72;
+                }
+            }
+            // set the balance
+            $balanceHolder = [
+                "start" => $item["start"],
+                "end" => $item["end"],
+                "period" => $item["start"] . " - " . $item["end"],
+                "allowed" => $allowedHours,
+                "consumed" => $consumedTimeInMinutes,
+                "remaining" => $allowedHours - ($consumedTimeInMinutes / 60)
+            ];
+        }
         //
-        $r['AllowedTime'] = $allowedTimeInMinutes;
-        $r['ConsumedTime'] = $consumedTimeInMinutes;
-        $r['RemainingTime'] = $allowedTimeInMinutes - $consumedTimeInMinutes;
+        $remainingTime = $balanceHolder["remaining"] * 60;
+        //
+        $r['AllowedTime'] = $balanceHolder["allowed"] * 60;
+        $r['ConsumedTime'] = $balanceHolder["remaining"] * 60;
+        $r['RemainingTime'] = $remainingTime;
         $r['MaxNegativeTime'] = $r['RemainingTime'];
         $r['RemainingTimeWithNegative'] = $r['RemainingTime'];
         $r['EmployementStatus'] = $employementStatus;
-        $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
-        $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
+        $r['lastAnniversaryDate'] =  $balanceHolder['start'];
+        $r['upcomingAnniversaryDate'] = $balanceHolder['end'];
         //
         return $r;
     }
@@ -2275,5 +2281,42 @@ if (!function_exists('isAllowedESTAPolicy')) {
         $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
         //
         return $difference >= 730 ? 0 : 1;
+    }
+}
+
+
+if (!function_exists("getTheAllowedTimeForSpecificYear")) {
+    function getTheAllowedTimeForSpecificYear(
+        $difference,
+        $dayscheck,
+        $employeeJoiningDate,
+        $todayDate,
+        $accruals
+    ) {
+        // allow default 40 hours
+        $allowedHours = 40;
+        //
+        $difference = $difference - $dayscheck; // this needs to be fixed
+        //
+        if ($accruals['employee_type_original'] == "parttime") {
+            $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +121 days'));
+        } else {
+            $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +91 days'));
+        }
+        //
+        $startTimestamp = strtotime($earningHoursStartDate);
+        $endTimestamp = strtotime($todayDate);
+        //
+        for ($currentDate = $startTimestamp; $currentDate <= $endTimestamp; $currentDate = strtotime("+1 day", $currentDate)) {
+            if (date('w', $currentDate) == 0) { // 0 means Sunday
+                $allowedHours  = $allowedHours + 1;
+            }
+        }
+        //
+        if ($allowedHours > 72) {
+            $allowedHours = 72;
+        }
+
+        return $allowedHours;
     }
 }

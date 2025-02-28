@@ -4782,3 +4782,36 @@ if (!function_exists("generateUniqueCode")) {
         return $code;
     }
 }
+
+
+if (!function_exists("getAnniversaryPeriods")) {
+    function getAnniversaryPeriods($joinedDate, $customDate)
+    {
+        // Convert the input dates to DateTime objects
+        $joinedDate = new DateTime($joinedDate);
+        $customDate = new DateTime($customDate);
+        // Initialize an array to store the anniversary periods
+        $anniversaryPeriods = [];
+        // Get the year of the joined date
+        $joinedYear = (int)$joinedDate->format('Y');
+        // Loop through the years from the joined year to the custom year
+        while ($joinedDate->format('Y') <= $customDate->format('Y')) {
+            // Set the current anniversary for this year
+            $anniversary = $joinedDate->setDate($joinedYear, $joinedDate->format('m'), $joinedDate->format('d'));
+            // If the anniversary is before the custom date, add the period to the list
+            if ($anniversary <= $customDate) {
+                // Set the next year's anniversary for the end period
+                $nextAnniversary = (clone $anniversary)->modify('+1 year');
+                // Add the start and end date for the period
+                $anniversaryPeriods[] = [
+                    'start' => $anniversary->format('Y-m-d'),
+                    'end' => $nextAnniversary->format('Y-m-d')
+                ];
+            }
+            // Increment the year
+            $joinedYear++;
+        }
+        //
+        return $anniversaryPeriods;
+    }
+}
