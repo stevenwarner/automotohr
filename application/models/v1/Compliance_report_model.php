@@ -1638,7 +1638,7 @@ class Compliance_report_model extends CI_Model
 		]);
 		$report["question_answers"] = $this->getCSPReportQuestionAnswers($reportId);
 		//
-		$report["emails"] = $this->getComplianceEmails($reportId, 0);
+		// $report["emails"] = $this->getComplianceEmails($reportId, 0);
 		$report["libraryItems"] = $this->getComplianceReportFiles($reportId, 0);
 		//
 		return $report;
@@ -1777,11 +1777,10 @@ class Compliance_report_model extends CI_Model
 		]);
 		//
 		$report["question_answers"] = $this->getCSPQuestionAnswers($incidentId);
-
 		//
-		$report["emails"] = $this->getComplianceEmails($reportId, $incidentId);
+		// $report["emails"] = $this->getComplianceEmails($reportId, $incidentId);
 		$report["libraryItems"] = $this->getComplianceReportFiles($reportId, $incidentId);
-
+		//
 		return $report;
 	}
 
@@ -3230,7 +3229,7 @@ class Compliance_report_model extends CI_Model
 		return $this->db->get("csp_reports_incidents")->result_array();
 	}
 
-	public function getComplianceEmails($reportId, $incidentId = 0)
+	public function getComplianceEmails($reportId, $incidentId = 0, $current_user)
 	{
 		$this->db->select('*');
 		$this->db->where('csp_reports_sid', $reportId);
@@ -3270,8 +3269,40 @@ class Compliance_report_model extends CI_Model
 					$incident_emails[$userId]['userId'] = $userId;
 				}
 				//
+				$email['email_type'] = 'Sent';
 				$incident_emails[$userId]['emails'][] = $email;
 				//
+				if ($email['receiver_sid'] == $current_user || ($email['receiver_sid'] == 0 && $email["manual_email"] == $current_user)) {
+					if ($email['receiver_sid'] == 0) {
+						$split_email = explode('@', $email['manual_email']);
+						$receiverId =  $split_email[0];
+					} else {
+						$receiverId = $email['receiver_sid'];
+					}
+					//
+					if (!array_key_exists($receiverId, $incident_emails)) {
+						//
+						$receiverName = '';
+						//
+						if ($email["manual_email"] && $email['receiver_sid'] == 0) {
+							$split_email = explode('@', $email['manual_email']);
+							$receiverName = $split_email[0] . ' (OutSider)';
+						} else {
+							$employeeInfo = $this->get_employee_info_by_id($receiverId);
+							$userType = $this->getUserType($employeeInfo, $incidentId, $receiverId);
+							//
+							$receiverName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
+						}
+	
+						//	
+						$incident_emails[$receiverId]['userName'] = $receiverName;
+						$incident_emails[$receiverId]['userId'] = $receiverId;
+						
+					}
+					//
+					$email['email_type'] = 'Received';
+					$incident_emails[$receiverId]['emails'][] = $email;
+				}
 			}
 		}
 		//
@@ -3299,5 +3330,45 @@ class Compliance_report_model extends CI_Model
 	function addComplianceEmailAttachment($dataToInsert)
 	{
 		$this->db->insert('csp_reports_email_attachments', $dataToInsert);
+	}
+
+	/**
+	 * Add files to report
+	 *
+	 * @param int $reportId
+	 * @param int $incidentId
+	 * @param string $loggedInEmployeeEmail
+	 * @param string $link
+	 * @param string $linkType
+	 * @param string $title
+	 * @return array
+	 */
+	public function addExternalEmployeeFilesLinkToReport(
+		int $reportId,
+		int $incidentId,
+		string $loggedInEmployeeEmail,
+		string $link,
+		string $linkType,
+		string $title
+	) {
+		//
+		$todayDateTime = getSystemDate();
+		// lets first add the report
+		$fileData = [
+			"csp_reports_sid" => $reportId,
+			"csp_incident_type_sid" => $incidentId,
+			"file_type" => $linkType,
+			"file_value" => $link,
+			"s3_file_value" => $link,
+			"title" => $title,
+			"created_by" => 0,
+			"manual_email" => $loggedInEmployeeEmail,
+			"created_at" => $todayDateTime,
+			"updated_at" => $todayDateTime,
+		];
+		//
+		$this->db->insert("csp_reports_files", $fileData);
+		//
+		return $this->db->insert_id();
 	}
 }

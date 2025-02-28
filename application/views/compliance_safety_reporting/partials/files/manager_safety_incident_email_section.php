@@ -53,7 +53,7 @@
                                                                     <h4 class="panel-title">
                                                                         <?php
                                                                         
-                                                                            $email_type = 'Sent';
+                                                                            $email_type = $incident_email['email_type'];
                                                                             $read_function = '';
                                                                             
                                                                             if ($incident_email['is_read'] == 0) {

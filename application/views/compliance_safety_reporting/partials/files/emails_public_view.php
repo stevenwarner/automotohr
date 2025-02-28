@@ -1,9 +1,8 @@
-<?php 
-$companyId = $session['company_detail']['sid'];
-$employeeId = $session['employer_detail']['sid'];
+<?php
+    $reportId =  $segments["reportId"];
+    $incidentId =  $segments["incidentId"];
 ?>
 <!-- Email Section Start -->
-   	<script type="text/javascript" src="https://automotohr.com/assets/ckeditor/ckeditor.js?v=1.0.0"></script>
 
 <div class="table-responsive table-outer">
     <div class="panel panel-blue">
@@ -19,23 +18,23 @@ $employeeId = $session['employer_detail']['sid'];
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <table class="table table-bordered table-hover table-stripped">
                                         <tbody>
-                                            <tr>
-                                                <td><b>Select Email Type</b></td>
-                                                <td>
-                                                    <div class="form-group edit_filter autoheight">
-                                                        <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
-                                                            Internal System Email
-                                                            <input <?php echo !empty($employees) ? 'checked="checked"' : ''; ?> name="send_type" class="email_type" type="radio" value="system" />
-                                                            <div class="control__indicator"></div>
-                                                        </label>
-                                                        <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
-                                                            Outside Email
-                                                            <input <?php echo empty($employees) ? 'checked="checked"' : ''; ?> class="email_type" name="send_type" type="radio" value="manual" />
-                                                            <div class="control__indicator"></div>
-                                                        </label>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                                <tr id="jsEmailFilter">
+                                                    <td><b>Select Email Type</b></td>
+                                                    <td>
+                                                        <div class="form-group edit_filter autoheight">
+                                                            <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
+                                                                Internal System Email
+                                                                <input <?php echo !empty($employees) ? 'checked="checked"' : ''; ?> name="send_type" class="email_type" type="radio" value="system" />
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                            <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
+                                                                Outside Email
+                                                                <input <?php echo empty($employees) ? 'checked="checked"' : ''; ?> class="email_type" name="send_type" type="radio" value="manual" />
+                                                                <div class="control__indicator"></div>
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                </tr>
                                             <tr>
                                                 <td><b>Message To</b> ;</td>
                                                 <td id="system_email">
@@ -732,13 +731,13 @@ $employeeId = $session['employer_detail']['sid'];
 
 <link rel="StyleSheet" type="text/css" href="<?= base_url('assets/css/chosen.css'); ?>"  />
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets/js/chosen.jquery.js'); ?>"></script>
+
 <script>
     var employeesList = <?= json_encode($employees); ?>;
-    var employeeId = '<?php echo $employeeId; ?>';
-    var companyId = '<?php echo $companyId; ?>';
     var reportId = '<?php echo $reportId; ?>';
     var incidentId = '<?php echo $incidentId; ?>';
     var baseURL = '<?php echo base_url(); ?>';
     var uploadVideoSize = '<?php echo UPLOAD_VIDEO_SIZE; ?>';
     var errorUploadVideoSize = '<?php echo ERROR_UPLOAD_VIDEO_SIZE; ?>';
+    var employeeType = '<?php echo $employee_type; ?>';
 </script>
