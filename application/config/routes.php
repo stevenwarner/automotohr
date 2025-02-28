@@ -2626,10 +2626,25 @@ $route["csp/edit/(:num)"]["get"] =
   "v1/Compliance_safety_reporting_public/edit/$1";
 
 $route["compliance_safety_reporting/save_email_manual_attachment"]["post"] =
-  "v1/Compliance_safety_reporting/save_email_manual_attachment";
+  "v1/Compliance_safety_reporting/saveEmailManualAttachment";
 
 $route["compliance_safety_reporting/send_compliance_report_email"]["post"] =
   "v1/Compliance_safety_reporting/sendComplianceReportEmail";  
 
 $route["compliance_safety_reporting/validate_vimeo"]["post"] =
-  "v1/Compliance_safety_reporting/validate_vimeo_video";  
+  "v1/Compliance_safety_reporting/validateVimeoVideoLink"; 
+
+$route["compliance_safety_reporting/update_email_read_flag"]["post"] =
+  "v1/Compliance_safety_reporting/updateEmailReadFlag";
+
+$route["compliance_safety_reporting_public/save_email_manual_attachment"]["post"] =
+  "v1/Compliance_safety_reporting_public/saveEmailManualAttachment";
+
+$route["compliance_safety_reporting_public/validate_vimeo"]["post"] =
+  "v1/Compliance_safety_reporting_public/validateVimeoVideoLink";
+
+$route["compliance_safety_reporting_public/send_compliance_report_email"]["post"] =
+  "v1/Compliance_safety_reporting_public/sendComplianceReportEmail";
+
+$route["compliance_safety_reporting_public/update_email_read_flag"]["post"] =
+  "v1/Compliance_safety_reporting_public/updateEmailReadFlag";

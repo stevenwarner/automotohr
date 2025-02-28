@@ -56,6 +56,7 @@
                     <?php $this->load->view("compliance_safety_reporting/partials/incidents/listing"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/documents"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/audio"); ?>
+                    <?php $this->load->view("compliance_safety_reporting/partials/files/emails_public_view"); ?>
 
                     <!-- Add Notes -->
                     <div class="panel panel-default">

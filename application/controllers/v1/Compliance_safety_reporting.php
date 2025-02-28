@@ -233,6 +233,8 @@ class Compliance_safety_reporting extends Base_csp
                 ]
             );
         //
+        $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, 0, $this->getLoggedInEmployee("sid"));
+        //
         if (!$this->data["report"]) {
             return redirect("/");
         }
@@ -281,7 +283,9 @@ class Compliance_safety_reporting extends Base_csp
                 $reportId,
                 $incidentId
             );
-
+        //
+        $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, $incidentId, $this->getLoggedInEmployee("sid"));
+        //
         if ($this->data["report"]["notes"]) {
             foreach ($this->data["report"]["notes"] as $k0 => $v0) {
                 if ($v0["note_type"] === "personal" && $v0["created_by"] != $this->getLoggedInEmployee("sid")) {
@@ -821,7 +825,7 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
-    public function save_email_manual_attachment()
+    public function saveEmailManualAttachment()
     {
         $session = $this->session->userdata('logged_in');
         $employee_sid   = $session["employer_detail"]["sid"];
@@ -928,7 +932,7 @@ class Compliance_safety_reporting extends Base_csp
         }
     }
 
-    public function validate_vimeo_video()
+    public function validateVimeoVideoLink()
     {
         $str = $this->input->post('url');
         if ($str != "") {
@@ -974,46 +978,7 @@ class Compliance_safety_reporting extends Base_csp
         }
     }
 
-    public function vimeo_get_id($str)
-    {
-        if ($str != "") {
-            if ($_SERVER['HTTP_HOST'] == 'localhost') {
-                $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
-                $response = @file_get_contents($api_url);
-
-                if (!empty($response)) {
-                    $response = json_decode($response, true);
-
-                    if (isset($response['video_id'])) {
-                        return $response['video_id'];
-                    } else {
-                        return 0;
-                    }
-                } else {
-                    return 0;
-                }
-            } else {
-                $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
-                $cSession = curl_init();
-                curl_setopt($cSession, CURLOPT_URL, $api_url);
-                curl_setopt($cSession, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($cSession, CURLOPT_HEADER, false);
-                $response = curl_exec($cSession);
-                curl_close($cSession);
-                $response = json_decode($response, true); //$response = @file_get_contents($api_url);
-
-                if (isset($response['video_id'])) {
-                    return $response['video_id'];
-                } else {
-                    return 0;
-                }
-            }
-        } else {
-            return 0;
-        }
-    }
-
-    function update_email_read_flag()
+    function updateEmailReadFlag()
     {
         $email_sid              = $_POST['email_sid'];
 
