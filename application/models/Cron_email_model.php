@@ -225,6 +225,7 @@ class Cron_email_model extends CI_Model
 
             foreach ($this->executiveAdminsList as $exRow) {
 
+                $executiveAdminsLMSReportAttachement = [];
                 $companyReplaceArray = [
                     "{{company_name}}" => '',
                     "{{company_address}}" => '',
@@ -275,17 +276,18 @@ class Cron_email_model extends CI_Model
                     $templateBody
                 );
 
-                
+                //
+                $executiveAdminsLMSReportAttachement = $this->executiveAdminsLMSReport[$exRow['data']['email']];
+
                 log_and_send_email_with_attachment(
                     FROM_EMAIL_NOTIFICATIONS,
                     $exRow['data']['email'],
                     $subject,
                     $body,
                     $fromName,
-                    '',
+                    $executiveAdminsLMSReportAttachement,
                     "sendMailWithAttachmentAsString"
                 );
-
             }
         }
     }
@@ -336,8 +338,6 @@ class Cron_email_model extends CI_Model
             }
 
 
-
-
             // get the ream member ids
             $response = getMyDepartmentAndTeams($v0["employer_sid"], "courses", "get", $this->companyId);
             //
@@ -371,7 +371,6 @@ class Cron_email_model extends CI_Model
 
             echo "Report generated \n";
 
-
             // check is executive admin
             if ($this->checkExecutiveAdmin($v0["employer_sid"]) == 1) {
 
@@ -404,7 +403,6 @@ class Cron_email_model extends CI_Model
                 $this->executiveAdminsList[$v0['email']]['data']['contact_name'] = $v0['contact_name'];
                 $this->executiveAdminsList[$v0['email']]['data']['email'] = $v0['email'];
 
-
                 //
                 $this->executiveAdminsLMSReport[$v0['email']]['name'] = $report['name'];
                 $this->executiveAdminsLMSReport[$v0['email']]['data'][0] = $report['data'][0];
@@ -418,13 +416,11 @@ class Cron_email_model extends CI_Model
                 unset($temparray['data'][2]);
 
                 $temparray['data'][end(array_keys($temparray['data'])) + 1] = [];
-                array_push($this->executiveAdminsReport[$v0['email']]['data'], ["company Name", $companyDetails["company_name"]]);
+                array_push($this->executiveAdminsLMSReport[$v0['email']]['data'], ["company Name", $companyDetails["company_name"]]);
                 foreach ($temparray['data'] as $reportdata) {
-                    array_push($this->executiveAdminsReport[$v0['email']]['data'], $reportdata);
+                    array_push($this->executiveAdminsLMSReport[$v0['email']]['data'], $reportdata);
                 }
             } else {
-
-
                 //
                 $this->sendCourseReportEmails($report, $v0);
                 echo "Report Sent \n\n";
@@ -1194,9 +1190,7 @@ class Cron_email_model extends CI_Model
                     //
                     foreach ($managersList as $key => $empRow) {
                         //
-
                         if ($this->checkExecutiveAdmin($empRow['employer_sid']) == 1) {
-
                             //
                             $viewCode = str_replace(
                                 ['/', '+'],
@@ -1224,7 +1218,6 @@ class Cron_email_model extends CI_Model
                             $executiveAdminsList[$empRow['email']]['data']['contact_name'] = $empRow['contact_name'];
                             $executiveAdminsList[$empRow['email']]['data']['email'] = $empRow['email'];
 
-
                             $executiveAdminsReport[$empRow['email']]['name'] = $report['name'];
                             $executiveAdminsReport[$empRow['email']]['data'][0] = $report['data'][0];
                             $executiveAdminsReport[$empRow['email']]['data'][1] = [];
@@ -1250,7 +1243,6 @@ class Cron_email_model extends CI_Model
                             $templateBody = $template["text"];
 
                             // set replace array
-                            //
                             $replaceArray = $companyReplaceArray;
                             //
                             $replaceArray["{{baseurl}}"] = base_url();
@@ -1279,7 +1271,6 @@ class Cron_email_model extends CI_Model
                             //
                             $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
                             $templateBody = str_replace('{{download_report}}', $downloadReport, $templateBody);
-
 
                             // set keys
                             $replaceKeys = array_keys($replaceArray);
