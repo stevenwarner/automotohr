@@ -92,7 +92,7 @@
                                                             </div>
                                                             <div class="hr-innerpadding">
                                                                 <div class="table-responsive">
-                                                                    <table class="table table-bordered table-hover table-striped">
+                                                                    <table class="table table-bordered table-hover table-striped" id="jsttblTypeListing">
                                                                         <thead>
                                                                             <tr>
                                                                                 <th>Name</th>
@@ -110,7 +110,6 @@
                                                                                 <td>
                                                                                     <button class="btn btn-sm btn-danger" id="8h" title="Delete" src="Disable" type="button"><i class="fa fa-trash"></i></button>
                                                                                 </td>
-
                                                                             </tr>
                                                                         </tbody>
                                                                     </table>
@@ -144,10 +143,8 @@
 <link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
 
-
 <link rel="stylesheet" type="text/css" href="<?= base_url(); ?>/assets/v1/plugins/ms_modal/main.css?v=1740748262">
 <script type="text/javascript" src="<?= base_url(); ?>/assets/v1/plugins/ms_modal/main.js?v=1740748262"></script>
-
 
 
 <script type="text/javascript">
@@ -296,40 +293,82 @@
         let bgColorCode = $("#bg_color_code").val();
         let ColorCode = $("#color_code").val();
 
+      
+
         // Adding a new row to the table
-        addRowToTable(4, listName, listLevel, bgColorCode, ColorCode);
+        addRowToTable(listName, listLevel, bgColorCode, ColorCode);
 
         // Display the updated table
-        // displayTable();
+       // displayTable();
 
-        function addRowToTable(incidentTypeId, listName, listLevel, bgColorCode, ColorCode) {
+        function addRowToTable(listName, listLevel, bgColorCode, ColorCode) {
             const newRow = {
-                incidentTypeId,
-                listLevel,
                 listName,
+                listLevel,
                 bgColorCode,
                 ColorCode
             };
 
             tempTable.push(newRow);
+
+            let tempId = tempTable.length - 1;
+
             alertify.alert('Success! ', "List Added Successfully");
 
             $("#list_name").val('');
             $("#list_level").val('');
             $("#bg_color_code").val('');
             $("#color_code").val('');
-
             // console.log(`Added new row: ${JSON.stringify(newRow)}`);
+
+            //
+            var newListRow = '';
+            newListRow += '<tr>';
+            newListRow += ' <td>' + listName + '</td>';
+            newListRow += '<td>' + listLevel + '</td>';
+            newListRow += '<td>' + bgColorCode + '</td>';
+            newListRow += '<td>';
+            newListRow += '<button class="btn btn-sm btn-danger jsRemoveList" data-id="' + tempId + '" title="Delete" src="Disable" type="button"><i class="fa fa-trash"></i></button>';
+            newListRow += '</td>';
+            newListRow += '</tr>';
+            $('#jsttblTypeListing tbody').append(newListRow);
+
         }
 
-        
-        function displayTable() {
+
+  
+    });
+
+
+    function displayTable() {
             console.log("-------------------");
             tempTable.forEach(row => {
-                console.log(`${row.incidentTypeId}  | ${row.listName} | ${row.ColorCode}`);
+                console.log(`${row.listName} | ${row.ColorCode}`);
             });
         }
-            
+
+
+
+    //
+    $(document).on('click', '.jsRemoveList', function() {
+
+        var id = $(this).data('id');
+        var row = $(this).closest('tr');
+
+        alertify.confirm('Confirmation', "Are you sure you want to delete this Item?",
+            function() {
+                row.remove();
+                tempTable.splice(id, 1);
+                alertify.alert('Item Deleted Successfully');
+
+
+                displayTable(); 
+
+
+            },
+            function() {
+                // 
+            });
 
     });
 </script>
