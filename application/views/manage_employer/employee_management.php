@@ -329,8 +329,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                     <p style="font-size:16px;font-weight: bold;"><?php echo $name; ?></p>
                                                                 <?php } ?>
                                                                 <?php
-                                                                echo '<br />' . $employee['email'];
+                                                                echo '<br />' . $employee['email'];                                                                
                                                                 echo '<br /> <b> Primary Number: </b>' . $employee['PhoneNumber'];
+                                                                echo '<br /> <b> Employee Type: </b>' . formateEmployeeJobType($employee['employee_type']);
                                                                 echo '<br> <b> Employee Status:</b> ' . (GetEmployeeStatus($employee['last_status_text'], $employee['active']));
                                                                 ?>
                                                                 <br>

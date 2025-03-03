@@ -4815,3 +4815,24 @@ if (!function_exists("getAnniversaryPeriods")) {
         return $anniversaryPeriods;
     }
 }
+
+
+//
+if (!function_exists("formateEmployeeJobType")) {
+
+function formateEmployeeJobType(string $jobtype)
+{
+    //
+    $jobtype = strtolower($jobtype);
+    //
+    if ($jobtype == "fulltime") {
+        return "Full-Time";
+    } elseif ($jobtype == "parttime") {
+        return "Part-Time";
+    } elseif ($jobtype == "contract") {
+        return "Contractual";
+    }else{
+        return $jobtype;
+    }
+}
+}

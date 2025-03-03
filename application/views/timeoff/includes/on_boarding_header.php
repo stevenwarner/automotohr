@@ -175,6 +175,7 @@
                                     <?php echo $employee['first_name'] . ' ' . $employee['last_name']; ?>
                                     <span><?php echo $employee['access_level']; ?></span>
                                 </h3>
+                               
                                 <span>
                                     <?= get_user_anniversary_date(
                                         $employee['joined_at'],
@@ -182,7 +183,10 @@
                                         $employee['rehire_date']
                                     );
                                     ?>
-                                </span>
+                                </span><br>
+                                <span>Employee Type:
+                                        <?= formateEmployeeJobType($employee['employee_type']); ?>
+                                    </span>
                                 <!--<p>Administrator at ABC</p>-->
                                 <ul class="contact-info">
                                     <?php if (!empty($employee['PhoneNumber'])) { ?>

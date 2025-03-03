@@ -131,6 +131,11 @@ function remakeEmployeeName(o, d) {
 	if (o.timezone) {
 		r += " (" + o.timezone + ")";
 	}
+
+	//
+	if(o.employee_type){
+		r += " (" + formateEmployeeJobType(o.employee_type) + ")";
+	}
 	//
 	return r;
 }
@@ -1432,4 +1437,20 @@ function setUpcomingTimeOffs(employeeId) {
 		//
 		$(".jsTimeOffUpComing").html(rows);
 	});
+}
+
+
+
+function formateEmployeeJobType(jobtype)
+{
+    //
+    if (jobtype == "fulltime") {
+        return "Full-Time";
+    } else if (jobtype == "parttime") {
+        return "Part-Time";
+    } else if (jobtype == "contract") {
+        return "Contractual";
+    }else{
+        return jobtype;
+    }
 }

@@ -120,6 +120,7 @@ class Timeoff_model extends CI_Model
             rehire_date,
             terminated_status,
             active,
+            employee_type,
         ')
             ->from('users')
             ->where('parent_sid', $companySid)
@@ -145,6 +146,8 @@ class Timeoff_model extends CI_Model
                     $employee['registration_date'],
                     $employee['rehire_date']
                 );
+
+                $employees[$index]['employee_type'] = formateEmployeeJobType($employee['employee_type']);
             }
         }
         return $employees;
@@ -183,7 +186,8 @@ class Timeoff_model extends CI_Model
             pay_plan_flag,
             joined_at,
             registration_date,
-            rehire_date
+            rehire_date,
+            employee_type,
         ')
             ->from('users')
             ->where('parent_sid', $companySid)
@@ -1297,7 +1301,8 @@ class Timeoff_model extends CI_Model
                 users.access_level,
                 users.pay_plan_flag,
                 users.job_title,
-                users.is_executive_admin
+                users.is_executive_admin,
+                users.employee_type
             ')
             ->from('timeoff_approvers')
             ->join('users', 'timeoff_approvers.employee_sid = users.sid', 'inner')

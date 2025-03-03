@@ -3781,6 +3781,7 @@ class Employee_management extends Public_Controller
         $companyId = $this->session->userdata('logged_in')['company_detail']['sid'];
         // Fetch employees profile
         $records = $this->employee_model->GetAllEmployees($companyId);
+
         //
         if (empty($records)) {
             $resp['Msg'] = 'Employees not found';

@@ -11443,6 +11443,13 @@ if (!function_exists('remakeEmployeeName')) {
             //
             $r .= ' (' . ($tz) . ')';
         }
+
+        if (!$o['employee_type']=='') {
+         //
+         $r .= ' (' . formateEmployeeJobType($o['employee_type']) . ')';
+        }
+
+
         //
         return $r;
     }
@@ -12213,6 +12220,7 @@ if (!function_exists('getUserFields')) {
         $fields .= 'users.user_shift_minutes,';
         $fields .= 'users.profile_picture as image,';
         $fields .= 'users.employee_number,';
+        $fields .= 'users.employee_type,';
         //
         return $fields;
     }

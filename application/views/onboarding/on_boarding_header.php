@@ -375,6 +375,9 @@
                                         );
                                         ?>
                                     </span>
+                                    <span>Employee Type:
+                                        <?= formateEmployeeJobType($employee['employee_type']); ?>
+                                    </span>
                                     <ul class="contact-info">
                                         <?php if (!empty($employee['PhoneNumber'])) { ?>
                                             <li><i class="fa fa-phone"></i> <?php echo $employee['PhoneNumber']; ?></li>

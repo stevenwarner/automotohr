@@ -2635,6 +2635,7 @@ class Time_off extends Public_Controller
                     $this->res['Response'] = 'We are unable to find employee(s). Please, add employee(s) from "Create employee" page.';
                     $this->resp();
                 }
+                
                 //
                 $this->res['Data'] = $employees;
                 $this->res['Code'] = 'SUCCESS';

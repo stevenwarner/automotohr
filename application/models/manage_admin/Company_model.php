@@ -208,6 +208,7 @@ class Company_model extends CI_Model
         $this->db->select('table_one.parent_sid');
         $this->db->select('table_one.transfer_date');
         $this->db->select('table_one.languages_speak');
+        $this->db->select('table_one.employee_type');
 
         $this->db->select('table_one.complynet_job_title');
         $this->db->select('portal_job_title_templates.title');
