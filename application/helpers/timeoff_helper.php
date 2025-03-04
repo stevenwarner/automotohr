@@ -2145,7 +2145,7 @@ if (!function_exists('processESTAPolicy')) {
                     $employeeId,
                     $item['start'],
                     $item['end']
-                ); 
+                );
             // get the difference
             $periodDiff = dateDifferenceInDays($item["start"], $todayDate);
             //

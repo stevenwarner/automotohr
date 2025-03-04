@@ -4301,6 +4301,7 @@ class Timeoff_model extends CI_Model
             }
             //
             $accruals = json_decode($policy['accruals'], true);
+            $accruals["employee_type_original"] = $employementType;
             //
             $t = getEmployeeAccrual(
                 $policy['sid'], // Policy id
