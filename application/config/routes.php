@@ -2636,3 +2636,7 @@ $route["compliance_safety_reporting/send_compliance_report_email"]["post"] =
 
 $route["compliance_safety_reporting/validate_vimeo"]["post"] =
   "v1/Compliance_safety_reporting/validate_vimeo_video";  
+
+
+  $route["manage_admin/compliance_safety/incident_types_list_delete"] =
+  "manage_admin/Compliance_safety/incidentTypeListDelete";

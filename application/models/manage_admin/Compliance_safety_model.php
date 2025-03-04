@@ -161,4 +161,26 @@ class Compliance_safety_model extends CI_Model
         $type = $this->db->update('compliance_incident_types_questions', $data);
         return $type;
     }
+
+//
+    public function getIncidentTypeListings(int $id)
+    {
+        return $this
+            ->db
+            ->select([
+                "sid",
+                "incident_type_id",
+                "list_name",
+                "list_level",
+                "list_bg_color",
+                "list_color",
+                "list_instructions",
+                "created_at",
+            ])
+            ->where("incident_type_id", $id)
+            ->get("incident_type_list")
+            ->result_array();
+    }
+
+
 }

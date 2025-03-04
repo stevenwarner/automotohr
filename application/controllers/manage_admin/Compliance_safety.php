@@ -189,8 +189,31 @@ class Compliance_safety extends Admin_Controller
                     "updated_at" => $todayDateTime,
                 ]);
             //
+
+            $insert_sid = $this->db->insert_id();
+
+            $listingData = $post['listingData'];
+
+            if (!empty($listingData)) {
+                foreach ($listingData as $listRow) {
+                    if ($listRow['listName'] != '') {
+                        $insertData = [];
+                        $insertData['incident_type_id'] = $insert_sid;
+                        $insertData['list_name'] = $listRow['listName'];
+                        $insertData['list_level'] = $listRow['listLevel'];
+                        $insertData['list_bg_color'] = $listRow['bgColorCode'];
+                        $insertData['list_color'] = $listRow['ColorCode'];
+                        $insertData['list_instructions'] = $listRow['instructionse'];
+                        $insertData['created_at'] = $todayDateTime;
+
+                        $this->db->insert("incident_type_list", $insertData);
+                    }
+                }
+            }
+
             // get the questions from main report and add them to the incident
             $this->setIncidentQuestions();
+
             //
             $this->session->set_flashdata('message', '<strong>Success</strong> Report Incident Type added.');
             return redirect(
@@ -210,6 +233,11 @@ class Compliance_safety extends Admin_Controller
         // get the report type
         $this->data["report_type"] = $this->compliance_safety_model->getIncidentById($id);
 
+        $this->data["report_type_listings"] = $this->compliance_safety_model->getIncidentTypeListings($id);
+        $this->data["report_type_id"] = $id;
+
+
+
         $this->data['page_title'] = "Compliance Safety Report Incident Type - " . $this->data["report_type"]["compliance_incident_type_name"];
         $this->data['page_title'] = "Compliance Safety - Edit Report Incident type";
         // add rules
@@ -222,6 +250,9 @@ class Compliance_safety extends Admin_Controller
         } else {
             // get the sanitized post
             $post = $this->input->post(null, true);
+
+
+            $listingData = $post['listingData'];
             //
             $todayDateTime = getSystemDate();
             //
@@ -237,6 +268,25 @@ class Compliance_safety extends Admin_Controller
                     "updated_at" => $todayDateTime,
                 ]);
             $this->setIncidentQuestions();
+
+            //
+            if (!empty($listingData)) {
+                foreach ($listingData as $listRow) {
+                    if ($listRow['listName'] != '') {
+                        $insertData = [];
+                        $insertData['incident_type_id'] = $id;
+                        $insertData['list_name'] = $listRow['listName'];
+                        $insertData['list_level'] = $listRow['listLevel'];
+                        $insertData['list_bg_color'] = $listRow['bgColorCode'];
+                        $insertData['list_color'] = $listRow['ColorCode'];
+                        $insertData['list_instructions'] = $listRow['instructionse'];
+                        $insertData['created_at'] = $todayDateTime;
+
+                        $this->db->insert("incident_type_list", $insertData);
+                    }
+                }
+            }
+
 
             //
             $this->session->set_flashdata('message', '<strong>Success</strong> Report Incident Type updated.');
@@ -405,5 +455,19 @@ class Compliance_safety extends Admin_Controller
                 }
             }
         }
+    }
+
+
+    //
+    public function incidentTypeListDelete()
+    {
+
+        $post = $this->input->post(null, true);
+        $id = $post['sid'];
+
+        $this
+            ->db
+            ->where("sid", $id)
+            ->delete("incident_type_list");
     }
 }

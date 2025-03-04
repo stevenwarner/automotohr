@@ -38,14 +38,14 @@
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row field-row-autoheight">
                                                             <label for="report_name">Report Incident Name <span class="hr-required">*</span></label>
-                                                            <?php echo form_input('compliance_incident_type_name', set_value('compliance_incident_type_name', $report_type["compliance_incident_type_name"]), 'class="hr-form-fileds"'); ?>
+                                                            <?php echo form_input('compliance_incident_type_name', set_value('compliance_incident_type_name', $report_type["compliance_incident_type_name"]), 'class="hr-form-fileds" id="compliance_incident_type_name"'); ?>
                                                             <?php echo form_error('compliance_incident_type_name'); ?>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
                                                             <label for="status">Status <span class="hr-required">*</span></label>
-                                                            <select name="status" class="hr-form-fileds">
+                                                            <select name="status" class="hr-form-fileds" id="status">
                                                                 <option <?= $report_type["status"] == "0" ? "selected" : ""; ?> value="0">In Active</option>
                                                                 <option <?= $report_type["status"] == "1" ? "selected" : ""; ?> value="1">Active</option>
                                                             </select>
@@ -64,16 +64,17 @@
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row field-row-autoheight">
                                                             <label for="report_name">Code</label>
-                                                            <?php echo form_input('code', set_value('code', $report_type["code"]), 'class="hr-form-fileds"'); ?>
+                                                            <?php echo form_input('code', set_value('code', $report_type["code"]), 'class="hr-form-fileds" id="code"'); ?>
                                                             <?php echo form_error('code'); ?>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row field-row-autoheight">
                                                             <label for="report_name">Priority</label>
-                                                            <?php echo form_input('priority', set_value('priority', $report_type["priority"]), 'class="hr-form-fileds"'); ?>
+                                                            <?php echo form_input('priority', set_value('priority', $report_type["priority"]), 'class="hr-form-fileds" id="priority"'); ?>
                                                             <?php echo form_error('priority'); ?>
                                                         </div>
+
                                                     </div>
 
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right">
@@ -103,14 +104,18 @@
                                                                         </thead>
                                                                         <tbody>
 
-                                                                            <tr>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td></td>
-                                                                                <td>
-                                                                                    <button class="btn btn-sm btn-danger" id="8h" title="Delete" src="Disable" type="button"><i class="fa fa-trash"></i></button>
-                                                                                </td>
-                                                                            </tr>
+                                                                            <?php foreach ($report_type_listings as $row) { ?>
+
+                                                                                <tr>
+                                                                                    <td><?php echo $row['list_name']; ?></td>
+                                                                                    <td><?php echo $row['list_level']; ?></td>
+                                                                                    <td><?php echo $row['list_bg_color']; ?></td>
+                                                                                    <td>
+                                                                                        <button class="btn btn-sm btn-danger jsbtnDeleteList" data-id="<?php echo $row['sid']; ?>" title="Delete" src="Disable" type="button"><i class="fa fa-trash"></i></button>
+                                                                                    </td>
+                                                                                </tr>
+
+                                                                            <?php } ?>
                                                                         </tbody>
                                                                     </table>
                                                                 </div>
@@ -120,7 +125,7 @@
                                                     </div>
 
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center hr-btn-panel">
-                                                        <input type="submit" class="search-btn" value="Update" name="form-submit" />
+                                                        <input type="button" class="search-btn" value="Update" name="form-submit" id="jsbtnUpdate" />
                                                     </div>
                                                 </div>
                                             </form>
@@ -137,6 +142,14 @@
     </div>
 </div>
 
+<div id="js-loader" class="text-center my_loader" style="display: none;">
+    <div id="file_loader" class="file_loader cs-loader-file" style="display: none; height: 1353px;"></div>
+    <div class="loader-icon-box cs-loader-box">
+        <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
+    </div>
+</div>
+
+
 
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
@@ -148,45 +161,104 @@
 
 
 <script type="text/javascript">
-    $(function() {
-        $.validator.setDefaults({
-            debug: true,
-            success: "valid"
+    $("#jsbtnUpdate").click(function(event) {
+
+        let compliance_incident_type_name = $("#compliance_incident_type_name").val();
+        let description = $.trim(CKEDITOR.instances.description.getData());
+        let status = $("#status").val();
+        let code = $("#code").val();
+        let priority = $("#priority").val()
+
+        if (compliance_incident_type_name == '') {
+            alertify.alert('Error! ', "Report Incident Name is Required");
+            return;
+        }
+
+        if (status == '') {
+            alertify.alert('Error! ', "Status is Required");
+            return;
+        }
+        if (description.length === 0) {
+            alertify.alert('Error! ', "Description are Required");
+            return;
+        }
+
+       
+        $('#js-loader').show();
+        //
+        $.post("<?= base_url('manage_admin/compliance_safety/incident_types/edit/' . $report_type_id); ?>", {
+            compliance_incident_type_name: compliance_incident_type_name,
+            status: status,
+            description: description,
+            code: code,
+            priority: priority,
+            listingData: tempTable,
+        }).done(function() {
+            //
+            $('#js-loader').hide();
+            window.location.reload();
         });
 
-        $("#edit_type").validate({
-            ignore: ":hidden:not(select)",
-            debug: false,
-            rules: {
-                compliance_incident_type_name: {
-                    required: true
-                },
-                description: {
-                    required: function() {
-                        CKEDITOR.instances.description.updateElement();
+
+        /*
+            $(function() {
+                $.validator.setDefaults({
+                    debug: true,
+                    success: "valid"
+                });
+
+                $("#edit_type").validate({
+                    ignore: ":hidden:not(select)",
+                    debug: false,
+                    rules: {
+                        compliance_incident_type_name: {
+                            required: true
+                        },
+                        description: {
+                            required: function() {
+                                CKEDITOR.instances.description.updateElement();
+                            }
+                        },
+                    },
+                    messages: {
+                        report_name: {
+                            required: 'Incident Type is required'
+                        },
+                        instructions: {
+                            required: 'Please provide some description for this report'
+                        },
+                    },
+                    submitHandler: function(form) {
+
+                        var instances = $.trim(CKEDITOR.instances.description.getData());
+                        if (instances.length === 0) {
+                            alertify.alert('Error! Description Missing', "Description cannot be Empty");
+                            return false;
+                        }
+
+
+
+                        // $("#listingData").val();
+                        //  $("#listingData").val(tempTable);                 
+
+
+
+
+                        //  form.submit();
+
+
+
+
+
                     }
-                },
-            },
-            messages: {
-                report_name: {
-                    required: 'Incident Type is required'
-                },
-                instructions: {
-                    required: 'Please provide some description for this report'
-                },
-            },
-            submitHandler: function(form) {
+                });
+            });
+        */
 
-                var instances = $.trim(CKEDITOR.instances.description.getData());
-                if (instances.length === 0) {
-                    alertify.alert('Error! Description Missing', "Description cannot be Empty");
-                    return false;
-                }
 
-                form.submit();
-            }
-        });
+
     });
+
 
     $(document).ready(function() {
         CKEDITOR.replace('description');
@@ -209,9 +281,8 @@
     });
 
 
-
+    //
     function generateFileBody() {
-
 
         var reportIncidentName = $("[name='compliance_incident_type_name']").val();
         let listForm = '';
@@ -239,7 +310,6 @@
         listForm += '</div>';
         listForm += '</div>';
 
-
         listForm += ' <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">';
         listForm += '<div class="field-row">';
         listForm += '<label for="status">BG Color <span class="hr-required">*</span></label>';
@@ -256,7 +326,7 @@
         listForm += '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
         listForm += '<div class="description-editor">';
         listForm += '<label>Add Instructions <span class="hr-required">*</span></label>';
-        listForm += '<textarea class="ckeditor" name="instructions" rows="8" cols="60" required>';
+        listForm += '<textarea class="ckeditor" name="instructions" id="instructions" rows="8" cols="60" required>';
 
         listForm += '</textarea>';
         listForm += '</div>';
@@ -269,7 +339,6 @@
         listForm += '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center hr-btn-panel">';
         listForm += '<input type="button" class="search-btn" value="Add" name="form-submit" id="jsbtnAddList" />';
         listForm += '</div>';
-
 
         $("#jsListingModalBody").html(listForm);
         ml(false, "jsListingModalLoader");
@@ -284,7 +353,8 @@
         listName: "",
         listLevel: '',
         bgColorCode: '',
-        ColorCode: ''
+        ColorCode: '',
+        instructionse: '',
     }];
 
     $(document).on('click', '#jsbtnAddList', function() {
@@ -292,21 +362,34 @@
         let listLevel = $("#list_level").val();
         let bgColorCode = $("#bg_color_code").val();
         let ColorCode = $("#color_code").val();
+        let instructionse = $.trim(CKEDITOR.instances.instructions.getData());
 
-      
+        if (listName == '') {
+            alertify.alert('Error! ', "Name is Required");
+            return;
+        }
+        if (listLevel == '') {
+            alertify.alert('Error! ', "Level is Required");
+            return;
+        }
+        if (instructionse.length === 0) {
+            alertify.alert('Error! ', "Instructions are Required");
+            return;
+        }
+
 
         // Adding a new row to the table
-        addRowToTable(listName, listLevel, bgColorCode, ColorCode);
+        addRowToTable(listName, listLevel, bgColorCode, ColorCode, instructionse);
 
         // Display the updated table
-       // displayTable();
 
-        function addRowToTable(listName, listLevel, bgColorCode, ColorCode) {
+        function addRowToTable(listName, listLevel, bgColorCode, ColorCode, instructionse) {
             const newRow = {
                 listName,
                 listLevel,
                 bgColorCode,
-                ColorCode
+                ColorCode,
+                instructionse
             };
 
             tempTable.push(newRow);
@@ -319,8 +402,6 @@
             $("#list_level").val('');
             $("#bg_color_code").val('');
             $("#color_code").val('');
-            // console.log(`Added new row: ${JSON.stringify(newRow)}`);
-
             //
             var newListRow = '';
             newListRow += '<tr>';
@@ -332,21 +413,20 @@
             newListRow += '</td>';
             newListRow += '</tr>';
             $('#jsttblTypeListing tbody').append(newListRow);
+            $('.jsModalCancel').trigger('click');
+
 
         }
 
-
-  
     });
 
 
     function displayTable() {
-            console.log("-------------------");
-            tempTable.forEach(row => {
-                console.log(`${row.listName} | ${row.ColorCode}`);
-            });
-        }
-
+        console.log("-------------------");
+        tempTable.forEach(row => {
+            console.log(`${row.listName} | ${row.ColorCode} | ${row.instructionse}`);
+        });
+    }
 
 
     //
@@ -361,9 +441,35 @@
                 tempTable.splice(id, 1);
                 alertify.alert('Item Deleted Successfully');
 
+            },
+            function() {
+                // 
+            });
 
-                displayTable(); 
+    });
 
+
+    //
+    $(document).on('click', '.jsbtnDeleteList', function() {
+
+        var id = $(this).data('id');
+        var row = $(this).closest('tr');
+
+        alertify.confirm('Confirmation', "Are you sure you want to delete this Item?",
+            function() {
+                row.remove();
+
+                $('#js-loader').show();
+                //
+                $.post("<?= base_url('manage_admin/compliance_safety/incident_types_list_delete'); ?>", {
+                    sid: id,
+
+                }).done(function() {
+                    //
+                    $('#js-loader').hide();
+                    alertify.alert('Item Deleted Successfully');
+                    window.location.reload();
+                });
 
             },
             function() {
