@@ -3371,4 +3371,83 @@ class Compliance_report_model extends CI_Model
 		//
 		return $this->db->insert_id();
 	}
+
+	public function checkAndGetComplianceSafetyReportUserKey ($userId, $reportId, $incidentId) {
+		$this->db->select('unique_code');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_report_incident_sid', $incidentId);
+		//
+		if (filter_var($userId, FILTER_VALIDATE_EMAIL)) {
+			$this->db->where('external_email', $userId);
+		} else {
+			$this->db->where('employee_sid', $userId);
+		}
+		//
+		$record_obj = $this->db->get('csp_reports_employees');
+		$record_arr = $record_obj->row_array();
+		$record_obj->free_result();
+		$userKey = array();
+		//
+		if (!empty($record_arr)) {
+			$userKey = $record_arr['unique_code'];
+		}
+		//
+		return $userKey;	
+	}
+
+	function getComplianceSafetyReportEmails($user_sid, $employee_sid, $reportId, $incidentId)
+	{
+		$where = "(sender_sid='" . $user_sid . "' AND receiver_sid='" . $employee_sid . "' OR sender_sid='" . $employee_sid . "' AND receiver_sid='" . $user_sid . "')";
+		$this->db->select('*');
+		$this->db->where($where);
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_incident_type_sid', $incidentId);
+		$this->db->order_by('send_date', 'desc');
+		$records_obj = $this->db->get('csp_reports_emails');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		$return_data = array();
+
+		if (!empty($records_arr)) {
+			$return_data = $records_arr;
+		}
+
+		return $return_data;
+	}
+
+	function getComplianceSafetyReportEmailsByEmailAddress($email, $employee_sid, $reportId, $incidentId)
+	{
+		$where = "(sender_sid='0' AND receiver_sid='" . $employee_sid . "' AND manual_email='" . $email . "' OR sender_sid='" . $employee_sid . "' AND receiver_sid='0' AND manual_email='" . $email . "')";
+		$this->db->select('*');
+		$this->db->where($where);
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_incident_type_sid', $incidentId);
+		$this->db->order_by('send_date', 'desc');
+		$records_obj = $this->db->get('csp_reports_emails');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		$return_data = array();
+
+		if (!empty($records_arr)) {
+			$return_data = $records_arr;
+		}
+
+		return $return_data;
+	}
+
+	function getCompanyIDByComplianceSafetyReportID($reportId)
+	{
+		$this->db->select('company_sid');
+		$this->db->where('sid', $reportId);
+		$record_obj = $this->db->get('csp_reports');
+		$record_arr = $record_obj->row_array();
+		$record_obj->free_result();
+		$return_data = 'N/A';
+
+		if (!empty($record_arr)) {
+			$return_data = $record_arr['company_sid'];
+		}
+
+		return $return_data;
+	}
 }

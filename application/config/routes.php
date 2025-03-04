@@ -2650,4 +2650,7 @@ $route["compliance_safety_reporting_public/send_compliance_report_email"]["post"
   "v1/Compliance_safety_reporting_public/sendComplianceReportEmail";
 
 $route["compliance_safety_reporting_public/update_email_read_flag"]["post"] =
-  "v1/Compliance_safety_reporting_public/updateEmailReadFlag";
+  "v1/Compliance_safety_reporting_public/updateEmailReadFlag"; 
+
+$route["compliance_safety_reporting_public/view_compliance_safety_report_email/(:num)/(:num)/(:any)/(:any)"]["get"] =
+  "v1/Compliance_safety_reporting_public/viewComplianceSafetyReportEmail/$1/$2/$3/$4";
