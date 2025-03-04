@@ -2145,7 +2145,7 @@ if (!function_exists('processESTAPolicy')) {
                     $employeeId,
                     $item['start'],
                     $item['end']
-                );
+                ); 
             // get the difference
             $periodDiff = dateDifferenceInDays($item["start"], $todayDate);
             //
@@ -2180,7 +2180,7 @@ if (!function_exists('processESTAPolicy')) {
         $remainingTime = $balanceHolder["remaining"] * 60;
         //
         $r['AllowedTime'] = $balanceHolder["allowed"] * 60;
-        $r['ConsumedTime'] = $balanceHolder["remaining"] * 60;
+        $r['ConsumedTime'] = $consumedTimeInMinutes;
         $r['RemainingTime'] = $remainingTime;
         $r['MaxNegativeTime'] = $r['RemainingTime'];
         $r['RemainingTimeWithNegative'] = $r['RemainingTime'];
