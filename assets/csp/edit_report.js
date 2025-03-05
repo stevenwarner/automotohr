@@ -363,8 +363,8 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/report/" +
-						getSegment(2) +
-						"/incident"
+					getSegment(2) +
+					"/incident"
 				),
 				method: "POST",
 				data: {
@@ -435,9 +435,9 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/" +
-						getSegment(2) +
-						"/" +
-						external.data("id")
+					getSegment(2) +
+					"/" +
+					external.data("id")
 				),
 				method: "DELETE",
 			})
@@ -490,9 +490,9 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/file/" +
-						getSegment(2) +
-						"/0/" +
-						type
+					getSegment(2) +
+					"/0/" +
+					type
 				),
 				method: "POST",
 				async: true,
@@ -568,7 +568,7 @@ $(function Overview() {
 				fileType === "application/pdf" ||
 				fileType.startsWith("application/msword") ||
 				fileType ===
-					"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+				"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 			) {
 				fileCategory = "document";
 			}
@@ -589,4 +589,43 @@ $(function Overview() {
 	}
 
 	ml(false, "jsPageLoader");
+
+
+	//
+	$(document).on("click", ".jsSendReminderEmail", function () {
+		const id = $(this).data("id");
+		alertify.confirm(
+			"Are you sure you want to  send reminder email?",
+			function () {
+				sendReminderEmail(id);
+			}
+		);
+	});
+
+	//
+	function sendReminderEmail(reportId) {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//		
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/send_report_email_reminder/" + reportId
+				),
+				method: "post",
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message, function () {
+					});
+				});
+		}
+	}
+
+
 });

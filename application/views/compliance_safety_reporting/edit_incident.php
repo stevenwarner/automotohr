@@ -24,6 +24,9 @@
                     </a>
                 <?php endif; ?>
 
+                <button type="button" class="btn  btn-blue csRadius5 csF16 jsSendReminderEmail" data-id="<?php echo $incidentId; ?>">
+                    <i class="fa fa-paper-plane" aria-hidden="true"></i> Send Reminder Email
+                </button>
 
             </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">

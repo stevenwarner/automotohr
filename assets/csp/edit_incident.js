@@ -522,4 +522,45 @@ $(function Overview() {
 	}
 
 	ml(false, "jsPageLoader");
+
+
+		//
+		$(document).on("click", ".jsSendReminderEmail", function () {
+			const id = $(this).data("id");
+			alertify.confirm(
+				"Are you sure you want to  send reminder email?",
+				function () {
+					sendReminderEmail(id);
+				}
+			);
+		});
+
+
+		//
+	function sendReminderEmail(incidentId) {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//		
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/send_incident_report_email_reminder/" + incidentId
+				),
+				method: "post",
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message, function () {
+					});
+				});
+		}
+	}
+
+
+
 });

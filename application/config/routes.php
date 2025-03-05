@@ -2667,3 +2667,10 @@ $route["compliance_safety_reporting_public/update_email_read_flag"]["post"] =
 
 $route["compliance_safety_reporting_public/view_compliance_safety_report_email/(:num)/(:num)/(:any)/(:any)"]["get"] =
   "v1/Compliance_safety_reporting_public/viewComplianceSafetyReportEmail/$1/$2/$3/$4";
+
+  //
+  $route["compliance_safety_reporting/send_report_email_reminder/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/sendReportEmailReminder/$1";
+  //
+  $route["compliance_safety_reporting/send_incident_report_email_reminder/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/sendIncidentReportEmailReminder/$1";

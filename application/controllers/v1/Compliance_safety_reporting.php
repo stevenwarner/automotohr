@@ -269,7 +269,7 @@ class Compliance_safety_reporting extends Base_csp
             ->compliance_report_model
             ->getAllIncidents();
         //
-        $this->data["reportId"] = $reportId; 
+        $this->data["reportId"] = $reportId;
         $this->data["incidentId"] = 0;
         //
         $this->renderView('compliance_safety_reporting/edit_report');
@@ -324,7 +324,7 @@ class Compliance_safety_reporting extends Base_csp
             $this->data["questions"] = [];
         }
         //
-        $this->data["reportId"] = $reportId; 
+        $this->data["reportId"] = $reportId;
         $this->data["incidentId"] = $incidentId;
         //
         $this->renderView('compliance_safety_reporting/edit_incident');
@@ -655,7 +655,8 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
-    public function sendComplianceReportEmail () {
+    public function sendComplianceReportEmail()
+    {
         //
         $send_email_type = $_POST['send_type'];
         $attachments = isset($_POST['attach_files']) ? explode(',', $_POST['attach_files']) : [];
@@ -681,7 +682,7 @@ class Compliance_safety_reporting extends Base_csp
             if ($isEmployee) {
                 $manualUserInfo = $this->compliance_report_model->getUserInfoByEmail($manual_email, $companyId);
                 $conversation_key = $reportId . '/' . $incidentId . '/' . $manualUserInfo['sid'] . '/' . $employeeId;
-                $receiver_name = $manualUserInfo['first_name'].' '.$manualUserInfo['last_name'];
+                $receiver_name = $manualUserInfo['first_name'] . ' ' . $manualUserInfo['last_name'];
                 $receiverId = $manualUserInfo['sid'];
             } else {
                 $conversation_key = $reportId . '/' . $incidentId . '/' . $manual_email . '/' . $employeeId;
@@ -783,13 +784,13 @@ class Compliance_safety_reporting extends Base_csp
                 if (!empty($attachments)) {
                     //
                     foreach ($attachments as $attachmentId) {
-    
+
                         $insert_attachment                      = array();
                         $insert_attachment['csp_reports_email_sid'] = $inserted_email_sid;
                         $insert_attachment['csp_reports_file_sid']  = $attachmentId;
                         $insert_attachment['attached_by']           = $employeeId;
                         $insert_attachment['attached_date']         = date('Y-m-d H:i:s');
-    
+
                         $this->compliance_report_model->addComplianceEmailAttachment($insert_attachment);
                     }
                 }
@@ -1025,5 +1026,27 @@ class Compliance_safety_reporting extends Base_csp
         } else {
             echo 'success';
         }
+    }
+
+    //
+    public function sendReportEmailReminder(int $reportId)
+    {
+        $this->compliance_report_model->sendEmailsForCSPReport($reportId, CSP_ASSIGNED_EMAIL_TEMPLATE_ID);
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Email Sent Successfully."]
+        );
+    }
+
+    //
+    public function sendIncidentReportEmailReminder(int $incidentId)
+    {
+        $this->compliance_report_model->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_ASSIGNED_EMAIL_TEMPLATE_ID);
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Email Sent Successfully."]
+        );
     }
 }

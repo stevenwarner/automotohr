@@ -1549,7 +1549,8 @@ class Compliance_report_model extends CI_Model
 				]);
 		}
 
-		$this->sendEmailsForCSPReport($reportId, CSP_ASSIGNED_EMAIL_TEMPLATE_ID);
+
+	//	$this->sendEmailsForCSPReport($reportId, CSP_ASSIGNED_EMAIL_TEMPLATE_ID);
 
 		return $reportId;
 	}
@@ -1955,6 +1956,7 @@ class Compliance_report_model extends CI_Model
 		int $loggedInEmployeeId,
 		array $post
 	) {
+
 		//
 		$todayDateTime = getSystemDate();
 		// lets first edit the report
@@ -1987,7 +1989,7 @@ class Compliance_report_model extends CI_Model
 			$loggedInEmployeeId
 		);
 
-		$this->sendEmailsForCSPReport($reportId, CSP_UPDATED_EMAIL_TEMPLATE_ID);
+	//	$this->sendEmailsForCSPReport($reportId, CSP_UPDATED_EMAIL_TEMPLATE_ID);
 
 		return true;
 	}
@@ -2089,7 +2091,7 @@ class Compliance_report_model extends CI_Model
 			$loggedInEmployeeId
 		);
 
-		$this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
+		//$this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
 
 
 		return true;
