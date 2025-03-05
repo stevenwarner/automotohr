@@ -26,6 +26,26 @@ class Compliance_safety_model extends CI_Model
             ->result_array();
     }
 
+    public function getSeverityLevels()
+    {
+        return $this
+            ->db
+            ->order_by("sid", "ASC")
+            ->get("compliance_severity_levels")
+            ->result_array();
+    }
+
+    public function getIncidentItems($incidentId)
+    {
+        return $this
+            ->db
+            ->select("sid, description")
+            ->where("compliance_report_incident_sid", $incidentId)
+            ->order_by("sid", "DESC")
+            ->get("compliance_report_incident_types")
+            ->result_array();
+    }
+
     public function getReportTypeById(int $reportTypeId)
     {
         $record =  $this

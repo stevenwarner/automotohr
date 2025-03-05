@@ -2492,6 +2492,11 @@ $route["manage_admin/copy_timeoff_policies"] = "manage_admin/Copy_policies/copyT
 // Compliance Safety
 $route["manage_admin/compliance_safety/dashboard"]["get"] =
   "manage_admin/Compliance_safety/dashboard";
+// Severity Levels
+$route["manage_admin/compliance_safety/severity_levels/manage"]["get"] =
+  "manage_admin/Compliance_safety/manageSeverityLevels";
+$route["manage_admin/compliance_safety/handle_severity_level/(:num)"]["post"] =
+  "manage_admin/Compliance_safety/handleSeverityLevel/$1";
 // Report types
 $route["manage_admin/compliance_safety/report_types/add"]["get"] =
   "manage_admin/Compliance_safety/reportAdd";
@@ -2513,6 +2518,14 @@ $route["manage_admin/compliance_safety/incident_types/edit/(:num)"]["get"] =
   "manage_admin/Compliance_safety/incidentTypeEdit/$1";
 $route["manage_admin/compliance_safety/incident_types/edit/(:num)"]["post"] =
   "manage_admin/Compliance_safety/incidentTypeEdit/$1";
+$route["manage_admin/compliance_safety/incident_types/(:num)/save_item"]["post"] =
+  "manage_admin/Compliance_safety/saveIncidentTypeItem/$1";
+$route["manage_admin/compliance_safety/incident_types_item/(:num)"]["delete"] =
+  "manage_admin/Compliance_safety/deleteIncidentTypeItem/$1";
+  $route["manage_admin/compliance_safety/incident_types_item/(:num)"]["get"] =
+  "manage_admin/Compliance_safety/getIncidentTypeItem/$1";
+  $route["manage_admin/compliance_safety/incident_types_item/(:num)/update"]["post"] =
+  "manage_admin/Compliance_safety/updateIncidentTypeItem/$1";
 // Incident questions
 $route["manage_admin/compliance_safety/incident_types/view_incident_questions/(:num)"]["get"] =
   "manage_admin/Compliance_safety/view_incident_questions/$1";
@@ -2632,10 +2645,10 @@ $route["compliance_safety_reporting/save_email_manual_attachment"]["post"] =
   "v1/Compliance_safety_reporting/saveEmailManualAttachment";
 
 $route["compliance_safety_reporting/send_compliance_report_email"]["post"] =
-  "v1/Compliance_safety_reporting/sendComplianceReportEmail";  
+  "v1/Compliance_safety_reporting/sendComplianceReportEmail";
 
 $route["compliance_safety_reporting/validate_vimeo"]["post"] =
-  "v1/Compliance_safety_reporting/validateVimeoVideoLink"; 
+  "v1/Compliance_safety_reporting/validateVimeoVideoLink";
 
 $route["compliance_safety_reporting/update_email_read_flag"]["post"] =
   "v1/Compliance_safety_reporting/updateEmailReadFlag";

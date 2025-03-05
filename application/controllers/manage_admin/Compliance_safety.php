@@ -29,6 +29,19 @@ class Compliance_safety extends Admin_Controller
         $this->render('manage_admin/compliance_safety/dashboard');
     }
 
+    public function manageSeverityLevels()
+    {
+        $redirect_url       = 'manage_admin';
+        $function_name      = 'compliance_safety_manage_severity_levels';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        $this->data['page_title'] = "Compliance Safety - Severity Levels";
+        $this->data['severity_levels'] = $this->compliance_safety_model->getSeverityLevels();
+        $this->render('manage_admin/compliance_safety/severity_levels');
+    }
+
     public function reportAdd()
     {
         $redirect_url       = 'manage_admin';
@@ -209,9 +222,11 @@ class Compliance_safety extends Admin_Controller
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         // get the report type
         $this->data["report_type"] = $this->compliance_safety_model->getIncidentById($id);
+        $this->data["items"] = $this->compliance_safety_model->getIncidentItems($id);
 
         $this->data['page_title'] = "Compliance Safety Report Incident Type - " . $this->data["report_type"]["compliance_incident_type_name"];
         $this->data['page_title'] = "Compliance Safety - Edit Report Incident type";
+        $this->data['incidentId'] = $id;
         // add rules
         $this->form_validation->set_rules('compliance_incident_type_name', 'Report Incident Name', 'required|trim');
         $this->form_validation->set_rules('status', 'Status', 'required');
@@ -346,6 +361,117 @@ class Compliance_safety extends Admin_Controller
         );
     }
 
+
+    public function handleSeverityLevel(int $id)
+    {
+        // get the sanitized post
+        $post = $this->input->post(null, true);
+        // update
+        $this
+            ->db
+            ->where("sid", $post["id"])
+            ->update(
+                "compliance_severity_levels",
+                [
+                    $post["type"] === "bg" ? "bg_color" : "txt_color" => $post["cl"]
+                ]
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                "message" => "You have successfully updated the severity level color."
+            ]
+        );
+    }
+
+    public function saveIncidentTypeItem(int $incidentTypeId)
+    {
+        // get the sanitized post
+        $description = $this->input->post("description", false);
+        // update
+        $this
+            ->db
+            ->insert(
+                "compliance_report_incident_types",
+                [
+                    "compliance_report_incident_sid" => $incidentTypeId,
+                    "description" => $description,
+                    "created_at" => getSystemDate(),
+                    "updated_at" => getSystemDate(),
+                ]
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                "message" => "You have successfully added an item.",
+                "id" => $this->db->insert_id()
+            ]
+        );
+    }
+
+    public function deleteIncidentTypeItem(int $id)
+    {
+        // update
+        $this
+            ->db
+            ->where("sid", $id)
+            ->delete(
+                "compliance_report_incident_types"
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                "message" => "You have successfully deleted an item."
+            ]
+        );
+    }
+    
+    public function getIncidentTypeItem(int $id)
+    {
+        // update
+        $record = $this
+            ->db
+            ->where("sid", $id)
+            ->get("compliance_report_incident_types")
+            ->row_array();
+        //
+        return SendResponse(
+            200,
+            [
+                "view" => $this->load->view("manage_admin/compliance_safety/incidents/item_modal", [
+                    "record" => $record
+                ], true)
+            ]
+        );
+    }
+
+    public function updateIncidentTypeItem(int $id)
+    {
+        // get the sanitized post
+        $description = $this->input->post("description", false);
+        // update
+        $this
+            ->db
+            ->where("sid", $id)
+            ->update(
+                "compliance_report_incident_types",
+                [
+                    "description" => $description,
+                    "updated_at" => getSystemDate()
+                ]
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                "message" => "You have successfully updated the item."
+            ]
+        );
+    }
+    
     public function enable_disable_question($id)
     {
         $data = array('status' => $this->input->get('status'));

@@ -1397,13 +1397,6 @@ if (
                                     } ?> href="<?php echo site_url('manage_admin/compliance_safety/dashboard'); ?>">Overview</a>
                             </div>
 
-                        <?php if (check_access_permissions_for_view($security_details, 'reported_incident')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/incident_reporting/reported_incidents')) !== false || ($this->uri->segment(4) == 'reported_incidents')) {
-                                        echo 'class="active"';
-                                    } ?> href="<?php echo site_url('manage_admin/reports/incident_reporting/reported_incidents'); ?>">Reported Incidents</a>
-                            </div>
-                        <?php } ?>
                     </div>
                 </li>
             <?php } ?>

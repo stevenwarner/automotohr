@@ -17,6 +17,7 @@
                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right">
                                             <a href="<?php echo base_url('manage_admin/compliance_safety/report_types/add') ?>" class="btn btn-success"><i class="fa fa-plus-circle"> </i> Add A Report Type</a>
                                             <a href="<?php echo base_url('manage_admin/compliance_safety/incident_types/add') ?>" class="btn btn-success"><i class="fa fa-plus-circle"> </i> Add An Incident Type</a>
+                                            <a href="<?php echo base_url('manage_admin/compliance_safety/severity_levels/manage') ?>" class="btn btn-success"><i class="fa fa-cogs"> </i> Manage Severity Levels</a>
                                         </div>
                                     </div>
                                     <?php $this->load->view("manage_admin/compliance_safety/partials/report_types"); ?>
