@@ -831,7 +831,7 @@ class Compliance_safety_reporting_public extends Base_csp
 
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
             
-        } else if ('system') {
+        } else if ($send_email_type == 'system') {
             //
             $receivers = explode(',', $_POST['receivers']);
             $subject = $_POST['subject'];

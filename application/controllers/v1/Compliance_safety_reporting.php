@@ -754,7 +754,7 @@ class Compliance_safety_reporting extends Base_csp
 
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
             //
-        } else if ('system') {
+        } else if ($send_email_type == 'system') {
             $receivers = explode(',', $_POST['receivers']);
             $subject = $_POST['subject'];
             $from_name = $employeeName;
@@ -800,11 +800,11 @@ class Compliance_safety_reporting extends Base_csp
                 $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                 $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
                 $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
-                if ($employeeType != "out_sider") {
-                    //
-                    // $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Compliance Report</a>' . '<br>';
-                    // $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
-                }
+                // if ($employeeType != "out_sider") {
+                //     //
+                //     // $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Compliance Report</a>' . '<br>';
+                //     // $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                // }
                 $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
                 $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                 $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
