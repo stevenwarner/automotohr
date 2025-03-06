@@ -216,6 +216,11 @@ class order_history_model extends CI_Model
         // else if($to != '')
         //     $this->db->where(" date <= '$to'", NULL);
 
+        if ($from != '' &&  $to != '') {
+            $this->db->where('invoices.date >=', $from);
+            $this->db->where('invoices.date <=', $to);
+        }
+
         // Invoice id check
         if ($invoice_id != 'all') $this->db->where('invoices.sid', $invoice_id);
         // Username check
