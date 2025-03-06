@@ -216,6 +216,13 @@ class order_history_model extends CI_Model
         // else if($to != '')
         //     $this->db->where(" date <= '$to'", NULL);
 
+        //
+        if ($from != '' &&  $to != '') {
+            $this->db->where('invoices.date >=', $from);
+            $this->db->where('invoices.date <=', $to);
+        }
+
+
         // Invoice id check
         if ($invoice_id != 'all') $this->db->where('invoices.sid', $invoice_id);
         // Username check
@@ -239,6 +246,7 @@ class order_history_model extends CI_Model
         $result = $this->db->get();
         $result_arr = $result->result_array();
         $result = $result->free_result();
+
         //
         if (!sizeof($result_arr)) return false;
         //
@@ -264,7 +272,7 @@ class order_history_model extends CI_Model
                 $items .= sc_remove($product_detail['name']);
                 $items .= $product_detail['name'];
 
-                $rows .= '  <li class="invoice-description-list-item">'.sc_remove($product_detail['name']);
+                $rows .= '  <li class="invoice-description-list-item">' . sc_remove($product_detail['name']);
 
                 //
                 if (isset($uns['credit'][$product_id])) {
