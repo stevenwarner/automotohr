@@ -218,12 +218,12 @@ class order_history_model extends CI_Model
         if ($payment_method && $payment_method != 'any') $this->db->where('invoices.payment_method', $payment_method);
         //
         // Date Check
-        if($from != '' && $to != '')
-            $this->db->where(" date BETWEEN '$from' AND '$to'", NULL);
-        else if($from != '')
-            $this->db->where(" date >= '$from'", NULL);
-        else if($to != '')
-            $this->db->where(" date <= '$to'", NULL);
+        // if($from != '' && $to != '')
+        //     $this->db->where(" date BETWEEN '$from' AND '$to'", NULL);
+        // else if($from != '')
+        //     $this->db->where(" date >= '$from'", NULL);
+        // else if($to != '')
+        //     $this->db->where(" date <= '$to'", NULL);
         //
         $this->db->where("invoices.company_sid", $company_sid);
         $this->db->order_by("invoices.sid", "DESC");
