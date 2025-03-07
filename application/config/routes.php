@@ -2522,9 +2522,9 @@ $route["manage_admin/compliance_safety/incident_types/(:num)/save_item"]["post"]
   "manage_admin/Compliance_safety/saveIncidentTypeItem/$1";
 $route["manage_admin/compliance_safety/incident_types_item/(:num)"]["delete"] =
   "manage_admin/Compliance_safety/deleteIncidentTypeItem/$1";
-  $route["manage_admin/compliance_safety/incident_types_item/(:num)"]["get"] =
+$route["manage_admin/compliance_safety/incident_types_item/(:num)"]["get"] =
   "manage_admin/Compliance_safety/getIncidentTypeItem/$1";
-  $route["manage_admin/compliance_safety/incident_types_item/(:num)/update"]["post"] =
+$route["manage_admin/compliance_safety/incident_types_item/(:num)/update"]["post"] =
   "manage_admin/Compliance_safety/updateIncidentTypeItem/$1";
 // Incident questions
 $route["manage_admin/compliance_safety/incident_types/view_incident_questions/(:num)"]["get"] =
@@ -2593,7 +2593,16 @@ $route["compliance_safety_reporting/report/(:num)/incident/edit/(:num)"]["post"]
 // view report incidents
 $route["compliance_safety_reporting/report/(:num)/incidents"]["get"] =
   "v1/Compliance_safety_reporting/reportIncidents/$1";
+// Add items to teh incidents
+$route["compliance_safety_reporting/report/(:num)/incident/(:num)/items"]["post"] =
+  "v1/Compliance_safety_reporting/attachItemToIncident/$1/$2";
+// Add items to teh incidents
+$route["compliance_safety_reporting/report/(:num)/incident/(:num)/items/all"]["post"] =
+  "v1/Compliance_safety_reporting/markAllItemsOfIncidentsInactive/$1/$2";
 
+// Add items to teh incidents
+$route["compliance_safety_reporting/report/(:num)/incident/(:num)/items/employees"]["post"] =
+  "v1/Compliance_safety_reporting/updateAttachedItem/$1/$2";
 // Employees
 // overview
 $route["compliance_safety_reporting/employee/overview"]["get"] =
@@ -2663,7 +2672,7 @@ $route["compliance_safety_reporting_public/send_compliance_report_email"]["post"
   "v1/Compliance_safety_reporting_public/sendComplianceReportEmail";
 
 $route["compliance_safety_reporting_public/update_email_read_flag"]["post"] =
-  "v1/Compliance_safety_reporting_public/updateEmailReadFlag"; 
+  "v1/Compliance_safety_reporting_public/updateEmailReadFlag";
 
 $route["compliance_safety_reporting_public/view_compliance_safety_report_email/(:num)/(:num)/(:any)/(:any)"]["get"] =
   "v1/Compliance_safety_reporting_public/viewComplianceSafetyReportEmail/$1/$2/$3/$4";

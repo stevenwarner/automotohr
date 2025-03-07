@@ -208,6 +208,91 @@ $(function Overview() {
 		);
 	});
 
+	//
+	$(".jsUpdateItems").click(function (event) {
+		//
+		event.preventDefault();
+		//
+		let ids = [];
+		//
+		if ($(".jsIncidentType:checked").length > 0) {
+			$(".jsIncidentType:checked").map(function () {
+				//
+				let dynamicInputs = $(this)
+					.closest(".jsIncidentItemRow")
+					.find('[name="dynamicInput[]"]')
+					.map(function () {
+						return $(this).val();
+					})
+					.get();
+				//
+				let dynamicCheckboxes = $(this)
+					.closest(".jsIncidentItemRow")
+					.find('[name="dynamicCheckbox[]"]')
+					.map(function () {
+						return $(this).prop("checked") ? "on" : "off";
+					})
+					.get();
+				//
+				const obj = {
+					id: $(this).val(),
+					status: $(this).prop("checked") ? "active" : "inactive",
+					level: $(this)
+						.closest(".jsIncidentItemRow")
+						.find(".jsIncidentSeverityLevel")
+						.val(),
+					dynamicInput: dynamicInputs,
+					dynamicCheckbox: dynamicCheckboxes,
+				};
+				//
+				ids.push($(this).val());
+				//
+				processIncidentItem(obj);
+			});
+		}
+		//
+		markIncidentItemsDisable(ids);
+	});
+
+	//
+	$(".jsCSPItemListingBtn").click(function (event) {
+		//
+		event.preventDefault();
+		//
+		let ids = [];
+		//
+		if ($(".jsCSPItemListingRow").length > 0) {
+			$(".jsCSPItemListingRow").map(function () {
+				//
+				let dynamicInputs = $(this)
+					.find('[name="dynamicInput[]"]')
+					.map(function () {
+						return $(this).val();
+					})
+					.get();
+				//
+				let dynamicCheckboxes = $(this)
+					.find('[name="dynamicCheckbox[]"]')
+					.map(function () {
+						return $(this).prop("checked") ? "on" : "off";
+					})
+					.get();
+				//
+				const obj = {
+					id: $(this).data("id"),
+					dynamicInput: dynamicInputs,
+					dynamicCheckbox: dynamicCheckboxes,
+				};
+				//
+				ids.push($(this).val());
+				//
+				processIncidentItemListing(obj);
+			});
+			alertify.success("You have successfully updated the checklist");
+			ml(false, "jsPageLoader");
+		}
+	});
+
 	function generateExternalEmployees() {
 		let html = `
         <div class="row" data-external="${externalPointer}">
@@ -293,6 +378,78 @@ $(function Overview() {
 					});
 				});
 		}
+	}
+
+	function processIncidentItem(obj) {
+		//
+		XHR = $.ajax({
+			url: baseUrl(
+				"compliance_safety_reporting/report/" +
+					getSegment(2) +
+					"/incident/" +
+					getSegment(5) +
+					"/items"
+			),
+			method: "POST",
+			data: obj,
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {});
+	}
+
+	function processIncidentItemListing(obj) {
+		//
+		XHR = $.ajax({
+			url: baseUrl(
+				"compliance_safety_reporting/report/" +
+					getSegment(2) +
+					"/incident/" +
+					getSegment(5) +
+					"/items/employees"
+			),
+			method: "POST",
+			data: obj,
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {});
+	}
+
+	function markIncidentItemsDisable(ids) {
+		//
+		ml(true, "jsPageLoader");
+		//
+		XHR = $.ajax({
+			url: baseUrl(
+				"compliance_safety_reporting/report/" +
+					getSegment(2) +
+					"/incident/" +
+					getSegment(5) +
+					"/items/all"
+			),
+			method: "POST",
+			data: {
+				ids: ids,
+			},
+		})
+			.always(function () {
+				XHR = null;
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				alertify.success(
+					"You have successfully updated the checklist",
+					function () {
+						window.location.refresh();
+					}
+				);
+			});
 	}
 
 	function addNoteToReport(obj) {
@@ -507,19 +664,75 @@ $(function Overview() {
 		return fileCategory;
 	}
 
-	//
-	if (descriptionFieldsObj && descriptionFieldsObj.dynamicInput) {
-		descriptionFieldsObj.dynamicInput.map(function (v, i) {
-			$('[name="dynamicInput[]"]').eq(i).val(v);
-		});
+	if ($(".jsDescriptionBody").length) {
+		if (descriptionFieldsObj && descriptionFieldsObj.dynamicInput) {
+			//
+			descriptionFieldsObj.dynamicInput.map(function (v, i) {
+				$('[name="dynamicInput[]"]').eq(i).val(v);
+			});
+		}
+		if (descriptionFieldsObj && descriptionFieldsObj.dynamicCheckbox) {
+			descriptionFieldsObj.dynamicCheckbox.map(function (v, i) {
+				$('[name="dynamicCheckbox[]"]')
+					.eq(i)
+					.prop("checked", v === "on");
+			});
+		}
 	}
-	if (descriptionFieldsObj && descriptionFieldsObj.dynamicCheckbox) {
-		descriptionFieldsObj.dynamicCheckbox.map(function (v, i) {
-			$('[name="dynamicCheckbox[]"]')
-				.eq(i)
-				.prop("checked", v === "on");
-		});
-	}
+
+	$(".show-status-box").click(function () {
+		$(this).closest(".row").next().show();
+	});
+
+	$(".applicant").hover(
+		function () {
+			$(this).find(".jsSeverityLevelText").animate(
+				{
+					"padding-top": 0,
+					"padding-right": 0,
+					"padding-bottom": 0,
+					"padding-left": 15,
+				},
+				"fast"
+			);
+		},
+		function () {
+			$(this).find(".jsSeverityLevelText").animate(
+				{
+					"padding-top": 0,
+					"padding-right": 0,
+					"padding-bottom": 0,
+					"padding-left": 5,
+				},
+				"fast"
+			);
+		}
+	);
+
+	$(".applicant").click(function () {
+		//
+		const id = $(this).data("id");
+		//
+		$(this).parent().parent().parent().find(".jsSelectedPill").html(`
+			<div data-id="${id}" class="csLabelPill jsSelectedLabelPill text-center" 
+			style="
+			background-color: ${$(this).css(
+				"background-color"
+			)}; color: ${$(this).css("color")} ;">${$(this).text()}</div>
+		`);
+
+		$(this)
+			.parent()
+			.parent()
+			.parent()
+			.parent()
+			.find(".jsIncidentSeverityLevel")
+			.val(id);
+	});
+
+	$(".cross").click(function () {
+		$(this).parent().parent().css("display", "none");
+	});
 
 	ml(false, "jsPageLoader");
 });
