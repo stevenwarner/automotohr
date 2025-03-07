@@ -63,7 +63,6 @@ class Cron_email_model extends CI_Model
                 $types,
                 $courseIds
             );
-        _e($employeesWithCourseList, true, true);    
         //
         if (!$employeesWithCourseList) {
             return ["errors" => ["No employees found!"]];
@@ -71,6 +70,7 @@ class Cron_email_model extends CI_Model
         //
         $this->companyEmployees = $employeesWithCourseList;
         //
+        _e($employeesWithCourseList, true, true);  
         $this->sendCourseEmailRemindersToEmployees();
 
         return ["success"];
@@ -525,11 +525,12 @@ class Cron_email_model extends CI_Model
                     $types,
                     $courseIds
                 );
-            // employee don't have courses
-            if (!$employeeCourses) {
+            // employee don't have courses or employee don't have courses in "ready to start" or "inprogress"
+            if (!$employeeCourses || (empty($employeeCourses['ready_to_start']) && empty($employeeCourses['inprogress']))) {
                 unset($employeeList[$k0]);
                 continue;
-            }
+            } 
+
             $employeeList[$k0]["courses"] = $employeeCourses;
         }
         return $employeeList;
