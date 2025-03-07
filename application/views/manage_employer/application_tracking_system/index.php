@@ -2175,6 +2175,7 @@
     }
 
     function candidate_email_form_validate() {
+        $("#candidate-register-form").validate().destroy();
         if (radio == 'to_email') {
             $("#candidate-register-form").validate({
                 ignore: [],
