@@ -70,7 +70,7 @@ class Cron_email_model extends CI_Model
         //
         $this->companyEmployees = $employeesWithCourseList;
         //
-        _e($employeesWithCourseList, true, true);  
+        _e($employeesWithCourseList, true, true);
         $this->sendCourseEmailRemindersToEmployees();
 
         return ["success"];
@@ -222,75 +222,73 @@ class Cron_email_model extends CI_Model
         }
 
         if (!empty($this->executiveAdminsList)) {
-          
-          foreach($this->executiveAdminsList as $exRow){
 
-           $companyReplaceArray = [
-                "{{company_name}}" => '',
-                "{{company_address}}" => '',
-                "{{company_phone}}" => '',
-                "{{career_site_url}}" => '',
-            ];
+            foreach ($this->executiveAdminsList as $exRow) {
 
-            $template = get_email_template(COURSE_REPORT_EMAILS);
-            //
-            $templateSubject = $template["subject"];
-            $templateFromName = $template["from_name"];
-            $templateBody = $template["text"];
-            // set replace array
-            //
+                $companyReplaceArray = [
+                    "{{company_name}}" => '',
+                    "{{company_address}}" => '',
+                    "{{company_phone}}" => '',
+                    "{{career_site_url}}" => '',
+                ];
 
-            //_e($exRow,true);
+                $template = get_email_template(COURSE_REPORT_EMAILS);
+                //
+                $templateSubject = $template["subject"];
+                $templateFromName = $template["from_name"];
+                $templateBody = $template["text"];
+                // set replace array
+                //
 
-            $replaceArray = $companyReplaceArray;
-            //
-            $replaceArray["{{baseurl}}"] = base_url();
-            $replaceArray["{{full_name}}"] =
-                $replaceArray["{{contact_name}}"]
-                = $exRow['data']['contact_name'];
+                //_e($exRow,true);
+
+                $replaceArray = $companyReplaceArray;
+                //
+                $replaceArray["{{baseurl}}"] = base_url();
+                $replaceArray["{{full_name}}"] =
+                    $replaceArray["{{contact_name}}"]
+                    = $exRow['data']['contact_name'];
 
 
-            $viewReport = '';
-            foreach ($exRow['data']['buttons'] as $buttonRow) {
-                $viewReport .= "<br><br>" . $buttonRow;
+                $viewReport = '';
+                foreach ($exRow['data']['buttons'] as $buttonRow) {
+                    $viewReport .= "<br><br>" . $buttonRow;
+                }
+
+                $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
+                $templateBody = str_replace('{{download_report}}', '', $templateBody);
+
+                // set keys
+                $replaceKeys = array_keys($replaceArray);
+
+                // replace
+                $fromName = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateFromName
+                );
+                $subject = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateSubject
+                );
+                $body = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateBody
+                );
+
+                // _e($exRow['email'],true);
+                log_and_send_email_with_attachment(
+                    FROM_EMAIL_NOTIFICATIONS,
+                    $exRow['data']['email'],
+                    $subject,
+                    $body,
+                    $fromName,
+                    '',
+                    "sendMailWithAttachmentAsString"
+                );
             }
-
-            $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
-            $templateBody = str_replace('{{download_report}}', '', $templateBody);
-
-            // set keys
-            $replaceKeys = array_keys($replaceArray);
-
-            // replace
-            $fromName = str_replace(
-                $replaceKeys,
-                $replaceArray,
-                $templateFromName
-            );
-            $subject = str_replace(
-                $replaceKeys,
-                $replaceArray,
-                $templateSubject
-            );
-            $body = str_replace(
-                $replaceKeys,
-                $replaceArray,
-                $templateBody
-            );
-
-           // _e($exRow['email'],true);
-            log_and_send_email_with_attachment(
-                FROM_EMAIL_NOTIFICATIONS,
-                $exRow['data']['email'],
-                $subject,
-                $body,
-                $fromName,
-                '',
-                "sendMailWithAttachmentAsString"
-            );
-
-          }         
-          
         }
     }
 
@@ -371,8 +369,6 @@ class Cron_email_model extends CI_Model
                 $this->executiveAdminsList[$v0['email']]['data']['buttons'][] = $buttons;
                 $this->executiveAdminsList[$v0['email']]['data']['contact_name'] = $v0['contact_name'];
                 $this->executiveAdminsList[$v0['email']]['data']['email'] = $v0['email'];
-
-
             } else {
 
                 // get the ream member ids
@@ -526,10 +522,23 @@ class Cron_email_model extends CI_Model
                     $courseIds
                 );
             // employee don't have courses or employee don't have courses in "ready to start" or "inprogress"
-            if (!$employeeCourses || (empty($employeeCourses['ready_to_start']) && empty($employeeCourses['inprogress']))) {
+            if (!$employeeCourses) {
                 unset($employeeList[$k0]);
                 continue;
-            } 
+            }
+            //
+            $hasAllowedType = false;
+            //
+            foreach ($types as $type) {
+                if ($employeeCourses[$type]) {
+                    $hasAllowedType = true;
+                }
+            }
+            //
+            if (!$hasAllowedType) {
+                unset($employeeList[$k0]);
+                continue;
+            }
 
             $employeeList[$k0]["courses"] = $employeeCourses;
         }
