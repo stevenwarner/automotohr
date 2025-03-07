@@ -135,75 +135,73 @@ $employeeId = $session['employer_detail']['sid'];
             </div>
             <div class="modal-body">
                 <div id="pop_up_email_compose_container">
-                    <form id="form_send_email" enctype="multipart/form-data" method="post" action="" autocomplete="off">
-                        <input type="hidden" id="perform_action" name="perform_action" value="send_email" />
-                        <input type="hidden" id="send_email_type" name="send_type" value="" />
-                        <input type="hidden" id="send_email_user" name="" value="" />
+                    <input type="hidden" id="perform_action" name="perform_action" value="send_email" />
+                    <input type="hidden" id="send_email_type" name="send_type" value="" />
+                    <input type="hidden" id="send_email_user" name="" value="" />
 
-                        <table class="table table-bordered table-hover table-stripped">
-                            <tbody>
-                                <tr>
-                                    <td><b>Message To</b></td>
-                                    <td>
-                                        <input type="text" id="send_email_address" value="" class="form-control invoice-fields" readonly="">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><b>Subject</b> <span class="required">*</span></td>
-                                    <td>
-                                        <input type="text" id="send_email_subject" name="subject" value="" class="form-control invoice-fields">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><b>Attachment</b></td>
-                                    <td>
-                                        <div class="row">
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                <a href="javascript:;" class="btn btn-info btn-block attachment_pop_up" attachment-type="library">Add Library Attachment</a>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                <a href="javascript:;" class="btn btn-info btn-block attachment_pop_up" attachment-type="manual">Add Manual Attachment</a>
-                                            </div>
+                    <table class="table table-bordered table-hover table-stripped">
+                        <tbody>
+                            <tr>
+                                <td><b>Message To</b></td>
+                                <td>
+                                    <input type="text" id="send_email_address" value="" class="form-control invoice-fields" readonly="">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Subject</b> <span class="required">*</span></td>
+                                <td>
+                                    <input type="text" id="send_email_subject" name="subject" value="" class="form-control invoice-fields">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Attachment</b></td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                            <a href="javascript:;" class="btn btn-info btn-block attachment_pop_up" attachment-type="library">Add Library Attachment</a>
                                         </div>
+                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                            <a href="javascript:;" class="btn btn-info btn-block attachment_pop_up" attachment-type="manual">Add Manual Attachment</a>
+                                        </div>
+                                    </div>
 
-                                        <div class="table-responsive table-outer full-width" style="margin-top: 20px; display: none;" id="pop_up_email_attachment_list">
-                                            <div class="table-wrp data-table">
-                                                <table class="table table-bordered table-hover table-stripped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="text-center">Attachment Title</th>
-                                                            <th class="text-center">Attachment Type</th>
-                                                            <th class="text-center">Attachment Source</th>
-                                                            <th class="text-center">Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="pop_up_attachment_listing_data">
+                                    <div class="table-responsive table-outer full-width" style="margin-top: 20px; display: none;" id="pop_up_email_attachment_list">
+                                        <div class="table-wrp data-table">
+                                            <table class="table table-bordered table-hover table-stripped">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">Attachment Title</th>
+                                                        <th class="text-center">Attachment Type</th>
+                                                        <th class="text-center">Attachment Source</th>
+                                                        <th class="text-center">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="pop_up_attachment_listing_data">
 
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                </tbody>
+                                            </table>
                                         </div>
-                                        <div style="display: none;" id="pop_up_email_attachment_files">
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><b>Message</b> <span class="required">*</span></td>
-                                    <td>
-                                        <textarea class="ckeditor" style="padding:5px; height:200px; width:100%;" class="invoice-fields" name="message" id="send_email_message"></textarea>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <div class="btn-wrp full-width text-right">
-                                            <button type="button" class="btn btn-black incident-panal-button" data-dismiss="modal">Cancel</button>
-                                            <button type="button" class="btn btn-info incident-panal-button" id="send_pop_up_email" name="submit" value="submit">Send Email</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </form>
+                                    </div>
+                                    <div style="display: none;" id="pop_up_email_attachment_files">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>Message</b> <span class="required">*</span></td>
+                                <td>
+                                    <textarea class="ckeditor" style="padding:5px; height:200px; width:100%;" class="invoice-fields" name="message" id="send_email_message"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <div class="btn-wrp full-width text-right">
+                                        <button type="button" class="btn btn-black incident-panal-button" data-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-info incident-panal-button" id="send_pop_up_email" name="submit" value="submit">Send Email</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <div id="pop_up_attachment_library_container" style="display: none;">
