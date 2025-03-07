@@ -1251,7 +1251,7 @@ class Testing extends CI_Controller
 
     function sendCourseReminderEmailsByCompanyId () {
         $this->load->model("cron_email_model");
-        $this->cron_email_model->sendCourseReminderEmailsByCompanyId(2756);
+        $this->cron_email_model->sendCourseReminderEmailsByCompanyId(32756);
     }
 }
 
