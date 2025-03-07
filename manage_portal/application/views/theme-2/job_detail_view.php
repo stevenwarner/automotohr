@@ -9,7 +9,7 @@
                 <div
                     data-indeed-apply-widget-type="AWI"
                     data-indeed-apply-sourceJobPostingId="<?= $indeedApplyButtonDetails["indeed_posting_id"]; ?>"
-                    data-indeed-apply-partnerApiToken="56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781"
+                    data-indeed-apply-partnerApiToken="<?= $indeedApplyButtonDetails["indeed_posting_id"]; ?>"
                     data-indeed-apply-encryptedJobUrl="<?= urlencode(current_url()) ?>"
                     data-indeed-apply-hl="en"
                     data-indeed-apply-co="US"
