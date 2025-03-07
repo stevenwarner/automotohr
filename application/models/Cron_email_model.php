@@ -63,6 +63,7 @@ class Cron_email_model extends CI_Model
                 $types,
                 $courseIds
             );
+        _e($employeesWithCourseList, true, true);    
         //
         if (!$employeesWithCourseList) {
             return ["errors" => ["No employees found!"]];
