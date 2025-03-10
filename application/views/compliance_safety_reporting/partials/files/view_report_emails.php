@@ -22,35 +22,93 @@
                                             <div class="panel panel-default">
                                                 <div class="panel-heading">
                                                     <h4 class="panel-title">
-                                                        <?php
-                                                        
+                                                        <?php 
+                                                            //
                                                             $email_type = '';
-                                                            $read_function = '';
-                                                            if ($email['sender_sid'] == $current_user || $email['sender_sid'] == 0) {
-                                                                if ($email['sender_sid'] == 0 && $current_user !=  $email['manual_email']) {
-                                                                    $email_type = 'Received';
-                                                                    if ($email['is_read'] == 0) {
-                                                                        $read_function = 'onclick="mark_read('.$email['sid'].')"';
-                                                                    }
-                                                                } else {
+                                                            $sender_type = '';
+                                                            $readEmail = '';
+                                                            $buttonText = 'Reply Email';
+                                                            $modalTitle = 'reply';
+                                                            $receiver_email = '';
+                                                            $receiver_id = '';
+                                                            $sender_id = '';
+                                                            //
+                                                            if ($user_type == 'manual') {
+                                                                $sender_type = 'system';
+                                                                //
+                                                                $sender_id = $email['manual_email'];
+                                                                //
+                                                                if ($email['sender_sid'] == 0) {
+                                                                    //
                                                                     $email_type = 'Sent';
+                                                                    $buttonText = 'Resend Email';
+                                                                    $modalTitle = 'resend';
+                                                                    //
+                                                                    $receiver_info = db_get_employee_profile($email['receiver_sid']);
+                                                                    $receiver_email = $receiver_info[0]['email'];
+                                                                    $receiver_id = $email['receiver_sid'];
+                                                                    
+                                                                } else if ($email['receiver_sid'] == 0) {
+                                                                    $email_type = 'Received';
+                                                                    //
+                                                                    if ($email['is_read'] == 0) {
+                                                                        $readEmail = 'jsMarkAsRead';
+                                                                    }
+                                                                    //
+                                                                    $receiver_info = db_get_employee_profile($email['sender_sid']);
+                                                                    $receiver_email = $receiver_info[0]['email'];
+                                                                    $receiver_id = $email['sender_sid'];
                                                                 }
-                                                                
                                                             } else {
-                                                                $email_type = 'Received';
-                                                                if ($email['is_read'] == 0) {
-                                                                    $read_function = 'onclick="mark_read('.$email['sid'].')"';
+                                                                $sender_id = $current_user;
+                                                                //
+                                                                if ($email['sender_sid'] != 0 || $email['sender_sid'] == $current_user) {
+                                                                    //
+                                                                    $email_type = 'Sent';
+                                                                    $buttonText = 'Resend Email';
+                                                                    $modalTitle = 'resend';
+                                                                    //
+                                                                    
+                                                                    //
+                                                                    if ($email['receiver_sid'] == 0) {
+                                                                        $receiver_email = $email['manual_email'];
+                                                                        $receiver_id = $email['manual_email'];
+                                                                        $sender_type = 'manual';
+                                                                    } else {
+                                                                        $receiver_info = db_get_employee_profile($email['receiver_sid']);
+                                                                        $receiver_email = $receiver_info[0]['email'];
+                                                                        $receiver_id = $email['receiver_sid'];
+                                                                        $sender_type = 'system';
+                                                                    }
+
+                                                                } else if ($email['receiver_sid'] != 0 || $email['receiver_sid'] == $current_user) {
+                                                                    //
+                                                                    $email_type = 'Received';
+                                                                    //
+                                                                    if ($email['is_read'] == 0) {
+                                                                        $readEmail = 'jsMarkAsRead';
+                                                                    }
+                                                                    //
+                                                                    if ($email['sender_sid'] == 0) {
+                                                                        $receiver_email = $email['manual_email'];
+                                                                        $receiver_id = $email['manual_email'];
+                                                                        $sender_type = 'manual';
+                                                                    } else {
+                                                                        $receiver_info = db_get_employee_profile($email['sender_sid']);
+                                                                        $receiver_email = $receiver_info[0]['email'];
+                                                                        $receiver_id = $email['sender_sid'];
+                                                                        $sender_type = 'system';
+                                                                    }
                                                                 }
                                                             }
                                                         ?>
                                                         <a class="collapsed" data-toggle="collapse" aria-expanded="false" data-parent="#accordion" href="#email_<?php echo $key; ?>">
-                                                            <span class="glyphicon glyphicon-plus  js-main-gly" <?php echo $read_function; ?>></span>
+                                                            <span class="glyphicon glyphicon-plus js-main-gly <?php echo $readEmail; ?>" data-id="<?php echo $email['sid']; ?>"></span>
                                                             <?php echo $email['subject'].' ( '.my_date_format($email['send_date']).' ) ( '.$email_type.' )'; ?>
                                                             <?php if ($email['is_read'] == 0 && $email_type == 'Received') { ?>
                                                                 <img src="<?php echo base_url() ?>assets/images/new_msg.gif" id="email_read_<?php echo $email['sid']; ?>">
                                                             <?php } ?>
                                                         </a>
-                                                        
                                                     </h4>
                                                 </div>
                                                 <div id="email_<?php echo $key; ?>" class="panel-collapse collapse js-main-coll">
@@ -63,50 +121,7 @@
                                                                             <b>Action</b>
                                                                         </td>
                                                                         <td>
-                                                                            <?php if ($email['sender_sid'] == $current_user || $email['sender_sid'] == 0) { ?>
-                                                                                
-                                                                                <?php if ($receiver_user !=  $email['manual_email']) { ?>
-                                                                                    <?php
-                                                                                        $receiver_sid = $email['receiver_sid'];
-                                                                                        $receiver_email = "";
-                                                                                        $receiver_subject = $email["subject"];
-                                                                                        if (str_replace('_wid', '', $receiver_sid) != $receiver_sid) {
-                                                                                            $witness_id = str_replace('_wid', '', $receiver_sid);
-                                                                                            $receiver_email = get_witness_email_by_id($witness_id);
-                                                                                        } else {
-                                                                                            $receiver_info = db_get_employee_profile($receiver_sid);
-                                                                                            $receiver_email = $receiver_info[0]['email'];
-                                                                                        }
-                                                                                    ?>
-                                                                                    <a href="javascript:;" class="btn-blockpull-right print-incident modify-comment-btn" data-title="<?php echo 'resend'; ?>" data-type="system" data-sid="<?php echo $receiver_sid; ?>" data-email="<?php echo $receiver_email; ?>" data-subject="<?php echo $receiver_subject; ?>" onclick="send_email(this);"><i class="fa fa-retweet"></i> Resend Email</a>
-                                                                                <?php } else { ?>
-                                                                                    <?php if ($email['receiver_sid'] != 0) { ?>
-                                                                                        <a href="javascript:;" class="btn-blockpull-right print-incident modify-comment-btn" data-title="<?php echo 'reply'; ?>" data-type="manual" data-sid="<?php echo $email['manual_email']; ?>" data-subject="<?php echo $email["subject"]; ?>" onclick="send_email(this);">
-                                                                                            <i class="fa fa-reply"></i> 
-                                                                                            Reply Email
-                                                                                        </a>
-                                                                                    <?php } else { ?>
-                                                                                        <a href="javascript:;" class="btn-blockpull-right print-incident modify-comment-btn" data-title="<?php echo 'resend'; ?>" data-type="manual" data-sid="<?php echo $email['manual_email']; ?>" data-subject="<?php echo $email["subject"]; ?>" onclick="send_email(this);"><i class="fa fa-retweet"></i> Resend Email</a>
-                                                                                    <?php } ?> 
-                                                                                <?php } ?>    
-                                                                            <?php } else { ?>
-                                                                                <?php
-                                                                                    $sender_sid = $email['sender_sid'];
-                                                                                    $sender_email = "";
-                                                                                    $sender_subject = $email["subject"];
-                                                                                    if (str_replace('_wid', '', $sender_sid) != $sender_sid) {
-                                                                                        $witness_id = str_replace('_wid', '', $sender_sid);
-                                                                                        $sender_email = get_witness_email_by_id($witness_id);
-                                                                                    } else {
-                                                                                        $sender_info = db_get_employee_profile($sender_sid);
-                                                                                        $sender_email = $sender_info[0]['email'];
-                                                                                    }
-                                                                                ?>
-                                                                                <a href="javascript:;" class="btn-blockpull-right print-incident modify-comment-btn" data-title="<?php echo 'reply'; ?>" data-type="system" data-sid="<?php echo $sender_sid; ?>" data-email="<?php echo $sender_email; ?>" data-subject="<?php echo $sender_subject; ?>" onclick="send_email(this);">
-                                                                                    <i class="fa fa-reply"></i> 
-                                                                                    Reply Email
-                                                                                </a>
-                                                                            <?php } ?>    
+                                                                            <a href="javascript:;" class="btn-blockpull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo $modalTitle; ?>" data-type="<?php echo $sender_type; ?>" data-senderId="<?php echo $sender_id; ?>" data-receiverId="<?php echo $receiver_id; ?>" data-email="<?php echo $receiver_email; ?>" data-subject="<?php echo $email["subject"]; ?>"><i class="fa fa-retweet"></i> <?php echo $buttonText; ?></a>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>

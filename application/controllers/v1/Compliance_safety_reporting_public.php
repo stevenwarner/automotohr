@@ -1253,7 +1253,7 @@ class Compliance_safety_reporting_public extends Base_csp
             $this->data['reportId']           = $reportId;
             $this->data['incidentId']         = $incidentId;
             $this->data['libraryItems']       = $libraryItems;
-            $this->data['senderType']        = $sender_type;
+            $this->data['senderType']         = $sender_type;
             $this->data['pageJs'][]           = 'csp/send_email_view';
             //
             $this->data['template'] = message_header_footer(
