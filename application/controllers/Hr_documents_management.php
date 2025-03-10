@@ -8864,15 +8864,15 @@ class Hr_documents_management extends Public_Controller
                         //
                         $currentDocument = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document['document_sid']);
                         //
-                        $document_to_update['document_original_name'] = $currentDocument ['uploaded_document_original_name'];
-                        $document_to_update['document_extension'] = $currentDocument ['uploaded_document_extension'];
-                        $document_to_update['document_s3_name'] = $currentDocument ['uploaded_document_s3_name'];
-                        $document_to_update['document_title'] = $currentDocument ['document_title'];
-                        $document_to_update['document_description'] = $currentDocument ['document_description'];
-                        $document_to_update['acknowledgment_required'] = $currentDocument ['acknowledgment_required'];
-                        $document_to_update['signature_required'] = $currentDocument ['signature_required'];
-                        $document_to_update['download_required'] = $currentDocument ['download_required'];
-                        $document_to_update['is_required'] = $currentDocument ['is_required'];
+                        $document_to_update['document_original_name'] = $currentDocument['uploaded_document_original_name'];
+                        $document_to_update['document_extension'] = $currentDocument['uploaded_document_extension'];
+                        $document_to_update['document_s3_name'] = $currentDocument['uploaded_document_s3_name'];
+                        $document_to_update['document_title'] = $currentDocument['document_title'];
+                        $document_to_update['document_description'] = $currentDocument['document_description'];
+                        $document_to_update['acknowledgment_required'] = $currentDocument['acknowledgment_required'];
+                        $document_to_update['signature_required'] = $currentDocument['signature_required'];
+                        $document_to_update['download_required'] = $currentDocument['download_required'];
+                        $document_to_update['is_required'] = $currentDocument['is_required'];
                         $document_to_update['assign_location'] = "update document from reassign group";
                         //
                         $this->hr_documents_management_model->reassign_group_document($document['document_sid'], $user_type, $user_sid, $document_to_update);
@@ -10991,7 +10991,7 @@ class Hr_documents_management extends Public_Controller
                 $this->res['Response'] = '<strong>Success:</strong> Document Successfully Bulk Assigned!';
                 break;
 
-                // 
+            // 
             case "get_documents":
                 //
                 $documents = $this->hr_documents_management_model->getGeneralAssignedDocuments(
@@ -11017,7 +11017,7 @@ class Hr_documents_management extends Public_Controller
                 $this->resp();
                 break;
 
-                // 
+            // 
             case "get_general_document_view":
                 //
                 switch ($post['documentType']) {
@@ -11052,7 +11052,7 @@ class Hr_documents_management extends Public_Controller
                             $this->resp();
                         }
                         break;
-                        //
+                    //
                     case "emergency_contacts":
                         //
                         $this->load->model('emergency_contacts_model');
@@ -11084,7 +11084,7 @@ class Hr_documents_management extends Public_Controller
                             $this->resp();
                         }
                         break;
-                        //
+                    //
                     case "drivers_license":
                         //
                         $this->load->model('dashboard_model');
@@ -11099,7 +11099,7 @@ class Hr_documents_management extends Public_Controller
                             $this->resp();
                         }
                         break;
-                        //
+                    //
                     case "occupational_license":
                         //
                         $this->load->model('dashboard_model');
@@ -11114,7 +11114,7 @@ class Hr_documents_management extends Public_Controller
                             $this->resp();
                         }
                         break;
-                        //
+                    //
                     case "direct_deposit":
                         //
                         $this->load->model('direct_deposit_model');
@@ -11140,7 +11140,7 @@ class Hr_documents_management extends Public_Controller
                 $this->resp();
                 break;
 
-                // 
+            // 
             case "get_general_document_history":
                 //
                 $history = $this->hr_documents_management_model->getGeneralAssignedDocumentHistory(
@@ -11162,7 +11162,7 @@ class Hr_documents_management extends Public_Controller
                 $this->resp();
                 break;
 
-                //
+            //
             case "assign_document":
                 //
                 $insertId = $this->hr_documents_management_model->assignGeneralDocument(
@@ -11260,7 +11260,7 @@ class Hr_documents_management extends Public_Controller
                 $this->resp();
                 break;
 
-                //
+            //
             case "revoke_document":
                 //
                 $insertId = $this->hr_documents_management_model->revokeGeneralDocument(
@@ -11281,7 +11281,7 @@ class Hr_documents_management extends Public_Controller
                 $this->res['Response'] = 'You have successfully revoked ' . (ucwords(str_replace('_', ' ', $post['documentType']))) . ' document.';
                 $this->resp();
                 break;
-                //
+            //
             case "modify_offer_letter_dates":
                 //
                 $data_to_update = array();
@@ -11304,7 +11304,7 @@ class Hr_documents_management extends Public_Controller
                 //
                 break;
 
-                //
+            //
             case "change_offer_letter_archive_status":
                 //
                 $data_to_update = array();
@@ -11320,7 +11320,7 @@ class Hr_documents_management extends Public_Controller
                 $this->resp();
                 //
                 break;
-                //
+            //
             case "modify_offer_letter_data":
                 //
                 $data_to_update = array();
@@ -11387,7 +11387,7 @@ class Hr_documents_management extends Public_Controller
                 $this->resp();
                 //
                 break;
-                //
+            //
             case "check_user_complete_general_document":
                 //
                 $company_sid = $post['company_sid'];
@@ -11415,7 +11415,7 @@ class Hr_documents_management extends Public_Controller
                 $this->resp();
                 //
                 break;
-                //
+            //
             case "modify_authorized_document":
                 //
                 $document_sid = $post['document_sid'];
@@ -11439,7 +11439,7 @@ class Hr_documents_management extends Public_Controller
                 //
                 break;
 
-                //
+            //
             case "mark_general_document_mandatory":
                 //
                 $this->hr_documents_management_model->makeGeneralDocumentRequired(
@@ -14084,7 +14084,7 @@ class Hr_documents_management extends Public_Controller
                     $template = $this->load->view('hr_documents_management/templates/dependents', ['data' => $data, 'cs' => $d], true);
                 }
                 break;
-                //
+            //
             case "emergency_contacts":
                 //
                 $this->load->model('emergency_contacts_model');
@@ -14113,7 +14113,7 @@ class Hr_documents_management extends Public_Controller
                     $template = $this->load->view('hr_documents_management/templates/emergency_contacts', ['data' => $data, 'cs' => $d], true);
                 }
                 break;
-                //
+            //
             case "drivers_license":
                 //
                 $this->load->model('dashboard_model');
@@ -14125,7 +14125,7 @@ class Hr_documents_management extends Public_Controller
                     $template = $this->load->view('hr_documents_management/templates/drivers_license', ['data' => $data], true);
                 }
                 break;
-                //
+            //
             case "occupational_license":
                 //
                 $this->load->model('dashboard_model');
@@ -14137,7 +14137,7 @@ class Hr_documents_management extends Public_Controller
                     $template = $this->load->view('hr_documents_management/templates/occupational_license', ['data' => $data], true);
                 }
                 break;
-                //
+            //
             case "direct_deposit":
                 //
                 $this->load->model('direct_deposit_model');
@@ -14525,6 +14525,17 @@ class Hr_documents_management extends Public_Controller
                 ->update('applicant_w9form', $data);
         } else if ($_POST['formType'] == 'w4') {
             //
+            $dataRow = $this->db
+                ->select('signature_timestamp')
+                ->from('form_w4_original')
+                ->where('sid', $_POST['id'])
+                ->get()
+                ->row_array();
+
+            if (!empty($dataRow)) {
+                $data['signature_timestamp'] = $dataRow['signature_timestamp'];
+            }
+
             $this->db
                 ->where('sid', $_POST['id'])
                 ->update('form_w4_original', $data);
@@ -16223,7 +16234,7 @@ class Hr_documents_management extends Public_Controller
 
                 break;
 
-                // 
+            // 
             case "delete_approver":
                 $this->hr_documents_management_model->delete_document_approver_from_list($post["rowId"]);
                 //
@@ -16231,7 +16242,7 @@ class Hr_documents_management extends Public_Controller
                 $resp['Msg'] = getUserNameBySID($post["approverId"]) . ' is deleted from approver list successfully.';
                 break;
 
-                // 
+            // 
             case "remind_approver":
                 //
                 // Send Email reminder to approver of this document
@@ -17816,7 +17827,7 @@ class Hr_documents_management extends Public_Controller
                     $a = [];
                     $a['employeeInfo'] = getEmployeeBasicInfo($row['sid']);
                     $a['documentInfo'] = [
-                        'percentage' =>  $totalDocs > 0 ? round(($totalDocsCompleted / $totalDocs) * 100, 2)."%" : 'N/A',
+                        'percentage' =>  $totalDocs > 0 ? round(($totalDocsCompleted / $totalDocs) * 100, 2) . "%" : 'N/A',
                         'assignedDocument' => $totalDocs,
                         'completedDocument' => $totalDocsCompleted,
                         'notCompletedDocument' => $totalDocsNotCompleted,
@@ -17845,7 +17856,6 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
                 }
-
             }
             //
             $data["employeeId"] = $employeeId;
