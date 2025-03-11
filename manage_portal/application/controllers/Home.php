@@ -1142,7 +1142,7 @@ class Home extends CI_Controller
             $data["indeedApplyButtonDetails"]["attributes"] = [
                 "encryptedJobUrl" => encryptAttributeForIndeed(
                     $secretKey,
-                    current_url()
+                    urlencode(current_url())
                 ),
             ];
         }
