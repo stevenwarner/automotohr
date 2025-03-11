@@ -1940,24 +1940,23 @@ if (!function_exists('verifyCaptcha')) {
 if (!function_exists("encryptAttributeForIndeed")) {
     function encryptAttributeForIndeed($partnerApiToken, $plainTextAttribute)
     {
-        // Step 1: Generate a 128-bit secret key from the partnerApiToken
-        // We'll take the first 16 bytes of the partnerApiToken as the key.
+        // Step 1: Generate a 128-bit secret key from the first 16 bytes of partnerApiToken
         $secretKey = substr($partnerApiToken, 0, 16); // First 16 bytes (128-bits)
 
-        // Step 2: Prepare the plaintext attribute (ensure it's UTF-8 encoded)
-        $plainTextBytes = mb_convert_encoding($plainTextAttribute, 'UTF-8');
+        // Step 2: Prepare the plaintext attribute (ensure UTF-8 encoding)
+        $plainTextBytes = mb_convert_encoding($plainTextAttribute, 'UTF-8'); // Convert to UTF-8 encoding
 
         // Step 3: Initialize the AES cipher parameters
-        $cipherMethod = 'aes-128-cbc'; // AES-128 with CBC mode
-        $iv = str_repeat("\0", 16); // 16 bytes of 0 for the initialization vector (IV)
+        $cipherMethod = 'aes-128-cbc';  // AES-128 with CBC mode
+        $iv = str_repeat("\0", 16);      // Initialization Vector: 16 bytes of 0 for IV
 
         // Step 4: Perform encryption using OpenSSL
         $encrypted = openssl_encrypt(
-            $plainTextBytes,  // Plaintext data to encrypt
-            $cipherMethod,    // AES-128-CBC encryption method
-            $secretKey,       // Secret key
-            OPENSSL_RAW_DATA, // Return raw binary encrypted data
-            $iv               // Initialization vector (IV)
+            $plainTextBytes,   // Plaintext data to encrypt
+            $cipherMethod,     // AES-128-CBC encryption method
+            $secretKey,        // Secret key (128-bit)
+            OPENSSL_RAW_DATA,  // Return raw binary encrypted data
+            $iv                // Initialization vector (16 bytes of 0)
         );
 
         if ($encrypted === false) {
