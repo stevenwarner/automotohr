@@ -1137,7 +1137,7 @@ class Home extends CI_Controller
         //
         if($data["indeedApplyButtonDetails"]) {
             // get partner key
-            $secretKey = getCreds("AHR")->INDEED->CLIENT_SECRET;
+            $secretKey = getCreds("AHR")->INDEED_PARTNER_KEY;
             //
             $data["indeedApplyButtonDetails"]["attributes"] = [
                 "encryptedJobUrl" => encryptAttributeForIndeed(
