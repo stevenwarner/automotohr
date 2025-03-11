@@ -14524,6 +14524,16 @@ class Hr_documents_management extends Public_Controller
                 ->where('sid', $_POST['id'])
                 ->update('applicant_w9form', $data);
         } else if ($_POST['formType'] == 'w4') {
+            $dataRow = $this->db
+                ->select('signature_timestamp')
+                ->from('form_w4_original')
+                ->where('sid', $_POST['id'])
+                ->get()
+                ->row_array();
+
+            if (!empty($dataRow)) {
+                $data['signature_timestamp'] = $dataRow['signature_timestamp'];
+            }
             //
             $this->db
                 ->where('sid', $_POST['id'])
