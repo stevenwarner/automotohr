@@ -24,7 +24,7 @@
                         color: <?= $level["txt_color"]; ?>;">Severity Level <?= $level["level"]; ?></div>
                     </div>
                     <div class="col-sm-10 jsCSPItemDescription">
-                        <?= convertCSPTags($item["description"], $decodedJSON); ?>
+                        <?= convertCSPTags($item["description"], $decodedJSON ?? []); ?>
                     </div>
                 </div>
                 <hr>

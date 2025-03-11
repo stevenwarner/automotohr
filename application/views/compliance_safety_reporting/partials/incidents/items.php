@@ -30,7 +30,7 @@
                     </div>
                     <div class="col-md-7">
                         <?= $cspRecord["description"]
-                            ? convertCSPTags($cspRecord["description"], $decodedJSON)
+                            ? convertCSPTags($cspRecord["description"], $decodedJSON ?? [])
                             : $item["description"];
                         ?>
                     </div>
