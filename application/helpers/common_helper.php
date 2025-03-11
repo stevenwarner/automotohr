@@ -66,7 +66,7 @@ if (!function_exists('getEmployeeBasicInfo')) {
             $basicInfo['phone'] = $basicInfo["PhoneNumber"];
             $basicInfo["name"] = remakeEmployeeName($userBasicInfo, true, true);
             $basicInfo["designation"] = remakeEmployeeName($userBasicInfo, false);
-            $basicInfo["employeeName"] = $basicInfo["name"] .' '. $basicInfo["designation"];
+            $basicInfo["employeeName"] = $basicInfo["name"] . ' ' . $basicInfo["designation"];
             $basicInfo["departmentName"] = getDepartmentNameBySID($userInfo['department_sid']);
             $basicInfo["teamName"] = getTeamNameBySID($userInfo['team_sid']);
             $basicInfo["companyName"] = getCompanyNameBySid($userInfo['parent_sid']);
@@ -74,7 +74,7 @@ if (!function_exists('getEmployeeBasicInfo')) {
             $basicInfo["teamId"] = $userInfo['team_sid'];
             $basicInfo["companyId"] = $userInfo['parent_sid'];
             $basicInfo["email"] = $userInfo['email'];
-        }    
+        }
         //
         return $basicInfo;
     }
@@ -407,28 +407,39 @@ if (!function_exists('sendMail')) {
 
     function sendMail($from, $to, $subject, $body, $fromName = NULL, $replyTo = NULL)
     {
-        if (is_staging_server()) return true;
-        require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
-        $mail = new PHPMailer;
-        $mail->From = $from;
-        $mail->FromName = $fromName;
 
-        if ($replyTo == NULL) {
-            $mail->addReplyTo($from);
-        } else {
-            $mail->addReplyTo($replyTo);
-        }
+      //  if (is_staging_server()) return true;
 
         //
+        $mailpassword = getMTPEmailCreds($to);
 
-        $mail->addAddress($to);
-        $mail->CharSet = 'UTF-8';
-        // mailAWSSES($mail, $to);
-        //$mail->addBCC('prosaifhasi@gmail.com');
-        $mail->isHTML(true);
-        $mail->Subject = $subject;
-        $mail->Body = $body;
-        $mail->send();
+        if (!empty($mailpassword)) {
+            sendSMTPmail($from, $to, $subject, $body, $mailpassword, $fromName = NULL, $replyTo = NULL);
+        } else {
+
+
+            require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
+            $mail = new PHPMailer;
+            $mail->From = $from;
+            $mail->FromName = $fromName;
+
+            if ($replyTo == NULL) {
+                $mail->addReplyTo($from);
+            } else {
+                $mail->addReplyTo($replyTo);
+            }
+
+            //
+
+            $mail->addAddress($to);
+            $mail->CharSet = 'UTF-8';
+            // mailAWSSES($mail, $to);
+            //$mail->addBCC('prosaifhasi@gmail.com');
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body = $body;
+            $mail->send();
+        }
     }
 }
 
@@ -6834,7 +6845,7 @@ if (!function_exists('log_and_send_email_with_attachment')) {
         //
         save_email_log_common($email_data);
         //
-        if (base_url() != STAGING_SERVER_URL){
+        if (base_url() != STAGING_SERVER_URL) {
             return $method($from, $to, $subject, $body, $sender_name, $file_path);
         }
     }
@@ -10421,7 +10432,7 @@ if (!function_exists('phonenumber_format')) {
         $phone_number = str_replace('/[^0-9]/', '', $phone_number);
         // Check for us format
         switch ($country_code) {
-                // For US & Canada
+            // For US & Canada
             case '+1':
                 // Match format & convert
                 if (preg_match('/^(\d{3})(\d{3})(\d{4})(\d+)?$/', $phone_number, $match))
@@ -10453,7 +10464,7 @@ if (!function_exists('phonenumber_validate')) {
         $phone_number = str_replace('/[^0-9]/', '', $phone_number);
         // Check for us format
         switch ($country_code) {
-                // For US & Canada
+            // For US & Canada
             case '+1':
                 // Match format & convert
                 if (preg_match('/^(\d{3})(\d{3})(\d{4})$/', $phone_number, $match))
@@ -17346,6 +17357,39 @@ if (!function_exists("isSafetyIncident")) {
             return true;
         } else {
             return false;
-        }  
+        }
+    }
+}
+
+
+if (!function_exists('sendSMTPMail')) {
+
+    function sendSMTPmail($from, $to, $subject, $body, $password, $fromName = NULL, $replyTo = NULL)
+    {
+
+        require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
+
+        $mail = new PHPMailer;
+        $mail->isSMTP();
+        $mail->Host = 'smtp.automotohr.com'; // Set the SMTP server to send through (e.g., Gmail's SMTP server: 'smtp.gmail.com')
+        $mail->SMTPAuth = true;
+        $mail->Username = $to; // SMTP username (your email address)
+        $mail->Password = $password; // SMTP password
+        $mail->Port = 587;
+
+        if ($replyTo == NULL) {
+            $mail->addReplyTo($from);
+        } else {
+            $mail->addReplyTo($replyTo);
+        }
+
+        $mail->From = $from;
+        $mail->FromName = $fromName;
+        $mail->addAddress($to);
+        $mail->CharSet = 'UTF-8';
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = $body;
+        $mail->send();
     }
 }
