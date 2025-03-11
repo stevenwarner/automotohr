@@ -288,7 +288,12 @@ $(function Overview() {
 				//
 				processIncidentItemListing(obj);
 			});
-			alertify.success("You have successfully updated the checklist");
+			alertify.success(
+				"You have successfully updated the checklist",
+				function () {
+					window.location.refresh();
+				}
+			);
 			ml(false, "jsPageLoader");
 		}
 	});
