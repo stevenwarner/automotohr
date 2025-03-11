@@ -2022,16 +2022,13 @@ class Compliance_report_model extends CI_Model
 			$insert = array();
 
 			foreach ($post as $key => $val) {
-				if (in_array($key, [
-					"report_completion_date",
-					"report_status",
-					"document_title",
-					"report_note_type",
-					"report_note",
-					"report_employees",
-					"external_employees_names",
-					"external_employees_emails",
-				])) {
+				//check for regex
+				if (
+					strpos($key, "multi-list_") === false
+					&& strpos($key, "date_") === false
+					&& strpos($key, "text_") === false
+					&& strpos($key, "radio_") === false
+				) {
 					continue;
 				}
 				$exp = explode('_', $key);

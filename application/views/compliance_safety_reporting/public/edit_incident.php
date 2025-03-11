@@ -44,7 +44,8 @@
                             </div>
                         </div>
                     </div>
-                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/description"); ?>
+                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/items_listing"); ?>
+
                     <?php if ($report["disable_answers"] == 1) : ?>
                         <?php $this->load->view("compliance_safety_reporting/partials/incidents/answers"); ?>
                     <?php else: ?>
@@ -237,3 +238,15 @@
 <script>
     const segments = <?= json_encode($segments); ?>;
 </script>
+
+<style>
+    .csLabelPill {
+        font-family: arial;
+        font-weight: bold;
+        padding: 6px;
+        font-size: 13px;
+        margin-bottom: 3px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+    }
+</style>

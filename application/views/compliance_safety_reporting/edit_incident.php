@@ -62,7 +62,6 @@
                     </div>
                     <?php $this->load->view("compliance_safety_reporting/partials/incidents/items"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/incidents/items_listing"); ?>
-                    <?php //$this->load->view("compliance_safety_reporting/partials/incidents/description"); ?>
                     <?php if ($report["disable_answers"] == 1) : ?>
                         <?php $this->load->view("compliance_safety_reporting/partials/incidents/answers"); ?>
                     <?php else: ?>
