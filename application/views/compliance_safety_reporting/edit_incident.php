@@ -17,6 +17,10 @@
                         <i class="fa fa-pie-chart"></i>
                         Compliance Safety Reporting
                     </a>
+                    <a href="javascript:void(0)" class="btn btn-orange jsSendReminderEmails">
+                        <i class="fa fa-send"></i>
+                        Send Emails
+                    </a>
                 <?php else: ?>
                     <a href="<?= base_url("compliance_safety_reporting/employee/overview") ?>" class="btn btn-blue">
                         <i class="fa fa-pie-chart"></i>

@@ -734,5 +734,37 @@ $(function Overview() {
 		$(this).parent().parent().css("display", "none");
 	});
 
+	$(".jsSendReminderEmails").click(function (event) {
+		event.preventDefault();
+		_confirm(
+			"Are you sure you want to send emails to the selected employees and external recipients?",
+			sendEmailsForReport
+		);
+	});
+
+	function sendEmailsForReport() {
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/" +
+						getSegment(2) +
+						"/emails/send/incidents"
+				),
+				method: "POST",
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message);
+				});
+		}
+	}
+
 	ml(false, "jsPageLoader");
 });

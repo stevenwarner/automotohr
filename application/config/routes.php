@@ -2680,3 +2680,9 @@ $route["compliance_safety_reporting_public/view_compliance_safety_report_email/(
 // Add items to teh incidents
 $route["csp/report/(:num)/incident/(:num)/items/employees"]["post"] =
   "v1/Compliance_safety_reporting_public/updateAttachedItem/$1/$2";
+
+$route["compliance_safety_reporting/(:num)/emails/send"]["post"] =
+  "v1/Compliance_safety_reporting/sendEmailsToReportManagers/$1";
+
+$route["compliance_safety_reporting/(:num)/emails/send/incidents"]["post"] =
+  "v1/Compliance_safety_reporting/sendEmailsForCSPIncident/$1";

@@ -1121,4 +1121,46 @@
                 echo 'success';
             }
         }
+
+        /**
+         * process edit
+         * 
+         * @param int $reportId
+         * @param int $incidentId
+         */
+        public function sendEmailsToReportManagers(int $reportId)
+        {
+            //allowed_internal_system_count
+            $this
+                ->compliance_report_model
+                ->sendEmailsForCSPReport(
+                    $reportId
+                );
+            // return the success
+            return sendResponse(
+                200,
+                ["message" => "You have successfully send the emails."]
+            );
+        }
+        
+        /**
+         * process edit
+         * 
+         * @param int $reportId
+         * @param int $incidentId
+         */
+        public function sendEmailsForCSPIncident(int $incidentId)
+        {
+            //allowed_internal_system_count
+            $this
+                ->compliance_report_model
+                ->sendEmailsForCSPIncident(
+                    $incidentId
+                );
+            // return the success
+            return sendResponse(
+                200,
+                ["message" => "You have successfully send the emails."]
+            );
+        }
     }

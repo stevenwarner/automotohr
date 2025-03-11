@@ -1549,7 +1549,7 @@ class Compliance_report_model extends CI_Model
 				]);
 		}
 
-		$this->sendEmailsForCSPReport($reportId, CSP_ASSIGNED_EMAIL_TEMPLATE_ID);
+		// $this->sendEmailsForCSPReport($reportId, CSP_ASSIGNED_EMAIL_TEMPLATE_ID);
 
 		return $reportId;
 	}
@@ -1992,7 +1992,7 @@ class Compliance_report_model extends CI_Model
 			$loggedInEmployeeId
 		);
 
-		$this->sendEmailsForCSPReport($reportId, CSP_UPDATED_EMAIL_TEMPLATE_ID);
+		// $this->sendEmailsForCSPReport($reportId, CSP_UPDATED_EMAIL_TEMPLATE_ID);
 
 		return true;
 	}
@@ -2091,7 +2091,7 @@ class Compliance_report_model extends CI_Model
 			$loggedInEmployeeId
 		);
 
-		$this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
+		// $this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
 
 
 		return true;
@@ -2468,7 +2468,7 @@ class Compliance_report_model extends CI_Model
 			->set("csp_incident_count", "csp_incident_count + 1", false)
 			->update("csp_reports");
 		// send public link
-		$this->sendEmailsForCSPIncident($id);
+		// $this->sendEmailsForCSPIncident($id);
 		//
 		return $id;
 	}
