@@ -14530,7 +14530,7 @@ class Hr_documents_management extends Public_Controller
                 ->where('sid', $_POST['id'])
                 ->get()
                 ->row_array();
-
+            //
             if (!empty($dataRow)) {
                 $data['signature_timestamp'] = $dataRow['signature_timestamp'];
             }
