@@ -1134,6 +1134,18 @@ class Home extends CI_Controller
                 $originalId,
                 $data['company_details']['sid']
             );
+        //
+        if ($data["indeedApplyButtonDetails"]) {
+            // get partner key
+            $partnerKey = getCreds("AHR")->INDEED_PARTNER_KEY;
+            //
+            $data["indeedApplyButtonDetails"]["attributes"] = [
+                "encryptedJobUrl" => encryptAttributeForIndeed(
+                    $partnerKey,
+                    current_url()
+                ),
+            ];
+        }
 
         $jobs_page_title = $this->theme_meta_model->fGetThemeMetaData($data['company_details']['sid'], $theme_name, 'jobs', 'jobs_page_title');
         $jobs_detail_page_title = $this->theme_meta_model->fGetThemeMetaData($data['company_details']['sid'], $theme_name, 'jobs_detail', 'jobs_detail_page_banner');
