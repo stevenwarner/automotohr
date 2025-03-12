@@ -1941,6 +1941,11 @@ if (!function_exists("encryptAttributeForIndeed")) {
     function encryptAttributeForIndeed($secretKey, $plainTextAttribute)
     {
         try {
+            //
+            $secretKey = mb_convert_encoding(
+                $secretKey,
+                "UTF-8"
+            );
             // Convert the API secret to a 16-byte key (AES-128)
             $key = substr($secretKey, 0, 16); // Ensure it's 16 bytes
 
