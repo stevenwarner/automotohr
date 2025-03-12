@@ -4718,7 +4718,7 @@ if (!function_exists("isAllowedForCSP")) {
         // load the model
         $CI->load->model("v1/compliance_report_model");
         // check the permission
-        return (int)$CI->compliance_report_model->hasAccess($employeeId) === 1;
+        return (int)$CI->compliance_report_model->hasAccess($employeeId) >= 1;
     }
 }
 
