@@ -2119,10 +2119,10 @@ if (!function_exists('processESTAPolicy')) {
         // set for full time employees
         $dayscheck = $accruals['employee_type_original'] == "parttime"
             ? 120
-            : 90;
+            : 0;
         // check if policy is applicable
         // after completing the accrual time
-        if ($difference < $dayscheck) {
+        if ($accruals['employee_type_original'] == "parttime" && $difference < $dayscheck) {
             $r['Reason'] = 'Employee do not meet accrual of ' . ($dayscheck) . ' days for this policy';
             return $r;
         }
@@ -2301,7 +2301,8 @@ if (!function_exists("getTheAllowedTimeForSpecificYear")) {
         if ($accruals['employee_type_original'] == "parttime") {
             $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +121 days'));
         } else {
-            $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +91 days'));
+            $earningHoursStartDate = $employeeJoiningDate;
+            $allowedHours = 72;
         }
         //
         $startTimestamp = strtotime($earningHoursStartDate);
