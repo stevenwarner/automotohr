@@ -68,6 +68,26 @@
                                                         </select>
                                                     </div>
                                                 </div>
+
+
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
+                                                    <label>Company Name</label>                                                  
+                                                    <div class="hr-select-dropdown">
+                                                        <select class="invoice-fields" name="company" id="jscompany">
+                                                            <option value="all">All</option>
+                                                            <?php if (!empty($companies)) {
+                                                                foreach ($companies as $company) {
+                                                            ?>
+                                                                    <option value="<?php echo $company['sid']; ?>" <?php if (isset($companyid) && $companyid == $company['sid']) { ?> selected="selected" <?php } ?>><?php echo $company['CompanyName']; ?></option>
+
+
+                                                            <?php }
+                                                            } ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+
                                                 <div class="col-lg-12 text-right field-row field-row-autoheight">
                                                     <a href="javascript:;" id="search" class="btn btn-success">Search</a>
                                                     <a href="<?php echo base_url('manage_admin/invoice'); ?>" class="btn btn-success">Clear</a>
@@ -98,6 +118,7 @@
                                                             <!--<th><input type="checkbox"></th>-->
                                                             <th>Invoice #</th>
                                                             <th>Customer Name</th>
+                                                            <th>Company Name</th>
                                                             <th>Date</th>
                                                             <th>Payment Method</th>
                                                             <th class="text-center">Total</th>
@@ -114,6 +135,7 @@
                                                                 <!--<td><input type="checkbox" ></td>-->
                                                                 <td><?= $invoice["invoice_number"] ?></td>
                                                                 <td><?= $invoice["username"] ?></td>
+                                                                <td><?= $invoice["CompanyName"] ?></td>
                                                                 <td><?= date_with_time($invoice["date"]); ?></td>
                                                                 <td><?= $invoice["payment_method"] ?></td>
                                                                 <td class="text-center">$<?= $invoice["total"] ?></td>
@@ -222,6 +244,8 @@
         var inv_sid = $('#inv_sid').val();
         var payment_method = $('#payment_method').val();
         var status = $('#status').val();
+        var company = $('#jscompany').val();
+
 
         startdate = startdate != '' && startdate != null && startdate != undefined && startdate != 0 ? encodeURIComponent(startdate) : 'all';
         enddate = enddate != '' && enddate != null && enddate != undefined && enddate != 0 ? encodeURIComponent(enddate) : 'all';
@@ -230,8 +254,11 @@
         payment_method = payment_method != '' && payment_method != null && payment_method != undefined && payment_method != 0 ? encodeURIComponent(payment_method) : 'all';
         status = status != '' && status != null && status != undefined && status != 0 ? encodeURIComponent(status) : 'all';
 
+        company = company != '' && company != null && company != undefined && company != 0 ? encodeURIComponent(company) : 'all';
 
-        var url = '<?php echo base_url('manage_admin/invoice/index'); ?>' + '/' + startdate + '/' + enddate + '/' + username + '/' + inv_sid + '/' + payment_method + '/' + status + '/';
+
+
+        var url = '<?php echo base_url('manage_admin/invoice/index'); ?>' + '/' + startdate + '/' + enddate + '/' + username + '/' + inv_sid + '/' + payment_method + '/' + status + '/' + company + '/';
 
         $('#search').attr('href', url);
     }
