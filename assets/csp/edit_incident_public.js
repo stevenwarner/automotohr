@@ -505,18 +505,77 @@ $(function Overview() {
 	}
 
 	//
-	if (descriptionFieldsObj && descriptionFieldsObj.dynamicInput) {
-		descriptionFieldsObj.dynamicInput.map(function (v, i) {
-			$('[name="dynamicInput[]"]').eq(i).val(v);
-		});
+	$(".jsCSPItemListingBtn").click(function (event) {
+		//
+		event.preventDefault();
+		//
+		let ids = [];
+		//
+		if ($(".jsCSPItemListingRow").length > 0) {
+			$(".jsCSPItemListingRow").map(function () {
+				//
+				let dynamicInputs = $(this)
+					.find('[name="dynamicInput[]"]')
+					.map(function () {
+						return $(this).val();
+					})
+					.get();
+				//
+				let dynamicCheckboxes = $(this)
+					.find('[name="dynamicCheckbox[]"]')
+					.map(function () {
+						return $(this).prop("checked") ? "on" : "off";
+					})
+					.get();
+				//
+				const obj = {
+					id: $(this).data("id"),
+					dynamicInput: dynamicInputs,
+					dynamicCheckbox: dynamicCheckboxes,
+				};
+				//
+				ids.push($(this).val());
+				//
+				processIncidentItemListing(obj);
+			});
+			alertify.success("You have successfully updated the checklist");
+			ml(false, "jsPageLoader");
+		}
+	});
+
+	function processIncidentItemListing(obj) {
+		//
+		XHR = $.ajax({
+			url: baseUrl(
+				"csp/report/" +
+					getSegmentId(2) +
+					"/incident/" +
+					getSegmentId(5) +
+					"/items/employees"
+			),
+			method: "POST",
+			data: obj,
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {});
 	}
-	if (descriptionFieldsObj && descriptionFieldsObj.dynamicCheckbox) {
-		descriptionFieldsObj.dynamicCheckbox.map(function (v, i) {
-			$('[name="dynamicCheckbox[]"]')
-				.eq(i)
-				.prop("checked", v === "on");
-		});
-	}
+
+	//
+	// if (descriptionFieldsObj && descriptionFieldsObj.dynamicInput) {
+	// 	descriptionFieldsObj.dynamicInput.map(function (v, i) {
+	// 		$('[name="dynamicInput[]"]').eq(i).val(v);
+	// 	});
+	// }
+	// if (descriptionFieldsObj && descriptionFieldsObj.dynamicCheckbox) {
+	// 	descriptionFieldsObj.dynamicCheckbox.map(function (v, i) {
+	// 		$('[name="dynamicCheckbox[]"]')
+	// 			.eq(i)
+	// 			.prop("checked", v === "on");
+	// 	});
+	// }
 
 	function getSegmentId(segmentId) {
 		if (segmentId === 2) {

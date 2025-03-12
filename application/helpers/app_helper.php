@@ -4743,24 +4743,58 @@ if (!function_exists("convertCSPTags")) {
      * Convert CSP tags
      *
      * @param string $description
+     * @param array  $dynamicData
+     * default []
      * @return string
      */
-    function convertCSPTags($description): string
+    function convertCSPTags($description, array $dynamicData = []): string
     {
-        // replace inputs
-        $description =
-            preg_replace(
-                "/{{input}}/i",
-                '<input type="text" name="dynamicInput[]" style="width: 400px;" />',
-                $description
-            );
-        // replace checkboxes
-        $description =
-            preg_replace(
-                "/{{checkbox}}/i",
-                '<input type="checkbox" name="dynamicCheckbox[]" style="width: 20px; height: 20px;" />',
-                $description
-            );
+        // Prepare the inputs and checkboxes content
+        $inputCounter = $checkboxCounter = 0;
+        // Check if dynamic data exists
+        if ($dynamicData) {
+            //
+            if ($dynamicData["dynamicInput"]) {
+                // Replace inputs
+                $description = preg_replace_callback(
+                    "/{{input}}/i",
+                    function ($matches) use ($dynamicData, &$inputCounter) {
+                        $value = $dynamicData['dynamicInput'][$inputCounter] ?? '';
+                        $inputCounter++;
+                        return '<input type="text" name="dynamicInput[]" style="width: 400px;" value="' . htmlspecialchars($value) . '" />';
+                    },
+                    $description
+                );
+            }
+            //
+            if ($dynamicData["dynamicCheckbox"]) {
+                // Replace checkboxes 
+                $description = preg_replace_callback(
+                    "/{{checkbox}}/i",
+                    function ($matches) use ($dynamicData, &$checkboxCounter) {
+                        $checked = $dynamicData['dynamicCheckbox'][$checkboxCounter] == "on" ? true : false;
+                        $checkboxCounter++;
+                        return '<input type="checkbox" name="dynamicCheckbox[]" style="width: 20px; height: 20px;"' . ($checked ? ' checked' : '') . ' />';
+                    },
+                    $description
+                );
+            }
+        } else {
+            // replace inputs
+            $description =
+                preg_replace(
+                    "/{{input}}/i",
+                    '<input type="text" name="dynamicInput[]" style="width: 400px;" />',
+                    $description
+                );
+            // replace checkboxes
+            $description =
+                preg_replace(
+                    "/{{checkbox}}/i",
+                    '<input type="checkbox" name="dynamicCheckbox[]" style="width: 20px; height: 20px;" />',
+                    $description
+                );
+        }
 
         //
         return $description;

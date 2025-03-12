@@ -358,6 +358,10 @@ class Compliance_safety_reporting_public extends Base_csp
                 $this->getPublicSessionData("company_sid"),
                 0
             );
+        // get the severity status
+        $this->data["severity_status"] = $this
+            ->compliance_report_model
+            ->getSeverityLevels();
         if ($this->data["report"]["disable_answers"] != 1) {
             // get incident questions and content
             $this->data["questions"] = $this
@@ -717,7 +721,8 @@ class Compliance_safety_reporting_public extends Base_csp
         );
     }
 
-    public function sendComplianceReportEmail () {
+    public function sendComplianceReportEmail()
+    {
         //
         $this->checkPublicSession();
         $companyId = $this->getPublicSessionData("company_sid");
@@ -758,7 +763,7 @@ class Compliance_safety_reporting_public extends Base_csp
             if ($isEmployee) {
                 $manualUserInfo = $this->compliance_report_model->getUserInfoByEmail($manual_email, $companyId);
                 $conversation_key = $reportId . '/' . $incidentId . '/' . $manualUserInfo['sid'] . '/' . $employeeId;
-                $receiver_name = $manualUserInfo['first_name'].' '.$manualUserInfo['last_name'];
+                $receiver_name = $manualUserInfo['first_name'] . ' ' . $manualUserInfo['last_name'];
                 $receiverId = $manualUserInfo['sid'];
             } else {
                 $conversation_key = $reportId . '/' . $incidentId . '/' . $manual_email . '/' . $employeeId;
@@ -830,7 +835,6 @@ class Compliance_safety_reporting_public extends Base_csp
                 . $email_hf['footer'];
 
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
-            
         } else if ($send_email_type == 'system') {
             //
             $receivers = explode(',', $_POST['receivers']);
@@ -870,13 +874,13 @@ class Compliance_safety_reporting_public extends Base_csp
                 if (!empty($attachments)) {
                     //
                     foreach ($attachments as $attachmentId) {
-    
+
                         $insert_attachment                      = array();
                         $insert_attachment['csp_reports_email_sid'] = $inserted_email_sid;
                         $insert_attachment['csp_reports_file_sid']  = $attachmentId;
                         $insert_attachment['attached_by']           = $employeeId;
                         $insert_attachment['attached_date']         = date('Y-m-d H:i:s');
-    
+
                         $this->compliance_report_model->addComplianceEmailAttachment($insert_attachment);
                     }
                 }
@@ -1150,7 +1154,8 @@ class Compliance_safety_reporting_public extends Base_csp
         }
     }
 
-    public function viewComplianceSafetyReportEmail ($reportId, $incidentId, $receiverId, $senderId) {
+    public function viewComplianceSafetyReportEmail($reportId, $incidentId, $receiverId, $senderId)
+    {
         //
         $manual_user = 'no';
         //
@@ -1262,9 +1267,39 @@ class Compliance_safety_reporting_public extends Base_csp
             );
             //
             $this->renderView('compliance_safety_reporting/partials/files/view_report_emails');
-            
         } else {
             $this->load->view('onboarding/onboarding_error');
         }
+    }
+
+    /**
+     * process edit
+     * 
+     * @param int $reportTypeId
+     */
+    public function updateAttachedItem(int $reportId, int $incidentId)
+    {
+        $this->form_validation->set_rules('id', 'Id', 'required');
+
+        if (!$this->form_validation->run()) {
+            return sendResponse(
+                400,
+                ["errors" => explode("\n", validation_errors())]
+            );
+        }
+        // get the post
+        $post = $this->input->post(null, true);
+        //allowed_internal_system_count
+        $this->compliance_report_model->updateAttachedItem(
+            $reportId,
+            $incidentId,
+            $this->getPublicSessionData("employee_sid"),
+            $post
+        );
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Item successfully updated."]
+        );
     }
 }

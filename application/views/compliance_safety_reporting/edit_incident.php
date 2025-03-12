@@ -17,6 +17,10 @@
                         <i class="fa fa-pie-chart"></i>
                         Compliance Safety Reporting
                     </a>
+                    <a href="javascript:void(0)" class="btn btn-orange jsSendReminderEmails">
+                        <i class="fa fa-send"></i>
+                        Send Emails
+                    </a>
                 <?php else: ?>
                     <a href="<?= base_url("compliance_safety_reporting/employee/overview") ?>" class="btn btn-blue">
                         <i class="fa fa-pie-chart"></i>
@@ -60,7 +64,8 @@
                             </div>
                         </div>
                     </div>
-                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/description"); ?>
+                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/items"); ?>
+                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/items_listing"); ?>
                     <?php if ($report["disable_answers"] == 1) : ?>
                         <?php $this->load->view("compliance_safety_reporting/partials/incidents/answers"); ?>
                     <?php else: ?>
