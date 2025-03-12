@@ -860,6 +860,7 @@ if (!function_exists('getEmployeeAccrual')) {
             );
         }
 
+
         // Check if employee is on probation
         if ($employementStatus == 'probation') {
             // Probation
@@ -2117,9 +2118,16 @@ if (!function_exists('processESTAPolicy')) {
         // set the default hours
         $allowedHours = 0;
         // set for full time employees
-        $dayscheck = $accruals['employee_type_original'] == "parttime"
+
+        /*  $dayscheck = $accruals['employee_type_original'] == "parttime"
             ? 120
             : 90;
+            */
+
+        $dayscheck = $accruals['employee_type_original'] == "parttime"
+            ? 120
+            : 0;
+
         // check if policy is applicable
         // after completing the accrual time
         if ($difference < $dayscheck) {
@@ -2301,6 +2309,7 @@ if (!function_exists("getTheAllowedTimeForSpecificYear")) {
         if ($accruals['employee_type_original'] == "parttime") {
             $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +121 days'));
         } else {
+
             $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . ' +91 days'));
         }
         //
@@ -2312,6 +2321,12 @@ if (!function_exists("getTheAllowedTimeForSpecificYear")) {
                 $allowedHours  = $allowedHours + 1;
             }
         }
+
+        //
+        if ($accruals['employee_type_original'] == "fulltime") {
+            $allowedHours = 72;
+        }
+                
         //
         if ($allowedHours > 72) {
             $allowedHours = 72;
