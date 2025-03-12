@@ -220,7 +220,7 @@ $(function Overview() {
             var senderType = $('#send_email_type').val();
             //
             if (senderType == 'system') {
-                manual_email = $('#send_email_user').val();
+                receivers = $('#send_email_user').val();
                 //
                 form_data.append('receivers', receivers);
                 form_data.append('send_type', "system");
@@ -935,8 +935,8 @@ $(function Overview() {
 		event.preventDefault();
 		var emailTitle = $(this).data("title");
         var emailType = $(this).data("type");
-        var senderId = $(this).data("senderId");
-        var receiverId = $(this).data("receiverId");
+        var senderId = $(this).data("sender_id");
+        var receiverId = $(this).data("receiver_id");
         var receiverEmail = $(this).data("email");
         var emailSubject = $(this).data("subject");
         //
@@ -958,7 +958,8 @@ $(function Overview() {
         receiver_email,
         email_subject
     ) {
-
+        console.log(receiverId)
+        //
         if (email_type == 'system') {
             $('#send_email_address').val(receiver_email);
             $('#send_email_user').attr('name', 'receivers[]');

@@ -3450,4 +3450,87 @@ class Compliance_report_model extends CI_Model
 
 		return $return_data;
 	}
+
+	function updateEmailReadFlag($sid, $data_to_update)
+	{
+		$this->db->where('sid', $sid);
+		$this->db->update('csp_reports_emails', $data_to_update);
+	}
+
+	function getEmailSenderInfo($sid)
+	{
+		$this->db->select('manual_email, sender_sid, csp_reports_sid, csp_incident_type_sid');
+		$this->db->where('sid', $sid);
+		$records_obj = $this->db->get('csp_reports_emails');
+		$records_arr = $records_obj->row_array();
+		$records_obj->free_result();
+		$return_data = array();
+
+		if (!empty($records_arr)) {
+			$return_data = $records_arr;
+		}
+
+		return $return_data;
+	}
+
+	
+	function isUserHaveNewEmail($userId, $reportId, $incidentId)
+	{
+		
+		$this->db->select('sid');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_incident_type_sid', $incidentId);
+		//
+		if (filter_var($userId, FILTER_VALIDATE_EMAIL)) {
+			$this->db->where('manual_email', $userId);
+			$this->db->where('receiver_sid', 0);
+		} else {
+			$this->db->where('receiver_sid', $userId);
+		}
+		//
+		$this->db->where('is_read', 0);
+		$this->db->from('csp_reports_emails');
+		$result = $this->db->get()->result_array();
+		$return_data = 0;
+
+		if (!empty($result)) {
+			$return_data = count($result);
+		}
+
+		return $return_data;
+	}
+	
+	function isUserHaveUnreadMessage($receiverId, $senderId, $reportId, $incidentId)
+	{
+		//
+		$this->db->select('sid');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_incident_type_sid', $incidentId);
+		//
+		if (filter_var($receiverId, FILTER_VALIDATE_EMAIL)) {
+			$this->db->where('manual_email', $receiverId);
+			$this->db->where('receiver_sid', 0);
+		} else {
+			$this->db->where('receiver_sid', $receiverId);
+		}
+		//
+		if (filter_var($senderId, FILTER_VALIDATE_EMAIL)) {
+			$this->db->where('manual_email', $senderId);
+			$this->db->where('sender_sid', 0);
+		} else {
+			$this->db->where('sender_sid', $senderId);
+		}
+		//
+		$this->db->where('is_read', 0);
+		$this->db->from('csp_reports_emails');
+		$result = $this->db->get()->result_array();
+		$return_data = 0;
+
+		if (!empty($result)) {
+			$return_data = count($result);
+		}
+
+		return $return_data;
+	}
+	
 }

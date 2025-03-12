@@ -121,7 +121,7 @@
                                                                             <b>Action</b>
                                                                         </td>
                                                                         <td>
-                                                                            <a href="javascript:;" class="btn-blockpull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo $modalTitle; ?>" data-type="<?php echo $sender_type; ?>" data-senderId="<?php echo $sender_id; ?>" data-receiverId="<?php echo $receiver_id; ?>" data-email="<?php echo $receiver_email; ?>" data-subject="<?php echo $email["subject"]; ?>"><i class="fa fa-retweet"></i> <?php echo $buttonText; ?></a>
+                                                                            <a href="javascript:;" class="btn-blockpull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo $modalTitle; ?>" data-type="<?php echo $sender_type; ?>" data-sender_id="<?php echo $sender_id; ?>" data-receiver_id="<?php echo $receiver_id; ?>" data-email="<?php echo $receiver_email; ?>" data-subject="<?php echo $email["subject"]; ?>"><i class="fa fa-retweet"></i> <?php echo $buttonText; ?></a>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -1011,7 +1011,7 @@
 <!-- Email Attachment Loader End -->
 
 <script>
-    var employeeId = '<?php echo $employeeId; ?>';
+    var employeeId = '<?php echo $current_user; ?>';
     var companyId = '<?php echo $companyId; ?>';
     var reportId = '<?php echo $reportId; ?>';
     var incidentId = '<?php echo $incidentId; ?>';
