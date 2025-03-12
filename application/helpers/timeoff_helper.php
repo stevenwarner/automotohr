@@ -2157,7 +2157,7 @@ if (!function_exists('processESTAPolicy')) {
                 $accruals,
             );
             // for first year
-            if ($k0 != 0) {
+            if ($k0 != 0 && $accruals['employee_type_original'] == "parttime") {
                 // get the time from last year
                 $allowedHours =
                     $allowedHours + $balanceHolder["remaining"];
