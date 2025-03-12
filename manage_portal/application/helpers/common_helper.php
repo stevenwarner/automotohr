@@ -1938,35 +1938,38 @@ if (!function_exists('verifyCaptcha')) {
 
 
 if (!function_exists("encryptAttributeForIndeed")) {
-    function encryptAttributeForIndeed($partnerApiToken, $plainTextAttribute)
+    function encryptAttributeForIndeed($secretKey, $plainTextAttribute)
     {
-        // Step 1: Generate a 128-bit secret key from the first 16 bytes of partnerApiToken
-        $secretKey = substr($partnerApiToken, 0, 16); // First 16 bytes (128-bits)
+        try {
+            // Convert the API secret to a 16-byte key (AES-128)
+            $key = substr($secretKey, 0, 16); // Ensure it's 16 bytes
 
-        // Step 2: Prepare the plaintext attribute (ensure UTF-8 encoding)
-        $plainTextBytes = mb_convert_encoding($plainTextAttribute, 'UTF-8'); // Convert to UTF-8 encoding
+            // Create a message byte array
+            $message_bytes = mb_convert_encoding($plainTextAttribute, "UTF-8");
 
-        // Step 3: Initialize the AES cipher parameters
-        $cipherMethod = 'aes-128-cbc';  // AES-128 with CBC mode
-        $iv = str_repeat("\0", 16);      // Initialization Vector: 16 bytes of 0 for IV
+            // Create AES cipher with CBC mode and an IV of 16 zero bytes
+            $iv = str_repeat("\x00", 16); // 16-byte IV of zeros
 
-        // Step 4: Perform encryption using OpenSSL
-        $encrypted = openssl_encrypt(
-            $plainTextBytes,   // Plaintext data to encrypt
-            $cipherMethod,     // AES-128-CBC encryption method
-            $secretKey,        // Secret key (128-bit)
-            OPENSSL_RAW_DATA,  // Return raw binary encrypted data
-            $iv                // Initialization vector (16 bytes of 0)
-        );
+            // Pad the message to make its length a multiple of the block size (16 bytes)
+            $block_size = 16;
+            $padding = $block_size - (strlen($message_bytes) % $block_size);
+            $padded_message = $message_bytes . str_repeat(chr($padding), $padding);
 
-        if ($encrypted === false) {
-            throw new Exception("Encryption failed.");
+            // Encrypt the message
+            $encrypted_message = openssl_encrypt(
+                $padded_message,
+                'AES-128-CBC',
+                $key,
+                OPENSSL_RAW_DATA,
+                $iv
+            );
+
+            // Return the encrypted message as a hex string
+            return bin2hex($encrypted_message);
+        } catch (Exception $e) {
+            echo "Encryption failed: " . $e->getMessage();
+            throw $e;
         }
-
-        // Step 5: Convert the encrypted bytes to a hex string
-        $hexEncryptedData = bin2hex($encrypted);
-
-        return $hexEncryptedData;
     }
 }
 
