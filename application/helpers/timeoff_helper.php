@@ -2313,7 +2313,12 @@ if (!function_exists("getTheAllowedTimeForSpecificYear")) {
                 $allowedHours  = $allowedHours + 1;
             }
         }
-        //
+
+        // add previous 4 mohth hours
+        if ($accruals['employee_type_original'] == "parttime") {
+            $allowedHours = $allowedHours + 16;
+        }
+
         if ($allowedHours > 72) {
             $allowedHours = 72;
         }
