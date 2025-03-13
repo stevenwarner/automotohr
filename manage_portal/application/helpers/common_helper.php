@@ -105,7 +105,8 @@ if (!function_exists('random_key')) {
             header('Content-Type: application/json');
             echo json_encode($this->data);
         } else {
-            $this->data['the_view_content'] = (is_null($the_view)) ? '' : $this->load->view($the_view, $this->data, TRUE);;
+            $this->data['the_view_content'] = (is_null($the_view)) ? '' : $this->load->view($the_view, $this->data, TRUE);
+            ;
             $this->load->view('theme1/' . $template . '_view', $this->data);
         }
     }
@@ -361,12 +362,12 @@ if (!function_exists('save_email_log_common')) {
         $CI = &get_instance();
 
         $emailData = array(
-            'date'                      => date('Y-m-d H:i:s'),
-            'subject'                   => $subject,
-            'email'                     => $to,
-            'message'                   => $message,
-            'admin'                     => $admin,
-            'username'                  => $from
+            'date' => date('Y-m-d H:i:s'),
+            'subject' => $subject,
+            'email' => $to,
+            'message' => $message,
+            'admin' => $admin,
+            'username' => $from
         );
 
         $CI->db->insert('email_log', $emailData);
@@ -499,7 +500,8 @@ if (!function_exists('get_notification_email_contacts')) {
         if (count($contacts)) {
             foreach ($contacts as $key => $contact) {
                 if ($contact['employer_sid'] != 0 && $contact['employer_sid'] != null) {
-                    if ($contact['userActive'] == 0 || $contact['terminated_status'] == 1) unset($contacts[$key]);
+                    if ($contact['userActive'] == 0 || $contact['terminated_status'] == 1)
+                        unset($contacts[$key]);
                     $contacts[$key]["email"] = $contact["userEmail"];
                 }
             }
@@ -737,16 +739,24 @@ if (!function_exists('phonenumber_format')) {
 if (!function_exists('_e')) {
     function _e($e, $print = FALSE, $die = FAlSE, $isHidden = FALSE)
     {
-        if ($isHidden) echo '<!-- ';
+        if ($isHidden)
+            echo '<!-- ';
         echo '<pre>';
-        if ($print) echo '<br />*****************************<br />';
-        if (is_array($e)) print_r($e);
-        else if (is_object($e)) var_dump($e);
-        else echo ($e);
-        if ($print) echo '<br />*****************************<br />';
+        if ($print)
+            echo '<br />*****************************<br />';
+        if (is_array($e))
+            print_r($e);
+        else if (is_object($e))
+            var_dump($e);
+        else
+            echo ($e);
+        if ($print)
+            echo '<br />*****************************<br />';
         echo '</pre>';
-        if ($isHidden) echo ' -->';
-        if ($die) exit(0);
+        if ($isHidden)
+            echo ' -->';
+        if ($die)
+            exit(0);
     }
 }
 
@@ -767,19 +777,21 @@ if (!function_exists('company_phone_regex_module_check')) {
     {
         $result =
             $_this
-            ->db
-            ->select('phone_pattern_module')
-            ->from('users')
-            ->where('sid', $company_sid)
-            ->order_by('sid', 'DESC')
-            ->limit(1)
-            ->get();
+                ->db
+                ->select('phone_pattern_module')
+                ->from('users')
+                ->where('sid', $company_sid)
+                ->order_by('sid', 'DESC')
+                ->limit(1)
+                ->get();
         //
         $result_arr = $result->row_array();
-        $result     = $result->free_result();
+        $result = $result->free_result();
 
-        if (!sizeof($result_arr)) $to['phone_pattern_enable'] = 0;
-        else $to['phone_pattern_enable'] = $result_arr['phone_pattern_module'];
+        if (!sizeof($result_arr))
+            $to['phone_pattern_enable'] = 0;
+        else
+            $to['phone_pattern_enable'] = $result_arr['phone_pattern_module'];
     }
 }
 
@@ -799,9 +811,12 @@ if (!function_exists('company_phone_regex_module_check')) {
 if (!function_exists('phonenumber_format')) {
     function phonenumber_format($phone_number, $strip_country_code = FALSE, $country_code = '+1')
     {
-        if (strlen($phone_number) === 0) return $phone_number;
-        if ($phone_number == $country_code) return '';
-        if ($phone_number == '') return '';
+        if (strlen($phone_number) === 0)
+            return $phone_number;
+        if ($phone_number == $country_code)
+            return '';
+        if ($phone_number == '')
+            return '';
         // Removes country code if exists
         $phone_number = str_replace($country_code, '', $phone_number);
         // Clean phone number
@@ -926,7 +941,7 @@ if (!function_exists('job_meta_keywords')) {
     {
         $meta_keywords = "Job";
         if (!empty($job['TitleOnly'])) {
-            $meta_keywords .=  ", " . str_replace("-", ",", $job['TitleOnly']);
+            $meta_keywords .= ", " . str_replace("-", ",", $job['TitleOnly']);
         }
         if (!empty($job['JobType'])) {
             $meta_keywords .= ', ' . $job['JobType'] . ' Job';
@@ -955,7 +970,7 @@ if (!function_exists('job_meta_keywords')) {
         }
 
         if (!empty($job['Location_State'])) {
-            $meta_keywords .=  ', Jobs in ' . $job['Location_State'];
+            $meta_keywords .= ', Jobs in ' . $job['Location_State'];
         }
         $meta_keywords .= ', Jobs in ' . $job['Location_Country'];
         $brand = array_shift((explode('.', $_SERVER['HTTP_HOST'])));
@@ -986,7 +1001,8 @@ if (!function_exists('verifyCaptcha_old')) {
         $token
     ) {
         //
-        if ($token == '' || $secret == '') return false;
+        if ($token == '' || $secret == '')
+            return false;
         //
         $curl = curl_init();
         //
@@ -1009,7 +1025,8 @@ if (!function_exists('verifyCaptcha_old')) {
         //
         curl_close($curl);
         //
-        if (json_decode($response, true)['success'] == 1) return true;
+        if (json_decode($response, true)['success'] == 1)
+            return true;
         //
         return false;
     }
@@ -1029,8 +1046,10 @@ if (!function_exists('checkSpammer')) {
         //
         $p['phone_number'] = preg_replace('/[^0-9]/', '', isset($p['phone_number']) ? $p['phone_number'] : $p['txt_phonenumber']);
         //
-        if (in_array($p['phone_number'], $phoneList)) $hack = true;
-        if (in_array($p['email_address'], $emailList)) $hack = true;
+        if (in_array($p['phone_number'], $phoneList))
+            $hack = true;
+        if (in_array($p['email_address'], $emailList))
+            $hack = true;
         //
         if ($hack) {
             $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your interest in our Talent Network, we will contact you soon.');
@@ -1369,7 +1388,7 @@ if (!function_exists('replace_tags_for_document')) {
         // $my_return = str_replace('{{text_area}}', $value, $my_return);
 
         //E_signature process
-        $signature_person_name = !empty($form_input_data['signature_person_name']) && $autofill == 1  ? $form_input_data['signature_person_name'] : '';
+        $signature_person_name = !empty($form_input_data['signature_person_name']) && $autofill == 1 ? $form_input_data['signature_person_name'] : '';
 
         $value = '<input type="text" id="signature_person_name" class="form-control input-grey" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="' . $signature_person_name . '">';
         $my_return = str_replace('{{signature_print_name}}', $value, $my_return);
@@ -1388,7 +1407,8 @@ if (!function_exists('replace_tags_for_document')) {
             $authorized_signature_date = '<a class="btn btn-sm blue-button get_authorized_sign_date" href="javascript:;">Authorized Sign Date</a><p id="target_authorized_signature_date"></p>';
         } else {
             $authorized_signature = '<p>Authorized Signature (<b>Not Signed</b>)</p>';
-            $authorized_signature_date = '<p>Authorized Signature Date (<b>Not Entered</b>)</p>';;
+            $authorized_signature_date = '<p>Authorized Signature Date (<b>Not Entered</b>)</p>';
+            ;
         }
 
 
@@ -1420,7 +1440,8 @@ if (!function_exists('replace_tags_for_document')) {
         function log_and_sendEmail($from, $to, $subject, $body, $senderName)
         {
             $CI = &get_instance();
-            if (empty($to) || $to == NULL) return 0;
+            if (empty($to) || $to == NULL)
+                return 0;
             //
             $emailData = array(
                 'date' => date('Y-m-d H:i:s'),
@@ -1458,27 +1479,27 @@ if (!function_exists('replace_tags_for_document')) {
             $_this->load->model('resume_model');
             $_this->load->library('encryption');
             //
-            $user_info           = array();
-            $emailTemplate       = '';
-            $default_subject     = '';
-            $default_template    = '';
-            $user_sid            = $post['user_sid'];
-            $user_type           = $post['user_type'];
-            $job_list_sid        = $post['job_list_sid'];
-            $requested_job_sid   = $post['requested_job_sid'];
-            $requested_job_type  = $post['requested_job_type'];
-            $company_sid         = $post['company_sid'];
-            $company_name        = $post['company_name'];
+            $user_info = array();
+            $emailTemplate = '';
+            $default_subject = '';
+            $default_template = '';
+            $user_sid = $post['user_sid'];
+            $user_type = $post['user_type'];
+            $job_list_sid = $post['job_list_sid'];
+            $requested_job_sid = $post['requested_job_sid'];
+            $requested_job_type = $post['requested_job_type'];
+            $company_sid = $post['company_sid'];
+            $company_name = $post['company_name'];
 
             $emailTemplate = $_this->resume_model->get_send_resume_template($company_sid);
 
             if (!empty($emailTemplate)) {
                 $default_subject = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['subject']);
-                $default_template  = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['message_body']);
+                $default_template = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['message_body']);
             } else {
                 $emailTemplate = get_email_template(SEND_RESUME_REQUEST);
                 $default_subject = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['subject']);
-                $default_template  = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['text']);
+                $default_template = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['text']);
             }
 
             $user_info = $_this->resume_model->get_applicant_information($user_sid);
@@ -1510,20 +1531,20 @@ if (!function_exists('replace_tags_for_document')) {
             }
 
             $data_to_insert = array();
-            $data_to_insert['company_sid']              = $company_sid;
-            $data_to_insert['user_type']                = $user_type;
-            $data_to_insert['user_sid']                 = $user_sid;
-            $data_to_insert['user_email']               = $applicant_email;
-            $data_to_insert['requested_by']             = 0;
-            $data_to_insert['requested_subject']        = $default_subject;
-            $data_to_insert['requested_message']        = $default_template;
-            $data_to_insert['requested_ip_address']     =  getUserIP();
-            $data_to_insert['requested_user_agent']     = $_SERVER['HTTP_USER_AGENT'];
-            $data_to_insert['request_status']           = 1;
-            $data_to_insert['requested_date']           = date('Y-m-d H:i:s', strtotime('now'));
-            $data_to_insert['job_sid']                  = $requested_job_sid;
-            $data_to_insert['job_type']                 = $requested_job_type;
-            $data_to_insert['is_manual']                = 0;
+            $data_to_insert['company_sid'] = $company_sid;
+            $data_to_insert['user_type'] = $user_type;
+            $data_to_insert['user_sid'] = $user_sid;
+            $data_to_insert['user_email'] = $applicant_email;
+            $data_to_insert['requested_by'] = 0;
+            $data_to_insert['requested_subject'] = $default_subject;
+            $data_to_insert['requested_message'] = $default_template;
+            $data_to_insert['requested_ip_address'] = getUserIP();
+            $data_to_insert['requested_user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+            $data_to_insert['request_status'] = 1;
+            $data_to_insert['requested_date'] = date('Y-m-d H:i:s', strtotime('now'));
+            $data_to_insert['job_sid'] = $requested_job_sid;
+            $data_to_insert['job_type'] = $requested_job_type;
+            $data_to_insert['is_manual'] = 0;
 
             $_this->resume_model->deactivate_old_resume_request($company_sid, $user_type, $user_sid, $requested_job_sid, $requested_job_type);
             $_this->resume_model->insert_resume_request($data_to_insert);
@@ -1567,7 +1588,8 @@ if (!function_exists('GetJobHeaderForGoogle')) {
     function GetJobHeaderForGoogle($job_details, $company_details)
     {
         $acDate = $job_details['activation_date'];
-        if (!preg_match('/[0-9]/', $acDate)) $acDate = date('m-d-Y');
+        if (!preg_match('/[0-9]/', $acDate))
+            $acDate = date('m-d-Y');
 
         if (preg_replace('/[^0-9]/', '', $job_details['activation_date']) == '' && $job_details['approval_status_change_datetime'] != '') {
             $acDate = DateTime::createFromFormat(
@@ -1936,7 +1958,6 @@ if (!function_exists('verifyCaptcha')) {
     }
 }
 
-
 if (!function_exists("encryptAttributeForIndeed")) {
     function encryptAttributeForIndeed($secretKey, $plainTextAttribute)
     {
@@ -1947,69 +1968,25 @@ if (!function_exists("encryptAttributeForIndeed")) {
                 "UTF-8"
             );
             // Convert the API secret to a 16-byte key (AES-128)
-            $key = substr($secretKey, 0, 16); // Ensure it's 16 bytes
-
+            $key = substr($secretKey, 0, 16); // Ensure it's 16 byteskey
             // Create a message byte array
             $message_bytes = mb_convert_encoding($plainTextAttribute, "UTF-8");
-
             // Create AES cipher with CBC mode and an IV of 16 zero bytes
             $iv = str_repeat("\x00", 16); // 16-byte IV of zeros
-
-            // Pad the message to make its length a multiple of the block size (16 bytes)
-            $block_size = 16;
-            $padding = $block_size - (strlen($message_bytes) % $block_size);
-            $padded_message = $message_bytes . str_repeat(chr($padding), $padding);
-
             // Encrypt the message
             $encrypted_message = openssl_encrypt(
-                $padded_message,
+                $message_bytes,
                 'AES-128-CBC',
                 $key,
                 OPENSSL_RAW_DATA,
-                $iv
+                $iv,
             );
 
             // Return the encrypted message as a hex string
-            return bin2hex($encrypted_message);
+            return (bin2hex($encrypted_message));
         } catch (Exception $e) {
             echo "Encryption failed: " . $e->getMessage();
             throw $e;
         }
-    }
-}
-
-
-if (!function_exists("decryptAttributeForIndeed")) {
-    function decryptAttributeForIndeed($partnerApiToken, $encryptedHexData)
-    {
-        // Step 1: Generate the 128-bit secret key from the partnerApiToken
-        $secretKey = substr($partnerApiToken, 0, 16); // First 16 bytes (128-bits)
-
-        // Step 2: Convert the encrypted hex string back to raw binary data
-        $encryptedData = hex2bin($encryptedHexData);
-
-        if ($encryptedData === false) {
-            throw new Exception("Invalid hex string for decryption.");
-        }
-
-        // Step 3: Initialize the AES cipher parameters
-        $cipherMethod = 'aes-128-cbc'; // AES-128 with CBC mode
-        $iv = str_repeat("\0", 16); // 16 bytes of 0 for the initialization vector (IV)
-
-        // Step 4: Perform decryption using OpenSSL
-        $decrypted = openssl_decrypt(
-            $encryptedData,  // Encrypted data in raw binary format
-            $cipherMethod,   // AES-128-CBC decryption method
-            $secretKey,      // Secret key
-            OPENSSL_RAW_DATA, // Expecting raw binary output
-            $iv              // Initialization vector (IV)
-        );
-
-        if ($decrypted === false) {
-            throw new Exception("Decryption failed.");
-        }
-
-        // Step 5: Return the decrypted plaintext (UTF-8 encoded)
-        return $decrypted;
     }
 }
