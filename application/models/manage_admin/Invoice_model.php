@@ -68,7 +68,8 @@ class invoice_model extends CI_Model
     {
         $this->db->select('invoices.*,invoices.sid as invoice_number,users.first_name,users.last_name,users.username,users.parent_sid,user.CompanyName');
         $this->db->join('users', 'users.sid = invoices.user_sid');
-        $this->db->join('users user', 'user.sid = users.parent_sid');
+        $this->db->join('users as user', 'user.sid = invoices.company_sid');
+        // $this->db->join('users user', 'user.sid = users.parent_sid');
         
         if(!empty($between)){
             $this->db->where($between);

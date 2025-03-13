@@ -94,6 +94,7 @@ class Invoice extends Admin_Controller
         $this->data['from_records'] = $offset == 0 ? 1 : $offset;
         $this->data['to_records'] = $total_records < $per_page ? $total_records : $offset + $per_page;
         $this->data['applicants_count'] = $total_records;
+        $this->data['companyid'] = $company;
 
         if (isset($startdate) || isset($enddate)) {
             $db_invoices = $this->invoice_model->get_invoices_date($username, $inv_sid, $status, $payment_method, $between,$company, false, $per_page, $offset);
