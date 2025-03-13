@@ -1,7 +1,9 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Invoice extends Admin_Controller {
-    function __construct() {
+class Invoice extends Admin_Controller
+{
+    function __construct()
+    {
         parent::__construct();
         $this->load->library('form_validation');
         $this->load->helper('form');
@@ -13,7 +15,8 @@ class Invoice extends Admin_Controller {
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
-    public function index($startdate = "all", $enddate = "all", $username = "all", $inv_sid = "all", $payment_method = "all", $status = "all", $page_no = 1) {
+    public function index($startdate = "all", $enddate = "all", $username = "all", $inv_sid = "all", $payment_method = "all", $status = "all", $company = "all", $page_no = 1)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'invoices_panel';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -34,6 +37,9 @@ class Invoice extends Admin_Controller {
         $per_page = PAGINATION_RECORDS_PER_PAGE;
         $offset = 0;
 
+        $companies = $this->invoice_model->getAllCompanies(1);
+        $this->data['companies'] = $companies;
+
         if ($page_no > 1) {
             $offset = ($page_no - 1) * $per_page;
         }
@@ -53,16 +59,16 @@ class Invoice extends Admin_Controller {
         }
 
         $between = "invoices.date between '" . $start_date . "' and '" . $end_date . "'";
-        $total_records = $this->invoice_model->get_invoices_date($username, $inv_sid, $status, $payment_method, $between, true, null, null);
+        $total_records = $this->invoice_model->get_invoices_date($username, $inv_sid, $status, $payment_method, $between, $company, true, null, null);
         $this->load->library('pagination');
-        $pagination_base = base_url('manage_admin/invoice/index') . '/' . urlencode($startdate) . '/' . urlencode($enddate) . '/' . urlencode($username) . '/' . $inv_sid . '/' . urlencode($payment_method) . '/' . urlencode($status);
+        $pagination_base = base_url('manage_admin/invoice/index') . '/' . urlencode($startdate) . '/' . urlencode($enddate) . '/' . urlencode($username) . '/' . $inv_sid . '/' . urlencode($payment_method) . '/' . urlencode($status). '/' . urlencode($company);
 
         $config = array();
         $config["base_url"] = $pagination_base;
         $config["total_rows"] = $total_records;
         $config["per_page"] = $per_page;
-        $config["uri_segment"] = 10;
-        $config["num_links"] = 8;
+        $config["uri_segment"] = 11;
+        $config["num_links"] = 9;
         $config["use_page_numbers"] = true;
         $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
         $config['full_tag_close'] = '</ul></nav><!--pagination-->';
@@ -88,9 +94,10 @@ class Invoice extends Admin_Controller {
         $this->data['from_records'] = $offset == 0 ? 1 : $offset;
         $this->data['to_records'] = $total_records < $per_page ? $total_records : $offset + $per_page;
         $this->data['applicants_count'] = $total_records;
+        $this->data['companyid'] = $company;
 
         if (isset($startdate) || isset($enddate)) {
-            $db_invoices = $this->invoice_model->get_invoices_date($username, $inv_sid, $status, $payment_method, $between, false, $per_page, $offset);
+            $db_invoices = $this->invoice_model->get_invoices_date($username, $inv_sid, $status, $payment_method, $between,$company, false, $per_page, $offset);
             $db_email_invoices = $this->invoice_model->get_email_invoices_date($username, $inv_sid, $status, $payment_method, $between);
             $this->data['email_invoices'] = $db_email_invoices;
             $this->data["flag"] = true;
@@ -112,7 +119,8 @@ class Invoice extends Admin_Controller {
         $this->render('manage_admin/invoice/listings_view', 'admin_master');
     }
 
-    public function index_bak() {
+    public function index_bak()
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'invoices_panel';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -178,7 +186,8 @@ class Invoice extends Admin_Controller {
         $this->render('manage_admin/invoice/listings_view', 'admin_master');
     }
 
-    private function add_new_invoice() {
+    private function add_new_invoice()
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'edit_invoice';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -290,8 +299,8 @@ class Invoice extends Admin_Controller {
             $subject = $emailTemplateData['subject'];
             $from_name = $emailTemplateData['from_name'];
             $body = EMAIL_HEADER
-                    . $emailTemplateBody
-                    . EMAIL_FOOTER;
+                . $emailTemplateBody
+                . EMAIL_FOOTER;
 
             $emailLog['subject'] = $subject;
             $emailLog['email'] = $to;
@@ -304,7 +313,8 @@ class Invoice extends Admin_Controller {
         }
     }
 
-    public function edit_invoice_back($invoice_id = NULL) {
+    public function edit_invoice_back($invoice_id = NULL)
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'edit_invoice';
@@ -321,7 +331,7 @@ class Invoice extends Admin_Controller {
 
         $invoiceData = $this->invoice_model->get_invoice_detail($invoice_id);
         $this->data['invoice_id'] = $invoice_id;
-        
+
         if (empty($invoiceData)) {
             $this->session->set_flashdata('message', 'Invoice not found!');
             redirect('manage_admin/invoice', 'refresh');
@@ -410,13 +420,13 @@ class Invoice extends Admin_Controller {
                         $to = $formpost["email"];
                         $receiverName = $formpost['to_name'];
                     }
-                    
+
                     $products = "";
                     $this->load->model('manage_admin/products_model');
 
                     for ($i = 0; $i < count($custom_data['products']); $i++) {
                         $custom_product_id = $custom_data['products'][$i];
-                        
+
                         if (strpos($custom_product_id, 'custom') === false) {
                             $products_name = db_get_product_name($custom_product_id);
                             $products .= $products_name . " = $" . $custom_data['item_price'][$i] . "<br><br>";
@@ -435,7 +445,7 @@ class Invoice extends Admin_Controller {
                     $replacement_array['invoice_subtotal'] = '$' . $invoiceData["sub_total"];
                     $replacement_array['discount'] = '$' . $invoiceData["total_discount"];
                     $replacement_array['invoice_total'] = '$' . $invoiceData["total"];
-                    
+
                     if (isset($custom_data["special_discount"]) && floatval($custom_data["special_discount"]) > 0) {
                         $replacement_array['special_discount'] = '$' . $custom_data["special_discount"];
                     } else {
@@ -452,7 +462,7 @@ class Invoice extends Admin_Controller {
                     $this->session->set_flashdata('message', 'Invoice sent Successfully!');
                 }
 
-                if ($formpost['action'] == 'Save') {//save invoice without send email
+                if ($formpost['action'] == 'Save') { //save invoice without send email
                     if ($formpost['date'] != "" && !empty($formpost['date'])) { //Converting date time
                         $timestamp = explode('-', $formpost['date']);
                         $month = $timestamp[0];
@@ -470,7 +480,8 @@ class Invoice extends Admin_Controller {
         }
     }
 
-    public function edit_invoice($invoice_id = NULL) {
+    public function edit_invoice($invoice_id = NULL)
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'edit_invoice';
@@ -487,7 +498,7 @@ class Invoice extends Admin_Controller {
 
         $invoiceData = $this->invoice_model->get_invoice_detail($invoice_id);
         $this->data['invoice_id'] = $invoice_id;
-        
+
         if (empty($invoiceData)) {
             $this->session->set_flashdata('message', 'Invoice not found!');
             redirect('manage_admin/invoice', 'refresh');
@@ -578,13 +589,13 @@ class Invoice extends Admin_Controller {
                         $to = $formpost["email"];
                         $receiverName = $formpost['to_name'];
                     }
-                    
+
                     $products = "";
                     $this->load->model('manage_admin/products_model');
 
                     for ($i = 0; $i < count($custom_data['products']); $i++) {
                         $custom_product_id = $custom_data['products'][$i];
-                        
+
                         if (strpos($custom_product_id, 'custom') === false) {
                             $products_name = db_get_product_name($custom_product_id);
                             $products .= $products_name . " = $" . $custom_data['item_price'][$i] . "<br><br>";
@@ -609,7 +620,7 @@ class Invoice extends Admin_Controller {
                     $this->session->set_flashdata('message', 'Invoice sent Successfully!');
                 }
 
-                if ($formpost['action'] == 'Save') {//save invoice without send email
+                if ($formpost['action'] == 'Save') { //save invoice without send email
                     if ($formpost['date'] != "" && !empty($formpost['date'])) { //Converting date time
                         $timestamp = explode('-', $formpost['date']);
                         $month = $timestamp[0];
@@ -627,7 +638,8 @@ class Invoice extends Admin_Controller {
         }
     }
 
-    function invoice_task() {
+    function invoice_task()
+    {
         $action = $this->input->post("action");
         $invoice_id = $this->input->post("sid");
 
@@ -663,13 +675,13 @@ class Invoice extends Admin_Controller {
                 $receiverName = $invoiceData["to_name"];
             } else {
                 $emp_data = $this->invoice_model->get_employer_email($invoiceData['user_sid']);
-                
+
                 if (empty($emp_data["first_name"]) && $emp_data["first_name"] == NULL) {
                     $receiverName = $emp_data["username"];
                 } else {
                     $receiverName = $emp_data["first_name"] . " " . $emp_data["last_name"];
                 }
-                
+
                 $to = $emp_data["email"];
             }
 
@@ -703,7 +715,8 @@ class Invoice extends Admin_Controller {
         }
     }
 
-    public function list_admin_invoices($year = null, $month = null, $company_sid = 'all', $payment_status = 'all', $payment_method = 'all') {
+    public function list_admin_invoices($year = null, $month = null, $company_sid = 'all', $payment_status = 'all', $payment_method = 'all')
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'list_admin_invoices';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -751,7 +764,8 @@ class Invoice extends Admin_Controller {
         }
     }
 
-    public function apply_discount_admin_invoice($invoice_sid = 0) {
+    public function apply_discount_admin_invoice($invoice_sid = 0)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'apply_discount_admin_invoice';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -800,7 +814,8 @@ class Invoice extends Admin_Controller {
         }
     }
 
-    public function view_admin_invoice($invoice_sid = 0) {
+    public function view_admin_invoice($invoice_sid = 0)
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'view_admin_invoice';
@@ -815,10 +830,10 @@ class Invoice extends Admin_Controller {
             $this->form_validation->set_rules('invoice_sid', 'invoice sid', 'numeric|required');
             $notes = $this->admin_invoices_model->get_invoice_notes($invoice_sid);
             $this->data['notes'] = $notes;
-            
+
             if ($_POST) {
                 $perform_action = $_POST['perform_action'];
-                
+
                 switch ($perform_action) {
                     case 'update_invoice_status':
                         break;
@@ -827,12 +842,11 @@ class Invoice extends Admin_Controller {
                         break;
                 }
             }
-            
+
             if ($this->form_validation->run() == false) {
-                
             } else {
                 $perform_action = $_POST['perform_action'];
-                
+
                 switch ($perform_action) {
                     case 'update_invoice_status':
                         $invoice_status = $this->input->post('invoice_status');
@@ -859,8 +873,8 @@ class Invoice extends Admin_Controller {
                         $subject = STORE_NAME . ' Invoice # ' . $invoice_data['invoice_number'];
                         //$body = $invoice;
                         $body = EMAIL_HEADER
-                                . $invoice
-                                . EMAIL_FOOTER;
+                            . $invoice
+                            . EMAIL_FOOTER;
 
                         log_and_sendEmail($from, $to, $subject, $body, STORE_NAME);
                         $this->session->set_flashdata('message', '<strong>Success: </strong>Invoice Sent Via Email!');
@@ -922,10 +936,10 @@ class Invoice extends Admin_Controller {
                     $company_data = $company_data[0];
                     $company_admin = $this->admin_invoices_model->Get_company_admin_information($invoice_data['company_sid']);
 
-                    if(!empty($company_admin)) {
+                    if (!empty($company_admin)) {
                         $company_data['email'] = $company_admin[0]['email'];
                     }
-                    
+
                     $country_name = db_get_country_name($company_data['Location_Country']);
                     $country_name = $country_name['country_name'];
                     $state_name = db_get_state_name_only($company_data['Location_State']);
@@ -946,7 +960,8 @@ class Invoice extends Admin_Controller {
         }
     }
 
-    public function print_admin_invoice($invoice_sid = 0) {
+    public function print_admin_invoice($invoice_sid = 0)
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'view_admin_invoice';
@@ -965,7 +980,8 @@ class Invoice extends Admin_Controller {
         }
     }
 
-    public function pending_invoices() {
+    public function pending_invoices()
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'unpaid_invoice';
@@ -980,7 +996,8 @@ class Invoice extends Admin_Controller {
         $this->render('manage_admin/invoice/pending_invoices', 'admin_master');
     }
 
-    public function pending_commissions() {
+    public function pending_commissions()
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'pending_commissions';
@@ -991,19 +1008,20 @@ class Invoice extends Admin_Controller {
         // ** Check Security Permissions Checks - End ** //
 
         $unpaid_commissions = $this->invoice_model->get_all_unpaid_commissions();
-        
+
         foreach ($unpaid_commissions as $key => $invoice_record) {
             $agency_check = $this->invoice_model->check_marketing_agency($invoice_record['marketing_agency_sid']);
-            if($agency_check == false) {
+            if ($agency_check == false) {
                 unset($unpaid_commissions[$key]);
             }
         }
-        
+
         $this->data['unpaid_commissions'] = $unpaid_commissions;
         $this->render('manage_admin/invoice/pending_commissions', 'admin_master');
     }
 
-    public function view_pending_invoices($company_sid) {
+    public function view_pending_invoices($company_sid)
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'pending_invoices';
@@ -1019,7 +1037,7 @@ class Invoice extends Admin_Controller {
             $this->data['invoices'] = $invoices;
             $this->data['company_sid'] = $company_sid;
             $grand_total = 0;
-            
+
             foreach ($invoices as $invoice) {
                 if ($invoice['exclusion_status'] == 0) {
                     $grand_total += $invoice['total_after_discount'];
@@ -1028,16 +1046,16 @@ class Invoice extends Admin_Controller {
 
             $this->data['grand_total'] = $grand_total;
             $company_info = $this->admin_invoices_model->Get_company_information($company_sid);
-            
-            if(!empty($company_info)) {
+
+            if (!empty($company_info)) {
                 $company_info = $company_info[0];
                 $company_admin = $this->admin_invoices_model->Get_company_admin_information($company_sid);
 
-                if(!empty($company_admin)) {
+                if (!empty($company_admin)) {
                     $company_info['email'] = $company_admin[0]['email'];
                 }
             }
-            
+
             $this->data['company_info'] = $company_info;
             $this->render('manage_admin/invoice/view_pending_invoices', 'admin_master');
         } else {
@@ -1050,7 +1068,7 @@ class Invoice extends Admin_Controller {
                     $invoices = $this->invoice_model->get_unpaid_invoices($company_sid, 0);
                     $company_info = get_company_details($company_sid);
                     $grand_total = 0;
-                    
+
                     foreach ($invoices as $invoice) {
                         if ($invoice['exclusion_status'] == 0) {
                             $grand_total += $invoice['total_after_discount'];
@@ -1096,7 +1114,8 @@ class Invoice extends Admin_Controller {
         }
     }
 
-    public function view_pending_commissions($commission_sid) {
+    public function view_pending_commissions($commission_sid)
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'view_pending_commission';
@@ -1109,8 +1128,8 @@ class Invoice extends Admin_Controller {
 
         if ($this->form_validation->run() == false) {
             $commission = $this->invoice_model->get_unpaid_commissions($commission_sid);
-            
-            if(!empty($commission)) {
+
+            if (!empty($commission)) {
                 $this->data['commission'] = $commission[0];
                 $this->data['commission_sid'] = $commission_sid;
                 $this->invoice_model->update_view_pending_commission_status($commission_sid);
@@ -1175,7 +1194,8 @@ class Invoice extends Admin_Controller {
         }
     }
 
-    public function print_pending_invoices($company_sid) {
+    public function print_pending_invoices($company_sid)
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'pending_invoices';
@@ -1191,7 +1211,7 @@ class Invoice extends Admin_Controller {
             $this->data['invoices'] = $invoices;
             $this->data['company_sid'] = $company_sid;
             $grand_total = 0;
-            
+
             foreach ($invoices as $invoice) {
                 if ($invoice['exclusion_status'] == 0) {
                     $grand_total += $invoice['total_after_discount'];
@@ -1207,7 +1227,8 @@ class Invoice extends Admin_Controller {
         }
     }
 
-    public function ajax_responder() {
+    public function ajax_responder()
+    {
         $admin_user_id = $this->ion_auth->user()->row()->id;
 
         if ($_POST) {
@@ -1228,10 +1249,10 @@ class Invoice extends Admin_Controller {
                         $invoice = generate_invoice_html($invoice_sid);
                         $to = $email_address;
                         $from = FROM_EMAIL_ACCOUNTS;
-                        $subject = STORE_NAME . ' Invoice # ' . $invoice_data['invoice_number'];                    
+                        $subject = STORE_NAME . ' Invoice # ' . $invoice_data['invoice_number'];
                         $body = EMAIL_HEADER
-                                . $invoice
-                                . EMAIL_FOOTER;
+                            . $invoice
+                            . EMAIL_FOOTER;
 
                         log_and_sendEmail($from, $to, $subject, $body, STORE_NAME);
                         echo 'success';
@@ -1255,9 +1276,9 @@ class Invoice extends Admin_Controller {
                         $company_billing_contacts = array();
 
                         if ($billing_notification_status == 1) {
-                            $company_billing_contacts = getNotificationContacts( $company_sid, 'billing_invoice', 'billing_invoice_notifications' );
+                            $company_billing_contacts = getNotificationContacts($company_sid, 'billing_invoice', 'billing_invoice_notifications');
                         }
-                        
+
                         $this->admin_invoices_model->update_admin_invoice_payment_table($invoice_sid, $processed_by, 'paid', 'cash', $invoice_description);
                         $this->receipts_model->generate_new_receipt($company_sid, $invoice_sid, $invoice_amount, 'Cash', $admin_user_id, 'super_admin', 'admin_invoice'); // Generate Receipt - Start                        
                         //Todo Handle Cron Job table entries and feature activation                        
@@ -1286,7 +1307,7 @@ class Invoice extends Admin_Controller {
                                 $replacement_array['company_admin'] = $company_billing_contact['contact_name'];
                                 log_and_send_templated_email(ADMIN_INVOICE_PAYMENT_NOTIFICATION, $email_address, $replacement_array);
                             }
-                        } 
+                        }
 
                         redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
                         break;
@@ -1310,7 +1331,7 @@ class Invoice extends Admin_Controller {
                         $company_billing_contacts = array();
 
                         if ($billing_notification_status == 1) {
-                            $company_billing_contacts = getNotificationContacts( $company_sid, 'billing_invoice', 'billing_invoice_notifications' );
+                            $company_billing_contacts = getNotificationContacts($company_sid, 'billing_invoice', 'billing_invoice_notifications');
                         }
 
                         $this->admin_invoices_model->update_admin_invoice_payment_table($invoice_sid, $processed_by, 'paid', 'Check', $invoice_description, $check_number);
@@ -1378,11 +1399,11 @@ class Invoice extends Admin_Controller {
                             log_and_send_templated_email(CREDIT_CARD_EXPIRATION_NOTIFICATION, $email_address, $replacement_array);
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Credit Card Expiration Notification Successfully Sent!');
                         }
-                            // $replacement_array = array();
-                            // $replacement_array['contact_name'] = 'Account Manager';
-                            // $replacement_array['company_name'] = '<strong>' . ucwords(strtolower($company_name)) . '</strong>';
-                            // $replacement_array['cc_management_link'] = anchor('cc_management', 'Credit Card Management');
-                            // log_and_send_templated_email(UPDATE_CREDIT_CARD_REQUEST, $email_address, $replacement_array);
+                        // $replacement_array = array();
+                        // $replacement_array['contact_name'] = 'Account Manager';
+                        // $replacement_array['company_name'] = '<strong>' . ucwords(strtolower($company_name)) . '</strong>';
+                        // $replacement_array['cc_management_link'] = anchor('cc_management', 'Credit Card Management');
+                        // log_and_send_templated_email(UPDATE_CREDIT_CARD_REQUEST, $email_address, $replacement_array);
 
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Credit Card Update Request Successfully Sent!');
                         redirect('manage_admin/misc/process_payment_admin_invoice/' . $invoice_sid, 'refresh');
@@ -1391,18 +1412,19 @@ class Invoice extends Admin_Controller {
             }
         }
     }
-    
-    public function edit_admin_invoice($invoice_sid = 0) {
+
+    public function edit_admin_invoice($invoice_sid = 0)
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'view_admin_invoice';
         $admin_id = $this->ion_auth->user()->row()->id;
-        
+
         if ($invoice_sid > 0) {
-            if($admin_id != 1) { // Only S
+            if ($admin_id != 1) { // Only S
                 $this->session->set_flashdata('message', '<strong>Error: </strong>You are not authorised. Please contact administrator!');
                 redirect('manage_admin/invoice/view_admin_invoice/' . $invoice_sid, 'refresh');
             }
-            
+
             $company_data = array();
             $invoice_data = $this->admin_invoices_model->Get_admin_invoice($invoice_sid, true);
 
@@ -1437,73 +1459,73 @@ class Invoice extends Admin_Controller {
             $this->data['company_info'] = $company_data;
             $this->data['invoice'] = $invoice_data;
             // echo '<pre>'; print_r($company_data); exit;
-            $this->data['page_title'] = 'Edit Invoice #'.$invoice_data['invoice_number'];
+            $this->data['page_title'] = 'Edit Invoice #' . $invoice_data['invoice_number'];
             $this->form_validation->set_rules('sid', 'sid', 'numeric|required');
-            
+
             if ($this->form_validation->run() == false) {
                 $this->render('manage_admin/invoice/edit_admin_invoice', 'admin_master');
             } else {
                 $data_to_update = array();
                 $created = $this->input->post('created');
-                
-                if(empty($created) || is_null($created) || $created == '') {
+
+                if (empty($created) || is_null($created) || $created == '') {
                     $data_to_update['created'] = NULL;
                 } else {
                     $data_to_update['created'] = DateTime::createFromFormat('m-d-Y', $created)->format('Y-m-d');
                 }
-                
+
                 $data_to_update['payment_date'] = $this->input->post('payment_status');
-                
-                if(isset($_POST['payment_date'])) {
+
+                if (isset($_POST['payment_date'])) {
                     $payment_date = $this->input->post('payment_date');
-                    
-                    if(empty($payment_date) || is_null($payment_date) || $payment_date == '') {
+
+                    if (empty($payment_date) || is_null($payment_date) || $payment_date == '') {
                         $data_to_update['payment_date'] = NULL;
                     } else {
                         $data_to_update['payment_date'] = DateTime::createFromFormat('m-d-Y', $payment_date)->format('Y-m-d');
                     }
                 }
-                
-                if(isset($_POST['payment_method'])) {
-                   $data_to_update['payment_method'] = $this->input->post('payment_method');
+
+                if (isset($_POST['payment_method'])) {
+                    $data_to_update['payment_method'] = $this->input->post('payment_method');
                 }
-                
-                if(isset($_POST['check_number'])) {
-                   $data_to_update['check_number'] = $this->input->post('check_number');
+
+                if (isset($_POST['check_number'])) {
+                    $data_to_update['check_number'] = $this->input->post('check_number');
                 }
-                
-                if(isset($_POST['payment_description'])) {
-                   $data_to_update['payment_description'] = $this->input->post('payment_description');
+
+                if (isset($_POST['payment_description'])) {
+                    $data_to_update['payment_description'] = $this->input->post('payment_description');
                 }
-                
-                if(isset($_POST['credit_card_number'])) {
-                   $data_to_update['credit_card_number'] = $this->input->post('credit_card_number');
+
+                if (isset($_POST['credit_card_number'])) {
+                    $data_to_update['credit_card_number'] = $this->input->post('credit_card_number');
                 }
-                
-                if(isset($_POST['credit_card_type'])) {
-                   $data_to_update['credit_card_type'] = $this->input->post('credit_card_type');
+
+                if (isset($_POST['credit_card_type'])) {
+                    $data_to_update['credit_card_type'] = $this->input->post('credit_card_type');
                 }
-                
+
                 $this->admin_invoices_model->update_admin_invoice($invoice_sid, $data_to_update);
                 $this->session->set_flashdata('message', '<strong>Success: </strong>Invoice Updated Successfully!');
-                redirect('manage_admin/invoice/view_admin_invoice/'.$invoice_sid, 'refresh');
+                redirect('manage_admin/invoice/view_admin_invoice/' . $invoice_sid, 'refresh');
             }
-            
         } else {
             $this->session->set_flashdata('message', '<strong>Error: </strong> Invoice Not Found!');
             redirect('manage_admin/invoice/list_admin_invoices', 'refresh');
         }
     }
 
-    public function delete_commission($invoice_sid = 0) {
-        
+    public function delete_commission($invoice_sid = 0)
+    {
+
         if ($invoice_sid > 0) {
             $payment_voucher_id = $this->admin_invoices_model->get_payment_voucher_id($invoice_sid);
             if ($payment_voucher_id > 0) {
                 $this->admin_invoices_model->delete_payment_voucher($payment_voucher_id);
-            } 
+            }
             $this->admin_invoices_model->delete_commission_invoice($invoice_sid);
             echo 'success';
-        } 
+        }
     }
 }

@@ -1118,6 +1118,9 @@ $route['manage_admin/invoice/index/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin
 $route['manage_admin/invoice/index/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/invoice/index/$1/$2/$3/$4/$5';
 $route['manage_admin/invoice/index/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/invoice/index/$1/$2/$3/$4/$5/$6';
 $route['manage_admin/invoice/index/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/invoice/index/$1/$2/$3/$4/$5/$6/$7';
+
+$route['manage_admin/invoice/index/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/invoice/index/$1/$2/$3/$4/$5/$6/$7/$8';
+
 //$route['manage_admin/list_admin_invoices'] = 'manage_admin/invoice/list_admin_invoices';
 //$route['manage_admin/list_admin_invoices/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/invoice/list_admin_invoices/$1/$2/$3/$4/$5';
 //$route['manage_admin/pending_invoices'] = 'manage_admin/invoice/pending_invoices';
