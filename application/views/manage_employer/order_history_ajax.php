@@ -144,7 +144,8 @@
                                     <thead>
                                         <tr>
                                             <th>Invoice #</th>
-                                            <th>Customer Name</th>
+                                            <th>Customer Name</th>   
+                                            <th>Company Name</th>                                          
                                             <th class="col-xs-4">Description</th>
                                             <th class="text-center">Date</th>
                                             <th class="text-center">Payment Method</th>

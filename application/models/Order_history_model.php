@@ -203,11 +203,12 @@ class order_history_model extends CI_Model
             invoices.total,
             invoices.status,
             concat( users.first_name, " ", users.last_name) as fullname,
-            users.username
+            users.username,
+            user.CompanyName
         ')
             ->from('invoices')
-            ->join('users', 'invoices.user_sid = users.sid', 'left');
-
+            ->join('users', 'invoices.user_sid = users.sid', 'left')
+            ->join('users user', 'user.sid = users.parent_sid');
         // Invoice id check
         if ($invoice_id != 'all') $this->db->where('invoices.sid', $invoice_id);
         // Username check
@@ -262,6 +263,7 @@ class order_history_model extends CI_Model
             $rows .= '<tr>';
             $rows .= '  <td>' . $v0['invoice_number'] . '</td>';
             $rows .= '  <td>' . ($v0['fullname'] == '' ? $v0['username'] : $v0['fullname']) . '</td>';
+            $rows .= '  <td>' . $v0['CompanyName'] . '</td>';
             $rows .= '  <td><p>Items Summary: </p>';
             $rows .= '      <ul class="list-unstyled invoice-description-list">';
             foreach ($product_ids as $prodcut_id_key => $product_id) {

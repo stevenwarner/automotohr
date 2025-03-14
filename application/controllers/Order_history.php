@@ -402,6 +402,7 @@ class Order_history extends Public_Controller {
                 $file_name .= $order_by;
                 $file_name .= '_';
                 $file_name .=  $status;
+                
                 $file_name = generate_csv(
                     $records, 
                     $file_name, 
