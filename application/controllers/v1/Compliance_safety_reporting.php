@@ -1163,4 +1163,57 @@
                 ["message" => "You have successfully send the emails."]
             );
         }
+
+        public function downloadCSPReport ($reportId) {
+            // get types
+            $this->data["report"] = $this
+                ->compliance_report_model
+                ->getCSPReportByIdForDownload(
+                    $reportId,
+                    [
+                        "csp_reports.sid",
+                        "csp_reports.title",
+                        "csp_reports.report_date",
+                        "csp_reports.disable_answers",
+                        "csp_reports.report_type_sid",
+                        "csp_reports.completion_date",
+                        "csp_reports.status",
+                        "csp_reports.updated_at",
+                        "compliance_report_types.compliance_report_name",
+                        "users.first_name",
+                        "users.last_name",
+                        "users.middle_name",
+                        "users.access_level",
+                        "users.access_level_plus",
+                        "users.pay_plan_flag",
+                        "users.job_title",
+                        "users.is_executive_admin",
+                        "users.email",
+                        "users.PhoneNumber",
+                    ]
+                );
+            //
+            if ($this->data['report']['job_title'] == '' && $this->data['report']['job_title'] == null) {
+                if (isset($this->data['report']['is_executive_admin']) && $this->data['report']['is_executive_admin'] != 0) {
+                    $this->data['report']['job_title'] = 'Executive ' . $this->data['report']['access_level'];
+                }
+                if ($this->data['report']['access_level_plus'] == 1 && $this->data['report']['pay_plan_flag'] == 1) {
+                    $this->data['report']['job_title'] . ' Plus / Payroll';
+                }    
+                if ($this->data['report']['access_level_plus'] == 1) {
+                    $this->data['report']['job_title'] . ' Plus';
+                }    
+                if ($this->data['report']['pay_plan_flag'] == 1) {
+                    $this->data['report']['job_title'] . ' Payroll';
+                }    
+            }  
+            //
+            $this->data['action_date'] = 'Downloaded Date';
+            $this->data['action_by'] = "Downloaded By"; 
+            $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name"); 
+            //
+            // _e($this->data["report"],true);  
+            //
+            $this->load->view('compliance_safety_reporting/download_compliance_safety_report', $this->data);  
+        }
     }

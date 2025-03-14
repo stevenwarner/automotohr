@@ -2686,3 +2686,6 @@ $route["compliance_safety_reporting/(:num)/emails/send"]["post"] =
 
 $route["compliance_safety_reporting/(:num)/emails/send/incidents"]["post"] =
   "v1/Compliance_safety_reporting/sendEmailsForCSPIncident/$1";
+
+$route["compliance_safety_reporting/download_report/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/downloadCSPReport/$1";
