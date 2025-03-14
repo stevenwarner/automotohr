@@ -1144,6 +1144,10 @@ class Home extends CI_Controller
                     $secretKey,
                     current_url()
                 ),
+                "encryptedExitUrl" => encryptAttributeForIndeed(
+                    $secretKey,
+                    current_url()
+                ),
             ];
         }
 

@@ -14,6 +14,7 @@
                     data-indeed-apply-sourceJobPostingId="<?= $indeedApplyButtonDetails["indeed_posting_id"]; ?>"
                     data-indeed-apply-partnerApiToken="<?= getCreds("AHR")->INDEED_PARTNER_KEY; ?>"
                     data-indeed-apply-encryptedJobUrl="<?= $indeedApplyButtonDetails["attributes"]["encryptedJobUrl"]; ?>"
+                    data-indeed-apply-encryptedExitUrl="<?= $indeedApplyButtonDetails["attributes"]["encryptedExitUrl"]; ?>"
                     data-indeed-apply-hl="en"
                     data-indeed-apply-co="US"
                     data-indeed-apply-newTab="true">
