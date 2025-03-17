@@ -1701,6 +1701,7 @@ class Compliance_report_model extends CI_Model
 		$report =  $this
 			->db
 			->select("csp_reports_incidents.*")
+			->select("compliance_incident_types.id as csp_incident_original_id")
 			->select("compliance_incident_types.compliance_incident_type_name")
 			->select("compliance_incident_types.description")
 			->select($this->userFields)
