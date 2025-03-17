@@ -70,7 +70,6 @@ class Cron_email_model extends CI_Model
         //
         $this->companyEmployees = $employeesWithCourseList;
         //
-        _e($employeesWithCourseList, true, true);
         $this->sendCourseEmailRemindersToEmployees();
 
         return ["success"];
