@@ -1721,6 +1721,8 @@ class Compliance_report_model extends CI_Model
 		if (!$report) {
 			return [];
 		}
+		// get the list of items available to the incident
+		$report["incident_items"] = $this->getCSPItems($report["csp_incident_original_id"]);
 		//
 		$report["internal_employees"] = $this
 			->getCSPIncidentInternalEmployeesById($reportId, $incidentId, [
@@ -3773,6 +3775,33 @@ class Compliance_report_model extends CI_Model
 		}
 
 		return $return_data;
+	}
+
+	public function getCSPItems(int $complianceIncidentId, $parse = true)
+	{
+		$records = $this
+			->db
+			->select("sid, description")
+			->where("compliance_report_incident_sid", $complianceIncidentId)
+			->order_by("sid", "DESC")
+			->get("compliance_report_incident_types")
+			->result_array();
+		//
+		if (!$parse) {
+			return $records;
+		}
+		//
+		$tmp = [];
+		foreach ($records as $record) {
+			//
+			$record["description"] = convertCSPTags(
+				$record["description"]
+			);
+			//
+			$tmp[] = $record;
+		}
+		//
+		return $tmp;
 	}
 	
 }
