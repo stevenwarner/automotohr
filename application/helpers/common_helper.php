@@ -66,7 +66,7 @@ if (!function_exists('getEmployeeBasicInfo')) {
             $basicInfo['phone'] = $userInfo["PhoneNumber"];
             $basicInfo["name"] = remakeEmployeeName($userBasicInfo, true, true);
             $basicInfo["designation"] = remakeEmployeeName($userBasicInfo, false);
-            $basicInfo["employeeName"] = $basicInfo["name"] .' '. $basicInfo["designation"];
+            $basicInfo["employeeName"] = $basicInfo["name"] . ' ' . $basicInfo["designation"];
             $basicInfo["departmentName"] = getDepartmentNameBySID($userInfo['department_sid']);
             $basicInfo["teamName"] = getTeamNameBySID($userInfo['team_sid']);
             $basicInfo["companyName"] = getCompanyNameBySid($userInfo['parent_sid']);
@@ -76,6 +76,7 @@ if (!function_exists('getEmployeeBasicInfo')) {
             $basicInfo["email"] = $userInfo['email'];
             $basicInfo["job_title"] = $userInfo['job_title'];
         }    
+
         //
         return $basicInfo;
     }
@@ -6835,7 +6836,7 @@ if (!function_exists('log_and_send_email_with_attachment')) {
         //
         save_email_log_common($email_data);
         //
-        if (base_url() != STAGING_SERVER_URL){
+        if (base_url() != STAGING_SERVER_URL) {
             return $method($from, $to, $subject, $body, $sender_name, $file_path);
         }
     }
@@ -8492,7 +8493,15 @@ if (!function_exists('generate_csv')) {
 
         $file_path .= $file_name;
         $file = fopen($file_path, 'w');
+
+        if ($type == "invoice_orders") {
+            $ci = &get_instance();
+            $companyName=$ci->session->userdata('logged_in')['company_detail']['CompanyName'];
+            fputcsv($file, array("Company Name: ",$companyName));
+        }
+
         fputcsv($file, $headers);
+
         foreach ($data as $k0 => $v0) {
             $row = array();
             switch ($type) {
@@ -10422,7 +10431,7 @@ if (!function_exists('phonenumber_format')) {
         $phone_number = str_replace('/[^0-9]/', '', $phone_number);
         // Check for us format
         switch ($country_code) {
-                // For US & Canada
+            // For US & Canada
             case '+1':
                 // Match format & convert
                 if (preg_match('/^(\d{3})(\d{3})(\d{4})(\d+)?$/', $phone_number, $match))
@@ -10454,7 +10463,7 @@ if (!function_exists('phonenumber_validate')) {
         $phone_number = str_replace('/[^0-9]/', '', $phone_number);
         // Check for us format
         switch ($country_code) {
-                // For US & Canada
+            // For US & Canada
             case '+1':
                 // Match format & convert
                 if (preg_match('/^(\d{3})(\d{3})(\d{4})$/', $phone_number, $match))
@@ -17347,6 +17356,6 @@ if (!function_exists("isSafetyIncident")) {
             return true;
         } else {
             return false;
-        }  
+        }
     }
 }

@@ -1271,29 +1271,66 @@ class Company_model extends CI_Model
 
     function get_documents_status($company_sid)
     {
-        $this->db->select('users.CompanyName');
-        $this->db->select('form_document_credit_card_authorization.status as cc_auth_status');
-        $this->db->select('form_document_eula.status as eula_status');
-        $this->db->select('form_document_company_contacts.status as company_contacts_status');
-        $this->db->select('form_payroll_agreement.status as fpa_status');
-        $this->db->select('form_document_payroll_credit_card_authorization.status as payroll_cc_auth_status');
 
-        $this->db->where('users.sid', $company_sid);
-        $this->db->join('form_document_credit_card_authorization', 'form_document_credit_card_authorization.company_sid = users.sid', 'left');
-        $this->db->join('form_document_eula', 'form_document_eula.company_sid = users.sid', 'left');
-        $this->db->join('form_document_company_contacts', 'form_document_company_contacts.company_sid = users.sid', 'left');
-        $this->db->join('form_payroll_agreement', 'form_payroll_agreement.company_sid = users.sid', 'left');
-        $this->db->join('form_document_payroll_credit_card_authorization', 'form_document_payroll_credit_card_authorization.company_sid = users.sid', 'left');
+        $documentsStatus = [];
+        //Get Credit Card Authorization Form
+        $this->db->select('status as cc_auth_status');
+        $this->db->limit(1);
+        $this->db->order_by('sid', 'DESC');
+        $this->db->where('company_sid', $company_sid);
+        $cc_auth = $this->db->get('form_document_credit_card_authorization')->result_array();
 
-        $record_obj = $this->db->get('users');
-        $data = $record_obj->result_array();
-        $record_obj->free_result();
-
-        if (!empty($data)) {
-            return $data[0];
-        } else {
-            return array();
+        if (!empty($cc_auth)) {
+            $documentsStatus['cc_auth_status'] = $cc_auth[0]['cc_auth_status'];
         }
+
+        //Get payroll Credit Card Authorization Form
+        $this->db->select('status as payroll_cc_auth_status');
+        $this->db->limit(1);
+        $this->db->order_by('sid', 'DESC');
+        $this->db->where('company_sid', $company_sid);
+        $payroll_cc_auth = $this->db->get('form_document_payroll_credit_card_authorization')->result_array();
+
+        if (!empty($payroll_cc_auth)) {
+            $documentsStatus['payroll_cc_auth_status'] = $payroll_cc_auth[0]['payroll_cc_auth_status'];
+        }
+
+        //Get End User License Agreement Form
+        $this->db->select('status as eula_status');
+        $this->db->limit(1);
+        $this->db->order_by('sid', 'DESC');
+        $this->db->where('company_sid', $company_sid);
+        $eula = $this->db->get('form_document_eula')->result_array();
+
+        if (!empty($eula)) {
+            $documentsStatus['eula_status'] = $eula[0]['eula_status'];
+        }
+
+        //Get Payroll Agreement Form
+        $this->db->select('status as fpa_status');
+        $this->db->limit(1);
+        $this->db->order_by('sid', 'DESC');
+        $this->db->where('company_sid', $company_sid);
+        $eula = $this->db->get('form_payroll_agreement')->result_array();
+
+        if (!empty($eula)) {
+            $documentsStatus['fpa_status'] = $eula[0]['fpa_status'];
+        }
+
+
+        //Get Company Contacts Form
+        $this->db->select('status as company_contacts_status');
+        $this->db->limit(1);
+        $this->db->order_by('sid', 'DESC');
+        $this->db->where('company_sid', $company_sid);
+        $eula = $this->db->get('form_document_company_contacts')->result_array();
+
+        if (!empty($eula)) {
+            $documentsStatus['company_contacts_status'] = $eula[0]['company_contacts_status'];
+        }
+
+        return $documentsStatus;
+       
     }
 
     function get_company_trial_period_detail($company_sid)
@@ -3119,7 +3156,7 @@ class Company_model extends CI_Model
             $this->db->update('users', $data);
         }
     }
-    
+
     //
     function set_executive_access_csp_single_company($executiveAdminSid, $companySid, $action)
     {
