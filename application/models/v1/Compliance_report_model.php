@@ -4060,5 +4060,27 @@ class Compliance_report_model extends CI_Model
 		$this->db->insert('csp_reports_incidents_items', $data);
 		return $this->db->insert_id();
 	}
+
+	public function updateAttachedItem(
+		$reportId,
+		$incidentId,
+		$loggedInEmployeeId,
+		$post
+	) {
+
+		$todayDateTime = getSystemDate();
+		// add new item
+		$data = [
+			'answers_json' => json_encode([
+				"dynamicInput" => $post["dynamicInput"],
+				"dynamicCheckbox" => $post["dynamicCheckbox"],
+			]),
+			'updated_at' => $todayDateTime,
+		];
+		//
+		return $this->db
+			->where('sid', $post["id"])
+			->update('csp_reports_incidents_items', $data);
+	}
 	
 }

@@ -8,8 +8,8 @@
         </tr>
     </thead>
     <tbody>
-        <?php if (!empty($items)) { _e($items,true); ?>
-            <?php foreach ($items as $item) { ?>
+        <?php if (!empty($incidentItemsSelected)) { _e($incidentItemsSelected,true); ?>
+            <?php foreach ($incidentItemsSelected as $item) { ?>
                 <tr>
                     <td>
                         <?php
