@@ -1724,6 +1724,7 @@ class Compliance_report_model extends CI_Model
 		}
 		// get the list of items available to the incident
 		$report["incident_items"] = $this->getCSPItems($report["csp_incident_original_id"]);
+		$report["incidentItemsSelected"] = $this->getCSPAttachedItems($incidentId);
 		//
 		$report["internal_employees"] = $this
 			->getCSPIncidentInternalEmployeesById($reportId, $incidentId, [
@@ -3709,6 +3710,7 @@ class Compliance_report_model extends CI_Model
 		}
 		// get the list of items available to the incident
 		$report["incident_items"] = $this->getCSPItems($report["csp_incident_original_id"]);
+		$report["incidentItemsSelected"] = $this->getCSPAttachedItems($incidentId);
 		//
 		$report["internal_employees"] = $this
 			->getCSPIncidentInternalEmployeesById($reportId, $incidentId, [
@@ -3956,6 +3958,107 @@ class Compliance_report_model extends CI_Model
 		}
 		//
 		return $tmp;
+	}
+
+	public function getCSPAttachedItems(int $incidentId)
+	{
+		$records =  $this->db
+			->select([
+				"csp_reports_incidents_items.sid",
+				"csp_reports_incidents_items.answers_json",
+				"csp_reports_incidents_items.severity_level_sid",
+				"compliance_report_incident_types.description",
+				"csp_reports_incidents_items.compliance_report_incident_types_sid",
+			])
+			->where([
+				'csp_reports_incidents_items.csp_reports_incidents_sid' => $incidentId,
+				'csp_reports_incidents_items.status' => 1,
+			])
+			->join(
+				"compliance_report_incident_types",
+				"compliance_report_incident_types.sid = csp_reports_incidents_items.compliance_report_incident_types_sid",
+				"inner"
+			)
+			->get('csp_reports_incidents_items')
+			->result_array();
+		//
+		if (!$records) {
+			return $records;
+		}
+		//
+		$tmp = [];
+		//
+		foreach ($records as $rc) {
+			$tmp[$rc["compliance_report_incident_types_sid"]] = $rc;
+		}
+		//
+		return $tmp;
+	}
+
+	public function markAllItemsOfIncidentsInactive(
+		$reportId,
+		$incidentId,
+		$loggedInEmployeeId,
+		$post
+	) {
+		if ($post["ids"]) {
+			$this->db->where_not_in(
+				"compliance_report_incident_types_sid",
+				$post["ids"]
+			);
+		}
+		return $this->db
+			->where('csp_reports_incidents_sid', $incidentId)
+			->update('csp_reports_incidents_items', [
+				"status" => 0,
+				"updated_at" => getSystemDate()
+			]);
+	}
+
+	public function attachItemToIncident(
+		$reportId,
+		$incidentId,
+		$loggedInEmployeeId,
+		$post
+	) {
+		// check if already exists
+		$exists = $this->db
+			->where([
+				'csp_reports_incidents_sid' => $incidentId,
+				'compliance_report_incident_types_sid' => $post['id']
+			])
+			->count_all_results('csp_reports_incidents_items');
+
+		$todayDateTime = getSystemDate();
+		// add new item
+		$data = [
+			'severity_level_sid' => $post["level"],
+			'status' => $post["status"] == "active" ? 1 : 0,
+			'answers_json' => json_encode([
+				"dynamicInput" => $post["dynamicInput"],
+				"dynamicCheckbox" => $post["dynamicCheckbox"],
+			]),
+			'updated_at' => $todayDateTime,
+		];
+		//
+		if ($exists > 0) {
+			return $this->db
+				->where([
+					'csp_reports_incidents_sid' => $incidentId,
+					'compliance_report_incident_types_sid' => $post['id']
+				])
+				->update('csp_reports_incidents_items', $data);
+		}
+		// add new item
+		$data = [
+			'csp_reports_incidents_sid' => $incidentId,
+			'compliance_report_incident_types_sid' => $post['id'],
+			'created_by' => $loggedInEmployeeId,
+			'created_at' => $todayDateTime,
+		];
+
+		$this->db->insert('csp_reports_incidents_items', $data);
+		return $this->db->insert_id();
 	}
 	
 }
