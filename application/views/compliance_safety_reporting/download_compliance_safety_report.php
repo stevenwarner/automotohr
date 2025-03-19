@@ -246,6 +246,7 @@
         <?php } ?>    
 
     </section>
+    <a href="<?php echo base_url('compliance_safety_report/download_report_zip').'/'.$report_sid; ?>"  id="JsCreateZipFile"></a>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
@@ -287,6 +288,7 @@
                         url: "<?php echo base_url('compliance_safety_report/save_compliance_report_pdf'); ?>",
                         success: function(data){
                             // 
+                            $('#JsCreateZipFile')[0].click();
                             window.setTimeout(function(){
                                 window.close();
                             }, 5000);

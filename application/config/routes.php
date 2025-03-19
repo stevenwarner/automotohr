@@ -2698,3 +2698,6 @@ $route["compliance_safety_reporting/download_incident/(:num)/(:num)"]["get"] =
 
 $route["compliance_safety_report/save_compliance_report_pdf"]["post"] =
   "v1/Compliance_safety_reporting/saveComplianceSafetyReportPDF";
+
+$route["compliance_safety_report/download_report_zip/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/createAndDownloadZip/$1";

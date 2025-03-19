@@ -227,6 +227,7 @@
         <?php $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $incidentDetail['notes']]); ?>   
 
     </section>
+    <a href="<?php echo base_url('compliance_safety_report/download_report_zip').'/'.$report_sid; ?>"  id="JsCreateZipFile"></a>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
@@ -245,7 +246,6 @@
 
                 }
             } else if (action == 'download') {
-                console.log('pakistan')
                 var draw = kendo.drawing;
                 draw.drawDOM($("#safety_checklist"), {
                     avoidLinks: false,
@@ -267,10 +267,10 @@
                         },
                         url: "<?php echo base_url('compliance_safety_report/save_compliance_report_pdf'); ?>",
                         success: function(data){
-                            //
-                        //     window.setTimeout(function(){
-                        //         window.close();
-                        //     }, 5000);
+                            $('#JsCreateZipFile')[0].click();
+                            window.setTimeout(function(){
+                                window.close();
+                            }, 5000);
                         },
                         error: function(){
 

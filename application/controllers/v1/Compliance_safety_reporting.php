@@ -1248,6 +1248,16 @@
                 }
             }
             //
+            return sendResponse(
+                200,
+                ["id" => $reportId, "message" => "Report downloaded successfully."]
+            );
+        }
+
+        public function createAndDownloadZip ($reportId) {
+            //
+            $companyName = $this->getLoggedInCompany("CompanyName");
+            $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . '/' . $reportId . '/';
             $zip_name = 'compliance_safety_report.zip';
             //
             ini_set('memory_limit', '-1');
@@ -1256,12 +1266,6 @@
             $this->zip->archive($basePath);
             deleteFolderWithFiles(ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)));
             $this->zip->download($zip_name);
-
-            //
-            return sendResponse(
-                200,
-                ["id" => $reportId, "message" => "Report downloaded successfully."]
-            );
         }
 
     }
