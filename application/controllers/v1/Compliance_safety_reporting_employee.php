@@ -105,7 +105,7 @@ class Compliance_safety_reporting_employee extends Base_csp
                 "csp_reports_incidents.sid",
                 "csp_reports_incidents.completed_at",
                 "csp_reports_incidents.status",
-            ], "on_hold");
+            ], "on_hold"); 
         // load JS
         $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
         $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';

@@ -23,6 +23,8 @@ assets/performance_management/videos/*
 assets/shifts_ics_files
 assets/csv_reports
 assets/csv_reports/*
+assets/compliance_safety_reports
+assets/compliance_safety_reports/*
 
 # Exclude system folder
 #system

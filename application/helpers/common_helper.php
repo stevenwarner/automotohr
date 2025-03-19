@@ -63,7 +63,7 @@ if (!function_exists('getEmployeeBasicInfo')) {
             //
             $basicInfo['picture'] = $userInfo["profile_picture"];
             $basicInfo['pictureURL'] = getImageURL($userInfo["profile_picture"]);
-            $basicInfo['phone'] = $basicInfo["PhoneNumber"];
+            $basicInfo['phone'] = $userInfo["PhoneNumber"];
             $basicInfo["name"] = remakeEmployeeName($userBasicInfo, true, true);
             $basicInfo["designation"] = remakeEmployeeName($userBasicInfo, false);
             $basicInfo["employeeName"] = $basicInfo["name"] . ' ' . $basicInfo["designation"];
@@ -74,7 +74,9 @@ if (!function_exists('getEmployeeBasicInfo')) {
             $basicInfo["teamId"] = $userInfo['team_sid'];
             $basicInfo["companyId"] = $userInfo['parent_sid'];
             $basicInfo["email"] = $userInfo['email'];
-        }
+            $basicInfo["job_title"] = $userInfo['job_title'];
+        }    
+
         //
         return $basicInfo;
     }

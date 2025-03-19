@@ -1549,7 +1549,7 @@ class Compliance_report_model extends CI_Model
 				]);
 		}
 
-		// $this->sendEmailsForCSPReport($reportId, CSP_ASSIGNED_EMAIL_TEMPLATE_ID);
+		$this->sendEmailsForCSPReport($reportId, CSP_ASSIGNED_EMAIL_TEMPLATE_ID);
 
 		return $reportId;
 	}
@@ -1724,6 +1724,7 @@ class Compliance_report_model extends CI_Model
 		}
 		// get the list of items available to the incident
 		$report["incident_items"] = $this->getCSPItems($report["csp_incident_original_id"]);
+		$report["incidentItemsSelected"] = $this->getCSPAttachedItems($incidentId);
 		//
 		$report["internal_employees"] = $this
 			->getCSPIncidentInternalEmployeesById($reportId, $incidentId, [
@@ -1784,8 +1785,6 @@ class Compliance_report_model extends CI_Model
 		// $report["emails"] = $this->getComplianceEmails($reportId, $incidentId);
 		$report["libraryItems"] = $this->getComplianceReportFiles($reportId, $incidentId);
 		//
-		$report["incidentItemsSelected"] = $this->getCSPAttachedItems($incidentId);
-
 		return $report;
 	}
 
@@ -1992,7 +1991,7 @@ class Compliance_report_model extends CI_Model
 			$loggedInEmployeeId
 		);
 
-		// $this->sendEmailsForCSPReport($reportId, CSP_UPDATED_EMAIL_TEMPLATE_ID);
+		$this->sendEmailsForCSPReport($reportId, CSP_UPDATED_EMAIL_TEMPLATE_ID);
 
 		return true;
 	}
@@ -2022,13 +2021,16 @@ class Compliance_report_model extends CI_Model
 			$insert = array();
 
 			foreach ($post as $key => $val) {
-				//check for regex
-				if (
-					strpos($key, "multi-list_") === false
-					&& strpos($key, "date_") === false
-					&& strpos($key, "text_") === false
-					&& strpos($key, "radio_") === false
-				) {
+				if (in_array($key, [
+					"report_completion_date",
+					"report_status",
+					"document_title",
+					"report_note_type",
+					"report_note",
+					"report_employees",
+					"external_employees_names",
+					"external_employees_emails",
+				])) {
 					continue;
 				}
 				$exp = explode('_', $key);
@@ -2091,7 +2093,7 @@ class Compliance_report_model extends CI_Model
 			$loggedInEmployeeId
 		);
 
-		// $this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
+		$this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
 
 
 		return true;
@@ -2312,9 +2314,18 @@ class Compliance_report_model extends CI_Model
 				return [];
 			}
 
+			if ($status !== "all") {
+				$this->db->where(
+					"csp_reports_incidents.status",
+					$status
+				);
+			}
+
 			if ($this->allowedCSP["reports"] && $this->allowedCSP["incidents"]) {
-				$this->db->where_in("csp_reports_incidents.sid", $this->allowedCSP["incidents"]);
+				$this->db->group_start();
 				$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
+				$this->db->or_where_in("csp_reports_incidents.sid", $this->allowedCSP["incidents"]);
+				$this->db->group_end();
 			} else if ($this->allowedCSP["reports"] && !$this->allowedCSP["incidents"]) {
 				$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
 			} else if (!$this->allowedCSP["reports"] && $this->allowedCSP["incidents"]) {
@@ -2338,12 +2349,7 @@ class Compliance_report_model extends CI_Model
 			"csp_reports.sid = csp_reports_incidents.csp_reports_sid",
 			"inner"
 		);
-		if ($status !== "all") {
-			$this->db->where(
-				"csp_reports_incidents.status",
-				$status
-			);
-		}
+		
 		return $this->db->get("csp_reports_incidents")->result_array();
 	}
 
@@ -2468,7 +2474,7 @@ class Compliance_report_model extends CI_Model
 			->set("csp_incident_count", "csp_incident_count + 1", false)
 			->update("csp_reports");
 		// send public link
-		// $this->sendEmailsForCSPIncident($id);
+		$this->sendEmailsForCSPIncident($id);
 		//
 		return $id;
 	}
@@ -3295,9 +3301,11 @@ class Compliance_report_model extends CI_Model
 							//
 							$receiverName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
 						}
+	
 						//	
 						$incident_emails[$receiverId]['userName'] = $receiverName;
 						$incident_emails[$receiverId]['userId'] = $receiverId;
+						
 					}
 					//
 					$email['email_type'] = 'Received';
@@ -3372,8 +3380,7 @@ class Compliance_report_model extends CI_Model
 		return $this->db->insert_id();
 	}
 
-	public function checkAndGetComplianceSafetyReportUserKey($userId, $reportId, $incidentId)
-	{
+	public function checkAndGetComplianceSafetyReportUserKey ($userId, $reportId, $incidentId) {
 		$this->db->select('unique_code');
 		$this->db->where('csp_reports_sid', $reportId);
 		$this->db->where('csp_report_incident_sid', $incidentId);
@@ -3393,7 +3400,7 @@ class Compliance_report_model extends CI_Model
 			$userKey = $record_arr['unique_code'];
 		}
 		//
-		return $userKey;
+		return $userKey;	
 	}
 
 	function getComplianceSafetyReportEmails($user_sid, $employee_sid, $reportId, $incidentId)
@@ -3452,6 +3459,553 @@ class Compliance_report_model extends CI_Model
 		return $return_data;
 	}
 
+	function updateEmailReadFlag($sid, $data_to_update)
+	{
+		$this->db->where('sid', $sid);
+		$this->db->update('csp_reports_emails', $data_to_update);
+	}
+
+	function getEmailSenderInfo($sid)
+	{
+		$this->db->select('manual_email, sender_sid, csp_reports_sid, csp_incident_type_sid');
+		$this->db->where('sid', $sid);
+		$records_obj = $this->db->get('csp_reports_emails');
+		$records_arr = $records_obj->row_array();
+		$records_obj->free_result();
+		$return_data = array();
+
+		if (!empty($records_arr)) {
+			$return_data = $records_arr;
+		}
+
+		return $return_data;
+	}
+
+	
+	function isUserHaveNewEmail($userId, $reportId, $incidentId)
+	{
+		
+		$this->db->select('sid');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_incident_type_sid', $incidentId);
+		//
+		if (filter_var($userId, FILTER_VALIDATE_EMAIL)) {
+			$this->db->where('manual_email', $userId);
+			$this->db->where('receiver_sid', 0);
+		} else {
+			$this->db->where('receiver_sid', $userId);
+		}
+		//
+		$this->db->where('is_read', 0);
+		$this->db->from('csp_reports_emails');
+		$result = $this->db->get()->result_array();
+		$return_data = 0;
+
+		if (!empty($result)) {
+			$return_data = count($result);
+		}
+
+		return $return_data;
+	}
+	
+	function isUserHaveUnreadMessage($receiverId, $senderId, $reportId, $incidentId)
+	{
+		//
+		$this->db->select('sid');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_incident_type_sid', $incidentId);
+		//
+		if (filter_var($receiverId, FILTER_VALIDATE_EMAIL)) {
+			$this->db->where('manual_email', $receiverId);
+			$this->db->where('receiver_sid', 0);
+		} else {
+			$this->db->where('receiver_sid', $receiverId);
+		}
+		//
+		if (filter_var($senderId, FILTER_VALIDATE_EMAIL)) {
+			$this->db->where('manual_email', $senderId);
+			$this->db->where('sender_sid', 0);
+		} else {
+			$this->db->where('sender_sid', $senderId);
+		}
+		//
+		$this->db->where('is_read', 0);
+		$this->db->from('csp_reports_emails');
+		$result = $this->db->get()->result_array();
+		$return_data = 0;
+
+		if (!empty($result)) {
+			$return_data = count($result);
+		}
+
+		return $return_data;
+	}
+
+	public function getSeverityLevels()
+	{
+		$records = $this
+			->db
+			->order_by("sid", "ASC")
+			->get("compliance_severity_levels")
+			->result_array();
+		if (!$records) {
+			return [];
+		}
+		$tmp = [];
+		foreach ($records as $record) {
+			$tmp[$record["sid"]] = $record;
+		}
+		return $tmp;
+	}
+
+	/**
+	* Get all compliance reports
+	*
+	* @param int $reportId
+	* @return array
+	*/
+   public function getCSPReportByIdForDownload (int $reportId, array $columns)
+   {
+	   $report =  $this
+		   ->db
+		   ->select($columns)
+		   ->join(
+			   "compliance_report_types",
+			   "compliance_report_types.id = csp_reports.report_type_sid",
+			   "left"
+		   )
+		   ->join(
+			   "users",
+			   "users.sid = csp_reports.last_modified_by",
+			   "left"
+		   )
+		   ->where("csp_reports.sid", $reportId)
+		   ->get("csp_reports")
+		   ->row_array();
+		//
+		if (!$report) {
+			return [];
+		}
+		//
+		if ($report['job_title'] == '' && $report['job_title'] == null) {
+			if (isset($report['is_executive_admin']) && $report['is_executive_admin'] != 0) {
+				$report['job_title'] = 'Executive ' . $report['access_level'];
+			}
+			if ($report['access_level_plus'] == 1 && $report['pay_plan_flag'] == 1) {
+				$report['job_title'] . ' Plus / Payroll';
+			}    
+			if ($report['access_level_plus'] == 1) {
+				$report['job_title'] . ' Plus';
+			}    
+			if ($report['pay_plan_flag'] == 1) {
+				$report['job_title'] . ' Payroll';
+			}    
+		} 
+		//
+		$report["internal_employees"] = $this->getCSPReportInternalEmployeesById($reportId, [
+			"csp_reports_employees.sid",
+			"csp_reports_employees.employee_sid",
+			"csp_reports_employees.created_by",
+			"csp_reports_employees.created_at"
+	   	]);
+	   	//
+		$report["external_employees"] = $this->getCSPReportExternalEmployeesById($reportId, [
+			"sid",
+			"external_name",
+			"external_email",
+			"created_by",
+			"created_at"
+		]);
+	   	//
+		$report["notes"] = $this->getCSPReportNotesByIdAndType($reportId, 0,'employee', [
+			$this->userFields,
+			"users.profile_picture",
+			"csp_reports_notes.note_type",
+			"csp_reports_notes.notes",
+			"csp_reports_notes.created_by",
+			"csp_reports_notes.created_at",
+		]);
+		//
+		$report["documents"] = $this->getCSPReportFilesByType($reportId, [
+			$this->userFields,
+			"csp_reports_files.file_value",
+			"csp_reports_files.sid",
+			"csp_reports_files.title",
+			"csp_reports_files.s3_file_value",
+			"csp_reports_files.file_type",
+			"csp_reports_files.created_at",
+			"csp_reports_files.created_by",
+			"csp_reports_files.manual_email",
+		], [
+			"document",
+			"file",
+			"image",
+		]);
+		//
+		$report["audios"] = $this->getCSPReportFilesByType($reportId, [
+			$this->userFields,
+			"csp_reports_files.file_value",
+			"csp_reports_files.sid",
+			"csp_reports_files.title",
+			"csp_reports_files.s3_file_value",
+			"csp_reports_files.file_type",
+			"csp_reports_files.created_at",
+			"csp_reports_files.created_by",
+			"csp_reports_files.manual_email",
+		], [
+			"audio",
+			"video",
+			"link",
+		]);
+		//
+		$report["incidents"] = $this->getCSPReportIncidents($reportId, [
+			$this->userFields,
+			"compliance_incident_types.compliance_incident_type_name",
+			"csp_reports_incidents.sid",
+			"csp_reports_incidents.updated_at",
+			"csp_reports_incidents.status",
+			"csp_reports_incidents.completed_at",
+		]);
+		//
+		if ($report["incidents"]) {
+				//
+				$report["incidentsDetail"] = [];
+				//
+				foreach ($report["incidents"] as $incident) {
+					$incidentsDetail = $this->getCSPIncidentByIdForDownload($reportId, $incident['sid']); 
+					$report["incidentsDetail"][] = $incidentsDetail;
+				}
+		}
+		//
+		$report["question_answers"] = $this->getCSPReportQuestionAnswers($reportId);
+		//
+		$report["emails"] = $this->getComplianceEmailsForDownload($reportId, 0);
+		//
+		$report["fileToDownload"] =  $this->getComplianceFilesToDownload($reportId, 0);
+		//
+		// $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', getCompanyNameBySid($report['parent_sid']))) . '/' . $reportId . '/';
+		// //
+		// if (!is_dir($basePath)) {echo "create folder for download<b>";
+		// 	mkdir($basePath, 0777, true);
+		// }
+		// //
+		// $report["basePath"] = $basePath;
+		//
+		return $report;
+   }
+
+   	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @return array
+	 */
+	public function getCSPIncidentByIdForDownload (int $reportId, int $incidentId, $onlyIncident = false)
+	{
+		$report =  $this
+			->db
+			->select("csp_reports_incidents.*")
+			->select("compliance_incident_types.id as csp_incident_original_id")
+			->select("compliance_incident_types.compliance_incident_type_name")
+			->select("compliance_incident_types.description")
+			->select("users.access_level")
+			->select("users.access_level_plus")
+			->select("users.pay_plan_flag")
+			->select("users.job_title")
+			->select("users.is_executive_admin")
+			->select("users.email")
+			->select("users.PhoneNumber")
+			->select($this->userFields)
+			->join(
+				"compliance_incident_types",
+				"compliance_incident_types.id = csp_reports_incidents.incident_type_sid",
+				"inner"
+			)
+			->join(
+				"users",
+				"users.sid = csp_reports_incidents.last_modified_by",
+				"left"
+			)
+			->where("csp_reports_incidents.sid", $incidentId)
+			->get("csp_reports_incidents")
+			->row_array();
+		//
+		if (!$report) {
+			return [];
+		}
+		// get the list of items available to the incident
+		$report["incidentItemsSelected"] = $this->getCSPAttachedItems($incidentId);
+		$report["severity_status"] = $this->getSeverityLevels();
+		//
+		$report["internal_employees"] = $this
+			->getCSPIncidentInternalEmployeesById($reportId, $incidentId, [
+				"csp_reports_employees.sid",
+				"csp_reports_employees.employee_sid",
+				"csp_reports_employees.created_by",
+				"csp_reports_employees.created_at"
+			]);
+		//
+		$report["external_employees"] = $this
+			->getCSPIncidentExternalEmployeesById($reportId, $incidentId, [
+				"sid",
+				"external_name",
+				"external_email",
+				"created_by",
+				"created_at"
+			]);
+		//
+		$report["notes"] = $this->getCSPReportNotesByIdAndType($reportId, $incidentId, 'employee', [
+			$this->userFields,
+			"users.profile_picture",
+			"csp_reports_notes.note_type",
+			"csp_reports_notes.notes",
+			"csp_reports_notes.created_by",
+			"csp_reports_notes.created_at",
+		]);
+		//
+		$report["documents"] = $this->getCSPIncidentFilesByType(
+			$reportId,
+			$incidentId,
+			[
+				$this->userFields,
+				"csp_reports_files.file_value",
+				"csp_reports_files.sid",
+				"csp_reports_files.title",
+				"csp_reports_files.s3_file_value",
+				"csp_reports_files.file_type",
+				"csp_reports_files.created_at",
+				"csp_reports_files.created_by",
+				"csp_reports_files.manual_email",
+			],
+			[
+				"document",
+				"file",
+				"image",
+			]
+		);
+		//
+		$report["audios"] = $this->getCSPIncidentFilesByType($reportId, $incidentId, [
+			$this->userFields,
+			"csp_reports_files.file_value",
+			"csp_reports_files.sid",
+			"csp_reports_files.title",
+			"csp_reports_files.s3_file_value",
+			"csp_reports_files.file_type",
+			"csp_reports_files.created_at",
+			"csp_reports_files.created_by",
+			"csp_reports_files.manual_email",
+		], [
+			"audio",
+			"video",
+			"link",
+		]);
+		//
+		$report["question_answers"] = $this->getCSPQuestionAnswers($incidentId);
+		//
+		$report["emails"] = $this->getComplianceEmailsForDownload($reportId, $incidentId);
+		//
+		if ($onlyIncident) {
+			$report["fileToDownload"] =  $this->getComplianceFilesToDownload($reportId, $incidentId);
+		}
+		//
+		return $report;
+	}
+
+	public function getComplianceFilesToDownload ($reportId, $incidentId) {
+		$this->db->select('
+			title,
+		   	s3_file_value,
+		   	file_type
+		');
+		$this->db->where('csp_reports_sid', $reportId);
+		//
+		if ($incidentId != 0) {
+			$this->db->where('csp_incident_type_sid', $incidentId);
+		}
+		$this->db->where('file_type <>', 'link');
+		//
+		$records_obj = $this->db->get('csp_reports_files');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		$return_data = array();
+
+		if (!empty($records_arr)) {
+			$link = '';
+			foreach ($records_arr as $ikey => $item) {
+				//
+				if ($item['file_type'] == 'document' || $item['file_type'] == 'image') {
+					if ($item["file_type"] === "image") {
+						$link = AWS_S3_BUCKET_URL . $item["s3_file_value"]; 
+					} elseif ($item["file_type"] === "document") {
+						if (preg_match("/doc|docx|xls|xlsx|ppt|pptx/i", $item["s3_file_value"])) {
+							$link = 'https://view.officeapps.live.com/op/embed.aspx?src='.AWS_S3_BUCKET_URL . $item["s3_file_value"];
+						} else {
+							$link = AWS_S3_BUCKET_URL . $item["s3_file_value"];
+						}
+					} 
+					//
+				} else {
+					$link  = AWS_S3_BUCKET_URL . $item["s3_file_value"];
+				}
+				$return_data[$ikey]['file_name'] = str_replace(' ', '_', $item["title"]).'_'.$item["s3_file_value"];
+				$return_data[$ikey]['link'] = $link;
+			}
+			
+		}
+		//
+		return $return_data;
+	}
+
+   	/**
+	 * Get compliance report notes	
+	 *
+	 * @param int $reportId
+	 * @param int $incidentId
+	 * @param string $type
+	 * @param array $columns
+	 * @return array
+	 */
+	public function getCSPReportNotesByIdAndType(int $reportId, int $incidentId, string $type = 'all', array $columns)
+	{
+		$this->db->select($columns, false);
+		$this->db->where("csp_reports_sid", $reportId);
+		$this->db->where("csp_incident_type_sid", $incidentId);
+		if ($type != 'all') {
+			$this->db->where("note_type", $type);
+		}
+		$this->db->join(
+				"users",
+				"users.sid = csp_reports_notes.created_by",
+				"left"
+			);
+		$this->db->order_by("csp_reports_notes.sid", "DESC");
+		$notes = $this->db->get('csp_reports_notes')->result_array();
+		return $notes;
+	}
+
+	public function getComplianceEmailsForDownload($reportId, $incidentId = 0)
+	{
+		$this->db->select('*');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_incident_type_sid', $incidentId);
+		$this->db->order_by('send_date', 'desc');
+		$records_obj = $this->db->get('csp_reports_emails');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		//
+		$incident_emails = array();
+		//
+		if (!empty($records_arr)) {
+			foreach ($records_arr as $email) {
+				if ($email['sender_sid'] == 0) {
+					$split_email = explode('@', $email['manual_email']);
+					$userId =  $split_email[0];
+				} else {
+					$userId = $email['sender_sid'];
+				}
+				//
+				if (!array_key_exists($userId, $incident_emails)) {
+					//
+					$userName = '';
+					//
+					if ($email["manual_email"] && $email['sender_sid'] == 0) {
+						$split_email = explode('@', $email['manual_email']);
+						$userType = $this->checkUserHasPermissionToComplianceSafetyReport($email['manual_email'], 'email', $reportId, $incidentId);
+						$userName = $split_email[0] . ' (' . $userType . ')';
+					} else {
+						$employeeInfo = $this->get_employee_info_by_id($userId);
+						$userType = $this->checkUserHasPermissionToComplianceSafetyReport($userId, 'employee', $reportId, $incidentId);
+						//
+						$userName = $employeeInfo['first_name'] . ' ' . $employeeInfo['last_name'] . ' (' . $userType . ')';
+					}
+
+					//	
+					$incident_emails[$userId]['userName'] = $userName;
+					$incident_emails[$userId]['userId'] = $userId;
+				}
+				//
+				$attachments = $this->getEmailAttachmentIds($email['sid']);
+				$email['attachments'] = $attachments;
+				//
+				$email['email_type'] = 'Sent';
+				$incident_emails[$userId]['user_emails'][] = $email;
+				//
+			}
+		}
+		//
+		return $incident_emails;
+	}
+
+	public function checkUserHasPermissionToComplianceSafetyReport($employeeId, $type, $reportId, $incidentId)
+	{
+		if ($type == "email") {
+			$this->db->where('external_email', $employeeId);
+		} else {
+			$this->db->where('employee_sid', $employeeId);
+		}
+		//
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_report_incident_sid', $incidentId);
+		$this->db->where('status', 1);
+		$count = $this->db->count_all_results('csp_reports_employees');
+		if ($count > 0) {
+			if ($type == "email") {
+				return "External Employee";
+			} else {
+				return "Internal Employee";
+			}
+		} else {
+			if ($type == "email") {
+				return "OutSider";
+			} else {
+				return "Company Employee";
+			}
+		}
+	}
+
+	public function getEmailAttachmentIds ($emailId) {
+		$this->db->select('
+			csp_reports_files.title,
+		   	csp_reports_files.s3_file_value,
+		   	csp_reports_files.file_type
+		');
+		$this->db->where('csp_reports_email_attachments.csp_reports_email_sid', $emailId);
+		$this->db->join('csp_reports_files', 'csp_reports_files.sid = csp_reports_email_attachments.csp_reports_file_sid', 'left');
+		$records_obj = $this->db->get('csp_reports_email_attachments');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		$return_data = array();
+
+		if (!empty($records_arr)) {
+			$link = '';
+			foreach ($records_arr as $ikey => $item) {
+				//
+				if ($item['file_type'] == 'document' || $item['file_type'] == 'image') {
+					if ($item["file_type"] === "image") {
+						$link = AWS_S3_BUCKET_URL . $item["s3_file_value"]; 
+					} elseif ($item["file_type"] === "document") {
+						if (preg_match("/doc|docx|xls|xlsx|ppt|pptx/i", $item["s3_file_value"])) {
+							$link = 'https://view.officeapps.live.com/op/embed.aspx?src='.AWS_S3_BUCKET_URL . $item["s3_file_value"];
+						} else {
+							$link = AWS_S3_BUCKET_URL . $item["s3_file_value"];
+						}
+					} 
+					//
+				} else {
+					if ($item['file_type'] == 'link') {
+						$link = $item['file_value'];
+					} else {
+						$link  = AWS_S3_BUCKET_URL . $item["s3_file_value"];
+					} 
+				}
+				$return_data[$ikey]['title'] = $item["title"];
+				$return_data[$ikey]['link'] = $link;
+			}
+			
+		}
+
+		return $return_data;
+	}
 
 	public function getCSPItems(int $complianceIncidentId, $parse = true)
 	{
@@ -3478,6 +4032,61 @@ class Compliance_report_model extends CI_Model
 		}
 		//
 		return $tmp;
+	}
+
+	public function getCSPAttachedItems(int $incidentId)
+	{
+		$records =  $this->db
+			->select([
+				"csp_reports_incidents_items.sid",
+				"csp_reports_incidents_items.answers_json",
+				"csp_reports_incidents_items.severity_level_sid",
+				"compliance_report_incident_types.description",
+				"csp_reports_incidents_items.compliance_report_incident_types_sid",
+			])
+			->where([
+				'csp_reports_incidents_items.csp_reports_incidents_sid' => $incidentId,
+				'csp_reports_incidents_items.status' => 1,
+			])
+			->join(
+				"compliance_report_incident_types",
+				"compliance_report_incident_types.sid = csp_reports_incidents_items.compliance_report_incident_types_sid",
+				"inner"
+			)
+			->get('csp_reports_incidents_items')
+			->result_array();
+		//
+		if (!$records) {
+			return $records;
+		}
+		//
+		$tmp = [];
+		//
+		foreach ($records as $rc) {
+			$tmp[$rc["compliance_report_incident_types_sid"]] = $rc;
+		}
+		//
+		return $tmp;
+	}
+
+	public function markAllItemsOfIncidentsInactive(
+		$reportId,
+		$incidentId,
+		$loggedInEmployeeId,
+		$post
+	) {
+		if ($post["ids"]) {
+			$this->db->where_not_in(
+				"compliance_report_incident_types_sid",
+				$post["ids"]
+			);
+		}
+		return $this->db
+			->where('csp_reports_incidents_sid', $incidentId)
+			->update('csp_reports_incidents_items', [
+				"status" => 0,
+				"updated_at" => getSystemDate()
+			]);
 	}
 
 	public function attachItemToIncident(
@@ -3547,76 +4156,5 @@ class Compliance_report_model extends CI_Model
 			->where('sid', $post["id"])
 			->update('csp_reports_incidents_items', $data);
 	}
-
-	public function markAllItemsOfIncidentsInactive(
-		$reportId,
-		$incidentId,
-		$loggedInEmployeeId,
-		$post
-	) {
-		if ($post["ids"]) {
-			$this->db->where_not_in(
-				"compliance_report_incident_types_sid",
-				$post["ids"]
-			);
-		}
-		return $this->db
-			->where('csp_reports_incidents_sid', $incidentId)
-			->update('csp_reports_incidents_items', [
-				"status" => 0,
-				"updated_at" => getSystemDate()
-			]);
-	}
-
-	public function getCSPAttachedItems(int $incidentId)
-	{
-		$records =  $this->db
-			->select([
-				"csp_reports_incidents_items.sid",
-				"csp_reports_incidents_items.answers_json",
-				"csp_reports_incidents_items.severity_level_sid",
-				"compliance_report_incident_types.description",
-				"csp_reports_incidents_items.compliance_report_incident_types_sid",
-			])
-			->where([
-				'csp_reports_incidents_items.csp_reports_incidents_sid' => $incidentId,
-				'csp_reports_incidents_items.status' => 1,
-			])
-			->join(
-				"compliance_report_incident_types",
-				"compliance_report_incident_types.sid = csp_reports_incidents_items.compliance_report_incident_types_sid",
-				"inner"
-			)
-			->get('csp_reports_incidents_items')
-			->result_array();
-		//
-		if (!$records) {
-			return $records;
-		}
-		//
-		$tmp = [];
-		//
-		foreach ($records as $rc) {
-			$tmp[$rc["compliance_report_incident_types_sid"]] = $rc;
-		}
-		//
-		return $tmp;
-	}
-
-	public function getSeverityLevels()
-	{
-		$records = $this
-			->db
-			->order_by("sid", "ASC")
-			->get("compliance_severity_levels")
-			->result_array();
-		if (!$records) {
-			return [];
-		}
-		$tmp = [];
-		foreach ($records as $record) {
-			$tmp[$record["sid"]] = $record;
-		}
-		return $tmp;
-	}
+	
 }

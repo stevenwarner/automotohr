@@ -53,6 +53,10 @@
                         <i class="fa fa-eye"></i>
                         Incidents
                     </a>
+                    <a class="btn btn-green" target="_blank" href="<?= base_url("{$firstSegment}/download_report/" . $display_box_data["sid"]); ?>">
+                        <i class="fa fa-download"></i>
+                        Download
+                    </a>
                 </div>
             </div>
         </article>

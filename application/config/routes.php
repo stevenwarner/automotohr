@@ -2689,3 +2689,12 @@ $route["compliance_safety_reporting/(:num)/emails/send"]["post"] =
 
 $route["compliance_safety_reporting/(:num)/emails/send/incidents"]["post"] =
   "v1/Compliance_safety_reporting/sendEmailsForCSPIncident/$1";
+
+$route["compliance_safety_reporting/download_report/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/downloadCSPReport/$1";
+
+$route["compliance_safety_reporting/download_incident/(:num)/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/downloadCSPIncident/$1/$2";
+
+$route["compliance_safety_report/save_compliance_report_pdf"]["post"] =
+  "v1/Compliance_safety_reporting/saveComplianceSafetyReportPDF";
