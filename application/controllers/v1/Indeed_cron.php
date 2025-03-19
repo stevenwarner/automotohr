@@ -29,7 +29,7 @@ class Indeed_cron extends CI_Controller
      * holds the API token
      * @var string
      */
-    private $apiToken = "10dd174267c685c403d8495343b6d285031e72c06816d7f09347c3f38af17d1e";
+    private $apiToken = "56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781";
 
     /**
      * holds the job body
