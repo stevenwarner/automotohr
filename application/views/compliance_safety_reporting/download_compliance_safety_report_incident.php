@@ -167,83 +167,64 @@
                 </small>
             </div>
             <div class="center-col">
-                <h2><?php echo $report['title']; ?></h2>
+                <h2><?php echo $incidentDetail['compliance_incident_type_name']; ?></h2>
             </div>
         </article>
 
-        <!-- Reporter Information section Start -->
+        <!-- Incident Creator Information section Start -->
         <table class="incident-table">
             <thead>
                 <tr class="bg-gray">
-                    <th colspan="5">
-                        <strong>Reporter Information</strong>
+                    <th colspan="4">
+                        <strong>Incident Information</strong>
                     </th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <th class="text-center">Name</th>
-                    <th class="text-center">Email</th>
-                    <th class="text-center">Job Title</th>
-                    <th class="text-center">Telephone Number</th>
-                </tr>
-                <tr>
-                    <td class="text-center"><?php echo $report['first_name'].' '.$report['last_name']; ?></td>
-                    <td class="text-center"><?php echo !empty($report['email']) ? $report['email'] : 'N/A'; ?></td>
-                    <td class="text-center"><?php echo !empty($report['job_title']) ? $report['job_title'] : 'N/A'; ?></td>
-                    <td class="text-center"><?php echo !empty($report['PhoneNumber']) ? $report['PhoneNumber'] : 'N/A'; ?></td>
-                </tr>
-            </tbody>
-        </table>
-        <!-- Reporter Information section End -->
-
-        <!-- Reporter Information section Start -->
-        <table class="incident-table">
-            <thead>
-                <tr class="bg-gray">
-                    <th colspan="5">
-                        <strong>Compliance Report Information</strong>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th class="text-center">Report Name</th>
-                    <th class="text-center">Reported Date</th>
+                    <th class="text-center">Created By</th>
+                    <th class="text-center">Created Date</th>
                     <th class="text-center">Completion Date</th>
-                    <th class="text-center">Report Status</th>
+                    <th class="text-center">Incident Status</th>
                 </tr>
                 <tr>
-                    <td class="text-center"><?php echo !empty($report['compliance_report_name']) ? $report['compliance_report_name'] : 'N/A'; ?></td>
-                    <td class="text-center"><?php echo !empty($report['report_date']) ? formatDateToDB($report['report_date'], DB_DATE, DATE) : 'N/A'; ?></td>
-                    <td class="text-center"><?php echo !empty($report['completion_date']) ? formatDateToDB($report['completion_date'], DB_DATE, DATE) : 'N/A'; ?></td>
-                    <td class="text-center"><?php echo !empty($report['status']) ? strtoupper($report['status']) : 'N/A'; ?></td>
+                    <td class="text-center"><?php echo $incidentDetail['first_name'].' '.$incidentDetail['last_name']; ?></td>
+                    <td class="text-center"><?php echo !empty($incidentDetail['created_at']) ? formatDateToDB($incidentDetail['created_at'], DB_DATE_WITH_TIME, DATE) : 'N/A'; ?></td>
+                    <td class="text-center"><?php echo !empty($incidentDetail['completed_at']) ? formatDateToDB($incidentDetail['completed_at'], DB_DATE_WITH_TIME, DATE) : 'N/A'; ?></td>
+                    <td class="text-center"><?php echo !empty($incidentDetail['status']) ? strtoupper($incidentDetail['status']) : 'N/A'; ?></td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <label>
+                            <strong>Description :</strong>
+                        </label>
+                        <span class="value-box bg-gray">
+                            <?php echo $incidentDetail['description']; ?>
+                        </span>
+                    </td>
                 </tr>
             </tbody>
         </table>
-        <!-- Reporter Information section End -->
+        <!-- Incident Creator Information section End -->
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/question", ['questions' => $report['question_answers']]); ?>
+        <?php $this->load->view("compliance_safety_reporting/partials/download/items", 
+            [
+                'incidentItemsSelected' => $incidentDetail['incidentItemsSelected'],
+                'severityStatus' => $incidentDetail['severity_status']
+            ]
+        ); ?>
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/incidents", ['incidents' => $report['incidents']]); ?>
-
-        <?php $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $report['documents']]); ?>
+        <?php $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $incidentDetail['documents']]); ?>
             
-        <?php $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $report['audios']]); ?> 
+        <?php $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $incidentDetail['audios']]); ?> 
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $report['internal_employees']]); ?> 
+        <?php $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $incidentDetail['internal_employees']]); ?> 
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/external", ['internalEmployees' => $report['external_employees']]); ?> 
+        <?php $this->load->view("compliance_safety_reporting/partials/download/external", ['internalEmployees' => $incidentDetail['external_employees']]); ?> 
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $report['emails']]); ?> 
+        <?php $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $incidentDetail['emails']]); ?> 
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $report['notes']]); ?> 
-
-        <?php if (isset($report['incidentsDetail'])) { ?>
-            <?php foreach ($report['incidentsDetail'] as $incidentDetail) { ?>
-                <?php $this->load->view("compliance_safety_reporting/partials/download/incident_detail", ['incidentDetail' => $incidentDetail]); ?> 
-            <?php } ?>
-        <?php } ?>    
+        <?php $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $incidentDetail['notes']]); ?>   
 
     </section>
 
@@ -264,7 +245,7 @@
 
                 }
             } else if (action == 'download') {
-                //
+                console.log('pakistan')
                 var draw = kendo.drawing;
                 draw.drawDOM($("#safety_checklist"), {
                     avoidLinks: false,
@@ -286,10 +267,10 @@
                         },
                         url: "<?php echo base_url('compliance_safety_report/save_compliance_report_pdf'); ?>",
                         success: function(data){
-                            // 
-                            window.setTimeout(function(){
-                                window.close();
-                            }, 5000);
+                            //
+                        //     window.setTimeout(function(){
+                        //         window.close();
+                        //     }, 5000);
                         },
                         error: function(){
 

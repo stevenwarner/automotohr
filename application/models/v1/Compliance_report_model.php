@@ -3582,100 +3582,125 @@ class Compliance_report_model extends CI_Model
 		   ->where("csp_reports.sid", $reportId)
 		   ->get("csp_reports")
 		   ->row_array();
-	   //
-	   if (!$report) {
-		   return [];
-	   }
-	   //
-	   $report["internal_employees"] = $this->getCSPReportInternalEmployeesById($reportId, [
-		   "csp_reports_employees.sid",
-		   "csp_reports_employees.employee_sid",
-		   "csp_reports_employees.created_by",
-		   "csp_reports_employees.created_at"
-	   ]);
-	   //
-	   $report["external_employees"] = $this->getCSPReportExternalEmployeesById($reportId, [
-		   "sid",
-		   "external_name",
-		   "external_email",
-		   "created_by",
-		   "created_at"
-	   ]);
-	   //
-	   $report["notes"] = $this->getCSPReportNotesByIdAndType($reportId, 0,'employee', [
-		   $this->userFields,
-		   "users.profile_picture",
-		   "csp_reports_notes.note_type",
-		   "csp_reports_notes.notes",
-		   "csp_reports_notes.created_by",
-		   "csp_reports_notes.created_at",
-	   ]);
-	   //
-	   $report["documents"] = $this->getCSPReportFilesByType($reportId, [
-		   $this->userFields,
-		   "csp_reports_files.file_value",
-		   "csp_reports_files.sid",
-		   "csp_reports_files.title",
-		   "csp_reports_files.s3_file_value",
-		   "csp_reports_files.file_type",
-		   "csp_reports_files.created_at",
-		   "csp_reports_files.created_by",
-		   "csp_reports_files.manual_email",
-	   ], [
-		   "document",
-		   "file",
-		   "image",
-	   ]);
-	   //
-	   $report["audios"] = $this->getCSPReportFilesByType($reportId, [
-		   $this->userFields,
-		   "csp_reports_files.file_value",
-		   "csp_reports_files.sid",
-		   "csp_reports_files.title",
-		   "csp_reports_files.s3_file_value",
-		   "csp_reports_files.file_type",
-		   "csp_reports_files.created_at",
-		   "csp_reports_files.created_by",
-		   "csp_reports_files.manual_email",
-	   ], [
-		   "audio",
-		   "video",
-		   "link",
-	   ]);
-	   //
-	   $report["incidents"] = $this->getCSPReportIncidents($reportId, [
-		   $this->userFields,
-		   "compliance_incident_types.compliance_incident_type_name",
-		   "csp_reports_incidents.sid",
-		   "csp_reports_incidents.updated_at",
-		   "csp_reports_incidents.status",
-		   "csp_reports_incidents.completed_at",
-	   ]);
-	   //
-	   if ($report["incidents"]) {
-			//
-			$report["incidentsDetail"] = [];
-			//
-			foreach ($report["incidents"] as $incident) {
-				$incidentsDetail = $this->getCSPIncidentByIdForDownload($reportId, $incident['sid']); 
-				$report["incidentsDetail"][] =$incidentsDetail;
+		//
+		if (!$report) {
+			return [];
+		}
+		//
+		if ($report['job_title'] == '' && $report['job_title'] == null) {
+			if (isset($report['is_executive_admin']) && $report['is_executive_admin'] != 0) {
+				$report['job_title'] = 'Executive ' . $report['access_level'];
 			}
-	   }
-	   //
-	   $report["question_answers"] = $this->getCSPReportQuestionAnswers($reportId);
-	   //
-	   $report["emails"] = $this->getComplianceEmailsForDownload($reportId, 0);
-	   //
-	   return $report;
+			if ($report['access_level_plus'] == 1 && $report['pay_plan_flag'] == 1) {
+				$report['job_title'] . ' Plus / Payroll';
+			}    
+			if ($report['access_level_plus'] == 1) {
+				$report['job_title'] . ' Plus';
+			}    
+			if ($report['pay_plan_flag'] == 1) {
+				$report['job_title'] . ' Payroll';
+			}    
+		} 
+		//
+		$report["internal_employees"] = $this->getCSPReportInternalEmployeesById($reportId, [
+			"csp_reports_employees.sid",
+			"csp_reports_employees.employee_sid",
+			"csp_reports_employees.created_by",
+			"csp_reports_employees.created_at"
+	   	]);
+	   	//
+		$report["external_employees"] = $this->getCSPReportExternalEmployeesById($reportId, [
+			"sid",
+			"external_name",
+			"external_email",
+			"created_by",
+			"created_at"
+		]);
+	   	//
+		$report["notes"] = $this->getCSPReportNotesByIdAndType($reportId, 0,'employee', [
+			$this->userFields,
+			"users.profile_picture",
+			"csp_reports_notes.note_type",
+			"csp_reports_notes.notes",
+			"csp_reports_notes.created_by",
+			"csp_reports_notes.created_at",
+		]);
+		//
+		$report["documents"] = $this->getCSPReportFilesByType($reportId, [
+			$this->userFields,
+			"csp_reports_files.file_value",
+			"csp_reports_files.sid",
+			"csp_reports_files.title",
+			"csp_reports_files.s3_file_value",
+			"csp_reports_files.file_type",
+			"csp_reports_files.created_at",
+			"csp_reports_files.created_by",
+			"csp_reports_files.manual_email",
+		], [
+			"document",
+			"file",
+			"image",
+		]);
+		//
+		$report["audios"] = $this->getCSPReportFilesByType($reportId, [
+			$this->userFields,
+			"csp_reports_files.file_value",
+			"csp_reports_files.sid",
+			"csp_reports_files.title",
+			"csp_reports_files.s3_file_value",
+			"csp_reports_files.file_type",
+			"csp_reports_files.created_at",
+			"csp_reports_files.created_by",
+			"csp_reports_files.manual_email",
+		], [
+			"audio",
+			"video",
+			"link",
+		]);
+		//
+		$report["incidents"] = $this->getCSPReportIncidents($reportId, [
+			$this->userFields,
+			"compliance_incident_types.compliance_incident_type_name",
+			"csp_reports_incidents.sid",
+			"csp_reports_incidents.updated_at",
+			"csp_reports_incidents.status",
+			"csp_reports_incidents.completed_at",
+		]);
+		//
+		if ($report["incidents"]) {
+				//
+				$report["incidentsDetail"] = [];
+				//
+				foreach ($report["incidents"] as $incident) {
+					$incidentsDetail = $this->getCSPIncidentByIdForDownload($reportId, $incident['sid']); 
+					$report["incidentsDetail"][] = $incidentsDetail;
+				}
+		}
+		//
+		$report["question_answers"] = $this->getCSPReportQuestionAnswers($reportId);
+		//
+		$report["emails"] = $this->getComplianceEmailsForDownload($reportId, 0);
+		//
+		$report["fileToDownload"] =  $this->getComplianceFilesToDownload($reportId, 0);
+		//
+		// $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', getCompanyNameBySid($report['parent_sid']))) . '/' . $reportId . '/';
+		// //
+		// if (!is_dir($basePath)) {echo "create folder for download<b>";
+		// 	mkdir($basePath, 0777, true);
+		// }
+		// //
+		// $report["basePath"] = $basePath;
+		//
+		return $report;
    }
 
-   /**
+   	/**
 	 * Get all compliance reports
 	 *
 	 * @param int $reportId
 	 * @return array
 	 */
-	public function getCSPIncidentByIdForDownload (int $reportId, int $incidentId)
+	public function getCSPIncidentByIdForDownload (int $reportId, int $incidentId, $onlyIncident = false)
 	{
 		$report =  $this
 			->db
@@ -3709,8 +3734,8 @@ class Compliance_report_model extends CI_Model
 			return [];
 		}
 		// get the list of items available to the incident
-		$report["incident_items"] = $this->getCSPItems($report["csp_incident_original_id"]);
 		$report["incidentItemsSelected"] = $this->getCSPAttachedItems($incidentId);
+		$report["severity_status"] = $this->getSeverityLevels();
 		//
 		$report["internal_employees"] = $this
 			->getCSPIncidentInternalEmployeesById($reportId, $incidentId, [
@@ -3779,7 +3804,56 @@ class Compliance_report_model extends CI_Model
 		//
 		$report["emails"] = $this->getComplianceEmailsForDownload($reportId, $incidentId);
 		//
+		if ($onlyIncident) {
+			$report["fileToDownload"] =  $this->getComplianceFilesToDownload($reportId, $incidentId);
+		}
+		//
 		return $report;
+	}
+
+	public function getComplianceFilesToDownload ($reportId, $incidentId) {
+		$this->db->select('
+			title,
+		   	s3_file_value,
+		   	file_type
+		');
+		$this->db->where('csp_reports_sid', $reportId);
+		//
+		if ($incidentId != 0) {
+			$this->db->where('csp_incident_type_sid', $incidentId);
+		}
+		$this->db->where('file_type <>', 'link');
+		//
+		$records_obj = $this->db->get('csp_reports_files');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		$return_data = array();
+
+		if (!empty($records_arr)) {
+			$link = '';
+			foreach ($records_arr as $ikey => $item) {
+				//
+				if ($item['file_type'] == 'document' || $item['file_type'] == 'image') {
+					if ($item["file_type"] === "image") {
+						$link = AWS_S3_BUCKET_URL . $item["s3_file_value"]; 
+					} elseif ($item["file_type"] === "document") {
+						if (preg_match("/doc|docx|xls|xlsx|ppt|pptx/i", $item["s3_file_value"])) {
+							$link = 'https://view.officeapps.live.com/op/embed.aspx?src='.AWS_S3_BUCKET_URL . $item["s3_file_value"];
+						} else {
+							$link = AWS_S3_BUCKET_URL . $item["s3_file_value"];
+						}
+					} 
+					//
+				} else {
+					$link  = AWS_S3_BUCKET_URL . $item["s3_file_value"];
+				}
+				$return_data[$ikey]['file_name'] = str_replace(' ', '_', $item["title"]).'_'.$item["s3_file_value"];
+				$return_data[$ikey]['link'] = $link;
+			}
+			
+		}
+		//
+		return $return_data;
 	}
 
    	/**
@@ -3906,7 +3980,7 @@ class Compliance_report_model extends CI_Model
 			$link = '';
 			foreach ($records_arr as $ikey => $item) {
 				//
-				if ($item[''] == 'document' || $item[''] == 'image') {
+				if ($item['file_type'] == 'document' || $item['file_type'] == 'image') {
 					if ($item["file_type"] === "image") {
 						$link = AWS_S3_BUCKET_URL . $item["s3_file_value"]; 
 					} elseif ($item["file_type"] === "document") {

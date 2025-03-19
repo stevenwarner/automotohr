@@ -39,9 +39,13 @@
     </tbody>
 </table>
 <!-- Incident Creator Information section End -->
- <?php _e($incidentDetail,true); ?>
 
-<?php $this->load->view("compliance_safety_reporting/partials/download/items", ['incidentItemsSelected' => $incidentDetail['incidentItemsSelected']]); ?>
+<?php $this->load->view("compliance_safety_reporting/partials/download/items", 
+    [
+        'incidentItemsSelected' => $incidentDetail['incidentItemsSelected'],
+        'severityStatus' => $incidentDetail['severity_status']
+    ]
+); ?>
 
 <?php $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $incidentDetail['documents']]); ?>
     

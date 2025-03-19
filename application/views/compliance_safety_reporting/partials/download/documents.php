@@ -41,6 +41,7 @@
                         $allReportLinks[$document['sid']]['title'] = $document['title'];
                         $allReportLinks[$document['sid']]['type']  = ucwords($document['file_type']);
                         $allReportLinks[$document['sid']]['url'] = $documentURL;
+                        //
                     ?>
                     <td class="text-center"><?php echo $document['title']; ?></td>
                     <td class="text-center"><?php echo ucwords($document['file_type']); ?></td>

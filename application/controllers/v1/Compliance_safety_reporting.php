@@ -1190,30 +1190,78 @@
                         "users.is_executive_admin",
                         "users.email",
                         "users.PhoneNumber",
+                        "users.parent_sid"
                     ]
                 );
             //
-            if ($this->data['report']['job_title'] == '' && $this->data['report']['job_title'] == null) {
-                if (isset($this->data['report']['is_executive_admin']) && $this->data['report']['is_executive_admin'] != 0) {
-                    $this->data['report']['job_title'] = 'Executive ' . $this->data['report']['access_level'];
-                }
-                if ($this->data['report']['access_level_plus'] == 1 && $this->data['report']['pay_plan_flag'] == 1) {
-                    $this->data['report']['job_title'] . ' Plus / Payroll';
-                }    
-                if ($this->data['report']['access_level_plus'] == 1) {
-                    $this->data['report']['job_title'] . ' Plus';
-                }    
-                if ($this->data['report']['pay_plan_flag'] == 1) {
-                    $this->data['report']['job_title'] . ' Payroll';
-                }    
-            }  
-            //
+            $this->data['report_sid'] = $reportId;
+            $this->data['company_name'] = $this->getLoggedInCompany("CompanyName");
             $this->data['action_date'] = 'Downloaded Date';
             $this->data['action_by'] = "Downloaded By"; 
+            $this->data['action'] = "download";
             $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name"); 
-            //
-            // _e($this->data["report"],true);  
             //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report', $this->data);  
         }
+
+        public function downloadCSPIncident ($reportId, $incidentId) {
+            //
+            $this->data["incidentDetail"] = $this
+                ->compliance_report_model
+                ->getCSPIncidentByIdForDownload(
+                    $reportId,
+                    $incidentId,
+                    true
+                );    
+            //
+            $this->data['report_sid'] = $reportId;
+            $this->data['company_name'] = $this->getLoggedInCompany("CompanyName");
+            $this->data['action_date'] = 'Downloaded Date';
+            $this->data['action_by'] = "Downloaded By"; 
+            $this->data['action'] = "download"; 
+            $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name"); 
+            //
+            $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident', $this->data);  
+        }
+
+        public function saveComplianceSafetyReportPDF()
+        {
+            $companyName = $this->getLoggedInCompany("CompanyName");;
+            $form_post = $this->input->post();
+            $base64 = $form_post['report_base64'];
+            $reportId = $form_post['report_sid'];
+            $files = $form_post['file_links'];
+
+            $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . '/' . $reportId . '/';
+
+            if (!is_dir($basePath)) {
+                mkdir($basePath, 0777, true);
+            }
+
+            $handler = fopen($basePath . 'compliance_safety_report.pdf', 'w');
+            fwrite($handler, base64_decode(str_replace('data:application/pdf;base64,', '', $base64)));
+            fclose($handler);
+            //
+            if ($files) {
+                foreach ($files as $file) {
+                    @file_put_contents($basePath . $file['file_name'], @file_get_contents($file['link']));
+                }
+            }
+            //
+            $zip_name = 'compliance_safety_report.zip';
+            //
+            ini_set('memory_limit', '-1');
+            $this->load->library('zip');
+            $this->zip->read_dir(rtrim($basePath, '/'), FALSE);
+            $this->zip->archive($basePath);
+            deleteFolderWithFiles(ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)));
+            $this->zip->download($zip_name);
+
+            //
+            return sendResponse(
+                200,
+                ["id" => $reportId, "message" => "Report downloaded successfully."]
+            );
+        }
+
     }

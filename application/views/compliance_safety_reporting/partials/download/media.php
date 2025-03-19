@@ -42,6 +42,7 @@
                         } else {
                             $mediaType = ucwords($media['file_type']);
                             $mediaURL  = AWS_S3_BUCKET_URL . $media["s3_file_value"];
+                            //
                         } 
                         //
                         $allReportLinks[$media['sid']]['title'] = $media['title'];
