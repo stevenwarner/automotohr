@@ -1226,18 +1226,21 @@
 
         public function saveComplianceSafetyReportPDF()
         {
-            $companyName = $this->getLoggedInCompany("CompanyName");;
+            $companyName = $this->getLoggedInCompany("CompanyName");
+            //
             $form_post = $this->input->post();
             $base64 = $form_post['report_base64'];
             $reportId = $form_post['report_sid'];
             $files = $form_post['file_links'];
-
-            $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . '/' . $reportId . '/';
-
+            //
+            $reportName = $this->compliance_report_model->getReportTitleById($reportId);
+            //
+            $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . '/' . strtolower(preg_replace('/\s+/', '_', $reportName)) . '/';
+            //
             if (!is_dir($basePath)) {
                 mkdir($basePath, 0777, true);
             }
-
+            //
             $handler = fopen($basePath . 'compliance_safety_report.pdf', 'w');
             fwrite($handler, base64_decode(str_replace('data:application/pdf;base64,', '', $base64)));
             fclose($handler);
@@ -1257,7 +1260,8 @@
         public function createAndDownloadZip ($reportId) {
             //
             $companyName = $this->getLoggedInCompany("CompanyName");
-            $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . '/' . $reportId . '/';
+            $reportName = $this->compliance_report_model->getReportTitleById($reportId);
+            $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . '/' . strtolower(preg_replace('/\s+/', '_', $reportName)) . '/';
             $zip_name = 'compliance_safety_report.zip';
             //
             ini_set('memory_limit', '-1');

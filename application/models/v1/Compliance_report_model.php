@@ -4156,5 +4156,15 @@ class Compliance_report_model extends CI_Model
 			->where('sid', $post["id"])
 			->update('csp_reports_incidents_items', $data);
 	}
+
+	public function getReportTitleById ($reportId) {
+		$this->db->select('title');
+		$this->db->where('sid', $reportId);
+		$record_obj = $this->db->get('csp_reports');
+		$record_arr = $record_obj->row_array();
+		$record_obj->free_result();
+		//
+		return $record_arr['title'];
+	}
 	
 }
