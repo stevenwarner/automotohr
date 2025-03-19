@@ -2557,9 +2557,8 @@ class Time_off extends Public_Controller
         //
         $this->res['Redirect'] = FALSE;
         //
-
         switch (strtolower($post['action'])) {
-                // Fetch company all policy types
+            // Fetch company all policy types
             case 'get_company_types_list':
                 //
                 $types = $this->timeoff_model->getCompanyTypesList($post);
@@ -2578,7 +2577,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Fetch company polcies
+            // Fetch company polcies
             case 'get_policy_list_by_company':
                 // Get policies
                 $policies = $this->timeoff_model->getPoliciesListByCompany($post['companyId'], 'all');
@@ -2594,7 +2593,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Fetch company policies
+            // Fetch company policies
             case 'get_policies_by_company':
                 // Get policies
                 $policies = $this->timeoff_model->getPoliciesByCompany(
@@ -2622,7 +2621,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Fetch company all employees
+            // Fetch company all employees
             case 'get_company_employees':
                 // Check if policy already exists for current company
                 $employees = $this->timeoff_model->getCompanyEmployees(
@@ -2643,7 +2642,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Fetch company all employees also executive admin
+            // Fetch company all employees also executive admin
             case 'get_company_employees_for_approvers':
                 // Check if policy already exists for current company
                 $employees = $this->timeoff_model->getCompanyAllEmployees(
@@ -2663,7 +2662,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Change sort order of policies
+            // Change sort order of policies
             case 'update_sort_order':
                 $func = 'updatePoliciesSort';
                 //
@@ -2681,7 +2680,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Create policy
+            // Create policy
             case "create_policy":
                 // Check if policy name already exists
                 $doPolicyExists = $this->timeoff_model->policyExists(
@@ -2731,6 +2730,22 @@ class Time_off extends Public_Controller
                 $accruals['plans'] = isset($post['plans']) ? $post['plans'] : [];
                 $accruals['defaultFlow'] = $post['accuralDefaultFlow'];
                 // Set policy insert array
+
+                $accrualCustomJson = [];
+
+                if ($post['ESTA_policy_Allowed_Time'] && $post['ESTA_policy_Applicable_Time'] && $post['ESTA_policy_Applicable_Time_Type'] && $post['ESTA_policy_Applicable_Accrual_Time']) {
+                    $accrualCustomJson['esta'] = [
+                        "allowed_time" => $post['ESTA_policy_Allowed_Time'],
+                        "applicable_time" => $post['ESTA_policy_Applicable_Time'],
+                        "applicable_time_type" => $post['ESTA_policy_Applicable_Time_Type'],
+                        "applicable_accrual_time" => $post['ESTA_policy_Applicable_Accrual_Time'],
+                        "applicable_accrual_time_effectiv" => $post['ESTA_policy_Applicable_Accrual_Time_Effectiv'],
+                        "applicable_accrual_time_type" => $post['ESTA_policy_Applicable_Accrual_Time_Type'],
+                    ];
+                }
+
+
+
                 $in = [];
                 //
                 $in['company_sid'] = $post['companyId'];
@@ -2758,6 +2773,8 @@ class Time_off extends Public_Controller
                 $in['policy_category_type'] = $post['policyCategory'];
                 $in['allowed_approvers'] = $post['approver'] == 1 ? implode(',', $post['approverList']) : '';
 
+                $in['accruals_custom_json'] = json_encode($accrualCustomJson);
+
                 //
                 $policyId = $this->timeoff_model->insertPolicy($in);
                 //
@@ -2781,7 +2798,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Update policy
+            // Update policy
             case "update_policy":
                 // Check if policy name already exists
                 $doPolicyExists = $this->timeoff_model->policyExists(
@@ -2835,6 +2852,21 @@ class Time_off extends Public_Controller
                 $accruals['plans'] = isset($post['plans']) ? $post['plans'] : [];
                 $accruals['defaultFlow'] = $post['accuralDefaultFlow'];
 
+
+                //
+                $accrualCustomJson = [];
+
+                if ($post['ESTA_policy_Allowed_Time'] && $post['ESTA_policy_Applicable_Time'] && $post['ESTA_policy_Applicable_Time_Type'] && $post['ESTA_policy_Applicable_Accrual_Time']) {
+                    $accrualCustomJson['esta'] = [
+                        "allowed_time" => $post['ESTA_policy_Allowed_Time'],
+                        "applicable_time" => $post['ESTA_policy_Applicable_Time'],
+                        "applicable_time_type" => $post['ESTA_policy_Applicable_Time_Type'],
+                        "applicable_accrual_time" => $post['ESTA_policy_Applicable_Accrual_Time'],
+                        "applicable_accrual_time_effectiv" => $post['ESTA_policy_Applicable_Accrual_Time_Effectiv'],
+                        "applicable_accrual_time_type" => $post['ESTA_policy_Applicable_Accrual_Time_Type'],
+                    ];
+                }
+
                 // Set policy insert array
                 $up = [];
                 //
@@ -2855,6 +2887,11 @@ class Time_off extends Public_Controller
                 $up['is_entitled_employee'] = $post['isEntitledEmployees'];
                 $up['policy_category_type'] = $post['policy_category_type'];
                 $up['allowed_approvers'] = $post['approver'] == 1 ? implode(',', $post['approverList']) : '';
+                //
+                $up['accruals_custom_json'] = json_encode($accrualCustomJson);
+
+
+
 
                 //
                 $policyId = $post['policyId'];
@@ -2875,7 +2912,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Update reset policy
+            // Update reset policy
             case "update_reset_policy":
                 // Get old row
                 $oldPolicy = $this->timeoff_model->getSinglePolicyById($post['policyId'])['reset_policy'];
@@ -2937,7 +2974,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Deactivate policy
+            // Deactivate policy
             case 'archive_company_policy':
                 // 
                 $this->timeoff_model->updateCompanyPolicy(
@@ -2959,7 +2996,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Activate policy
+            // Activate policy
             case 'activate_company_policy':
                 // 
                 $this->timeoff_model->updateCompanyPolicy(
@@ -2981,7 +3018,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get single policyby id
+            // Get single policyby id
             case 'get_single_policy_by_id':
                 // 
                 $policy = $this->timeoff_model->getSinglePolicyById(
@@ -3001,7 +3038,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get policy history
+            // Get policy history
             case "get_policy_history":
                 //
                 $policyHistory = $this->timeoff_model->getPolicyHistory($post['policyId']);
@@ -3111,7 +3148,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Fetch company types
+            // Fetch company types
             case 'get_types_by_company':
                 // Get types
                 $types = $this->timeoff_model->getTypesListByCompany(
@@ -3139,7 +3176,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Create type
+            // Create type
             case "create_type":
                 // Check type name
                 $doTypeExists = $this->timeoff_model->typeExists(
@@ -3198,7 +3235,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Deactivate type
+            // Deactivate type
             case 'archive_company_type':
                 // 
                 $this->timeoff_model->updateCompanyType(
@@ -3220,7 +3257,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Activate type
+            // Activate type
             case 'activate_company_type':
                 // 
                 $this->timeoff_model->updateCompanyType(
@@ -3242,7 +3279,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get type history
+            // Get type history
             case "get_type_history":
                 //
                 $typeHistory = $this->timeoff_model->getTypeHistory($post['typeId']);
@@ -3256,7 +3293,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get single type
+            // Get single type
             case "get_single_type":
                 //
                 $type = $this->timeoff_model->getSingleType($post['typeId'], $post['companyId']);
@@ -3274,7 +3311,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Update type
+            // Update type
             case "update_type":
                 // Check type name
                 $doTypeExists = $this->timeoff_model->typeExists(
@@ -3332,7 +3369,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Company holidays
+            // Company holidays
             case "get_holidays_by_company":
                 // Get holidays
                 $holidays = $this->timeoff_model->getCompanyHolidays(
@@ -3361,7 +3398,7 @@ class Time_off extends Public_Controller
 
                 break;
 
-                // Deactivate type
+            // Deactivate type
             case 'archive_company_holiday':
                 // 
                 $this->timeoff_model->updateCompanyHoliday(
@@ -3383,7 +3420,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Activate holiday
+            // Activate holiday
             case 'activate_company_holiday':
                 // 
                 $this->timeoff_model->updateCompanyHoliday(
@@ -3405,7 +3442,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get holiday history
+            // Get holiday history
             case "get_holiday_history":
                 //
                 $holidayHistory = $this->timeoff_model->getHolidayHistory($post['holidayId']);
@@ -3419,7 +3456,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get company all years
+            // Get company all years
             case 'get_company_holiday_years':
                 //
                 $this->res['Status'] = true;
@@ -3429,7 +3466,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Create holiday
+            // Create holiday
             case 'create_holiday':
                 // Check if holiday already exists
                 $isExists = $this->timeoff_model->companyHolidayExists($post);
@@ -3478,7 +3515,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get single holiday
+            // Get single holiday
             case "get_single_holiday":
                 // Check if holiday exists
                 $holiday = $this->timeoff_model->getHolidayById(
@@ -3500,7 +3537,7 @@ class Time_off extends Public_Controller
                 break;
                 break;
 
-                // Update holiday
+            // Update holiday
             case 'update_holiday':
                 // Check if holiday already exists
                 $isExists = $this->timeoff_model->companyHolidayExists($post);
@@ -3552,7 +3589,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get company settings
+            // Get company settings
             case 'get_settings_by_company':
                 // Get plans
                 $settings = $this->timeoff_model->getSettingsAndFormats($post['companyId'], true);
@@ -3564,7 +3601,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Company settings
+            // Company settings
             case 'edit_settings':
                 //
                 $settings = $this->timeoff_model->updateSettings($post);
@@ -3592,7 +3629,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get department & teams
+            // Get department & teams
             case 'get_company_departments_and_teams':
                 //
                 $dt = $this->timeoff_model->getCompanyDepartmentsAndTeams(
@@ -3606,7 +3643,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get approvers by company
+            // Get approvers by company
             case 'get_approvers_by_company':
                 // Get approvers
                 $approvers = $this->timeoff_model->getApproversByCompany(
@@ -3634,7 +3671,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Deactivate approver
+            // Deactivate approver
             case 'archive_company_approver':
                 // 
                 $this->timeoff_model->updateTable(
@@ -3657,7 +3694,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Activate approver
+            // Activate approver
             case 'activate_company_approver':
                 // 
                 $this->timeoff_model->updateTable(
@@ -3680,7 +3717,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get approver history
+            // Get approver history
             case "get_approver_history":
                 //
                 $approverHistory = $this->timeoff_model->getHistory(
@@ -3698,7 +3735,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Insert approver
+            // Insert approver
             case "create_approver":
                 // Check for approver
                 $approverExists = $this->timeoff_model->companyApproverCheck($post);
@@ -3739,7 +3776,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get single approver
+            // Get single approver
             case "get_single_approver":
                 //
                 $approver = $this->timeoff_model->getCompanyApprover($post);
@@ -3756,7 +3793,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Update approver
+            // Update approver
             case "update_approver":
                 //
                 if (!is_array($post['employee'])) {
@@ -3794,7 +3831,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Balances
+            // Balances
             case "get_balances":
                 //
                 $balances = $this->timeoff_model->getBalanceSheet(
@@ -3810,7 +3847,7 @@ class Time_off extends Public_Controller
                 break;
                 break;
 
-                // EMOPLOYEE POLCIIES
+            // EMOPLOYEE POLCIIES
             case "get_employee_policies":
                 //
                 $policies = $this->timeoff_model->getEmployeePoliciesById(
@@ -3827,7 +3864,7 @@ class Time_off extends Public_Controller
                 break;
 
 
-                // EMOPLOYEE POLCIIES
+            // EMOPLOYEE POLCIIES
             case "get_employee_policies_with_timeoffs":
                 //
                 $policies = $this->timeoff_model->getEmployeePoliciesByIdWithTimeoffs(
@@ -3842,7 +3879,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // EMOPLOYEE POLCIIES
+            // EMOPLOYEE POLCIIES
             case "get_employee_policies_with_approvers":
                 //
                 $policies = $this->timeoff_model->getEmployeePoliciesWithApproversById(
@@ -3858,7 +3895,7 @@ class Time_off extends Public_Controller
                 break;
                 break;
 
-                // Get employee balance history
+            // Get employee balance history
             case "get_employee_balance_history":
                 //
                 $history = $this->timeoff_model->getEmployeeBalanceHistory(
@@ -3874,7 +3911,7 @@ class Time_off extends Public_Controller
                 break;
                 break;
 
-                // Add employee balances
+            // Add employee balances
             case 'add_employee_balance':
                 //
                 $data = $this->timeoff_model->addEmployeeBalance($post);
@@ -3884,8 +3921,8 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get requests
-                // TODO
+            // Get requests
+            // TODO
             case "get_requests":
                 //
                 $data = $this->timeoff_model->getRequests($post);
@@ -3894,8 +3931,8 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed...';
                 $this->res['Data'] = $data;
                 break;
-                // Get requests
-                // TODO
+            // Get requests
+            // TODO
             case "get_employee_requests_by_status":
                 //
                 $data = $this->timeoff_model->getRequestsByStatus($post);
@@ -3903,7 +3940,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed...';
                 $this->res['Data'] = $data;
                 break;
-                //
+            //
             case "get_employee_approvers":
                 //
                 $data = $this->timeoff_model->getEmployeeApprovers($post['companyId'], $post['employeeId']);
@@ -3912,7 +3949,7 @@ class Time_off extends Public_Controller
                 $this->res['Data'] = $data;
                 break;
 
-                // Get Modal
+            // Get Modal
             case "get_modal":
                 if ($post['formLMS'] == 0 && $this->theme == 1) {
                     echo $this->load->view('timeoff/partials/' . ($this->prefix . $post['type']) . '', [], true);
@@ -3922,7 +3959,7 @@ class Time_off extends Public_Controller
                 exit;
                 break;
 
-                //
+            //
             case "get_employee_upcoming_timeoffs":
                 //
                 $data = $this->timeoff_model->getEmployeeUpcomingTimeoffs($post['companyId'], $post['employeeId']);
@@ -3932,7 +3969,7 @@ class Time_off extends Public_Controller
                 $this->res['Data'] = $data;
                 break;
 
-                // EMOPLOYEE POLCIIES
+            // EMOPLOYEE POLCIIES
             case "get_employee_policies_by_date":
                 //
                 if (!isset($post['fromDate'])) $post['fromDate'] = '';
@@ -3967,7 +4004,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Create timeoff
+            // Create timeoff
             case "create_timeoff":
                 //
                 $in = [];
@@ -4060,7 +4097,7 @@ class Time_off extends Public_Controller
                 break;
 
 
-                // Create timeoff
+            // Create timeoff
             case "update_timeoff":
                 //
                 $update_time = 'no';
@@ -4176,7 +4213,7 @@ class Time_off extends Public_Controller
                 break;
 
 
-                // Create timeoff
+            // Create timeoff
             case "archive_request":
                 //
                 $in = [];
@@ -4200,7 +4237,7 @@ class Time_off extends Public_Controller
                 break;
 
 
-                // Create timeoff
+            // Create timeoff
             case "cancel_request":
                 //
 
@@ -4230,7 +4267,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // 
+            // 
             case "get_request_by_id":
                 //
                 $data = $this->timeoff_model->getRequestById($post['requestId'], false);
@@ -4240,7 +4277,7 @@ class Time_off extends Public_Controller
                 break;
 
 
-                // Get approver history
+            // Get approver history
             case "get_request_history":
                 //
                 $history = $this->timeoff_model->getHistory(
@@ -4339,7 +4376,7 @@ class Time_off extends Public_Controller
                 break;
 
 
-                // Balances
+            // Balances
             case "get_employee_balances":
                 //
                 $balances = $this->timeoff_model->getGraphBalanceOfEmployee($post['companyId'], $post['employeeId']);
@@ -4351,7 +4388,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get employee breakdown
+            // Get employee breakdown
             case "get_employee_breakdown":
                 //
                 $balances = $this->timeoff_model->getEmployeeR($post['companyId'], $post['employeeId']);
@@ -4363,7 +4400,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get employee breakdown
+            // Get employee breakdown
             case "import_balance":
                 // Start the import process
                 foreach ($post['data'] as $balance) {
@@ -4398,7 +4435,7 @@ class Time_off extends Public_Controller
                 break;
 
 
-                // Get off employees
+            // Get off employees
             case "get_today_off_employees":
                 //
                 $this->res['Status'] = true;
@@ -4409,7 +4446,7 @@ class Time_off extends Public_Controller
                 break;
 
 
-                // Update request status
+            // Update request status
             case "request_status":
                 //
                 $in = []; //echo '<pre>'; print_r($post); die();
@@ -4468,9 +4505,9 @@ class Time_off extends Public_Controller
 
 
 
-                // Deprecated as of 12/12/2020
-                // -------------------------------------------------
-                //
+            // Deprecated as of 12/12/2020
+            // -------------------------------------------------
+            //
             case 'check_available_time':
                 //
                 $startMonth = DateTime::createFromFormat('m/d/Y', $formpost['startDate'])->format('m');
@@ -4489,8 +4526,8 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Plans
-                // Get plan list by company sid
+            // Plans
+            // Get plan list by company sid
             case 'get_plan_list_by_company':
                 // Get plans
                 $plans = $this->timeoff_model->getPlanListByCompany($formpost['companySid']);
@@ -4505,7 +4542,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get plan employee list by company sid
+            // Get plan employee list by company sid
             case 'get_plan_creators_by_company':
                 // Get plans
                 $creators = $this->timeoff_model->getPlanEmployeeListByCompany($formpost['companySid']);
@@ -4520,7 +4557,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get plans by company sid
+            // Get plans by company sid
             case 'get_plan_by_company':
                 // Check if policy already exists for current company
                 $plans = $this->timeoff_model->getPlansByCompany(
@@ -4547,7 +4584,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Add company planSid
+            // Add company planSid
             case 'add_company_plan':
                 if ($formpost['plan'] != '') {
                     $planSid = $this->timeoff_model->checkAndInsertPlanList($formpost['year'], $formpost['month']);
@@ -4597,7 +4634,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Archive company plans
+            // Archive company plans
             case 'archive_company_plan':
                 // Get plans
                 $this->timeoff_model->updateCompanyPlanWithData(
@@ -4610,7 +4647,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Activate company plan
+            // Activate company plan
             case 'activate_company_plan':
                 // Get plans
                 $this->timeoff_model->updateCompanyPlanWithData(
@@ -4623,7 +4660,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Edit company planSid
+            // Edit company planSid
             case 'edit_company_plan':
                 if ($formpost['plan'] != '') {
                     $planListSid = $this->timeoff_model->checkAndInsertPlanList($formpost['year'], $formpost['month']);
@@ -4668,10 +4705,10 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Policies
-                // Get policies list by company sid
+            // Policies
+            // Get policies list by company sid
 
-                // Get company plans
+            // Get company plans
             case 'get_company_plans':
                 // Check if policy already exists for current company
                 $plans = $this->timeoff_model->getCompanyPlans(
@@ -4690,7 +4727,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed.';
                 $this->resp();
                 break;
-                // Add company Policy
+            // Add company Policy
             case 'add_company_policy':
                 $formpost['policy'] = trim($formpost['policy']);
                 // $formpost['policy'] = strtolower(trim($formpost['policy']));
@@ -4727,13 +4764,13 @@ class Time_off extends Public_Controller
                 $this->resp();
                 // 
                 break;
-                // Get policies list by company sid
+            // Get policies list by company sid
 
-                // Archive company plans
+            // Archive company plans
 
-                // Activate company plan
+            // Activate company plan
 
-                // Get a single company policy for edit
+            // Get a single company policy for edit
             case 'get_single_company_policy':
                 $policy = $this->timeoff_model->getCompanyPolicyById($formpost);
                 //
@@ -4747,7 +4784,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed...';
                 $this->resp();
                 break;
-                // Edit company Policy
+            // Edit company Policy
             case 'edit_company_policy':
                 $formpost['policy'] = (trim($formpost['policy']));
                 $formpost['policy'] = (trim($formpost['policy']));
@@ -4788,8 +4825,8 @@ class Time_off extends Public_Controller
                 // 
                 break;
 
-                // Policy Overwrites
-                // Add company Policy
+            // Policy Overwrites
+            // Add company Policy
             case 'add_company_policy_overwrite':
                 // Check for overwrite
                 $policyOverwriteExists = $this->timeoff_model->companyPolicyOverwriteExists($formpost);
@@ -4812,7 +4849,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 // 
                 break;
-                // Get policies list by company sid
+            // Get policies list by company sid
             case 'get_policy_overwrites_by_company':
                 // Get policies
                 $policiesOverwrites = $this->timeoff_model->getPolicyOverwritesByCompany(
@@ -4838,7 +4875,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed.';
                 $this->resp();
                 break;
-                // Archive company policy overwrite
+            // Archive company policy overwrite
             case 'archive_company_policy_overwrite':
                 //
                 $this->timeoff_model->updateCompanyPolicyOverwrite(
@@ -4850,7 +4887,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Policy Overwrite is marked as archive.';
                 $this->resp();
                 break;
-                // Activate company policy overwrite
+            // Activate company policy overwrite
             case 'activate_company_policy_overwrite':
                 //
                 $this->timeoff_model->updateCompanyPolicyOverwrite(
@@ -4862,7 +4899,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Policy Overwrite is marked as activate.';
                 $this->resp();
                 break;
-                // Get a single company policy for edit
+            // Get a single company policy for edit
             case 'get_single_company_policy_overwrite':
                 $policyOverwrite = $this->timeoff_model->getCompanyPolicyOverwriteById($formpost);
                 //
@@ -4876,7 +4913,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed...';
                 $this->resp();
                 break;
-                // Edit company Policy Overwrite
+            // Edit company Policy Overwrite
             case 'edit_company_policy_overwrite':
                 // Check for overwrite
                 $policyOverwriteExists = $this->timeoff_model->companyPolicyOverwriteExists($formpost);
@@ -4900,10 +4937,10 @@ class Time_off extends Public_Controller
                 break;
 
 
-                // Approvers
-                // Add Approver
+            // Approvers
+            // Add Approver
 
-                // Archive company policy overwrite
+            // Archive company policy overwrite
             case 'archive_company_approver':
                 //
                 $this->timeoff_model->updateCompanyApprover(
@@ -4915,7 +4952,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Approver is marked as archive.';
                 $this->resp();
                 break;
-                // Activate company policy overwrite
+            // Activate company policy overwrite
             case 'activate_company_approver':
                 //
                 $this->timeoff_model->updateCompanyApprover(
@@ -4927,9 +4964,9 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Approver is marked as activate.';
                 $this->resp();
                 break;
-                // Get approvers list by company sid
+            // Get approvers list by company sid
 
-                // Get a single company policy for edit
+            // Get a single company policy for edit
 
             case 'get_company_departments':
                 //
@@ -4943,10 +4980,10 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get company departments and teams
+            // Get company departments and teams
 
 
-                // Get employee policies
+            // Get employee policies
             case 'get_employee_policies':
                 $policies = $this->timeoff_model->getEmployeePolicies($formpost);
                 //
@@ -4981,7 +5018,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Create employee time off
+            // Create employee time off
             case 'create_employee_timeoff':
                 // 
                 // // Check if PTO exists for the same date
@@ -5259,7 +5296,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Create employee time off
+            // Create employee time off
             case 'create_employee_timeoff_draft':
                 $formpost['requestedTimeDetails']['formated'] = get_array_from_minutes(
                     $formpost['requestedDays']['totalTime'],
@@ -5356,7 +5393,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get employee timeoff requests
+            // Get employee timeoff requests
             case 'fetch_employee_requests':
                 $requests = $this->timeoff_model->fetchEmployeeRequestsLMS(
                     $formpost
@@ -5373,7 +5410,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Cancel employee request
+            // Cancel employee request
             case 'cancel_employee_request':
                 $cancelled = $this->timeoff_model->cancelEmployeeRequest(
                     $formpost
@@ -5394,7 +5431,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get employee total policy status
+            // Get employee total policy status
             case 'get_employee_policies_status':
                 $policies = $this->timeoff_model->getEmployeePoliciesStatus($formpost);
                 //
@@ -5422,7 +5459,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get balance sheet
+            // Get balance sheet
             case 'get_balance_sheet':
                 $balanceSheet = $this->timeoff_model->getBalanceSheet($formpost);
                 //
@@ -5437,11 +5474,11 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get my team employees
+            // Get my team employees
 
-                // Get all company policies
+            // Get all company policies
 
-                // Get all company policies
+            // Get all company policies
             case 'get_employee_all_policies':
                 // Get policies
                 $policies = $this->timeoff_model->getEmployeeAllPolicies(
@@ -5474,7 +5511,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed.';
                 $this->resp();
                 break;
-                // Get requests by team authority
+            // Get requests by team authority
             case 'get_assigned_requests':
                 // Get policies
                 $requests = $this->timeoff_model->getIncomingRequestByPerm(
@@ -5493,7 +5530,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed.';
                 $this->resp();
                 break;
-                // Get requests by team authority
+            // Get requests by team authority
             case 'get_assigned_request_report':
                 // Get policies
                 $requests = $this->timeoff_model->getIncomingRequestReportByPerm(
@@ -5512,7 +5549,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed.';
                 $this->resp();
                 break;
-                // Get single request
+            // Get single request
             case 'get_single_request':
                 // Get policies
                 $request = $this->timeoff_model->getSingleRequest(
@@ -5529,7 +5566,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed.';
                 $this->resp();
                 break;
-                //  Update employee timeoff
+            //  Update employee timeoff
             case 'update_employee_timeoff':
                 $formpost['requestedTimeDetails']['formated'] = get_array_from_minutes(
                     $formpost['requestedDays']['totalTime'],
@@ -5559,7 +5596,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Time off request is updated.';
                 $this->resp();
                 break;
-                //  Update archive status
+            //  Update archive status
             case 'update_archive_status':
                 $archive_status = $formpost['archive'];
                 $request_sid = $formpost['requestId'];
@@ -5574,7 +5611,7 @@ class Time_off extends Public_Controller
 
                 $this->resp();
                 break;
-                //  Update employee timeoff
+            //  Update employee timeoff
             case 'update_employee_timeoff_from_employee':
                 $formpost['requestedTimeDetails']['formated'] = get_array_from_minutes(
                     $formpost['requestedDays']['totalTime'],
@@ -5597,7 +5634,7 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Time off request is updated.';
                 $this->resp();
                 break;
-                //  Update employee timeoff
+            //  Update employee timeoff
             case 'update_employee_timeoff_draft':
                 $formpost['requestedTimeDetails']['formated'] = get_array_from_minutes(
                     $formpost['requestedDays']['totalTime'],
@@ -5614,7 +5651,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                //  Update employee timeoff
+            //  Update employee timeoff
             case 'convert_employee_timeoff':
                 $formpost['requestedTimeDetails']['formated'] = get_array_from_minutes(
                     $formpost['requestedDays']['totalTime'],
@@ -5803,13 +5840,13 @@ class Time_off extends Public_Controller
                 break;
 
 
-                // Settings
-                //Get settings and formats by company sid
+            // Settings
+            //Get settings and formats by company sid
 
-                // Edit settings and formats by company sid
+            // Edit settings and formats by company sid
 
 
-                // Import time off
+            // Import time off
             case 'import':
                 //
                 if (!sizeof($formpost['timeoffs'])) {
@@ -5946,11 +5983,11 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Update sort codes
+            // Update sort codes
 
 
 
-                // Fetch company policy list
+            // Fetch company policy list
             case 'get_company_policies_list':
                 //
                 $policies = $this->timeoff_model->getCompanyPolicies($formpost);
@@ -5964,14 +6001,14 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Fetch company types list
+            // Fetch company types list
 
 
-                // Gey company types list
+            // Gey company types list
 
 
-                // Policy Types
-                // Add policy type
+            // Policy Types
+            // Add policy type
             case 'add_company_catgeory':
                 // Check if type already exists
                 $alreadyExists = $this->timeoff_model->checkIfTypeAlreadyExists($formpost);
@@ -6001,7 +6038,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Edit policy type
+            // Edit policy type
             case 'edit_company_catgeory':
                 // Check if type already exists
                 $alreadyExists = $this->timeoff_model->checkIfTypeAlreadyExists($formpost);
@@ -6028,7 +6065,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Archive company type
+            // Archive company type
             case 'archive_company_type':
                 // Get plans
                 $this->timeoff_model->updateCompanyTypeWithData(
@@ -6041,7 +6078,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Activate company type
+            // Activate company type
             case 'activate_company_type':
                 // Get plans
                 $this->timeoff_model->updateCompanyTypeWithData(
@@ -6054,7 +6091,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                //   
+            //   
             case 'add_attachment_to_request':
                 if (!sizeof($_FILES)) {
                     $this->res['Response'] = 'Failed to save attachment.';
@@ -6076,7 +6113,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                //   
+            //   
             case 'attach_document_to_request':
                 if (!sizeof($_FILES) && !isset($formpost['attachmentSid'])) {
                     $this->res['Response'] = 'Failed to save attachment.';
@@ -6108,7 +6145,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                //   
+            //   
             case 'remove_attachment':
                 // Insert attachment
                 $this->timeoff_model->removeAttachment(
@@ -6120,7 +6157,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                //   
+            //   
             case 'update_fmla':
                 // Get the latest description
                 $fmla = $this->timeoff_model->getLatestFMLAData($formpost['requestSid']);
@@ -6143,7 +6180,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                //   
+            //   
             case 'get_generated_fmla_view':
                 // Fetch data by sid
                 $fmla = $this->timeoff_model->getFMLADetailsBySid($formpost['fmla']['id']);
@@ -6159,7 +6196,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                //   
+            //   
             case 'update_fmla_attachment':
                 if (!sizeof($_FILES)) {
                     $this->res['Response'] = 'Failed to upload FMLA.';
@@ -6181,7 +6218,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                //   
+            //   
             case 'get_company_holidays':
                 // Get holidays
                 $holidays = $this->timeoff_model->getCompanyHolidays(
@@ -6208,10 +6245,10 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                //   
+            //   
 
 
-                // Archive company plans
+            // Archive company plans
             case 'archive_company_holiday':
                 // Get plans
                 $this->timeoff_model->updateCompanyHolidayWithData(
@@ -6224,7 +6261,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Activate company plan
+            // Activate company plan
             case 'activate_company_holiday':
                 // Get plans
                 $this->timeoff_model->updateCompanyHolidayWithData(
@@ -6237,15 +6274,15 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get company distinct years
+            // Get company distinct years
 
 
-                // Add company holiday
+            // Add company holiday
             case 'add_company_holiday':
 
                 break;
 
-                // Edit company holiday
+            // Edit company holiday
             case 'edit_company_holiday':
                 // Check if holiday alreadu exists
                 $isExists = $this->timeoff_model->companyHolidayExists($formpost);
@@ -6276,7 +6313,7 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
-                // Get single company holiday
+            // Get single company holiday
             case 'get_single_company_holiday':
 
 
@@ -6288,7 +6325,7 @@ class Time_off extends Public_Controller
                 $this->res['Data'] = $this->timeoff_model->getDistinctHolidayDates($formpost);
                 $this->resp();
                 break;
-                // Export time off
+            // Export time off
             case 'export':
                 //
                 $data = $this->timeoff_model->getDataForExport($post);
@@ -6303,9 +6340,9 @@ class Time_off extends Public_Controller
                 $this->res['Data'] = $data;
                 $this->resp();
                 break;
-                //
+            //
 
-                // get employee balance history
+            // get employee balance history
             case 'get_employee_balance_history':
 
                 //
@@ -7452,7 +7489,7 @@ class Time_off extends Public_Controller
         $page = '';
 
         switch (strtolower($request)) {
-                // Requests
+            // Requests
             case 'requests':
                 //
                 if ($request_id > 0) {
@@ -7464,7 +7501,7 @@ class Time_off extends Public_Controller
                     // Get company all timeoff request
                 }
                 break;
-                //
+            //
             case 'balance':
                 //
                 $data['balances'] = $this->timeoff_model->getBalanceSheet([

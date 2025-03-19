@@ -867,6 +867,7 @@ function finalStep(type) {
 //
 function saveStep(d) {
     return localStorage.setItem(`${page}Policy`, JSON.stringify(d));
+    
 }
 
 //

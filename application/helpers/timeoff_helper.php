@@ -2139,11 +2139,43 @@ if (!function_exists('processESTAPolicy')) {
             $r['Reason'] = 'Employee has worked for more than 2 year.';
             return $r;
         }
-        // set the default hours
+
+
+        //
+        $CI = &get_instance();
+        $policyData = $CI->timeoff_model
+            ->getSinglePolicyById($policyId);
+
+        $accuralCustomSettings = json_decode($policyData['accruals_custom_json'], true);
+
         $allowedHours = 0;
+        $dayscheckLimit = 0;
+        $allowedHoursLimit = 72;
+        if ($accuralCustomSettings['esta']) {
+
+            $allowedHoursLimit = $accuralCustomSettings['esta']['allowed_time'];
+            $applicableTime = $accuralCustomSettings['esta']['applicable_time'];
+            $applicableTimeType = $accuralCustomSettings['esta']['applicable_time_type'];
+
+            if ($applicableTimeType == 'days') {
+                $dayscheckLimit = $applicableTime;
+            } else if ($applicableTimeType == 'months') {
+
+                $dayscheckLimit = ($applicableTime * 30);
+            } else if ($applicableTimeType == 'years') {
+
+                $dayscheckLimit = ($applicableTime * 365);
+            } else {
+                $dayscheckLimit = 120;
+            }
+        }
+
+
+        // set the default hours
+        // $allowedHours = 0;
         // set for full time employees
         $dayscheck = $accruals['employee_type_original'] == "parttime"
-            ? 120
+            ? $dayscheckLimit
             : 0;
         // check if policy is applicable
         // after completing the accrual time
@@ -2180,6 +2212,7 @@ if (!function_exists('processESTAPolicy')) {
                 $item["start"],
                 $todayDate,
                 $accruals,
+                $policyId,
             );
             // for first year
             if ($k0 != 0) {
@@ -2187,8 +2220,8 @@ if (!function_exists('processESTAPolicy')) {
                 $allowedHours =
                     $allowedHours + $balanceHolder["remaining"];
                 //
-                if ($allowedHours > 72) {
-                    $allowedHours = 72;
+                if ($allowedHours > $allowedHoursLimit) {
+                    $allowedHours = $allowedHoursLimit;
                 }
             }
             // set the balance
@@ -2316,8 +2349,26 @@ if (!function_exists("getTheAllowedTimeForSpecificYear")) {
         $dayscheck,
         $employeeJoiningDate,
         $todayDate,
-        $accruals
+        $accruals,
+        $policyId = 0
     ) {
+
+
+
+        if (checkPolicyESTA($policyId) == 1) {
+            $allowedHours = getESTACustomAccural(
+                $difference,
+                $dayscheck,
+                $employeeJoiningDate,
+                $todayDate,
+                $accruals,
+                $policyId
+            );
+            return $allowedHours;
+        }
+
+
+
         // allow default 40 hours
         $allowedHours = 40;
         //
@@ -2355,5 +2406,74 @@ if (!function_exists("getTheAllowedTimeForSpecificYear")) {
         }
 
         return $allowedHours;
+    }
+
+
+
+    //
+    if (!function_exists("getESTACustomAccural")) {
+        function getESTACustomAccural(
+            $difference,
+            $dayscheck,
+            $employeeJoiningDate,
+            $todayDate,
+            $accruals,
+            $policyId = 0
+        ) {
+
+
+            $CI = &get_instance();
+            $policyData = $CI->timeoff_model
+                ->getSinglePolicyById($policyId);
+
+            $accuralCustomSettings = json_decode($policyData['accruals_custom_json'], true);
+
+            $allowedHours = 0;
+            if ($accuralCustomSettings['esta']) {
+
+                $allowedHours = $accuralCustomSettings['esta']['allowed_time'];
+                $applicableTime = $accuralCustomSettings['esta']['applicable_time'];
+                $applicableTimeType = $accuralCustomSettings['esta']['applicable_time_type'];
+
+                $applicableAccrualTime = $accuralCustomSettings['esta']['applicable_accrual_time'];
+                $applicableAccrualTimeEffectiv = $accuralCustomSettings['esta']['applicable_accrual_time_effectiv'];
+                $applicableAccrualTimeType = $accuralCustomSettings['esta']['applicable_accrual_time_type'];
+
+                $earningStartAfter = " +" . $applicableTime . " " . $applicableTimeType;
+                $extraHoursAfter = " +" . $applicableAccrualTimeEffectiv . " " . $applicableAccrualTimeType;
+
+                //
+                $difference = $difference - $dayscheck; // this needs to be fixed
+                //
+                if ($accruals['employee_type_original'] == "parttime") {
+                    $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . $earningStartAfter));
+                    $startTimestamp = strtotime($employeeJoiningDate);
+                    $endTimestamp = strtotime($earningHoursStartDate);
+                    $sundaysCount = 0;
+
+                    for ($currentDate = $startTimestamp; $currentDate <= $endTimestamp; $currentDate = strtotime($extraHoursAfter, $currentDate)) {
+
+                        $sundaysCount = $sundaysCount + $applicableAccrualTime;
+                    }
+                    $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . $earningStartAfter));
+                    $allowedHours = $sundaysCount;
+                } else {
+                    $earningHoursStartDate = $employeeJoiningDate;
+                    $allowedHours = $accuralCustomSettings['esta']['allowed_time'];
+                }
+                //
+                $startTimestamp = strtotime($earningHoursStartDate);
+                $endTimestamp = strtotime($todayDate);
+                //
+                for ($currentDate = $startTimestamp; $currentDate <= $endTimestamp; $currentDate = strtotime($extraHoursAfter, $currentDate)) {
+                    $allowedHours = $allowedHours + $applicableAccrualTime;
+                }
+                //
+                if ($allowedHours > $accuralCustomSettings['esta']['allowed_time']) {
+                    $allowedHours = $accuralCustomSettings['esta']['allowed_time'];
+                }
+            }
+            return $allowedHours;
+        }
     }
 }

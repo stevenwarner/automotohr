@@ -19,8 +19,8 @@ $(function () {
             approverList: [],
             deactivate: 0,
             include: 1,
-            isESST:0,
-            isESTA:0,
+            isESST: 0,
+            isESTA: 0,
             method: 'yearly',
             time: 'none',
             frequency: 'none',
@@ -598,7 +598,7 @@ $(function () {
         $('#js-off-days-edit').select2('val', policy.offDays);
         // Set approver check
         $('#js-approver-check-edit').prop('checked', policy.approver == 1 ? true : false);
-        
+
         if (policy.approver == 1) {
             $('#js-approvers-list-edit').select2('val', policy.approverList ? policy.approverList.split(',') : []);
         }
@@ -612,7 +612,7 @@ $(function () {
         // Set accrual method
         // $('#js-accrual-method-edit').select2('val', policy.method);
         // $('#js-accrual-method-edit').trigger('change');
-        // Set accrual time
+        // Set accrual time      
         $('#js-accrual-time-edit').select2('val', policy.time);
         $('#js-accrual-time-edit').trigger('change');
         // Set accrual frquency
@@ -652,10 +652,10 @@ $(function () {
         $('#js-step-bar-edit').show();
         //
         $("#js-accrual-default-flow-edit").prop(
-			"checked",
-			policy.accuralDefaultFlow == 1 || policy.accuralDefaultFlow == undefined ? true
-				: false
-		);
+            "checked",
+            policy.accuralDefaultFlow == 1 || policy.accuralDefaultFlow == undefined ? true
+                : false
+        );
         //
         if (resp.Data.is_entitled_employee == 1) {
             $('#EntitledEmployees').prop('checked', true);
@@ -772,6 +772,38 @@ $(function () {
         //
         setNewHireAccrual('edit');
         setNewHireAccrual('reset');
+
+
+        //
+        let accrualsCustomJson = JSON.parse(resp.Data.accruals_custom_json);
+
+        if (accrualsCustomJson && accrualsCustomJson.esta) {
+
+            $('#js-esta-policy-allowed-time-edit').val(accrualsCustomJson.esta.allowed_time);
+            $('#js-esta-policy-applicable-time-edit').val(accrualsCustomJson.esta.applicable_time);
+            $('#js-esta-policy-applicable-time-type-edit').val(accrualsCustomJson.esta.applicable_time_type);
+
+            $('#js-esta-policy-accrual-allowed-time-edit').val(accrualsCustomJson.esta.applicable_accrual_time);
+            $('#js-esta-policy-accrual-time-effectiv-edit').val(accrualsCustomJson.esta.applicable_accrual_time_effectiv);
+            $('#js-esta-policy-accrual-time-type-edit').val(accrualsCustomJson.esta.applicable_accrual_time_type
+            );
+        }else{
+            $('#js-esta-policy-allowed-time-edit').val();
+            $('#js-esta-policy-applicable-time-edit').val();
+            $('#js-esta-policy-applicable-time-type-edit').val();
+            $('#js-esta-policy-accrual-allowed-time-edit').val();
+            $('#js-esta-policy-accrual-time-effectiv-edit').val();
+            $('#js-esta-policy-accrual-time-type-edit').val()
+        }
+
+
+
+        if (policy.isESTA == 1) {
+            $("#js-esta-policy-box").show();
+        } else {
+            $("#js-esta-policy-box").hide();
+        }
+
         //
         ml(false, 'policy');
     }
@@ -829,7 +861,39 @@ $(function () {
             policyOBJ.isESTA = $('#js-is-esta-edit').prop('checked') === true ? 1 : 0;
             // Set deactivate check
             policyOBJ.include = $('#js-include-check-edit').prop('checked') == true ? 1 : 0;
-            //
+
+            //run validations
+            if (policyOBJ.isESTA == 1) {
+                policyOBJ.ESTA_policy_Allowed_Time = getField('#js-esta-policy-allowed-time-edit');
+                policyOBJ.ESTA_policy_Applicable_Time = getField('#js-esta-policy-applicable-time-edit');
+                policyOBJ.ESTA_policy_Applicable_Time_Type = getField('#js-esta-policy-applicable-time-type-edit');
+
+                policyOBJ.ESTA_policy_Applicable_Accrual_Time = getField('#js-esta-policy-accrual-allowed-time-edit');
+                policyOBJ.ESTA_policy_Applicable_Accrual_Time_Effectiv = getField('#js-esta-policy-accrual-time-effectiv-edit');
+                policyOBJ.ESTA_policy_Applicable_Accrual_Time_Type = getField('#js-esta-policy-accrual-time-type-edit');
+
+                if (isValidInteger(policyOBJ.ESTA_policy_Allowed_Time == false)) {
+                    alertify.alert('WARNING!', 'Allowed Time: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESTA_policy_Applicable_Time == false)) {
+                    alertify.alert('WARNING!', 'Applicable Time: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESTA_policy_Applicable_Accrual_Time == false)) {
+                    alertify.alert('WARNING!', 'Allow: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESTA_policy_Applicable_Accrual_Time_Type == false)) {
+                    alertify.alert('WARNING!', 'extra hours(s) after: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+            }
+
             saveStep(policyOBJ);
             //
             return true;
@@ -849,7 +913,7 @@ $(function () {
             policyOBJ.rate = getField('#js-accrual-rate-edit');
             // Set policy rate type
             policyOBJ.rateType = getField('#js-accrual-rate-type-edit option:selected');
-            
+
             // Set policy minimum aplicable type
             policyOBJ.applicableTimeType = getField('.js-minimum-applicable-time-edit:checked');
             // Set policy minimum aplicable time
@@ -1158,5 +1222,24 @@ $(function () {
             });
             return;
         });
+    }
+
+
+    //
+    $(document).on('click', '#js-is-esta-edit', function (e) {
+
+        if ($(this).is(":checked")) {
+
+            $("#js-esta-policy-box").show();
+        } else {
+            $("#js-esta-policy-box").hide();
+        }
+
+    });
+
+    //
+    function isValidInteger(str) {
+        const num = Number(str);
+        return Number.isInteger(num) && num > 0;
     }
 });
