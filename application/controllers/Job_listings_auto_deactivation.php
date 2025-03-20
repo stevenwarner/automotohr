@@ -28,6 +28,8 @@ class Job_listings_auto_deactivation extends CI_Controller
             if (!empty($jobs)) {
                 // load the indeed model
                 $this->load->model("Indeed_model", "indeed_model");
+                $this->load->model("Job_sync_api_model");
+
                 foreach ($jobs as $key => $job) {
                     $sid = $job['sid'];
                     $company_sid = $job['user_sid'];
@@ -35,9 +37,11 @@ class Job_listings_auto_deactivation extends CI_Controller
                     $expiration_date = $job['expiration_date'];
                     $expiring_job_sids[] = $sid;
                      // expire the job on Indeed
-                    $this->indeed_model->expireJobToQueue(
-                        $job["sid"]
-                    );
+                    // $this->indeed_model->expireJobToQueue(
+                    //     $job["sid"]
+                    // );
+                    $this->Job_sync_api_model->checkAndAddJob($job["sid"]);
+
 
                     // Send job status alert to AC
                     $this->sendJobDetailsToRemarket(

@@ -444,7 +444,8 @@ class Job_listings extends Public_Controller
 
                 $jobId                                                          = $this->dashboard_model->add_listing($listing_data);  //Now call dashboard_model function to insert data in DB
 
-
+                $this->load->model("Job_sync_api_model");
+                $this->Job_sync_api_model->checkAndAddJob($jobId);
                 if ($listing_data["organic_feed"] == 1) {
                     // load the indeed model
                     $this->load->model("Indeed_model", "indeed_model");
@@ -1427,6 +1428,8 @@ class Job_listings extends Public_Controller
                     );
 
                     $this->dashboard_model->update_listing($formpost['sid'], $listing_data); //Now call dashboard_model function to insert data in DB
+                    $this->load->model("Job_sync_api_model");
+                    $this->Job_sync_api_model->checkAndAddJob($formpost["sid"]);
                     if ($listing_data["organic_feed"] == 1) {
                         // load the indeed model
                         $this->load->model("Indeed_model", "indeed_model");
@@ -1881,6 +1884,8 @@ class Job_listings extends Public_Controller
                     );
 
                     $jobId                                                      = $this->dashboard_model->add_listing($listing_data);
+                    $this->load->model("Job_sync_api_model");
+                    $this->Job_sync_api_model->checkAndAddJob($jobId);
                     if ($listing_data["organic_feed"] == 1) {
                         // load the indeed model
                         $this->load->model("Indeed_model", "indeed_model");
@@ -1966,6 +1971,8 @@ class Job_listings extends Public_Controller
                         "Indeed_model",
                         "indeed_model"
                     );
+                    $this->load->model("Job_sync_api_model");
+                    $this->Job_sync_api_model->checkAndAddJobs($newJobIds);
                     // call the cron handler
                     // $this
                     //     ->indeed_model
@@ -2029,12 +2036,14 @@ class Job_listings extends Public_Controller
                         "Indeed_model",
                         "indeed_model"
                     );
+                    $this->load->model("Job_sync_api_model");
+                    $this->Job_sync_api_model->checkAndAddJobs($newJobIds);
                     // call the cron handler
-                    $this
-                        ->indeed_model
-                        ->checkAndDeactivateJobs(
-                            $newJobIds
-                        );
+                    // $this
+                    //     ->indeed_model
+                    //     ->checkAndDeactivateJobs(
+                    //         $newJobIds
+                    //     );
 
                     $insert_record['edit_date'] = date('Y-m-d H:i:s');
                     $insert_record['edit_by_name'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
