@@ -1248,7 +1248,7 @@
             $form_post = $this->input->post();
             $base64 = $form_post['report_base64'];
             $reportId = $form_post['report_sid'];
-            $files = $form_post['file_links']s;
+            $files = $form_post['file_links'];
             //
             $reportName = $this->compliance_report_model->getReportTitleById($reportId);
             //
