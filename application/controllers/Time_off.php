@@ -3917,7 +3917,7 @@ class Time_off extends Public_Controller
                 if ($post['formLMS'] == 0 && $this->theme == 1) {
                     echo $this->load->view('timeoff/partials/' . ($this->prefix . $post['type']) . '', [], true);
                 } else {
-                    echo $this->load->view('timeoff/partials/new_' . ($post['type']) . '', [], true);
+                   echo $this->load->view('timeoff/partials/new_' . ($post['type']) . '', [], true);
                 }
                 exit;
                 break;

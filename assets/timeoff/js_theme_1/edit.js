@@ -1,5 +1,6 @@
 $(function () {
     let
+        selectedPolicyId = 0,
         selectedRequestId = 0,
         selectedEmployeeId = 0,
         oldTime = 0,
@@ -23,9 +24,17 @@ $(function () {
         //
         policyOffDays = undefined;
         //
+
+        /*
         let policy = getSelectedPolicy(
             getField('#jsEditPolicy')
         );
+*/
+
+        let policy = getSelectedPolicy(
+            selectedPolicyId
+        );
+
         //
         if (policy.length == 0) {
             //
@@ -38,7 +47,8 @@ $(function () {
             return;
         }
         //
-        cOBJ.policyId = getField('#jsEditPolicy');
+        // cOBJ.policyId = getField('#jsEditPolicy');
+        cOBJ.policyId = selectedPolicyId;
         cOBJ.startDate = getField('#jsStartDateEdit');
         cOBJ.endDate = getField('#jsEndDateEdit');
         cOBJ.status = getField('#jsStatusEdit');
@@ -57,6 +67,19 @@ $(function () {
             //
             return;
         }
+        //     
+        
+        if (cOBJ.dateRows.totalTime <= 0) {
+
+            alertify.alert(
+                'WARNING!',
+                'The total time request must be greater than 0.',
+                () => { }
+            );
+            //
+            return;
+        }            
+   
         //
         if (cOBJ.startDate == 0) {
             //
@@ -94,6 +117,7 @@ $(function () {
         }
         //
         if (cOBJ.dateRows.error) return;
+        
         //
         let selectedPolicy = getPolicy(
             cOBJ.policyId,
@@ -159,15 +183,15 @@ $(function () {
                                         'cancel': 'No'
                                     }
                                 });
-                            } else if (resp.code == 2) {
-                                alertify.alert(
-                                    'CONFLICT!',
-                                    resp.message,
-                                    function () {
-                                        return true;
-                                    }
-                                )
-                            }        
+                        } else if (resp.code == 2) {
+                            alertify.alert(
+                                'CONFLICT!',
+                                resp.message,
+                                function () {
+                                    return true;
+                                }
+                            )
+                        }
                     } else {
                         //
                         sendUpdateStatusRequest(cOBJ);
@@ -310,9 +334,9 @@ $(function () {
                 beforeShowDay: unavailable,
                 onSelect: () => {
                     //
-                    
-                 $('#asoffdate').text('AS Of  ' + moment($('#jsStartDateEdit').val(), 'MM/DD/YYYY').format(timeoffDateFormat));
-                 getSideBarPolicies();
+
+                    $('#asoffdate').text('AS Of  ' + moment($('#jsStartDateEdit').val(), 'MM/DD/YYYY').format(timeoffDateFormat));
+                    getSideBarPolicies();
                     //
                     remakeRangeRows(
                         '#jsStartDateEdit',
@@ -570,7 +594,7 @@ $(function () {
                     rows += '<tr>';
                     rows += '   <td colspan="6">';
                     if (balance.is_manual == 0 && balance.is_allowed == 1) {
-                        rows += '       <p><strong>Note</strong>: A balance of <b>'+(balance.added_time/60)+'</b> hours is available against policy <b>"' +balance.title+ '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat)+'</b>';
+                        rows += '       <p><strong>Note</strong>: A balance of <b>' + (balance.added_time / 60) + '</b> hours is available against policy <b>"' + balance.title + '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat) + '</b>';
                     } else {
                         rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
                     }
@@ -701,37 +725,33 @@ $(function () {
                         //
                         rows += `
                         <div>
-                        <strong>${policy.Title} (<strong class="text-${
-							policy.categoryType == 1 ? "success" : "danger"
-						}">${
-							policy.categoryType == 1 ? "Paid" : "Unpaid"
-						}</strong>)</strong>
+                        <strong>${policy.Title} (<strong class="text-${policy.categoryType == 1 ? "success" : "danger"
+                            }">${policy.categoryType == 1 ? "Paid" : "Unpaid"
+                            }</strong>)</strong>
                         <br />
-                        <span>Remaining Time: ${
-							policy.AllowedTime.M.minutes == 0 &&
-							policy.Reason == ""
-								? "Unlimited"
-								: policy.RemainingTime.text
-						}</span>
+                        <span>Remaining Time: ${policy.AllowedTime.M.minutes == 0 &&
+                                policy.Reason == ""
+                                ? "Unlimited"
+                                : policy.RemainingTime.text
+                            }</span>
                         <br />
-                        <span>Scheduled Time: ${
-							policy.AllowedTime.M.minutes == 0 &&
-							policy.Reason == ""
-								? "Unlimited"
-								: policy.ConsumedTime.text
-						}</span>
+                        <span>Scheduled Time: ${policy.AllowedTime.M.minutes == 0 &&
+                                policy.Reason == ""
+                                ? "Unlimited"
+                                : policy.ConsumedTime.text
+                            }</span>
                         <br />
                         <span>Employment Status: ${ucwords(
-							policy.EmployementStatus
-						)}</span><br>
+                                policy.EmployementStatus
+                            )}</span><br>
                         <span>Policy Cycle: ${moment(
-							policy.lastAnniversaryDate,
-							"YYYY/MM/DD"
-						).format(timeoffDateFormat)} -
+                                policy.lastAnniversaryDate,
+                                "YYYY/MM/DD"
+                            ).format(timeoffDateFormat)} -
                         ${moment(
-							policy.upcomingAnniversaryDate,
-							"YYYY/MM/DD"
-						).format(timeoffDateFormat)}
+                                policy.upcomingAnniversaryDate,
+                                "YYYY/MM/DD"
+                            ).format(timeoffDateFormat)}
                         </span> 
                         </div>
                         <hr />
@@ -755,7 +775,7 @@ $(function () {
                     });
                     //
                     $('#jsEditPolicy').html(policyRows);
-                    $('#jsEditPolicy').select2();
+                    // $('#jsEditPolicy').select2();
                 }
                 //
                 if (window.timeoff.cPolicies.length == 0) {
@@ -993,5 +1013,8 @@ $(function () {
         } else {
             policyOffDays = singlePolicy.OffDays.split(',');
         }
+
+        selectedPolicyId = $(this).val();
+
     });
 })

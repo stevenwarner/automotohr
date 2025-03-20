@@ -1,5 +1,6 @@
 $(function () {
     let
+        selectedPolicyId = 0,
         selectedRequestId = 0,
         selectedEmployeeId = 0,
         oldTime = 0,
@@ -21,9 +22,20 @@ $(function () {
         //
         policyOffDays = undefined;
         //
-        let policy = getSelectedPolicy(
+
+        /*
+              let policy = getSelectedPolicy(
             getField('#jsEditPolicy')
         );
+      */
+
+
+        let policy = getSelectedPolicy(
+            selectedPolicyId
+        );
+
+
+
         //
         if (policy.length == 0) {
             //
@@ -35,8 +47,10 @@ $(function () {
             //
             return;
         }
+
         //
-        cOBJ.policyId = getField('#jsEditPolicy');
+        // cOBJ.policyId = getField('#jsEditPolicy');
+        cOBJ.policyId = selectedPolicyId;
         cOBJ.startDate = getField('#jsStartDateEdit');
         cOBJ.endDate = getField('#jsEndDateEdit');
         cOBJ.status = getField('#jsStatusEdit');
@@ -44,6 +58,19 @@ $(function () {
         cOBJ.comment = CKEDITOR.instances['jsCommentEdit'].getData();
         cOBJ.sendEmailNotification = getField('.js-send-emailEdit:checked');
         cOBJ.dateRows = getRequestedDays('.jsDurationBox', 'edit');
+
+        //
+        if (cOBJ.dateRows.totalTime <= 0) {
+
+            alertify.alert(
+                'WARNING!',
+                'The total time request must be greater than 0.',
+                () => { }
+            );
+            //
+            return;
+        }
+
         //
         if (cOBJ.policyId == 0) {
             //
@@ -157,7 +184,8 @@ $(function () {
         //
         e.preventDefault();
         //
-        console.log($(this).closest('.jsBox').data())
+
+        //   console.log($(this).closest('.jsBox').data())
         let requestId = $(this).closest('.jsBox').data('id'),
             employeeId = $(this).closest('.jsBox').data('userid'),
             status = $(this).closest('.jsBox').data('status'),
@@ -232,6 +260,7 @@ $(function () {
                 //
                 policies.map((policy) => {
                     policyRows += `<option value="${policy.PolicyId}">${policy.Title} (<strong class="text-${policy.categoryType == 1 ? 'success' : 'danger'}">${policy.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</option>`;
+
                 });
                 policyRows += `</optgroup>`;
             });
@@ -249,6 +278,7 @@ $(function () {
             //
             $('#jsEditPolicy').html(policyRows);
             $('#jsEditPolicy').select2();
+
             //
             $('#jsStartDateEdit').datepicker({
                 format: 'mm-dd-yyyy',
@@ -335,7 +365,10 @@ $(function () {
             CKEDITOR.replace('jsReasonEdit');
             if ($('#jsCommentEdit').length > 0) CKEDITOR.replace('jsCommentEdit');
             //
+
             $('#jsEditPolicy').select2('val', cOBJ.policyId);
+
+
             $('#jsStartDateEdit').val(cOBJ.startDate);
             $('#jsEndDateEdit').val(cOBJ.endDate);
             //
@@ -539,7 +572,7 @@ $(function () {
                     rows += '<tr>';
                     rows += '   <td colspan="6">';
                     if (balance.is_manual == 0 && balance.is_allowed == 1) {
-                        rows += '       <p><strong>Note</strong>: A balance of <b>'+(balance.added_time/60)+'</b> hours is available against policy <b>"' +balance.title+ '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat)+'</b>';
+                        rows += '       <p><strong>Note</strong>: A balance of <b>' + (balance.added_time / 60) + '</b> hours is available against policy <b>"' + balance.title + '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat) + '</b>';
                     } else {
                         rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
                     }
@@ -688,7 +721,7 @@ $(function () {
                     //
                     $('#jsAsOfTodayPolicies').html(rows);
                     //
-                     //
+                    //
                     // add policy dropdown with selected date.
                     let policyRows = '<option value="0" selected="true">[Select a policy]</option>';
                     //
@@ -702,7 +735,7 @@ $(function () {
                     });
                     //
                     $('#jsEditPolicy').html(policyRows);
-                    $('#jsEditPolicy').select2();
+
                 }
                 //
                 if (window.timeoff.cPolicies.length == 0) {
@@ -957,5 +990,9 @@ $(function () {
         } else {
             policyOffDays = singlePolicy.OffDays.split(',');
         }
+
+        selectedPolicyId = $(this).val();
+
+
     });
 })

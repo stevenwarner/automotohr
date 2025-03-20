@@ -28,12 +28,15 @@ $(function () {
 			alertify.alert(
 				"WARNING!",
 				"You don't have any policies. Please select a different date.",
-				() => {}
+				() => { }
 			);
 			//
 			return;
 		}
 		//
+
+
+
 		cOBJ.policyId = getField("#jsAddPolicy");
 		cOBJ.startDate = getField("#jsStartDate");
 		cOBJ.endDate = getField("#jsEndDate");
@@ -45,17 +48,30 @@ $(function () {
 		//
 		if (cOBJ.policyId == 0) {
 			//
-			alertify.alert("WARNING!", "Please select a policy.", () => {});
+			alertify.alert("WARNING!", "Please select a policy.", () => { });
 			//
 			return;
 		}
+
+		//
+		if (cOBJ.dateRows.totalTime <= 0) {
+
+			alertify.alert(
+				'WARNING!',
+				'The total time request must be greater than 0.',
+				() => { }
+			);
+			//
+			return;
+		}
+
 		//
 		if (cOBJ.startDate == 0) {
 			//
 			alertify.alert(
 				"WARNING!",
 				"Please select the start date.",
-				() => {}
+				() => { }
 			);
 			//
 			return;
@@ -63,7 +79,7 @@ $(function () {
 		//
 		if (cOBJ.endDate == 0) {
 			//
-			alertify.alert("WARNING!", "Please select an end date.", () => {});
+			alertify.alert("WARNING!", "Please select an end date.", () => { });
 			//
 			return;
 		}
@@ -79,7 +95,7 @@ $(function () {
 				alertify.alert(
 					"WARNING!",
 					"Please, either select approve or reject.",
-					() => {}
+					() => { }
 				);
 				//
 				return;
@@ -98,7 +114,7 @@ $(function () {
 				alertify.alert(
 					"WARNING!",
 					`You don't have any time left against this policy.`,
-					() => {}
+					() => { }
 				);
 				return;
 			}
@@ -110,7 +126,7 @@ $(function () {
 				alertify.alert(
 					"WARNING!",
 					`Requested time-off can not be greater than the allowed time i.e. "${selectedPolicy.RemainingTimeWithNegative.text}"`,
-					() => {}
+					() => { }
 				);
 				return;
 			}
@@ -143,7 +159,7 @@ $(function () {
 						alertify.alert(
 							"Conflict!",
 							resp.Response.message,
-							() => {}
+							() => { }
 						);
 						return;
 					} else {
@@ -188,7 +204,7 @@ $(function () {
 			(resp) => {
 				if (resp.Status === false) {
 					ml(false, currentLoader);
-					alertify.alert("WARNING!", resp.Response, () => {});
+					alertify.alert("WARNING!", resp.Response, () => { });
 					return;
 				}
 				//
@@ -855,111 +871,107 @@ $(function () {
 			);
 		});
 	}
-			
 
-    //
-    function getSideBarPolicies() {
-        //
-        $('.jsAsOfTodayPolicies').html('');
-        //
-        $.post(
-            handlerURL, {
-            action: 'get_employee_policies_by_date',
-            companyId: companyId,
-            employerId: employerId,
-            employeeId: selectedEmployeeId,
-            fromDate: $('#jsStartDate').val()
-        },
-            (resp) => {
-                //
-                window.timeoff.cPolicies = resp.Data;
-                $('.jsCreateTimeOffBTN').prop('disabled', false);
-                $('#jsEndDate').prop('disabled', false);
-                $('#jsAddPolicy').prop('disabled', false);
-                //
-                let newPolicies = [];
-                let newPoliciesObj = {};
-                //
-                if (resp.Data.length > 0) {
-                    //
-                    let rows = '';
-                    //
-                    resp.Data.map((policy) => {
-                        if (policy.Reason != '') return;
-                        //
-                        newPolicies.push(policy);
-                        //
-                        if (newPoliciesObj[policy['Category']] === undefined) newPoliciesObj[policy['Category']] = [];
-                        newPoliciesObj[policy['Category']].push(policy);
-                        //
-                        rows += `
+
+	//
+	function getSideBarPolicies() {
+		//
+		$('.jsAsOfTodayPolicies').html('');
+		//
+		$.post(
+			handlerURL, {
+			action: 'get_employee_policies_by_date',
+			companyId: companyId,
+			employerId: employerId,
+			employeeId: selectedEmployeeId,
+			fromDate: $('#jsStartDate').val()
+		},
+			(resp) => {
+				//
+				window.timeoff.cPolicies = resp.Data;
+				$('.jsCreateTimeOffBTN').prop('disabled', false);
+				$('#jsEndDate').prop('disabled', false);
+				$('#jsAddPolicy').prop('disabled', false);
+				//
+				let newPolicies = [];
+				let newPoliciesObj = {};
+				//
+				if (resp.Data.length > 0) {
+					//
+					let rows = '';
+					//
+					resp.Data.map((policy) => {
+						if (policy.Reason != '') return;
+						//
+						newPolicies.push(policy);
+						//
+						if (newPoliciesObj[policy['Category']] === undefined) newPoliciesObj[policy['Category']] = [];
+						newPoliciesObj[policy['Category']].push(policy);
+						//
+						rows += `
                         <div class="p10">
-                        <strong>${policy.Title} (<strong class="text-${
-							policy.categoryType == 1 ? "success" : "danger"
-						}">${
-							policy.categoryType == 1 ? "Paid" : "Unpaid"
-						}</strong>)</strong>
+                        <strong>${policy.Title} (<strong class="text-${policy.categoryType == 1 ? "success" : "danger"
+							}">${policy.categoryType == 1 ? "Paid" : "Unpaid"
+							}</strong>)</strong>
                         <br />
                         <span>(${policy.Category})</span>  
                         <br />
-                        <span>${
-							policy.IsUnlimited
+                        <span>${policy.IsUnlimited
 								? "Unlimited"
 								: policy.RemainingTime.text
-						} remaining</span>
+							} remaining</span>
                         <br />
-                        <span>${
-							policy.IsUnlimited
+                        <span>${policy.IsUnlimited
 								? "Unlimited"
 								: policy.ConsumedTime.text
-						} scheduled</span>
+							} scheduled</span>
                         <br />
                         <span>Employment status: ${ucwords(
-							policy.EmployementStatus
-						)}</span><br>
+								policy.EmployementStatus
+							)}</span><br>
                         <span>Policy Cycle: ${moment(
-							policy.lastAnniversaryDate,
-							"YYYY/MM/DD"
-						).format(timeoffDateFormat)} -
+								policy.lastAnniversaryDate,
+								"YYYY/MM/DD"
+							).format(timeoffDateFormat)} -
                         ${moment(
-							policy.upcomingAnniversaryDate,
-							"YYYY/MM/DD"
-						).format(timeoffDateFormat)}
+								policy.upcomingAnniversaryDate,
+								"YYYY/MM/DD"
+							).format(timeoffDateFormat)}
                         </span> 
                         </div>
                         <hr />
                         `;
-                    });
-                    //
-                    window.timeoff.cPolicies = newPolicies;
-                    //
-                    $('#jsAsOfTodayPolicies').html(rows);
-                    //
-                    // add policy dropdown with selected date.
-                    let policyRows = '<option value="0" selected="true">[Select a policy]</option>';
-                    //
-                    $.each(newPoliciesObj, (category, policies) => {
-                        policyRows += `<optgroup label="${category}">`;
-                        //
-                        policies.map((policy) => {
-                            policyRows += `<option value="${policy.PolicyId}">${policy.Title} (<strong class="text-${policy.categoryType == 1 ? 'success' : 'danger'}">${policy.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</option>`;
-                        });
-                        policyRows += `</optgroup>`;
-                    });
-                    //
-                    $('#jsAddPolicy').html(policyRows);
-                    $('#jsAddPolicy').select2();
-                }
-                //
-                if (window.timeoff.cPolicies.length == 0) {
-                    $('#jsAsOfTodayPolicies').html('<div class="alert alert-success">No policies found.</div>');
-                    $('.jsCreateTimeOffBTN').prop('disabled', true);
-                    $('#jsEndDate').prop('disabled', true);
-                    $('#jsAddPolicy').prop('disabled', true);
-                }
-            }
-        );
-    }
+					});
+					//
+					window.timeoff.cPolicies = newPolicies;
+					//
+					$('#jsAsOfTodayPolicies').html(rows);
+					//
+					// add policy dropdown with selected date.
+					let policyRows = '<option value="0" selected="true">[Select a policy]</option>';
+					//
+					$.each(newPoliciesObj, (category, policies) => {
+						policyRows += `<optgroup label="${category}">`;
+						//
+						policies.map((policy) => {
+							policyRows += `<option value="${policy.PolicyId}">${policy.Title} (<strong class="text-${policy.categoryType == 1 ? 'success' : 'danger'}">${policy.categoryType == 1 ? 'Paid' : 'Unpaid'}</strong>)</option>`;
+						});
+						policyRows += `</optgroup>`;
+					});
+					//
+					$('#jsAddPolicy').html(policyRows);
+					$('#jsAddPolicy').select2();
+				}
+				//
+				if (window.timeoff.cPolicies.length == 0) {
+					$('#jsAsOfTodayPolicies').html('<div class="alert alert-success">No policies found.</div>');
+					$('.jsCreateTimeOffBTN').prop('disabled', true);
+					$('#jsEndDate').prop('disabled', true);
+					$('#jsAddPolicy').prop('disabled', true);
+				}
+			}
+		);
+	}
 
 	//
 	function unavailable(date) {
@@ -1006,7 +1018,7 @@ $(function () {
 			alertify.alert(
 				"WARNING!",
 				"We are unable to find any active employees.",
-				() => {}
+				() => { }
 			);
 			return;
 		}
@@ -1019,9 +1031,8 @@ $(function () {
 			if (employee.terminated_status === "1" || employee.active === "0") {
 				return;
 			}
-			options += `<option value="${
-				employee.user_id
-			}">${remakeEmployeeName(employee)}</option>`;
+			options += `<option value="${employee.user_id
+				}">${remakeEmployeeName(employee)}</option>`;
 		});
 
 		//
@@ -1075,11 +1086,10 @@ $(function () {
 						);
 						//
 						return $(
-							`<span><img  style="padding: 5px; margin-left: 5px;" src="${
-								employeeDetail.image == "" ||
+							`<span><img  style="padding: 5px; margin-left: 5px;" src="${employeeDetail.image == "" ||
 								employeeDetail.image == null
-									? awsURL + "test_file_01.png"
-									: awsURL + employeeDetail.image
+								? awsURL + "test_file_01.png"
+								: awsURL + employeeDetail.image
 							}" width="60px" /> <span>${opt.text}</span></span>`
 						);
 					},
@@ -1189,13 +1199,10 @@ $(function () {
 			policyRows += `<optgroup label="${category}">`;
 			//
 			policies.map((policy) => {
-				policyRows += `<option value="${policy.PolicyId}">${
-					policy.Title
-				} (<strong class="text-${
-					policy.categoryType == 1 ? "success" : "danger"
-				}">${
-					policy.categoryType == 1 ? "Paid" : "Unpaid"
-				}</strong>)</option>`;
+				policyRows += `<option value="${policy.PolicyId}">${policy.Title
+					} (<strong class="text-${policy.categoryType == 1 ? "success" : "danger"
+					}">${policy.categoryType == 1 ? "Paid" : "Unpaid"
+					}</strong>)</option>`;
 			});
 			policyRows += `</optgroup>`;
 		});
@@ -1222,9 +1229,9 @@ $(function () {
 				//
 				$("#asoffdate").text(
 					"AS Of  " +
-						moment($("#jsStartDate").val(), "MM/DD/YYYY").format(
-							timeoffDateFormat
-						)
+					moment($("#jsStartDate").val(), "MM/DD/YYYY").format(
+						timeoffDateFormat
+					)
 				);
 				getSideBarPolicies();
 
@@ -1318,9 +1325,9 @@ $(function () {
                     <div class="csTextBox">
                         <p>${emp.first_name} ${emp.last_name}</p>
                         <p class="csTextSmall"> ${remakeEmployeeName(
-							emp,
-							false
-						)}</p>
+					emp,
+					false
+				)}</p>
                         <p class="csTextSmall">${emp.email}</p>
                         <p class="csTextSmall">${emp.anniversary_text}</p>
                     </div>
@@ -1358,33 +1365,30 @@ $(function () {
 			//
 			rows += `
                 <div class="csApproverBox" title="Approver" data-content="${msg}">
-                    <img src="${
-						approver.profile_picture == null ||
-						approver.profile_picture == ""
-							? awsURL + "test_file_01.png"
-							: awsURL + approver.profile_picture
-					}" />
+                    <img src="${approver.profile_picture == null ||
+					approver.profile_picture == ""
+					? awsURL + "test_file_01.png"
+					: awsURL + approver.profile_picture
+				}" />
                 </div>
             `;
 			mRows += `
                 <div class="csApproverBox">
                     <div class="employee-info">            
                         <figure>                
-                            <img src="${
-								approver.profile_picture == null ||
-								approver.profile_picture == ""
-									? awsURL + "test_file_01.png"
-									: awsURL + approver.profile_picture
-							}" />          
+                            <img src="${approver.profile_picture == null ||
+					approver.profile_picture == ""
+					? awsURL + "test_file_01.png"
+					: awsURL + approver.profile_picture
+				}" />          
                         </figure>            
                         <div class="text">                
                             <h4>${msg}</h4>                
-                            <p><a href="http://automotohr.local/employee_profile/${
-								approver.userId
-							}" target="_blank">Id: ${getEmployeeId(
-				approver.userId,
-				approver.employee_number
-			)}</a></p>            
+                            <p><a href="http://automotohr.local/employee_profile/${approver.userId
+				}" target="_blank">Id: ${getEmployeeId(
+					approver.userId,
+					approver.employee_number
+				)}</a></p>            
                         </div>        
                     </div>
                 </div>
