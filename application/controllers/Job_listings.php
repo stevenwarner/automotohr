@@ -2088,7 +2088,7 @@ class Job_listings extends Public_Controller
                         }
                     }
                     $this->load->model("Job_sync_api_model");
-                    $this->Job_sync_api_model->checkAndAddJobs($newJobIds);
+                    $this->Job_sync_api_model->checkAndDeactivateJobs($newJobIds);
                     //send job status to remarket
                     $url = REMARKET_PORTAL_BASE_URL . "/activate_deactivate_jobs/" . REMARKET_PORTAL_KEY;
                     $remarket_listing_data['deactivated_jobs'] = $jobId;
