@@ -3394,7 +3394,7 @@ class Compliance_report_model extends CI_Model
 		$record_obj = $this->db->get('csp_reports_employees');
 		$record_arr = $record_obj->row_array();
 		$record_obj->free_result();
-		$userKey = array();
+		$userKey = '';
 		//
 		if (!empty($record_arr)) {
 			$userKey = $record_arr['unique_code'];
@@ -3682,14 +3682,6 @@ class Compliance_report_model extends CI_Model
 		$report["emails"] = $this->getComplianceEmailsForDownload($reportId, 0);
 		//
 		$report["fileToDownload"] =  $this->getComplianceFilesToDownload($reportId, 0);
-		//
-		// $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', getCompanyNameBySid($report['parent_sid']))) . '/' . $reportId . '/';
-		// //
-		// if (!is_dir($basePath)) {echo "create folder for download<b>";
-		// 	mkdir($basePath, 0777, true);
-		// }
-		// //
-		// $report["basePath"] = $basePath;
 		//
 		return $report;
    }
@@ -4165,6 +4157,49 @@ class Compliance_report_model extends CI_Model
 		$record_obj->free_result();
 		//
 		return $record_arr['title'];
+	}
+
+	public function checkEmployeeHaveReportAccess ($userId, $reportId, $incidentId) {
+		//
+		if (
+			$this->db
+			->where("sid", $reportId)
+			->where("created_by", $userId)
+			->count_all_results('csp_reports')
+		) {
+			return 'access_report';
+		} else if ($this->checkComplianceSafetyReportAssigned($userId, $reportId, 0)) {
+			return 'access_report';
+		} else if ($this->checkComplianceSafetyReportAssigned($userId, $reportId, $incidentId)) {
+			return 'access_incident';
+		} else {
+			return 'not_have_access';
+		}
+	}
+
+	public function checkComplianceSafetyReportAssigned ($userId, $reportId, $incidentId) {
+		$this->db->select('sid');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_report_incident_sid', $incidentId);
+		$this->db->where('status', 1);
+		//
+		if (filter_var($userId, FILTER_VALIDATE_EMAIL)) {
+			$this->db->where('external_email', $userId);
+		} else {
+			$this->db->where('employee_sid', $userId);
+		}
+		//
+		$record_obj = $this->db->get('csp_reports_employees');
+		$record_arr = $record_obj->row_array();
+		$record_obj->free_result();
+		//
+		$isAssign = false;
+		//
+		if (!empty($record_arr)) {
+			$isAssign = true;
+		}
+		//
+		return $isAssign;	
 	}
 	
 }
