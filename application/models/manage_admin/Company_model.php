@@ -134,8 +134,10 @@ class Company_model extends CI_Model
                 ->where('timeoff_approvers.company_sid', $companySid)
                 ->order_by('timeoff_approvers.sid', 'DESC');
             // Search Filter
-            if ($status != 'all') $this->db->where('timeoff_approvers.is_archived', $status);
-            if ($approver != 'all') $this->db->where('timeoff_approvers.employee_sid', $approver); //
+            if ($status != 'all')
+                $this->db->where('timeoff_approvers.is_archived', $status);
+            if ($approver != 'all')
+                $this->db->where('timeoff_approvers.employee_sid', $approver); //
             return $this->db->count_all_results();
         }
         //
@@ -160,14 +162,17 @@ class Company_model extends CI_Model
             ->order_by('timeoff_approvers.sort_order', 'ASC')
             ->limit($start, $end);
         // Search Filter
-        if ($status != 'all') $this->db->where('timeoff_approvers.is_archived', $status);
-        if ($approver != 'all') $this->db->where('timeoff_approvers.employee_sid', $approver);
+        if ($status != 'all')
+            $this->db->where('timeoff_approvers.is_archived', $status);
+        if ($approver != 'all')
+            $this->db->where('timeoff_approvers.employee_sid', $approver);
         //
         $result = $this->db->get();
         $approvers = $result->result_array();
-        $result  = $result->free_result();
+        $result = $result->free_result();
         //
-        if (!sizeof($approvers)) return array();
+        if (!sizeof($approvers))
+            return array();
 
         return $approvers;
     }
@@ -315,18 +320,18 @@ class Company_model extends CI_Model
             departments_team_management.name,
             departments_employee_2_team.employee_sid
         ")
-            // ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
-            // ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid')
+                // ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
+                // ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid')
 
-            ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner')
-            ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
-            //
-            ->where('departments_management.is_deleted', 0)
-            ->where('departments_team_management.is_deleted', 0)
-            ->where_in('departments_employee_2_team.employee_sid', $employeeIds)
-            ->order_by('departments_employee_2_team.id', 'DESC')
-            ->get('departments_employee_2_team')
-            ->result_array();
+                ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner')
+                ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+                //
+                ->where('departments_management.is_deleted', 0)
+                ->where('departments_team_management.is_deleted', 0)
+                ->where_in('departments_employee_2_team.employee_sid', $employeeIds)
+                ->order_by('departments_employee_2_team.id', 'DESC')
+                ->get('departments_employee_2_team')
+                ->result_array();
         //
         if (!empty($employeeDepartmentTeams)) {
             //
@@ -859,11 +864,11 @@ class Company_model extends CI_Model
         if (!empty($result)) {
             foreach ($result as $row) {
                 $meta_values = unserialize($row['meta_value']);
-                $metaValue =  [
+                $metaValue = [
                     'enable_header_bg' => isset($meta_values['enable_header_bg']) ? $meta_values['enable_header_bg'] : 1,
                     'enable_header_overlay' => intval($header_video_overlay_status)
                 ];
-                $data2 =  array(
+                $data2 = array(
                     'meta_value' => serialize($metaValue)
                 );
                 //
@@ -1330,7 +1335,7 @@ class Company_model extends CI_Model
         }
 
         return $documentsStatus;
-       
+
     }
 
     function get_company_trial_period_detail($company_sid)
@@ -1351,8 +1356,10 @@ class Company_model extends CI_Model
 
     function add_exec_admin($data)
     { // function for adding new executive administrator
-        if (isset($data['user_shift_minutes']) && (trim($data['user_shift_minutes']) == '') || $data['user_shift_minutes'] == null) unset($data['user_shift_minutes']);
-        if (isset($data['user_shift_hours']) && trim($data['user_shift_hours']) == '' || $data['user_shift_hours'] == null) unset($data['user_shift_hours']);
+        if (isset($data['user_shift_minutes']) && (trim($data['user_shift_minutes']) == '') || $data['user_shift_minutes'] == null)
+            unset($data['user_shift_minutes']);
+        if (isset($data['user_shift_hours']) && trim($data['user_shift_hours']) == '' || $data['user_shift_hours'] == null)
+            unset($data['user_shift_hours']);
         $result = $this->db->insert('executive_users', $data);
         return $this->db->insert_id();
     }
@@ -2238,15 +2245,15 @@ class Company_model extends CI_Model
     {
         $result =
             $this->db
-            ->select('phone_number')
-            ->from('portal_company_sms_module')
-            ->where('company_sid', $company_sid)
-            ->limit(1)
-            ->order_by('sid', 'DESC')
-            ->get();
+                ->select('phone_number')
+                ->from('portal_company_sms_module')
+                ->where('company_sid', $company_sid)
+                ->limit(1)
+                ->order_by('sid', 'DESC')
+                ->get();
         //
         $result_arr = $result->row_array();
-        $result     = $result->free_result();
+        $result = $result->free_result();
         //
         return !sizeof($result_arr) ? false : $result_arr;
     }
@@ -2264,15 +2271,15 @@ class Company_model extends CI_Model
     {
         $result =
             $this->db
-            ->select('phone_number')
-            ->from('portal_company_sms_module')
-            ->where('company_sid', $company_sid)
-            ->limit(1)
-            ->order_by('sid', 'DESC')
-            ->get();
+                ->select('phone_number')
+                ->from('portal_company_sms_module')
+                ->where('company_sid', $company_sid)
+                ->limit(1)
+                ->order_by('sid', 'DESC')
+                ->get();
         //
         $result_arr = $result->row_array();
-        $result     = $result->free_result();
+        $result = $result->free_result();
         //
         return !sizeof($result_arr) ? false : true;
     }
@@ -2321,7 +2328,7 @@ class Company_model extends CI_Model
             ->get();
 
         $result_arr = $result->row_array();
-        $result     = $result->free_result();
+        $result = $result->free_result();
 
         return isset($result_arr[$column]) ? $result_arr[$column] : 0;
     }
@@ -2383,10 +2390,10 @@ class Company_model extends CI_Model
         foreach ($b as $k => $v) {
             if (
                 $this->db
-                ->where('module_sid', $v['sid'])
-                ->where('is_active', 1)
-                ->where('company_sid', $companyId)
-                ->count_all_results('company_modules')
+                    ->where('module_sid', $v['sid'])
+                    ->where('is_active', 1)
+                    ->where('company_sid', $companyId)
+                    ->count_all_results('company_modules')
             ) {
                 $b[$k]['status'] = 1;
             }
@@ -2399,13 +2406,14 @@ class Company_model extends CI_Model
     function update_module_status()
     {
         $post = $this->input->post(NULL, TRUE);
-        if (!sizeof($post)) return false;
+        if (!sizeof($post))
+            return false;
         // Check if company exists in modules
         if (
             $this->db
-            ->where('company_sid', $post['CompanyId'])
-            ->where('module_sid', $post['Id'])
-            ->count_all_results('company_modules')
+                ->where('company_sid', $post['CompanyId'])
+                ->where('module_sid', $post['Id'])
+                ->count_all_results('company_modules')
         ) {
             $this->db
                 ->where('company_sid', $post['CompanyId'])
@@ -2435,7 +2443,7 @@ class Company_model extends CI_Model
             ->where('sid', $company_details['sid'])
             ->get('users');
 
-        $result =  $record_obj->row_array();
+        $result = $record_obj->row_array();
         $record_obj->free_result();
         if (isset($result['Logo']))
             $company_details['Logo'] = $result['Logo'];
@@ -2500,7 +2508,8 @@ class Company_model extends CI_Model
             ->where('employee_sid', $post['employeeSid'])
             ->where('department_sid', $post['departmentSid']);
 
-        if (isset($post['approversid'])) $this->db->where('sid <> ', $post['approversid']);
+        if (isset($post['approversid']))
+            $this->db->where('sid <> ', $post['approversid']);
 
         return $this->db->count_all_results('timeoff_approvers');
     }
@@ -2724,7 +2733,8 @@ class Company_model extends CI_Model
 
     function check_offer_letter_moved($document_sid, $document_type)
     {
-        $this->db->select('*');;
+        $this->db->select('*');
+        ;
         $this->db->where('doc_sid', $document_sid);
         $this->db->where('document_type', $document_type);
 
@@ -2989,11 +2999,11 @@ class Company_model extends CI_Model
             return false;
         }
         //
-        foreach ($records_arr  as $companies_row) {
+        foreach ($records_arr as $companies_row) {
             //
             $data_to_save = array();
             $data_to_save['first_name'] = $executive_user_signature['first_name'];
-            $data_to_save['last_name'] =  $executive_user_signature['last_name'];
+            $data_to_save['last_name'] = $executive_user_signature['last_name'];
             $data_to_save['email_address'] = $executive_user_signature['email_address'];
             $data_to_save['signature'] = $executive_user_signature['signature'];
             $data_to_save['init_signature'] = $executive_user_signature['init_signature'];
@@ -3083,8 +3093,8 @@ class Company_model extends CI_Model
         //
         if (
             $this->db
-            ->where('company_id', $company_sid)
-            ->count_all_results('helpbox_info_for_company')
+                ->where('company_id', $company_sid)
+                ->count_all_results('helpbox_info_for_company')
         ) {
             $this->db->where('company_id', $company_sid);
             $this->db->update('helpbox_info_for_company', $dataToInsert);
@@ -3146,9 +3156,9 @@ class Company_model extends CI_Model
 
             $data = array();
             if ($action == 'mark_admin_plus') {
-                $data['access_level_plus'] =  1;
+                $data['access_level_plus'] = 1;
             } elseif ($action == 'unmark_admin_plus') {
-                $data['access_level_plus'] =  0;
+                $data['access_level_plus'] = 0;
             }
 
             $this->db->where('sid', $result['logged_in_sid']);
@@ -3170,9 +3180,9 @@ class Company_model extends CI_Model
 
             $data = array();
             if ($action == 'grant_access') {
-                $data['can_access_compliance_safety_report'] =  1;
+                $data['can_access_compliance_safety_report'] = 1;
             } elseif ($action == 'revoke_access') {
-                $data['can_access_compliance_safety_report'] =  0;
+                $data['can_access_compliance_safety_report'] = 0;
             }
 
             $this->db->where('sid', $result['logged_in_sid']);
@@ -3540,6 +3550,7 @@ class Company_model extends CI_Model
                     "indeed_job_sync" => $selectedOption
                 ]
             );
+        $this->load->model("Job_sync_api_model");
         //
         if ($selectedOption == 1) {
             $this->db->select('sid');
@@ -3550,7 +3561,8 @@ class Company_model extends CI_Model
             $jobData = $record_obj->result_array();
             if ($jobData) {
                 foreach ($jobData as $row) {
-                    $this->indeed_model->updateJobToQueue($row['sid'], $companyId);
+                    $this->Job_sync_api_model->checkAndAddJob($row["sid"]);
+                    // $this->indeed_model->updateJobToQueue($row['sid'], $companyId);
                 }
             }
         }
@@ -3563,11 +3575,12 @@ class Company_model extends CI_Model
             $jobData = $record_obj->result_array();
             if ($jobData) {
                 foreach ($jobData as $row) {
-                    $this
-                        ->indeed_model
-                        ->checkAndDeactivateJobs(
-                            [$row['sid']]
-                        );
+                    $this->Job_sync_api_model->checkAndAddJob($row["sid"]);
+                    // $this
+                    //     ->indeed_model
+                    //     ->checkAndDeactivateJobs(
+                    //         [$row['sid']]
+                    //     );
                 }
             }
         }
