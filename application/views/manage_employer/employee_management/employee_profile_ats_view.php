@@ -60,6 +60,11 @@ if (checkIfAppIsEnabled('timeoff')) {
                         });
                     </script>
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                    <?php if (check_access_permissions_for_view($security_details, $function_names)) { ?>
+                        <div class="page-header-area">
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Employee Profile</span>
+                        </div>
+                    <?php } ?>
                     <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
                     <div id="HorizontalTab" class="HorizontalTab">
                         <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || $this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {  ?>

@@ -54,6 +54,11 @@ if ($_ssv) {
                         });
                     </script>
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                    <?php if (check_access_permissions_for_view($security_details, $function_names)) { ?>
+                        <div class="page-header-area">
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Employee Profile</span>
+                        </div>
+                    <?php } ?>
                     <div class="application-header">
                         <article>
                             <figure>
