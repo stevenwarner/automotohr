@@ -215,7 +215,9 @@ if (!function_exists('sendMail')) {
         $mail->Subject = $subject;
         $mail->Body = $body;
         //
-        mailAWSSES($mail, $to);
+        // mailAWSSES($mail, $to);
+        // attach the SMTP creds
+        attachSMTPToMailer($mail, $from);
         $mail->send();
     }
 

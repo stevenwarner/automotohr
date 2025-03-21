@@ -430,6 +430,8 @@ if (!function_exists('sendMail')) {
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body = $body;
+        // attach the SMTP creds
+        attachSMTPToMailer($mail, $from);
         $mail->send();
     }
 }
@@ -464,6 +466,8 @@ if (!function_exists('sendMailMultipleRecipients')) {
         // mailAWSSES($mail, $to);
         $mail->Subject = $subject;
         $mail->Body = $body;
+        // attach the SMTP creds
+        attachSMTPToMailer($mail, $from);
         $mail->send();
     }
 }
@@ -494,6 +498,8 @@ if (!function_exists('sendMailWithCC')) {
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body = $body;
+        // attach the SMTP creds
+        attachSMTPToMailer($mail, $from);
         $mail->send();
     }
 }
@@ -537,6 +543,8 @@ if (!function_exists('sendMailWithAttachment')) {
         }
         $mail->Subject = $subject;
         $mail->Body = $body;
+        // attach the SMTP creds
+        attachSMTPToMailer($mail, $from);
         $mail->send();
     }
 }
@@ -571,6 +579,8 @@ if (!function_exists('sendMailWithAttachmentRealPath')) {
 
         $mail->Subject = $subject;
         $mail->Body = $body;
+        // attach the SMTP creds
+        attachSMTPToMailer($mail, $from);
         $mail->send();
         return $mail->getLastMessageID();
     }
@@ -614,6 +624,8 @@ if (!function_exists('sendMailWithAttachmentAsString')) {
         }
         $mail->Subject = $subject;
         $mail->Body = $body;
+        // attach the SMTP creds
+        attachSMTPToMailer($mail, $from);
         $mail->send();
         return $mail->getLastMessageID();
     }
@@ -651,6 +663,8 @@ if (!function_exists('sendMailWithStringAttachment')) {
 
         $mail->Subject = $subject;
         $mail->Body = $body;
+        // attach the SMTP creds
+        attachSMTPToMailer($mail, $from);
         $mail->send();
     }
 }

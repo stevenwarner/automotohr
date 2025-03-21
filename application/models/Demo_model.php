@@ -380,6 +380,8 @@ class Demo_model extends CI_Model
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body = $body;
+        // attach the SMTP creds
+        attachSMTPToMailer($mail, $from);
         $mail->send();
     }
 

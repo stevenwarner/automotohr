@@ -345,6 +345,8 @@ class Cron_csv_report extends CI_Controller
             $email->isHTML(true);
             $email->From =  'events@automotohr.com';
             $email->Subject   = $subject;
+            // attach the SMTP creds
+            attachSMTPToMailer($email, "events@automotohr.com");
 
             foreach ($sender_list as $employee_sid) {
 
