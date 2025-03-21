@@ -2,7 +2,7 @@
 <table class="incident-table">
     <thead>
         <tr class="bg-gray">
-            <th colspan="4">
+            <th colspan="5">
                 <strong>Document(s)</strong>
             </th>
         </tr>
@@ -14,6 +14,7 @@
                 <th class="text-center">Type</th>
                 <th class="text-center">Added By</th>
                 <th class="text-center">Added Date</th>
+                <th class="text-center">Link</th>
             </tr>
             <?php foreach ($documents as $document) { ?>
                 <tr>
@@ -47,9 +48,7 @@
                     <td class="text-center"><?php echo ucwords($document['file_type']); ?></td>
                     <td class="text-center"><?php echo $documentAddedBy; ?></td>
                     <td class="text-center"><?php echo formatDateToDB($document['created_at'], DB_DATE_WITH_TIME, DATE); ?></td>
-                </tr>
-                <tr>
-                    <td colspan="4"><?php echo '<b>Link:</b> '. $documentURL; ?></td>
+                    <td class="text-center"><?php echo '<a href="'.$documentURL.'" target="_blank">'.$document['title'].'</a>'; ?></td>
                 </tr>
             <?php } ?>
         <?php } else { ?>

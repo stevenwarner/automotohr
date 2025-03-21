@@ -1,6 +1,6 @@
 <article class="sheet-header">
     <div class="center-col">
-        <h2><?php echo $incidentDetail['compliance_incident_type_name']; ?></h2>
+        <h2><?php echo 'Incident - '.$incidentDetail['compliance_incident_type_name']; ?></h2>
     </div>
 </article>
 
@@ -47,14 +47,38 @@
     ]
 ); ?>
 
-<?php $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $incidentDetail['documents']]); ?>
-    
-<?php $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $incidentDetail['audios']]); ?> 
+<?php 
+    if ($incidentDetail['documents']) { 
+        $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $incidentDetail['documents']]); 
+    }
+?> 
 
-<?php $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $incidentDetail['internal_employees']]); ?> 
+<?php 
+    if ($incidentDetail['audios']) { 
+        $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $incidentDetail['audios']]); 
+    }
+?> 
 
-<?php $this->load->view("compliance_safety_reporting/partials/download/external", ['internalEmployees' => $incidentDetail['external_employees']]); ?> 
+<?php 
+    if ($incidentDetail['internal_employees']) { 
+        $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $incidentDetail['internal_employees']]); 
+    }
+?>
 
-<?php $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $incidentDetail['emails']]); ?> 
+<?php 
+    if ($incidentDetail['external_employees']) { 
+        $this->load->view("compliance_safety_reporting/partials/download/external", ['externalEmployees' => $incidentDetail['external_employees']]); 
+    }
+?>
 
-<?php $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $incidentDetail['notes']]); ?> 
+<?php 
+    if ($incidentDetail['emails']) { 
+        $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $incidentDetail['emails']]);
+    }
+?>
+
+<?php 
+    if ($incidentDetail['notes']) { 
+        $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $incidentDetail['notes']]);
+    }
+?>  

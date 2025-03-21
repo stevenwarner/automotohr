@@ -1115,38 +1115,37 @@ class Compliance_safety_reporting_public extends Base_csp
 
         $data_to_update             = array();
         $data_to_update['is_read']  = 1;
-        $this->compliance_report_model->update_email_is_read_flag($email_sid, $data_to_update);
-
-
-
+        $this->compliance_report_model->updateEmailReadFlag($email_sid, $data_to_update);
+        //
         if (isset($_POST['receiver_sid'])) {
             $receiver_sid           = $_POST['receiver_sid'];
-            $sender_info            = $this->compliance_report_model->get_email_sender_info($email_sid);
+            $sender_info            = $this->compliance_report_model->getEmailSenderInfo($email_sid);
 
-            $incident_sid           = $sender_info['incident_reporting_id'];
-            $sender_sid             = $sender_info['sender_sid'] == 0 ? $sender_info['manual_email'] : $sender_info['sender_sid'];
+            $reportId             = $sender_info['csp_reports_sid'];
+            $incidentId           = $sender_info['csp_incident_type_sid'];
+            $senderId             = $sender_info['sender_sid'] == 0 ? $sender_info['manual_email'] : $sender_info['sender_sid'];
 
-            $log_in_user_status     = is_manager_have_new_email($receiver_sid, $incident_sid);
+            $log_in_user_status     = $this->compliance_report_model->isUserHaveNewEmail($receiver_sid, $reportId, $incidentId);
             $status_one = 0;
             if ($log_in_user_status > 0) {
                 $status_one = 1;
             }
 
-            $current_user_status    = is_user_have_unread_message($receiver_sid, $sender_sid, $incident_sid);
+            $current_user_status    = $this->compliance_report_model->isUserHaveUnreadMessage($receiver_sid, $senderId, $reportId, $incidentId);
             $status_two = 0;
             if ($current_user_status > 0) {
                 $status_two = 1;
             }
 
-            if (filter_var($sender_sid, FILTER_VALIDATE_EMAIL)) {
-                $split_email = explode('@', $sender_sid);
-                $sender_sid = $split_email[0];
+            if (filter_var($senderId, FILTER_VALIDATE_EMAIL)) {
+                $split_email = explode('@', $senderId);
+                $senderId = $split_email[0];
             }
 
             $return_data                = array();
             $return_data['status_one']  = $status_one;
             $return_data['status_two']  = $status_two;
-            $return_data['sender_sid']  = $sender_sid;
+            $return_data['senderId']  = $senderId;
 
             echo json_encode($return_data);
         } else {
@@ -1258,7 +1257,7 @@ class Compliance_safety_reporting_public extends Base_csp
             $this->data['reportId']           = $reportId;
             $this->data['incidentId']         = $incidentId;
             $this->data['libraryItems']       = $libraryItems;
-            $this->data['senderType']        = $sender_type;
+            $this->data['senderType']         = $sender_type;
             $this->data['pageJs'][]           = 'csp/send_email_view';
             //
             $this->data['template'] = message_header_footer(

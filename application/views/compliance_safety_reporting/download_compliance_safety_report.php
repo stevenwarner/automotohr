@@ -171,33 +171,7 @@
             </div>
         </article>
 
-        <!-- Reporter Information section Start -->
-        <table class="incident-table">
-            <thead>
-                <tr class="bg-gray">
-                    <th colspan="5">
-                        <strong>Reporter Information</strong>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th class="text-center">Name</th>
-                    <th class="text-center">Email</th>
-                    <th class="text-center">Job Title</th>
-                    <th class="text-center">Telephone Number</th>
-                </tr>
-                <tr>
-                    <td class="text-center"><?php echo $report['first_name'].' '.$report['last_name']; ?></td>
-                    <td class="text-center"><?php echo !empty($report['email']) ? $report['email'] : 'N/A'; ?></td>
-                    <td class="text-center"><?php echo !empty($report['job_title']) ? $report['job_title'] : 'N/A'; ?></td>
-                    <td class="text-center"><?php echo !empty($report['PhoneNumber']) ? $report['PhoneNumber'] : 'N/A'; ?></td>
-                </tr>
-            </tbody>
-        </table>
-        <!-- Reporter Information section End -->
-
-        <!-- Reporter Information section Start -->
+        <!-- Report Basic Information section Start -->
         <table class="incident-table">
             <thead>
                 <tr class="bg-gray">
@@ -209,35 +183,70 @@
             <tbody>
                 <tr>
                     <th class="text-center">Report Name</th>
+                    <th class="text-center">Reported By</th>
                     <th class="text-center">Reported Date</th>
                     <th class="text-center">Completion Date</th>
                     <th class="text-center">Report Status</th>
                 </tr>
                 <tr>
                     <td class="text-center"><?php echo !empty($report['compliance_report_name']) ? $report['compliance_report_name'] : 'N/A'; ?></td>
+                    <td class="text-center"><?php echo $report['first_name'].' '.$report['last_name']; ?></td>
                     <td class="text-center"><?php echo !empty($report['report_date']) ? formatDateToDB($report['report_date'], DB_DATE, DATE) : 'N/A'; ?></td>
                     <td class="text-center"><?php echo !empty($report['completion_date']) ? formatDateToDB($report['completion_date'], DB_DATE, DATE) : 'N/A'; ?></td>
                     <td class="text-center"><?php echo !empty($report['status']) ? strtoupper($report['status']) : 'N/A'; ?></td>
                 </tr>
             </tbody>
         </table>
-        <!-- Reporter Information section End -->
+        <!-- Report Basic Information section End -->
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/question", ['questions' => $report['question_answers']]); ?>
+        <?php 
+            if ($report['question_answers']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/question", ['questions' => $report['question_answers']]); 
+            }
+        ?>
+        
+        <?php 
+            if ($report['incidents']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/incidents", ['incidents' => $report['incidents']]); 
+            }
+        ?> 
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/incidents", ['incidents' => $report['incidents']]); ?>
+        <?php 
+            if ($report['documents']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $report['documents']]); 
+            }
+        ?> 
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $report['documents']]); ?>
-            
-        <?php $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $report['audios']]); ?> 
+        <?php 
+            if ($report['audios']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $report['audios']]); 
+            }
+        ?> 
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $report['internal_employees']]); ?> 
+        <?php 
+            if ($report['internal_employees']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $report['internal_employees']]); 
+            }
+        ?>
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/external", ['internalEmployees' => $report['external_employees']]); ?> 
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $report['emails']]); ?> 
+        <?php 
+            if ($report['external_employees']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/external", ['externalEmployees' => $report['external_employees']]); 
+            }
+        ?>
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $report['notes']]); ?> 
+        <?php 
+            if ($report['emails']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $report['emails']]);
+            }
+        ?>
+
+        <?php 
+            if ($report['notes']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $report['notes']]);
+            }
+        ?>
 
         <?php if (isset($report['incidentsDetail'])) { ?>
             <?php foreach ($report['incidentsDetail'] as $incidentDetail) { ?>

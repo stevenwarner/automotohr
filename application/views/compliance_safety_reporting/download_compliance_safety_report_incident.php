@@ -214,17 +214,53 @@
             ]
         ); ?>
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $incidentDetail['documents']]); ?>
-            
-        <?php $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $incidentDetail['audios']]); ?> 
+<?php 
+            if ($report['question_answers']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/question", ['questions' => $report['question_answers']]); 
+            }
+        ?>
+        
+        <?php 
+            if ($report['incidents']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/incidents", ['incidents' => $report['incidents']]); 
+            }
+        ?> 
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $incidentDetail['internal_employees']]); ?> 
+        <?php 
+            if ($report['documents']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $incidentDetail['documents']]); 
+            }
+        ?> 
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/external", ['internalEmployees' => $incidentDetail['external_employees']]); ?> 
+        <?php 
+            if ($report['audios']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $incidentDetail['audios']]); 
+            }
+        ?> 
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $incidentDetail['emails']]); ?> 
+        <?php 
+            if ($report['internal_employees']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $incidentDetail['internal_employees']]); 
+            }
+        ?>
 
-        <?php $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $incidentDetail['notes']]); ?>   
+        <?php 
+            if ($report['external_employees']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/external", ['externalEmployees' => $incidentDetail['external_employees']]); 
+            }
+        ?>
+
+        <?php 
+            if ($report['emails']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $incidentDetail['emails']]);
+            }
+        ?>
+
+        <?php 
+            if ($report['notes']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $incidentDetail['notes']]);
+            }
+        ?>  
 
     </section>
     <a href="<?php echo base_url('compliance_safety_report/download_report_zip').'/'.$report_sid; ?>"  id="JsCreateZipFile"></a>

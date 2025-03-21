@@ -8,14 +8,14 @@
         </tr>
     </thead>
     <tbody>
-        <?php if (!empty($internalEmployees)) { ?>
+        <?php if (!empty($externalEmployees)) { ?>
             <tr>
                 <th class="text-center">Name</th>
                 <th class="text-center">Email</th>
                 <th class="text-center">Added By</th>
                 <th class="text-center">Added Date</th>
             </tr>
-            <?php foreach ($internalEmployees as $externalEmployee) { ?>
+            <?php foreach ($externalEmployees as $externalEmployee) { ?>
                 <tr>
                     <td class="text-center"><?php echo $externalEmployee['external_name']; ?></td>
                     <td class="text-center"><?php echo $externalEmployee['external_email']; ?></td>

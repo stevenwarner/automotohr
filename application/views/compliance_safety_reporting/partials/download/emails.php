@@ -111,7 +111,7 @@
                                                                                 </td>
                                                                                 <td>
                                                                                     <?php
-                                                                                        echo $attachment['link'];
+                                                                                        echo '<a href="'.$attachment['link'].'" target="_blank">'.$attachment['title'].'</a>';
                                                                                     ?>
                                                                                 </td>
                                                                             </tr>   

@@ -220,7 +220,7 @@ $(function Overview() {
             var senderType = $('#send_email_type').val();
             //
             if (senderType == 'system') {
-                manual_email = $('#send_email_user').val();
+                receivers = $('#send_email_user').val();
                 //
                 form_data.append('receivers', receivers);
                 form_data.append('send_type', "system");
@@ -255,6 +255,14 @@ $(function Overview() {
         });
         
     }
+
+    $(document).on("click", ".jsMarkAsRead", function (event) {
+		//
+		event.preventDefault();
+		var emailId = $(this).data("id");
+        //
+        mark_read(emailId);
+	});
 
     function mark_read(email_sid) {
         var update_url = baseURL + 'compliance_safety_reporting_public/update_email_read_flag';
@@ -922,23 +930,45 @@ $(function Overview() {
         }
     });
 
-    function send_email(source) {
-        var email_type = $(source).attr('data-type');
-        var email_reciever = $(source).attr('data-sid');
-        var email_subject = $(source).attr('data-subject');
-        var email_title = $(source).attr('data-title');
+    $(document).on("click", ".jsSendEmail", function (event) {
+		//
+		event.preventDefault();
+		var emailTitle = $(this).data("title");
+        var emailType = $(this).data("type");
+        var senderId = $(this).data("sender_id");
+        var receiverId = $(this).data("receiver_id");
+        var receiverEmail = $(this).data("email");
+        var emailSubject = $(this).data("subject");
+        //
+        send_email(
+            emailTitle,
+            emailType,
+            senderId,
+            receiverId,
+            receiverEmail,
+            emailSubject  
+        );
+	});
 
+    function send_email(
+        email_title,
+        email_type,
+        sender_id,
+        receiverId,
+        receiver_email,
+        email_subject
+    ) {
+        console.log(receiverId)
+        //
         if (email_type == 'system') {
-            var system_user_email = $(source).attr('data-email');
-            $('#send_email_address').val(system_user_email);
+            $('#send_email_address').val(receiver_email);
             $('#send_email_user').attr('name', 'receivers[]');
-            var user = [email_reciever];
+            var user = [receiverId];
             $('#send_email_user').val(user);
         } else {
-            var email_address = $(source).attr('data-email');
-            $('#send_email_address').val(email_address);
+            $('#send_email_address').val(receiver_email);
             $('#send_email_user').attr('name', 'manual_email');
-            $('#send_email_user').val(email_address);
+            $('#send_email_user').val(receiver_email);
         }
 
         if (email_title == 'reply') {

@@ -1258,13 +1258,14 @@
                 mkdir($basePath, 0777, true);
             }
             //
-            $handler = fopen($basePath . 'compliance_safety_report.pdf', 'w');
+            $handler = fopen($basePath . strtolower(preg_replace('/\s+/', '_', $reportName)).'.pdf', 'w');
             fwrite($handler, base64_decode(str_replace('data:application/pdf;base64,', '', $base64)));
             fclose($handler);
             //
             if ($files) {
                 foreach ($files as $file) {
-                    @file_put_contents($basePath . $file['file_name'], @file_get_contents($file['link']));
+                    // @file_put_contents($basePath . $file['file_name'], @file_get_contents($file['link']));
+                    downloadFileFromAWS($basePath . $file['file_name'], $file['link']);
                 }
             }
             //

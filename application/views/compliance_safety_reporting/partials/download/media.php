@@ -2,7 +2,7 @@
 <table class="incident-table">
     <thead>
         <tr class="bg-gray">
-            <th colspan="4">
+            <th colspan="5">
                 <strong>Audio(s)/Video(s)</strong>
             </th>
         </tr>
@@ -14,6 +14,7 @@
                 <th class="text-center">Type</th>
                 <th class="text-center">Added By</th>
                 <th class="text-center">Added Date</th>
+                <th class="text-center">Link</th>
             </tr>
             <?php foreach ($audios as $media) { ?>
                 <tr>
@@ -53,9 +54,7 @@
                     <td class="text-center"><?php echo $mediaType; ?></td>
                     <td class="text-center"><?php echo $mediaAddedBy; ?></td>
                     <td class="text-center"><?php echo formatDateToDB($media['created_at'], DB_DATE_WITH_TIME, DATE); ?></td>
-                </tr>
-                <tr>
-                    <td colspan="4"><?php echo '<b>Link:</b> '. $mediaURL; ?></td>
+                    <td class="text-center"><?php echo '<a href="'.$mediaURL.'" target="_blank">'.$media['title'].'</a>'; ?></td>
                 </tr>
             <?php } ?>
         <?php } else { ?>
