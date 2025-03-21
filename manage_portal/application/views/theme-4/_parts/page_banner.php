@@ -85,6 +85,7 @@
             <div class="row">
                 <div class="col-sm-2 col-sm-offset-5 text-center">
                     <?php if ($indeedApplyButtonDetails): ?>
+                        <script src="https://apply.indeed.com/indeedapply/static/scripts/app/awi-bootstrap.js"></script>
                         <div
                             data-indeed-apply-widget-type="AWI"
                             data-indeed-apply-sourceJobPostingId="<?= $indeedApplyButtonDetails["indeed_posting_id"]; ?>"
