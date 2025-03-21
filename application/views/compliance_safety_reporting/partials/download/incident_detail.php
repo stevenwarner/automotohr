@@ -40,12 +40,16 @@
 </table>
 <!-- Incident Creator Information section End -->
 
-<?php $this->load->view("compliance_safety_reporting/partials/download/items", 
-    [
-        'incidentItemsSelected' => $incidentDetail['incidentItemsSelected'],
-        'severityStatus' => $incidentDetail['severity_status']
-    ]
-); ?>
+<?php 
+    if ($incidentDetail['incidentItemsSelected']) { 
+        $this->load->view("compliance_safety_reporting/partials/download/items", 
+            [
+                'incidentItemsSelected' => $incidentDetail['incidentItemsSelected'],
+                'severityStatus' => $incidentDetail['severity_status']
+            ]
+        );
+    }    
+?>
 
 <?php 
     if ($incidentDetail['documents']) { 
