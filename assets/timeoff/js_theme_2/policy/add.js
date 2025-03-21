@@ -308,7 +308,7 @@ $(function () {
                 return false;
             }
 
-            //run validations
+           //run validations
             if (policyOBJ.isESTA == 1) {
                 policyOBJ.ESTA_policy_Allowed_Time = getField('#js-esta-policy-allowed-time-add');
                 policyOBJ.ESTA_policy_Applicable_Time = getField('#js-esta-policy-applicable-time-add');
@@ -494,8 +494,6 @@ $(function () {
         });
     }
 
-
-
     //
     $(document).on('click', '#js-is-esta-add', function (e) {
 
@@ -513,6 +511,4 @@ $(function () {
         const num = Number(str);
         return Number.isInteger(num) && num > 0;
     }
-
-
 })

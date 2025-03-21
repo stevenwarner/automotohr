@@ -12,6 +12,8 @@ $(function () {
         approverList: [],
         deactivate: 0,
         include: 1,
+        isESST: 0,
+        isESTA: 0,
         employeeTypes: [],
         offDays: [],
         method: 'none',
@@ -288,6 +290,10 @@ $(function () {
             policyOBJ.deactivate = $('#js-archive-check-add').prop('checked') === true ? 1 : 0;
             // // Set deactivate check
             policyOBJ.include = $('#js-include-check-add').prop('checked') === true ? 1 : 0;
+
+            policyOBJ.isESST = $('#js-is-esst-add').prop('checked') === true ? 1 : 0;
+            //
+            policyOBJ.isESTA = $('#js-is-esta-add').prop('checked') === true ? 1 : 0;
             //
             policyOBJ.employeeTypes = $('#js-employee-type-add').val();
             //
@@ -299,6 +305,39 @@ $(function () {
                 alertify.alert('WARNING!', 'Please, add the employee type.', () => { });
                 return false;
             }
+
+            //run validations
+            if (policyOBJ.isESTA == 1) {
+                policyOBJ.ESTA_policy_Allowed_Time = getField('#js-esta-policy-allowed-time-add');
+                policyOBJ.ESTA_policy_Applicable_Time = getField('#js-esta-policy-applicable-time-add');
+                policyOBJ.ESTA_policy_Applicable_Time_Type = getField('#js-esta-policy-applicable-time-type-add');
+
+                policyOBJ.ESTA_policy_Applicable_Accrual_Time = getField('#js-esta-policy-accrual-allowed-time-add');
+                policyOBJ.ESTA_policy_Applicable_Accrual_Time_Effectiv = getField('#js-esta-policy-accrual-time-effectiv-add');
+                policyOBJ.ESTA_policy_Applicable_Accrual_Time_Type = getField('#js-esta-policy-accrual-time-type-add');
+
+                if (isValidInteger(policyOBJ.ESTA_policy_Allowed_Time == false)) {
+                    alertify.alert('WARNING!', 'Allowed Time: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESTA_policy_Applicable_Time == false)) {
+                    alertify.alert('WARNING!', 'Applicable Time: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESTA_policy_Applicable_Accrual_Time == false)) {
+                    alertify.alert('WARNING!', 'Allow: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESTA_policy_Applicable_Accrual_Time_Type == false)) {
+                    alertify.alert('WARNING!', 'extra hours(s) after: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+            }
+
             //
             saveStep(policyOBJ);
             //
@@ -451,5 +490,23 @@ $(function () {
             });
             return;
         });
+    }
+
+    //
+    $(document).on('click', '#js-is-esta-add', function (e) {
+
+        if ($(this).is(":checked")) {
+
+            $("#js-esta-policy-box-add").show();
+        } else {
+            $("#js-esta-policy-box-add").hide();
+        }
+
+    });
+
+    //
+    function isValidInteger(str) {
+        const num = Number(str);
+        return Number.isInteger(num) && num > 0;
     }
 })

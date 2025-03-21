@@ -1391,7 +1391,6 @@
                             <!--  -->
                             <?php $this->load->view('timeoff/partials/note'); ?>
 
-
                             <div class="row">
                                 <div class="col-lg-12">
                                     <p style="color: #cc1100; margin-top: 10px;">

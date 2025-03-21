@@ -189,7 +189,112 @@
             </div>
         </div>
 
-        <!-- FMLA Range -->
+
+        <div class="row mb10 csRow">
+            <div class="col-sm-6 col-xs-12">
+                <div class="">
+                    <label class="control control--checkbox">
+                        <input type="checkbox" id="js-is-esst-edit" />
+                        <?php echo $get_policy_item_info['is_esst_policy_label']; ?>
+                        <span class="control__indicator"></span>
+                    </label>
+                    <i class="fa fa-question-circle" data-hint="js-hint" data-target="balance"></i>
+                    <div class="js-hint js-hint-balance">
+                        <?php echo $get_policy_item_info['is_esst_policy_hint']; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb10 csRow">
+            <div class="col-sm-6 col-xs-12">
+                <div class="">
+                    <label class="control control--checkbox">
+                        <input type="checkbox" id="js-is-esta-edit" />
+                        <?php echo $get_policy_item_info['is_esta_policy_label']; ?>
+                        <span class="control__indicator"></span>
+                    </label>
+                    <i class="fa fa-question-circle" data-hint="js-hint" data-target="balance"></i>
+                    <div class="js-hint js-hint-balance">
+                        <?php echo $get_policy_item_info['is_esta_policy_hint']; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- custom Accruals -->
+        <div class="row mb10 csRow" id="js-esta-policy-box" style="display: none;">
+            <div class="col-sm-6 col-xs-12">
+
+                <div class="dash-box">
+                    <div class="count-box">
+                        <div class="form-group margin-bottom-custom">
+                            <label class=""><?php echo $get_policy_item_info['esta_policy_allowed_time_label']; ?>
+                                <span class="cs-required">*</span>
+                                <i class="fa fa-question-circle" data-hint="js-hint" data-target="info"></i>
+                            </label>
+                            <div class="js-hint js-hint-info">
+                                <?php echo $get_policy_item_info['esta_policy_allowed_time_hint']; ?>
+                            </div>
+                            <div>
+                                <input class="form-control" name="estaPolicyAllowedTime" id="js-esta-policy-allowed-time-edit" placeholder="72" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <h5 class="timeline-title allowed-time-off-title-custom">
+                                <?php echo $get_policy_item_info['esta_policy_applicable_time_lable']; ?> <span class="cs-required">*</span>
+                                <i class="fa fa-question-circle" data-hint="js-hint" data-target="rate"></i>
+                            </h5>
+                            <div class="js-hint js-hint-rate">
+                                <?php echo $get_policy_item_info['esta_policy_applicable_time_info']; ?></div>
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <input class="form-control" name="js-esta-policy-applicable-time" id="js-esta-policy-applicable-time-edit" autocomplete="off" placeholder="120" />
+                                </div>
+                                <div class="col-sm-4">
+                                    <select class="form-control jsTimeTypeSelect-editf" id="js-esta-policy-applicable-time-type-edit">
+                                        <option value="days">Days</option>
+                                        <option value="months">Months</option>
+                                        <option value="years">Years</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <h5 class="timeline-title allowed-time-off-title-custom">
+                                <?php echo $get_policy_item_info['esta_policy_accrual_rate_label']; ?> <span class="cs-required">*</span>
+                                <i class="fa fa-question-circle" data-hint="js-hint" data-target="rate"></i>
+                            </h5>
+                            <div class="js-hint js-hint-rate">
+                                <?php echo $get_policy_item_info['esta_policy_accrual_rate_info']; ?>
+                            </div>
+
+                        </div>
+
+                        <div style="padding: 20px 0 10px;"> <span>Allow</span>
+                            <div class="form-group form-group-custom form-group-custom-settings csIn50">
+                                <input class="form-control form-control-custom " placeholder="40" id="js-esta-policy-accrual-allowed-time-edit">
+                            </div>
+                            <span> extra <span class="js-plan-type">hours</span> after </span>
+                            <div class="form-group form-group-custom form-group-custom-settings csIn50">
+                                <input class="form-control form-control-custom" placeholder="2" id="js-esta-policy-accrual-time-effectiv-edit">
+                            </div>
+                            <div class="form-group form-group-custom form-group-custom-settings csIn50 csW100">
+                                <select class="form-control form-control-custom " id="js-esta-policy-accrual-time-type-edit">
+                                    <option value="days">Days</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       <!-- FMLA Range -->
         <div class="row mb10 js-fmla-range-wrap-edit hidden" style="display: none;">
             <div class="col-sm-12">
                 <h4 class="timeline-title allowed-time-off-title-custom csHeading">FMLA Range</h4>
@@ -431,7 +536,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Carryover Value - Edit -->
         <div class="row mb10 js-hider-edit js-carryover-box-edit">
             <div class="col-sm-6">
