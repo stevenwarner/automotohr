@@ -74,6 +74,10 @@ $firstSegment = $this->uri->segment(1);
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     <?php endif; ?>
+
+                                    <a class="btn btn-green" target="_blank" href="<?= base_url("compliance_safety_reporting/download_incident/" . $report["sid"]. '/' .$item["sid"]); ?>">
+                                        <i class="fa fa-download"></i>
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
