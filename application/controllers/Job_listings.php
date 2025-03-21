@@ -1971,8 +1971,6 @@ class Job_listings extends Public_Controller
                         "Indeed_model",
                         "indeed_model"
                     );
-                    $this->load->model("Job_sync_api_model");
-                    $this->Job_sync_api_model->checkAndAddJobs($newJobIds);
                     // call the cron handler
                     // $this
                     //     ->indeed_model
@@ -2020,6 +2018,9 @@ class Job_listings extends Public_Controller
                             $this->dashboard_model->update_listing($jobId, $listing_data);
                         }
                     }
+
+                    $this->load->model("Job_sync_api_model");
+                    $this->Job_sync_api_model->checkAndAddJobs($newJobIds);
                     //send job status to remarket
                     $url = REMARKET_PORTAL_BASE_URL . "/activate_deactivate_jobs/" . REMARKET_PORTAL_KEY;
                     $remarket_listing_data['activated_jobs'] = $jobId;
@@ -2036,8 +2037,8 @@ class Job_listings extends Public_Controller
                         "Indeed_model",
                         "indeed_model"
                     );
-                    $this->load->model("Job_sync_api_model");
-                    $this->Job_sync_api_model->checkAndAddJobs($newJobIds);
+                    // $this->load->model("Job_sync_api_model");
+                    // $this->Job_sync_api_model->checkAndAddJobs($newJobIds);
                     // call the cron handler
                     // $this
                     //     ->indeed_model
@@ -2086,6 +2087,8 @@ class Job_listings extends Public_Controller
                             $this->dashboard_model->update_listing($jobId, $listing_data);
                         }
                     }
+                    $this->load->model("Job_sync_api_model");
+                    $this->Job_sync_api_model->checkAndDeactivateJobs($newJobIds);
                     //send job status to remarket
                     $url = REMARKET_PORTAL_BASE_URL . "/activate_deactivate_jobs/" . REMARKET_PORTAL_KEY;
                     $remarket_listing_data['deactivated_jobs'] = $jobId;

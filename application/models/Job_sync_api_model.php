@@ -19,6 +19,28 @@ class Job_sync_api_model extends CI_Model
     }
 
     /**
+     * Summary of checkAndDeactivateJobs
+     * @param mixed $jobIds
+     * @return array<array{errors: array|bool>}
+     */
+    public function checkAndDeactivateJobs($jobIds): array
+    {
+        // check if the job ids are empty
+        if (empty($jobIds)) {
+            return $this->getError("Job IDs are required");
+        }
+        $responseArray = [];
+        //
+        foreach ($jobIds as $jobId) {
+            //
+            $this->jobId = $jobId;
+            $responseArray[] = $this->checkAndExpireJob();
+        }
+        //
+        return $responseArray;
+    }
+    
+    /**
      * Summary of checkAndAddJobs
      * @param mixed $jobIds
      * @return array<array{errors: array|bool>}

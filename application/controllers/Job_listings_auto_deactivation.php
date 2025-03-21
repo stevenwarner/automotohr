@@ -40,8 +40,7 @@ class Job_listings_auto_deactivation extends CI_Controller
                     // $this->indeed_model->expireJobToQueue(
                     //     $job["sid"]
                     // );
-                    $this->Job_sync_api_model->checkAndAddJob($job["sid"]);
-
+                    $this->Job_sync_api_model->checkAndDeactivateJobs([$job["sid"]]);
 
                     // Send job status alert to AC
                     $this->sendJobDetailsToRemarket(
