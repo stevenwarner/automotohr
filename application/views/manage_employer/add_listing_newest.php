@@ -96,7 +96,7 @@
                                                     <?php echo form_error('Location_City'); ?>
                                                 </li>
                                                 <li class="form-col-50-right">
-                                                    <label>Zip Code:</label>
+                                                    <label>Zip Code: <span class="staric">*</span></label>
                                                     <input class="invoice-fields" type="text" name="Location_ZipCode" id="zip_code" value="<?php echo set_value('Location_ZipCode'); ?>">
                                                     <?php echo form_error('Location_ZipCode'); ?>
                                                 </li>
@@ -756,6 +756,7 @@
                     pattern: /^[a-zA-Z0-9\- ]+$/
                 },
                 Location_ZipCode: {
+                    required: true,
                     pattern: /^[0-9\-]+$/
                 }
             },
@@ -775,6 +776,7 @@
                     pattern: 'Letters, numbers, and dashes only please',
                 },
                 Location_ZipCode: {
+                    required: 'Zip Code is required',
                     pattern: 'Numeric values only'
                 }
                 //                salary: {

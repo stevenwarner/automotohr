@@ -79,7 +79,7 @@
                                             <?php echo form_error('JobCategory'); ?>
                                         </li>
                                         <li class="form-col-50-left">
-                                            <label>Country:</label>
+                                            <label>Country: <span class="staric">*</span></label>
                                             <div class="hr-select-dropdown">
                                                 <select class="invoice-fields" name="Location_Country" onchange="getStates(this.value, <?php echo $states; ?>)">
                                                     <?php foreach ($active_countries as $active_country) { ?>
@@ -92,7 +92,7 @@
                                             <?php echo form_error('Location_Country'); ?>
                                         </li>
                                         <li class="form-col-50-right">
-                                            <label>State:</label>
+                                            <label>State: <span class="staric">*</span></label>
                                             <div class="hr-select-dropdown">
                                                 <select class="invoice-fields" name="Location_State" id="state">
                                                     <?php if (empty($country_id)) { ?>
@@ -110,13 +110,13 @@
                                         </li>
 
                                         <li class="form-col-50-left">
-                                            <label>City:</label>
+                                            <label>City: <span class="staric">*</span></label>
                                             <input class="invoice-fields" type="text" name="Location_City" id="city" value="<?php echo set_value('Location_City', $listing["Location_City"]); ?>">
                                             <?php echo form_error('Location_City'); ?>
                                         </li>
 
                                         <li class="form-col-50-right">
-                                            <label>Zip Code:</label>
+                                            <label>Zip Code: <span class="staric">*</span></label>
                                             <input class="invoice-fields" type="text" name="Location_ZipCode" id="zip_code" value="<?php echo set_value('Location_ZipCode', $listing["Location_ZipCode"]); ?>">
                                             <?php echo form_error('Location_ZipCode'); ?>
                                         </li>
@@ -1212,6 +1212,7 @@
                     pattern: /^[a-zA-Z0-9\- ]+$/
                 },
                 Location_ZipCode: {
+                    required: true,
                     pattern: /^[0-9\-]+$/
                 }
             },
@@ -1231,6 +1232,7 @@
                     pattern: 'Letters, numbers, and dashes only please',
                 },
                 Location_ZipCode: {
+                    required: 'Zip Code is required',
                     pattern: 'Numeric values only'
                 }
             },
