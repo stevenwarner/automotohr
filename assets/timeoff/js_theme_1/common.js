@@ -678,44 +678,62 @@ function getTime(ind, indd, prefix) {
     }
 }
 
-function getRequestedDays(
-    target,
-    slug
-) {
-    //
-    let
-        totalTime = 0,
-        err = false,
-        arr = [];
-    //
-    slug = slug === undefined ? '' : '-' + slug;
-    //
-    $(`${target} tbody tr`).map(function(i, v) {
-        if (err) return;
-        var time = getTimeInMinutes(`el${slug}${$(this).data('id')}`);
-        //
-        if (time.requestedMinutes <= 0) {
-            err = true;
-            alertify.alert('WARNING!', 'Please, add request time for date <b>' + ($(this).data('date')) + '</b>.', function() { return; });
-        } else if (time.requestedMinutes > time.defaultTimeslotMinutes) {
-            err = true;
-            alertify.alert('WARNING!', 'Requested time off can not be greater than shift time.', function() { return; });
-        }
-        //
-        arr.push({
-            date: $(this).data('date'),
-            partial: $(this).find('input[name="' + (i) + '_day_type_' + (slug.replace(/-/, '')) + '"]:checked').val(),
-            time: time.requestedMinutes,
-        });
-        //
-        totalTime = parseInt(totalTime) + parseInt(time.requestedMinutes);
-    });
+function getRequestedDays(target, slug) {
+	//
+	let totalTime = 0,
+		err = false,
+		arr = [];
+	//
+	slug = slug === undefined ? "" : "-" + slug;
+	//
+	$(`${target} tbody tr`).map(function (i, v) {
+		if (err) return;
+		var time = getTimeInMinutes(`el${slug}${$(this).data("id")}`);
+		//
+		if (time.requestedMinutes < 0) {
+			err = true;
+			alertify.alert(
+				"WARNING!",
+				"Please, add request time for date <b>" +
+					$(this).data("date") +
+					"</b>.",
+				function () {
+					return;
+				}
+			);
+		} else if (time.requestedMinutes > time.defaultTimeslotMinutes) {
+			err = true;
+			alertify.alert(
+				"WARNING!",
+				"Requested time off can not be greater than shift time.",
+				function () {
+					return;
+				}
+			);
+		}
+		//
+		arr.push({
+			date: $(this).data("date"),
+			partial: $(this)
+				.find(
+					'input[name="' +
+						i +
+						"_day_type_" +
+						slug.replace(/-/, "") +
+						'"]:checked'
+				)
+				.val(),
+			time: time.requestedMinutes,
+		});
+		//
+		totalTime = parseInt(totalTime) + parseInt(time.requestedMinutes);
+	});
 
-    return {
-        totalTime: totalTime,
-        days: arr,
-        error: err
-    }
+	return {
+		totalTime: totalTime,
+		days: arr,
+		error: err,
+	};
 }
 
 function getTimeInMinutes(typo) {
@@ -1034,4 +1052,47 @@ function setUpcomingTimeOffs(employeeId) {
         //
         $('.jsTimeOffUpComing').html(rows);
     });
+
+
+
+
+    function getRequestedDays_old(
+        target,
+        slug
+    ) {
+        //
+        let
+            totalTime = 0,
+            err = false,
+            arr = [];
+        //
+        slug = slug === undefined ? '' : '-' + slug;
+        //
+        $(`${target} tbody tr`).map(function(i, v) {
+            if (err) return;
+            var time = getTimeInMinutes(`el${slug}${$(this).data('id')}`);
+            //
+            if (time.requestedMinutes <= 0) {
+                err = true;
+                alertify.alert('WARNING!', 'Please, add request time for date <b>' + ($(this).data('date')) + '</b>.', function() { return; });
+            } else if (time.requestedMinutes > time.defaultTimeslotMinutes) {
+                err = true;
+                alertify.alert('WARNING!', 'Requested time off can not be greater than shift time.', function() { return; });
+            }
+            //
+            arr.push({
+                date: $(this).data('date'),
+                partial: $(this).find('input[name="' + (i) + '_day_type_' + (slug.replace(/-/, '')) + '"]:checked').val(),
+                time: time.requestedMinutes,
+            });
+            //
+            totalTime = parseInt(totalTime) + parseInt(time.requestedMinutes);
+        });
+    
+        return {
+            totalTime: totalTime,
+            days: arr,
+            error: err
+        }
+    }
 }
