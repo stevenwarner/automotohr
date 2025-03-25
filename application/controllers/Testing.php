@@ -1248,6 +1248,46 @@ class Testing extends CI_Controller
 
         _e($response);
     }
+
+
+
+    //
+
+    public function setEmployeesDepartmentTeams()
+    {
+        //
+        $this->db->select('sid');
+        $this->db->where('active', 1);
+        $this->db->where('is_executive_admin', 0);
+        $this->db->where('terminated_status', 0);
+        $results = $this->db->get('users')->result_array();
+        if (!empty($results)) {
+            foreach ($results as $v) {
+
+                $this->db->select('department_sid,team_sid,employee_sid,id');
+                $this->db->where('employee_sid', $v['sid']);
+                $this->db->order_by('id', 'Desc');
+                $this->db->limit(1);
+                $result = $this->db->get('departments_employee_2_team')->row_array();
+
+                if (!empty($result)) {
+                    $updateUserData = [];
+                    $updateUserData['department_sid'] = $result['department_sid'];
+                    $updateUserData['department_sid'] = $result['team_sid'];
+                    //
+                    $this->db->where("sid", $v["sid"])
+                        ->update("users", $updateUserData);
+
+                    //
+                    $this->db->where('employee_sid', $v["sid"]);
+                    $this->db->where('id!=', $result["id"]);
+                    $this->db->delete('departments_employee_2_team');
+                }
+            }
+        }
+
+        echo "done";
+    }
 }
 
 

@@ -440,6 +440,7 @@ class Import_csv extends Public_Controller
                     $employeeArray = $this->import_csv_model->GetEmployee($companyId, $checkByColumn, $checkByValue);
                     // In case of exist update the employee
                     // only add the misisng information
+
                     if (!empty($employeeArray)) {
                         $employeeOldSid = $this->updateUser($employeeArray, $v0);
 
@@ -673,11 +674,21 @@ class Import_csv extends Public_Controller
                         $insertArray['marital_status'] = ucwords(trim($v0['marital_status']));
                     }
 
-                   $employeeId = $this->import_csv_model->InsertNewUser($insertArray);
+                    $employeeId = $this->import_csv_model->InsertNewUser($insertArray);
                     //
                     // Manage employee status
                     $this->manageEmployeeStatus($employeeId, $v0);
 
+
+                    //Assigne Department Team
+                    if (sizeof($depTeamSids)) {
+                        $assigneDepartmentTeam = [];
+                        $assigneDepartmentTeam['department_sid'] = $depTeamSids[0]['department_sid'];
+                        $assigneDepartmentTeam['team_sid'] = $depTeamSids[0]['sid'];
+                        $assigneDepartmentTeam['employee_sid'] = $employeeId;
+                        $assigneDepartmentTeam['created_at'] =
+                            $this->assigneDepartmentTeam($assigneDepartmentTeam);
+                    }
                     // Add Driver Information
 
                     $insertDriverinfo['users_sid'] =  $employeeId;
@@ -859,8 +870,23 @@ class Import_csv extends Public_Controller
         }
         //Fetch and assign Department and Team ids
         if (empty($pre_emp['team']) && isset($v0['team']) && !empty($v0['team']) && $v0['team'] != NULL) {
+          
             $depTeamSids = $this->import_csv_model->getDepartmentTeamIds($v0['team']);
+            
             if (sizeof($depTeamSids)) {
+
+                if (sizeof($depTeamSids)) {
+                    //
+                    removeEmployeeAllDepartmentsTeams($pre_emp['sid'], $depTeamSids[0]['sid'], $depTeamSids[0]['department_sid']);
+
+                    $assigneDepartmentTeam = [];
+                    $assigneDepartmentTeam['department_sid'] = $depTeamSids[0]['department_sid'];
+                    $assigneDepartmentTeam['team_sid'] = $depTeamSids[0]['sid'];
+                    $assigneDepartmentTeam['employee_sid'] = $pre_emp['sid'];
+                    $assigneDepartmentTeam['created_at'] = getSystemDate();
+                    $this->import_csv_model->assigneDepartmentTeam($assigneDepartmentTeam);
+                }
+
                 $insertArray['department_sid'] = $depTeamSids[0]['department_sid'];
                 $insertArray['team_sid'] = $depTeamSids[0]['sid'];
             }

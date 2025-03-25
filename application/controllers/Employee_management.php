@@ -147,7 +147,7 @@ class Employee_management extends Public_Controller
                 $deactivate_fields = $_POST['ej_check'];
 
                 foreach ($deactivate_fields as $key => $value) {
-                   // $this->employee_model->deactivate_employee_by_id($value);
+                    // $this->employee_model->deactivate_employee_by_id($value);
                 }
 
                 $this->session->set_flashdata('message', '<b>Success: </b>Employee(s) / Team Member(s) Deactivated!');
@@ -158,7 +158,7 @@ class Employee_management extends Public_Controller
                 $deactivate_fields = $_POST['ej_check'];
 
                 foreach ($deactivate_fields as $key => $value) {
-                   // $this->employee_model->activate_employee_by_id($value);
+                    // $this->employee_model->activate_employee_by_id($value);
                 }
 
                 $this->session->set_flashdata('message', '<b>Success: </b>Employee(s) / Team Member(s) Activated!');
@@ -1749,7 +1749,7 @@ class Employee_management extends Public_Controller
                     // Update dept/team table
                     $department = $this->input->post('department');
                     $teams = $this->input->post('teams');
-                    //
+                    //                
                     if (isset($teams) && !empty($teams) && $department != 0) {
                         $old_assign_teams = $this->employee_model->getAllAssignedTeams($employer_id);
                         $add_team_sids = array();
@@ -1799,6 +1799,8 @@ class Employee_management extends Public_Controller
                         $maintain_employee_team_history['event_data'] = serialize($event_array);
                         $this->employee_model->manageEmployeeTeamHistory($maintain_employee_team_history);
                     } else if ($teamId != 0 && $departmentId != 0) {
+                        //
+                        removeEmployeeAllDepartmentsTeams($employer_id, $teamId, $departmentId);
                         //
                         $this->employee_model->checkAndAddEmployeeToTeam(
                             $departmentId,
@@ -1952,13 +1954,12 @@ class Employee_management extends Public_Controller
                         }
                             */
 
-                            $department = $this->input->post('department');
-                            $departmentId = $departmentId != 0 ? getDepartmentColumnByTeamId($department, 'department_sid') : 0;
-                            //
-                            if ($employee_detail['department_sid'] != $departmentId) {
-                                // updateEmployeeDepartmentToComplyNet($sid, $company_id);
-                            }
-
+                        $department = $this->input->post('department');
+                        $departmentId = $departmentId != 0 ? getDepartmentColumnByTeamId($department, 'department_sid') : 0;
+                        //
+                        if ($employee_detail['department_sid'] != $departmentId) {
+                            // updateEmployeeDepartmentToComplyNet($sid, $company_id);
+                        }
                     }
 
                     // update the data in verification forms

@@ -16653,6 +16653,10 @@ if (!function_exists('handleEmployeeDepartmentAndTeam')) {
         }
         // Get department id
         $departmentId = getDepartmentColumnByTeamId($teamId, 'department_sid');
+
+        //
+        removeEmployeeAllDepartmentsTeams($employeeId, $teamId, $departmentId);
+
         //
         if (!$departmentId) {
             return false;

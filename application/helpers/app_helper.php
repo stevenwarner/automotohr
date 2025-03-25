@@ -4849,3 +4849,21 @@ if (!function_exists("getAnniversaryPeriods")) {
         return $anniversaryPeriods;
     }
 }
+
+//
+if (!function_exists("removeEmployeeAllDepartmentsTeams")) {
+ 
+    function removeEmployeeAllDepartmentsTeams($employeeId,$teamId,$departmentId)
+    {
+        // load CI instance
+        $CI = get_instance();      
+            $CI->db
+            ->where("employee_sid", $employeeId)
+            ->group_start()
+            ->where("team_sid!=", $teamId)
+            ->or_where("department_sid!=", $departmentId)
+            ->group_end()
+            ->delete("departments_employee_2_team");
+          
+    }
+}

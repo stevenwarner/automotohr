@@ -363,4 +363,10 @@ class Import_csv_model extends CI_Model {
     }
 
 
+    //
+    function assigneDepartmentTeam($insertArray){
+        $this->db->insert('departments_employee_2_team', $insertArray);
+        return $this->db->insert_id();
+    }
+
 }
