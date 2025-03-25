@@ -1104,7 +1104,15 @@ if (!function_exists('checkI9RecordWithProfile')) {
         $data['section1_middle_initial'] = $data['section1_middle_initial'] ? $data['section1_middle_initial'] : $profileData['middle_name'];
         $data['section1_address'] = $data['section1_address'] ? $data['section1_address'] :  $address;
         $data['section1_city_town'] = $data['section1_city_town'] ? $data['section1_city_town'] : $profileData['Location_City'];
-        $data['section1_state'] = $data['section1_state'] ?? getStateColumnById($profileData['Location_State'] ?? 0);
+        
+        if(is_numeric($profileData['Location_State'])){
+            $state_id=$profileData['Location_State'];
+        }else{
+            $state_id=0;
+        }        
+        
+        $data['section1_state'] = $data['section1_state'] ?? getStateColumnById($state_id);
+        
         $data['section1_zip_code'] = $data['section1_zip_code'] ? $data['section1_zip_code'] : $profileData['Location_ZipCode'];
         $data['section1_date_of_birth'] = $data['section1_date_of_birth'] ? $data['section1_date_of_birth'] : $profileData['dob'];
         $data['section1_social_security_number'] = $data['section1_social_security_number'] ? $data['section1_social_security_number'] :  $profileData['ssn'];
