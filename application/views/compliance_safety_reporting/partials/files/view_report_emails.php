@@ -190,7 +190,28 @@
                                                                                     <?php 
                                                                                         foreach ($attachments as $key => $attach_item) {
                                                                                             //
-                                                                                            $attach_item_type = 'Media';
+                                                                                            if ($item['file_type'] == 'document' || $item['file_type'] == 'image') {
+                                                                                                //
+                                                                                                if ($item["file_type"] === "image") {
+                                                                                                    $link = AWS_S3_BUCKET_URL . $item["s3_file_value"]; 
+                                                                                                } elseif ($item["file_type"] === "document") {
+                                                                                                    if (preg_match("/doc|docx|xls|xlsx|ppt|pptx/i", $item["s3_file_value"])) {
+                                                                                                        $link = 'https://view.officeapps.live.com/op/embed.aspx?src='.AWS_S3_BUCKET_URL . $item["s3_file_value"];
+                                                                                                    } else {
+                                                                                                        $link = AWS_S3_BUCKET_URL . $item["s3_file_value"];
+                                                                                                    }
+                                                                                                } 
+                                                                                                //
+                                                                                            } else {
+                                                                                                //
+                                                                                                if ($item['file_type'] == 'link') {
+                                                                                                    $link = $item['file_value'];
+                                                                                                } else {
+                                                                                                    $link  = AWS_S3_BUCKET_URL . $item["s3_file_value"];
+                                                                                                } 
+                                                                                            }
+                                                                                            //
+                                                                                            $attach_item_type = ucwords($item["file_type"]);
                                                                                             //
                                                                                             if ($attach_item['file_type'] == 'document' || $attach_item['file_type'] == 'image') {
                                                                                                 $attach_item_type = 'Document';
