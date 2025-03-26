@@ -236,6 +236,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                     </li>
                                 <?php } ?>
 
+
                                 <?php if (checkIfAppIsEnabled('performance_management')) { ?>
                                     <li>
                                         <span class="left-addon">
@@ -245,6 +246,20 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         <a href="<?php echo base_url('performance-management/employee/goals/' . ($employer["sid"]) . ''); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                     </li>
                                 <?php } ?>
+
+                                <?php                                 
+                                if (checkIfAppIsEnabled(MODULE_LMS)) { ?>
+                                    <?php if (isPayrollOrPlus() || isLMSManagerDepartmentAndTeams($employer["sid"]) ) {  ?>
+                                        <li>
+                                            <span class="left-addon">
+                                                <i aria-hidden="true" class="fa fa-file"></i>
+                                            </span>
+                                            <h4>LMS</h4>
+                                            <a href="<?php echo base_url('lms/subordinate/dashboard/' . ($employer["sid"]) . ''); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                        </li>
+                                    <?php } ?>
+                                <?php } ?>
+
                             </ul>
                         </div>
                     </div>

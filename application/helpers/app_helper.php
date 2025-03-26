@@ -4675,7 +4675,6 @@ if (!function_exists("create_sitemap_structure")) {
     }
 }
 
-
 /*******************************************
  * Compliance Safety System helpers
  *******************************************/
@@ -4855,5 +4854,36 @@ if (!function_exists("getAnniversaryPeriods")) {
         }
         //
         return $anniversaryPeriods;
+    }
+}    
+
+//
+if (!function_exists("isLMSManagerDepartmentAndTeams")) {
+    /**
+     * Creates a basic sitemap structure.
+     * This function will be used when the sitemap file doesn't exist.
+     */
+    function isLMSManagerDepartmentAndTeams($employeeSid)
+    {
+
+        $CI = &get_instance();
+        // get the session
+        $session = $CI->session->userdata('logged_in');
+
+        $companySid = $session['company_detail']['sid'];
+        $employerSid = $session['employer_detail']['sid'];
+
+        $mangersData = getLMSManagerDepartmentAndTeams($employerSid, $companySid);
+
+        if (!empty($mangersData['employees'])) {
+
+            $employeeIds = array_column($mangersData['employees'], 'employee_sid');
+
+            if (in_array($employeeSid, $employeeIds)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }

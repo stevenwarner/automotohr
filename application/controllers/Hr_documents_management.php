@@ -4413,6 +4413,12 @@ class Hr_documents_management extends Public_Controller
             // _e($data['uncompleted_payroll_documents'],true);
             // _e($data['completed_payroll_documents'],true,true);
             //
+
+
+            //
+            $data["userCompletedLMSCourses"] = $this->hr_documents_management_model->get_employee_lms_completed_Courses($company_sid, $user_sid);
+
+
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
             $this->load->view('main/footer');
@@ -8864,15 +8870,15 @@ class Hr_documents_management extends Public_Controller
                         //
                         $currentDocument = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document['document_sid']);
                         //
-                        $document_to_update['document_original_name'] = $currentDocument ['uploaded_document_original_name'];
-                        $document_to_update['document_extension'] = $currentDocument ['uploaded_document_extension'];
-                        $document_to_update['document_s3_name'] = $currentDocument ['uploaded_document_s3_name'];
-                        $document_to_update['document_title'] = $currentDocument ['document_title'];
-                        $document_to_update['document_description'] = $currentDocument ['document_description'];
-                        $document_to_update['acknowledgment_required'] = $currentDocument ['acknowledgment_required'];
-                        $document_to_update['signature_required'] = $currentDocument ['signature_required'];
-                        $document_to_update['download_required'] = $currentDocument ['download_required'];
-                        $document_to_update['is_required'] = $currentDocument ['is_required'];
+                        $document_to_update['document_original_name'] = $currentDocument['uploaded_document_original_name'];
+                        $document_to_update['document_extension'] = $currentDocument['uploaded_document_extension'];
+                        $document_to_update['document_s3_name'] = $currentDocument['uploaded_document_s3_name'];
+                        $document_to_update['document_title'] = $currentDocument['document_title'];
+                        $document_to_update['document_description'] = $currentDocument['document_description'];
+                        $document_to_update['acknowledgment_required'] = $currentDocument['acknowledgment_required'];
+                        $document_to_update['signature_required'] = $currentDocument['signature_required'];
+                        $document_to_update['download_required'] = $currentDocument['download_required'];
+                        $document_to_update['is_required'] = $currentDocument['is_required'];
                         $document_to_update['assign_location'] = "update document from reassign group";
                         //
                         $this->hr_documents_management_model->reassign_group_document($document['document_sid'], $user_type, $user_sid, $document_to_update);
@@ -17652,7 +17658,6 @@ class Hr_documents_management extends Public_Controller
         }
     }
 
-
     /**
      * public function for Manager Report
      * 
@@ -17870,5 +17875,132 @@ class Hr_documents_management extends Public_Controller
         } else {
             redirect(base_url('login'), "refresh");
         }
+    }
+
+    function getLmsCourseCertificatePreview(
+        int $studentId,        
+        int $courseId
+    ) {
+        //
+        if (!$this->session->userdata('logged_in')) {
+            return redirect("login");
+        }
+   
+
+        $this->load->model('v1/course_model');
+
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $data['title'] = "Certificate :: " . STORE_NAME;
+        $data['session'] = $session;
+        $data['companyId'] = $companyId;
+        $data['employer_sid'] = $employeeId;
+        $data['student_sid'] = $studentId;
+        $data['type'] = $type;
+        $data['employee'] = $session['employer_detail'];
+        $data['employeeName'] = getEmployeeOnlyNameBySID($studentId);
+        $data['company_info'] = $session['company_detail'];
+        $data['companyName'] = getCompanyNameBySid($companyId);
+        $data['AHRLogo'] = base_url('assets/images/lms_certificate_logo.png');
+        $data['AHRStudentID'] = 'AHR-' . $studentId;
+        $data['load_view'] = 1;
+        $data['level'] = 0;
+        $data['courseInfo'] = $this->course_model->getCourseCertificateInfo($courseId);
+        $EmployeeCourseProgress = $this->course_model->getEmployeeCourseProgressInfo($courseId, $studentId, $companyId);
+        $studentInfo = $this->course_model->getStudentInfo($studentId);
+        //
+        $data['completedOn'] = convertDateTimeToTimeZone(
+            $EmployeeCourseProgress['updated_at'],
+            DB_DATE_WITH_TIME,
+            DATE
+        );
+        //
+        $data['studentSSN'] = substr($studentInfo['ssn'], -4);
+        //
+        $data['studentDOB'] = $studentInfo['dob'] ?
+            convertDateTimeToTimeZone(
+                $studentInfo['dob'],
+                DB_DATE,
+                DATE
+            ) : "";
+        $data["studentInfo"] = $studentInfo;
+        $data["EmployeeCourseProgress"] = $EmployeeCourseProgress;
+
+        $view = $this->load->view('courses/certificate_preview', $data, true);
+        //  
+        return SendResponse(200, ['view' => $view, 'title' => $form['title']]);
+    }
+
+    function getLmsCourseCertificatePrintDownload(
+        int $studentId,        
+        int $courseId,
+        string $action
+    ) {
+        //
+        if (!$this->session->userdata('logged_in')) {
+            return redirect("login");
+        }
+   
+
+        $this->load->model('v1/course_model');
+
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $data['title'] = "Certificate :: " . STORE_NAME;
+        $data['session'] = $session;
+        $data['companyId'] = $companyId;
+        $data['employer_sid'] = $employeeId;
+        $data['student_sid'] = $studentId;
+        $data['type'] = $type;
+        $data['employee'] = $session['employer_detail'];
+        $data['employeeName'] = getEmployeeOnlyNameBySID($studentId);
+        $data['company_info'] = $session['company_detail'];
+        $data['companyName'] = getCompanyNameBySid($companyId);
+        $data['AHRLogo'] = base_url('assets/images/lms_certificate_logo.png');
+        $data['AHRStudentID'] = 'AHR-' . $studentId;
+        $data['load_view'] = 1;
+        $data['level'] = 0;
+        $data['courseInfo'] = $this->course_model->getCourseCertificateInfo($courseId);
+        $EmployeeCourseProgress = $this->course_model->getEmployeeCourseProgressInfo($courseId, $studentId, $companyId);
+        $studentInfo = $this->course_model->getStudentInfo($studentId);
+        //
+        $data['completedOn'] = convertDateTimeToTimeZone(
+            $EmployeeCourseProgress['updated_at'],
+            DB_DATE_WITH_TIME,
+            DATE
+        );
+        //
+        $data['studentSSN'] = substr($studentInfo['ssn'], -4);
+        //
+        $data['studentDOB'] = $studentInfo['dob'] ?
+            convertDateTimeToTimeZone(
+                $studentInfo['dob'],
+                DB_DATE,
+                DATE
+            ) : "";
+        $data["studentInfo"] = $studentInfo;
+        $data["EmployeeCourseProgress"] = $EmployeeCourseProgress;
+
+
+        $data['printDownload']=$action;
+        //
+        $this->load
+           // ->view('main/header_2022', $data)
+            ->view('courses/certificate_print_download',$data);
+            //->view('main/footer');
     }
 }

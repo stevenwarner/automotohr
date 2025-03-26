@@ -6033,6 +6033,7 @@ class Hr_documents_management_model extends CI_Model
             'drivers_license' => '',
             'occupational_license' => '',
             'W4MN' => [],
+            'lms_courses' => [],
         ];
         //
         $t = [];
@@ -6067,6 +6068,9 @@ class Hr_documents_management_model extends CI_Model
             $this->getEmployeeW4MNForm($cId, $id, $r);
             $this->getEmployeeGeneralDocuments($cId, $id, $r, true);
         }
+
+       //
+       $r['lms_courses'] =$this->get_employee_lms_completed_Courses($cId, $id);
         //
         return $r;
     }
@@ -12065,4 +12069,26 @@ class Hr_documents_management_model extends CI_Model
             return [];
         }
     }
+
+
+    //
+    function get_employee_lms_completed_Courses($company_sid, $employee_sid)
+    {
+      
+        $this->db->select('lms_employee_course.*,lms_default_courses.course_title');
+        $this->db->where('lms_employee_course.company_sid', $company_sid);
+        $this->db->where('lms_employee_course.employee_sid', $employee_sid);
+        $this->db->where('lms_employee_course.course_status', 'passed');
+        $this->db->where('lms_employee_course.lesson_status', 'completed'); 
+        $this->db->join('lms_default_courses', 'lms_default_courses.sid = lms_employee_course.course_sid');
+        //
+        $records_obj = $this->db->get('lms_employee_course');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        //
+        return $records_arr;
+    }
+
+
+
 }
