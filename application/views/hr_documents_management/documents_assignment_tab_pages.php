@@ -1834,13 +1834,13 @@ $noActionRequiredDocumentsList = [];
                     <?php } ?>
                     <!-- Performance Documents End -->
 
-                    <? if (checkIfAppIsEnabled(MODULE_LMS)) { ?>
-                        <?php if (isPayrollOrPlus() || isLMSManagerDepartmentAndTeams($employer["sid"])) {  ?>
-
-                            <?php $this->load->view("hr_documents_management/partials/tabs/completed_lms_courses"); ?>
-
-                    <?php }
-                    } ?>
+                    <? 
+                        if (checkIfAppIsEnabled(MODULE_LMS)) {
+                            if (isPayrollOrPlus() || isLMSManagerDepartmentAndTeams($employer["sid"])) {
+                                $this->load->view("hr_documents_management/partials/tabs/completed_lms_courses");
+                            }
+                        } 
+                    ?>
 
 
                 </div>

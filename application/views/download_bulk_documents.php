@@ -110,15 +110,9 @@
             if (has['W9'] != "null") assignedLength++;
             if (has['W4'] != "null") assignedLength++;
             // if (has['W4MN'] != "null") assignedLength++;
-
-
             //
             let lmsCourses = <?= json_encode($documents['lms_courses']); ?>;
             assignedLength = assignedLength + lmsCourses.length;
-
-
-
-
             //
             $('#js-dt').text(assignedLength);
 
