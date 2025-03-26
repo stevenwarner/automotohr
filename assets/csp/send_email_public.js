@@ -278,6 +278,14 @@ $(function Overview() {
         
     }
 
+    $(document).on("click", ".jsMarkAsRead", function (event) {
+        //
+        event.preventDefault();
+        var emailId = $(this).data("id");
+        //
+        mark_read(emailId);
+    });
+
     function mark_read(email_sid) {
         var update_url = baseURL + 'compliance_safety_reporting_public/update_email_read_flag';
         var targit_document = $('#update_document_sid').val();
@@ -315,6 +323,11 @@ $(function Overview() {
     $('.show_media_library').on('click', function() {
         $("#library_item_title").html('Attachment Library');
         $("#attachment_library_modal").modal('show');
+    });
+
+    $(document).on("click", ".jsViewLibraryItem", function (event) {
+        event.preventDefault();
+        view_library_item($(this));
     });
 
     function view_library_item(source) {
@@ -548,6 +561,11 @@ $(function Overview() {
         }
     });
 
+    $(document).on("onchange", ".jsCheckAttachVideo", function (event) {
+        event.preventDefault();
+        check_attach_video('attach_video');
+    });
+  
     function check_attach_video(val) {
         var fileName = $("#" + val).val();
 
@@ -587,6 +605,11 @@ $(function Overview() {
         }
     }
 
+    $(document).on("onchange", ".jsCheckAttachAudio", function (event) {
+        event.preventDefault();
+        check_attach_audio('attach_audio');
+    });
+
     function check_attach_audio(val) {
         var fileName = $("#" + val).val();
 
@@ -625,6 +648,11 @@ $(function Overview() {
             return false;
         }
     }
+
+    $(document).on("onchange", ".jsCheckAttachDocument", function (event) {
+        event.preventDefault();
+        check_attach_document('attach_document');
+    });
 
     function check_attach_document(val) {
         var fileName = $("#" + val).val();
@@ -1239,6 +1267,11 @@ $(function Overview() {
         }
     });
 
+    $(document).on("onchange", ".jsPop_upCheckAttachVideo", function (event) {
+        event.preventDefault();
+        pop_up_check_attach_video('pop_up_attach_video');
+    });
+
     function pop_up_check_attach_video(val) {
         var fileName = $("#" + val).val();
 
@@ -1278,6 +1311,11 @@ $(function Overview() {
         }
     }
 
+    $(document).on("onchange", ".jsPopUpCheckAttachAudio", function (event) {
+        event.preventDefault();
+        pop_up_check_attach_audio('pop_up_attach_audio');
+    });
+
     function pop_up_check_attach_audio(val) {
         var fileName = $("#" + val).val();
 
@@ -1316,6 +1354,11 @@ $(function Overview() {
             return false;
         }
     }
+
+    $(document).on("onchange", ".jsPopUpCheckAttachDocument", function (event) {
+        event.preventDefault();
+        pop_up_check_attach_document('pop_up_attach_document');
+    });
 
     function pop_up_check_attach_document(val) {
         var fileName = $("#" + val).val();
