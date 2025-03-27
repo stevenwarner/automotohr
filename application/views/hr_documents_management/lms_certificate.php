@@ -134,6 +134,7 @@
                     userFullNameSlug: "<?=$userFullNameSlug;?>",
                     type: 'lms_certificate_'+key,
                 }, () => {
+                    dc++;
                     m('Adding LMS certificate to export.')
                 });
             });
