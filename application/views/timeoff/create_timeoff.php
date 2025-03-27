@@ -318,15 +318,17 @@
                                 </div>
                             </div>
                             <div class="col-md-12">
-                                <h5> Instructions: To ensure that your information remains completely confidential, and to ensure that Family or Medical leave is properly designated, there are three forms available for you to choose from if you are
-                                    requesting time off from work.</h5>
+                                <h5> Instructions: To ensure that your information remains completely confidential, and to ensure that Family or Medical leave is properly designated, there are three forms available for you to choose from if you are requesting time off from work.</h5>
                                 <ul>
-                                    <li>To request time off for Vacation, Personal Time, Jury day, or any other reason not related to your health, use the Non-Medical Time-Off Request.
+                                    <li>To request time off for Vacation, Personal Time, Jury day, or any other reason not related to your health, use the Non-Medical Time-Off Request,
                                     </li>
+
                                     <li>To request time off for a health-related reason such as visits to a health-care provider, Workers Compensation, etc. use the Medical Time-Off Request form. The confidential medical information reported on that form will be securely filed.
                                     </li>
+
                                     <li>To request Family or Medical leave, first review the family & Medical Leave policy. Then use a Family & Medical Leave Request form. The confidential medical information reported on that form will be securely filed.
                                     </li>
+
                                 </ul>
                                 <h5><strong>Note:</strong> Allowed supporting document types <b>.doc, .docx, .pdf, .png, .jpg, .jpeg</b></h5>
                             </div>
