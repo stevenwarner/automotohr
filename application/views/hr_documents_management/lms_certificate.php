@@ -134,8 +134,7 @@
                     userFullNameSlug: "<?=$userFullNameSlug;?>",
                     type: 'lms_certificate_'+key,
                 }, () => {
-                    // $("#i9_pdf").closest('html').remove();
-                    // has['I9'] = true;
+                    m('Adding LMS certificate to export.')
                 });
             });
     });        
