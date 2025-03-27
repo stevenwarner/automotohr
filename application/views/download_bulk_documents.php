@@ -41,6 +41,231 @@
             font-size: 16px;
         }
     </style>
+    <?php if ($documents['lms_courses']) { ?>
+        <style>
+            @font-face {
+                font-family: 'Open Sans';
+                font-style: normal;
+                font-weight: 400;
+                font-stretch: normal;
+                src: url(https://fonts.gstatic.com/s/opensans/v36/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsjZ0B4gaVc.ttf) format('truetype');
+            }
+
+            @font-face {
+                font-family: 'Pinyon Script';
+                font-style: normal;
+                font-weight: 400;
+                src: url(https://fonts.gstatic.com/s/pinyonscript/v21/6xKpdSJbL9-e9LuoeQiDRQR8WOXaPw.ttf) format('truetype');
+            }
+
+            @font-face {
+                font-family: 'Rochester';
+                font-style: normal;
+                font-weight: 400;
+                src: url(https://fonts.gstatic.com/s/rochester/v22/6ae-4KCqVa4Zy6Fif-UC2FHS.ttf) format('truetype');
+            }
+
+            .s13 {
+                color: black;
+                font-family: "Times New Roman", serif;
+                font-style: normal;
+                font-weight: bold;
+                text-decoration: none;
+                font-size: 9.5pt;
+            }
+
+            .cursive {
+                font-family: "Pinyon Script", cursive;
+            }
+
+            .sans {
+                font-family: "Open Sans", sans-serif;
+            }
+
+            .bold {
+                font-weight: bolder;
+            }
+
+            .block {
+                display: block;
+            }
+
+            .underline {
+                border-bottom: 1px solid #777;
+                padding: 5px;
+                margin-bottom: 15px;
+            }
+
+            .margin-0 {
+                margin: 0;
+            }
+
+            .margin-bottom-15 {
+                margin: 15px;
+            }
+
+            .padding-0 {
+                padding: 0;
+            }
+
+            .pm-empty-space {
+                height: 16px;
+                width: 100%;
+            }
+
+            body {
+                padding: 20px 0;
+                background: #ccc;
+            }
+
+            .cssMain {
+                background-color: #0000FF;
+            }
+
+            .pm-certificate-container {
+                position: relative;
+                width: 1400px;
+                height: 860px;
+                background-color: #0000FF;
+                padding: 30px;
+                color: #333;
+                font-family: "Open Sans", sans-serif;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            }
+
+            .outer-border {
+                width: 1390px;
+                height: 850px;
+                position: absolute;
+                left: 50%;
+                margin-left: -695px;
+                top: 50%;
+                margin-top: -425px;
+                border: 2px solid #fff;
+            }
+
+            .inner-border {
+                width: 1344px;
+                height: 806px;
+                position: absolute;
+                left: 50%;
+                margin-left: -672px;
+                top: 50%;
+                margin-top: -403px;
+                border: 2px solid #fff;
+            }
+
+            .pm-certificate-border {
+                position: relative;
+                width: 1334px;
+                height: 796px;
+                padding: 0;
+                border: 1px solid #e1e5f0;
+                background-color: #ffffff;
+                background-image: none;
+                left: 50%;
+                margin-left: -667px;
+                top: 50%;
+                margin-top: -398px;
+            }
+
+            .pm-certificate-block {
+                width: 1060px;
+                height: 200px;
+                position: relative;
+                left: 36%;
+                margin-left: -325px;
+                top: 70px;
+                margin-top: 0;
+            }
+
+            .pm-certificate-header {
+                margin-bottom: 10px;
+            }
+
+            .pm-certificate-title {
+                position: relative;
+                top: 40px;
+            }
+
+            .pm-certificate-title h1 {
+                font-size: 64px !important;
+                font-weight: 900;
+                text-align: center;
+            }
+
+            .pm-certificate-body {
+                /* padding: 20px; */
+            }
+
+            .pm-name-text {
+                font-size: 32px;
+            }
+
+            .pm-course-title-text {
+                font-size: 22px;
+            }
+
+            .pm-credits-text {
+                font-size: 15px;
+            }
+
+            .pm-certified {
+                font-size: 12px;
+            }
+
+            .pm-certified .underline {
+                margin-bottom: 5px;
+            }
+
+            .pm-certificate-footer {
+                width: 1060px;
+                height: 100px;
+                position: relative;
+                left: 36%;
+                margin-left: -325px;
+                bottom: -105px;
+            }
+
+            .pm-presented-text {
+                font-size: 26px;
+                font-weight: 600;
+                margin-bottom: 14px;
+            }
+
+            .pm-entitled-text {
+                font-size: 26px;
+                font-weight: 600;
+                margin-top: 26px;
+                margin-bottom: 14px;
+            }
+
+            .pm-completion-date-text {
+                font-size: 26px;
+                font-weight: 600;
+                margin-top: 16px;
+                margin-bottom: 8px;
+            }
+
+            .pm-sub-credit-text {
+                font-size: 24px;
+                margin-top: 12px
+            }
+
+            .csRadius5 {
+                border-radius: 5px !important;
+                -webkit-border-radius: 5px !important;
+                -moz-border-radius: 5px !important;
+                -o-border-radius: 5px !important;
+            }
+
+            .image-responsive {
+                margin: 20px auto;
+                max-width: 100%;
+                /*display: block;*/
+            }
+        </style>
+    <?php } ?>    
 </head>
 
 <body style="overflow: hidden;">
@@ -560,7 +785,38 @@
 
     <!--  -->
     <div style="float: left; margin-left: -1000px; width: 800px;">
+    <!-- <div> -->
         <?php
+        if ($documents['lms_courses']) {
+            foreach ($documents['lms_courses'] as $key => $course) {
+                $employeeInfo = getEmployeeBasicInfo($course['employee_sid']);
+                $courseInfo = [];
+                $courseInfo['key'] = $course['sid'].'_'.$course['company_sid'].'_lms_certificate';
+                $courseInfo['companyName'] = $employeeInfo['companyName'];
+                $courseInfo['employeeName'] = $employeeInfo['name'];
+                $courseInfo['AHRLogo'] = base_url('assets/images/lms_certificate_logo.png');
+                $courseInfo['AHRStudentID'] = $employeeInfo['AHREmployeeID'];
+                
+                $courseInfo['completedOn'] = convertDateTimeToTimeZone(
+                    $course['updated_at'],
+                    DB_DATE_WITH_TIME,
+                    DATE
+                );
+                $courseInfo['course_title'] = ucfirst($course["course_language"]);
+                $courseInfo['secondary_logo'] = $course['secondary_logo'];
+                $courseInfo['course_title'] = $course['course_title'];
+                $courseInfo['course_language'] = $course['course_language'];
+                //
+                $this->load->view('hr_documents_management/lms_certificate', [
+                    'courseInfo' => $courseInfo,
+                    'doUpload' => 1,
+                    'token' => $token,
+                    'employeeSid' => $user_sid,
+                    'userFullNameSlug' => $slug
+                ]);
+            }
+        }
+
         if (count($documents['I9'])) {
             $this->load->view('2022/federal_fillable/form_i9_download_bulk', [
                 'pre_form' => $documents['I9'],

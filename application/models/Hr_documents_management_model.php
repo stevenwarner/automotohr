@@ -12075,7 +12075,7 @@ class Hr_documents_management_model extends CI_Model
     function get_employee_lms_completed_Courses($company_sid, $employee_sid)
     {
       
-        $this->db->select('lms_employee_course.*,lms_default_courses.course_title');
+        $this->db->select('lms_employee_course.*,lms_default_courses.course_title, lms_default_courses.secondary_logo');
         $this->db->where('lms_employee_course.company_sid', $company_sid);
         $this->db->where('lms_employee_course.employee_sid', $employee_sid);
         $this->db->where('lms_employee_course.course_status', 'passed');
@@ -12085,6 +12085,7 @@ class Hr_documents_management_model extends CI_Model
         $records_obj = $this->db->get('lms_employee_course');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
+        //
         //
         return $records_arr;
     }

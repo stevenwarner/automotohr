@@ -75,6 +75,7 @@ if (!function_exists('getEmployeeBasicInfo')) {
             $basicInfo["companyId"] = $userInfo['parent_sid'];
             $basicInfo["email"] = $userInfo['email'];
             $basicInfo["job_title"] = $userInfo['job_title'];
+            $basicInfo['AHREmployeeID'] = 'AHR-' . $sid;
         }    
 
         //
