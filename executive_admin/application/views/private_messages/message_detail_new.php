@@ -98,9 +98,11 @@
                                             <td><b>Attachment</b></td>
                                             <td>
                                                 <?php foreach ($attachments as $attachment) { ?>
-                                                    <a class="btn btn-primary" download="Attachment"
-                                                        href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">Download
-                                                        Attachment</a>
+                                                    <?php if ($attachment): ?>
+                                                        <a class="btn btn-primary" download="Attachment"
+                                                            href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">Download
+                                                            Attachment</a>
+                                                    <?php endif; ?>
                                                 <?php } ?>
                                             </td>
                                         </tr>
