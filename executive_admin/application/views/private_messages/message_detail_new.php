@@ -6,7 +6,8 @@
 
                 <div class="heading-title page-title">
                     <h1 class="page-title"><i class="fa fa-envelope"></i><?php echo $title; ?> (<?= $page ?>)</h1>
-                    <a class="black-btn pull-right" href="<?php echo base_url('dashboard'); ?>"><i class="fa fa-long-arrow-left"></i> Back to Dashboard</a>
+                    <a class="black-btn pull-right" href="<?php echo base_url('dashboard'); ?>"><i
+                            class="fa fa-long-arrow-left"></i> Back to Dashboard</a>
                 </div>
                 <div class="bt-panel">
                     <div class="row">
@@ -16,9 +17,12 @@
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-6 col-xs-12 col-sm-7">
-                            <a href="<?php echo base_url('private_messages') . '/' . $company_id; ?>" class="btn btn-success">Inbox <span>(<?= $total_messages ?>)</span></a>
-                            <a href="<?php echo base_url('outbox') . '/' . $company_id; ?>" class="btn btn-success">Outbox</a>
-                            <a href="<?php echo base_url('compose_message') . '/' . $company_id; ?>" class="btn btn-success">Compose new Message</a>
+                            <a href="<?php echo base_url('private_messages') . '/' . $company_id; ?>"
+                                class="btn btn-success">Inbox <span>(<?= $total_messages ?>)</span></a>
+                            <a href="<?php echo base_url('outbox') . '/' . $company_id; ?>"
+                                class="btn btn-success">Outbox</a>
+                            <a href="<?php echo base_url('compose_message') . '/' . $company_id; ?>"
+                                class="btn btn-success">Compose new Message</a>
                         </div>
                     </div>
                 </div>
@@ -34,8 +38,8 @@
                                     </tr>
                                     <tr>
                                         <th class="success"><b>From <?php if ($page == 'Inbox') {
-                                                                        echo 'Name';
-                                                                    } ?></b></th>
+                                            echo 'Name';
+                                        } ?></b></th>
                                         <td><?php echo $contact_details["from_name"]; ?>&nbsp;
 
                                             <?php
@@ -57,8 +61,8 @@
                                     <?php } ?>
                                     <tr>
                                         <th class="success"><b>To <?php if ($page != 'Inbox') {
-                                                                        echo 'Name';
-                                                                    } ?></b></th>
+                                            echo 'Name';
+                                        } ?></b></th>
                                         <td>
                                             <?php echo $contact_details["to_name"]; ?>&nbsp;
                                             <?php
@@ -89,12 +93,14 @@
                                     <?php
                                     $attachments = $message["attachment"] ? explode(",", $message["attachment"]) : [];
                                     ?>
-                                    <?php if ($attachments) { ?>
+                                    <?php if ($attachments && $attachments[0]) { ?>
                                         <tr>
                                             <td><b>Attachment</b></td>
                                             <td>
                                                 <?php foreach ($attachments as $attachment) { ?>
-                                                    <a class="btn btn-primary" download="Attachment" href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">Download Attachment</a>
+                                                    <a class="btn btn-primary" download="Attachment"
+                                                        href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">Download
+                                                        Attachment</a>
                                                 <?php } ?>
                                             </td>
                                         </tr>
@@ -106,9 +112,11 @@
                 </div>
                 <div class="form-group text-right">
                     <?php if ($page == 'Inbox') { ?>
-                        <a href="<?= base_url('reply_message') ?>/<?= $company_id ?>/<?= $message['msg_id'] ?>"><input type="button" class="btn btn-success" value="Reply"></a>
+                        <a href="<?= base_url('reply_message') ?>/<?= $company_id ?>/<?= $message['msg_id'] ?>"><input
+                                type="button" class="btn btn-success" value="Reply"></a>
                     <?php } ?>
-                    <input class="btn btn-danger" type="button" id="<?= $message['msg_id'] ?>" onclick="todo('delete', this.id);" value="Delete">
+                    <input class="btn btn-danger" type="button" id="<?= $message['msg_id'] ?>"
+                        onclick="todo('delete', this.id);" value="Delete">
                 </div>
             </div>
         </div>
@@ -118,18 +126,18 @@
     function todo(action, id) {
         url = "<?= base_url() ?>private_messages/message_task";
         alertify.confirm('Confirmation', "Are you sure you want to " + action + " this Message?",
-            function() {
+            function () {
                 $.post(url, {
-                        action: action,
-                        sid: id
-                    })
-                    .done(function(data) {
+                    action: action,
+                    sid: id
+                })
+                    .done(function (data) {
                         alertify.success('Selected message have been ' + action + 'd.');
                         $("#parent_" + id).remove();
                     });
 
             },
-            function() {
+            function () {
                 alertify.error('Canceled');
             });
     }
@@ -137,7 +145,7 @@
 
 
 <script>
-    $('.jsToCompany').click(function(event) {
+    $('.jsToCompany').click(function (event) {
         //
         event.preventDefault();
         //
@@ -155,11 +163,11 @@
         url_to = "<?= base_url() ?>dashboard/company_login";
 
         $.post(url_to, {
-                action: "login",
-                company_sid: company_sid,
-                logged_in_sid: logged_in_sid
-            })
-            .done(function(data) {
+            action: "login",
+            company_sid: company_sid,
+            logged_in_sid: logged_in_sid
+        })
+            .done(function (data) {
                 const responseData = JSON.parse(data);
                 // logedin
                 if (responseData.logedin == 1) {
