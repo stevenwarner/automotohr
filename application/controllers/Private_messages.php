@@ -360,7 +360,8 @@ class Private_messages extends Public_Controller
                     $contact_details['from_name'] = $name_only;
                 }
                 //
-                if (is_numeric($contact_details['from_email'])) {
+                
+                if (!is_numeric($contact_details['from_email'])) {
                     $userInfo = findCompanyUser($contact_details['from_email'], $company_id);
                     //
                     if (!empty($userInfo['profilePath'])) {

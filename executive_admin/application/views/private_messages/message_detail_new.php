@@ -151,18 +151,24 @@
     });
 
     function companyLogin(company_sid, logged_in_sid, toLink) {
+
         url_to = "<?= base_url() ?>dashboard/company_login";
+
         $.post(url_to, {
                 action: "login",
                 company_sid: company_sid,
                 logged_in_sid: logged_in_sid
             })
             .done(function(data) {
-                if (data == 1) {
+                const responseData = JSON.parse(data);
+                // logedin
+                if (responseData.logedin == 1) {
                     window.open(toLink, '_blank');
                 } else {
                     alert('Account Is De-Activated');
                 }
+
+
             });
     }
 </script>
