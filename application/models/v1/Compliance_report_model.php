@@ -1726,6 +1726,13 @@ class Compliance_report_model extends CI_Model
 		$report["incident_items"] = $this->getCSPItems($report["csp_incident_original_id"]);
 		$report["incidentItemsSelected"] = $this->getCSPAttachedItems($incidentId);
 		//
+		if ($report["incidentItemsSelected"]) {
+			foreach ($report["incidentItemsSelected"] as $ikey => $item) {
+				$report["incidentItemsSelected"][$ikey]['attachments'] = $this->getCSPItemAttachments($reportId, $incidentId, $item['sid']);
+			}
+
+		}
+		//
 		$report["internal_employees"] = $this
 			->getCSPIncidentInternalEmployeesById($reportId, $incidentId, [
 				"csp_reports_employees.sid",
@@ -4201,5 +4208,99 @@ class Compliance_report_model extends CI_Model
 		//
 		return $isAssign;	
 	}
+
+	/**
+	* Add files to report
+	*
+	* @param int $reportId
+	* @param int $incidentId
+	* @param int $itemId
+	* @param int $loggedInEmployeeId
+	* @param string $fileName
+	* @param string $originalFileName
+	* @param string $fileType
+	* @return array
+	*/
+	public function addFilesToIncidentItem(
+		int $reportId,
+		int $incidentId,
+		int $itemId,
+		int $loggedInEmployeeId,
+		string $fileName,
+		string $originalFileName,
+		string $fileType,
+		string $title
+	) {
+		//
+		$todayDateTime = getSystemDate();
+		// lets first add the report
+		$fileData = [
+			"csp_reports_sid" => $reportId,
+			"csp_incident_type_sid" => $incidentId,
+			"file_type" => $fileType,
+			"file_value" => $originalFileName,
+			"s3_file_value" => $fileName,
+			"title" => $title,
+			"created_by" => $loggedInEmployeeId,
+			"created_at" => $todayDateTime,
+			"updated_at" => $todayDateTime,
+			"csp_reports_incidents_items_sid" => $itemId
+		];
+		//
+		$this->db->insert("csp_reports_files", $fileData);
+		//
+		return $this->db->insert_id();
+	}
+
+	/**
+	 * Add files to report
+	 *
+	 * @param int $reportId
+	 * @param int $incidentId
+	 * @param int $itemId
+	 * @param int $loggedInEmployeeId
+	 * @param string $link
+	 * @param string $linkType
+	 * @param string $title
+	 * @return array
+	 */
+	public function addFilesLinkToIncidentItem(
+		int $reportId,
+		int $incidentId,
+		int $itemId,
+		int $loggedInEmployeeId,
+		string $link,
+		string $linkType,
+		string $title
+	) {
+		//
+		$todayDateTime = getSystemDate();
+		// lets first add the report
+		$fileData = [
+			"csp_reports_sid" => $reportId,
+			"csp_incident_type_sid" => $incidentId,
+			"file_type" => $linkType,
+			"file_value" => $link,
+			"s3_file_value" => $link,
+			"title" => $title,
+			"created_by" => $loggedInEmployeeId,
+			"created_at" => $todayDateTime,
+			"updated_at" => $todayDateTime,
+			"csp_reports_incidents_items_sid" => $itemId
+		];
+		//
+		$this->db->insert("csp_reports_files", $fileData);
+		//
+		return $this->db->insert_id();
+	}
+
+	public function getCSPItemAttachments ($reportId, $incidentId, $itemId) {
+		$this->db->select("file_value,sid,title,s3_file_value,file_type,created_at,created_by,manual_email");
+		$this->db->where("csp_reports_sid", $reportId);
+		$this->db->where("csp_incident_type_sid", $incidentId);
+		$this->db->where("csp_reports_incidents_items_sid", $itemId);
+		return $this->db->get("csp_reports_files")->result_array();
+	}
+
 	
 }

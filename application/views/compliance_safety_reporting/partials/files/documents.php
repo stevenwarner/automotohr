@@ -2,7 +2,7 @@
  <div class="panel panel-default">
      <div class="panel-heading">
          <h1 class="panel-heading-text text-medium">
-             <strong>Upload Files </strong>
+             <strong>Upload Files</strong>
          </h1>
      </div>
      <div class="panel-body">

@@ -397,6 +397,7 @@
                 ["message" => "Item successfully updated."]
             );
         }
+
         /**
          * process edit
          * 
@@ -427,6 +428,7 @@
                 ["message" => "Item successfully updated."]
             );
         }
+
         /**
          * process edit
          * 
@@ -1288,6 +1290,90 @@
             $this->zip->archive($basePath);
             deleteFolderWithFiles(ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)));
             $this->zip->download($zip_name);
+        }
+
+        public function getUploadAttachmentView () {
+            return sendResponse(
+                200,
+                [
+                    "view" => $this->load->view(
+                        'compliance_safety_reporting/partials/files/item_attachment',
+                        [],
+                        true
+                    )
+                ]
+            );
+        }
+
+        public function uploadAttachmentItemFile () {
+            //
+            $post = $this->input->post(null, true);
+
+            if ($post["link"]) {
+                $this
+                    ->compliance_report_model
+                    ->addFilesLinkToIncidentItem(
+                        $post['reportId'],
+                        $post['incidentId'],
+                        $post['itemId'],
+                        $this->getLoggedInEmployee("sid"),
+                        $post["link"],
+                        $post["type"],
+                        $post['title']
+                    );
+                // return the success
+                return sendResponse(
+                    200,
+                    [
+                        "message" => "File is attached successfully."
+                    ]
+                );
+            } else {
+                // sanitize the name
+                $fileName = preg_replace('/[^a-zA-Z0-9-_\.]/', '', $_FILES['file']['name']);
+                $fileName = str_replace(' ', '_', $fileName);
+                $fileName = time() . '_' . $fileName;
+                $fileName = strtolower($fileName);
+
+                $this->load->library('aws_lib');
+                //
+                try {
+                    $options = [
+                        'Bucket' => AWS_S3_BUCKET_NAME,
+                        'Key' => $fileName,
+                        'Body' => file_get_contents($_FILES["file"]["tmp_name"]),
+                        'ACL' => 'public-read',
+                        'ContentType' => $_FILES["file"]["type"]
+                    ];
+                    //
+                    $this->aws_lib->put_object($options);
+                    $this
+                        ->compliance_report_model
+                        ->addFilesToIncidentItem(
+                            $post['reportId'],
+                            $post['incidentId'],
+                            $post['itemId'],
+                            $this->getLoggedInEmployee("sid"),
+                            $fileName,
+                            $_FILES["file"]["name"],
+                            $post["type"],
+                            $post['title']
+                        );
+                    // return the success
+                    return sendResponse(
+                        200,
+                        [
+                            "message" => "File is attached successfully."
+                        ]
+                    );
+                    //
+                } catch (Exception $exception) {
+                    return sendResponse(
+                        400,
+                        ["errors" => ["Failed to upload file to AWS S3"]]
+                    );
+                }
+            }
         }
 
     }
