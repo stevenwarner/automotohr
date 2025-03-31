@@ -1890,10 +1890,10 @@ if (!function_exists('getEmployeeManualBalance')) {
         //
         $CI->db
             ->select('
-    timeoff_balances.is_added,
-    effective_at,
-    timeoff_balances.added_time
-');
+                timeoff_balances.is_added,
+                effective_at,
+                timeoff_balances.added_time
+            ');
         $CI->db->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner');
         $CI->db->where('timeoff_policies.company_sid', $companyId);
         $CI->db->where('timeoff_balances.user_sid', $employeeId);
@@ -1910,6 +1910,10 @@ if (!function_exists('getEmployeeManualBalance')) {
         }
         // loop through the balances
         foreach ($balances as $rowBalance) {
+            // make sure don't pass the current date
+            // if ($rowBalance["effective_at"] > $currentDate) {
+            // continue;
+            // }
             if ($rowBalance['is_added'] == '1')
                 $balanceToReturn += $rowBalance['added_time']; // on add
             else
@@ -2191,14 +2195,23 @@ if (!function_exists('processESTAPolicy')) {
                     $allowedHours = 72;
                 }
             }
+            //
+            $balanceInMinutes = getEmployeeManualBalance(
+                $employeeId,
+                $policyId,
+                $item['start'],
+                $item['end'],
+                0
+            );
+            $balanceInMinutes = $balanceInMinutes > 0 ? $balanceInMinutes / 60 : 0;
             // set the balance
             $balanceHolder = [
                 "start" => $item["start"],
                 "end" => $item["end"],
                 "period" => $item["start"] . " - " . $item["end"],
-                "allowed" => $allowedHours,
+                "allowed" => $allowedHours + $balanceInMinutes,
                 "consumed" => $consumedTimeInMinutes,
-                "remaining" => $allowedHours - ($consumedTimeInMinutes / 60)
+                "remaining" => ($allowedHours + $balanceInMinutes) - ($consumedTimeInMinutes / 60),
             ];
         }
         //
