@@ -2714,3 +2714,15 @@ $route["compliance_safety_reporting/get_item_attachment_view"]["get"] =
 $route["compliance_safety_reporting/add_file_to_incident_item"]["post"] =
   "v1/Compliance_safety_reporting/uploadAttachmentItemFile";
 
+$route["csp/get_item_attachment_view"]["get"] =
+  "v1/Compliance_safety_reporting_public/getUploadAttachmentView";
+
+$route["csp/add_file_to_incident_item"]["post"] =
+  "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";
+
+$route["csp/incident_item_management/(:num)/(:num)/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_public/manageIncidentItem/$1/$2/$3";
+
+$route["csp/add_file_to_incident_item"]["post"] =
+  "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";
+

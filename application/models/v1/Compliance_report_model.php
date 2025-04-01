@@ -1998,7 +1998,7 @@ class Compliance_report_model extends CI_Model
 			$loggedInEmployeeId
 		);
 
-		$this->sendEmailsForCSPReport($reportId, CSP_UPDATED_EMAIL_TEMPLATE_ID);
+		// $this->sendEmailsForCSPReport($reportId, CSP_UPDATED_EMAIL_TEMPLATE_ID);
 
 		return true;
 	}
@@ -2100,7 +2100,7 @@ class Compliance_report_model extends CI_Model
 			$loggedInEmployeeId
 		);
 
-		$this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
+		// $this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
 
 
 		return true;
@@ -4215,7 +4215,7 @@ class Compliance_report_model extends CI_Model
 	* @param int $reportId
 	* @param int $incidentId
 	* @param int $itemId
-	* @param int $loggedInEmployeeId
+	* @param string $loggedInEmployeeId
 	* @param string $fileName
 	* @param string $originalFileName
 	* @param string $fileType
@@ -4225,7 +4225,7 @@ class Compliance_report_model extends CI_Model
 		int $reportId,
 		int $incidentId,
 		int $itemId,
-		int $loggedInEmployeeId,
+		string $loggedInEmployeeId,
 		string $fileName,
 		string $originalFileName,
 		string $fileType,
@@ -4241,11 +4241,17 @@ class Compliance_report_model extends CI_Model
 			"file_value" => $originalFileName,
 			"s3_file_value" => $fileName,
 			"title" => $title,
-			"created_by" => $loggedInEmployeeId,
 			"created_at" => $todayDateTime,
 			"updated_at" => $todayDateTime,
 			"csp_reports_incidents_items_sid" => $itemId
 		];
+		//
+		if (filter_var($loggedInEmployeeId, FILTER_VALIDATE_EMAIL)) {
+			$fileData['manual_email'] = $loggedInEmployeeId;
+			$fileData['created_by'] = 0;
+		} else {
+			$fileData['created_by'] = $loggedInEmployeeId;
+		}
 		//
 		$this->db->insert("csp_reports_files", $fileData);
 		//
@@ -4258,7 +4264,7 @@ class Compliance_report_model extends CI_Model
 	 * @param int $reportId
 	 * @param int $incidentId
 	 * @param int $itemId
-	 * @param int $loggedInEmployeeId
+	 * @param string $loggedInEmployeeId
 	 * @param string $link
 	 * @param string $linkType
 	 * @param string $title
@@ -4268,7 +4274,7 @@ class Compliance_report_model extends CI_Model
 		int $reportId,
 		int $incidentId,
 		int $itemId,
-		int $loggedInEmployeeId,
+		string $loggedInEmployeeId,
 		string $link,
 		string $linkType,
 		string $title
@@ -4283,11 +4289,17 @@ class Compliance_report_model extends CI_Model
 			"file_value" => $link,
 			"s3_file_value" => $link,
 			"title" => $title,
-			"created_by" => $loggedInEmployeeId,
 			"created_at" => $todayDateTime,
 			"updated_at" => $todayDateTime,
 			"csp_reports_incidents_items_sid" => $itemId
 		];
+		//
+		if (filter_var($loggedInEmployeeId, FILTER_VALIDATE_EMAIL)) {
+			$fileData['manual_email'] = $loggedInEmployeeId;
+			$fileData['created_by'] = 0;
+		} else {
+			$fileData['created_by'] = $loggedInEmployeeId;
+		}
 		//
 		$this->db->insert("csp_reports_files", $fileData);
 		//

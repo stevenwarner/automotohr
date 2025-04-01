@@ -17360,3 +17360,38 @@ if (!function_exists("isSafetyIncident")) {
         }
     }
 }
+
+if (!function_exists('getManualUserNameByEmailId')) {
+    function getManualUserNameByEmailId($reportId, $incidentId, $emailId)
+    {
+        $CI = &get_instance();
+        $CI->db->select('external_name');
+        $CI->db->where('csp_reports_sid', $reportId);
+        $CI->db->where('csp_report_incident_sid', 0);
+        $CI->db->where('external_email', $emailId);
+        $reportUser = $CI->db->get('csp_reports_employees')->row_array();
+        //
+        $employeeName = '';
+        //
+        if ($reportUser) {
+            //
+            $employeeName = $reportUser['external_name'];
+        } else {
+            $CI = &get_instance();
+            $CI->db->select('external_name');
+            $CI->db->where('csp_reports_sid', $reportId);
+            $CI->db->where('csp_report_incident_sid', $incidentId);
+            $CI->db->where('external_email', $emailId);
+            $incidentUser = $CI->db->get('csp_reports_employees')->row_array();
+            //
+            if ($incidentUser) {
+                $employeeName = $incidentUser['external_name'];
+            } else {
+                $employeeName = $emailId;
+            }
+        }  
+
+        //
+        return $employeeName;
+    }
+}

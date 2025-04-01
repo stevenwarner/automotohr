@@ -219,7 +219,7 @@ $(function Overview() {
 				Id: "FileAttachModal",
 				Loader: "jsFileAttachModalLoader",
 				Title: '<span>Upload Item Attachment</span>',
-				Body: '<div id="jsFileAttachModalBody"></body>',
+				Body: '<div id="jsFileAttachModalBody"></div>',
 			},
 			function () {
 				loadAttachmentView(itemId, reportId, incidentId);

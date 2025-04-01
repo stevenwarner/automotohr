@@ -25,7 +25,7 @@
                     </a>
                 <?php endif; ?>
 
-                <a class="btn btn-green" target="_blank" href="<?= base_url("{$firstSegment}/download_report/" . $report["sid"]); ?>">
+                <a class="btn btn-black" target="_blank" href="<?= base_url("{$firstSegment}/download_report/" . $report["sid"]); ?>">
                     <i class="fa fa-download"></i>
                     Download
                 </a>

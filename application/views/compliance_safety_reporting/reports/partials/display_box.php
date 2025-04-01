@@ -32,7 +32,7 @@
                     <i class="fa fa-pencil"></i>
                     Edit
                 </a>
-                <a class="btn btn-green" target="_blank" href="<?= base_url("compliance_safety_reporting/download_incident/" . $report["sid"] . '/' .$display_box_data["sid"]); ?>">
+                <a class="btn btn-black" target="_blank" href="<?= base_url("compliance_safety_reporting/download_incident/" . $report["sid"] . '/' .$display_box_data["sid"]); ?>">
                     <i class="fa fa-download"></i>
                     Download
                 </a>

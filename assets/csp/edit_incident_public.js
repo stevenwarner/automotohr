@@ -208,6 +208,66 @@ $(function Overview() {
 		);
 	});
 
+	$(document).on("click", ".jsCSPItemAttachmentBtn", function (event) {
+		event.preventDefault();
+		const itemId = $(this).data("item_id");
+		const reportId = $(this).data("report_id");
+		const incidentId = $(this).data("incident_id");
+		//
+		Modal(
+			{
+				Id: "FileAttachModal",
+				Loader: "jsFileAttachModalLoader",
+				Title: '<span>Upload Item Attachment</span>',
+				Body: '<div id="jsFileAttachModalBody"></div>',
+			},
+			function () {
+				loadAttachmentView(itemId, reportId, incidentId);
+			}
+		);
+	});
+
+	$(document).on("click", ".jsAddItemDocument", function (event) {
+		event.preventDefault();
+
+		const obj = {
+			title: $("#jsItemDocumentTitle").val(),
+			file: $("#jsItemDocuments").msFileUploader("get"),
+		};
+		//
+		if (obj.title.trim() === "") {
+			_error("Please enter a file title.");
+			return;
+		}
+		if (!obj.file) {
+			_error("Please select a file.");
+			return;
+		}
+		if (Object.keys(obj.file).length === 0) {
+			_error("Please select a file.");
+			return;
+		}
+		if (obj.file.hasError && obj.file.type === "vimeo") {
+			_error("Vimeo link is invalid.");
+			return;
+		}
+		if (obj.file.hasError && obj.file.type === "youtube") {
+			_error("YouTube link is invalid.");
+			return;
+		}
+		if (obj.file.hasError) {
+			_error(obj.file.errorCode);
+			return;
+		}
+
+		let fileType =
+			obj.file.type === "vimeo" || obj.file.type === "youtube"
+				? "link"
+				: getFileType(obj.file).toLowerCase();
+		//
+		attachFileToItem(obj.file, obj.title, fileType);
+	});
+
 	function generateExternalEmployees() {
 		let html = `
         <div class="row" data-external="${externalPointer}">
@@ -317,6 +377,77 @@ $(function Overview() {
 					_success(resp.message, function () {
 						window.location.refresh();
 					});
+				});
+		}
+	}
+
+	function loadAttachmentView (itemId, reportId, incidentId) {
+		$.ajax({
+			url: baseUrl("csp/get_item_attachment_view"),
+			method: "GET",
+		})
+			.always(function () {
+				XHR = null;
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				$("#jsFileAttachModalBody").html(resp.view);
+				$("#jsItemId").val(itemId);
+				$("#jsReportId").val(reportId);
+				$("#jsIncidentId").val(incidentId);
+				$("#jsItemDocuments").msFileUploader(config.document);
+				ml(false, "jsFileAttachModalLoader");
+				//
+			});
+	}
+
+	async function attachFileToItem(file, title, type) {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			var itemId = $("#jsItemId").val();
+			var reportId = $("#jsReportId").val();
+			var incidentId =$("#jsIncidentId").val();
+			//
+			const formData = new FormData();
+			formData.append("title", title);
+			formData.append("type", type);
+			formData.append("itemId", itemId);
+			formData.append("reportId", reportId);
+			formData.append("incidentId", incidentId);
+
+			if (file.type === "youtube" || file.type === "vimeo") {
+				formData.append("link", file.link);
+			} else {
+				formData.append("file", file);
+			}
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"csp/add_file_to_incident_item"
+				),
+				method: "POST",
+				async: true,
+				cache: false,
+				contentType: false,
+				processData: false,
+				data: formData,
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					alertify.alert(
+						"You have successfully upload the file",
+						function () {
+							window.location.refresh();
+						}
+					);
 				});
 		}
 	}
@@ -538,7 +669,14 @@ $(function Overview() {
 				//
 				processIncidentItemListing(obj);
 			});
-			alertify.success("You have successfully updated the checklist");
+			//
+			alertify.alert(
+				"You have successfully updated the checklist",
+				function () {
+					window.location.refresh();
+				}
+			);
+			//
 			ml(false, "jsPageLoader");
 		}
 	});

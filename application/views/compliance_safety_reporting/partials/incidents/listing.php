@@ -75,7 +75,7 @@ $firstSegment = $this->uri->segment(1);
                                         </button>
                                     <?php endif; ?>
 
-                                    <a class="btn btn-green" target="_blank" href="<?= base_url("compliance_safety_reporting/download_incident/" . $report["sid"]. '/' .$item["sid"]); ?>">
+                                    <a class="btn btn-black" target="_blank" href="<?= base_url("compliance_safety_reporting/download_incident/" . $report["sid"]. '/' .$item["sid"]); ?>">
                                         <i class="fa fa-download"></i>
                                     </a>
                                 </td>

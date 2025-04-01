@@ -330,6 +330,7 @@
             //
             $this->data["reportId"] = $reportId;
             $this->data["incidentId"] = $incidentId;
+            $this->data["manageItemUrl"] = base_url('compliance_safety_reporting/incident_item_management/'.$reportId.'/'.$incidentId);
             //
             $this->renderView('compliance_safety_reporting/edit_incident');
         }
