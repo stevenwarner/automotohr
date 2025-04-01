@@ -4130,6 +4130,21 @@ class Compliance_report_model extends CI_Model
 			'created_at' => $todayDateTime,
 		];
 
+		if ($post["level"]) {
+			$data["severity_level_sid"] = $post["level"];
+		}
+
+		if ($post["status"]) {
+			$data["status"] = $post["status"] == "active" ? 1 : 0;
+		}
+
+		if ($post["dynamicInput"] || $post["dynamicCheckbox"]) {
+			$data["answers_json"] = json_encode([
+				"dynamicInput" => $post["dynamicInput"],
+				"dynamicCheckbox" => $post["dynamicCheckbox"],
+			]);
+		}
+
 		$this->db->insert('csp_reports_incidents_items', $data);
 		return $this->db->insert_id();
 	}
