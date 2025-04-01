@@ -509,9 +509,8 @@ $(function Overview() {
 			.fail(handleErrorResponse)
 			.done(function (resp) {
 				alertify.alert(
-					"You have successfully updated the checklist 11",
+					"You have successfully updated the checklist.",
 					function () {
-						console.log("here I am")
 						window.location.refresh();
 					}
 				);
