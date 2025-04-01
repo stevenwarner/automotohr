@@ -68,7 +68,11 @@
                             </div>
                         </div>
                     </div>
-                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/items"); ?>
+                    <?php 
+                        if (isMainAllowedForCSP()) { 
+                            $this->load->view("compliance_safety_reporting/partials/incidents/items");
+                        } 
+                    ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/incidents/items_listing"); ?>
                     <?php if ($report["disable_answers"] == 1) : ?>
                         <?php $this->load->view("compliance_safety_reporting/partials/incidents/answers"); ?>
