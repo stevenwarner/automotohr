@@ -64,23 +64,23 @@ class invoice_model extends CI_Model
     //        return $data->result_array();
     //    }
 
-    public function get_invoices_date($name = 'all', $inv_num = 'all', $status = 'all', $method = 'all', $between = '',$company='all', $count_only = false, $limit = null, $offset = null)
+    public function get_invoices_date($name = 'all', $inv_num = 'all', $status = 'all', $method = 'all', $between = '', $company = 'all', $count_only = false, $limit = null, $offset = null)
     {
         $this->db->select('invoices.*,invoices.sid as invoice_number,users.first_name,users.last_name,users.username,users.parent_sid,user.CompanyName');
         $this->db->join('users', 'users.sid = invoices.user_sid');
         $this->db->join('users as user', 'user.sid = invoices.company_sid');
         // $this->db->join('users user', 'user.sid = users.parent_sid');
-        
-        if(!empty($between)){
+
+        if (!empty($between)) {
             $this->db->where($between);
         }
-            
+
 
         if (!empty($inv_num) && $inv_num != 'all') {
             $this->db->where('invoices.sid', $inv_num);
         }
         if (!empty($name) && $name != 'all') {
-            $this->db->where('users.username', $name);
+            $this->db->like('users.username', $name);
         }
         if (!empty($status) && $status != 'all') {
             $this->db->where('invoices.status', $status);
