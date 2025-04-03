@@ -2573,7 +2573,7 @@ $route["compliance_safety_reporting/(:num)/(:num)"]["delete"] =
 
 // add notes
 $route["compliance_safety_reporting/notes/(:num)/(:num)"]["post"] =
-  "v1/Compliance_safety_reporting/processNotes/$1/$2";
+  "v1/Compliance_safety_reporting/processIncidentItemNotes/$1/$2";
 
 // add file
 $route["compliance_safety_reporting/file/(:num)/(:num)/(:any)"]["post"] =
@@ -2636,7 +2636,7 @@ $route["csp/file/view/(:num)"]["get"] =
 
 // add notes
 $route["csp/notes/(:num)/(:num)"]["post"] =
-  "v1/Compliance_safety_reporting_public/processNotes/$1/$2";
+  "v1/Compliance_safety_reporting_public/processIncidentItemNotes/$1/$2";
 // edit incidents
 $route["csp/report/(:num)/incident/edit/(:num)"]["get"] =
   "v1/Compliance_safety_reporting_public/editReportIncident/$1/$2";
@@ -2717,12 +2717,25 @@ $route["compliance_safety_reporting/add_file_to_incident_item"]["post"] =
 $route["csp/get_item_attachment_view"]["get"] =
   "v1/Compliance_safety_reporting_public/getUploadAttachmentView";
 
-$route["csp/add_file_to_incident_item"]["post"] =
-  "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";
+$route["compliance_safety_reporting/incident_item_management/(:num)/(:num)/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/manageIncidentItem/$1/$2/$3";
+
+$route["compliance_safety_reporting/incident_item_management/(:num)/(:num)/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/processIncidentItem/$1/$2/$3";
+
+// add notes to incident item
+$route["compliance_safety_reporting/notes/(:num)/(:num)/(:num)"]["post"] =
+"v1/Compliance_safety_reporting/processIncidentItemNotes/$1/$2/$3";
 
 $route["csp/incident_item_management/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting_public/manageIncidentItem/$1/$2/$3";
 
+$route["csp/incident_item_management/(:num)/(:num)/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting_public/processIncidentItem/$1/$2/$3";
+
 $route["csp/add_file_to_incident_item"]["post"] =
-  "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";
+  "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";  
+
+$route["csp/notes/(:num)/(:num)/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting_public/processIncidentItemNotes/$1/$2/$3"; 
 

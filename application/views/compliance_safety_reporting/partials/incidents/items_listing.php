@@ -13,12 +13,12 @@
                     <div class="panel-heading">
                         <h1 class="panel-heading-text text-medium" style="padding: 14px 0px;">
                             <strong>Item <?php echo $i; $i++;?></strong>
-                            <!-- <span class="pull-right">
+                            <span class="pull-right">
                                 <a type="button" class="btn btn-orange" href="<?= $manageItemUrl.'/'.$item["sid"]; ?>">
                                     <i class="fa fa-info"></i>
                                     Manage Item
                                 </a>
-                            </span> -->
+                            </span>
                         </h1>
                     </div>
                     <div class="panel-body">

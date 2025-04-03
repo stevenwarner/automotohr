@@ -159,6 +159,7 @@ $(function Overview() {
                     form_data.append('file_type', item_source);
                     form_data.append('report_sid',reportId);
                     form_data.append('incident_sid',incidentId);
+                    form_data.append('item_sid', itemId);
 
                     $.ajax({
                         url: save_attachment_url,
@@ -1608,6 +1609,7 @@ $(function Overview() {
                     form_data.append('user_type', 'manager');
                     form_data.append('report_sid', reportId);
                     form_data.append('incident_sid', incidentId);
+                    form_data.append('item_sid', itemId);
 
                     $.ajax({
                         url: save_attachment_url,

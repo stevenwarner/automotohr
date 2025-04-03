@@ -21,7 +21,13 @@
                                         <?= formatDateToDB($file['created_at'], DB_DATE_WITH_TIME, DATE); ?>
                                         <br>
 
-                                        <?= remakeEmployeeName($file); ?>
+                                        <?php
+                                            if ($file['manual_email']) {
+                                                echo getManualUserNameByEmailId($reportId, $incidentId, $file['manual_email']);
+                                            } else {
+                                                echo remakeEmployeeName($file);
+                                            }
+                                        ?>
                                     </small>
                                 </p>
                                 <div class="status-panel">

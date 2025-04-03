@@ -153,6 +153,7 @@ $(function Overview() {
                     form_data.append('user_type', 'manager');
                     form_data.append('report_sid',reportId);
                     form_data.append('incident_sid',incidentId);
+                    form_data.append('item_sid',itemId);
                     form_data.append('company_sid', companyId);
                     form_data.append('uploaded_by', employeeId);
 
@@ -219,6 +220,7 @@ $(function Overview() {
         var form_data = new FormData();
         form_data.append('report_id', reportId);
         form_data.append('incident_id', incidentId);
+        form_data.append('item_id', itemId);
         form_data.append('subject', message_subject);
         form_data.append('message', message_body);
         // //
@@ -1604,6 +1606,7 @@ $(function Overview() {
                     form_data.append('user_type', 'manager');
                     form_data.append('report_sid', reportId);
                     form_data.append('incident_sid', incidentId);
+                    form_data.append('item_sid', itemId);
                     form_data.append('company_sid', companyId);
                     form_data.append('uploaded_by', employeeId);
 

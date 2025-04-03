@@ -271,14 +271,6 @@ class Compliance_safety_reporting_public extends Base_csp
                 ]
             );
         //
-        if ($this->data["report"]["notes"]) {
-            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
-                if ($v0["note_type"] === "personal" && $v0["created_by"] != $this->getPublicSessionData("employee_sid")) {
-                    unset($this->data["report"]["notes"][$k0]);
-                }
-            }
-        }
-
         // set the title
         $this->data['segments'] = [
             "reportId" => $this->data["report"]["sid"],
@@ -295,7 +287,7 @@ class Compliance_safety_reporting_public extends Base_csp
         $this->data["employees"] = $this
             ->compliance_report_model
             ->getActiveEmployees(
-                $this->data["report"]["company_sid"],
+                $this->getPublicSessionData("company_sid"),
                 0
             );
         // get the report incident types
@@ -306,12 +298,28 @@ class Compliance_safety_reporting_public extends Base_csp
         $currentUser = '';
         //
         if ($this->getPublicSessionData("is_external_employee") == 1) {
+            $this->data['employee_type'] = 'external';
             $currentUser = $this->getPublicSessionData("external_email");
         } else {
+            $this->data['employee_type'] = 'internal';
             $currentUser = $this->getPublicSessionData("employee_sid");
         }
         //
         $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, 0, $currentUser);
+        //
+        if ($this->data["report"]["notes"]) {
+            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
+                if ($this->data['employee_type'] == 'external') {
+                    if ($v0["note_type"] === "personal" && $v0["manual_email"] != $currentUser) {
+                        unset($this->data["report"]["notes"][$k0]);
+                    }
+                } else {
+                    if ($v0["note_type"] === "personal" && $v0["created_by"] != $currentUser) {
+                        unset($this->data["report"]["notes"][$k0]);
+                    }
+                }
+            }
+        }
         //
         $this->renderView('compliance_safety_reporting/public/edit_report');
     }
@@ -332,14 +340,6 @@ class Compliance_safety_reporting_public extends Base_csp
                 $reportId,
                 $incidentId
             );
-
-        if ($this->data["report"]["notes"]) {
-            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
-                if ($v0["note_type"] === "personal" && $v0["created_by"] != $this->getLoggedInEmployee("sid")) {
-                    unset($this->data["report"]["notes"][$k0]);
-                }
-            }
-        }
         //
         $this->data['segments'] = [
             "reportId" => $reportId,
@@ -384,6 +384,21 @@ class Compliance_safety_reporting_public extends Base_csp
         }
         //
         $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, $incidentId, $currentUser);
+        //
+        if ($this->data["report"]["notes"]) {
+            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
+                if ($this->data['employee_type'] == 'external') {
+                    if ($v0["note_type"] === "personal" && $v0["manual_email"] != $currentUser) {
+                        unset($this->data["report"]["notes"][$k0]);
+                    }
+                } else {
+                    if ($v0["note_type"] === "personal" && $v0["created_by"] != $currentUser) {
+                        unset($this->data["report"]["notes"][$k0]);
+                    }
+                }
+            }
+        }
+        //
         $this->data["reportId"] = $reportId;
         $this->data["incidentId"] = $incidentId;
         $this->data["manageItemUrl"] = base_url('csp/incident_item_management/'.$reportId.'/'.$incidentId);
@@ -1240,7 +1255,7 @@ class Compliance_safety_reporting_public extends Base_csp
             $company_name = $this->compliance_report_model->get_company_name_by_sid($company_sid);
 
             // Fetch Document For Media
-            $libraryItems = $this->compliance_report_model->getComplianceReportFiles($reportId, $incidentId);
+            $libraryItems = $this->compliance_report_model->getComplianceReportFiles($reportId, $incidentId, 0);
 
             $this->data['emails']             = $emails;
             $this->data['title']              = 'Compliance Safety Emails';
@@ -1441,7 +1456,146 @@ class Compliance_safety_reporting_public extends Base_csp
     }
 
     public function manageIncidentItem ($reportId, $incidentId, $itemId) {
+        // get types
+        $this->data["report"] = $this
+            ->compliance_report_model
+            ->getCSPIncidentItemInfo(
+                $reportId,
+                $incidentId,
+                $itemId
+            );
+        //
+        if ($this->getPublicSessionData("is_external_employee") == 1) {
+            $this->data['employee_type'] = 'external';
+            $currentUser = $this->getPublicSessionData("external_email");
+        } else {
+            $this->data['employee_type'] = 'internal';
+            $currentUser = $this->getPublicSessionData("employee_sid");
+        }
+        //
+        $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, $incidentId, $currentUser);
+        //
+        if ($this->data["report"]["notes"]) {
+            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
+                if ($this->data['employee_type'] == 'external') {
+                    if ($v0["note_type"] === "personal" && $v0["manual_email"] != $currentUser) {
+                        unset($this->data["report"]["notes"][$k0]);
+                    }
+                } else {
+                    if ($v0["note_type"] === "personal" && $v0["created_by"] != $currentUser) {
+                        unset($this->data["report"]["notes"][$k0]);
+                    }
+                }
+            }
+        }
+        //
+        // set the title
+        $this->data['title'] = 'Compliance Safety Incident Item Management';
+        $this->data['pageJs'][] = 'csp/manage_incident_item_public';
+        $this->data['pageJs'][] = 'csp/send_email_public';
 
+        // get the employees
+        $this->data["employees"] = $this
+            ->compliance_report_model
+            ->getActiveEmployees(
+                $this->getPublicSessionData("company_sid"),
+                0
+            );
+        //
+        $this->data["reportId"] = $reportId;
+        $this->data["incidentId"] = $incidentId;
+        $this->data["itemId"] = $itemId;
+        $this->data['pageType'] = 'public';
+        //
+        $this->renderView('compliance_safety_reporting/edit_incident_item');
+    }
+
+    /**
+     * process edit incident item
+     * 
+     * @param int $reportId
+     * @param int $incidentId
+     * @param int $itemId
+     */
+    public function processIncidentItem(int $reportId, int $incidentId, $itemId)
+    {
+        // get the post
+        $post = $this->input->post(null, true);
+        //
+        $employeeId = $this->getPublicSessionData("employee_sid")
+                ? $this->getPublicSessionData("employee_sid")
+                : 0;
+        //allowed_internal_system_count
+        $fileId = $this->compliance_report_model->editIncidentItem(
+            $reportId,
+            $incidentId,
+            $itemId,
+            $employeeId,
+            $post
+        );
+        //
+        if ($this->getPublicSessionData("is_external_employee") == 1) {
+            $emailId = $this->getPublicSessionData("external_email");
+            //
+            $this->compliance_report_model->addExternalUser(
+                $fileId,
+                $emailId,
+                'csp_reports_files'
+            );
+        }
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Incident item updated successfully."]
+        );
+    }
+
+    /**
+     * process add note to incident item
+     * 
+     * @param int $reportId
+     * @param int $incidentId
+     * @param int $incidentId
+     */
+    public function processIncidentItemNotes(int $reportId, int $incidentId, int $itemId = 0)
+    {
+        $this->form_validation->set_rules('type', 'Note Type', 'required');
+        $this->form_validation->set_rules('content', 'Note', 'required');
+
+        if (!$this->form_validation->run()) {
+            return sendResponse(
+                400,
+                ["errors" => explode("\n", validation_errors())]
+            );
+        }
+        // get the post
+        $post = $this->input->post(null, true);
+        $employeeId = $this->getPublicSessionData("employee_sid")
+                ? $this->getPublicSessionData("employee_sid")
+                : 0;
+        //allowed_internal_system_count
+        $noteId = $this->compliance_report_model->addNotesToIncidentItem(
+            $reportId,
+            $incidentId,
+            $itemId,
+            $employeeId,
+            $post
+        );
+        //
+        if ($this->getPublicSessionData("is_external_employee") == 1) {
+            $emailId = $this->getPublicSessionData("external_email");
+            //
+            $this->compliance_report_model->addExternalUser(
+                $noteId,
+                $emailId,
+                'csp_reports_notes'
+            );
+        }
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Notes added successfully."]
+        );
     }
 
 }

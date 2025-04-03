@@ -271,6 +271,7 @@
             //
             $this->data["reportId"] = $reportId;
             $this->data["incidentId"] = 0;
+            $this->data["itemId"] = 0;
             //
             $this->renderView('compliance_safety_reporting/edit_report');
         }
@@ -330,6 +331,7 @@
             //
             $this->data["reportId"] = $reportId;
             $this->data["incidentId"] = $incidentId;
+            $this->data["itemId"] = 0;
             $this->data["manageItemUrl"] = base_url('compliance_safety_reporting/incident_item_management/'.$reportId.'/'.$incidentId);
             //
             $this->renderView('compliance_safety_reporting/edit_incident');
@@ -583,6 +585,7 @@
                     ->addFilesLinkToReport(
                         $reportId,
                         $incidentId,
+                        0,
                         $this->getLoggedInEmployee("sid"),
                         $post["link"],
                         $post["type"],
@@ -754,6 +757,7 @@
             $attachments = isset($_POST['attach_files']) ? explode(',', $_POST['attach_files']) : [];
             $reportId = $_POST['report_id'];
             $incidentId = $_POST['incident_id'];
+            $itemId = $_POST['item_id'];
             $companyId = $this->getLoggedInCompany("sid");
             $companyName = $this->getLoggedInCompany("CompanyName");
             $employeeId = $this->getLoggedInEmployee("sid");
@@ -786,8 +790,9 @@
                 $message        = $_POST['message'];
                 //
                 $manual_email_to_insert = array();
-                $manual_email_to_insert['csp_reports_sid']          = $reportId;
-                $manual_email_to_insert['csp_incident_type_sid']    = $incidentId;
+                $manual_email_to_insert['csp_reports_sid']                  = $reportId;
+                $manual_email_to_insert['csp_incident_type_sid']            = $incidentId;
+                $manual_email_to_insert['csp_reports_incidents_items_sid']  = $itemId;
                 //
                 if ($isEmployee) {
                     $manual_email_to_insert['receiver_sid']         = $receiverId;
@@ -864,8 +869,9 @@
                     $message_body = $_POST['message'];
 
                     $data_to_insert = array();
-                    $data_to_insert['csp_reports_sid']          = $reportId;
-                    $data_to_insert['csp_incident_type_sid']    = $incidentId;
+                    $data_to_insert['csp_reports_sid'] = $reportId;
+                    $data_to_insert['csp_incident_type_sid'] = $incidentId;
+                    $data_to_insert['csp_reports_incidents_items_sid'] = $itemId;
                     $data_to_insert['sender_sid'] = $employeeId;
                     $data_to_insert['subject'] = $subject;
                     $data_to_insert['message_body'] = $message_body;
@@ -898,11 +904,11 @@
                     $emailTemplateBody = 'Dear ' . $receiver_name . ', <br>';
                     $emailTemplateBody = $emailTemplateBody . '<p><strong>' . $from_name . '</strong> has sent you a new email about compliance report.</p>' . '<br>';
                     $emailTemplateBody = $emailTemplateBody . '<p>Please click on the following link to reply.</p>' . '<br>';
-                    if ($employeeType != "out_sider") {
+                    // if ($employeeType != "out_sider") {
                         //
                         // $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $viewIncident . '">View Compliance Report</a>' . '<br>';
                         // $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
-                    }
+                    // }
                     $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Reply to this Email</a>' . '<br>';
                     $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
                     $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
@@ -934,9 +940,10 @@
             $companyId    = $session['company_detail']['sid'];
 
             $item_title     = $_POST['attachment_title'];
-            $companyId    = $_POST['companyId'];
+            $companyId      = $_POST['companyId'];
             $report_sid     = $_POST['report_sid'];
             $incident_sid   = $_POST['incident_sid'];
+            $item_sid       = $_POST['item_sid'];
             $item_source    = $_POST['file_type'];
             $uploaded_by    = $_POST['uploaded_by'];
             $user_type      = $_POST['user_type'];
@@ -955,6 +962,7 @@
                             ->addFilesLinkToReport(
                                 $report_sid,
                                 $incident_sid,
+                                $item_sid,
                                 $this->getLoggedInEmployee("sid"),
                                 $upload_incident_doc,
                                 "document",
@@ -1018,6 +1026,7 @@
                     ->addFilesLinkToReport(
                         $report_sid,
                         $incident_sid,
+                        $item_sid,
                         $this->getLoggedInEmployee("sid"),
                         $video_id,
                         $fileType,
@@ -1375,6 +1384,107 @@
                     );
                 }
             }
+        }
+
+        public function manageIncidentItem ($reportId, $incidentId, $itemId) {
+            // get types
+            $this->data["report"] = $this
+                ->compliance_report_model
+                ->getCSPIncidentItemInfo(
+                    $reportId,
+                    $incidentId,
+                    $itemId
+                );
+            //
+            $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, $incidentId, $this->getLoggedInEmployee("sid"));
+            //
+            if ($this->data["report"]["notes"]) {
+                foreach ($this->data["report"]["notes"] as $k0 => $v0) {
+                    if ($v0["note_type"] === "personal" && $v0["created_by"] != $this->getLoggedInEmployee("sid")) {
+                        unset($this->data["report"]["notes"][$k0]);
+                    }
+                }
+            }
+            //
+            // set the title
+            $this->data['title'] = 'Compliance Safety Incident Item Management';
+            $this->data['pageJs'][] = 'csp/manage_incident_item';
+            $this->data['pageJs'][] = 'csp/send_email';
+            // get the employees
+            $this->data["employees"] = $this
+                ->compliance_report_model
+                ->getActiveEmployees(
+                    $this->getLoggedInCompany("sid"),
+                    0
+                );
+            //
+            $this->data["reportId"] = $reportId;
+            $this->data["incidentId"] = $incidentId;
+            $this->data["itemId"] = $itemId;
+            $this->data['pageType'] = 'not_public';
+            //
+            $this->renderView('compliance_safety_reporting/edit_incident_item');
+        }
+
+        /**
+         * process edit
+         * 
+         * @param int $reportId
+         * @param int $incidentId
+         * @param int $itemId
+         */
+        public function processIncidentItem(int $reportId, int $incidentId, $itemId)
+        {
+            // get the post
+            $post = $this->input->post(null, true);
+            //allowed_internal_system_count
+            $this->compliance_report_model->editIncidentItem(
+                $reportId,
+                $incidentId,
+                $itemId,
+                $this->getLoggedInEmployee("sid"),
+                $post
+            );
+            // return the success
+            return sendResponse(
+                200,
+                ["message" => "Incident item updated successfully."]
+            );
+        }
+
+        /**
+         * process add note to incident item
+         * 
+         * @param int $reportId
+         * @param int $incidentId
+         * @param int $incidentId
+         */
+        public function processIncidentItemNotes(int $reportId, int $incidentId, int $itemId = 0)
+        {
+            $this->form_validation->set_rules('type', 'Note Type', 'required');
+            $this->form_validation->set_rules('content', 'Note', 'required');
+
+            if (!$this->form_validation->run()) {
+                return sendResponse(
+                    400,
+                    ["errors" => explode("\n", validation_errors())]
+                );
+            }
+            // get the post
+            $post = $this->input->post(null, true);
+            //allowed_internal_system_count
+            $this->compliance_report_model->addNotesToIncidentItem(
+                $reportId,
+                $incidentId,
+                $itemId,
+                $this->getLoggedInEmployee("sid"),
+                $post
+            );
+            // return the success
+            return sendResponse(
+                200,
+                ["message" => "Notes added successfully."]
+            );
         }
 
     }

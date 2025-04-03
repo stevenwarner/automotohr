@@ -734,6 +734,7 @@
     var employeesList = <?= json_encode($employees); ?>;
     var reportId = '<?php echo $reportId; ?>';
     var incidentId = '<?php echo $incidentId; ?>';
+    var itemId = '<?php echo $itemId; ?>';
     var baseURL = '<?php echo base_url(); ?>';
     var uploadVideoSize = '<?php echo UPLOAD_VIDEO_SIZE; ?>';
     var errorUploadVideoSize = '<?php echo ERROR_UPLOAD_VIDEO_SIZE; ?>';

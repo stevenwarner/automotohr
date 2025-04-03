@@ -52,7 +52,13 @@
                                          <?= formatDateToDB($document['created_at'], DB_DATE_WITH_TIME, DATE); ?>
                                          <br>
 
-                                         <?= remakeEmployeeName($document); ?>
+                                        <?php
+                                            if ($document['manual_email']) {
+                                                echo getManualUserNameByEmailId($reportId, $incidentId, $document['manual_email']);
+                                            } else {
+                                                echo remakeEmployeeName($document);
+                                            }
+                                        ?>
                                      </small>
                                  </p>
                                  <div class="status-panel">
