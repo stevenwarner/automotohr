@@ -1,26 +1,27 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Eeo extends Public_Controller
+
+class Eeo extends CI_Controller
 {
+
     public function __construct()
     {
         parent::__construct();
         $this->load->model('eeo_model');
-        $this->load->model('dashboard_model');
-        $this->load->model('application_tracking_system_model');
-        $this->load->model('hr_documents_management_model');
         $this->load->library('pagination');
     }
 
-    public function index($keyword = 'all', $opt_type = 'no', $start_date = null, $end_date = null, $employee_status = null, $page = null)
+    public function index($company_sid, $keyword = 'all', $opt_type = 'no', $start_date = null, $end_date = null, $employee_status = null, $page = null)
     {
-        if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
-            check_access_permissions($security_details, 'my_settings', 'eeo'); // Param2: Redirect URL, Param3: Function Name
-            $company_id = $data['session']['company_detail']['sid'];
+        if ($this->session->userdata('executive_loggedin')) {
+
+            $data = $this->session->userdata('executive_loggedin');
+
+            $data['title'] = 'Daily Inactivity Report';
+            $data['company_sid'] = $company_sid;
+            $company_id = $company_sid;
+            $data['companyName'] = getCompanyNameBySid($company_sid);
+
             $keyword = urldecode($keyword);
 
             $display_start_day = '';
@@ -46,9 +47,9 @@ class Eeo extends Public_Controller
 
             $records_per_page = 5; //PAGINATION_RECORDS_PER_PAGE;
             if ($keyword == 'employee') {
-                $page = ($this->uri->segment(7)) ? $this->uri->segment(7) : 0;
+                $page = ($this->uri->segment(8)) ? $this->uri->segment(8) : 0;
             } else {
-                $page = ($this->uri->segment(6)) ? $this->uri->segment(6) : 0;
+                $page = ($this->uri->segment(7)) ? $this->uri->segment(7) : 0;
             }
 
             $my_offset = 0;
@@ -113,12 +114,12 @@ class Eeo extends Public_Controller
                 $eeo_candidates = '';
 
                 $segement6 = '/' . $employee_status;
-                $uri_segment = 7;
+                $uri_segment = 8;
 
                 $eeo_candidates = $this->eeo_model->getEEOCEmployeesByFilter($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
                 $total_records = count($eeo_candidates);
 
-               // _e($eeo_candidates,true,true);
+                // _e($eeo_candidates,true,true);
 
                 foreach ($eeo_candidates as $employee_row) {
 
@@ -236,7 +237,7 @@ class Eeo extends Public_Controller
                 $data['recordsfor'] = 'Employees';
             } else {
                 $segement6 = '';
-                $uri_segment = 6;
+                $uri_segment = 7;
                 $total_records = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, true);
                 $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset);
 
@@ -310,7 +311,6 @@ class Eeo extends Public_Controller
                                     $notdefined_cout_nogroup++;
                                 }
                             }
-
                         } else {
                             if ($eeo_detail['gender'] == 'Male') {
                                 $male_cout++;
@@ -372,7 +372,7 @@ class Eeo extends Public_Controller
                             }
                         }
                     }
-                }    
+                }
 
                 $data['totalrecords'] = $total_records;
                 $data['recordsfor'] = 'Applicants';
@@ -381,7 +381,7 @@ class Eeo extends Public_Controller
 
             $start_date = DateTime::createFromFormat('Y-m-d H:i:s', $start_date)->format('m-d-Y');
             $end_date = DateTime::createFromFormat('Y-m-d H:i:s', $end_date)->format('m-d-Y');
-            $baseUrl = base_url('eeo') . '/' . urlencode($keyword) . '/' . $opt_type . '/' . urlencode($start_date) . '/' . urlencode($end_date) . $segement6;
+            $baseUrl = base_url('eeo') . '/' . $company_id . '/' . urlencode($keyword) . '/' . $opt_type . '/' . urlencode($start_date) . '/' . urlencode($end_date) . $segement6;
 
             $config = array();
             $config['base_url'] = $baseUrl;
@@ -417,7 +417,7 @@ class Eeo extends Public_Controller
             $data['to_records'] = $total_records < $records_per_page ? $total_records : $my_offset + $records_per_page;
             $data['total_records'] = $total_records;
 
-            $data['title'] = 'EEO form Applicants';
+            $data['title'] = 'EEO form Report';
 
             $data['keyword'] = $keyword;
             $data['startdate'] = $display_start_day;
@@ -476,7 +476,7 @@ class Eeo extends Public_Controller
             $data['notdefined_cout_nogroup'] = $notdefined_cout_nogroup;
 
             $this->load->view('main/header', $data);
-            $this->load->view('manage_employer/eeo_applicants_new');
+            $this->load->view('reports/eeo_applicants_new');
             $this->load->view('main/footer');
         } else {
             redirect(base_url('login'), "refresh");
@@ -485,15 +485,10 @@ class Eeo extends Public_Controller
 
     public function export_excel()
     {
+        if ($this->session->userdata('executive_loggedin')) {
 
-        if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
-            check_access_permissions($security_details, 'my_settings', 'eeo'); // Param2: Redirect URL, Param3: Function Name
-            $company_id = $data['session']['company_detail']['sid'];
-
+   
+            $company_id = $_POST["companyid"];
             $start_date = $_POST['startdate'];
             $end_date = $_POST['enddate'];
             $employee_status = $_POST['employee_status'];
@@ -538,7 +533,7 @@ class Eeo extends Public_Controller
                 $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, null, 0, false);
 
                 if (!empty($eeo_candidates)) {
-                   foreach ($eeo_candidates as $key => $eeo_detail) {
+                    foreach ($eeo_candidates as $key => $eeo_detail) {
                         if (empty($eeo_detail["gender"])) {
                             $eeoc_form = $this->eeo_model->get_user_eeo_form_info($eeo_detail["applicant_sid"], "applicant");
                             //
@@ -548,11 +543,9 @@ class Eeo extends Public_Controller
                             $eeo_candidates[$key]["veteran"] = $eeoc_form['veteran'];
                             $eeo_candidates[$key]["disability"] = $eeoc_form['disability'];
                             $eeo_candidates[$key]["gender"] = $eeoc_form['gender'];
-
                         }
-                    } 
+                    }
                 }
-                
             }
 
 
@@ -561,8 +554,8 @@ class Eeo extends Public_Controller
 
             $output = fopen('php://output', 'w');
 
-            
-            fputcsv($output, array('Name','Job Title', 'Opt Out', 'Date', 'IP Address', 'US Citizen', 'Visa Status', 'Group Status', 'Veteran', 'Disability', 'Gender', 'Applicant Type', 'Applicant Source'));
+
+            fputcsv($output, array('Name', 'Job Title', 'Opt Out', 'Date', 'IP Address', 'US Citizen', 'Visa Status', 'Group Status', 'Veteran', 'Disability', 'Gender', 'Applicant Type', 'Applicant Source'));
 
             if (sizeof($eeo_candidates) > 0) {
                 foreach ($eeo_candidates as $candidate) {
@@ -767,9 +760,9 @@ class Eeo extends Public_Controller
                         $us_citizen = $this->input->post('us_citizen');
                         $visa_status = $this->input->post('visa_status');
                         $group_status = $this->input->post('group_status');
-                        $veteran = $this->input->post('veteran')?$this->input->post('veteran'):'';
-                        $disability = $this->input->post('disability')?$this->input->post('disability'):'';
-                        $gender = $this->input->post('gender')?$this->input->post('gender'):'';
+                        $veteran = $this->input->post('veteran') ? $this->input->post('veteran') : '';
+                        $disability = $this->input->post('disability') ? $this->input->post('disability') : '';
+                        $gender = $this->input->post('gender') ? $this->input->post('gender') : '';
 
                         $data_to_update = array();
                         $data_to_update['eeo_form'] = $eeoc_form_status;
@@ -1011,7 +1004,7 @@ class Eeo extends Public_Controller
             $html .= '    </td>';
             $html .= '    <td class="col-lg-4 text-right" colspan="4">';
             if ($track['user_type'] === 'applicant') {
-                $html .=        $userDetails['first_name'].' '.$userDetails['last_name'].' (Applicant)';
+                $html .=        $userDetails['first_name'] . ' ' . $userDetails['last_name'] . ' (Applicant)';
             } else {
                 $html .=        remakeEmployeeName($userDetails);
             }
