@@ -8870,6 +8870,8 @@ class Hr_documents_management extends Public_Controller
                         //
                         $currentDocument = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document['document_sid']);
                         //
+                        $document_to_update['assigned_date'] = date('Y-m-d H:i:s');
+                        $document_to_update['assigned_by'] = $employer_sid;
                         $document_to_update['document_original_name'] = $currentDocument['uploaded_document_original_name'];
                         $document_to_update['document_extension'] = $currentDocument['uploaded_document_extension'];
                         $document_to_update['document_s3_name'] = $currentDocument['uploaded_document_s3_name'];
@@ -13207,6 +13209,8 @@ class Hr_documents_management extends Public_Controller
                 $a['authorized_signature'] = NULL;
                 $a['authorized_signature_by'] = NULL;
                 $a['authorized_signature_date'] = NULL;
+                $a['assigned_date'] = date('Y-m-d H:i:s', strtotime('now'));
+                $a['assigned_by'] = $session["employer_detail"]["sid"];
 
                 //
                 $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a);
@@ -15058,6 +15062,8 @@ class Hr_documents_management extends Public_Controller
             $document_to_update['authorized_signature'] = NULL;
             $document_to_update['authorized_signature_by'] = NULL;
             $document_to_update['authorized_signature_date'] = NULL;
+            $document_to_update['assigned_date'] = date('Y-m-d H:i:s');
+            $document_to_update['assigned_by'] = $employee_sid;
 
             $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $document_to_update); // If already exists then update
             $document_id = json_encode((int)$assignInsertId);
