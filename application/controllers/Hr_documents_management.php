@@ -9068,6 +9068,7 @@ class Hr_documents_management extends Public_Controller
                     $w4_data_to_update['ip_address']                            = NULL;
                     $w4_data_to_update['user_agent']                            = NULL;
                     $w4_data_to_update['user_consent']                          = NULL;
+                    $w4_data_to_update['last_assign_by']                        = $employer_sid;
 
                     $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_update);
                 } else {
@@ -9078,6 +9079,7 @@ class Hr_documents_management extends Public_Controller
                     $w4_data_to_insert['sent_status'] = 1;
                     $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                     $w4_data_to_insert['status'] = 1;
+                    $w4_data_to_insert['last_assign_by'] = $employer_sid;
                     //
                     $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
                 }
@@ -9110,6 +9112,7 @@ class Hr_documents_management extends Public_Controller
                     $w9_data_to_update['sent_date'] = date('Y-m-d H:i:s');
                     $w9_data_to_update['status'] = 1;
                     $w9_data_to_update['user_consent'] = NULL;
+                    $w9_data_to_update['last_assign_by'] = $employer_sid;
                     //
                     $this->hr_documents_management_model->activate_w9_forms($user_type, $user_sid, $w9_data_to_update);
                 } else {
@@ -9120,6 +9123,7 @@ class Hr_documents_management extends Public_Controller
                     $w9_data_to_insert['sent_status'] = 1;
                     $w9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                     $w9_data_to_insert['status'] = 1;
+                    $w9_data_to_insert['last_assign_by'] = $employer_sid;
                     $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
                 }
             }
@@ -9156,6 +9160,7 @@ class Hr_documents_management extends Public_Controller
                     $i9_data_to_update["version"] = getSystemDate('Y');
                     $i9_data_to_update["section1_preparer_json"] = NULL;
                     $i9_data_to_update["section3_authorized_json"] = NULL;
+                    $i9_data_to_update['last_assign_by'] = $employer_sid;
                     //
                     $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $i9_data_to_update);
                 } else {
@@ -9167,6 +9172,7 @@ class Hr_documents_management extends Public_Controller
                     $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                     $i9_data_to_insert['status'] = 1;
                     $i9_data_to_insert["version"] = getSystemDate('Y');
+                    $i9_data_to_insert['last_assign_by'] = $employer_sid;
                     //
                     $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
                 }
