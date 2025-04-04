@@ -2019,6 +2019,7 @@ if (!function_exists('processESSTPolicy')) {
         //
         $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
         $todayDate = getFormatedDate($todayDate);
+        
         //
         // $employeeJoiningDate = '2024-06-24';
         // $todayDate = '2024-09-24';
@@ -2032,6 +2033,7 @@ if (!function_exists('processESSTPolicy')) {
         $joinningDifference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
         //
         // check if employee work for 80 hours 8 * 10 = 80 hours so we check employee worked more the 10 days
+           
         if ($joinningDifference < 10) {
             $r['Reason'] = 'Employee do not meet accrual of 80 hours for this policy';
             return $r;
@@ -2042,9 +2044,51 @@ if (!function_exists('processESSTPolicy')) {
         $totalHoursWork = $currentYearDifference * 8;
         $earnHours = round($totalHoursWork / 30);
         //
-        if ($earnHours > 48) {
-            $earnHours = 48;
+
+
+        $policyData = $CI->timeoff_model
+            ->getSinglePolicyById($policyId);
+
+        $accuralCustomSettings = json_decode($policyData['accruals_custom_json'], true);
+
+
+       // $allowedHours = 0;
+        $dayscheckLimit = 0;
+        $allowedHoursLimit = 48;
+        if ($accuralCustomSettings['esst']) {
+
+            $allowedHoursLimit = $accuralCustomSettings['esst']['allowed_time'];
+            $applicableTime = $accuralCustomSettings['esst']['applicable_time'];
+            $applicableTimeType = $accuralCustomSettings['esst']['applicable_time_type'];
+
+
+            if ($applicableTimeType == 'days') {
+                $dayscheckLimit = $applicableTime;
+            } else if ($applicableTimeType == 'months') {
+
+                $dayscheckLimit = ($applicableTime * 30);
+            } else if ($applicableTimeType == 'years') {
+
+                $dayscheckLimit = ($applicableTime * 365);
+            } else {
+                $dayscheckLimit = 0;
+            }
         }
+        /////
+
+
+        if ($earnHours > $allowedHoursLimit) {
+            $earnHours = $allowedHoursLimit;
+        }
+
+        //n
+        if ($currentYearDifference < $dayscheckLimit) {
+            $r['Reason'] = 'Employee do not meet accrual of ' . ($dayscheckLimit) . ' days for this policy';
+            return $r;
+        }
+             
+
+
         //
         $allowedTimeInMinutes = $earnHours * 60;
         //
@@ -2355,6 +2399,22 @@ if (!function_exists("getTheAllowedTimeForSpecificYear")) {
 
 
 
+
+        //
+        if (checkPolicyESST($policyId) == 1) {
+            $allowedHours = getESSTCustomAccural(
+                $difference,
+                $dayscheck,
+                $employeeJoiningDate,
+                $todayDate,
+                $accruals,
+                $policyId
+            );
+            return $allowedHours;
+        }
+
+
+
         if (checkPolicyESTA($policyId) == 1) {
             $allowedHours = getESTACustomAccural(
                 $difference,
@@ -2366,6 +2426,8 @@ if (!function_exists("getTheAllowedTimeForSpecificYear")) {
             );
             return $allowedHours;
         }
+
+
 
 
 
@@ -2438,6 +2500,74 @@ if (!function_exists("getTheAllowedTimeForSpecificYear")) {
                 $applicableAccrualTime = $accuralCustomSettings['esta']['applicable_accrual_time'];
                 $applicableAccrualTimeEffectiv = $accuralCustomSettings['esta']['applicable_accrual_time_effectiv'];
                 $applicableAccrualTimeType = $accuralCustomSettings['esta']['applicable_accrual_time_type'];
+
+                $earningStartAfter = " +" . $applicableTime . " " . $applicableTimeType;
+                $extraHoursAfter = " +" . $applicableAccrualTimeEffectiv . " " . $applicableAccrualTimeType;
+
+                //
+                $difference = $difference - $dayscheck; // this needs to be fixed
+                //
+                if ($accruals['employee_type_original'] == "parttime") {
+                    $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . $earningStartAfter));
+                    $startTimestamp = strtotime($employeeJoiningDate);
+                    $endTimestamp = strtotime($earningHoursStartDate);
+                    $sundaysCount = 0;
+
+                    for ($currentDate = $startTimestamp; $currentDate <= $endTimestamp; $currentDate = strtotime($extraHoursAfter, $currentDate)) {
+
+                        $sundaysCount = $sundaysCount + $applicableAccrualTime;
+                    }
+                    $earningHoursStartDate = date('Y-m-d', strtotime($employeeJoiningDate . $earningStartAfter));
+                    $allowedHours = $sundaysCount;
+                } else {
+                    $earningHoursStartDate = $employeeJoiningDate;
+                    $allowedHours = $accuralCustomSettings['esta']['allowed_time'];
+                }
+                //
+                $startTimestamp = strtotime($earningHoursStartDate);
+                $endTimestamp = strtotime($todayDate);
+                //
+                for ($currentDate = $startTimestamp; $currentDate <= $endTimestamp; $currentDate = strtotime($extraHoursAfter, $currentDate)) {
+                    $allowedHours = $allowedHours + $applicableAccrualTime;
+                }
+                //
+                if ($allowedHours > $accuralCustomSettings['esta']['allowed_time']) {
+                    $allowedHours = $accuralCustomSettings['esta']['allowed_time'];
+                }
+            }
+            return $allowedHours;
+        }
+    }
+
+    //
+    //
+    if (!function_exists("getESSTCustomAccural")) {
+        function getESSTCustomAccural(
+            $difference,
+            $dayscheck,
+            $employeeJoiningDate,
+            $todayDate,
+            $accruals,
+            $policyId = 0
+        ) {
+
+
+            $CI = &get_instance();
+            $policyData = $CI->timeoff_model
+                ->getSinglePolicyById($policyId);
+
+            $accuralCustomSettings = json_decode($policyData['accruals_custom_json'], true);
+
+            $allowedHours = 0;
+            if ($accuralCustomSettings['esst']) {
+
+                $allowedHours = $accuralCustomSettings['esst']['allowed_time'];
+                $applicableTime = $accuralCustomSettings['esst']['applicable_time'];
+                $applicableTimeType = $accuralCustomSettings['esst']['applicable_time_type'];
+
+                $applicableAccrualTime = $accuralCustomSettings['esst']['applicable_accrual_time'];
+                $applicableAccrualTimeEffectiv = $accuralCustomSettings['esst']['applicable_accrual_time_effectiv'];
+                $applicableAccrualTimeType = $accuralCustomSettings['esst']['applicable_accrual_time_type'];
 
                 $earningStartAfter = " +" . $applicableTime . " " . $applicableTimeType;
                 $extraHoursAfter = " +" . $applicableAccrualTimeEffectiv . " " . $applicableAccrualTimeType;

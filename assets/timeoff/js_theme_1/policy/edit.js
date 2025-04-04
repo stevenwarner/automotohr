@@ -767,36 +767,64 @@ $(function () {
         setNewHireAccrual('reset');
 
 
-         //
-         let accrualsCustomJson = JSON.parse(resp.Data.accruals_custom_json);
+        //
+        let accrualsCustomJson = JSON.parse(resp.Data.accruals_custom_json);
 
-         if (accrualsCustomJson && accrualsCustomJson.esta) {
- 
-             $('#js-esta-policy-allowed-time-edit').val(accrualsCustomJson.esta.allowed_time);
-             $('#js-esta-policy-applicable-time-edit').val(accrualsCustomJson.esta.applicable_time);
-             $('#js-esta-policy-applicable-time-type-edit').val(accrualsCustomJson.esta.applicable_time_type);
- 
-             $('#js-esta-policy-accrual-allowed-time-edit').val(accrualsCustomJson.esta.applicable_accrual_time);
-             $('#js-esta-policy-accrual-time-effectiv-edit').val(accrualsCustomJson.esta.applicable_accrual_time_effectiv);
-             $('#js-esta-policy-accrual-time-type-edit').val(accrualsCustomJson.esta.applicable_accrual_time_type
-             );
-         }else{
-             $('#js-esta-policy-allowed-time-edit').val();
-             $('#js-esta-policy-applicable-time-edit').val();
-             $('#js-esta-policy-applicable-time-type-edit').val();
-             $('#js-esta-policy-accrual-allowed-time-edit').val();
-             $('#js-esta-policy-accrual-time-effectiv-edit').val();
-             $('#js-esta-policy-accrual-time-type-edit').val()
-         }
- 
- 
- 
-         if (policy.isESTA == 1) {
-             $("#js-esta-policy-box").show();
-         } else {
-             $("#js-esta-policy-box").hide();
-         }
- 
+        if (accrualsCustomJson && accrualsCustomJson.esta) {
+
+            $('#js-esta-policy-allowed-time-edit').val(accrualsCustomJson.esta.allowed_time);
+            $('#js-esta-policy-applicable-time-edit').val(accrualsCustomJson.esta.applicable_time);
+            $('#js-esta-policy-applicable-time-type-edit').val(accrualsCustomJson.esta.applicable_time_type);
+
+            $('#js-esta-policy-accrual-allowed-time-edit').val(accrualsCustomJson.esta.applicable_accrual_time);
+            $('#js-esta-policy-accrual-time-effectiv-edit').val(accrualsCustomJson.esta.applicable_accrual_time_effectiv);
+            $('#js-esta-policy-accrual-time-type-edit').val(accrualsCustomJson.esta.applicable_accrual_time_type
+            );
+
+
+
+        } else {
+            $('#js-esta-policy-allowed-time-edit').val();
+            $('#js-esta-policy-applicable-time-edit').val();
+            $('#js-esta-policy-applicable-time-type-edit').val();
+            $('#js-esta-policy-accrual-allowed-time-edit').val();
+            $('#js-esta-policy-accrual-time-effectiv-edit').val();
+            $('#js-esta-policy-accrual-time-type-edit').val();
+        }
+
+        //
+        if (accrualsCustomJson && accrualsCustomJson.esst) {
+            $('#js-est-policy-allowed-time-edit').val(accrualsCustomJson.esst.allowed_time);
+            $('#js-est-policy-applicable-time-edit').val(accrualsCustomJson.esst.applicable_time);
+            $('#js-est-policy-applicable-time-type-edit').val(accrualsCustomJson.esst.applicable_time_type);
+
+            $('#js-est-policy-accrual-allowed-time-edit').val(accrualsCustomJson.esst.applicable_accrual_time);
+            $('#js-est-policy-accrual-time-effectiv-edit').val(accrualsCustomJson.esst.applicable_accrual_time_effectiv);
+            $('#js-est-policy-accrual-time-type-edit').val(accrualsCustomJson.esst.applicable_accrual_time_type);
+
+        } else {
+            //
+            $('#js-est-policy-allowed-time-edit').val();
+            $('#js-est-policy-applicable-time-edit').val();
+            $('#js-est-policy-applicable-time-type-edit').val();
+            $('#js-est-policy-accrual-allowed-time-edit').val();
+            $('#js-est-policy-accrual-time-effectiv-edit').val();
+            $('#js-esta-policy-accrual-time-type-edit').val()
+        }
+
+
+        if (policy.isESST == 1) {
+            $("#js-est-policy-box").show();
+        } else {
+            $("#js-est-policy-box").hide();
+        }
+
+        if (policy.isESTA == 1) {
+            $("#js-esta-policy-box").show();
+        } else {
+            $("#js-esta-policy-box").hide();
+        }
+
         //
         ml(false, 'policy');
     }
@@ -856,6 +884,40 @@ $(function () {
 
             policyOBJ.isESST = $('#js-is-esst-edit').prop('checked') === true ? 1 : 0;
             policyOBJ.isESTA = $('#js-is-esta-edit').prop('checked') === true ? 1 : 0;
+
+
+
+            //run validations
+            if (policyOBJ.isESST == 1) {
+                policyOBJ.ESST_policy_Allowed_Time = getField('#js-est-policy-allowed-time-edit');
+                policyOBJ.ESST_policy_Applicable_Time = getField('#js-est-policy-applicable-time-edit');
+                policyOBJ.ESST_policy_Applicable_Time_Type = getField('#js-est-policy-applicable-time-type-edit');
+
+                policyOBJ.ESST_policy_Applicable_Accrual_Time = getField('#js-est-policy-accrual-allowed-time-edit');
+                policyOBJ.ESST_policy_Applicable_Accrual_Time_Effectiv = getField('#js-est-policy-accrual-time-effectiv-edit');
+                policyOBJ.ESST_policy_Applicable_Accrual_Time_Type = getField('#js-est-policy-accrual-time-type-edit');
+
+                if (isValidInteger(policyOBJ.ESST_policy_Allowed_Time == false)) {
+                    alertify.alert('WARNING!', 'ESST Allowed Time: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESST_policy_Applicable_Time == false)) {
+                    alertify.alert('WARNING!', 'ESST Applicable Time: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESST_policy_Applicable_Accrual_Time == false)) {
+                    alertify.alert('WARNING!', 'ESST Allow: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESST_policy_Applicable_Accrual_Time_Type == false)) {
+                    alertify.alert('WARNING!', 'ESST extra hours(s) after: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+            }
 
             //run validations
             if (policyOBJ.isESTA == 1) {
@@ -1233,4 +1295,18 @@ $(function () {
         const num = Number(str);
         return Number.isInteger(num) && num > 0;
     }
+
+
+    //
+    $(document).on('click', '#js-is-esst-edit', function (e) {
+
+        if ($(this).is(":checked")) {
+
+            $("#js-est-policy-box").show();
+        } else {
+            $("#js-est-policy-box").hide();
+        }
+
+    });
+
 });

@@ -308,6 +308,40 @@ $(function () {
                 return false;
             }
 
+
+            //run validations
+
+            if (policyOBJ.isESST == 1) {
+                policyOBJ.ESST_policy_Allowed_Time = getField('#js-est-policy-allowed-time-add');
+                policyOBJ.ESST_policy_Applicable_Time = getField('#js-est-policy-applicable-time-add');
+                policyOBJ.ESST_policy_Applicable_Time_Type = getField('#js-est-policy-applicable-time-type-add');
+
+                policyOBJ.ESST_policy_Applicable_Accrual_Time = getField('#js-est-policy-accrual-allowed-time-add');
+                policyOBJ.ESST_policy_Applicable_Accrual_Time_Effectiv = getField('#js-est-policy-accrual-time-effectiv-add');
+                policyOBJ.ESST_policy_Applicable_Accrual_Time_Type = getField('#js-est-policy-accrual-time-type-add');
+
+                if (isValidInteger(policyOBJ.ESST_policy_Allowed_Time == false)) {
+                    alertify.alert('WARNING!', 'ESST Allowed Time: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESST_policy_Applicable_Time == false)) {
+                    alertify.alert('WARNING!', 'ESST Applicable Time: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESST_policy_Applicable_Accrual_Time == false)) {
+                    alertify.alert('WARNING!', 'ESST Allow: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+                if (isValidInteger(policyOBJ.ESST_policy_Applicable_Accrual_Time_Type == false)) {
+                    alertify.alert('WARNING!', 'ESST extra hours(s) after: Please Enter Valid Number', () => { });
+                    return false;
+                }
+
+            }
+
            //run validations
             if (policyOBJ.isESTA == 1) {
                 policyOBJ.ESTA_policy_Allowed_Time = getField('#js-esta-policy-allowed-time-add');
@@ -494,6 +528,18 @@ $(function () {
         });
     }
 
+
+    //
+    $(document).on('click', '#js-is-esst-add', function (e) {
+
+        if ($(this).is(":checked")) {
+
+            $("#js-est-policy-box-add").show();
+        } else {
+            $("#js-est-policy-box-add").hide();
+        }
+
+    });
     //
     $(document).on('click', '#js-is-esta-add', function (e) {
 

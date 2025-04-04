@@ -2733,6 +2733,19 @@ class Time_off extends Public_Controller
 
                 $accrualCustomJson = [];
 
+
+                //
+                if ($post['ESST_policy_Allowed_Time'] && $post['ESST_policy_Applicable_Time'] && $post['ESST_policy_Applicable_Time_Type'] && $post['ESST_policy_Applicable_Accrual_Time']) {
+                    $accrualCustomJson['esst'] = [
+                        "allowed_time" => $post['ESST_policy_Allowed_Time'],
+                        "applicable_time" => $post['ESST_policy_Applicable_Time'],
+                        "applicable_time_type" => $post['ESST_policy_Applicable_Time_Type'],
+                        "applicable_accrual_time" => $post['ESST_policy_Applicable_Accrual_Time'],
+                        "applicable_accrual_time_effectiv" => $post['ESST_policy_Applicable_Accrual_Time_Effectiv'],
+                        "applicable_accrual_time_type" => $post['ESST_policy_Applicable_Accrual_Time_Type'],
+                    ];
+                }
+
                 if ($post['ESTA_policy_Allowed_Time'] && $post['ESTA_policy_Applicable_Time'] && $post['ESTA_policy_Applicable_Time_Type'] && $post['ESTA_policy_Applicable_Accrual_Time']) {
                     $accrualCustomJson['esta'] = [
                         "allowed_time" => $post['ESTA_policy_Allowed_Time'],
@@ -2855,6 +2868,17 @@ class Time_off extends Public_Controller
 
                 //
                 $accrualCustomJson = [];
+
+                if ($post['ESST_policy_Allowed_Time'] && $post['ESST_policy_Applicable_Time'] && $post['ESST_policy_Applicable_Time_Type'] && $post['ESST_policy_Applicable_Accrual_Time']) {
+                    $accrualCustomJson['esst'] = [
+                        "allowed_time" => $post['ESST_policy_Allowed_Time'],
+                        "applicable_time" => $post['ESST_policy_Applicable_Time'],
+                        "applicable_time_type" => $post['ESST_policy_Applicable_Time_Type'],
+                        "applicable_accrual_time" => $post['ESST_policy_Applicable_Accrual_Time'],
+                        "applicable_accrual_time_effectiv" => $post['ESST_policy_Applicable_Accrual_Time_Effectiv'],
+                        "applicable_accrual_time_type" => $post['ESST_policy_Applicable_Accrual_Time_Type'],
+                    ];
+                }
 
                 if ($post['ESTA_policy_Allowed_Time'] && $post['ESTA_policy_Applicable_Time'] && $post['ESTA_policy_Applicable_Time_Type'] && $post['ESTA_policy_Applicable_Accrual_Time']) {
                     $accrualCustomJson['esta'] = [
