@@ -190,7 +190,28 @@
                                                                                     <?php 
                                                                                         foreach ($attachments as $key => $attach_item) {
                                                                                             //
-                                                                                            $attach_item_type = 'Media';
+                                                                                            if ($item['file_type'] == 'document' || $item['file_type'] == 'image') {
+                                                                                                //
+                                                                                                if ($item["file_type"] === "image") {
+                                                                                                    $link = AWS_S3_BUCKET_URL . $item["s3_file_value"]; 
+                                                                                                } elseif ($item["file_type"] === "document") {
+                                                                                                    if (preg_match("/doc|docx|xls|xlsx|ppt|pptx/i", $item["s3_file_value"])) {
+                                                                                                        $link = 'https://view.officeapps.live.com/op/embed.aspx?src='.AWS_S3_BUCKET_URL . $item["s3_file_value"];
+                                                                                                    } else {
+                                                                                                        $link = AWS_S3_BUCKET_URL . $item["s3_file_value"];
+                                                                                                    }
+                                                                                                } 
+                                                                                                //
+                                                                                            } else {
+                                                                                                //
+                                                                                                if ($item['file_type'] == 'link') {
+                                                                                                    $link = $item['file_value'];
+                                                                                                } else {
+                                                                                                    $link  = AWS_S3_BUCKET_URL . $item["s3_file_value"];
+                                                                                                } 
+                                                                                            }
+                                                                                            //
+                                                                                            $attach_item_type = ucwords($item["file_type"]);
                                                                                             //
                                                                                             if ($attach_item['file_type'] == 'document' || $attach_item['file_type'] == 'image') {
                                                                                                 $attach_item_type = 'Document';
@@ -262,14 +283,14 @@
                                                                                                             <div class="row">
                                                                                                                 <?php if ($attach_item_type == 'Document') { ?>
                                                                                                                     <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
-                                                                                                                        <a href="javascript:;" class="btn btn-block btn-info" onclick="view_attach_item(this);" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
+                                                                                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewAttachItem" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
                                                                                                                     </div>
                                                                                                                     <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
                                                                                                                         <a target="_blank" href="<?php echo $download_url; ?>" class="btn btn-block btn-info"><i class="fa fa-download"></i></a>
                                                                                                                     </div>
                                                                                                                 <?php } else { ?>
                                                                                                                     <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
-                                                                                                                        <a href="javascript:;" class="btn btn-block btn-info" onclick="view_attach_item(this);" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
+                                                                                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewAttachItem"  item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
                                                                                                                     </div>
                                                                                                                     <?php if ($item_source == 'upload_video' || $item_source == 'upload_audio') { ?>
                                                                                                                         <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
@@ -528,7 +549,7 @@
                                                         <?php echo $item_category; ?>
                                                     </td>
                                                     <td class="text-center">
-                                                        <a href="javascript:;" class="btn btn-block btn-info" onclick="view_library_item(this);" item-category="document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $item_url; ?>">View Document</a>
+                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem" item-category="document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $item_url; ?>">View Document</a>
                                                     </td>
                                                     <td class="text-center">
                                                         <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
@@ -672,7 +693,7 @@
                                     <label>Attach Video <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_video"></span>
-                                        <input type="file" name="pop_up_attach_video" id="pop_up_attach_video" onchange="pop_up_check_attach_video('pop_up_attach_video')" >
+                                        <input type="file" name="pop_up_attach_video" id="pop_up_attach_video" class="jsPopUpCheckAttachVideo">
                                         <a href="javascript:;">Choose Video</a>
                                     </div>
                                 </div>
@@ -680,7 +701,7 @@
                                     <label>Attach Audio <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_audio"></span>
-                                        <input type="file" name="pop_up_attach_audio" id="pop_up_attach_audio" onchange="pop_up_check_attach_audio('pop_up_attach_audio')" >
+                                        <input type="file" name="pop_up_attach_audio" id="pop_up_attach_audio" class="jsPopUpCheckAttachAudio" >
                                         <a href="javascript:;">Choose Audio</a>
                                     </div>
                                 </div>
@@ -688,7 +709,7 @@
                                     <label>Attach Document <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_document"></span>
-                                        <input type="file" name="pop_up_attach_document" id="pop_up_attach_document" onchange="pop_up_check_attach_document('pop_up_attach_document')" >
+                                        <input type="file" name="pop_up_attach_document" id="pop_up_attach_document" class="jsPopUpCheckAttachDocument">
                                         <a href="javascript:;">Choose Document</a>
                                     </div>
                                 </div>
@@ -918,7 +939,7 @@
                                 <label>Attach Video <span class="hr-required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_video"></span>
-                                    <input type="file" name="attach_video" id="attach_video" onchange="check_attach_video('attach_video')" >
+                                    <input type="file" name="attach_video" id="attach_video" class="jsCheckAttachVideo" >
                                     <a href="javascript:;">Choose Video</a>
                                 </div>
                             </div>
@@ -926,7 +947,7 @@
                                 <label>Attach Audio <span class="hr-required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_audio"></span>
-                                    <input type="file" name="attach_audio" id="attach_audio" onchange="check_attach_audio('attach_audio')" >
+                                    <input type="file" name="attach_audio" id="attach_audio" class="jsCheckAttachAudio">
                                     <a href="javascript:;">Choose Audio</a>
                                 </div>
                             </div>
@@ -934,7 +955,7 @@
                                 <label>Attach Document <span class="hr-required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_document"></span>
-                                    <input type="file" name="attach_document" id="attach_document" onchange="check_attach_document('attach_document')" >
+                                    <input type="file" name="attach_document" id="attach_document" class="jsCheckAttachDocument">
                                     <a href="javascript:;">Choose Document</a>
                                 </div>
                             </div>
