@@ -17,8 +17,8 @@ class Compliance_safety extends Admin_Controller
 
     public function dashboard()
     {
-        $redirect_url       = 'manage_admin';
-        $function_name      = 'compliance_safety_dashboard';
+        $redirect_url = 'manage_admin';
+        $function_name = 'compliance_safety_dashboard';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
@@ -31,8 +31,8 @@ class Compliance_safety extends Admin_Controller
 
     public function manageSeverityLevels()
     {
-        $redirect_url       = 'manage_admin';
-        $function_name      = 'compliance_safety_manage_severity_levels';
+        $redirect_url = 'manage_admin';
+        $function_name = 'compliance_safety_manage_severity_levels';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
@@ -44,8 +44,8 @@ class Compliance_safety extends Admin_Controller
 
     public function reportAdd()
     {
-        $redirect_url       = 'manage_admin';
-        $function_name      = 'compliance_safety_report_add';
+        $redirect_url = 'manage_admin';
+        $function_name = 'compliance_safety_report_add';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
@@ -104,8 +104,8 @@ class Compliance_safety extends Admin_Controller
 
     public function reportEdit(int $reportTypeId)
     {
-        $redirect_url       = 'manage_admin';
-        $function_name      = 'compliance_safety_report_edit';
+        $redirect_url = 'manage_admin';
+        $function_name = 'compliance_safety_report_edit';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
@@ -170,8 +170,8 @@ class Compliance_safety extends Admin_Controller
 
     public function incidentTypeAdd()
     {
-        $redirect_url       = 'manage_admin';
-        $function_name      = 'compliance_safety_incident_add';
+        $redirect_url = 'manage_admin';
+        $function_name = 'compliance_safety_incident_add';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
@@ -214,8 +214,8 @@ class Compliance_safety extends Admin_Controller
 
     public function incidentTypeEdit(int $id)
     {
-        $redirect_url       = 'manage_admin';
-        $function_name      = 'compliance_safety_incident_edit';
+        $redirect_url = 'manage_admin';
+        $function_name = 'compliance_safety_incident_edit';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
@@ -251,7 +251,7 @@ class Compliance_safety extends Admin_Controller
                     "priority" => $post["priority"],
                     "updated_at" => $todayDateTime,
                 ]);
-            $this->setIncidentQuestions();
+            // $this->setIncidentQuestions();
 
             //
             $this->session->set_flashdata('message', '<strong>Success</strong> Report Incident Type updated.');
@@ -356,7 +356,7 @@ class Compliance_safety extends Admin_Controller
         return SendResponse(
             200,
             [
-                "message" => "You have successfully " . ($post["status"] === "off" ?  "Deactivated" : "Activated") . " the " . ($post["type"] === "report" ? "Report Type" : "Report Incident Type") . "."
+                "message" => "You have successfully " . ($post["status"] === "off" ? "Deactivated" : "Activated") . " the " . ($post["type"] === "report" ? "Report Type" : "Report Incident Type") . "."
             ]
         );
     }
@@ -428,7 +428,7 @@ class Compliance_safety extends Admin_Controller
             ]
         );
     }
-    
+
     public function getIncidentTypeItem(int $id)
     {
         // update
@@ -471,7 +471,7 @@ class Compliance_safety extends Admin_Controller
             ]
         );
     }
-    
+
     public function enable_disable_question($id)
     {
         $data = array('status' => $this->input->get('status'));
@@ -479,7 +479,7 @@ class Compliance_safety extends Admin_Controller
         print_r(json_encode(array('message' => 'updated')));
     }
 
-    private function  setIncidentQuestions()
+    private function setIncidentQuestions()
     {
         // get the questions of main
         $questions = $this
@@ -506,12 +506,12 @@ class Compliance_safety extends Admin_Controller
         // get all the incident ids
         $incidents =
             $this
-            ->db
-            ->select([
-                "id"
-            ])
-            ->get("compliance_incident_types")
-            ->result_array();
+                ->db
+                ->select([
+                    "id"
+                ])
+                ->get("compliance_incident_types")
+                ->result_array();
         //
         if (!$incidents) {
             return false;

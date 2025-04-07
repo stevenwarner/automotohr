@@ -1478,17 +1478,7 @@ class Compliance_report_model extends CI_Model
 		$insert = array();
 
 		foreach ($post as $key => $val) {
-			if (
-				in_array($key, [
-					"report_title",
-					"report_date",
-					"report_completion_date",
-					"report_status",
-					"report_employees",
-					"external_employees_names",
-					"external_employees_emails",
-				])
-			) {
+			if (!$this->isQuestionField($key)) {
 				continue;
 			}
 			$exp = explode('_', $key);
@@ -2045,23 +2035,15 @@ class Compliance_report_model extends CI_Model
 			$insert = array();
 
 			foreach ($post as $key => $val) {
-				if (
-					in_array($key, [
-						"report_completion_date",
-						"report_status",
-						"document_title",
-						"report_note_type",
-						"report_note",
-						"report_employees",
-						"external_employees_names",
-						"external_employees_emails",
-					])
-				) {
+				if (!$this->isQuestionField($key)) {
 					continue;
 				}
 				$exp = explode('_', $key);
 				if (sizeof($exp) > 1 && !empty($val)) {
 					$insert['question'] = $this->getSpecificQuestion($exp[1]);
+					if (empty($insert['question'])) {
+						continue;
+					}
 
 					if ($exp[0] == 'multi-list') {
 						$val = serialize($val);
@@ -2531,6 +2513,7 @@ class Compliance_report_model extends CI_Model
 	{
 		$this->db->select('compliance_incident_types_questions.*', 'compliance_incident_types.compliance_incident_type_name');
 		$this->db->where('compliance_incident_types_id', $id);
+		$this->db->where('compliance_incident_types_questions.status', 1);
 		$this->db->join('compliance_incident_types', 'compliance_incident_types_questions.compliance_incident_types_id = compliance_incident_types.id', 'left');
 		$questions = $this->db->get('compliance_incident_types_questions')->result_array();
 		return $questions;
@@ -2540,6 +2523,7 @@ class Compliance_report_model extends CI_Model
 	{
 		$this->db->select('compliance_report_types_questions.*');
 		$this->db->where('compliance_report_types_id', $id);
+		$this->db->where('compliance_report_types_questions.status', 1);
 		$questions = $this->db->get('compliance_report_types_questions')->result_array();
 		return $questions;
 	}
@@ -4522,5 +4506,26 @@ class Compliance_report_model extends CI_Model
 		//
 		$this->db->where('sid', $rowId);
 		$this->db->update($table, ['manual_email' => $emailId]);
+	}
+
+	/**
+	 * Check if the field is a question field
+	 *
+	 * @param string $field
+	 * @return bool
+	 */
+	private function isQuestionField($field): bool
+	{
+		if (
+			preg_match("/^text_[0-9]/", $field)
+			|| preg_match("/^radio_[0-9]/", $field)
+			|| preg_match("/^list_[0-9]/", $field)
+			|| preg_match("/^multi-list_[0-9]/", $field)
+			|| preg_match("/^date_[0-9]/", $field)
+			|| preg_match("/^time_[0-9]/", $field)
+		) {
+			return true;
+		}
+		return false;
 	}
 }
