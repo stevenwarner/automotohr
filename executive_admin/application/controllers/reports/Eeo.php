@@ -22,6 +22,9 @@ class Eeo extends CI_Controller
             $company_id = $company_sid;
             $data['companyName'] = getCompanyNameBySid($company_sid);
 
+            $data['companyLogo'] = getCompanyLogoBySid($company_sid);
+
+
             $keyword = urldecode($keyword);
 
             $display_start_day = '';

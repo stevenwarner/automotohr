@@ -14,8 +14,20 @@
                         </a>
                     </div>
 
-
                     <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                            <div style="text-align: center;">
+                                <span>
+                                    <img src="<?php echo AWS_S3_BUCKET_URL . $companyLogo; ?>" style="width: 75px; height: 75px;" class="img-rounded" alt="Company logo" />
+                                    <br />
+
+                                    <?php echo $companyName; ?>
+                                    <br><br>
+                                </span>
+                            </div>
+                        </div>
+
                         <div class="applicant-reg-date">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="row">
@@ -36,7 +48,7 @@
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
-                                                <input type="hidden" name="companyid" value="<?php echo $company_sid;?>" id="companyid">                                                
+                                                <input type="hidden" name="companyid" value="<?php echo $company_sid; ?>" id="companyid">
                                             </div>
                                             <hr>
                                         </div>
@@ -498,7 +510,7 @@
     function fclearDateFilters() {
 
         var companySid = '<?php echo $company_sid; ?>';
-        var url = '<?php echo base_url(); ?>' + 'eeo/'+companySid+'/all/all';
+        var url = '<?php echo base_url(); ?>' + 'eeo/' + companySid + '/all/all';
         window.location = url;
     }
 
