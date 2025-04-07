@@ -136,6 +136,12 @@
                                     <td>Applicant Origination Statistics</td>
                                     <td class="text-center"><a class="btn btn-success btn-block btn-block" href="<?php echo base_url() . 'reports/applicant_origination_statistics_report/' . $company_sid; ?>">View</a></td>
                                 </tr>
+
+                                <tr>
+                                    <td>EEO Report</td>
+                                    <td class="text-center"><a class="btn btn-success btn-block" href="<?php echo base_url() . 'eeo/' . $company_sid; ?>">View</a></td>
+                                </tr>
+
                                 <!-- *** -->
                             </tbody>
                         </table>

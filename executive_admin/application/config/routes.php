@@ -150,3 +150,13 @@ $route['lms_subordinate_report/(:num)/(:any)/(:any)/(:any)/(:any)'] = 'reports/L
 
 $route["reports/all"]["get"] = "Reporting/all";
 $route["reports/export_employees"]["get"] = "Reporting/exportEmployees";
+
+
+///
+$route['eeo/export_excel'] = 'reports/eeo/export_excel';
+$route['eeo/(:any)'] = 'reports/eeo/index/$1';
+$route['eeo/(:any)/(:any)/(:any)'] = 'reports/eeo/index/$1/$2/$3';
+$route['eeo/(:any)/(:any)/(:any)/(:any)'] = 'reports/eeo/index/$1/$2/$3/$4';
+$route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'reports/eeo/index/$1/$2/$3/$4/$5';
+$route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'reports/eeo/index/$1/$2/$3/$4/$5/$6';
+$route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'reports/eeo/index/$1/$2/$3/$4/$5/$6/$7';

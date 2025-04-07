@@ -2588,3 +2588,28 @@ if (!function_exists('getEmployeeCourseStatus')) {
         } 
     }
 }
+
+
+//
+if (!function_exists('getUserFields')) {
+    function getUserFields()
+    {
+        $fields  = 'users.sid as userId,';
+        $fields .= 'users.first_name,';
+        $fields .= 'users.last_name,';
+        $fields .= 'users.email,';
+        $fields .= 'users.access_level,';
+        $fields .= 'users.access_level_plus,';
+        $fields .= 'users.pay_plan_flag,';
+        $fields .= 'users.is_executive_admin,';
+        $fields .= 'users.timezone,';
+        $fields .= 'users.job_title,';
+        $fields .= 'users.profile_picture,';
+        $fields .= 'users.user_shift_hours,';
+        $fields .= 'users.user_shift_minutes,';
+        $fields .= 'users.profile_picture as image,';
+        $fields .= 'users.employee_number,';
+        //
+        return $fields;
+    }
+}

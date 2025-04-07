@@ -15,7 +15,6 @@
                 </div>
                 <div class="hr-search-main" <?php echo isset($flag) && $flag == true ? 'style="display:block"' : ''; ?>>
                     <!-- search form -->
-
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                 <div class="field-row">
@@ -46,7 +45,6 @@
                                             <option value="">No jobs found</option>
                                         <?php } ?>
                                     </select>
-
                                 </div>
                             </div>
                             <!-- jobs div -->
@@ -121,14 +119,10 @@
                                            value="<?php echo set_value('end_date_applied', $end_date); ?>"/>
                                 </div>
                             </div>
-
-
-
                             <div class="field-row field-row-autoheight col-lg-12 text-right">
                                 <a id="btn_apply_filters" class="btn btn-success" href="#" >Apply Filters</a>
                                 <a id="btn_reset_filters" class="btn btn-success" href="<?php echo base_url('reports/applicants_report/' . $company_sid . '/all/all/all/all/all/all'); ?>">Reset Filters</a>
                             </div>
-
                         </div>
 
                     <!-- search form -->
