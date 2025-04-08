@@ -42,6 +42,7 @@ class I9 extends Public_Controller
         $data['user_type'] = 'employee';
         $pre_form = [];
         $pre_form['sid'] = $data['form']['sid'];
+
         $data['pre_form'] = $pre_form;
         $data['documents_assignment_sid'] = null;
         $data['prepare_signature'] = 'get_prepare_signature';
@@ -59,10 +60,13 @@ class I9 extends Public_Controller
             'v1/forms/i9/main'
         ];
         //
-        $this->load
-            ->view('main/header', $data)
-            ->view('v1/forms/i9/my')
-            ->view('main/footer');
+        $this->load->view('main/header', $data);
+        if (!empty($data['form']["version"]) && $data['form']["version"] == "2025") {
+            $this->load->view('v1/forms/i9/2025/my');
+        } else {
+            $this->load->view('v1/forms/i9/my');
+        }
+        $this->load->view('main/footer');
     }
 
     /**
@@ -107,10 +111,19 @@ class I9 extends Public_Controller
         $data['pre_form'] = $data['form'];
         $data['section_access'] = "complete_pdf";
         //
+        echo $data['section_access']."<br>";
         if ($action == "print") {
-            $this->load->view('2022/federal_fillable/form_i9_print_new', $data);
+            if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2025") {
+                $this->load->view('v1/forms/i9/2025/form_i9_print', $data);
+            } else {
+                $this->load->view('2022/federal_fillable/form_i9_print_new', $data);
+            }
         } else {
-            $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
+            if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2025") {
+                $this->load->view('v1/forms/i9/2025/form_i9_download', $data);
+            } else {
+                $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
+            }
         }
     }
 

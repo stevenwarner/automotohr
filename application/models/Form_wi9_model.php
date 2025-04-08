@@ -294,6 +294,8 @@ class Form_wi9_model extends CI_Model
             $columns[] = 'applicant_i9form.section1_penalty_of_perjury';
             $columns[] = 'applicant_i9form.section1_preparer_or_translator';
             $columns[] = 'applicant_i9form.section1_preparer_json';
+            $columns[] = 'applicant_i9form.version';
+            $columns[] = 'applicant_i9form.sent_date';
         }
         //
         $record =

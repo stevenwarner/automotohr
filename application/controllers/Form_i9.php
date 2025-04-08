@@ -235,7 +235,11 @@ class Form_i9 extends Public_Controller
                 if (!empty($previous_form['s3_filename']) && $previous_form['s3_filename'] != NULL) {
                     $this->load->view('form_i9/index_uploaded');
                 } else {
-                    $this->load->view('form_i9/index_new');
+                    if (!empty($data['form']["version"]) && $data['form']["version"] == "2025") {
+                        $this->load->view('v1/forms/i9/2025/index');
+                    } else {
+                        $this->load->view('form_i9/index_new');
+                    }
                 }
                 //
                 $this->load->view('main/footer');
@@ -1078,6 +1082,8 @@ class Form_i9 extends Public_Controller
             //
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
                 $this->load->view('2022/federal_fillable/form_i9_preview_new', $data);
+            } else if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2025") {
+                $this->load->view('v1/forms/i9/2025/form_i9_preview', $data);
             } else {
                 $this->load->view('2022/federal_fillable/form_i9_preview', $data);
             }
@@ -1100,6 +1106,8 @@ class Form_i9 extends Public_Controller
             //
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
                 $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
+            } else if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2025") {
+                $this->load->view('v1/forms/i9/2025/form_i9_download', $data);
             } else {
                 $this->load->view('2022/federal_fillable/form_i9_download', $data);
             }
@@ -1122,6 +1130,8 @@ class Form_i9 extends Public_Controller
             //
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
                 $this->load->view('2022/federal_fillable/form_i9_print_new', $data);
+            } else if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2025") {
+                $this->load->view('v1/forms/i9/2025/form_i9_print', $data);
             } else {
                 $this->load->view('2022/federal_fillable/form_i9_print', $data);
             }
@@ -1144,6 +1154,8 @@ class Form_i9 extends Public_Controller
             //
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
                 $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
+            } else if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2025") {
+                $this->load->view('v1/forms/i9/2025/form_i9_download', $data);
             } else {
                 $this->load->view('2022/federal_fillable/form_i9_download', $data);
             }
