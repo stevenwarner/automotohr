@@ -111,7 +111,6 @@ class I9 extends Public_Controller
         $data['pre_form'] = $data['form'];
         $data['section_access'] = "complete_pdf";
         //
-        echo $data['section_access']."<br>";
         if ($action == "print") {
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2025") {
                 $this->load->view('v1/forms/i9/2025/form_i9_print', $data);

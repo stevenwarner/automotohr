@@ -1083,6 +1083,7 @@ class Form_i9 extends Public_Controller
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
                 $this->load->view('2022/federal_fillable/form_i9_preview_new', $data);
             } else if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2025") {
+                $data['section_access'] = "complete_pdf";
                 $this->load->view('v1/forms/i9/2025/form_i9_preview', $data);
             } else {
                 $this->load->view('2022/federal_fillable/form_i9_preview', $data);
@@ -1107,6 +1108,7 @@ class Form_i9 extends Public_Controller
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
                 $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
             } else if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2025") {
+                $data['section_access'] = "complete_pdf";
                 $this->load->view('v1/forms/i9/2025/form_i9_download', $data);
             } else {
                 $this->load->view('2022/federal_fillable/form_i9_download', $data);
@@ -1131,6 +1133,7 @@ class Form_i9 extends Public_Controller
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
                 $this->load->view('2022/federal_fillable/form_i9_print_new', $data);
             } else if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2025") {
+                $data['section_access'] = "complete_pdf";
                 $this->load->view('v1/forms/i9/2025/form_i9_print', $data);
             } else {
                 $this->load->view('2022/federal_fillable/form_i9_print', $data);
@@ -1155,6 +1158,7 @@ class Form_i9 extends Public_Controller
             if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2023") {
                 $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
             } else if (!empty($data["pre_form"]["version"]) && $data["pre_form"]["version"] == "2025") {
+                $data['section_access'] = "complete_pdf";
                 $this->load->view('v1/forms/i9/2025/form_i9_download', $data);
             } else {
                 $this->load->view('2022/federal_fillable/form_i9_download', $data);
