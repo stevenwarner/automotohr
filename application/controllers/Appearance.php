@@ -1587,7 +1587,7 @@ class Appearance extends Public_Controller
         $dataToSave = array(
             'image' => $image,
             'video' => $video,
-            'title' => $title,
+            'title' => str_replace(" ", " ",html_entity_decode($title)),
             'tag_line' => $tag_line,
             'content' => $content, //htmlentities($content),
             'status' => $status,
