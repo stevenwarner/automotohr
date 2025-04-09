@@ -118,7 +118,7 @@ class Eeo extends Public_Controller
                 $eeo_candidates = $this->eeo_model->getEEOCEmployeesByFilter($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
                 $total_records = count($eeo_candidates);
 
-               // _e($eeo_candidates,true,true);
+                // _e($eeo_candidates,true,true);
 
                 foreach ($eeo_candidates as $employee_row) {
 
@@ -310,7 +310,6 @@ class Eeo extends Public_Controller
                                     $notdefined_cout_nogroup++;
                                 }
                             }
-
                         } else {
                             if ($eeo_detail['gender'] == 'Male') {
                                 $male_cout++;
@@ -372,7 +371,7 @@ class Eeo extends Public_Controller
                             }
                         }
                     }
-                }    
+                }
 
                 $data['totalrecords'] = $total_records;
                 $data['recordsfor'] = 'Applicants';
@@ -494,6 +493,9 @@ class Eeo extends Public_Controller
             check_access_permissions($security_details, 'my_settings', 'eeo'); // Param2: Redirect URL, Param3: Function Name
             $company_id = $data['session']['company_detail']['sid'];
 
+            $companyName = $data['session']['company_detail']['CompanyName'];
+
+
             $start_date = $_POST['startdate'];
             $end_date = $_POST['enddate'];
             $employee_status = $_POST['employee_status'];
@@ -538,7 +540,7 @@ class Eeo extends Public_Controller
                 $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, null, 0, false);
 
                 if (!empty($eeo_candidates)) {
-                   foreach ($eeo_candidates as $key => $eeo_detail) {
+                    foreach ($eeo_candidates as $key => $eeo_detail) {
                         if (empty($eeo_detail["gender"])) {
                             $eeoc_form = $this->eeo_model->get_user_eeo_form_info($eeo_detail["applicant_sid"], "applicant");
                             //
@@ -548,21 +550,22 @@ class Eeo extends Public_Controller
                             $eeo_candidates[$key]["veteran"] = $eeoc_form['veteran'];
                             $eeo_candidates[$key]["disability"] = $eeoc_form['disability'];
                             $eeo_candidates[$key]["gender"] = $eeoc_form['gender'];
-
                         }
-                    } 
+                    }
                 }
-                
             }
 
 
             header('Content-Type: text/csv; charset=utf-8');
-            header('Content-Disposition: attachment; filename=eeoreport_' . $opt_type . '-' . date('Y-m-d-H-i-s') . '.csv');
+            header('Content-Disposition: attachment; filename=EEO Report for ' . $companyName . ' ' . date('Y-m-d-H-i-s') . '.csv');
+
 
             $output = fopen('php://output', 'w');
 
-            
-            fputcsv($output, array('Name','Job Title', 'Opt Out', 'Date', 'IP Address', 'US Citizen', 'Visa Status', 'Group Status', 'Veteran', 'Disability', 'Gender', 'Applicant Type', 'Applicant Source'));
+            fputcsv($output, array('', '', 'EEO Report for ' . $companyName . ' ' . date('Y-m-d-H-i-s')));
+            fputcsv($output, array(''));
+
+            fputcsv($output, array('Name', 'Job Title', 'Opt Status', 'Date', 'IP Address', 'US Citizen', 'Visa Status', 'Group Status', 'Veteran', 'Disability', 'Gender', 'Applicant Type', 'Applicant Source'));
 
             if (sizeof($eeo_candidates) > 0) {
                 foreach ($eeo_candidates as $candidate) {
@@ -570,7 +573,14 @@ class Eeo extends Public_Controller
                     $input['name'] = ucwords($candidate['first_name']) . ' ' . ucwords($candidate['last_name']);
                     $input['job_title'] = $candidate['job_title'];
 
-                    $input['opt_out'] = ucwords($opt_type);
+                    //
+                    $opt_status = $candidate['eeo_form'];
+                    if ($opt_status == null) {
+                        $opt_status = 'Not Available';
+                    }
+
+                    $input['opt_out'] = $opt_status;
+
                     // $input['date_applied'] = date_with_time($candidate['date_applied']);
                     $input['date_applied'] = reset_datetime(array('datetime' => $candidate['date_applied'], '_this' => $this, 'from_format' => 'Y-m-d H:i:s'));
                     $input['ip_address'] = $candidate['ip_address'];
@@ -767,9 +777,9 @@ class Eeo extends Public_Controller
                         $us_citizen = $this->input->post('us_citizen');
                         $visa_status = $this->input->post('visa_status');
                         $group_status = $this->input->post('group_status');
-                        $veteran = $this->input->post('veteran')?$this->input->post('veteran'):'';
-                        $disability = $this->input->post('disability')?$this->input->post('disability'):'';
-                        $gender = $this->input->post('gender')?$this->input->post('gender'):'';
+                        $veteran = $this->input->post('veteran') ? $this->input->post('veteran') : '';
+                        $disability = $this->input->post('disability') ? $this->input->post('disability') : '';
+                        $gender = $this->input->post('gender') ? $this->input->post('gender') : '';
 
                         $data_to_update = array();
                         $data_to_update['eeo_form'] = $eeoc_form_status;
@@ -1011,7 +1021,7 @@ class Eeo extends Public_Controller
             $html .= '    </td>';
             $html .= '    <td class="col-lg-4 text-right" colspan="4">';
             if ($track['user_type'] === 'applicant') {
-                $html .=        $userDetails['first_name'].' '.$userDetails['last_name'].' (Applicant)';
+                $html .=        $userDetails['first_name'] . ' ' . $userDetails['last_name'] . ' (Applicant)';
             } else {
                 $html .=        remakeEmployeeName($userDetails);
             }

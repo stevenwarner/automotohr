@@ -301,16 +301,18 @@
                                                         <br />
                                                         <small>Job Title : <?php echo isset($item["job_title"]) && !empty($item["job_title"]) ? $item["job_title"] : 'Not Available'; ?></small>
                                                     </td>
+
                                                     <td>
                                                         <?php $opt_status = $item['eeo_form']; ?>
                                                         <?php if ($opt_status == 'Yes') { ?>
-                                                            <span class="text-success">Opted In</span>
+                                                            <span class="text-success">Yes</span>
                                                         <?php } else if ($opt_status == 'No') { ?>
-                                                            <span class="text-danger">Opted Out</span>
+                                                            <span class="text-danger">No</span>
                                                         <?php } else if ($opt_status == null) { ?>
                                                             <span class="">Not Available</span>
                                                         <?php } ?>
                                                     </td>
+
                                                     <td>
                                                         <?php if ($item["is_expired"] == 1) { ?>
                                                             <span class="text-success">COMPLETED</span>

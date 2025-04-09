@@ -122,8 +122,6 @@ class Eeo extends CI_Controller
                 $eeo_candidates = $this->eeo_model->getEEOCEmployeesByFilter($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
                 $total_records = count($eeo_candidates);
 
-                // _e($eeo_candidates,true,true);
-
                 foreach ($eeo_candidates as $employee_row) {
 
                     if ($employee_row['gender'] == 'Male') {
@@ -490,11 +488,13 @@ class Eeo extends CI_Controller
     {
         if ($this->session->userdata('executive_loggedin')) {
 
-   
+
             $company_id = $_POST["companyid"];
             $start_date = $_POST['startdate'];
             $end_date = $_POST['enddate'];
             $employee_status = $_POST['employee_status'];
+
+            $companyName = getCompanyNameBySid($company_id);
 
             if ($_POST['applicantoption'] == 'employee') {
                 $opt_type = $_POST['opt_type1'];
@@ -553,12 +553,14 @@ class Eeo extends CI_Controller
 
 
             header('Content-Type: text/csv; charset=utf-8');
-            header('Content-Disposition: attachment; filename=eeoreport_' . $opt_type . '-' . date('Y-m-d-H-i-s') . '.csv');
-
+            header('Content-Disposition: attachment; filename=EEO Report for ' . $companyName . ' ' . date('Y-m-d-H-i-s') . '.csv');
             $output = fopen('php://output', 'w');
 
+            fputcsv($output, array('', '', 'EEO Report for ' . $companyName . ' ' . date('Y-m-d-H-i-s')));
+            fputcsv($output, array(''));
+            fputcsv($output, array('Name', 'Job Title', 'Opt Status', 'Date', 'IP Address', 'US Citizen', 'Visa Status', 'Group Status', 'Veteran', 'Disability', 'Gender', 'Applicant Type', 'Applicant Source'));
 
-            fputcsv($output, array('Name', 'Job Title', 'Opt Out', 'Date', 'IP Address', 'US Citizen', 'Visa Status', 'Group Status', 'Veteran', 'Disability', 'Gender', 'Applicant Type', 'Applicant Source'));
+
 
             if (sizeof($eeo_candidates) > 0) {
                 foreach ($eeo_candidates as $candidate) {
@@ -566,7 +568,13 @@ class Eeo extends CI_Controller
                     $input['name'] = ucwords($candidate['first_name']) . ' ' . ucwords($candidate['last_name']);
                     $input['job_title'] = $candidate['job_title'];
 
-                    $input['opt_out'] = ucwords($opt_type);
+                    //
+                    $opt_status = $candidate['eeo_form'];
+                    if ($opt_status == null) {
+                        $opt_status = 'Not Available';
+                    }
+                    $input['opt_out'] = $opt_status;
+
                     // $input['date_applied'] = date_with_time($candidate['date_applied']);
                     $input['date_applied'] = reset_datetime(array('datetime' => $candidate['date_applied'], '_this' => $this, 'from_format' => 'Y-m-d H:i:s'));
                     $input['ip_address'] = $candidate['ip_address'];
