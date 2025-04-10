@@ -636,7 +636,7 @@
                                 <label>Attach Video <span class="required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_video"></span>
-                                    <input type="file" name="attach_video" id="attach_video" class="jsCheckAttachVideo" onchange="check_attach_video('attach_video')">
+                                    <input type="file" name="attach_video" id="attach_video" class="jsCheckAttachVideo">
                                     <a href="javascript:;">Choose Video</a>
                                 </div>
                             </div>

@@ -583,7 +583,7 @@
                                                     <td class="text-center"><?php echo $media_title; ?></td>
                                                     <td class="text-center"><?php echo $media_category; ?></td>
                                                     <td class="text-center">
-                                                        <a href="javascript:;" class="btn btn-block btn-info" onclick="view_library_item(this);" item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
+                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem"  item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
                                                     </td>
                                                     <td class="text-center">
                                                         <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
@@ -783,7 +783,7 @@
                                                     <?php echo $item_category; ?>
                                                 </td>
                                                 <td class="text-center">
-                                                    <a href="javascript:;" class="btn btn-block btn-info" onclick="view_library_item(this);" item-category="document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $item_url; ?>">View Document</a>
+                                                    <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem"  item-category="document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $item_url; ?>">View Document</a>
                                                 </td>
                                                 <td class="text-center">
                                                     <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
@@ -817,7 +817,7 @@
                                                 <td class="text-center"><?php echo $media_title; ?></td>
                                                 <td class="text-center"><?php echo $media_category; ?></td>
                                                 <td class="text-center">
-                                                    <a href="javascript:;" class="btn btn-block btn-info" onclick="view_library_item(this);" item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
+                                                    <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem"  item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
                                                 </td>
                                                 <td class="text-center">
                                                     <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">

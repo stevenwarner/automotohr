@@ -583,6 +583,7 @@ $(function Overview() {
             return false;
         }
     }
+    
     $(document).on("onchange", ".jsCheckAttachAudio", function (event) {
         event.preventDefault();
         check_attach_audio('attach_audio');

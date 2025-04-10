@@ -884,6 +884,11 @@ $(function Overview() {
         }
     });
 
+    $(".jsViewAttachedItem").on('click', function() {
+        //
+        view_attach_item($(this));
+    });
+
     function view_attach_item(source) {
         var item_category = $(source).attr('item-category');
         var item_title = $(source).attr('item-title');
@@ -971,6 +976,11 @@ $(function Overview() {
             $("#image-tag").remove();
             $('#document-container').hide();
         }
+    });
+
+
+    $(".jsSendEmail").on('click', function() {
+        send_email($(this));
     });
 
     function send_email(source) {
