@@ -54,14 +54,14 @@
                                                                         <?php
                                                                         
                                                                             $email_type = $incident_email['email_type'];
-                                                                            $read_function = '';
+                                                                            $readClass = '';
                                                                             
-                                                                            if ($incident_email['is_read'] == 0) {
-                                                                                $read_function = 'onclick="mark_read('.$incident_email['sid'].')"';
+                                                                            if ($incident_email['is_read'] == 0 && $email_type == 'Received') {
+                                                                                $readClass = 'jsMarkAsRead';
                                                                             }
                                                                         ?>
                                                                         <a class="collapsed" data-toggle="collapse" aria-expanded="false" data-parent="#accordion" href="#email_<?php echo $key.'_'.$email['userId']; ?>">
-                                                                            <span class="glyphicon glyphicon-eye-open  js-main-gly" <?php echo $read_function; ?>></span>
+                                                                            <span class="glyphicon glyphicon-eye-open js-main-gly <?= $readClass ?>" data-email_id="<?php echo $incident_email['sid']; ?>"></span>
                                                                             <?php echo $incident_email['subject'].' ( '.my_date_format($incident_email['send_date']).' ) ( '.$email_type.' )'; ?>
                                                                             <?php if ($incident_email['is_read'] == 0 && $email_type == 'Received') { ?>
                                                                                 <img src="<?php echo base_url() ?>assets/images/new_msg.gif" id="email_read_<?php echo $incident_email['sid']; ?>">
@@ -88,19 +88,19 @@
                                                                                                         $receiver_email = $incident_email['manual_email'];
                                                                                                         $receiver_subject = $incident_email["subject"];
                                                                                                     ?>
-                                                                                                    <a href="javascript:;" class="pull-right print-incident modify-comment-btn" data-title="<?php echo 'resend'; ?>" data-type="manual" data-sid="<?php echo $receiver_sid; ?>" data-email="<?php echo $receiver_email; ?>" data-subject="<?php echo $receiver_subject; ?>" onclick="send_email(this);">
+                                                                                                    <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'resend'; ?>" data-type="manual" data-sid="<?php echo $receiver_sid; ?>" data-email="<?php echo $receiver_email; ?>" data-subject="<?php echo $receiver_subject; ?>" onclick="send_email(this);">
                                                                                                         <i class="fa fa-retweet"></i> 
                                                                                                         Resend Email
                                                                                                     </a>
                                                                                                 <?php } else { ?>
 
                                                                                                     <?php if ($incident_email['receiver_sid'] != 0) {  ?>
-                                                                                                        <a href="javascript:;" class="pull-right print-incident modify-comment-btn" data-title="<?php echo 'reply'; ?>" data-type="system" data-sid="<?php echo $incident_email['receiver_sid']; ?>" data-subject="<?php echo $incident_email["subject"]; ?>" onclick="send_email(this);">
+                                                                                                        <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'reply'; ?>" data-type="system" data-sid="<?php echo $incident_email['receiver_sid']; ?>" data-subject="<?php echo $incident_email["subject"]; ?>" onclick="send_email(this);">
                                                                                                             <i class="fa fa-reply"></i> 
                                                                                                             Reply Email
                                                                                                         </a>
                                                                                                     <?php } else { ?>
-                                                                                                        <a href="javascript:;" class="pull-right print-incident modify-comment-btn" data-title="<?php echo 'resend'; ?>" data-type="system" data-sid="<?php echo $incident_email['receiver_sid']; ?>" data-subject="<?php echo $incident_email["subject"]; ?>" onclick="send_email(this);">
+                                                                                                        <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'resend'; ?>" data-type="system" data-sid="<?php echo $incident_email['receiver_sid']; ?>" data-subject="<?php echo $incident_email["subject"]; ?>" onclick="send_email(this);">
                                                                                                             <i class="fa fa-retweet"></i>
                                                                                                             Resend Email
                                                                                                         </a>
@@ -119,7 +119,7 @@
                                                                                                         $sender_email = $sender_info[0]['email'];
                                                                                                     }
                                                                                                 ?>
-                                                                                                <a href="javascript:;" class="pull-right print-incident modify-comment-btn" data-title="<?php echo 'reply'; ?>" data-type="system" data-sid="<?php echo $sender_sid; ?>" data-email="<?php echo $sender_email; ?>" data-subject="<?php echo $sender_subject; ?>" onclick="send_email(this);">
+                                                                                                <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'reply'; ?>" data-type="system" data-sid="<?php echo $sender_sid; ?>" data-email="<?php echo $sender_email; ?>" data-subject="<?php echo $sender_subject; ?>" onclick="send_email(this);">
                                                                                                     <i class="fa fa-reply"></i> 
                                                                                                     Reply Email
                                                                                                 </a>
@@ -264,14 +264,14 @@
                                                                                                                             <div class="row">
                                                                                                                                 <?php if ($attach_item_type == 'Document') { ?>
                                                                                                                                     <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
-                                                                                                                                        <a href="javascript:;" class="btn btn-block btn-info" onclick="view_attach_item(this);" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
+                                                                                                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewAttachedItem" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
                                                                                                                                     </div>
                                                                                                                                     <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
                                                                                                                                         <a target="_blank" href="<?php echo $download_url; ?>" class="btn btn-block btn-info"><i class="fa fa-download"></i></a>
                                                                                                                                     </div>
                                                                                                                                 <?php } else { ?>
                                                                                                                                     <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
-                                                                                                                                        <a href="javascript:;" class="btn btn-block btn-info" onclick="view_attach_item(this);" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
+                                                                                                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewAttachedItem" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
                                                                                                                                     </div>
                                                                                                                                     <?php if ($item_source == 'upload_video' || $item_source == 'upload_audio') { ?>
                                                                                                                                         <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">

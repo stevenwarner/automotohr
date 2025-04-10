@@ -1469,8 +1469,20 @@ class Compliance_report_model extends CI_Model
 		//
 		$this->db->insert("csp_reports", $reportData);
 		//
-		$reportId = $this->db->insert_id();
-
+		$reportId =  $this->db->insert_id();
+		//
+		$jsonLogData = [
+			'action' => 'create',
+			'type' => 'report',
+			'title' =>  $post["report_title"],
+			'dateTime' => $todayDateTime,
+			'fields' => [
+				'report_date' => $post['report_date'],
+				'completion_date' => $post['report_completion_date'],
+				'status' => $post['report_status']
+			]
+		];
+		//
 		if (!$reportId) {
 			return false;
 		}
@@ -1519,6 +1531,8 @@ class Compliance_report_model extends CI_Model
 				->update("csp_reports", [
 					"allowed_internal_system_count" => count($reportEmployees),
 				]);
+			//
+			$jsonLogData['internalEmployees'] = $post['report_employees'];
 		}
 		// add external employees
 		if ($post["external_employees_names"]) {
@@ -1542,9 +1556,24 @@ class Compliance_report_model extends CI_Model
 				->update("csp_reports", [
 					"allowed_external_employees_count" => count($externalEmployees),
 				]);
+			//
+			$jsonLogData['externalEmployees'] = $post['external_employees_emails'];
 		}
-
+		//
 		// $this->sendEmailsForCSPReport($reportId, CSP_ASSIGNED_EMAIL_TEMPLATE_ID);
+		//
+		// Save log on create report
+		$this->saveComplianceSafetyReportLog(
+			[
+				'reportId' => $reportId,
+				'incidentId' => 0,
+				'type' => 'main',
+				'userType' => 'employee',
+				'userId' => $loggedInEmployeeId,
+				'jsonData' => $jsonLogData
+
+			]
+		);
 
 		return $reportId;
 	}
@@ -1995,6 +2024,32 @@ class Compliance_report_model extends CI_Model
 			->where("sid", $reportId)
 			->update("csp_reports", $reportData);
 		//
+		if ($loggedInEmployeeId != 0) {
+			// Save log on update report
+			$this->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => 0,
+					'type' => 'main',
+					'userType' => 'employee',
+					'userId' => $loggedInEmployeeId,
+					'jsonData' => [
+						'action' => 'update',
+						'type' => 'report',
+						'title' =>  $post["report_title"],
+						'dateTime' => $todayDateTime,
+						'fields' => [
+							'report_date' => $post['report_date'],
+							'completion_date' => $post['report_completion_date'],
+							'status' => $post['report_status']
+						],
+						'internalEmployees' => $post['report_employees'],
+                        'externalEmployees' => $post['external_employees_emails']
+					]
+				]
+			);
+		}
+		//
 		$this->updateCSPEmployees(
 			$post,
 			$reportId,
@@ -2051,12 +2106,19 @@ class Compliance_report_model extends CI_Model
 
 					$insert['answer'] = strip_tags($val);
 					$insert['csp_report_incident_sid'] = $incidentId;
-					$this->insertCSPIncidentAnswer($insert);
+					//
+					if ($insert['question']) {
+						$this->insertCSPIncidentAnswer($insert);
+					}
+					
 				} elseif (sizeof($exp) == 1 && !empty($val) && $exp[0] == 'signature') {
 					$insert['question'] = $exp[0];
 					$insert['answer'] = strip_tags($val);
 					$insert['csp_report_incident_sid'] = $incidentId;
-					$this->insertCSPIncidentAnswer($insert);
+					//
+					if ($insert['question']) {
+						$this->insertCSPIncidentAnswer($insert);
+					}
 				}
 			}
 		}
@@ -2101,9 +2163,33 @@ class Compliance_report_model extends CI_Model
 			0,
 			$loggedInEmployeeId
 		);
+		//
+		// $this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
+		//
+		if ($loggedInEmployeeId != 0) {
+			// Save log on update incident
+			$this->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'type' => 'incidents',
+					'userType' => 'employee',
+					'userId' => $loggedInEmployeeId,
+					'jsonData' => [
+						'action' => 'update',
+						'dateTime' => $todayDateTime,
+						'fields' => [
+							'completion_date' => $post['report_completion_date'],
+							'status' => $post['report_status']
+						],
+						'internalEmployees' => $post['report_employees'],
+                        'externalEmployees' => $post['external_employees_emails']
+					]
+				]
+			);
+		}
 
 		// $this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
-
 
 		return true;
 	}
@@ -2138,7 +2224,28 @@ class Compliance_report_model extends CI_Model
 		//
 		$this->db->insert("csp_reports_notes", $noteData);
 		//
-		return $this->db->insert_id();
+		$noteId = $this->db->insert_id();
+		//
+		if ($loggedInEmployeeId != 0 && $post["type"] == 'employee') {
+			// Save log on add note
+			$this->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'type' => 'notes',
+					'userType' => 'employee',
+					'userId' => $loggedInEmployeeId,
+					'jsonData' => [
+						'action' => 'create',
+						'type' => 'employee_note',
+						'noteId' => $noteId,
+						'dateTime' => $todayDateTime
+					]
+				]
+			);
+		}
+		//
+		return $noteId;
 	}
 
 	/**
@@ -2226,7 +2333,29 @@ class Compliance_report_model extends CI_Model
 		//
 		$this->db->insert("csp_reports_files", $fileData);
 		//
-		return $this->db->insert_id();
+		$fileId = $this->db->insert_id();
+		//
+		if ($loggedInEmployeeId != 0) {
+			// Save log on Add file to AWS
+			$this->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'type' => 'files',
+					'userType' => 'employee',
+					'userId' => $loggedInEmployeeId,
+					'jsonData' => [
+						'action' => 'create',
+						'type' => 'file',
+						'title' => $title,
+						'fileId' => $fileId,
+						'dateTime' => $todayDateTime
+					]
+				]
+			);
+		}
+		//
+		return $fileId; 
 	}
 
 	/**
@@ -2422,8 +2551,29 @@ class Compliance_report_model extends CI_Model
 		];
 		//
 		$this->db->insert("csp_reports_files", $fileData);
+		$fileId = $this->db->insert_id();
 		//
-		return $this->db->insert_id();
+		if ($loggedInEmployeeId != 0) {
+			// Save log on Add file Link
+			$this->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'type' => 'files',
+					'userType' => 'employee',
+					'userId' => $loggedInEmployeeId,
+					'jsonData' => [
+						'action' => 'create',
+						'type' => 'link',
+						'title' => $title,
+						'fileId' => $fileId,
+						'dateTime' => $todayDateTime
+					]
+				]
+			);
+		}
+		//
+		return $fileId;
 	}
 
 	/**
@@ -2493,6 +2643,24 @@ class Compliance_report_model extends CI_Model
 			->update("csp_reports");
 		// send public link
 		// $this->sendEmailsForCSPIncident($id);
+		//
+		// Save log on add incident
+		$this->saveComplianceSafetyReportLog(
+			[
+				'reportId' => $reportId,
+				'incidentId' => 0,
+				'type' => 'main',
+				'userType' => 'employee',
+				'userId' => $loggedInEmployeeId,
+				'jsonData' => [
+					'action' => 'create',
+					'type' => 'incident',
+					'incidentId' => $id,
+					'incidentTypeId' => $incidentId,
+					'dateTime' => $todayDateTime
+				]
+			]
+		);
 		//
 		return $id;
 	}
@@ -2988,6 +3156,7 @@ class Compliance_report_model extends CI_Model
 				->update("csp_reports", [
 					"allowed_internal_system_count" => count($reportEmployees),
 				]);
+			//
 			// delete
 			$this
 				->db
@@ -3050,6 +3219,7 @@ class Compliance_report_model extends CI_Model
 				->update("csp_reports", [
 					"allowed_external_employees_count" => count($reportEmployees),
 				]);
+			//
 			// delete
 			$this
 				->db
@@ -4190,6 +4360,31 @@ class Compliance_report_model extends CI_Model
 			'updated_at' => $todayDateTime,
 		];
 		//
+		if ($loggedInEmployeeId != 0) {
+			// Save log on update report
+			$this->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'type' => 'incidents',
+					'userType' => 'employee',
+					'userId' => $loggedInEmployeeId,
+					'jsonData' => [
+						'action' => 'update',
+						'type' => 'items',
+						'item_id' => $post["id"],
+						'dateTime' => $todayDateTime,
+						'fields' => [
+							'dynamicInput' => $post["dynamicInput"],
+							'dynamicCheckbox' => $post['dynamicCheckbox'],
+							'status' => $post['status'],
+							'level' => $post['level'],
+						],
+					]
+				]
+			);
+		}
+		//
 		return $this->db
 			->where('sid', $post["id"])
 			->update('csp_reports_incidents_items', $data);
@@ -4526,6 +4721,25 @@ class Compliance_report_model extends CI_Model
 		) {
 			return true;
 		}
+		//
 		return false;
+	}  
+
+	public function saveComplianceSafetyReportLog ($data) {
+		//
+		$dataToInsert = [];
+		//
+		$dataToInsert['csp_reports_sid'] = $data['reportId'];
+		$dataToInsert['csp_reports_incident_sid'] = $data['incidentId'];
+		if ($data['userType'] == 'employee') {
+			$dataToInsert['employee_sid'] = $data['userId'];
+		} else {
+			$dataToInsert['employee_email'] = $data['userId'];
+		}
+		$dataToInsert['module_type'] = $data['type'];
+		$dataToInsert['created_at'] = getSystemDate();
+		$dataToInsert['action_json'] = json_encode($data['jsonData']);
+		//
+		$this->db->insert('csp_logs', $dataToInsert);
 	}
 }

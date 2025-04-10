@@ -1,10 +1,8 @@
 $(function Overview() {
-	//
-    
-
+    //    
     var emailAttachmentIds = [];
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         var itemsArr = new Array();
         //
         $('#up_video_container input').prop('disabled', true);
@@ -14,17 +12,17 @@ $(function Overview() {
         $('#up_audio_container').hide();
 
         $('#view_0').trigger('click');
-        $('.js-main-coll').on('shown.bs.collapse', function(e) {
+        $('.js-main-coll').on('shown.bs.collapse', function (e) {
             e.stopPropagation();
             $(this).parent().find(".js-main-gly").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        }).on('hidden.bs.collapse', function() {
+        }).on('hidden.bs.collapse', function () {
             $(this).parent().find(".js-main-gly").removeClass("glyphicon-minus").addClass("glyphicon-plus");
         });
 
-        $('.js-child-coll').on('shown.bs.collapse', function(e) {
+        $('.js-child-coll').on('shown.bs.collapse', function (e) {
             e.stopPropagation();
             $(this).parent().find(".js-child-gly").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        }).on('hidden.bs.collapse', function() {
+        }).on('hidden.bs.collapse', function () {
             $(this).parent().find(".js-child-gly").removeClass("glyphicon-minus").addClass("glyphicon-plus");
         });
 
@@ -48,7 +46,7 @@ $(function Overview() {
     });
 
     // Email JS Start
-    $('.email_type').on('click', function() {
+    $('.email_type').on('click', function () {
         var selected = $(this).val();
 
         if (selected == 'system') {
@@ -60,7 +58,7 @@ $(function Overview() {
         }
     });
 
-    $("#send_normal_email").on('click', function() {
+    $("#send_normal_email").on('click', function () {
         var flag = 0;
         var message = '';
         var receivers;
@@ -106,7 +104,7 @@ $(function Overview() {
 
         if (attachment_size > 0 && flag == 0) {
             $('#attachment_loader').show();
-            $('#attachment_listing_data > .manual_upload_items').each(function(key) {
+            $('#attachment_listing_data > .manual_upload_items').each(function (key) {
                 var item_status = $(this).attr('item-status');
                 if (item_status == 'pending') {
                     var item_row_id = $(this).attr('row-id');
@@ -134,8 +132,8 @@ $(function Overview() {
                     }
 
                     form_data.append('file_type', item_source);
-                    form_data.append('report_sid',reportId);
-                    form_data.append('incident_sid',incidentId);
+                    form_data.append('report_sid', reportId);
+                    form_data.append('incident_sid', incidentId);
 
                     $.ajax({
                         url: save_attachment_url,
@@ -144,7 +142,7 @@ $(function Overview() {
                         processData: false,
                         type: 'post',
                         data: form_data,
-                        success: function(response) {
+                        success: function (response) {
 
                             var obj = jQuery.parseJSON(response);
                             var res_item_sid = obj['item_sid'];
@@ -161,12 +159,12 @@ $(function Overview() {
                             emailAttachmentIds.push(res_item_sid);
 
                             if (attachment_size == 0) {
-                                setTimeout(function() {
+                                setTimeout(function () {
                                     sendNormalEmail('normal');
                                 }, 1000);
                             }
                         },
-                        error: function() {
+                        error: function () {
 
                         }
                     });
@@ -182,7 +180,7 @@ $(function Overview() {
         }
     });
 
-    function sendNormalEmail (type) {
+    function sendNormalEmail(type) {
         $('#attachment_loader').show();
         //
         var send_type;
@@ -196,7 +194,7 @@ $(function Overview() {
         } else if (type == 'popup') {
             message_subject = $('#send_email_subject').val();
             message_body = CKEDITOR.instances['send_email_message'].getData();
-        }    
+        }
         //
         var form_data = new FormData();
         form_data.append('report_id', reportId);
@@ -230,7 +228,7 @@ $(function Overview() {
                 form_data.append('manual_email', manual_email);
                 form_data.append('send_type', "manual");
             }
-        } 
+        }
         //
         if (emailAttachmentIds.length) {
             form_data.append('attach_files', emailAttachmentIds);
@@ -243,26 +241,26 @@ $(function Overview() {
             processData: false,
             type: 'post',
             data: form_data,
-            success: function(response) {
+            success: function (response) {
                 $('#attachment_loader').hide();
                 alertify.alert('SUCCESS!', 'You have succesfully send an email.', () => {
                     window.location.reload();
                 });
             },
-            error: function() {
+            error: function () {
 
             }
         });
-        
+
     }
 
     $(document).on("click", ".jsMarkAsRead", function (event) {
-		//
-		event.preventDefault();
-		var emailId = $(this).data("id");
+        //
+        event.preventDefault();
+        var emailId = $(this).data("id");
         //
         mark_read(emailId);
-	});
+    });
 
     function mark_read(email_sid) {
         var update_url = baseURL + 'compliance_safety_reporting_public/update_email_read_flag';
@@ -278,7 +276,7 @@ $(function Overview() {
             processData: false,
             type: 'post',
             data: form_data,
-            success: function(response) {
+            success: function (response) {
                 var obj = jQuery.parseJSON(response);
                 var status_one = obj['status_one'];
                 var status_two = obj['status_two'];
@@ -294,13 +292,20 @@ $(function Overview() {
 
                 $('#email_read_' + email_sid).hide();
             },
-            error: function() {}
+            error: function () { }
         });
     }
 
-    $('.show_media_library').on('click', function() {
+    $('.show_media_library').on('click', function () {
         $("#library_item_title").html('Attachment Library');
         $("#attachment_library_modal").modal('show');
+    });
+
+    $(document).on("click", ".jsViewLibraryItem", function (event) {
+        //
+        event.preventDefault();
+        //       
+        view_library_item($(this));
     });
 
     function view_library_item(source) {
@@ -361,7 +366,7 @@ $(function Overview() {
         }
     }
 
-    $('.back_to_library').on('click', function() {
+    $('.back_to_library').on('click', function () {
         var item_type = $(this).attr('file-type');
 
         if (item_type == 'youtube') {
@@ -388,8 +393,8 @@ $(function Overview() {
         $("#library_item_title").html('Attachment Library');
         $("#show_library_item").show();
     });
- 
-    $(".select_lib_item").on("click", function() {
+
+    $(".select_lib_item").on("click", function () {
         var item_id = $(this).attr("item-sid");
         //
         if ($(this).prop('checked') == true) {
@@ -400,7 +405,7 @@ $(function Overview() {
 
             $('#email_attachment_list').show();
             $('#attachment_listing_data').prepend('<tr id="lib_item_' + item_id + '"><input type="hidden" name="attachment[' + item_id + '][item_type]" value="' + item_type + '"><input type="hidden" name="attachment[' + item_id + '][record_sid]" value="' + item_id + '"><td class="text-center">' + item_title + '</td><td class="text-center">' + item_type + '</td><td class="text-center">' + item_source + '</td><td><a href="javascript:;" item-sid="' + item_id + '" attachment-type="library" item-type="' + item_type + '" class="btn btn-block btn-info js-remove-attachment">Remove</a></td></tr>');
-        
+
             emailAttachmentIds.push(item_id.split('_')[1]);
         } else {
             $('#lib_item_' + item_id).remove();
@@ -414,7 +419,7 @@ $(function Overview() {
         }
     });
 
-    $(document).on('click', '.js-remove-attachment', function() {
+    $(document).on('click', '.js-remove-attachment', function () {
         var remove_item_sid = $(this).attr('item-sid');
         var attachment_type = $(this).attr('attachment-type');
         var remove_item_type = $(this).attr('item-type');
@@ -434,7 +439,7 @@ $(function Overview() {
         }
     });
 
-    $('.show_manual_attachment').on('click', function() {
+    $('.show_manual_attachment').on('click', function () {
         $('#attachment_item_title').val('');
         $('#attach_social_video').val('');
         $('#default_manual_select').prop("checked", true);
@@ -463,7 +468,7 @@ $(function Overview() {
         $("#manual_attachment_modal").modal('show');
     });
 
-    $('.attach_item_source').on('click', function() {
+    $('.attach_item_source').on('click', function () {
         var selected = $(this).val();
 
         if (selected == 'youtube') {
@@ -534,6 +539,12 @@ $(function Overview() {
         }
     });
 
+    $(document).on("onchange", ".jsCheckAttachVideo", function (event) {
+        //
+        event.preventDefault();
+        check_attach_video('attach_video');
+    });
+
     function check_attach_video(val) {
         var fileName = $("#" + val).val();
 
@@ -572,6 +583,11 @@ $(function Overview() {
             return false;
         }
     }
+    
+    $(document).on("onchange", ".jsCheckAttachAudio", function (event) {
+        event.preventDefault();
+        check_attach_audio('attach_audio');
+    });
 
     function check_attach_audio(val) {
         var fileName = $("#" + val).val();
@@ -612,6 +628,12 @@ $(function Overview() {
         }
     }
 
+    $(document).on("onchange", ".jsCheckAttachDocument", function (event) {
+        event.preventDefault();
+
+        check_attach_document('attach_document');
+    });
+
     function check_attach_document(val) {
         var fileName = $("#" + val).val();
 
@@ -642,7 +664,7 @@ $(function Overview() {
     }
 
     var item = 1;
-    $('#save_attach_item').on('click', function() {
+    $('#save_attach_item').on('click', function () {
 
         var flag = 0;
         var message;
@@ -666,7 +688,7 @@ $(function Overview() {
 
         if (source == 'vimeo') {
             if ($('#attach_social_video').val() != '') {
-                var myurl = baseURL   + "compliance_safety_reporting_public/validate_vimeo";
+                var myurl = baseURL + "compliance_safety_reporting_public/validate_vimeo";
                 $.ajax({
                     type: "POST",
                     url: myurl,
@@ -674,13 +696,13 @@ $(function Overview() {
                         url: $('#attach_social_video').val()
                     },
                     async: false,
-                    success: function(data) {
+                    success: function (data) {
                         if (data == false) {
                             message = 'Not a Valid Vimeo URLs';
                             flag = 1;
                         }
                     },
-                    error: function(data) {}
+                    error: function (data) { }
                 });
             } else {
                 message = 'Please provide a Valid Vimeo URL';
@@ -841,6 +863,11 @@ $(function Overview() {
         }
     });
 
+    $(document).on("click", ".jsViewAttachItem", function (event) {
+        event.preventDefault();
+        view_attach_item($(this));
+    });
+
     function view_attach_item(source) {
         var item_category = $(source).attr('item-category');
         var item_title = $(source).attr('item-title');
@@ -906,7 +933,7 @@ $(function Overview() {
         }
     }
 
-    $('.close-current-item').on('click', function() {
+    $('.close-current-item').on('click', function () {
         var item_type = $(this).attr('file-type');
 
         if (item_type == 'youtube') {
@@ -931,9 +958,9 @@ $(function Overview() {
     });
 
     $(document).on("click", ".jsSendEmail", function (event) {
-		//
-		event.preventDefault();
-		var emailTitle = $(this).data("title");
+        //
+        event.preventDefault();
+        var emailTitle = $(this).data("title");
         var emailType = $(this).data("type");
         var senderId = $(this).data("sender_id");
         var receiverId = $(this).data("receiver_id");
@@ -946,9 +973,9 @@ $(function Overview() {
             senderId,
             receiverId,
             receiverEmail,
-            emailSubject  
+            emailSubject
         );
-	});
+    });
 
     function send_email(
         email_title,
@@ -983,7 +1010,7 @@ $(function Overview() {
         $('#send_email_modal').modal('show');
     }
 
-    $(".attachment_pop_up").on('click', function() {
+    $(".attachment_pop_up").on('click', function () {
         var attachment_type = $(this).attr('attachment-type');
 
         if (attachment_type == 'library') {
@@ -1061,7 +1088,7 @@ $(function Overview() {
         }
     }
 
-    $(".email_pop_up_back_to_library").on("click", function() {
+    $(".email_pop_up_back_to_library").on("click", function () {
         var item_type = $(".email_pop_up_back_to_library").attr('item-type');
 
         if (item_type == 'youtube') {
@@ -1088,7 +1115,7 @@ $(function Overview() {
         $("#show_pop_up_library_item").show();
     });
 
-    $(".email_pop_up_back_to_compose_email").on("click", function() {
+    $(".email_pop_up_back_to_compose_email").on("click", function () {
         var button_from = $(this).attr('btn-from');
 
         if (button_from == 'library') {
@@ -1104,7 +1131,7 @@ $(function Overview() {
         }
     });
 
-    $(".email_pop_up_select_lib_item").on("click", function() {
+    $(".email_pop_up_select_lib_item").on("click", function () {
         var item_id = $(this).attr("item-sid");
 
         if ($(this).prop('checked') == true) {
@@ -1129,7 +1156,7 @@ $(function Overview() {
         }
     });
 
-    $(document).on('click', '.js-pop-up-remove-attachment', function() {
+    $(document).on('click', '.js-pop-up-remove-attachment', function () {
         var remove_item_sid = $(this).attr('item-sid');
         var attachment_type = $(this).attr('attachment-type');
         var remove_item_type = $(this).attr('item-type')
@@ -1176,7 +1203,7 @@ $(function Overview() {
         $('#pop_up_attachment_upload_document_input_container').hide();
     }
 
-    $('.pop_up_attach_item_source').on('click', function() {
+    $('.pop_up_attach_item_source').on('click', function () {
         var selected = $(this).val();
 
         if (selected == 'youtube') {
@@ -1247,6 +1274,11 @@ $(function Overview() {
         }
     });
 
+    $(document).on("onchange", ".jsPopUpCheckAttachVideo", function (event) {
+        event.preventDefault();
+        pop_up_check_attach_video('pop_up_attach_video');
+    });
+
     function pop_up_check_attach_video(val) {
         var fileName = $("#" + val).val();
 
@@ -1285,6 +1317,11 @@ $(function Overview() {
             return false;
         }
     }
+
+    $(document).on("onchange", ".jsPopUpCheckAttachAudio", function (event) {
+        event.preventDefault();
+        pop_up_check_attach_audio('pop_up_attach_audio');
+    });
 
     function pop_up_check_attach_audio(val) {
         var fileName = $("#" + val).val();
@@ -1325,6 +1362,11 @@ $(function Overview() {
         }
     }
 
+    $(document).on("onchange", ".jsPopUpCheckAttachDocument", function (event) {
+        event.preventDefault();
+        pop_up_check_attach_document('pop_up_attach_document');
+    });
+
     function pop_up_check_attach_document(val) {
         var fileName = $("#" + val).val();
 
@@ -1355,7 +1397,7 @@ $(function Overview() {
     }
 
     var pop_up_item = 1;
-    $('#pop_up_save_attach_item').on('click', function() {
+    $('#pop_up_save_attach_item').on('click', function () {
 
         var flag = 0;
         var message;
@@ -1379,7 +1421,7 @@ $(function Overview() {
 
         if (source == 'vimeo') {
             if ($('#pop_up_attach_social_video').val() != '') {
-                var myurl = baseURL   + "compliance_safety_reporting_public/validate_vimeo";
+                var myurl = baseURL + "compliance_safety_reporting_public/validate_vimeo";
                 $.ajax({
                     type: "POST",
                     url: myurl,
@@ -1387,13 +1429,13 @@ $(function Overview() {
                         url: $('#pop_up_attach_social_video').val()
                     },
                     async: false,
-                    success: function(data) {
+                    success: function (data) {
                         if (data == false) {
                             message = 'Not a Valid Vimeo URLs';
                             flag = 1;
                         }
                     },
-                    error: function(data) {}
+                    error: function (data) { }
                 });
             } else {
                 message = 'Please provide a Valid Vimeo URL';
@@ -1556,7 +1598,7 @@ $(function Overview() {
         }
     });
 
-    $("#send_pop_up_email").on('click', function() {
+    $("#send_pop_up_email").on('click', function () {
         var flag = 0;
         var message = '';
         var receivers;
@@ -1585,14 +1627,14 @@ $(function Overview() {
         if (manual_attachment_size > 0 && flag == 0) {
             $('#send_email_modal').modal('hide');
             $('#attachment_loader').show();
-            $('#pop_up_attachment_listing_data > .pop_up_manual_upload_items').each(function(key) {
+            $('#pop_up_attachment_listing_data > .pop_up_manual_upload_items').each(function (key) {
                 var item_status = $(this).attr('item-status');
                 if (item_status == 'pending') {
                     var item_row_id = $(this).attr('row-id');
 
                     var item_title = $(this).attr('item-title');
                     var item_source = $(this).attr('item-source');
-                    var save_attachment_url = baseURL   + 'compliance_safety_reporting_public/save_email_manual_attachment';                    
+                    var save_attachment_url = baseURL + 'compliance_safety_reporting_public/save_email_manual_attachment';
                     var form_data = new FormData();
                     form_data.append('attachment_title', item_title);
 
@@ -1624,7 +1666,7 @@ $(function Overview() {
                         processData: false,
                         type: 'post',
                         data: form_data,
-                        success: function(response) {
+                        success: function (response) {
                             var obj = jQuery.parseJSON(response);
                             var res_item_sid = obj['item_sid'];
                             var res_item_title = obj['item_title'];
@@ -1639,12 +1681,12 @@ $(function Overview() {
                             emailAttachmentIds.push(res_item_sid);
 
                             if (manual_attachment_size == 0) {
-                                setTimeout(function() {
+                                setTimeout(function () {
                                     sendNormalEmail('popup')
                                 }, 1000);
                             }
                         },
-                        error: function() {
+                        error: function () {
 
                         }
                     });

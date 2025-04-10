@@ -202,6 +202,26 @@ $(function Overview() {
         }
     });
 
+    $(".jsViewLibraryItem").on('click', function() {
+        //
+        view_library_item($(this));
+    });
+
+    $(".jsViewAttachedItem").on('click', function() {
+        //
+        view_attach_item($(this));
+    });
+
+    $(".jsMarkAsRead").on('click', function() {
+        var emailId = $(this).data('email_id');
+        //
+        mark_read(emailId);
+    });
+
+    $(".jsSendEmail").on('click', function() {
+        send_email($(this));
+    });
+
     function sendNormalEmail (type) {
         $('#attachment_loader').show();
         var send_type;
@@ -546,6 +566,12 @@ $(function Overview() {
         }
     });
 
+    $(document).on("onchange", ".jsCheckAttachVideo", function (event) {
+        //
+        event.preventDefault();
+        check_attach_video('attach_video');
+    });
+
     function check_attach_video(val) {
         var fileName = $("#" + val).val();
 
@@ -584,6 +610,11 @@ $(function Overview() {
             return false;
         }
     }
+    
+    $(document).on("onchange", ".jsCheckAttachAudio", function (event) {
+        event.preventDefault();
+        check_attach_audio('attach_audio');
+    });
 
     function check_attach_audio(val) {
         var fileName = $("#" + val).val();
@@ -623,6 +654,12 @@ $(function Overview() {
             return false;
         }
     }
+
+    $(document).on("onchange", ".jsCheckAttachDocument", function (event) {
+        event.preventDefault();
+
+        check_attach_document('attach_document');
+    });
 
     function check_attach_document(val) {
         var fileName = $("#" + val).val();
@@ -1237,6 +1274,11 @@ $(function Overview() {
         }
     });
 
+    $(document).on("onchange", ".jsPopUpCheckAttachVideo", function (event) {
+        event.preventDefault();
+        pop_up_check_attach_video('pop_up_attach_video');
+    });
+
     function pop_up_check_attach_video(val) {
         var fileName = $("#" + val).val();
 
@@ -1276,6 +1318,11 @@ $(function Overview() {
         }
     }
 
+    $(document).on("onchange", ".jsPopUpCheckAttachAudio", function (event) {
+        event.preventDefault();
+        pop_up_check_attach_audio('pop_up_attach_audio');
+    });
+
     function pop_up_check_attach_audio(val) {
         var fileName = $("#" + val).val();
 
@@ -1314,6 +1361,11 @@ $(function Overview() {
             return false;
         }
     }
+
+    $(document).on("onchange", ".jsPopUpCheckAttachDocument", function (event) {
+        event.preventDefault();
+        pop_up_check_attach_document('pop_up_attach_document');
+    });
 
     function pop_up_check_attach_document(val) {
         var fileName = $("#" + val).val();

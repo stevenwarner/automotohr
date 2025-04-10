@@ -434,6 +434,36 @@ class Compliance_safety_reporting_public extends Base_csp
                 : 0,
             $post
         );
+        //
+        if ($this->getPublicSessionData("is_external_employee") == 1) {
+            //
+            // Save log on update report
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => 0,
+                    'type' => 'main',
+                    'userType' => 'external',
+                    'userId' => $this->getPublicSessionData("external_email"),
+                    'jsonData' => [
+                        'action' => 'update',
+                        'type' => 'report',
+                        'title' =>  $post["report_title"],
+                        'dateTime' => getSystemDate(),
+                        'fields' => [
+							'report_date' => $post['report_date'],
+							'completion_date' => $post['report_completion_date'],
+							'status' => $post['report_status']
+						],
+                        'internalEmployees' => $post['report_employees'],
+                        'externalEmployees' => $post['external_employees_emails']
+
+
+                    ]
+                ]
+            );
+            
+        }
         // return the success
         return sendResponse(
             200,
@@ -459,6 +489,29 @@ class Compliance_safety_reporting_public extends Base_csp
                 : 0,
             $post
         );
+        //
+        if ($this->getPublicSessionData("is_external_employee") == 1) {
+			// Save log on update incident
+			$this->compliance_report_model->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'type' => 'incidents',
+					'userType' => 'external',
+					'userId' => $this->getPublicSessionData("external_email"),
+					'jsonData' => [
+						'action' => 'update',
+						'dateTime' => getSystemDate(),
+						'fields' => [
+							'completion_date' => $post['report_completion_date'],
+							'status' => $post['report_status']
+						],
+						'internalEmployees' => $post['report_employees'],
+                        'externalEmployees' => $post['external_employees_emails']
+					]
+				]
+			);
+		}
         // return the success
         return sendResponse(
             200,
@@ -505,7 +558,7 @@ class Compliance_safety_reporting_public extends Base_csp
         // get the post
         $post = $this->input->post(null, true);
         //allowed_internal_system_count
-        $this->compliance_report_model->addNotesToReport(
+        $noteId = $this->compliance_report_model->addNotesToReport(
             $reportId,
             $incidentId,
             $this->getPublicSessionData("employee_sid")
@@ -513,6 +566,25 @@ class Compliance_safety_reporting_public extends Base_csp
                 : 0,
             $post
         );
+        //
+        if ($this->getPublicSessionData("is_external_employee") == 1 && $post["type"] == 'employee') {
+            // Save log on add note
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
+                    'type' => 'notes',
+                    'userType' => 'external',
+                    'userId' => $this->getPublicSessionData("external_email"),
+                    'jsonData' => [
+                        'action' => 'create',
+                        'type' => 'employee_note',
+                        'noteId' => $noteId,
+                        'dateTime' => getSystemDate()
+                    ]
+                ]
+            );
+        }
         // return the success
         return sendResponse(
             200,
@@ -568,6 +640,26 @@ class Compliance_safety_reporting_public extends Base_csp
                 "created_at" => getSystemDate(),
             ];
             $sd = array_merge($sd, $main);
+            //
+            if ($this->getPublicSessionData("is_external_employee") == 1) {
+                // Save log on Add file Link
+                $this->compliance_report_model->saveComplianceSafetyReportLog(
+                    [
+                        'reportId' => $reportId,
+                        'incidentId' => $incidentId,
+                        'type' => 'files',
+                        'userType' => 'external',
+                        'userId' => $this->getPublicSessionData("external_email"),
+                        'jsonData' => [
+                            'action' => 'create',
+                            'type' => 'link',
+                            'title' => $this->input->post("title"),
+                            'fileId' => $id,
+                            'dateTime' => getSystemDate()
+                        ]
+                    ]
+                );
+            }
             // return the success
             return sendResponse(
                 200,
@@ -622,6 +714,26 @@ class Compliance_safety_reporting_public extends Base_csp
                     "created_at" => getSystemDate(),
                 ];
                 $sd = array_merge($sd, $main);
+                //
+                if ($this->getPublicSessionData("is_external_employee") == 1) {
+                    // Save log on Add file
+                    $this->compliance_report_model->saveComplianceSafetyReportLog(
+                        [
+                            'reportId' => $reportId,
+                            'incidentId' => $incidentId,
+                            'type' => 'files',
+                            'userType' => 'external',
+                            'userId' => $this->getPublicSessionData("external_email"),
+                            'jsonData' => [
+                                'action' => 'create',
+                                'type' => 'file',
+                                'title' => $this->input->post("title"),
+                                'fileId' => $id,
+                                'dateTime' => getSystemDate()
+                            ]
+                        ]
+                    );
+                }
                 // return the success
                 return sendResponse(
                     200,
@@ -1313,6 +1425,32 @@ class Compliance_safety_reporting_public extends Base_csp
             $this->getPublicSessionData("employee_sid"),
             $post
         );
+        //
+        if ($this->getPublicSessionData("is_external_employee") == 1) {
+            //
+            // Save log on update report
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'type' => 'incidents',
+					'userType' => 'external',
+                    'userId' => $this->getPublicSessionData("external_email"),
+					'jsonData' => [
+						'action' => 'update',
+						'type' => 'items',
+						'item_id' => $post["id"],
+						'dateTime' => getSystemDate(),
+						'fields' => [
+							'dynamicInput' => $post["dynamicInput"],
+							'dynamicCheckbox' => $post['dynamicCheckbox'],
+							'status' => $post['status'],
+							'level' => $post['level'],
+						],
+					]
+				]
+			);
+		}
         // return the success
         return sendResponse(
             200,

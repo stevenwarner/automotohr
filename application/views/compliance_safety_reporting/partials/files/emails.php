@@ -250,7 +250,7 @@ $employeeId = $session['employer_detail']['sid'];
                                                         <?php echo $item_category; ?>
                                                     </td>
                                                     <td class="text-center">
-                                                        <a href="javascript:;" class="btn btn-block btn-info" onclick="view_library_item(this);" item-category="document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $item_url; ?>">View Document</a>
+                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem" item-category="document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $item_url; ?>">View Document</a>
                                                     </td>
                                                     <td class="text-center">
                                                         <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
@@ -284,7 +284,7 @@ $employeeId = $session['employer_detail']['sid'];
                                                     <td class="text-center"><?php echo $media_title; ?></td>
                                                     <td class="text-center"><?php echo $media_category; ?></td>
                                                     <td class="text-center">
-                                                        <a href="javascript:;" class="btn btn-block btn-info" onclick="view_library_item(this);" item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
+                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem" item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
                                                     </td>
                                                     <td class="text-center">
                                                         <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
@@ -394,7 +394,7 @@ $employeeId = $session['employer_detail']['sid'];
                                     <label>Attach Video <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_video"></span>
-                                        <input type="file" name="pop_up_attach_video" id="pop_up_attach_video" onchange="pop_up_check_attach_video('pop_up_attach_video')">
+                                        <input type="file" name="pop_up_attach_video" id="pop_up_attach_video" class="jsPopUpCheckAttachVideo">
                                         <a href="javascript:;">Choose Video</a>
                                     </div>
                                 </div>
@@ -402,7 +402,7 @@ $employeeId = $session['employer_detail']['sid'];
                                     <label>Attach Audio <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_audio"></span>
-                                        <input type="file" name="pop_up_attach_audio" id="pop_up_attach_audio" onchange="pop_up_check_attach_audio('pop_up_attach_audio')">
+                                        <input type="file" name="pop_up_attach_audio" id="pop_up_attach_audio" class="jsPopUpCheckAttachAudio">
                                         <a href="javascript:;">Choose Audio</a>
                                     </div>
                                 </div>
@@ -410,7 +410,7 @@ $employeeId = $session['employer_detail']['sid'];
                                     <label>Attach Document <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_document"></span>
-                                        <input type="file" name="pop_up_attach_document" id="pop_up_attach_document" onchange="pop_up_check_attach_document('pop_up_attach_document')">
+                                        <input type="file" name="pop_up_attach_document" id="pop_up_attach_document" class="jsPopUpCheckAttachDocument" >
                                         <a href="javascript:;">Choose Document</a>
                                     </div>
                                 </div>
@@ -483,7 +483,7 @@ $employeeId = $session['employer_detail']['sid'];
                                                     <?php echo $item_category; ?>
                                                 </td>
                                                 <td class="text-center">
-                                                    <a href="javascript:;" class="btn btn-block btn-info" onclick="view_library_item(this);" item-category="document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $item_url; ?>">View Document</a>
+                                                    <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem" item-category="document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $item_url; ?>">View Document</a>
                                                 </td>
                                                 <td class="text-center">
                                                     <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
@@ -517,7 +517,7 @@ $employeeId = $session['employer_detail']['sid'];
                                                 <td class="text-center"><?php echo $media_title; ?></td>
                                                 <td class="text-center"><?php echo $media_category; ?></td>
                                                 <td class="text-center">
-                                                    <a href="javascript:;" class="btn btn-block btn-info" onclick="view_library_item(this);" item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
+                                                    <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem" item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
                                                 </td>
                                                 <td class="text-center">
                                                     <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
@@ -637,7 +637,7 @@ $employeeId = $session['employer_detail']['sid'];
                                 <label>Attach Video <span class="required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_video"></span>
-                                    <input type="file" name="attach_video" id="attach_video" onchange="check_attach_video('attach_video')">
+                                    <input type="file" name="attach_video" id="attach_video" class="jsCheckAttachVideo" >
                                     <a href="javascript:;">Choose Video</a>
                                 </div>
                             </div>
@@ -645,7 +645,7 @@ $employeeId = $session['employer_detail']['sid'];
                                 <label>Attach Audio <span class="required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_audio"></span>
-                                    <input type="file" name="attach_audio" id="attach_audio" onchange="check_attach_audio('attach_audio')">
+                                    <input type="file" name="attach_audio" id="attach_audio" class="jsCheckAttachAudio">
                                     <a href="javascript:;">Choose Audio</a>
                                 </div>
                             </div>
@@ -653,7 +653,7 @@ $employeeId = $session['employer_detail']['sid'];
                                 <label>Attach Document <span class="required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_document"></span>
-                                    <input type="file" name="attach_document" id="attach_document" onchange="check_attach_document('attach_document')">
+                                    <input type="file" name="attach_document" id="attach_document" class="jsCheckAttachDocument" >
                                     <a href="javascript:;">Choose Document</a>
                                 </div>
                             </div>
