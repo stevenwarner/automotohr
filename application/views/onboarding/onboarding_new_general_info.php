@@ -130,12 +130,14 @@ if ($_ssv) {
                                                         <?php $temp = isset($driv_license[$field_name]) && !empty($driv_license[$field_name]) ? $driv_license[$field_name] : ''; ?>
                                                         <?php echo form_label('License Type', $field_name); ?>
                                                         <div class="hr-select-dropdown">
+
+
                                                             <select class="form-control" name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>">
                                                                 <option value="" selected="">Please Select</option>
                                                                 <?php if (!empty($license_types)) { ?>
                                                                     <?php foreach ($license_types as $key => $license_type) { ?>
                                                                         <?php $default_selected = $key == $temp ? true : false; ?>
-                                                                        <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_type ?></option>
+                                                                        <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo str_replace('â€™', "'", $license_type); ?></option>
                                                                     <?php } ?>
                                                                 <?php } ?>
                                                             </select>
