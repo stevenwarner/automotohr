@@ -298,6 +298,7 @@ class Hr_documents_management extends Public_Controller
                                 //
                                 addColumnsForDocumentAssigned($data_to_insert, $document);
 
+                                $data_to_insert["assign_location"]="EMS bulk assigne document";
                                 $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             }
 
@@ -12461,8 +12462,8 @@ class Hr_documents_management extends Public_Controller
      * 4 - Assign Signers (For authorized people)
      */
     function assign_document($document = array())
-    {
-        //
+    { 
+             
         //
         $r = [
             'Status' => FALSE,
@@ -12629,11 +12630,14 @@ class Hr_documents_management extends Public_Controller
         }
         //
 
-        if ($assignInsertId == null)
+        if ($assignInsertId == null){
+            $a["assign_location"]="document center assigne single document";
             $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
-        else
+        }else{
+            $a["assign_location"]="document center reassigne single document";
             $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
-        //
+        }
+            //
         $is_manual = get_document_type($assignInsertId);
         //
         if (isset($post["has_approval_flow"]) && $post["has_approval_flow"] == "on") {
@@ -15111,6 +15115,8 @@ class Hr_documents_management extends Public_Controller
             // Send emails to assigned employers
             // Send emails to authorize assigners
             // Send emails to approvers if any
+
+            $new_documents_assigned_data['assign_location']="Blue Panel Library document assigne";
 
             $sid = $this->hr_documents_management_model->insert_documents_assigned($new_documents_assigned_data);
             $document_id = json_encode($sid);
