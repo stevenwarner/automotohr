@@ -80,50 +80,53 @@
                                                                                             <b>Action</b>
                                                                                         </td>
                                                                                         <td>
-                                                                                            <?php if ($incident_email['sender_sid'] == $current_user || $incident_email['sender_sid'] == 0) {  ?>
-                                                                                                
-                                                                                                <?php if ($receiver_user !=  $incident_email['manual_email']) { ?>
+                                                                                            <?php if ($incident_email['sender_sid'] == $current_user) {  ?>
+                                                                                                <?php if ($incident_email['receiver_sid'] == 0) { ?>
                                                                                                     <?php
                                                                                                         $receiver_sid = $incident_email['receiver_sid'];
                                                                                                         $receiver_email = $incident_email['manual_email'];
                                                                                                         $receiver_subject = $incident_email["subject"];
                                                                                                     ?>
-                                                                                                    <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'resend'; ?>" data-type="manual" data-sid="<?php echo $receiver_sid; ?>" data-email="<?php echo $receiver_email; ?>" data-subject="<?php echo $receiver_subject; ?>" onclick="send_email(this);">
+                                                                                                    <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'resend'; ?>" data-type="manual" data-sid="<?php echo $receiver_sid; ?>" data-email="<?php echo $receiver_email; ?>" data-subject="<?php echo $receiver_subject; ?>">
                                                                                                         <i class="fa fa-retweet"></i> 
                                                                                                         Resend Email
                                                                                                     </a>
                                                                                                 <?php } else { ?>
-
-                                                                                                    <?php if ($incident_email['receiver_sid'] != 0) {  ?>
-                                                                                                        <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'reply'; ?>" data-type="system" data-sid="<?php echo $incident_email['receiver_sid']; ?>" data-subject="<?php echo $incident_email["subject"]; ?>" onclick="send_email(this);">
-                                                                                                            <i class="fa fa-reply"></i> 
+                                                                                                    <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'resend'; ?>" data-type="system" data-sid="<?php echo $incident_email['receiver_sid']; ?>" data-subject="<?php echo $incident_email["subject"]; ?>">
+                                                                                                        <i class="fa fa-retweet"></i>
+                                                                                                        Resend Email
+                                                                                                    </a>
+                                                                                                <?php } ?>
+                                                                                            <?php } else if ($incident_email['sender_sid'] == 0 && $currentUser == $incident_email['manual_email'])  { ?>
+                                                                                                <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'resend'; ?>" data-type="system" data-sid="<?php echo $incident_email['receiver_sid']; ?>" data-subject="<?php echo $incident_email["subject"]; ?>">
+                                                                                                    <i class="fa fa-retweet"></i>
+                                                                                                    Resend Email
+                                                                                                </a>
+                                                                                            <?php } else { ?>
+                                                                                                <?php if (filter_var($current_user, FILTER_VALIDATE_EMAIL) && $incident_email['receiver_sid'] != 0) { ?>
+                                                                                                    <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'reply'; ?>" data-type="system" data-sid="<?php echo $incident_email['receiver_sid']; ?>" data-subject="<?php echo $incident_email["subject"]; ?>" onclick="send_email(this);">
+                                                                                                        <i class="fa fa-reply"></i> 
+                                                                                                        Reply Email
+                                                                                                    </a>
+                                                                                                <?php } else { ?>
+                                                                                                    <?php if ($incident_email['receiver_sid'] == 0) { ?>
+                                                                                                        <?php
+                                                                                                            $receiver_sid = $incident_email['receiver_sid'];
+                                                                                                            $receiver_email = $incident_email['manual_email'];
+                                                                                                            $receiver_subject = $incident_email["subject"];
+                                                                                                        ?>
+                                                                                                        <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'reply'; ?>" data-type="manual" data-sid="<?php echo $receiver_sid; ?>" data-email="<?php echo $receiver_email; ?>" data-subject="<?php echo $receiver_subject; ?>">
+                                                                                                            <i class="fa fa-retweet"></i> 
                                                                                                             Reply Email
                                                                                                         </a>
                                                                                                     <?php } else { ?>
-                                                                                                        <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'resend'; ?>" data-type="system" data-sid="<?php echo $incident_email['receiver_sid']; ?>" data-subject="<?php echo $incident_email["subject"]; ?>" onclick="send_email(this);">
+                                                                                                        <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'reply'; ?>" data-type="system" data-sid="<?php echo $incident_email['receiver_sid']; ?>" data-subject="<?php echo $incident_email["subject"]; ?>">
                                                                                                             <i class="fa fa-retweet"></i>
-                                                                                                            Resend Email
+                                                                                                            Reply Email
                                                                                                         </a>
-                                                                                                    <?php } ?> 
-                                                                                                <?php } ?>    
-                                                                                            <?php } else { ?>
-                                                                                                <?php
-                                                                                                    $sender_sid = $incident_email['sender_sid'];
-                                                                                                    $sender_email = "";
-                                                                                                    $sender_subject = $incident_email["subject"];
-                                                                                                    if (str_replace('_wid', '', $sender_sid) != $sender_sid) {
-                                                                                                        $witness_id = str_replace('_wid', '', $sender_sid);
-                                                                                                        $sender_email = get_witness_email_by_id($witness_id);
-                                                                                                    } else {
-                                                                                                        $sender_info = db_get_employee_profile($sender_sid);
-                                                                                                        $sender_email = $sender_info[0]['email'];
-                                                                                                    }
-                                                                                                ?>
-                                                                                                <a href="javascript:;" class="pull-right print-incident modify-comment-btn jsSendEmail" data-title="<?php echo 'reply'; ?>" data-type="system" data-sid="<?php echo $sender_sid; ?>" data-email="<?php echo $sender_email; ?>" data-subject="<?php echo $sender_subject; ?>" onclick="send_email(this);">
-                                                                                                    <i class="fa fa-reply"></i> 
-                                                                                                    Reply Email
-                                                                                                </a>
-                                                                                            <?php } ?>    
+                                                                                                    <?php } ?>
+                                                                                                <?php } ?>
+                                                                                            <?php } ?> 
                                                                                         </td>
                                                                                     </tr>
                                                                                     <tr>

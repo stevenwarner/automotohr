@@ -260,12 +260,12 @@ $(function Overview() {
             var senderType = $('#send_email_type').val();
             //
             if (senderType == 'system') {
-                manual_email = $('#send_email_user').val();
+                receivers = $('#send_email_user').val();
                 //
                 form_data.append('receivers', receivers);
                 form_data.append('send_type', "system");
             } else {
-                receivers = $('#send_email_user').val();
+                manual_email = $('#send_email_user').val();
                 //
                 form_data.append('manual_email', manual_email);
                 form_data.append('send_type', "manual");

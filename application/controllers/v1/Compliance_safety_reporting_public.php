@@ -274,7 +274,8 @@ class Compliance_safety_reporting_public extends Base_csp
         // set the title
         $this->data['segments'] = [
             "reportId" => $this->data["report"]["sid"],
-            "incidentId" => 0
+            "incidentId" => 0,
+            "itemId" => 0
         ];
         $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
         $this->data['pageJs'][] = 'csp/edit_report_public';
@@ -343,7 +344,8 @@ class Compliance_safety_reporting_public extends Base_csp
         //
         $this->data['segments'] = [
             "reportId" => $reportId,
-            "incidentId" => $incidentId
+            "incidentId" => $incidentId,
+            "itemId" => 0
         ];
         $this->data["report"]["description"] = convertCSPTags($this->data["report"]["description"]);
 
@@ -401,6 +403,7 @@ class Compliance_safety_reporting_public extends Base_csp
         //
         $this->data["reportId"] = $reportId;
         $this->data["incidentId"] = $incidentId;
+
         $this->data["manageItemUrl"] = base_url('csp/incident_item_management/'.$reportId.'/'.$incidentId);
         //
         $this->renderView('compliance_safety_reporting/public/edit_incident');
@@ -647,6 +650,7 @@ class Compliance_safety_reporting_public extends Base_csp
                     [
                         'reportId' => $reportId,
                         'incidentId' => $incidentId,
+                        'incidentItemId' => 0,
                         'type' => 'files',
                         'userType' => 'external',
                         'userId' => $this->getPublicSessionData("external_email"),
@@ -721,12 +725,13 @@ class Compliance_safety_reporting_public extends Base_csp
                         [
                             'reportId' => $reportId,
                             'incidentId' => $incidentId,
+                            'incidentItemId' => 0,
                             'type' => 'files',
                             'userType' => 'external',
                             'userId' => $this->getPublicSessionData("external_email"),
                             'jsonData' => [
                                 'action' => 'create',
-                                'type' => 'file',
+                                'type' => $type,
                                 'title' => $this->input->post("title"),
                                 'fileId' => $id,
                                 'dateTime' => getSystemDate()
@@ -877,6 +882,7 @@ class Compliance_safety_reporting_public extends Base_csp
         $attachments = isset($_POST['attach_files']) ? explode(',', $_POST['attach_files']) : [];
         $reportId = $_POST['report_id'];
         $incidentId = $_POST['incident_id'];
+        $itemId = $_POST['item_id']; 
         //
         $email_hf = message_header_footer_domain($companyId, $companyName);
         //
@@ -965,6 +971,25 @@ class Compliance_safety_reporting_public extends Base_csp
                 . $email_hf['footer'];
 
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
+            //
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'incidentItemId' => $itemId,
+					'type' => 'emails',
+					'userType' => $employeeType,
+					'userId' => $employeeType == 'external' ? $employeeEmail : $employeeId,
+					'jsonData' => [
+						'action' => 'send email',
+						'dateTime' => getSystemDate(),
+						'receiver' => $to,
+                        'subject' => $_POST['subject'],
+                        'message' => $_POST['message']
+					]
+				]
+			);
+            //
         } else if ($send_email_type == 'system') {
             //
             $receivers = explode(',', $_POST['receivers']);
@@ -1042,6 +1067,24 @@ class Compliance_safety_reporting_public extends Base_csp
                 log_and_sendEmail($from, $to, $subject, $body, $from_name);
                 //
             }
+            //
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'incidentItemId' => $itemId,
+					'type' => 'emails',
+					'userType' => $employeeType,
+					'userId' => $employeeType == 'external' ? $employeeEmail : $employeeId,
+					'jsonData' => [
+						'action' => 'send email',
+						'dateTime' => getSystemDate(),
+						'receiver' => $receivers,
+                        'subject' => $_POST['subject'],
+                        'message' => $_POST['message']
+					]
+				]
+			);
         }
         //
         return sendResponse(
@@ -1527,7 +1570,7 @@ class Compliance_safety_reporting_public extends Base_csp
         }
         //
         if ($post["link"]) {
-            $this
+            $linkId = $this
                 ->compliance_report_model
                 ->addFilesLinkToIncidentItem(
                     $post['reportId'],
@@ -1538,6 +1581,27 @@ class Compliance_safety_reporting_public extends Base_csp
                     $post["type"],
                     $post['title']
                 );
+            //
+            if ($this->getPublicSessionData("is_external_employee") == 1) {
+                // Save log on Add file
+                $this->compliance_report_model->saveComplianceSafetyReportLog(
+                    [
+                        'reportId' => $post['reportId'],
+                        'incidentId' => $post['incidentId'],
+                        'incidentItemId' => $post['itemId'],
+                        'type' => 'files',
+                        'userType' => 'external',
+                        'userId' => $this->getPublicSessionData("external_email"),
+                        'jsonData' => [
+                            'action' => 'create',
+                            'type' => 'link',
+                            'title' => $post['title'],
+                            'fileId' => $linkId,
+                            'dateTime' => getSystemDate()
+                        ]
+                    ]
+                );
+            }
             // return the success
             return sendResponse(
                 200,
@@ -1564,7 +1628,8 @@ class Compliance_safety_reporting_public extends Base_csp
                 ];
                 //
                 $this->aws_lib->put_object($options);
-                $this
+                //
+                $fileId = $this
                     ->compliance_report_model
                     ->addFilesToIncidentItem(
                         $post['reportId'],
@@ -1576,6 +1641,27 @@ class Compliance_safety_reporting_public extends Base_csp
                         $post["type"],
                         $post['title']
                     );
+                //
+                if ($this->getPublicSessionData("is_external_employee") == 1) {
+                    // Save log on Add file
+                    $this->compliance_report_model->saveComplianceSafetyReportLog(
+                        [
+                            'reportId' => $post['reportId'],
+                            'incidentId' => $post['incidentId'],
+                            'incidentItemId' => $post['itemId'],
+                            'type' => 'files',
+                            'userType' => 'external',
+                            'userId' => $this->getPublicSessionData("external_email"),
+                            'jsonData' => [
+                                'action' => 'create',
+                                'type' => $post["type"],
+                                'title' => $post['title'],
+                                'fileId' => $fileId,
+                                'dateTime' => getSystemDate()
+                            ]
+                        ]
+                    );
+                }
                 // return the success
                 return sendResponse(
                     200,
@@ -1644,6 +1730,12 @@ class Compliance_safety_reporting_public extends Base_csp
         $this->data["incidentId"] = $incidentId;
         $this->data["itemId"] = $itemId;
         $this->data['pageType'] = 'public';
+        $this->data['segments'] = [
+            "reportId" => $reportId,
+            "incidentId" => $incidentId,
+            "itemId" => $itemId
+        ];
+
         //
         $this->renderView('compliance_safety_reporting/edit_incident_item');
     }

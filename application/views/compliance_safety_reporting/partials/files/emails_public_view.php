@@ -1,6 +1,7 @@
 <?php
     $reportId =  $segments["reportId"];
     $incidentId =  $segments["incidentId"];
+    $itemID = $segments["itemId"];
 ?>
 <!-- Email Section Start -->
 

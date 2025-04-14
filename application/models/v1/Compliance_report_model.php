@@ -1567,6 +1567,7 @@ class Compliance_report_model extends CI_Model
 			[
 				'reportId' => $reportId,
 				'incidentId' => 0,
+				'incidentItemId' => 0,
 				'type' => 'main',
 				'userType' => 'employee',
 				'userId' => $loggedInEmployeeId,
@@ -2030,6 +2031,7 @@ class Compliance_report_model extends CI_Model
 				[
 					'reportId' => $reportId,
 					'incidentId' => 0,
+					'incidentItemId' => 0,
 					'type' => 'main',
 					'userType' => 'employee',
 					'userId' => $loggedInEmployeeId,
@@ -2172,6 +2174,7 @@ class Compliance_report_model extends CI_Model
 				[
 					'reportId' => $reportId,
 					'incidentId' => $incidentId,
+					'incidentItemId' => 0,
 					'type' => 'incidents',
 					'userType' => 'employee',
 					'userId' => $loggedInEmployeeId,
@@ -2188,7 +2191,6 @@ class Compliance_report_model extends CI_Model
 				]
 			);
 		}
-
 		// $this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
 
 		return true;
@@ -2232,6 +2234,7 @@ class Compliance_report_model extends CI_Model
 				[
 					'reportId' => $reportId,
 					'incidentId' => $incidentId,
+					'incidentItemId' => 0,
 					'type' => 'notes',
 					'userType' => 'employee',
 					'userId' => $loggedInEmployeeId,
@@ -2341,12 +2344,13 @@ class Compliance_report_model extends CI_Model
 				[
 					'reportId' => $reportId,
 					'incidentId' => $incidentId,
+					'incidentItemId' => 0,
 					'type' => 'files',
 					'userType' => 'employee',
 					'userId' => $loggedInEmployeeId,
 					'jsonData' => [
 						'action' => 'create',
-						'type' => 'file',
+						'type' => $fileType,
 						'title' => $title,
 						'fileId' => $fileId,
 						'dateTime' => $todayDateTime
@@ -2559,6 +2563,7 @@ class Compliance_report_model extends CI_Model
 				[
 					'reportId' => $reportId,
 					'incidentId' => $incidentId,
+					'incidentItemId' => 0,
 					'type' => 'files',
 					'userType' => 'employee',
 					'userId' => $loggedInEmployeeId,
@@ -2648,7 +2653,8 @@ class Compliance_report_model extends CI_Model
 		$this->saveComplianceSafetyReportLog(
 			[
 				'reportId' => $reportId,
-				'incidentId' => 0,
+				'incidentId' => $id,
+				'incidentItemId' => 0,
 				'type' => 'main',
 				'userType' => 'employee',
 				'userId' => $loggedInEmployeeId,
@@ -4366,6 +4372,7 @@ class Compliance_report_model extends CI_Model
 				[
 					'reportId' => $reportId,
 					'incidentId' => $incidentId,
+					'incidentItemId' => 0,
 					'type' => 'incidents',
 					'userType' => 'employee',
 					'userId' => $loggedInEmployeeId,
@@ -4492,7 +4499,30 @@ class Compliance_report_model extends CI_Model
 		//
 		$this->db->insert("csp_reports_files", $fileData);
 		//
-		return $this->db->insert_id();
+		$fileId = $this->db->insert_id();
+		//
+		if ($loggedInEmployeeId != 0) {
+			// Save log on add note
+			$this->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'incidentItemId' => $itemId,
+					'type' => 'files',
+					'userType' => 'employee',
+					'userId' => $loggedInEmployeeId,
+					'jsonData' => [
+						'action' => 'create',
+						'type' => $fileType,
+						'title' => $title,
+						'fileId' => $fileId,
+						'dateTime' => $todayDateTime
+					]
+				]
+			);
+		}
+		//
+		return $fileId;
 	}
 
 	/**
@@ -4540,7 +4570,31 @@ class Compliance_report_model extends CI_Model
 		//
 		$this->db->insert("csp_reports_files", $fileData);
 		//
-		return $this->db->insert_id();
+		$linkId = $this->db->insert_id();
+		//
+		if ($loggedInEmployeeId != 0) {
+			// Save log on add note
+			$this->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'incidentItemId' => $itemId,
+					'type' => 'files',
+					'userType' => 'employee',
+					'userId' => $loggedInEmployeeId,
+					'jsonData' => [
+						'action' => 'create',
+						'type' => 'link',
+						'title' => $title,
+						'fileId' => $linkId,
+						'dateTime' => $todayDateTime
+					]
+				]
+			);
+		}
+		//
+		return $linkId;
+		
 	}
 
 	public function getCSPItemAttachments($reportId, $incidentId, $itemId)
@@ -4604,6 +4658,8 @@ class Compliance_report_model extends CI_Model
 			$this->userFields,
 			"csp_reports_files.file_value",
 			"csp_reports_files.sid",
+
+
 			"csp_reports_files.title",
 			"csp_reports_files.s3_file_value",
 			"csp_reports_files.file_type",
@@ -4647,7 +4703,27 @@ class Compliance_report_model extends CI_Model
 			$loggedInEmployeeId
 		);
 		//
-		return $this->db->insert_id();
+		if ($loggedInEmployeeId != 0) {
+			// Save log on update incident item
+			$this->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'incidentItemId' => $itemId,
+					'type' => 'incident_item',
+					'userType' => 'employee',
+					'userId' => $loggedInEmployeeId,
+					'jsonData' => [
+						'action' => 'update incident item',
+						'dateTime' => getSystemDate(),
+						'internalEmployees' => $post['report_employees'],
+                        'externalEmployees' => $post['external_employees_emails']
+					]
+				]
+			);
+		}
+		//
+		return true;
 	}
 
 	/**
@@ -4682,8 +4758,29 @@ class Compliance_report_model extends CI_Model
 		];
 		//
 		$this->db->insert("csp_reports_notes", $noteData);
+		$noteId = $this->db->insert_id();
 		//
-		return $this->db->insert_id();
+		if ($loggedInEmployeeId != 0 && $post["type"] == 'employee') {
+			// Save log on add note
+			$this->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'incidentItemId' => $itemId,
+					'type' => 'notes',
+					'userType' => 'employee',
+					'userId' => $loggedInEmployeeId,
+					'jsonData' => [
+						'action' => 'create',
+						'type' => 'employee_note',
+						'noteId' => $noteId,
+						'dateTime' => $todayDateTime
+					]
+				]
+			);
+		}
+		//
+		return $noteId;
 	}
 
 	/**
@@ -4731,6 +4828,7 @@ class Compliance_report_model extends CI_Model
 		//
 		$dataToInsert['csp_reports_sid'] = $data['reportId'];
 		$dataToInsert['csp_reports_incident_sid'] = $data['incidentId'];
+		$dataToInsert['csp_reports_incident_item_sid'] = $data['incidentItemId'];
 		if ($data['userType'] == 'employee') {
 			$dataToInsert['employee_sid'] = $data['userId'];
 		} else {

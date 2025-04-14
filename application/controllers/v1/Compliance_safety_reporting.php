@@ -744,7 +744,7 @@ class Compliance_safety_reporting extends Base_csp
                         "file" => $file
                     ],
                     true
-                ),
+                ), 
                 "data" => $file
             ]
         );
@@ -857,6 +857,24 @@ class Compliance_safety_reporting extends Base_csp
 
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
             //
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'incidentItemId' => $itemId,
+					'type' => 'emails',
+					'userType' => 'employee',
+					'userId' => $employeeId,
+					'jsonData' => [
+						'action' => 'send email',
+						'dateTime' => getSystemDate(),
+						'receiver' => $to,
+                        'subject' => $_POST['subject'],
+                        'message' => $_POST['message']
+					]
+				]
+			);
+            //
         } else if ($send_email_type == 'system') {
             $receivers = explode(',', $_POST['receivers']);
             $subject = $_POST['subject'];
@@ -925,6 +943,24 @@ class Compliance_safety_reporting extends Base_csp
                 log_and_sendEmail($from, $to, $subject, $body, $from_name);
                 //
             }
+            //
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'incidentItemId' => $itemId,
+					'type' => 'emails',
+					'userType' => 'employee',
+					'userId' => $employeeId,
+					'jsonData' => [
+						'action' => 'send email',
+						'dateTime' => getSystemDate(),
+						'receiver' => $receivers,
+                        'subject' => $_POST['subject'],
+                        'message' => $_POST['message']
+					]
+				]
+			);
         }
         //
         return sendResponse(

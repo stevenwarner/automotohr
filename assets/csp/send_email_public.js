@@ -224,6 +224,7 @@ $(function Overview() {
         var form_data = new FormData();
         form_data.append('report_id', reportId);
         form_data.append('incident_id', incidentId);
+        form_data.append('item_id', itemId);
         form_data.append('subject', message_subject);
         form_data.append('message', message_body);
         // //
