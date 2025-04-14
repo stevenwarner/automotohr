@@ -385,7 +385,7 @@ class Testing extends CI_Controller
                     $request['company_sid'] = $results[0]['to_company_sid'];
                     $request['employee_sid'] = $results[0]['new_employee_sid'];
                     $request['timeoff_policy_sid'] = $newPolicyId['sid'];
-                    $request['creator_sid'] = $request['creator_sid'] ==  $results[0]['new_employee_sid'] ? $results[0]['new_employee_sid'] : $adminId;
+                    $request['creator_sid'] = $request['creator_sid'] == $results[0]['new_employee_sid'] ? $results[0]['new_employee_sid'] : $adminId;
                     $request['approved_by'] = $request['approved_by'] ? $adminId : $request['approved_by'];
                     //
                     $whereArray = [
@@ -603,13 +603,13 @@ class Testing extends CI_Controller
         ];
 
         $options = [
-            'Bucket'     => AWS_S3_BUCKET_NAME,
+            'Bucket' => AWS_S3_BUCKET_NAME,
             'CopySource' => urlencode(AWS_S3_BUCKET_NAME . '/' . $fileName), // Source object
-            'Key'        => $fileName, // Destination object
+            'Key' => $fileName, // Destination object
             'Metadata' => $meta,
             "MetadataDirective" => "REPLACE",
             "ContentType" => "application/pdf",
-            'ACL'        => 'public-read', // Optional: specify the ACL (access control list)
+            'ACL' => 'public-read', // Optional: specify the ACL (access control list)
         ];
         //
         $this->aws_lib->copyObject($options);
@@ -624,8 +624,8 @@ class Testing extends CI_Controller
         //
         $employees =
             $this
-            ->fakeEmployees
-            ->init(5);
+                ->fakeEmployees
+                ->init(5);
         //
         foreach ($employees as $employee) {
             $employee['parent_sid'] = $companyId;
@@ -697,13 +697,13 @@ class Testing extends CI_Controller
             ->where('sid', $sid)
             ->set([
                 'last_read' => date('Y-m-d H:i:s', strtotime('now')),
-                'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
+                'referral' => !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : ''
             ])->update('job_feeds_management');
         //
         $this->db
             ->insert('job_feeds_management_history', [
                 'feed_id' => $sid,
-                'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
+                'referral' => !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '',
                 'created_at' => date('Y-m-d H:i:s', strtotime('now'))
             ]);
     }
@@ -725,7 +725,8 @@ class Testing extends CI_Controller
             $jobIds = $indeedPaidJobIds['Ids'];
             $budget = $indeedPaidJobIds['Budget'];
             $indeedPaidJobs = $this->indeed_model->getIndeedPaidJobs();
-        } else $budget = $jobIds = array();
+        } else
+            $budget = $jobIds = array();
         // Get Indeed Organic Jobs
         $indeedOrganicJobs = $this->indeed_model->getIndeedOrganicJobs($featuredJobs);
         // Get Active companies
@@ -763,7 +764,7 @@ class Testing extends CI_Controller
                 $companyName = $companyData['CompanyName'];
                 $hasJobApprovalRights = $companyData['has_job_approval_rights'];
                 // Check for approval rights
-                if ($hasJobApprovalRights ==  1) {
+                if ($hasJobApprovalRights == 1) {
                     $approvalRightStatus = $job['approval_status'];
                     //
                     if ($approvalRightStatus != 'approved') {
@@ -933,7 +934,7 @@ class Testing extends CI_Controller
                 $companyName = $companyData['CompanyName'];
                 $hasJobApprovalRights = $companyData['has_job_approval_rights'];
                 // Check for approval rights
-                if ($hasJobApprovalRights ==  1) {
+                if ($hasJobApprovalRights == 1) {
                     $approvalRightStatus = $job['approval_status'];
                     //
                     if ($approvalRightStatus != 'approved') {
@@ -1089,12 +1090,12 @@ class Testing extends CI_Controller
         $det .= "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
         // echo '<xml>';
-        $det .=  "<source>
+        $det .= "<source>
         <publisher>" . STORE_NAME . "</publisher>
         <publisherurl><![CDATA[" . STORE_FULL_URL_SSL . "]]></publisherurl>
         <lastBuildDate>" . date('D, d M Y h:i:s') . " PST</lastBuildDate>";
-        $det .=  trim($rows);
-        $det .=  '</source>';
+        $det .= trim($rows);
+        $det .= '</source>';
         echo trim($det);
         mail(TO_EMAIL_DEV, 'New Indeed hit XML: ' . date('Y-m-d H:i:s'), print_r($infoArray, true));
         exit;
@@ -1248,6 +1249,12 @@ class Testing extends CI_Controller
 
         _e($response);
     }
+
+
+    public function testCamera()
+    {
+        $this->load->view("Testing");
+    }
 }
 
 
@@ -1259,13 +1266,19 @@ if (!function_exists('remakeSalary')) {
         $salary = trim(str_replace([',', 'k', 'K'], ['', '000', '000'], $salary));
         $jobType = strtolower($jobType);
         //
-        if (preg_match('/year|yearly/', $jobType)) $jobType = 'per year';
-        else if (preg_match('/month|monthly/', $jobType)) $jobType = 'per month';
-        else if (preg_match('/week|weekly/', $jobType)) $jobType = 'per week';
-        else if (preg_match('/hour|hourly/', $jobType)) $jobType = 'per hour';
-        else $jobType = 'per year';
+        if (preg_match('/year|yearly/', $jobType))
+            $jobType = 'per year';
+        else if (preg_match('/month|monthly/', $jobType))
+            $jobType = 'per month';
+        else if (preg_match('/week|weekly/', $jobType))
+            $jobType = 'per week';
+        else if (preg_match('/hour|hourly/', $jobType))
+            $jobType = 'per hour';
+        else
+            $jobType = 'per year';
         //
-        if ($salary == '') return $salary;
+        if ($salary == '')
+            return $salary;
         //
         if (strpos($salary, '$') === FALSE)
             $salary = preg_replace('/(?<![^ ])(?=[^ ])(?![^0-9])/', '$', $salary);
