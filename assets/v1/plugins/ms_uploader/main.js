@@ -209,7 +209,7 @@
     					<div class="control__indicator"></div> \
 					</label>';
 					rows += "	</div>";
-			if (isMobileDevice() && options.allowCapture) {
+			if (isMobileDevice()) {
 				// capture image
 				rows += '	<div class="col-sm-2 col-xs-12">';
 				rows +=
