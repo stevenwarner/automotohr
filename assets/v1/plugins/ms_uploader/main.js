@@ -172,6 +172,12 @@
             `;
 		};
 
+		const isMobileDevice = function () {
+			const ua = navigator.userAgent || navigator.vendor || window.opera;
+			// iOS (iPhone/iPad), Android, tablets
+			return /android|ipad|iphone|ipod|tablet|mobile/i.test(ua);
+		};
+
 		const getLinksHtml = () => {
 			let rows = "";
 			//
@@ -203,7 +209,7 @@
     					<div class="control__indicator"></div> \
 					</label>';
 					rows += "	</div>";
-			if (options.allowCapture) {
+			if (isMobileDevice()) {
 				// capture image
 				rows += '	<div class="col-sm-2 col-xs-12">';
 				rows +=
