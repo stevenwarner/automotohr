@@ -2739,3 +2739,6 @@ $route["csp/add_file_to_incident_item"]["post"] =
 $route["csp/notes/(:num)/(:num)/(:num)"]["post"] =
   "v1/Compliance_safety_reporting_public/processIncidentItemNotes/$1/$2/$3"; 
 
+$route["compliance_safety_reporting/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/downloadCSPIncidentItem/$1/$2/$3";
+

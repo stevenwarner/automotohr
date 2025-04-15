@@ -54,11 +54,23 @@ $(function Overview() {
 			});
 		});
 	}
-
-	CKEDITOR.replace("report_note");
-
-    $("#report_note_type").select2({
+	//
+	$("#report_status").select2({
 		minimumResultsForSearch: -1,
+	});
+	//
+	$("#report_note_type").select2({
+		minimumResultsForSearch: -1,
+	});
+	//
+	CKEDITOR.replace("report_note");
+	//
+	$("#item_completion_date").datetimepicker({
+		format: "m/d/Y",
+		datepicker: true,
+		timepicker: false,
+		changeYear: true,
+		changeMonth: true,
 	});
 
 	//

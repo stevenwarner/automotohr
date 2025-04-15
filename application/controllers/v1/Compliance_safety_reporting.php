@@ -1475,7 +1475,7 @@ class Compliance_safety_reporting extends Base_csp
      * @param int $incidentId
      * @param int $itemId
      */
-    public function processIncidentItem(int $reportId, int $incidentId, $itemId)
+    public function processIncidentItem(int $reportId, int $incidentId, int $itemId)
     {
         // get the post
         $post = $this->input->post(null, true);
@@ -1527,6 +1527,36 @@ class Compliance_safety_reporting extends Base_csp
             200,
             ["message" => "Notes added successfully."]
         );
+    }
+
+    public function downloadCSPIncidentItem (int $reportId, int $incidentId, int $itemId) {
+        
+        $employeeId = $this->getLoggedInEmployee("sid");
+        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($employeeId, $reportId, $incidentId);
+
+        //
+        if ($haveAccess == 'access_report' || $haveAccess == 'access_incident') {
+            //
+            $this->data["itemDetail"] = $this
+                ->compliance_report_model
+                ->getCSPIncidentItemByIdForDownload(
+                    $reportId,
+                    $incidentId,
+                    $itemId,
+                    true
+                );
+            //
+            $this->data['report_sid'] = $reportId;
+            $this->data['company_name'] = $this->getLoggedInCompany("CompanyName");
+            $this->data['action_date'] = 'Downloaded Date';
+            $this->data['action_by'] = "Downloaded By";
+            $this->data['action'] = "download";
+            $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
+            //
+            $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident_item', $this->data);
+        } else {
+            return redirect("dashboard");
+        }
     }
 
 }

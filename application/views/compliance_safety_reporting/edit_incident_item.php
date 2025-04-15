@@ -52,6 +52,32 @@
                 </div>
                 <!--  -->
                 <form method="post" enctype="multipart/form-data" autocomplete="off" id="jsAddIncidentItemForm">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
+                            <div class="form-group">
+                                <label for="report_date">Created Date <strong class="text-danger">*</strong></label>
+                                <input type="text" class="form-control" readonly value="<?= formatDateToDB($report['created_date'], DB_DATE_WITH_TIME, "m/d/Y"); ?>" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
+                            <div class="form-group">
+                                <label for="item_completion_date">Completion Date</label>
+                                <input type="text" class="form-control" id="item_completion_date" name="item_completion_date" value="<?= $report['completion_date'] ? formatDateToDB($report['completion_date'], DB_DATE, "m/d/Y") : ""; ?>" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
+                            <div class="form-group">
+                                <label for="report_status">Status</label>
+                                <select name="report_status" id="report_status" style="width: 100%;">
+                                    <option <?= $report['completion_status'] === "pending" ? "selected" : ""; ?> value="pending">Pending</option>
+                                    <option <?= $report['completion_status'] === "on_hold" ? "selected" : ""; ?> value="on_hold">On Hold</option>
+                                    <option <?= $report['completion_status'] === "completed" ? "selected" : ""; ?> value="completed">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
                     <?php $this->load->view("compliance_safety_reporting/partials/files/documents"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/audio"); ?>
@@ -148,89 +174,91 @@
                         </div>
                     </div>
 
-                    <!-- Employees -->
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h1 class="panel-heading-text text-medium">
-                                <strong>Internal Employees</strong>
-                            </h1>
-                        </div>
-                        <div class="panel-body">
-                            <?php if ($employees) :
-                                $selectedEmployees = array_column($report["internal_employees"], "employee_sid"); ?>
-                                <div class="row">
-                                    <?php foreach ($employees as $employee) : ?>
-                                        <div class="col-lg-4">
-                                            <label class="control control--checkbox">
-                                                <input type="checkbox" name="report_employees[]" value="<?= $employee["sid"]; ?>" <?= in_array($employee["sid"], $selectedEmployees) ? "checked" : ""; ?> />
-                                                <div class="control__indicator"></div>
-                                                <span><?= remakeEmployeeName($employee); ?></span>
-                                            </label>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php else : ?>
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <p class="text-danger">No employees found.</p>
+                    <div class="hidden">
+                        <!-- Employees -->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h1 class="panel-heading-text text-medium">
+                                    <strong>Internal Employees</strong>
+                                </h1>
+                            </div>
+                            <div class="panel-body">
+                                <?php if ($employees) :
+                                    $selectedEmployees = array_column($report["internal_employees"], "employee_sid"); ?>
+                                    <div class="row">
+                                        <?php foreach ($employees as $employee) : ?>
+                                            <div class="col-lg-4">
+                                                <label class="control control--checkbox">
+                                                    <input type="checkbox" name="report_employees[]" value="<?= $employee["sid"]; ?>" <?= in_array($employee["sid"], $selectedEmployees) ? "checked" : ""; ?> />
+                                                    <div class="control__indicator"></div>
+                                                    <span><?= remakeEmployeeName($employee); ?></span>
+                                                </label>
+                                            </div>
+                                        <?php endforeach; ?>
                                     </div>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-
-                    <!-- Employees -->
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <h1 class="panel-heading-text text-medium">
-                                        <strong>
-                                            External Employees
-                                        </strong>
-                                    </h1>
-
-                                </div>
-                                <div class="col-sm-6 text-right">
-                                    <button class="btn btn-orange jsAddExternalEmployee">
-                                        <i class="fa fa-plus"></i>
-                                        Add External Employee
-                                    </button>
-                                </div>
+                                <?php else : ?>
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <p class="text-danger">No employees found.</p>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
-                        <div class="panel-body jsAddExternalBody">
-                            <?php if ($report["external_employees"]) : ?>
-                                <?php foreach ($report["external_employees"] as $key => $item) : ?>
-                                    <div class="row jsEER" data-external="<?= $key; ?>" data-id="<?= $item["sid"]; ?>">
-                                        <div class="col-md-5">
-                                            <div class="form-group">
-                                                <label for="external_employee_name">Name</label>
-                                                <input type="text" name="external_employees_names[<?= $key; ?>]['name']" class="form-control" value="<?= $item["external_name"]; ?>" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-5">
-                                            <div class="form-group">
-                                                <label for="external_employee_email">Email</label>
-                                                <input type="email" name="external_employees_emails[<?= $key; ?>]['email']" class="form-control" value="<?= $item["external_email"]; ?>" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <div class="form-group">
-                                                <label>&nbsp;</label>
-                                                <button type="button" class="btn btn-red btn-block jsRemoveExternalEmployee">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php else : ?>
-                                <div class="alert alert-info text-center">
-                                    No External employees found
-                                </div>
-                            <?php endif; ?>
 
+                        <!-- Employees -->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h1 class="panel-heading-text text-medium">
+                                            <strong>
+                                                External Employees
+                                            </strong>
+                                        </h1>
+
+                                    </div>
+                                    <div class="col-sm-6 text-right">
+                                        <button class="btn btn-orange jsAddExternalEmployee">
+                                            <i class="fa fa-plus"></i>
+                                            Add External Employee
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body jsAddExternalBody">
+                                <?php if ($report["external_employees"]) : ?>
+                                    <?php foreach ($report["external_employees"] as $key => $item) : ?>
+                                        <div class="row jsEER" data-external="<?= $key; ?>" data-id="<?= $item["sid"]; ?>">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="external_employee_name">Name</label>
+                                                    <input type="text" name="external_employees_names[<?= $key; ?>]['name']" class="form-control" value="<?= $item["external_name"]; ?>" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label for="external_employee_email">Email</label>
+                                                    <input type="email" name="external_employees_emails[<?= $key; ?>]['email']" class="form-control" value="<?= $item["external_email"]; ?>" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <label>&nbsp;</label>
+                                                    <button type="button" class="btn btn-red btn-block jsRemoveExternalEmployee">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php else : ?>
+                                    <div class="alert alert-info text-center">
+                                        No External employees found
+                                    </div>
+                                <?php endif; ?>
+
+                            </div>
                         </div>
                     </div>
 
