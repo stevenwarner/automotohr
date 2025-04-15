@@ -64,7 +64,7 @@ if (!function_exists('getPolicyDifference')) {
         //
         if ($oldDataArray['transferred']) {
             //
-            $differenceArray =  [
+            $differenceArray = [
                 'policy_title' => [
                     'old_value' => $oldDataArray['title'],
                     'new_value' => $newDataArray['title']
@@ -674,7 +674,7 @@ if (!function_exists('isCompanyOnBoard')) {
     function isCompanyOnBoard(int $companyId): bool
     {
         //
-        return (bool)get_instance()->db
+        return (bool) get_instance()->db
             ->where([
                 'company_sid' => $companyId
             ])
@@ -905,10 +905,10 @@ if (!function_exists('getDataFromTable')) {
     function getDataFromTable(string $table, array $where, array $columns = ['*'], string $method = 'row_array'): array
     {
         return get_instance()
-            ->db
-            ->select($columns)
-            ->where($where)
-            ->get($table)
+                    ->db
+                    ->select($columns)
+                    ->where($where)
+                    ->get($table)
             ->$method();
     }
 }
@@ -1102,20 +1102,20 @@ if (!function_exists('checkI9RecordWithProfile')) {
         $data['section1_last_name'] = $data['section1_last_name'] ? $data['section1_last_name'] : $profileData['last_name'];
         $data['section1_first_name'] = $data['section1_first_name'] ? $data['section1_first_name'] : $profileData['first_name'];
         $data['section1_middle_initial'] = $data['section1_middle_initial'] ? $data['section1_middle_initial'] : $profileData['middle_name'];
-        $data['section1_address'] = $data['section1_address'] ? $data['section1_address'] :  $address;
+        $data['section1_address'] = $data['section1_address'] ? $data['section1_address'] : $address;
         $data['section1_city_town'] = $data['section1_city_town'] ? $data['section1_city_town'] : $profileData['Location_City'];
-        
-        if(is_numeric($profileData['Location_State'])){
-            $state_id=$profileData['Location_State'];
-        }else{
-            $state_id=0;
-        }        
-        
+
+        if (is_numeric($profileData['Location_State'])) {
+            $state_id = $profileData['Location_State'];
+        } else {
+            $state_id = 0;
+        }
+
         $data['section1_state'] = $data['section1_state'] ?? getStateColumnById($state_id);
-        
+
         $data['section1_zip_code'] = $data['section1_zip_code'] ? $data['section1_zip_code'] : $profileData['Location_ZipCode'];
         $data['section1_date_of_birth'] = $data['section1_date_of_birth'] ? $data['section1_date_of_birth'] : $profileData['dob'];
-        $data['section1_social_security_number'] = $data['section1_social_security_number'] ? $data['section1_social_security_number'] :  $profileData['ssn'];
+        $data['section1_social_security_number'] = $data['section1_social_security_number'] ? $data['section1_social_security_number'] : $profileData['ssn'];
         $data['section1_emp_email_address'] = $data['section1_emp_email_address'] ? $data['section1_emp_email_address'] : $profileData['email'];
         $data['section1_emp_telephone_number'] = $data['section1_emp_telephone_number'] ? $data['section1_emp_telephone_number'] : $profileData['PhoneNumber'];
         $data['section1_today_date'] = $data['section1_today_date'] ?? getSystemDate(DB_DATE);
@@ -1225,13 +1225,13 @@ if (!function_exists('getStateByCol')) {
 
     function getStateColumn(array $where, string $column): string
     {
-        $result  = &get_instance()->db
+        $result = &get_instance()->db
             ->select($column)
             ->where($where)
             ->get('states')
             ->row_array();
 
-        return $result && $result[$column] ?  $result[$column] : "";
+        return $result && $result[$column] ? $result[$column] : "";
     }
 }
 
@@ -1368,7 +1368,7 @@ if (!function_exists('isValidJson')) {
      * @param string  $string
      * @return bool
      */
-    function isValidJson(string  $string): bool
+    function isValidJson(string $string): bool
     {
         json_decode($string);
         return json_last_error() === JSON_ERROR_NONE;
@@ -1527,7 +1527,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
         $departmentAndTeams = $CI->db->$method('departments_team_management');
         //
         if ($method == "count_all_results") {
-            return $departmentAndTeams  ? [1] : [];
+            return $departmentAndTeams ? [1] : [];
         }
         //
         $departmentAndTeams = $departmentAndTeams->result_array();
@@ -1546,7 +1546,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                 if (isPayrollOrPlus() || (in_array($employeeId, explode(",", $team["lms_managers_ids"])))) {
                     $r['departments'][$team["sid"]] = array(
                         "sid" => $team["sid"],
-                        "name" =>  $team["name"],
+                        "name" => $team["name"],
                         "employees_ids" => []
                     );
                 }
@@ -1614,7 +1614,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                         'job_title' => $jobTitleInfo['job_title'],
                     ]);
                     //
-                    $employees[$employee['employee_sid']]["job_title_sid"] =  !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
+                    $employees[$employee['employee_sid']]["job_title_sid"] = !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
                     $employees[$employee['employee_sid']]["full_name"] = $employeeName;
                     $employees[$employee['employee_sid']]["profile_picture_url"] = getImageURL($jobTitleInfo["profile_picture"]);
                     $employees[$employee['employee_sid']]["only_name"] = remakeEmployeeName($jobTitleInfo, true, true);
@@ -1627,8 +1627,8 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                     //
                     $employeeData = [];
                     $employeeData["employee_sid"] = $employee['employee_sid'];
-                    $employeeData["job_title_sid"] =  $jobTitleId;
-                    $employeeData["employee_name"] =  $employeeName;
+                    $employeeData["job_title_sid"] = $jobTitleId;
+                    $employeeData["employee_name"] = $employeeName;
                     //
                     if ($flag == 'courses') {
                         if ($jobTitleInfo['lms_job_title'] != 0) {
@@ -1672,7 +1672,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                             //
                             $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses . $manualAssignedCoursesList;
                             $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($assignCourses . $manualAssignedCoursesList, $employee['employee_sid']);
-                            $employeeData["assign_courses"] =  array_merge($assignCourses, $manualAssignedCourses);
+                            $employeeData["assign_courses"] = array_merge($assignCourses, $manualAssignedCourses);
                         } else if (checkAnyManualCourseAssigned($employee['employee_sid'])) {
                             $manualAssignedCourses = $CI->db
                                 ->select('default_course_sid')
@@ -1686,10 +1686,10 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                             //
                             $employees[$employee['employee_sid']]["assign_courses"] = $manualAssignedCoursesList;
                             $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($manualAssignedCoursesList, $employee['employee_sid']);
-                            $employeeData["assign_courses"] =  $manualAssignedCoursesList;
+                            $employeeData["assign_courses"] = $manualAssignedCoursesList;
                         } else {
                             $employees[$employee['employee_sid']]["assign_courses"] = "";
-                            $employeeData["assign_courses"] =  "";
+                            $employeeData["assign_courses"] = "";
                         }
                     }
 
@@ -1771,7 +1771,7 @@ if (!function_exists('getLMSManagerDepartmentAndTeams')) {
                 if (isPayrollOrPlus() || (in_array($employeeId, explode(",", $team["lms_managers_ids"])))) {
                     $r['departments'][$team["sid"]] = array(
                         "sid" => $team["sid"],
-                        "name" =>  $team["name"],
+                        "name" => $team["name"],
                         "employees_ids" => []
                     );
                 }
@@ -1839,7 +1839,7 @@ if (!function_exists('getLMSManagerDepartmentAndTeams')) {
                         'job_title' => $jobTitleInfo['job_title'],
                     ]);
                     //
-                    $employees[$employee['employee_sid']]["job_title_sid"] =  !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
+                    $employees[$employee['employee_sid']]["job_title_sid"] = !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
                     $employees[$employee['employee_sid']]["full_name"] = $employeeName;
                     $employees[$employee['employee_sid']]["profile_picture_url"] = getImageURL($jobTitleInfo["profile_picture"]);
                     $employees[$employee['employee_sid']]["only_name"] = remakeEmployeeName($jobTitleInfo, true, true);
@@ -1852,8 +1852,8 @@ if (!function_exists('getLMSManagerDepartmentAndTeams')) {
                     //
                     $employeeData = [];
                     $employeeData["employee_sid"] = $employee['employee_sid'];
-                    $employeeData["job_title_sid"] =  $jobTitleId;
-                    $employeeData["employee_name"] =  $employeeName;
+                    $employeeData["job_title_sid"] = $jobTitleId;
+                    $employeeData["employee_name"] = $employeeName;
                     //
 
                     if ($jobTitleInfo['lms_job_title'] != 0) {
@@ -1895,7 +1895,7 @@ if (!function_exists('getLMSManagerDepartmentAndTeams')) {
                         //
                         $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses . $manualAssignedCoursesList;
                         $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($assignCourses . $manualAssignedCoursesList, $employee['employee_sid']);
-                        $employeeData["assign_courses"] =  array_merge($assignCourses, $manualAssignedCourses);
+                        $employeeData["assign_courses"] = array_merge($assignCourses, $manualAssignedCourses);
                     } else if (checkAnyManualCourseAssigned($employee['employee_sid'])) {
                         $manualAssignedCourses = $CI->db
                             ->select('default_course_sid')
@@ -1909,10 +1909,10 @@ if (!function_exists('getLMSManagerDepartmentAndTeams')) {
                         //
                         $employees[$employee['employee_sid']]["assign_courses"] = $manualAssignedCoursesList;
                         $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($manualAssignedCoursesList, $employee['employee_sid']);
-                        $employeeData["assign_courses"] =  $manualAssignedCoursesList;
+                        $employeeData["assign_courses"] = $manualAssignedCoursesList;
                     } else {
                         $employees[$employee['employee_sid']]["assign_courses"] = "";
-                        $employeeData["assign_courses"] =  "";
+                        $employeeData["assign_courses"] = "";
                     }
 
                     //
@@ -2130,7 +2130,7 @@ if (!function_exists('prefillFormData')) {
         array $form
     ): array {
         // set table
-        $table = $userType === 'applicant' ?  'portal_job_applications' : 'users';
+        $table = $userType === 'applicant' ? 'portal_job_applications' : 'users';
         // set columns
         $columns = [
             'first_name',
@@ -2508,7 +2508,7 @@ if (!function_exists('getPageContent')) {
             $CI->db->where('page', $page);
         }
         $CI->db->where('status', 1);
-        $pageContent =   $CI->db->get('cms_pages_new')->row_array();
+        $pageContent = $CI->db->get('cms_pages_new')->row_array();
         return json_decode($pageContent['content'], true);
     }
 }
@@ -2519,7 +2519,7 @@ if (!function_exists('getPageNameBySlug')) {
     {
         //
         $CI = &get_instance();
-        $page =  $CI->db->select('page')
+        $page = $CI->db->select('page')
             ->where('slug', $slug)
             ->get('cms_pages_new')
             ->row_array();
@@ -2829,38 +2829,38 @@ if (!function_exists("getFile")) {
         // set alertify plugin
         $plugins["alertify"] = [
             "css" =>
-            main_url("public/v1/plugins/alertifyjs/css/alertify.min.css?v=3.0"),
-            "js" =>   main_url("public/v1/plugins/alertifyjs/alertify.min.js?v=3.0")
+                main_url("public/v1/plugins/alertifyjs/css/alertify.min.css?v=3.0"),
+            "js" => main_url("public/v1/plugins/alertifyjs/alertify.min.js?v=3.0")
         ];
         // set alertify plugin
         $plugins["validator"] = [
-            "js" =>  main_url("public/v1/plugins/validator/jquery.validate.min.js?v=3.0")
+            "js" => main_url("public/v1/plugins/validator/jquery.validate.min.js?v=3.0")
         ];
         $plugins["additionalMethods"] = [
-            "js" =>  main_url("public/v1/plugins/validator/additional-methods.min.js?v=3.0")
+            "js" => main_url("public/v1/plugins/validator/additional-methods.min.js?v=3.0")
         ];
 
         // set date range picker plugin
         $plugins["daterangepicker"] = [
             "css" => main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0"),
-            "js" =>  main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0")
+            "js" => main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0")
         ];
 
         // set time picker
         $plugins["timepicker"] = [
             "css" => main_url("public/v1/plugins/timepicker/css/jquery.timepicker.min.css?v=3.0"),
-            "js" =>  main_url("public/v1/plugins/timepicker/jquery.timepicker.min.js?v=3.0")
+            "js" => main_url("public/v1/plugins/timepicker/jquery.timepicker.min.js?v=3.0")
         ];
         // set google map
         $plugins["google_map"] = [
-            "js" =>  main_url("public/v1/plugins/google_map/main.min.js?v=1.0")
+            "js" => main_url("public/v1/plugins/google_map/main.min.js?v=1.0")
         ];
 
         // set select2
         $plugins["select2"] = [
             "css" =>
-            main_url("public/v1/plugins/select2/css/select2.min.css?v=3.0"),
-            "js" =>   main_url("public/v1/plugins/select2/select2.min.js?v=3.0")
+                main_url("public/v1/plugins/select2/css/select2.min.css?v=3.0"),
+            "js" => main_url("public/v1/plugins/select2/select2.min.js?v=3.0")
         ];
         //
         return $plugins[$index][$type] ?? "";
@@ -3808,7 +3808,7 @@ if (!function_exists("showEmployeeStatusSelect")) {
         $html = "<select {$props}>";
         foreach ($options as $index => $option) {
             $html .= '<option value="' . ($index) . '" ';
-            $html .=  $selectedOptions && in_array($index, $selectedOptions) ? "selected" : "";
+            $html .= $selectedOptions && in_array($index, $selectedOptions) ? "selected" : "";
             $html .= ">";
             $html .= $option;
             $html .= '</option>';
@@ -4045,12 +4045,12 @@ if (!function_exists("cleanTerminatedEmployees")) {
         foreach ($employeeArray as $index => $value) {
             $record =
                 $ci->db
-                ->select("employee_status")
-                ->where("employee_sid", $value["sid"])
-                ->order_by("sid", "DESC")
-                ->limit(1)
-                ->get("terminated_employees")
-                ->row_array();
+                    ->select("employee_status")
+                    ->where("employee_sid", $value["sid"])
+                    ->order_by("sid", "DESC")
+                    ->limit(1)
+                    ->get("terminated_employees")
+                    ->row_array();
             //
             if ($record && in_array($record["employee_status"], [1])) {
                 unset($employeeArray[$index]);
@@ -4217,12 +4217,12 @@ if (!function_exists("checkAndGetDocumentDescription")) {
         // check if fillable document
         if (
             $CI
-            ->db
-            ->where([
-                "sid" => $documentId,
-                "fillable_document_slug IS NOT NULL" => null
-            ])
-            ->count_all_results("documents_management")
+                ->db
+                ->where([
+                    "sid" => $documentId,
+                    "fillable_document_slug IS NOT NULL" => null
+                ])
+                ->count_all_results("documents_management")
         ) {
             return $encode ? htmlentities(
                 $description
@@ -4292,7 +4292,7 @@ if (!function_exists("checkGeneralDocumentActive")) {
             $where[$documentField] = 0;
         }
         //
-        return (bool)$CI
+        return (bool) $CI
             ->db
             ->where($where)
             ->count_all_results("portal_employer");
@@ -4340,7 +4340,7 @@ if (!function_exists("checkEmployeeExistInCompany")) {
         }
 
         //
-        if ($columnName &&  $columnValue) {
+        if ($columnName && $columnValue) {
             //
             $CI = &get_instance();
             //
@@ -4410,8 +4410,8 @@ if (!function_exists("getCompanyDataForPrefil")) {
         //
         $record =
             get_instance()
-            ->db
-            ->select('
+                ->db
+                ->select('
                 users.CompanyName,
                 users.company_corp_name,
                 users.Location_Address,
@@ -4423,16 +4423,16 @@ if (!function_exists("getCompanyDataForPrefil")) {
                 states.state_code,
                 users.extra_info
             ')
-            ->join(
-                "states",
-                "states.sid = users.Location_State",
-                "left"
-            )
-            ->where('users.sid', $companyId)
-            ->where('users.parent_sid', 0)
-            ->limit(1)
-            ->get('users')
-            ->row_array();
+                ->join(
+                    "states",
+                    "states.sid = users.Location_State",
+                    "left"
+                )
+                ->where('users.sid', $companyId)
+                ->where('users.parent_sid', 0)
+                ->limit(1)
+                ->get('users')
+                ->row_array();
         // when record found
         if ($record) {
             // set company details
@@ -4505,26 +4505,26 @@ if (!function_exists("checkIfEmployeeIsLMSManager")) {
         // check for department level
         if (
             $CI
-            ->db
-            ->where("is_deleted", 0)
-            ->where("FIND_IN_SET('{$employeeId}', lms_managers_ids) !=", 0)
-            ->count_all_results("departments_management")
+                ->db
+                ->where("is_deleted", 0)
+                ->where("FIND_IN_SET('{$employeeId}', lms_managers_ids) !=", 0)
+                ->count_all_results("departments_management")
         ) {
             return true;
         }
         // check it on team level
         return
             $CI
-            ->db
-            ->join(
-                "departments_management",
-                "departments_management.sid = departments_team_management.department_sid",
-                "inner"
-            )
-            ->where("departments_management.is_deleted", 0)
-            ->where("departments_team_management.is_deleted", 0)
-            ->where("FIND_IN_SET('{$employeeId}', departments_team_management.lms_managers_ids) !=", 0)
-            ->count_all_results("departments_team_management");
+                ->db
+                ->join(
+                    "departments_management",
+                    "departments_management.sid = departments_team_management.department_sid",
+                    "inner"
+                )
+                ->where("departments_management.is_deleted", 0)
+                ->where("departments_team_management.is_deleted", 0)
+                ->where("FIND_IN_SET('{$employeeId}', departments_team_management.lms_managers_ids) !=", 0)
+                ->count_all_results("departments_team_management");
     }
 }
 
@@ -4569,7 +4569,7 @@ if (!function_exists('getAllActivePages')) {
         $CI->db
             ->select('slug');
         $CI->db->where('status', 1);
-        $pageResult =   $CI->db->get('cms_pages_new')->result_array();
+        $pageResult = $CI->db->get('cms_pages_new')->result_array();
 
         $activeslugs = [];
         if (!empty($pageResult)) {
@@ -4615,7 +4615,7 @@ if (!function_exists("manage_sitemap")) {
             $i = 0;
             // Loop through the URL entries and delete the specified URL
             foreach ($urlset->url as $index => $url_entry) {
-                if ((string)$url_entry->loc == $url) {
+                if ((string) $url_entry->loc == $url) {
                     unset($urlset->url[$i]);
                     break;
                 }
@@ -4625,7 +4625,7 @@ if (!function_exists("manage_sitemap")) {
             // Add or update the URL
             $url_exists = false;
             foreach ($urlset->url as $url_entry) {
-                if ((string)$url_entry->loc == $url) {
+                if ((string) $url_entry->loc == $url) {
                     // Update the existing URL
                     $url_entry->lastmod = date('Y-m-d\TH:i:s\Z');
                     $url_entry->priority = $priority;
@@ -4698,7 +4698,7 @@ if (!function_exists("isMainAllowedForCSP")) {
         // get the access column
         $hasMainAccess = getUserColumnById($employeeId, "can_access_compliance_safety_report");
         // check if has access to the main module
-        return (int)$hasMainAccess === 1;
+        return (int) $hasMainAccess === 1;
     }
 }
 
@@ -4725,7 +4725,7 @@ if (!function_exists("isAllowedForCSP")) {
         // load the model
         $CI->load->model("v1/compliance_report_model");
         // check the permission
-        return (int)$CI->compliance_report_model->hasAccess($employeeId) >= 1;
+        return (int) $CI->compliance_report_model->hasAccess($employeeId) >= 1;
     }
 }
 
@@ -4768,7 +4768,7 @@ if (!function_exists("convertCSPTags")) {
                     function ($matches) use ($dynamicData, &$inputCounter) {
                         $value = $dynamicData['dynamicInput'][$inputCounter] ?? '';
                         $inputCounter++;
-                        return '<input type="text" name="dynamicInput[]" style="width: 400px;" value="' . htmlspecialchars($value) . '" />';
+                        return '<input type="text" name="dynamicInput[]" style="width: ' . ((strlen($value) * 8) + 5) . 'px;" value="' . htmlspecialchars($value) . '" />';
                     },
                     $description
                 );
@@ -4791,7 +4791,7 @@ if (!function_exists("convertCSPTags")) {
             $description =
                 preg_replace(
                     "/{{input}}/i",
-                    '<input type="text" name="dynamicInput[]" style="width: 400px;" />',
+                    '<input type="text" name="dynamicInput[]" style="max-width: 400px;" />',
                     $description
                 );
             // replace checkboxes
@@ -4834,7 +4834,7 @@ if (!function_exists("getAnniversaryPeriods")) {
         // Initialize an array to store the anniversary periods
         $anniversaryPeriods = [];
         // Get the year of the joined date
-        $joinedYear = (int)$joinedDate->format('Y');
+        $joinedYear = (int) $joinedDate->format('Y');
         // Loop through the years from the joined year to the custom year
         while ($joinedDate->format('Y') <= $customDate->format('Y')) {
             // Set the current anniversary for this year
@@ -4855,7 +4855,7 @@ if (!function_exists("getAnniversaryPeriods")) {
         //
         return $anniversaryPeriods;
     }
-}    
+}
 
 //
 if (!function_exists("isLMSManagerDepartmentAndTeams")) {
