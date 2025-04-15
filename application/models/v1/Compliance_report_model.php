@@ -3933,6 +3933,16 @@ class Compliance_report_model extends CI_Model
 		$report["incidentItemsSelected"] = $this->getCSPAttachedItems($incidentId);
 		$report["severity_status"] = $this->getSeverityLevels();
 		//
+		if ($report["incidentItemsSelected"]) {
+			//
+			$report["incidentsItemDetail"] = [];
+			//
+			foreach ($report["incidentItemsSelected"] as $item) {
+				$itemDetail = $this->getCSPIncidentItemByIdForDownload($reportId, $incidentId, $item['sid']);
+				$report["itemDetail"][] = $itemDetail;
+			}
+		}
+		//
 		$report["internal_employees"] = $this
 			->getCSPIncidentInternalEmployeesById($reportId, $incidentId, 0, [
 				"csp_reports_employees.sid",

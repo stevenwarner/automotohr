@@ -2742,3 +2742,6 @@ $route["csp/notes/(:num)/(:num)/(:num)"]["post"] =
 $route["compliance_safety_reporting/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting/downloadCSPIncidentItem/$1/$2/$3";
 
+$route["csp/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_public/downloadCSPIncidentItem/$1/$2/$3";
+

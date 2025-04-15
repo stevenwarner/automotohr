@@ -1828,4 +1828,49 @@ class Compliance_safety_reporting_public extends Base_csp
         );
     }
 
+    public function downloadCSPIncidentItem ($reportId, $incidentId, $itemId) {
+        //
+        $userId = '';
+        //
+        if ($this->getPublicSessionData("is_external_employee") == 1) {
+            $userId = $this->getPublicSessionData("external_email");
+        } else {
+            $userId = $this->getPublicSessionData("employee_sid");
+        }
+        //
+        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($userId, $reportId, $incidentId);
+        //
+        if ($haveAccess == 'access_report' || $haveAccess == 'access_incident') {
+            $this->data["itemDetail"] = $this
+                ->compliance_report_model
+                ->getCSPIncidentItemByIdForDownload(
+                    $reportId,
+                    $incidentId,
+                    $itemId,
+                    true
+                );   
+            //
+            $companyId = $this->getPublicSessionData("company_sid");
+            $employeeName = '';
+            //
+            if ($this->getPublicSessionData("is_external_employee") == 1) {
+                $employeeName = $this->getPublicSessionData("external_name");
+            } else {
+                $employeeId = $this->getPublicSessionData("employee_sid");
+                $employeeName = getEmployeeOnlyNameBySID($employeeId);
+            }
+            //
+            $this->data['report_sid'] = $reportId;
+            $this->data['company_name'] = $this->compliance_report_model->get_company_name_by_sid($companyId);
+            $this->data['action_date'] = 'Downloaded Date';
+            $this->data['action_by'] = "Downloaded By"; 
+            $this->data['action'] = "download"; 
+            $this->data['action_by_name'] = $employeeName; 
+            //
+            $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident_item', $this->data);  
+        } else {
+            return redirect("/");
+        }    
+    }
+
 }
