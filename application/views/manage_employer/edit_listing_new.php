@@ -140,7 +140,15 @@
                                         <?php           } ?>
 
                                         <div class="description-editor">
-                                            <label>Job Description:<span class="staric">*</span></label>
+                                            <div style="display: flex;">
+                                                <label style="margin-right: 5px;">Job Description:<span class="staric">*</span></label>
+                                                <button
+                                                    class="generate-button"
+                                                    type="button"
+                                                    id="generate_button"
+                                                    onclick="generateJobDescription()"
+                                                >Generate</button>
+                                            </div>
                                             <div style='margin-bottom:5px;'><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
                                             <textarea class="ckeditor" name="JobDescription" id="JobDescription" cols="67" rows="6">
                                                             <?php echo $listing["JobDescription"]; ?></textarea>
@@ -161,7 +169,7 @@
 
                                         <li class="form-col-50-left">
                                             <div class="form-col-50-left">
-                                                <label>Salary From:
+                                                <label>Salary From:</label>
                                                     <div class="input-group">
                                                         <span class="input-group-addon" id="basic-addon1">$</span>
                                                         <input class="invoice-fields" type="text" name="minSalary" id="minSalary" value="<?php echo set_value('minSalary', $listing["minSalary"]); ?>">
@@ -169,7 +177,7 @@
                                                     </div>
                                             </div>
                                             <div class="form-col-50-right">
-                                                <label>Salary To:
+                                                <label>Salary To:</label>
                                                     <div class="input-group">
                                                         <span class="input-group-addon" id="basic-addon1">$</span>
                                                         <input class="invoice-fields" type="text" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary', $listing["maxSalary"]); ?>">
@@ -1926,6 +1934,16 @@
     .cs-purchased-product p {
         font-size: 16px !important;
     }
+    .generate-button {
+        background: #81b431;
+        border: none;
+        padding: 5px 10px;
+        color: #fff;
+    }
+    .generate-button:disabled {
+        background: #ddd;
+        color: #000;
+    }
 </style>
 <?php if ($hasNewModuleAccess) { ?>
 
@@ -2040,6 +2058,37 @@
 
 <script>
     // $('#select_template').select2();
+
+    async function generateJobDescription() {
+        document.querySelector('button#generate_button').disabled = true;
+        const title = document.querySelector('input#Title').value;
+        const options = document.querySelector('select#Category').selectedOptions;
+        let optionsTextAr = [];
+        for(let i = 0; i < options.length; i++)
+        {
+            optionsTextAr.push(options[i].text);
+        }
+        const instructions = 'Write down job description brefiely with html formate according given input';
+        const input = `Provide job description according ${optionsTextAr.join(', ')} as title: "${title}"`;
+        const resp = await generateJDOpenAiCall(input, instructions);
+
+        CKEDITOR.instances.JobDescription.setData(resp.result);
+        document.querySelector('button#generate_button').disabled = false;
+    }
+
+    async function generateJDOpenAiCall(input, instructions) {
+        return await fetch("http://127.0.0.1:3000/openai/generate-JD", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          instructions,
+          input
+        }),
+      }).then(async response => response.json())
+      .catch(e => e);
+    }
 </script>
 
 <style>
