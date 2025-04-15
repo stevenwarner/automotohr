@@ -54,7 +54,7 @@
 		options["placeholderImage"] =
 			(opt !== undefined && opt.placeholderImage) || "";
 		options["fileLimit"] =
-			opt === undefined	
+			opt === undefined	|| $.inArray("mp4", opt.allowedTypes) === -1
 				? -1
 				: opt.fileLimit;
 		options["allowedTypes"] = (opt !== undefined && opt.allowedTypes) || [
@@ -94,6 +94,7 @@
 		// turn on youtube and video
 		options["allowLinks"] = opt.allowLinks || false;
 		options["activeLink"] = opt.activeLink || "upload";
+		options["allowCapture"] = opt.allowCapture || false;
 
 		//
 		let errorCodes = {
@@ -201,7 +202,29 @@
 				'" value="vimeo" /> Vimeo \
     					<div class="control__indicator"></div> \
 					</label>';
-			rows += "	</div>";
+					rows += "	</div>";
+			if (options.allowCapture) {
+				// capture image
+				rows += '	<div class="col-sm-2 col-xs-12">';
+				rows +=
+					'<label class="control control--radio"> \
+							<input type="radio" name="jsSourceType' +
+					randKey +
+					'" value="capture_photo" /> Capture Photo \
+							<div class="control__indicator"></div> \
+						</label>';
+				rows += "	</div>";
+				// record video
+				rows += '	<div class="col-sm-2 col-xs-12">';
+				rows +=
+					'<label class="control control--radio"> \
+							<input type="radio" name="jsSourceType' +
+					randKey +
+					'" value="record_video" /> Record Video \
+							<div class="control__indicator"></div> \
+						</label>';
+				rows += "	</div>";
+			}
 			rows += "</div><br />";
 			// youtube box
 			rows += '<div class="row hidden">';
@@ -231,6 +254,17 @@
 					</div>';
 			rows += "	</div>";
 			rows += "<br /></div>";
+
+			if (options.allowCapture) {
+				// photo
+				rows += `
+					<input type="file" id="cameraInput${randKey}" accept="image/*" capture="environment" style="display: none;" />
+				`;
+				// video
+				rows += `
+					<input type="file" id="videoInput${randKey}" accept="video/*" capture="environment" style="display: none;" />
+				`;
+			}
 			//
 			return rows;
 		};
@@ -239,7 +273,7 @@
 		const getWrapper = () => {
 			return `
             <div class="jsMainUploadAreaWrapper">
-				${options.allowLinks ? getLinksHtml() : ""}
+				${options.allowLinks || options.allowCapture ? getLinksHtml() : ""}
                 <div class="csUploadArea hidden" id="${options.mainDivName}">
                     <div class="csUploadInnerArea">
                         <p>${options.text}</p>
@@ -248,8 +282,8 @@
 								? `<em style="color:rgb(255, 155, 0);"><i class="fa fa-warning"></i> Maximum allowed file size is ${options.fileLimit}</em><br />`
 								: ""
 						}
-                        <span>(${options.allowedTypes})</span> <br /><br />
-                        <span style="color: red; font-weight: bold; display: none;" id="${
+                        <span style="word-break: break-all;">(${options.allowedTypes})</span> <br /><br />
+                        <span style="color: red; font-weight: bold; display: none;  word-break: break-all;" id="${
 							options.errorMSG
 						}"></span>
                         <div style="${
@@ -577,6 +611,22 @@
 					link: "",
 					hasError: true,
 				};
+			} else if ($(this).val() === "capture_photo") {
+				//
+				instances[_this.selector] = {
+					type: "upload",
+					link: "",
+					hasError: true,
+				};
+				$(`#cameraInput${randKey}`).trigger("click")
+			} else if ($(this).val() === "record_video") {
+				//
+				instances[_this.selector] = {
+					type: "upload",
+					link: "",
+					hasError: true,
+				};
+				$(`#videoInput${randKey}`).trigger("click")
 			}
 		});
 

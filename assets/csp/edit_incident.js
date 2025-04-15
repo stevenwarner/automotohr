@@ -31,6 +31,7 @@ $(function Overview() {
 			],
 			fileLimit: "200mb",
 			allowLinks: true,
+			allowCapture: true,
 		},
 	};
 
