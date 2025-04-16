@@ -142,12 +142,22 @@
                                         <div class="description-editor">
                                             <div style="display: flex;">
                                                 <label style="margin-right: 5px;">Job Description:<span class="staric">*</span></label>
-                                                <button
-                                                    class="generate-button"
-                                                    type="button"
-                                                    id="generate_button"
-                                                    onclick="generateJobDescription()"
-                                                >Generate</button>
+
+                                                <div class="generate-wrapper">
+                                                    <button
+                                                        class="generate-button"
+                                                        type="button"
+                                                        id="generate_prompt_button"
+                                                        data-target="#generate_with_prompt_modal"
+                                                        onclick="$('#generate_with_prompt_modal').modal('show');"
+                                                    >Generate With Prompt</button>
+                                                    <button
+                                                        class="generate-button"
+                                                        type="button"
+                                                        id="generate_button"
+                                                        onclick="generateJobDescription()"
+                                                    >Auto Generate</button>
+                                                </div>
                                             </div>
                                             <div style='margin-bottom:5px;'><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
                                             <textarea class="ckeditor" name="JobDescription" id="JobDescription" cols="67" rows="6">
@@ -1063,6 +1073,32 @@
         </div>
     </div>
 </div>
+
+<div id="generate_with_prompt_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form
+        onsubmit="generateWithPrompt(event)"
+        >
+            <div class="modal-content">
+                <div class="modal-header modal-header-bg">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Generate Description</h4>
+                </div>
+                <div class="modal-body">
+                    <label for="generate_prompt_input">Prompt: <span class="staric">*</span></label>
+                    <textarea class="invoice-fields" type="text" name="generate_prompt_input" id="generate_prompt_input" placeholder="Prompt ..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        class="generate-button"
+                        type="submit"
+                        id="submit_prompt"
+                    >Generate</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/bootstrap_select/js2/bootstrap-select.js"></script>
@@ -1934,11 +1970,19 @@
     .cs-purchased-product p {
         font-size: 16px !important;
     }
+
+    .generate-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        gap: 1rem;
+    }
     .generate-button {
         background: #81b431;
         border: none;
         padding: 5px 10px;
         color: #fff;
+        width: max-content;
     }
     .generate-button:disabled {
         background: #ddd;
@@ -2058,23 +2102,56 @@
 
 <script>
     // $('#select_template').select2();
+    const CompanyName = '<?= $session['company_detail']['CompanyName'] ?>';
 
-    async function generateJobDescription() {
+    async function generateJobDescription(newInput = "") {
+        // Start Submission
         document.querySelector('button#generate_button').disabled = true;
+        document.querySelector('button#generate_prompt_button').disabled = true;
+        document.querySelector('button#submit_prompt').disabled = true;
+
         const title = document.querySelector('input#Title').value;
+        const country = document.querySelector("select[name=Location_Country] option:checked").text;
+        const state = document.querySelector("select[name=Location_State] option:checked").text;
+        const city = document.querySelector("input[name=Location_City]").value;
         const options = document.querySelector('select#Category').selectedOptions;
         let optionsTextAr = [];
         for(let i = 0; i < options.length; i++)
         {
             optionsTextAr.push(options[i].text);
         }
-        const instructions = 'Write down job description brefiely with html formate according given input';
-        const input = `Provide job description according ${optionsTextAr.join(', ')} as title: "${title}"`;
+        const instructions = `Format the job post in HTML with inline CSS styles suitable for pasting into a WYSIWYG editor like CKEditor or TinyMCE.
+        Use proper heading tags (<h2>, <h3>), paragraphs (<p>), and lists (<ul>, <li>).
+        Style it with readable fonts, spacing, and a clean layout using only inline CSS (no external or embedded <style> tags).
+        Keep the design minimal, professional, and mobile-friendly.
+        Do not include <html>, <head>, or <body> tags — just the inner content.`;
+
+        let input = `Write a professional and engaging Job Post in the category of ${optionsTextAr.join(', ')}.
+        The job is for the position of ${title} at ${CompanyName}, located in ${city}, ${state} ${country}.
+        Define list of responsibilities in detail according to position.`;
+        if(newInput.length > 5)
+        {
+            input += `${input}
+            Use the following infromation to generate job description: ${newInput}`
+        }
         const resp = await generateJDOpenAiCall(input, instructions);
 
         CKEDITOR.instances.JobDescription.setData(resp.result);
+
+        // Clear Submission
         document.querySelector('button#generate_button').disabled = false;
+        document.querySelector('button#generate_prompt_button').disabled = false;
+        document.querySelector('button#submit_prompt').disabled = false;
+        $('#generate_with_prompt_modal').modal('hide');
     }
+
+    document.querySelector('#generate_with_prompt_modal form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const newInput = document.querySelector('#generate_with_prompt_modal form textarea').value;
+        generateJobDescription(newInput);
+
+        return false;
+    })
 
     async function generateJDOpenAiCall(input, instructions) {
         return await fetch("http://127.0.0.1:3000/openai/generate-JD", {
