@@ -97,19 +97,19 @@ $(function Overview() {
         var message_subject = $('#subject').val();
         var message_body = CKEDITOR.instances['email_message'].getData();
 
-        if (receivers == null && message_subject == '' && message_body == '') {
+        if ((receivers == null || receivers.length == 0) && message_subject == '' && message_body == '') {
             message = 'All fields are required.';
             flag = 1;
-        } else if (receivers == null && message_subject == '') {
+        } else if ((receivers == null || receivers.length == 0) && message_subject == '') {
             message = 'Email address and Subject are required.';
             flag = 1;
-        } else if (receivers == null && message_body == '') {
+        } else if ((receivers == null || receivers.length == 0) && message_body == '') {
             message = 'Email address and Message are required.';
             flag = 1;
         } else if (message_subject == '' && message_body == '') {
             message = 'Subject and Message body are required.';
             flag = 1;
-        } else if (receivers == null) {
+        } else if (receivers == null || receivers.length == 0) {
             message = 'Email address is required.';
             flag = 1;
         } else if (message_body == '') {
@@ -285,7 +285,7 @@ $(function Overview() {
             data: form_data,
             success: function(response) {
                 $('#attachment_loader').hide();
-                alertify.alert('SUCCESS!', 'You have succesfully send an email.', () => {
+                alertify.alert('SUCCESS!', 'You have successfully send an email.', () => {
                     window.location.reload();
                 });
             },

@@ -3607,13 +3607,14 @@ class Compliance_report_model extends CI_Model
 		return $userKey;
 	}
 
-	function getComplianceSafetyReportEmails($user_sid, $employee_sid, $reportId, $incidentId)
+	function getComplianceSafetyReportEmails($user_sid, $employee_sid, $reportId, $incidentId, $itemId = 0)
 	{
 		$where = "(sender_sid='" . $user_sid . "' AND receiver_sid='" . $employee_sid . "' OR sender_sid='" . $employee_sid . "' AND receiver_sid='" . $user_sid . "')";
 		$this->db->select('*');
 		$this->db->where($where);
 		$this->db->where('csp_reports_sid', $reportId);
 		$this->db->where('csp_incident_type_sid', $incidentId);
+		$this->db->where('csp_reports_incidents_items_sid', $itemId);
 		$this->db->order_by('send_date', 'desc');
 		$records_obj = $this->db->get('csp_reports_emails');
 		$records_arr = $records_obj->result_array();
@@ -3627,13 +3628,14 @@ class Compliance_report_model extends CI_Model
 		return $return_data;
 	}
 
-	function getComplianceSafetyReportEmailsByEmailAddress($email, $employee_sid, $reportId, $incidentId)
+	function getComplianceSafetyReportEmailsByEmailAddress($email, $employee_sid, $reportId, $incidentId, $itemId = 0)
 	{
 		$where = "(sender_sid='0' AND receiver_sid='" . $employee_sid . "' AND manual_email='" . $email . "' OR sender_sid='" . $employee_sid . "' AND receiver_sid='0' AND manual_email='" . $email . "')";
 		$this->db->select('*');
 		$this->db->where($where);
 		$this->db->where('csp_reports_sid', $reportId);
 		$this->db->where('csp_incident_type_sid', $incidentId);
+		$this->db->where('csp_reports_incidents_items_sid', $itemId);
 		$this->db->order_by('send_date', 'desc');
 		$records_obj = $this->db->get('csp_reports_emails');
 		$records_arr = $records_obj->result_array();

@@ -322,6 +322,10 @@ class Compliance_safety_reporting_public extends Base_csp
             }
         }
         //
+        $this->data["reportId"] = $reportId;
+        $this->data["incidentId"] = 0;
+        $this->data["itemId"] = 0;
+        //
         $this->renderView('compliance_safety_reporting/public/edit_report');
     }
 
@@ -403,6 +407,7 @@ class Compliance_safety_reporting_public extends Base_csp
         //
         $this->data["reportId"] = $reportId;
         $this->data["incidentId"] = $incidentId;
+        $this->data["itemId"] = 0;
 
         $this->data["manageItemUrl"] = base_url('csp/incident_item_management/'.$reportId.'/'.$incidentId);
         //
@@ -898,11 +903,11 @@ class Compliance_safety_reporting_public extends Base_csp
             //
             if ($isEmployee) {
                 $manualUserInfo = $this->compliance_report_model->getUserInfoByEmail($manual_email, $companyId);
-                $conversation_key = $reportId . '/' . $incidentId . '/' . $manualUserInfo['sid'] . '/' . $employeeId;
+                $conversation_key = $reportId . '/' . $incidentId . '/' . $itemId . '/' . $manualUserInfo['sid'] . '/' . $employeeId;
                 $receiver_name = $manualUserInfo['first_name'] . ' ' . $manualUserInfo['last_name'];
                 $receiverId = $manualUserInfo['sid'];
             } else {
-                $conversation_key = $reportId . '/' . $incidentId . '/' . $manual_email . '/' . $employeeId;
+                $conversation_key = $reportId . '/' . $incidentId . '/' . $itemId . '/' . $manual_email . '/' . $employeeId;
                 $name = explode("@", $manual_email);
                 $receiver_name = $name[0];
             }
@@ -913,6 +918,7 @@ class Compliance_safety_reporting_public extends Base_csp
             $manual_email_to_insert = array();
             $manual_email_to_insert['csp_reports_sid']          = $reportId;
             $manual_email_to_insert['csp_incident_type_sid']    = $incidentId;
+            $manual_email_to_insert['csp_reports_incidents_items_sid']    = $itemId;
             //
             if ($isEmployee) {
                 $manual_email_to_insert['receiver_sid']         = $receiverId;
@@ -1005,14 +1011,15 @@ class Compliance_safety_reporting_public extends Base_csp
                 $data_to_insert = array();
                 $data_to_insert['csp_reports_sid']          = $reportId;
                 $data_to_insert['csp_incident_type_sid']    = $incidentId;
+                $data_to_insert['csp_reports_incidents_items_sid']    = $itemId;
                 //
                 if ($employeeType == 'internal') {
                     $data_to_insert['sender_sid'] = $employeeId;
-                    $conversation_key = $reportId . '/' . $incidentId . '/' . $receiver_id . '/' . $employeeId;
+                    $conversation_key = $reportId . '/' . $incidentId . '/' . $itemId . '/' . $receiver_id . '/' . $employeeId;
                 } else if ($employeeType == 'external') {
                     $data_to_insert['sender_sid'] = 0;
                     $data_to_insert['manual_email'] = $employeeEmail;
-                    $conversation_key = $reportId . '/' . $incidentId . '/' . $receiver_id . '/' . $employeeEmail;
+                    $conversation_key = $reportId . '/' . $incidentId . '/' . $itemId . '/' . $receiver_id . '/' . $employeeEmail;
                 }
                 //
                 $data_to_insert['sender_sid'] = $employeeId;
@@ -1326,21 +1333,21 @@ class Compliance_safety_reporting_public extends Base_csp
         }
     }
 
-    public function viewComplianceSafetyReportEmail($reportId, $incidentId, $receiverId, $senderId)
+    public function viewComplianceSafetyReportEmail($reportId, $incidentId, $itemId, $receiverId, $senderId)
     {
         //
         $manual_user = 'no';
         //
         if (!filter_var($receiverId, FILTER_VALIDATE_EMAIL) && !filter_var($senderId, FILTER_VALIDATE_EMAIL)) {
             // Fetch All Emails IF Both Sender-SID And Receiver_SID is Integers 
-            $emails = $this->compliance_report_model->getComplianceSafetyReportEmails($receiverId, $senderId, $reportId, $incidentId);
+            $emails = $this->compliance_report_model->getComplianceSafetyReportEmails($receiverId, $senderId, $reportId, $incidentId, $itemId);
         } else {
             if (filter_var($receiverId, FILTER_VALIDATE_EMAIL)) {
                 // Fetch All Emails IF Both Sender-SID is Integer And Receiver_SID is Email Address
-                $emails = $this->compliance_report_model->getComplianceSafetyReportEmailsByEmailAddress($receiverId, $senderId, $reportId, $incidentId);
+                $emails = $this->compliance_report_model->getComplianceSafetyReportEmailsByEmailAddress($receiverId, $senderId, $reportId, $incidentId, $itemId);
             } else if (filter_var($senderId, FILTER_VALIDATE_EMAIL)) {
                 // Fetch All Emails IF Both Sender-SID is Email Address And Receiver_SID is Integer
-                $emails = $this->compliance_report_model->getComplianceSafetyReportEmailsByEmailAddress($senderId, $receiverId, $reportId, $incidentId);
+                $emails = $this->compliance_report_model->getComplianceSafetyReportEmailsByEmailAddress($senderId, $receiverId, $reportId, $incidentId, $itemId);
             }
 
             $manual_user = 'yes';
@@ -1410,7 +1417,7 @@ class Compliance_safety_reporting_public extends Base_csp
             $company_name = $this->compliance_report_model->get_company_name_by_sid($company_sid);
 
             // Fetch Document For Media
-            $libraryItems = $this->compliance_report_model->getComplianceReportFiles($reportId, $incidentId, 0);
+            $libraryItems = $this->compliance_report_model->getComplianceReportFiles($reportId, $incidentId, $itemId);
 
             $this->data['emails']             = $emails;
             $this->data['title']              = 'Compliance Safety Emails';
@@ -1429,6 +1436,7 @@ class Compliance_safety_reporting_public extends Base_csp
             $this->data['receiver_user']      = $to_sid;
             $this->data['reportId']           = $reportId;
             $this->data['incidentId']         = $incidentId;
+            $this->data['itemId']             = $itemId;
             $this->data['libraryItems']       = $libraryItems;
             $this->data['senderType']         = $sender_type;
             $this->data['pageJs'][]           = 'csp/send_email_view';

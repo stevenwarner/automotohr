@@ -777,11 +777,11 @@ class Compliance_safety_reporting extends Base_csp
             //
             if ($isEmployee) {
                 $manualUserInfo = $this->compliance_report_model->getUserInfoByEmail($manual_email, $companyId);
-                $conversation_key = $reportId . '/' . $incidentId . '/' . $manualUserInfo['sid'] . '/' . $employeeId;
+                $conversation_key = $reportId . '/' . $incidentId . '/' . $itemId . '/' . $manualUserInfo['sid'] . '/' . $employeeId;
                 $receiver_name = $manualUserInfo['first_name'] . ' ' . $manualUserInfo['last_name'];
                 $receiverId = $manualUserInfo['sid'];
             } else {
-                $conversation_key = $reportId . '/' . $incidentId . '/' . $manual_email . '/' . $employeeId;
+                $conversation_key = $reportId . '/' . $incidentId . '/' . $itemId . '/' . $manual_email . '/' . $employeeId;
                 $name = explode("@", $manual_email);
                 $receiver_name = $name[0];
             }
@@ -897,7 +897,7 @@ class Compliance_safety_reporting extends Base_csp
                 $manager_info = db_get_employee_profile($receiver_id);
                 $receiver_email = $manager_info[0]['email'];
                 $receiver_name = $manager_info[0]['first_name'] . ' ' . $manager_info[0]['last_name'];
-                $conversation_key = $reportId . '/' . $incidentId . '/' . $receiver_id . '/' . $employeeId;
+                $conversation_key = $reportId . '/' . $incidentId . '/' . $itemId . '/' . $receiver_id . '/' . $employeeId;
                 $data_to_insert['receiver_sid'] = $receiver_id;
                 //
                 $inserted_email_sid = $this->compliance_report_model->addComplianceReportEmail($data_to_insert);
