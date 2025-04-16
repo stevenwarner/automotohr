@@ -3159,4 +3159,106 @@ class Reports_model extends CI_Model
         $r['Data'] = $holderArray;
         return $r;
     }
+
+    //
+    function getCompanyComplianceReports($companySid)
+    {
+        $a = $this->db
+            ->select("sid,title")
+            ->where('company_sid', $companySid)
+            ->order_by('title', 'ASC')
+            ->get('csp_reports');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+
+
+    //
+    function getcspReport($post, $csv = false)
+    {
+
+        $r = array(
+            'Count' => 0,
+            'Data' => array()
+        );
+
+        //
+        $companyId = $post['companySid'];
+        $cspReportsArray = $post['cspreports'];
+        $csModulespArray = $post['cspmodules'];
+        //
+        if (!empty($cspReportsArray)) {
+            if (!in_array('all', $cspReportsArray)) {
+                $this->db->where_in('csp_logs.csp_reports_sid', $cspReportsArray);
+            }
+        }
+        //
+        if (!empty($csModulespArray)) {
+            if (!in_array('main', $csModulespArray)) {
+                $this->db->where_in('csp_logs.module_type', $csModulespArray);
+            }
+        }
+
+        $this->db->select("csp_logs.*,csp_reports.title");
+        $this->db->where('csp_reports.company_sid', $companyId);
+        $this->db->join('csp_reports', 'csp_reports.sid = csp_logs.csp_reports_sid', 'left');
+        $logsDataTemp = $this->db->get('csp_logs')->result_array();
+
+        // $sql=$this->db->last_query();
+        // _e($sql,true,true);
+
+        $logsData = [];
+        if (!empty($logsDataTemp)) {
+            foreach ($logsDataTemp as $key => $val) {
+                $logsData[$val['csp_reports_sid']]['reportName'] = $val['title'];
+                $val['action_json'] = json_decode($val['action_json'], true);
+                $val['action_json']['internalEmployees'] = $this->getInternalEmployeesName($val['action_json']['internalEmployees']);
+
+                $val['action_json']['actionBy'] = $this->getInternalEmployeesName([$val['employee_sid']]);
+
+                $logsData[$val['csp_reports_sid']]['logData'][] = $val;
+
+            }
+        }
+
+        // 
+        $r['Count'] = count($logsData);
+        $r['Data'] = $logsData;
+
+       // _e($r,true,true);
+
+        return $r;
+    }
+
+
+    //
+    function getInternalEmployeesName($employeeIds)
+    {
+        //
+        $internalEmployee = [];
+        if (!empty($employeeIds)) {
+            $this->db->select("first_name,last_name,access_level,access_level_plus,is_executive_admin,pay_plan_flag,job_title");
+            $this->db->where_in('sid', $employeeIds);
+            $employees = $this->db->get('users')->result_array();
+            foreach ($employees as $eKey => $employee) {
+                $employee_data = array(
+                    'first_name' => $employee['first_name'],
+                    'last_name' => $employee['last_name'],
+                    'access_level' => $employee['access_level'],
+                    'access_level_plus' => $employee['access_level_plus'],
+                    'is_executive_admin' => $employee['is_executive_admin'],
+                    'pay_plan_flag' => $employee['pay_plan_flag'],
+                    'job_title' => $employee['job_title']
+                );
+                //
+                $employee_name = remakeEmployeeName($employee_data);
+                array_push($internalEmployee, $employee_name);
+            }
+        }
+
+        return  $internalEmployee;
+    }
 }

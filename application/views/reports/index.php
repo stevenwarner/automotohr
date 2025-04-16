@@ -517,6 +517,28 @@
                                             </div>
                                         <?php } ?>
 
+
+
+                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <?php $url = base_url('reports/complianceSafetyReport'); ?>
+                                                        <figure><i class="fa fa-list" aria-hidden="true"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo $url; ?>">Compliance Safety Reporting</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <small>Compliance Log Report</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a class="site-btn" href="<?php echo $url; ?>">Generate</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
                                     </div>
                                 </div>
                             </div>

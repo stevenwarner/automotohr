@@ -2970,7 +2970,7 @@ class Reports extends Public_Controller
         $formpost['companySid'] = $companyId;
         //
         switch (strtolower($formpost['action'])) {
-                //
+            //
             case 'get_driving_license_filter':
                 // Fetch employees
                 $employees = $this->reports_model->getEmployeesByCompanyId($companyId);
@@ -2984,7 +2984,7 @@ class Reports extends Public_Controller
                 $this->res['Data'] = $employees;
                 $this->resp();
                 break;
-                //
+            //
             case 'get_driving_licenses':
                 // Fetch licenses
                 $licenses = $this->reports_model->getDriverLicenses($formpost);
@@ -3070,6 +3070,30 @@ class Reports extends Public_Controller
                 //
                 if ($formpost['page'] == 1) {
                     $this->res['TotalRecords'] = $employeedocuments['Count'];
+                    $this->res['TotalPages'] = ceil($this->res['TotalRecords'] / $this->res['Limit']);
+                }
+                $this->resp();
+                break;
+
+            case 'get_csp_report_log':
+
+                // _e($formpost,true,true);
+                $cspReportData = $this->reports_model->getcspReport($formpost);
+
+              // _e($cspReportData,true,true);
+
+                //
+                if (!sizeof($cspReportData)) {
+                    $this->res['Response'] = 'No Employees found.';
+                    $this->resp();
+                }
+                $this->res['Status'] = true;
+                $this->res['Limit'] = $formpost['limit'];
+                $this->res['Response'] = 'Proceed';
+                $this->res['Data'] = $cspReportData['Data'];
+                //
+                if ($formpost['page'] == 1) {
+                    $this->res['TotalRecords'] = $cspReportData['Count'];
                     $this->res['TotalPages'] = ceil($this->res['TotalRecords'] / $this->res['Limit']);
                 }
                 $this->resp();
@@ -3797,5 +3821,34 @@ class Reports extends Public_Controller
         } else {
             redirect('login', "refresh");
         }
+    }
+
+
+    //
+    //
+    function complianceSafetyReport()
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login', "refresh");
+        }
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
+        check_access_permissions($data['security_details'], 'my_settings', 'reports');
+        $company_sid   = $data['session']['company_detail']['sid'];
+        //
+        $data['title'] = 'Compliance Log Report';
+        $companyinfo = getCompanyInfo($company_sid);
+        $data['companyName'] = $companyinfo['company_name'];
+        $data['employerSid'] = $data["session"]["employer_detail"]["sid"];
+        //
+      
+        $cspReports = $this->reports_model->getCompanyComplianceReports($company_sid);
+
+        $data['cspReports'] = $cspReports;
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('reports/compliance_log');
+        $this->load->view('main/footer');
     }
 }
