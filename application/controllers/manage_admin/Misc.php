@@ -970,6 +970,9 @@ class Misc extends Admin_Controller
 
                         $this->session->set_flashdata('message', 'Success, Your card has successfully updated!');
                         redirect('manage_admin/misc/cc_management/' . $this->data['card']['company_sid'], "refresh");
+                    } else if (strtolower($card_state) == 'expired') {
+                        $this->session->set_flashdata('message', 'Error, Your card has expired. Please update your card details and try again.!');
+                        redirect('manage_admin/misc/cc_management/' . $this->data['card']['company_sid'], "refresh");
                     } else {
                         $this->session->set_flashdata('message', 'Error, Please try again!');
                         redirect('manage_admin/misc/cc_management/' . $this->data['card']['company_sid'], "refresh");
