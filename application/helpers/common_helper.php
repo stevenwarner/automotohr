@@ -17375,7 +17375,7 @@ if (!function_exists('getManualUserNameByEmailId')) {
         //
         if ($reportUser) {
             //
-            $employeeName = $reportUser['external_name'];
+            $employeeName = $reportUser['external_name'].' [External User]';;
         } else {
             $CI = &get_instance();
             $CI->db->select('external_name');
@@ -17385,7 +17385,7 @@ if (!function_exists('getManualUserNameByEmailId')) {
             $incidentUser = $CI->db->get('csp_reports_employees')->row_array();
             //
             if ($incidentUser) {
-                $employeeName = $incidentUser['external_name'];
+                $employeeName = $incidentUser['external_name'].' [External User]';
             } else {
                 $employeeName = $emailId;
             }

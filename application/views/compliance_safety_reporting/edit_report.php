@@ -137,7 +137,15 @@
                                             <div class="text">
                                                 <div class="message-header">
                                                     <div class="message-title">
-                                                        <h2><?= remakeEmployeeName($note); ?></h2>
+                                                        <h2>
+                                                            <?php
+                                                                if ($note['manual_email']) {
+                                                                    echo getManualUserNameByEmailId($reportId, $incidentId, $note['manual_email']);
+                                                                } else {
+                                                                    echo remakeEmployeeName($note);
+                                                                }
+                                                            ?>    
+                                                        </h2>
                                                         <p class="text-danger"><?= ucfirst($note['note_type']); ?></p>
                                                     </div>
                                                     <ul class="message-option">

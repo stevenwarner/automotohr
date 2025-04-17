@@ -259,6 +259,7 @@ class Compliance_safety_reporting_public extends Base_csp
                     "csp_reports.completion_date",
                     "csp_reports.status",
                     "csp_reports.updated_at",
+                    "csp_reports.last_modified_by",
                     "compliance_report_types.compliance_report_name",
                     "users.first_name",
                     "users.last_name",
@@ -327,6 +328,79 @@ class Compliance_safety_reporting_public extends Base_csp
         $this->data["itemId"] = 0;
         //
         $this->renderView('compliance_safety_reporting/public/edit_report');
+    }
+
+    /**
+     * process edit
+     * 
+     * @param int $reportId
+     * @param int $incidentId
+     */
+    public function addIncidentToReport(int $reportId)
+    {
+        $this->checkPublicSession();
+        // get the post
+        $post = $this->input->post("incidentId", true);
+        //allowed_internal_system_count
+        $id = $this->compliance_report_model->attachIncidentToReport(
+            $reportId,
+            $post,
+            $this->getPublicSessionData("employee_sid")
+                ? $this->getPublicSessionData("employee_sid")
+                : 0
+        );
+        //
+        if ($this->getPublicSessionData("is_external_employee") == 1) {
+            //
+            $loggedInEmployeeName = getManualUserNameByEmailId(
+                $reportId, 
+                0, 
+                $this->getPublicSessionData("external_email")
+            );
+            //
+            $dataToUpdate = [
+                "last_modified_by" => $loggedInEmployeeName
+            ];    
+            //
+            $this->compliance_report_model->addManualUserEmail(
+                $reportId,
+                $dataToUpdate,
+                'csp_reports'
+            );
+            //
+            $this->compliance_report_model->addManualUserEmail(
+                $id,
+                [
+                    'created_by' => $loggedInEmployeeName
+                ],
+                'csp_reports_incidents'
+            );
+            //
+            // Save log on update report
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $id,
+                    'incidentItemId' => 0,
+                    'type' => 'main',
+                    'userType' => 'external',
+                    'userId' => $this->getPublicSessionData("external_email"),
+                    'jsonData' => [
+                        'action' => 'create',
+                        'type' => 'incident',
+                        'incidentId' => $id,
+                        'incidentTypeId' => $post['incidentId'],
+                        'dateTime' => getSystemDate()
+                    ]
+                ]
+            );
+            
+        }
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Incident added to report successfully."]
+        );
     }
 
     /**
@@ -434,6 +508,10 @@ class Compliance_safety_reporting_public extends Base_csp
         }
         // get the post
         $post = $this->input->post(null, true);
+        //
+        if ($this->getPublicSessionData("is_external_employee") == 1) {
+            $currentStatus = $this->compliance_report_model->getReportCurrentStatus($reportId);
+        }
         //allowed_internal_system_count
         $this->compliance_report_model->editReport(
             $reportId,
@@ -445,12 +523,43 @@ class Compliance_safety_reporting_public extends Base_csp
         //
         if ($this->getPublicSessionData("is_external_employee") == 1) {
             //
+            $loggedInEmployeeName = getManualUserNameByEmailId(
+                $reportId, 
+                0, 
+                $this->getPublicSessionData("external_email")
+            );
+            //
+            $dataToUpdate = [
+                "last_modified_by" => $loggedInEmployeeName
+            ];    
+            //
+            if ($post["report_status"] == 'completed' && $currentStatus != 'completed') {
+                $dataToUpdate['completed_by'] = $loggedInEmployeeName;
+            } else if ($post["report_status"] != 'completed' && $currentStatus == 'completed') {echo "down<br>";
+                $dataToUpdate['completed_by'] = null;
+            }
+            //
+            $this->compliance_report_model->addManualUserEmail(
+                $reportId,
+                $dataToUpdate,
+                'csp_reports'
+            );
+            //
+            // check and add external user email in employee
+            $this->compliance_report_model->checkAndAddEmailInAddEmployee(
+                $reportId,
+                0,
+                0,
+                $this->getPublicSessionData("external_email")
+            );
+            //
             // Save log on update report
             $this->compliance_report_model->saveComplianceSafetyReportLog(
                 [
                     'reportId' => $reportId,
                     'incidentId' => 0,
-                    'type' => 'main',
+                    'incidentItemId' => 0,
+                    'type' => 'main', 
                     'userType' => 'external',
                     'userId' => $this->getPublicSessionData("external_email"),
                     'jsonData' => [
@@ -504,6 +613,7 @@ class Compliance_safety_reporting_public extends Base_csp
 				[
 					'reportId' => $reportId,
 					'incidentId' => $incidentId,
+                    'incidentItemId' => 0,
 					'type' => 'incidents',
 					'userType' => 'external',
 					'userId' => $this->getPublicSessionData("external_email"),
@@ -581,6 +691,7 @@ class Compliance_safety_reporting_public extends Base_csp
                 [
                     'reportId' => $reportId,
                     'incidentId' => $incidentId,
+                    'incidentItemId' => 0,
                     'type' => 'notes',
                     'userType' => 'external',
                     'userId' => $this->getPublicSessionData("external_email"),
@@ -650,6 +761,14 @@ class Compliance_safety_reporting_public extends Base_csp
             $sd = array_merge($sd, $main);
             //
             if ($this->getPublicSessionData("is_external_employee") == 1) {
+                //
+                $this->compliance_report_model->addManualUserEmail(
+                    $id,
+                    [
+                        'manual_email' => $this->getPublicSessionData("external_email")
+                    ],
+                    'csp_reports_files'
+                );
                 // Save log on Add file Link
                 $this->compliance_report_model->saveComplianceSafetyReportLog(
                     [
@@ -725,6 +844,14 @@ class Compliance_safety_reporting_public extends Base_csp
                 $sd = array_merge($sd, $main);
                 //
                 if ($this->getPublicSessionData("is_external_employee") == 1) {
+                    //
+                    $this->compliance_report_model->addManualUserEmail(
+                        $id,
+                        [
+                            'manual_email' => $this->getPublicSessionData("external_email")
+                        ],
+                        'csp_reports_files'
+                    );
                     // Save log on Add file
                     $this->compliance_report_model->saveComplianceSafetyReportLog(
                         [
@@ -1484,6 +1611,7 @@ class Compliance_safety_reporting_public extends Base_csp
 				[
 					'reportId' => $reportId,
 					'incidentId' => $incidentId,
+                    'incidentItemId' => 0,
 					'type' => 'incidents',
 					'userType' => 'external',
                     'userId' => $this->getPublicSessionData("external_email"),

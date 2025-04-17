@@ -229,6 +229,7 @@ class Compliance_safety_reporting extends Base_csp
                     "csp_reports.completion_date",
                     "csp_reports.status",
                     "csp_reports.updated_at",
+                    "csp_reports.last_modified_by",
                     "compliance_report_types.compliance_report_name",
                     "users.first_name",
                     "users.last_name",

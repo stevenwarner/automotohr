@@ -1625,6 +1625,7 @@ class Compliance_report_model extends CI_Model
 			"csp_reports_notes.notes",
 			"csp_reports_notes.created_by",
 			"csp_reports_notes.updated_at",
+			"csp_reports_notes.manual_email"
 		]);
 		//
 		$report["documents"] = $this->getCSPReportFilesByType($reportId, [
@@ -1635,6 +1636,7 @@ class Compliance_report_model extends CI_Model
 			"csp_reports_files.s3_file_value",
 			"csp_reports_files.file_type",
 			"csp_reports_files.created_at",
+			"csp_reports_files.manual_email",
 		], [
 			"document",
 			"file",
@@ -1649,6 +1651,7 @@ class Compliance_report_model extends CI_Model
 			"csp_reports_files.s3_file_value",
 			"csp_reports_files.file_type",
 			"csp_reports_files.created_at",
+			"csp_reports_files.manual_email",
 		], [
 			"audio",
 			"video",
@@ -1656,10 +1659,10 @@ class Compliance_report_model extends CI_Model
 		]);
 		//
 		$report["incidents"] = $this->getCSPReportIncidents($reportId, [
-			$this->userFields,
 			"compliance_incident_types.compliance_incident_type_name",
 			"csp_reports_incidents.sid",
 			"csp_reports_incidents.updated_at",
+			"csp_reports_incidents.created_by"
 		]);
 		$report["question_answers"] = $this->getCSPReportQuestionAnswers($reportId);
 		//
@@ -1986,6 +1989,16 @@ class Compliance_report_model extends CI_Model
 			->delete("csp_reports_employees");
 	}
 
+	public function getReportCurrentStatus ($reportId) {
+		$report = $this
+			->db
+			->select('status')
+			->where("sid", $reportId)
+			->get("csp_reports")
+			->row_array();
+		//
+		return $report['status'];
+	}
 	/**
 	 * Get all compliance reports
 	 *
@@ -2001,10 +2014,15 @@ class Compliance_report_model extends CI_Model
 		array $post
 	) {
 		//
+		$loggedInEmployeeName = '';
 		$todayDateTime = getSystemDate();
+		//
+		if ($loggedInEmployeeId != 0) {
+			$loggedInEmployeeName = getUserNameBySID($loggedInEmployeeId);
+		}
 		// lets first edit the report
 		$reportData = [
-			"last_modified_by" => $loggedInEmployeeId,
+			"last_modified_by" => $loggedInEmployeeName,
 			"title" => $post["report_title"],
 			"report_date" => formatDateToDB(
 				$post["report_date"],
@@ -2019,6 +2037,14 @@ class Compliance_report_model extends CI_Model
 			"status" => $post["report_status"],
 			"updated_at" => $todayDateTime,
 		];
+		//
+		$currentStatus = $this->getReportCurrentStatus($reportId);
+		//
+		if ($post["report_status"] == 'completed' && $currentStatus != 'completed') {
+			$reportData['completed_by'] = $loggedInEmployeeName;
+		} else if ($post["report_status"] != 'completed' && $currentStatus == 'completed') {
+			$reportData['completed_by'] = null;
+		}
 		//
 		$this
 			->db
@@ -2425,11 +2451,6 @@ class Compliance_report_model extends CI_Model
 		$this->db->select($columns, false);
 		$this->db->where("csp_reports_incidents.csp_reports_sid", $reportId);
 		$this->db->join(
-			"users",
-			"users.sid = csp_reports_incidents.created_by",
-			"left"
-		);
-		$this->db->join(
 			"compliance_incident_types",
 			"compliance_incident_types.id = csp_reports_incidents.incident_type_sid",
 			"inner"
@@ -2632,7 +2653,7 @@ class Compliance_report_model extends CI_Model
 		$fileData = [
 			"csp_reports_sid" => $reportId,
 			"incident_type_sid" => $incidentId,
-			"created_by" => $loggedInEmployeeId,
+			"created_by" => getUserNameBySID($loggedInEmployeeId),
 			"created_at" => $todayDateTime,
 			"updated_at" => $todayDateTime,
 		];
@@ -3865,12 +3886,12 @@ class Compliance_report_model extends CI_Model
 		]);
 		//
 		$report["incidents"] = $this->getCSPReportIncidents($reportId, [
-			$this->userFields,
 			"compliance_incident_types.compliance_incident_type_name",
 			"csp_reports_incidents.sid",
 			"csp_reports_incidents.updated_at",
 			"csp_reports_incidents.status",
 			"csp_reports_incidents.completed_at",
+			"csp_reports_incidents.created_by"
 		]);
 		//
 		if ($report["incidents"]) {
@@ -5039,5 +5060,23 @@ class Compliance_report_model extends CI_Model
 		}
 		//
 		return $tmp;
+	}
+
+	function addManualUserEmail ($sid, $data_to_update, $table)
+	{
+		$this->db->where('sid', $sid);
+		$this->db->update($table, $data_to_update);
+	}
+
+	function checkAndAddEmailInAddEmployee ($reportId, $incidentId, $itemId, $emailId) {
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_report_incident_sid', $incidentId);
+		$this->db->where('csp_reports_incidents_items_sid', $itemId);
+		$this->db->where('created_by', 0);
+		$this->db->group_start();
+		$this->db->where('manual_email IS NULL', null, false);
+		$this->db->or_where('manual_email', '');
+		$this->db->group_end();
+		$this->db->update('csp_reports_employees', ['manual_email' => $emailId]);
 	}
 }

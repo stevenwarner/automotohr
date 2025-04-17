@@ -2589,6 +2589,9 @@ $route["compliance_safety_reporting/file/view/(:num)"]["get"] =
 $route["compliance_safety_reporting/report/(:num)/incident"]["post"] =
   "v1/Compliance_safety_reporting/addIncidentToReport/$1";
 
+// add incidents
+$route["csp/report/(:num)/incident"]["post"] =
+  "v1/Compliance_safety_reporting_public/addIncidentToReport/$1";
 // edit incidents
 $route["compliance_safety_reporting/report/(:num)/incident/edit/(:num)"]["get"] =
   "v1/Compliance_safety_reporting/editReportIncident/$1/$2";

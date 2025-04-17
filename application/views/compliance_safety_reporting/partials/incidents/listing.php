@@ -61,7 +61,7 @@ $firstSegment = $this->uri->segment(1);
                                     <?= $item["compliance_incident_type_name"]; ?>
                                 </td>
                                 <td style="vertical-align: middle;">
-                                    <?= remakeEmployeeName($item); ?>
+                                    <?= $item['created_by']; ?>
                                     <br>
                                     <?= formatDateToDB($item['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                 </td>
