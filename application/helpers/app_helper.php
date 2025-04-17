@@ -4768,7 +4768,12 @@ if (!function_exists("convertCSPTags")) {
                     function ($matches) use ($dynamicData, &$inputCounter) {
                         $value = $dynamicData['dynamicInput'][$inputCounter] ?? '';
                         $inputCounter++;
-                        return '<input type="text" name="dynamicInput[]" style="width: ' . ((strlen($value) * 8) + 5) . 'px;" value="' . htmlspecialchars($value) . '" />';
+                        if ($value) {
+                            return '<input type="text" name="dynamicInput[]" style="width: ' . ((strlen($value) * 8) + 5) . 'px;" value="' . htmlspecialchars($value) . '" />';
+                        } else {
+                            return '<input type="text" name="dynamicInput[]" style="max-width: 400px;" value="" />';
+
+                        }
                     },
                     $description
                 );
