@@ -1983,6 +1983,7 @@
         padding: 5px 10px;
         color: #fff;
         width: max-content;
+        border-radius: 3px;
     }
     .generate-button:disabled {
         background: #ddd;
@@ -2120,19 +2121,38 @@
         {
             optionsTextAr.push(options[i].text);
         }
-        const instructions = `Format the job post in HTML with inline CSS styles suitable for pasting into a WYSIWYG editor like CKEditor or TinyMCE.
-        Use proper heading tags (<h2>, <h3>), paragraphs (<p>), and lists (<ul>, <li>).
-        Style it with readable fonts, spacing, and a clean layout using only inline CSS (no external or embedded <style> tags).
-        Keep the design minimal, professional, and mobile-friendly.
-        Do not include <html>, <head>, or <body> tags — just the inner content.`;
 
-        let input = `Write a professional and engaging Job Post in the category of ${optionsTextAr.join(', ')}.
-        The job is for the position of ${title} at ${CompanyName}, located in ${city}, ${state} ${country}.
-        Define list of responsibilities in detail according to position.`;
+        const instructions = `
+        You are a professional job post writer.
+        Based on the input data provided, generate a full-length job post in the given job category, structured for use in WYSIWYG editors like CKEditor or TinyMCE.
+        The post must be returned as HTML only (no <html>/<head>/<body>), and all styles should be written using inline CSS
+        The post should include the following sections:
+        1. A header with the job title and company name.
+        2. A short paragraph introducing the company using the provided or generated company description.
+        3. A "Key Responsibilities" section using an HTML list.
+        4. A "Qualifications" section based on the job category and responsibilities.
+        5. A closing paragraph on how to apply.
+        `;
+        
+        let template_sid = $('#select_template').val();
+        let template = '';
+        if(template_sid)
+        {
+            let selectedTemplate = $('#template_' + template_sid);
+            template = `Template Format: ${$(selectedTemplate).attr('data-description')}`;
+        }
+
+        let input = `${template}
+        Write down Job Description in detail from 500 to 1000 words and required information given below:
+        Job position: ${title}
+        Company Name: ${CompanyName}
+        Location: ${city}, ${state} ${country}.
+        Following Categories and Work Experience are ${optionsTextAr.join(', ')} and describe in details according job criteria.
+        Define list of Key Responsibilities in detail according to job position and work experience.`;
         if(newInput.length > 5)
         {
             input += `${input}
-            Use the following infromation to generate job description: ${newInput}`
+            Use the following extra infromation to generate job description: ${newInput}`
         }
         const resp = await generateJDOpenAiCall(input, instructions);
 
