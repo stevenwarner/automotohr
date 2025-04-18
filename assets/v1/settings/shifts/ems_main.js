@@ -9,6 +9,11 @@ $(function manageMyShifts() {
 	//
 	const mode = getSearchParam("mode") || "month";
 
+	let XHR = null;
+	const modalId = "jsModalPage";
+	const modalLoader = modalId + "Loader";
+	const modalBody = modalId + "Body";
+
 	// apply date picker
 	$(".jsWeekDaySelect").daterangepicker({
 		opens: "center",
@@ -56,22 +61,22 @@ $(function manageMyShifts() {
 		if (mode == "month") {
 			return (window.location.href = baseUrl(
 				"shifts/my?mode=" +
-					mode +
-					"&year=" +
-					picker.startDate.clone().format("YYYY") +
-					"&month=" +
-					picker.startDate.clone().format("MM")
+				mode +
+				"&year=" +
+				picker.startDate.clone().format("YYYY") +
+				"&month=" +
+				picker.startDate.clone().format("MM")
 			));
 		}
 
 		//
 		window.location.href = baseUrl(
 			"shifts/my?mode=" +
-				mode +
-				"&start_date=" +
-				startDate +
-				"&end_date=" +
-				endDate
+			mode +
+			"&start_date=" +
+			startDate +
+			"&end_date=" +
+			endDate
 		);
 	});
 
@@ -79,6 +84,188 @@ $(function manageMyShifts() {
 	$(".schedule-employee-row").map(function () {
 		$(".schedule-column-" + $(this).data("id")).height($(this).height());
 	});
+
+
+
+
+	function applyTimePicker() {
+		$(".jsTimeField").timepicker({
+			timeFormat: "h:mm p",
+			dynamic: false,
+			dropdown: false,
+			scrollbar: false,
+		});
+	}
+
+
+
+
+	//
+	$(".item-openshift").click(function (event) {
+		// prevent the event from happening
+		event.preventDefault();
+		event.stopPropagation();
+		//
+		callToEditOpenBox($(this).data("id"));
+	});
+	/**
+	 * add the break
+	 */
+	$(document).on("click", ".jsAddBreak", function (event) {
+		event.preventDefault();
+		//
+		const uniqId = getRandomCode();
+		// generate html
+		$(".jsBreakContainer").append(generateBreakHtml(uniqId));
+		//
+		$('[name="breaks[' + uniqId + '][break]"]').rules("add", {
+			required: true,
+		});
+		$('[name="breaks[' + uniqId + '][duration]"]').rules("add", {
+			required: true,
+			number: true,
+			digits: true,
+			greaterThanZero: true,
+		});
+		//
+		applyTimePicker();
+	});
+
+//
+
+function callToEditOpenBox(shiftId) {
+	makePage("Claim Shift", "open_single_shift_claim", shiftId, function (resp) {
+		// hides the loader
+		ml(false, modalLoader);
+		//
+
+		applyTimePicker();
+
+		//
+		validatorRef = $("#jsPageCreateSingleShiftForm").validate({
+			rules: {
+				//shift_employee: { required: true },
+				shift_date: { required: true },
+				start_time: { required: true, timeIn12Format: true },
+				end_time: { required: true, timeIn12Format: true },
+			},
+			errorPlacement: function (error, element) {
+				if ($(element).parent().hasClass("input-group")) {
+					$(element).parent().after(error);
+				} else {
+					$(element).after(error);
+				}
+			},
+			submitHandler: function (form) {
+				return processCallWithoutContentType(
+					formArrayToObj($(form).serializeArray()),
+					$(".jsPageCreateSingleShiftBtn"),
+					"settings/shifts/opensingle/claim",
+					function (resp) {
+						_success(resp.msg, function () {
+							window.location.reload();
+						});
+					}
+				);
+			},
+		});
+	});
+}
+
+
+
+	/**
+	 * generates the modal
+	 * @param {string} pageTitle
+	 * @param {string} pageSlug
+	 * @param {number} pageId
+	 * @param {function} cb
+	 */
+	function makePage(pageTitle, pageSlug, pageId, cb) {
+		Modal(
+			{
+				Id: modalId,
+				Title: pageTitle,
+				Body: '<div id="' + modalBody + '"></div>',
+				Loader: modalLoader,
+			},
+			function () {
+				fetchPage(pageSlug, pageId, cb);
+			}
+		);
+	}
+
+
+	/**
+	 * fetch page from server
+	 * @param {string} pageSlug
+	 * @param {function} cb
+	 */
+	function fetchPage(pageSlug, pageId, cb) {
+		// check if call is already made
+		if (XHR !== null) {
+			// abort the call
+			XHR.abort();
+		}
+		// make a new call
+		XHR = $.ajax({
+			url: baseUrl("settings/page/" + pageSlug + "/" + pageId),
+			method: "GET",
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				// load the new body
+				$("#" + modalBody).html(resp.view);
+				// call the callback
+				cb(resp);
+			});
+	}
+
+/**
+	 * process the call
+	 * @param {object} formObj
+	 * @param {string} buttonRef
+	 * @param {string} url
+	 * @param {Object} cb
+	 */
+	function processCallWithoutContentType(formObj, buttonRef, url, cb) {
+		// check if call is already made
+		if (XHR !== null) {
+			// abort the call
+			return;
+		}
+		let btnRef;
+		//
+		if (buttonRef) {
+			btnRef = callButtonHook(buttonRef, true);
+		}
+
+		// make a new call
+		XHR = $.ajax({
+			url: baseUrl(url),
+			method: "POST",
+			data: formObj,
+			processData: false,
+			contentType: false,
+		})
+			.always(function () {
+				//
+				if (buttonRef) {
+					callButtonHook(btnRef, false);
+				}
+				//
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				//
+				validatorRef?.destroy();
+				return cb(resp);
+			});
+	}
 
 	/**
 	 * get the start date
@@ -193,16 +380,16 @@ $(function manageMyShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"shifts/my?mode=" +
-					mode +
-					"&start_date=" +
-					endDate.clone().format("MM/DD/YYYY") +
-					filterFields +
-					"&end_date=" +
-					endDate
-						.clone()
-						.add(adder, "week")
-						.subtract(1, "day")
-						.format("MM/DD/YYYY")
+				mode +
+				"&start_date=" +
+				endDate.clone().format("MM/DD/YYYY") +
+				filterFields +
+				"&end_date=" +
+				endDate
+					.clone()
+					.add(adder, "week")
+					.subtract(1, "day")
+					.format("MM/DD/YYYY")
 			));
 		} else {
 			//
@@ -210,12 +397,12 @@ $(function manageMyShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"shifts/my?mode=" +
-					mode +
-					"&year=" +
-					startDateObj.clone().format("YYYY") +
-					"&month=" +
-					startDateObj.clone().format("MM") +
-					filterFields
+				mode +
+				"&year=" +
+				startDateObj.clone().format("YYYY") +
+				"&month=" +
+				startDateObj.clone().format("MM") +
+				filterFields
 			));
 		}
 	});
@@ -232,15 +419,15 @@ $(function manageMyShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"shifts/my?mode=" +
-					mode +
-					"&start_date=" +
-					startDate
-						.clone()
-						.subtract(mode === "week" ? 1 : 2, "week")
-						.format("MM/DD/YYYY") +
-					"&end_date=" +
-					startDate.clone().subtract(1, "day").format("MM/DD/YYYY") +
-					filterFields
+				mode +
+				"&start_date=" +
+				startDate
+					.clone()
+					.subtract(mode === "week" ? 1 : 2, "week")
+					.format("MM/DD/YYYY") +
+				"&end_date=" +
+				startDate.clone().subtract(1, "day").format("MM/DD/YYYY") +
+				filterFields
 			));
 		} else {
 			//
@@ -248,12 +435,12 @@ $(function manageMyShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"shifts/my?mode=" +
-					mode +
-					"&year=" +
-					startDateObj.clone().format("YYYY") +
-					"&month=" +
-					startDateObj.clone().format("MM") +
-					filterFields
+				mode +
+				"&year=" +
+				startDateObj.clone().format("YYYY") +
+				"&month=" +
+				startDateObj.clone().format("MM") +
+				filterFields
 			));
 		}
 	});

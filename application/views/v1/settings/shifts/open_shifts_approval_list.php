@@ -4,8 +4,6 @@
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-8">
 
-
-
                     <div class="page-header-area">
                         <span class="page-heading down-arrow">
                             <?php $this->load->view('manage_employer/company_logo_name'); ?>
@@ -57,9 +55,8 @@
                                         &nbsp;Open Shift Approvals
                                     </a>
                                 <?php } ?>
+
                             <?php } ?>
-
-
 
                         </div>
                     </div>
@@ -109,26 +106,6 @@
                         <div class="js-page p10" id="js-page-view">
                             <!-- Requests status -->
 
-                            <div class="row">
-                                <div class="pto-tabs col-lg-12">
-                                    <ul class="nav nav-tabs nav_report_status">
-                                        <li class="active-tab active">
-                                            <a href="javascript:void(0)" data-key="all" class="jsReportTab">All <br><span id="jsAllRequests"></span></a>
-                                        </li>
-
-                                        <li class="active-tab">
-                                            <a href="javascript:void(0)" data-key="confirmed" class="jsReportTab">Pending <br><span id="jsPendingRequests"></span></a>
-                                        </li>
-                                        <li class="active-tab">
-                                            <a href="javascript:void(0)" data-key="approved" class="jsReportTab">Approved <br><span id="jsApprovedRequests"></span></a>
-                                        </li>
-                                        <li class="active-tab">
-                                            <a href="javascript:void(0)" data-key="admin rejected" class="jsReportTab">Rejected <br><span id="jsRejectedRequests"></span></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <div class="row">
@@ -145,16 +122,13 @@
                                             <button class="btn btn-red jsAdminRejectTradeShifts">
                                                 Reject requests
                                             </button>
-                                            <button class="btn btn-orange jsAdminApproveTradeShifts">
-                                                Approve Requests
-                                            </button>
+                                          
                                         </div>
                                     </div>
                                 </div>
                                 <div class="panel-body">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-hover table-striped">
-                                            <!-- <table class="table table-striped table-condensed pto-policy-table csCustomTableHeader"> -->
                                             <thead style="background-color: #fd7a2a;" class="js-table-head">
                                                 <tr>
                                                     <th style="width:5%">
@@ -164,10 +138,8 @@
                                                         </label>
                                                     </th>
                                                     <th style="width:20%">Shift</th>
-                                                    <th style="width:20%">Status</th>
                                                     <th style="width:10%">Requested At</th>
                                                     <th style="width:25%">From Employee</th>
-                                                    <th style="width:25%">To Employee</th>
                                                     <th style="width:20%;padding-right: 30px;" class="text-right">Action</th>
                                                 </tr>
                                             </thead>

@@ -702,7 +702,7 @@ class Settings extends Public_Controller
                 //Emergency Contact
                 $portal_data['emergency_contact_phone_number_status'] = $this->input->post('emergency_contact_phone_number_status')  ? 1 : 0;
                 $portal_data['emergency_contact_email_status'] = $this->input->post('emergency_contact_email_status')  ? 1 : 0;
-                
+
                 $this->dashboard_model->update_portal($portal_data, $company_id);
                 $this->session->set_flashdata('message', '<b>Success:</b> Company Profile is updated successfully');
                 redirect("my_settings", "location");
@@ -4158,6 +4158,11 @@ class Settings extends Public_Controller
             $data["filter"],
             $employeeIds
         );
+
+        $data["openShifts"] = $this->shift_model->getOpenShifts(
+            $data["filter"]
+        );
+
         //
         // load time off model
         $this->load->model("timeoff_model", "timeoff_model");
@@ -4186,13 +4191,17 @@ class Settings extends Public_Controller
         );
 
         // set common files bundle
+
         $data["pageCSS"] = [
             getPlugin("alertify", "css"),
             getPlugin("timepicker", "css"),
             getPlugin("daterangepicker", "css"),
             getPlugin("select2", "css"),
-            "v1/plugins/ms_modal/main"
+            "v1/plugins/ms_modal/main",
+            "v1/plugins/ms_modal/custom"
         ];
+
+
         $data["pageJs"] = [
             getPlugin("alertify", "js"),
             getPlugin("timepicker", "js"),
@@ -4366,7 +4375,6 @@ class Settings extends Public_Controller
      */
     public function getPageBySlug(string $slug, int $pageId)
     {
-
         //
         if ($_GET['shiftsIds']) {
             $pageId = $_GET['shiftsIds'];
@@ -6189,9 +6197,8 @@ class Settings extends Public_Controller
         //
         if ($shiftStatus == 'rejected') {
             $this->sendEmailToEmployee($shiftIds);
-            
         } else if ($shiftStatus == 'confirmed') {
-            
+
             $this->sendEmailToAdmin($shiftIds);
         }
         //
@@ -6200,7 +6207,8 @@ class Settings extends Public_Controller
         ]);
     }
 
-    function sendEmailToEmployee ($shiftIds) {
+    function sendEmailToEmployee($shiftIds)
+    {
         //
         $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftIds);
         //
@@ -6239,7 +6247,8 @@ class Settings extends Public_Controller
         }
     }
 
-    function sendEmailToAdmin ($shiftIds) {
+    function sendEmailToAdmin($shiftIds)
+    {
         //
         $companyDetail = checkAndGetSession("company_detail");
         $adminList = getCompanyAdminPlusList($companyDetail['sid']);
@@ -6286,7 +6295,7 @@ class Settings extends Public_Controller
                     }
                 }
             }
-        }    
+        }
     }
 
     /**
@@ -6320,7 +6329,7 @@ class Settings extends Public_Controller
         $this->load->model("v1/Shift_model", "shift_model");
 
         switch (strtolower($post['action'])) {
-                // 
+            // 
             case "get_requests":
                 //
                 $data = $this->shift_model->getSwapShiftsRequest($post);
@@ -6350,6 +6359,20 @@ class Settings extends Public_Controller
                 $this->res['pendingRequests'] = $pendingRequests;
                 $this->res['rejectedRequests'] = $rejectedRequests;
                 $this->res['approvedRequests'] = $approvedRequests;
+                // 
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed...';
+                $this->res['Data'] = $data;
+                break;
+            case "get_openshifts_requests":
+                //
+                $data = $this->shift_model->getOpenShiftsRequest($post);
+                //
+                $this->res['requestsType'] = $post['type'];
+                //
+                $post['type'] = 'all';
+                //
+                $allData = $this->shift_model->getOpenShiftsRequest($post);
                 // 
                 $this->res['Status'] = true;
                 $this->res['Response'] = 'Proceed...';
@@ -6487,8 +6510,8 @@ class Settings extends Public_Controller
         } else {
             $this->shift_model->cancelShiftsTradeRequest($shiftIds, $data_update_request);
         }
-        
-        
+
+
         //
         // send mail
         $emailTemplateFromEmployee = get_email_template(SHIFTS_SWAP_ADMIN_REJECTED);
@@ -6643,7 +6666,6 @@ class Settings extends Public_Controller
                 "list" => $data["employeesdata"]
             ]
         );
-      
     }
 
     //
@@ -6743,6 +6765,422 @@ class Settings extends Public_Controller
             "view" => $this->load->view("v1/settings/shifts/partials/shift_history", $data, true),
             "data" => $data["return"] ?? []
         ]);
-    }    
+    }
 
+
+
+    //
+    private function pageCreateSingleOpenShift(string $pageSlug, int $employeeId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $data["employees"] = $this->shift_model->getCompanySingleEmployee(
+            $session["company_detail"]["sid"],
+            $employeeId
+        );
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/create_single_open_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+
+    //
+    private function pageEditOpenSingleShift(string $pageSlug, int $shiftId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        $data["shift"] = $this->shift_model->getSingle(
+            $session["company_detail"]["sid"],
+            $shiftId
+        );
+
+        // alert($shiftId);
+        if (empty($data["shift"])) {
+            return SendResponse(400, [
+                'errors' => ["Shift Not Found"]
+            ]);
+        }
+
+        $employeeId =  $data["shift"]["employee_sid"];
+
+
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+
+        //
+        $data['shiftHistoryCount'] = $this->shift_model->getShiftRequestsHistory($shiftId, true);
+
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/edit_open_single_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+    //
+
+    public function processCreateOpenSingleShift()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("shift_date", "Shift date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("start_time", "Start time", "trim|xss_clean|required");
+        $this->form_validation->set_rules("end_time", "End time", "trim|xss_clean|required");
+        // run the validation
+
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+
+        $this->shift_model
+            ->processCreateOpenSingleShift(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+
+
+
+    //
+    private function pageOpenSingleShiftClaim(string $pageSlug, int $shiftId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        $data["shift"] = $this->shift_model->getSingle(
+            $session["company_detail"]["sid"],
+            $shiftId
+        );
+
+        // alert($shiftId);
+        if (empty($data["shift"])) {
+            return SendResponse(400, [
+                'errors' => ["Shift Not Found"]
+            ]);
+        }
+
+        $employeeId =  $data["shift"]["employee_sid"];
+
+
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+
+        //
+        $data['shiftHistoryCount'] = $this->shift_model->getShiftRequestsHistory($shiftId, true);
+
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/claim_open_single_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+
+    public function processClaimOpenSingleShift()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("shift_date", "Shift date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("start_time", "Start time", "trim|xss_clean|required");
+        $this->form_validation->set_rules("end_time", "End time", "trim|xss_clean|required");
+        // run the validation
+
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+
+        // _e($post,true,true);
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+
+        $this->shift_model
+            ->processClaimOpenSingleShift(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    //
+    public function openShiftsApprovals()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+
+        $data = [];
+        $data["title"] = "Open Shifts | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+
+            getPlugin("alertify", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/shifts/openshiftsapproval"
+        ], "public/v1/shifts/", "openshiftsapproval", false);
+        //
+
+        $weekStartDate = formatDateToDB(getSystemDate(SITE_DATE), SITE_DATE);
+        $weekEndDate = formatDateToDB(date('Y-m-d', strtotime($weekStartDate . ' + 1 month')), 'Y-m-d', SITE_DATE);
+        $weekStartDate = formatDateToDB($weekStartDate, 'Y-m-d', SITE_DATE);
+
+        $defaultRange = $weekStartDate . ' - ' . $weekEndDate;
+        $dateRange = $this->input->get("date_range") ?? $defaultRange;
+
+        //
+        $tmp = explode("-", $dateRange);
+        $startDate = trim($tmp[0]);
+        $endDate = trim($tmp[1]);
+        // get todays date
+        $data["filter"] = [
+            "startDate" => $startDate,
+            "endDate" => $endDate,
+            "dateRange" => $dateRange
+        ];
+
+        //  
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        $data["employeeShifts"] = $this->shift_model->getEmployeeShifts($data["filter"], $loggedInEmployee['sid']);
+
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/shifts/open_shifts_approval_list');
+        $this->load->view('main/footer');
+    }
+
+    
+     //
+     public function processClaimShiftsReject()
+     {
+ 
+         //
+         $session = $this->session->userdata('logged_in');
+         $actionById = $session['employer_detail']['sid'];
+         //
+         $post = $this->input->post(null, true);
+         $shiftIds = explode(',', $post['shiftids']);
+         $toEmployeeid = $post['toEmployeeId'];
+
+         // load schedule model
+         $this->load->model("v1/Shift_model", "shift_model");
+         //
+         $data_update_request = [];
+         $data_update_request['shift_status'] = 2;
+         $data_update_request['action_by'] = $actionById;
+         $data_update_request['updated_at'] = getSystemDate();
+
+         //
+             $this->shift_model->updateOpenShiftsRequest($post['shiftids'], $toEmployeeid, $data_update_request);
+              
+         // send mail
+         $emailTemplateFromEmployee = get_email_template(SHIFTS_CLAIM_ADMIN_REJECTED);
+         $emailTemplateToEmployee = $emailTemplateFromEmployee;
+         $requestsData = $this->shift_model->getOpenShiftsRequestById($shiftIds);
+
+         //
+         foreach ($requestsData as $key => $requestRow) {
+ 
+             if ($requestRow['employee_sid'] != '') {
+                 //
+                 $emailTemplateBodyFromEmployee = $this->shiftClaimEmailTemplate($emailTemplateFromEmployee['text'], $requestRow,  $requestRow['companyName'], $requestRow['from_employee']);
+                 //
+                 $from = $emailTemplateFromEmployee['from_email'];
+                 $to = $requestRow['from_employee_email'];
+                 $subject = $emailTemplateFromEmployee['subject'];
+                 $from_name = $emailTemplateFromEmployee['from_name'];
+                 $body = EMAIL_HEADER
+                     . $emailTemplateBodyFromEmployee
+                     . EMAIL_FOOTER;
+ 
+                 if ($_SERVER['SERVER_NAME'] != 'localhost') {
+ 
+                     sendMail($from, $to, $subject, $body, $from_name);
+                 }
+                 //
+                 $emailData = array(
+                     'date' => date('Y-m-d H:i:s'),
+                     'subject' => $subject,
+                     'email' => $to,
+                     'message' => $body,
+                 );
+                 save_email_log_common($emailData);
+             }
+             
+         }
+ 
+ 
+         return SendResponse(200, [
+             "msg" => "You have successfully rejected the open shift claim request."
+         ]);
+     }
+
+//
+     public function processClaimShiftsApprove()
+     {
+         //
+         $session = $this->session->userdata('logged_in');
+         $employeeId = $session['employer_detail']['sid'];
+         $companyId = $session["company_detail"]["sid"];
+         //
+         $post = $this->input->post(null, true);
+         $shiftIds = explode(',', $post['shiftids']);
+         $toEmployeeid = $post['toEmployeeId'];
+         //
+         // load schedule model
+         $this->load->model("v1/Shift_model", "shift_model");
+         //
+         $data_update_request = [];
+         $data_update_request['shift_status'] = '1';
+         $data_update_request['action_by'] = $employeeId;
+         $data_update_request['updated_at'] = getSystemDate();
+
+         //
+         if ($toEmployeeid) {
+             $this->shift_model->updateOpenShiftsRequest($post['shiftids'], $toEmployeeid, $data_update_request);
+         } 
+       
+
+         // send mail
+         $emailTemplateFromEmployee = get_email_template(SHIFTS_CLAIM_ADMIN_APPROVED);
+         $emailTemplateToEmployee = $emailTemplateFromEmployee;
+         $requestsData = $this->shift_model->getOpenShiftsRequestById($shiftIds, 'approved');
+         //
+         foreach ($requestsData as $requestRow) {
+             //
+             if ($requestRow['employee_sid'] != '') {
+                 //
+                 $emailTemplateBodyFromEmployee = $this->shiftSwapEmailTemplate($emailTemplateFromEmployee['text'], $requestRow, $requestRow['companyName'], $requestRow['from_employee']);
+                 //
+                 $from = $emailTemplateFromEmployee['from_email'];
+                 $to = $requestRow['from_employee_email'];
+                 $subject = $emailTemplateFromEmployee['subject'];
+                 $from_name = $emailTemplateFromEmployee['from_name'];
+                 $body = EMAIL_HEADER
+                     . $emailTemplateBodyFromEmployee
+                     . EMAIL_FOOTER;
+ 
+                 if ($_SERVER['SERVER_NAME'] != 'localhost') {
+ 
+                     sendMail($from, $to, $subject, $body, $from_name);
+                 }
+                 //
+                 $emailData = array(
+                     'date' => date('Y-m-d H:i:s'),
+                     'subject' => $subject,
+                     'email' => $to,
+                     'message' => $body,
+                 );
+                 save_email_log_common($emailData);
+             }
+           
+         }
+ 
+ 
+         return SendResponse(200, [
+             "msg" => "You have successfully Approved Request."
+         ]);
+     }
+
+
+     function shiftClaimEmailTemplate($emailTemplateBody, $replacementArray, $companyName, $employeeName, $isAdmin = false)
+     {
+         if (!$replacementArray) {
+             return $emailTemplateBody;
+         }
+         //
+         if ($isAdmin == true) {
+             $reject_shift = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['admin_id'] . '/admin_reject' . '" target="_blank">Reject</a>';
+             //
+             $confirm_shift = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['admin_id'] . '/admin_approve' . '" target="_blank">Approve</a>';
+         } else {
+             $reject_shift = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/employee_reject' . '" target="_blank">Reject</a>';
+             //
+             $confirm_shift = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/employee_approve' . '" target="_blank">Approve</a>';
+         }
+         //
+         $emailTemplateBody = str_replace('{{employee_name}}', $employeeName, $emailTemplateBody);
+         $emailTemplateBody = str_replace('{{shift_date}}', $replacementArray['shift_date'], $emailTemplateBody);
+         $emailTemplateBody = str_replace('{{shift_time}}', $replacementArray['start_time'], $emailTemplateBody);
+         $emailTemplateBody = str_replace('{{shift_status}}', $replacementArray['request_status'], $emailTemplateBody);
+         $emailTemplateBody = str_replace('{{company_name}}', $companyName, $emailTemplateBody);
+         $emailTemplateBody = str_replace('{{shift_status_by}}', $replacementArray['updated_by'], $emailTemplateBody);
+         $emailTemplateBody = str_replace('{{reject_shift}}', $reject_shift, $emailTemplateBody);
+         $emailTemplateBody = str_replace('{{approve_shift}}', $confirm_shift, $emailTemplateBody);
+ 
+         return $emailTemplateBody;
+     }
 }
