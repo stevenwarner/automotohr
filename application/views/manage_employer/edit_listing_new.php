@@ -175,7 +175,17 @@
                                         <li class="form-col-100 autoheight">
 
                                             <p class="text-danger" style="margin-bottom: -10px; font-size: 16px;"><strong>Note: Your State may have recently mandated a Required Salary Range be added to all jobs that you post.<br> Please Add a Salary or Salary Range here. <a href="#" class=" jsSalaryInfo" style="text-decoration: underline;">Click Here for More Details</a></strong></p></label>
+
                                         </li>
+
+                                        <div class="form-col-100">
+                                            <button
+                                                class="generate-button"
+                                                type="button"
+                                                id="generate_questionnaire"
+                                                onclick="generateQuestionnaire()"
+                                            >Generate Questionnaire</button>
+                                        </div>
 
                                         <li class="form-col-50-left">
                                             <div class="form-col-50-left">
@@ -1099,6 +1109,82 @@
         </form>
     </div>
 </div>
+
+<div id="generate_questionnaire_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form>
+            <div class="modal-content">
+                <div class="modal-header modal-header-bg">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Questions</h4>
+                </div>
+                <div class="modal-body" id="questionnaire_generated_body_data">
+                    <div>
+                        <label for="generate_prompt_input">Question: <span class="staric">*</span></label>
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Suscipit mollitia laborum odio dicta nesciunt assumenda facere, cum porro, nemo consequatur ex id eum totam, debitis ad necessitatibus incidunt? Et, tenetur.</p>
+                        <strong>Type: </strong> <span>Yes / No</span>
+                        
+                        <!-- <div>
+                            <div>
+                                <label>Yes: <samp style="color:red;">*</samp></label>
+                                <div class="hr-select-dropdown">
+                                    <select class="invoice-fields" id="answer_boolean_edit_yes" name="answer_boolean_edit[]">
+                                        <option value="">Select Question Score</option>          
+                                        <option value="0">Not acceptable - 0</option>
+                                        <option value="1">Acceptable - 1</option>
+                                        <option value="2">Good - 2</option>
+                                        <option value="3">Very Good - 3</option>
+                                        <option value="4">Excellent - 4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label>Status: <samp style="color:red;">*</samp></label>
+                                <div class="hr-select-dropdown">
+                                    <select class="invoice-fields" id="status_boolean_edit_yes" name="status_boolean_edit[]">        
+                                        <option value="Pass">Pass</option>
+                                        <option value="Fail">Fail</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <!-- <div>
+                            <label>No: <samp style="color:red;">*</samp></label>
+                            <div class="hr-select-dropdown">
+                                    <select class="invoice-fields" id="answer_boolean_edit_no" name="answer_boolean_edit[]">
+                                    <option value="">Select Question Score</option>          
+                                    <option value="0">Not acceptable - 0</option>
+                                    <option value="1">Acceptable - 1</option>
+                                    <option value="2">Good - 2</option>
+                                    <option value="3">Very Good - 3</option>
+                                    <option value="4">Excellent - 4</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Status: <samp style="color:red;">*</samp></label>
+                            <div class="hr-select-dropdown">
+                                <select class="invoice-fields" id="status_boolean_edit_no" name="status_boolean_edit[]">        
+                                    <option value="Pass">Pass</option>
+                                    <option value="Fail">Fail</option>
+                                </select>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        class="generate-button"
+                        type="submit"
+                        id="submit_prompt"
+                    >Generate</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/bootstrap_select/js2/bootstrap-select.js"></script>
@@ -2104,6 +2190,35 @@
 <script>
     // $('#select_template').select2();
     const CompanyName = '<?= $session['company_detail']['CompanyName'] ?>';
+
+    async function generateQuestionnaire() {
+        const input = `Generate 5 different interview or screening questions based on the following job post and description. Each question should include:
+
+        1. The question text
+        2. The answer type, which must be one of the following: "text", "yes_no", "multiple_choice", "single_choice"
+        3. If the answer type is "multiple_choice" or "single_choice", include a list of options
+
+        Format the output strictly in JSON as an array of objects. Here is the job post and description:
+
+        ${CKEDITOR.instances.JobDescription.getData()}`;
+        const resp = await generateJDOpenAiCall(input, '');
+        
+        const questions = JSON.parse(resp.result)
+        console.log('resp', questions);
+        
+        let questionHtml = '';
+        for(let i = 0; i <= questions.length; i++) {
+            questionHtml +=`<div>
+                <label for="generate_prompt_input">Question: <span class="staric">*</span></label>
+                <p>${questions[i].question_text}</p>
+                <strong>Type: </strong> <span>${questions[i].answer_type == 'text' ? 'text' : 'Yes / No'}</span>
+            </div>`;
+        }
+
+        $('#questionnaire_generated_body_data').html(questionHtml);
+
+        $('#generate_questionnaire_modal').modal('show');
+    }
 
     async function generateJobDescription(newInput = "") {
         // Start Submission
