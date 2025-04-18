@@ -51,6 +51,14 @@
                     </h2>
                 </div>
                 <!--  -->
+                <div class="alert alert-info">
+                    <div class="row">
+                        <div class="col-sm-12 text-left">
+                            Last modified by <strong><?= $report['last_modified_by'] ?></strong> at <strong><?= formatDateToDB($report['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></strong>.
+                        </div>
+                    </div>
+                </div>
+                <!--  -->
                 <form method="post" enctype="multipart/form-data" autocomplete="off" id="jsAddIncidentItemForm">
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">

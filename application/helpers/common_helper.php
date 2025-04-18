@@ -17375,7 +17375,7 @@ if (!function_exists('getManualUserNameByEmailId')) {
         //
         if ($reportUser) {
             //
-            $employeeName = $reportUser['external_name'].' [External User]';;
+            $employeeName = $reportUser['external_name'].' [External User]';
         } else {
             $CI = &get_instance();
             $CI->db->select('external_name');

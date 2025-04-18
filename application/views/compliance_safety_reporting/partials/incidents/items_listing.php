@@ -45,9 +45,18 @@
                                 <div class="col-sm-12">
                                     <div class="row jsFirst">
                                         <?php foreach ($item["attachments"] as $attachFile) { ?>
+                                            <?php 
+                                                $style = '';
+                                                //
+                                                if ($attachFile['file_type'] == 'image') {
+                                                    $imageUrl = AWS_S3_BUCKET_URL . $attachFile["s3_file_value"]; 
+                                                    $style = "background-image: url('".$imageUrl."'); background-size: cover; background-repeat: no-repeat; background-position: center;";
+                                                }
+                                                
+                                            ?>
                                             <div class="col-sm-3">
                                                 <div class="widget-box">
-                                                    <div class="attachment-box full-width jsFileBox" data-id="<?= $attachFile["sid"]; ?>">
+                                                    <div class="attachment-box full-width jsFileBox" style="<?= $style; ?>" data-id="<?= $attachFile["sid"]; ?>">
                                                         <h4 style="padding: 5px;" class="text-white">
                                                             <?= $attachFile["title"]; ?>
                                                         </h4>

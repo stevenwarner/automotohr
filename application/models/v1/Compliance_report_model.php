@@ -1780,6 +1780,8 @@ class Compliance_report_model extends CI_Model
 			"csp_reports_notes.note_type",
 			"csp_reports_notes.notes",
 			"csp_reports_notes.updated_at",
+			"csp_reports_notes.created_by",
+			"csp_reports_notes.manual_email"
 		]);
 		//
 		$report["documents"] = $this->getCSPIncidentFilesByType(
@@ -1794,6 +1796,7 @@ class Compliance_report_model extends CI_Model
 				"csp_reports_files.s3_file_value",
 				"csp_reports_files.file_type",
 				"csp_reports_files.created_at",
+				"csp_reports_files.created_by",
 				"csp_reports_files.manual_email"
 			],
 			[
@@ -1811,6 +1814,7 @@ class Compliance_report_model extends CI_Model
 			"csp_reports_files.s3_file_value",
 			"csp_reports_files.file_type",
 			"csp_reports_files.created_at",
+			"csp_reports_files.created_by",
 			"csp_reports_files.manual_email"
 		], [
 			"audio",
@@ -2151,13 +2155,15 @@ class Compliance_report_model extends CI_Model
 			}
 		}
 		//
+		$loggedInEmployeeName = '';
 		$todayDateTime = getSystemDate();
+		//
+		if ($loggedInEmployeeId != 0) {
+			$loggedInEmployeeName = getUserNameBySID($loggedInEmployeeId);
+		}
 		// lets first edit the report
 		$reportData = [
 			"last_modified_by" => $loggedInEmployeeId,
-			"completed_by" => $post["report_completion_date"]
-				? $loggedInEmployeeId
-				: null,
 			"completed_at" => $post["report_completion_date"] ? formatDateToDB(
 				$post["report_completion_date"],
 				"m/d/Y",
@@ -2178,6 +2184,15 @@ class Compliance_report_model extends CI_Model
 		}
 		//
 		$reportData["fields_json"] = json_encode($reportData["fields_json"]);
+		//
+		//
+		$currentStatus = $this->getIncidentCurrentStatus($incidentId);
+		//
+		if ($post["report_status"] == 'completed' && $currentStatus != 'completed') {
+			$reportData['completed_by'] = $loggedInEmployeeName;
+		} else if ($post["report_status"] != 'completed' && $currentStatus == 'completed') {
+			$reportData['completed_by'] = null;
+		}
 		//
 		$this
 			->db
@@ -2220,6 +2235,17 @@ class Compliance_report_model extends CI_Model
 		// $this->sendEmailsForCSPIncident($incidentId, CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID);
 
 		return true;
+	}
+
+	public function getIncidentCurrentStatus ($incidentId) {
+		$report = $this
+			->db
+			->select('status')
+			->where("sid", $incidentId)
+			->get("csp_reports_incidents")
+			->row_array();
+		//
+		return $report['status'];
 	}
 
 	/**
@@ -2330,6 +2356,7 @@ class Compliance_report_model extends CI_Model
 	 *
 	 * @param int $reportId
 	 * @param int $incidentId
+	 * @param int $itemId
 	 * @param int $loggedInEmployeeId
 	 * @param string $fileName
 	 * @param string $originalFileName
@@ -2339,6 +2366,7 @@ class Compliance_report_model extends CI_Model
 	public function addFilesToReport(
 		int $reportId,
 		int $incidentId,
+		int $itemId,
 		int $loggedInEmployeeId,
 		string $fileName,
 		string $originalFileName,
@@ -2351,6 +2379,7 @@ class Compliance_report_model extends CI_Model
 		$fileData = [
 			"csp_reports_sid" => $reportId,
 			"csp_incident_type_sid" => $incidentId,
+			"csp_reports_incidents_items_sid" => $itemId,
 			"file_type" => $fileType,
 			"file_value" => $originalFileName,
 			"s3_file_value" => $fileName,
@@ -2365,6 +2394,28 @@ class Compliance_report_model extends CI_Model
 		$fileId = $this->db->insert_id();
 		//
 		if ($loggedInEmployeeId != 0) {
+			//
+			$loggedInEmployeeName = getUserNameBySID($loggedInEmployeeId);
+			//
+			$dataToUpdate = [
+                "last_modified_by" => $loggedInEmployeeName
+            ];    
+            //
+			if($reportId != 0 && $incidentId == 0) {
+				$this->compliance_report_model->addManualUserEmail(
+					$reportId,
+					$dataToUpdate,
+					'csp_reports'
+				);
+			}
+
+			if($incidentId != 0 && $itemId == 0) {
+				$this->compliance_report_model->addManualUserEmail(
+					$incidentId,
+					$dataToUpdate,
+					'csp_reports_incidents'
+				);
+			}
 			// Save log on Add file to AWS
 			$this->saveComplianceSafetyReportLog(
 				[
@@ -2579,12 +2630,35 @@ class Compliance_report_model extends CI_Model
 		$fileId = $this->db->insert_id();
 		//
 		if ($loggedInEmployeeId != 0) {
+			//
+			$loggedInEmployeeName = getUserNameBySID($loggedInEmployeeId);
+			//
+			$dataToUpdate = [
+                "last_modified_by" => $loggedInEmployeeName
+            ];    
+            //
+			if($reportId != 0 && $incidentId == 0) {
+				$this->compliance_report_model->addManualUserEmail(
+					$reportId,
+					$dataToUpdate,
+					'csp_reports'
+				);
+			}
+
+			if($incidentId != 0 && $itemId == 0) {
+				$this->compliance_report_model->addManualUserEmail(
+					$incidentId,
+					$dataToUpdate,
+					'csp_reports_incidents'
+				);
+			}
+            
 			// Save log on Add file Link
 			$this->saveComplianceSafetyReportLog(
 				[
 					'reportId' => $reportId,
 					'incidentId' => $incidentId,
-					'incidentItemId' => 0,
+					'incidentItemId' => $itemId,
 					'type' => 'files',
 					'userType' => 'employee',
 					'userId' => $loggedInEmployeeId,
@@ -2670,24 +2744,42 @@ class Compliance_report_model extends CI_Model
 		// send public link
 		// $this->sendEmailsForCSPIncident($id);
 		//
-		// Save log on add incident
-		$this->saveComplianceSafetyReportLog(
-			[
-				'reportId' => $reportId,
-				'incidentId' => $id,
-				'incidentItemId' => 0,
-				'type' => 'main',
-				'userType' => 'employee',
-				'userId' => $loggedInEmployeeId,
-				'jsonData' => [
-					'action' => 'create',
-					'type' => 'incident',
+		if ($loggedInEmployeeId != 0) {
+			$loggedInEmployeeName = '';
+			//
+			if ($loggedInEmployeeId != 0) {
+				$loggedInEmployeeName = getUserNameBySID($loggedInEmployeeId);
+			}
+			//
+			$dataToUpdate = [
+                "last_modified_by" => $loggedInEmployeeName
+            ];    
+            //
+            $this->compliance_report_model->addManualUserEmail(
+                $reportId,
+                $dataToUpdate,
+                'csp_reports'
+            );
+			//
+			// Save log on add incident
+			$this->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
 					'incidentId' => $id,
-					'incidentTypeId' => $incidentId,
-					'dateTime' => $todayDateTime
+					'incidentItemId' => 0,
+					'type' => 'main',
+					'userType' => 'employee',
+					'userId' => $loggedInEmployeeId,
+					'jsonData' => [
+						'action' => 'create',
+						'type' => 'incident',
+						'incidentId' => $id,
+						'incidentTypeId' => $incidentId,
+						'dateTime' => $todayDateTime
+					]
 				]
-			]
-		);
+			);
+		}	
 		//
 		return $id;
 	}
@@ -4355,11 +4447,13 @@ class Compliance_report_model extends CI_Model
 				])
 				->update('csp_reports_incidents_items', $data);
 		}
+		//
+		$loggedInEmployeeName = getUserNameBySID($loggedInEmployeeId);
 		// add new item
 		$data = [
 			'csp_reports_incidents_sid' => $incidentId,
 			'compliance_report_incident_types_sid' => $post['id'],
-			'created_by' => $loggedInEmployeeId,
+			'created_by' => $loggedInEmployeeName,
 			'created_at' => $todayDateTime,
 		];
 
@@ -4379,7 +4473,19 @@ class Compliance_report_model extends CI_Model
 		}
 
 		$this->db->insert('csp_reports_incidents_items', $data);
-		return $this->db->insert_id();
+		$itemId = $this->db->insert_id();
+		//
+		$dataToUpdate = [
+			"last_modified_by" => $loggedInEmployeeName
+		];    
+		//
+		$this->compliance_report_model->addManualUserEmail(
+			$incidentId,
+			$dataToUpdate,
+			'csp_reports_incidents'
+		);
+		//
+		return $itemId; 
 	}
 
 	public function updateAttachedItem(
@@ -4399,7 +4505,23 @@ class Compliance_report_model extends CI_Model
 			'updated_at' => $todayDateTime,
 		];
 		//
+		$returnData = $this->db
+			->where('sid', $post["id"])
+			->update('csp_reports_incidents_items', $data);
+		//
 		if ($loggedInEmployeeId != 0) {
+			//
+			$loggedInEmployeeName = getUserNameBySID($loggedInEmployeeId);
+			//
+			$dataToUpdate = [
+				"last_modified_by" => $loggedInEmployeeName
+			];    
+			//
+			$this->compliance_report_model->addManualUserEmail(
+				$post["id"],
+				$dataToUpdate,
+				'csp_reports_incidents_items'
+			);
 			// Save log on update report
 			$this->saveComplianceSafetyReportLog(
 				[
@@ -4425,9 +4547,7 @@ class Compliance_report_model extends CI_Model
 			);
 		}
 		//
-		return $this->db
-			->where('sid', $post["id"])
-			->update('csp_reports_incidents_items', $data);
+		return $returnData;
 	}
 
 	public function getReportTitleById($reportId)
@@ -4535,6 +4655,17 @@ class Compliance_report_model extends CI_Model
 		$fileId = $this->db->insert_id();
 		//
 		if ($loggedInEmployeeId != 0) {
+			$loggedInEmployeeName = getUserNameBySID($loggedInEmployeeId);
+			//
+			$dataToUpdate = [
+				"last_modified_by" => $loggedInEmployeeName
+			];    
+			//
+			$this->compliance_report_model->addManualUserEmail(
+				$itemId,
+				$dataToUpdate,
+				'csp_reports_incidents_items'
+			);
 			// Save log on add note
 			$this->saveComplianceSafetyReportLog(
 				[
@@ -4606,6 +4737,18 @@ class Compliance_report_model extends CI_Model
 		$linkId = $this->db->insert_id();
 		//
 		if ($loggedInEmployeeId != 0) {
+			//
+			$loggedInEmployeeName = getUserNameBySID($loggedInEmployeeId);
+			//
+			$dataToUpdate = [
+				"last_modified_by" => $loggedInEmployeeName
+			];    
+			//
+			$this->compliance_report_model->addManualUserEmail(
+				$itemId,
+				$dataToUpdate,
+				'csp_reports_incidents_items'
+			);
 			// Save log on add note
 			$this->saveComplianceSafetyReportLog(
 				[
@@ -4645,7 +4788,7 @@ class Compliance_report_model extends CI_Model
 		//
 		$item = $this
 			->db
-			->select("created_at, completion_date, completion_status")
+			->select("last_modified_by, created_at, completion_date, completion_status, updated_at")
 			->where("sid", $itemId)
 			->get("csp_reports_incidents_items")
 			->row_array();
@@ -4657,6 +4800,8 @@ class Compliance_report_model extends CI_Model
 		$itemData["created_date"] = $item['created_at'];
 		$itemData["completion_date"] = $item['completion_date'];
 		$itemData["completion_status"] = $item['completion_status'];
+		$itemData["last_modified_by"] = $item['last_modified_by'];
+		$itemData["updated_at"] = $item['updated_at'];
 		//
 		$itemData["internal_employees"] = $this
 			->getCSPIncidentInternalEmployeesById($reportId, $incidentId, $itemId, [
@@ -4765,6 +4910,17 @@ class Compliance_report_model extends CI_Model
 		);
 		//
 		if ($loggedInEmployeeId != 0) {
+			$loggedInEmployeeName = getUserNameBySID($loggedInEmployeeId);
+			//
+			$dataToUpdate = [
+				"last_modified_by" => $loggedInEmployeeName
+			];    
+			//
+			$this->compliance_report_model->addManualUserEmail(
+				$itemId,
+				$dataToUpdate,
+				'csp_reports_incidents_items'
+			);
 			// Save log on update incident item
 			$this->saveComplianceSafetyReportLog(
 				[

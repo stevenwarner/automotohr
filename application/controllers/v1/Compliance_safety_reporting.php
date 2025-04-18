@@ -642,6 +642,7 @@ class Compliance_safety_reporting extends Base_csp
                     ->addFilesToReport(
                         $reportId,
                         $incidentId,
+                        0,
                         $this->getLoggedInEmployee("sid"),
                         $fileName,
                         $_FILES["file"]["name"],
