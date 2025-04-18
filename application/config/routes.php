@@ -2753,3 +2753,11 @@ $route["compliance_safety_reporting/download_incident_item/(:num)/(:num)/(:num)"
 $route["csp/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting_public/downloadCSPIncidentItem/$1/$2/$3";
 
+//
+$route["settings/shifts/opensingle/create"]["post"] = "Settings/processCreateOpenSingleShift";
+$route["settings/shifts/opensingle/claim"]["post"] = "Settings/processClaimOpenSingleShift";
+
+$route["settings/openshifts/approval"]["get"] = "Settings/openShiftsApprovals";
+$route["settings/shifts/claimshiftsreject"]["post"] = "Settings/processClaimShiftsReject";
+$route["settings/shifts/claimshiftsapprove"]["post"] = "Settings/processClaimShiftsApprove";
+

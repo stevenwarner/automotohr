@@ -118,17 +118,33 @@ class Employee_shifts extends Public_Controller
             getPlugin("alertify", "css"),
             getPlugin("timepicker", "css"),
             getPlugin("daterangepicker", "css"),
+            "v1/plugins/ms_modal/main"
         ];
         $data["pageJs"] = [
             getPlugin("alertify", "js"),
             getPlugin("timepicker", "js"),
             getPlugin("daterangepicker", "js"),
+            getPlugin("validator", "js"),
+            "v1/plugins/ms_modal/main"
         ];
 
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/ems_main"
-        ], "public/v1/shifts/", "my_ems_shifts", true);
+        ], "public/v1/shifts/", "my_ems_shifts", false);
+
+
+
+        //
+
+        $data["openShifts"] = $this->shift_model->getOpenShifts(
+            $data["filter"],
+            true
+        );
+
+
+        //_e($data["openShifts"],true);
+
 
         $this->load->view('main/header', $data);
         $this->load->view('v1/schedules/my/listing');

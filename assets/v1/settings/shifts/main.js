@@ -342,6 +342,17 @@ $(function manageShifts() {
 		);
 	});
 
+
+	//
+
+
+	$(".schedule-item-openshift").click(function (event) {
+		// prevent the event from happening
+		event.preventDefault();
+		event.stopPropagation();
+		//
+		callToEditOpenBox($(this).data("id"));
+	});
 	/**
 	 * add the break
 	 */
@@ -424,6 +435,25 @@ $(function manageShifts() {
 			$(this).find("option:selected").data("duration")
 		);
 	});
+
+
+
+
+//
+$(".schedule-column-clickable-openshift").click(function (event) {
+	// prevent the event from happening
+	event.preventDefault();
+	//
+	callToCreateBoxOpenShift(
+		$(this).data("eid"),
+		$(this).closest(".schedule-column-container").data("date")
+	);
+ });
+
+
+
+
+
 
 	/**
 	 * generates the modal
@@ -994,6 +1024,107 @@ $(function manageShifts() {
 			});
 		});
 	}
+
+
+//
+	function callToCreateBoxOpenShift(employeeId, date) {
+		makePage(
+			"Create Shift",
+			"create_single_open_shift",
+			employeeId,
+			function (resp) {
+				// hides the loader
+				ml(false, modalLoader);
+				//
+				$('[name="shift_date"]').val(
+					moment(date, "YYYY-MM-DD").format("MM/DD/YYYY")
+				);
+
+				applyTimePicker();
+
+				//
+				validatorRef = $("#jsPageCreateSingleShiftForm").validate({
+					rules: {
+					//	shift_employee: { required: true },
+						shift_date: { required: true },
+						start_time: { required: true, timeIn12Format: true },
+						end_time: { required: true, timeIn12Format: true },
+					},
+					errorPlacement: function (error, element) {
+						if ($(element).parent().hasClass("input-group")) {
+							$(element).parent().after(error);
+						} else {
+							$(element).after(error);
+						}
+					},
+					submitHandler: function (form) {
+
+
+						return processCallWithoutContentType(
+							formArrayToObj($(form).serializeArray()),
+							$(".jsPageCreateSingleShiftBtn"),
+							"settings/shifts/opensingle/create",
+							function (resp) {
+								if (resp.shiftid != 0) {
+									callToCreateBoxSendShifts(resp.shiftid,resp.shiftdate);
+
+								} else {
+									_success(resp.msg, function () {
+										//
+										window.location.reload();
+									});
+
+								}
+							}
+						);
+					},
+				});
+			}
+		);
+	}
+
+
+
+//
+function callToEditOpenBox(shiftId) {
+		makePage("Edit Shift", "edit_open_single_shift", shiftId, function (resp) {
+			// hides the loader
+			ml(false, modalLoader);
+			//
+
+			applyTimePicker();
+
+			//
+			validatorRef = $("#jsPageCreateSingleShiftForm").validate({
+				rules: {
+					//shift_employee: { required: true },
+					shift_date: { required: true },
+					start_time: { required: true, timeIn12Format: true },
+					end_time: { required: true, timeIn12Format: true },
+				},
+				errorPlacement: function (error, element) {
+					if ($(element).parent().hasClass("input-group")) {
+						$(element).parent().after(error);
+					} else {
+						$(element).after(error);
+					}
+				},
+				submitHandler: function (form) {
+					return processCallWithoutContentType(
+						formArrayToObj($(form).serializeArray()),
+						$(".jsPageCreateSingleShiftBtn"),
+						"settings/shifts/opensingle/create",
+						function (resp) {
+							_success(resp.msg, function () {
+								window.location.reload();
+							});
+						}
+					);
+				},
+			});
+		});
+	}
+
 
 	/**
 	 * apply time picker
@@ -1897,3 +2028,9 @@ $(function manageShifts() {
 		});
 	}
 });
+
+
+
+
+
+

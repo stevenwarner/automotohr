@@ -165,6 +165,22 @@ if ($filter["mode"] === "month") {
                                                         <i class="fa fa-chevron-right" aria-hidden="true"></i>
                                                     </span>
                                                 </div>
+                                               <!-- Open Shifts-->
+                                               <div class="schedule-employee-row" data-id="<?= $loggedInEmployee["userId"]; ?>" style="background-color: #ceffef;">
+                                                    <div class="row">
+                                                        <div class="col-sm-2">
+                                                        </div>
+                                                        <div class="col-sm-8">
+                                                        <p class="text-medium weight-6 text-center"> Open Shifts</p>                                                      
+                                                        </div>
+                                                        <div class="col-sm-2 text-right">
+                                                            <span class="text-small">
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- End -->
+
                                                 <!-- employee boxes -->
                                                 <?php $employeeShiftRow = $shifts[$loggedInEmployee["sid"]]; ?>
                                                 <div class="schedule-employee-row" data-id="<?= $loggedInEmployee["userId"]; ?>">
@@ -196,6 +212,7 @@ if ($filter["mode"] === "month") {
                                             </div>
                                         </div>
                                         <div class="col-sm-9" style="padding-left: 0">
+                                      
                                             <div class="schedule-row-container">
                                                 <?php
                                                 $todaysDate = getSystemDate("Y-m-d");
@@ -205,15 +222,51 @@ if ($filter["mode"] === "month") {
                                                     $employeeLeave = $leaves[$loggedInEmployee["sid"]][$monthDate];
 
                                                     $highlightStyle = $todaysDate === $monthDate ? "bg-success" : "";
-                                                    ?>
+                                                    ?>                                                    
+                                                    
                                                     <!-- column-->
                                                     <div class="schedule-column-container" data-date="<?= $monthDate; ?>">
                                                         <div class="schedule-column-header text-center <?= $highlightStyle; ?>">
                                                             <?= formatDateToDB($monthDate, DB_DATE, "D d"); ?>
                                                             </p>
                                                         </div>
-                                                        <?php $employeeShift = $shifts[$loggedInEmployee["sid"]]["dates"][$monthDate];
+                                                        <?php
+                                                         $employeeShift = $shifts[$loggedInEmployee["sid"]]["dates"][$monthDate];
+                                                         $employeeOpenShift = $openShifts[0]["dates"][$monthDate];
                                                         ?>
+
+                                                    <!-- open Shift -->
+                                                    <div class="schedule-column schedule-column-<?= $loggedInEmployee["sid"]; ?> text-center <?= $highlightStyle; ?>" data-eid="<?= $loggedInEmployee["sid"]; ?>">
+                                                           
+                                                            <?php if ($employeeOpenShift) {
+                                                                $totalHoursInSeconds += $employeeOpenShift["totalTime"];
+                                                            ?>
+                                                                <div class="schedule-item item-openshift " data-id="<?= $employeeOpenShift["sid"]; ?>">
+                                                                 
+                                                                    <p class="text-small">
+                                                                        <?= formatDateToDB(
+                                                                            $employeeOpenShift["start_time"],
+                                                                            "H:i:s",
+                                                                            "h:i a"
+                                                                        ); ?> -
+                                                                        <?= formatDateToDB(
+                                                                            $employeeOpenShift["end_time"],
+                                                                            "H:i:s",
+                                                                            "h:i a"
+                                                                        ); ?>
+                                                                    </p>
+                                                                </div>
+                                                            <?php } elseif ($holidays[$monthDate]) { ?>
+                                                                <div class="schedule-dayoff">
+                                                                    <button class="btn btn-red text-small btn-xs">
+                                                                        <?= $holidays[$monthDate]["title"]; ?>
+                                                                    </button>
+                                                                </div>
+                                                            <?php } else { ?>
+                                                            <?php } ?>
+                                                        </div>
+                                                     <!-- End--->
+
                                                         <div class="schedule-column schedule-column-<?= $loggedInEmployee["sid"]; ?> text-center <?= $highlightStyle; ?>" data-eid="<?= $loggedInEmployee["sid"]; ?>">
                                                             <?php if ($employeeLeave) { ?>
                                                                 <div class="schedule-dayoff text-primary text-small">
@@ -250,6 +303,10 @@ if ($filter["mode"] === "month") {
                                                             <?php } else { ?>
                                                             <?php } ?>
                                                         </div>
+
+
+
+
                                                         <?php
                                                         ?>
                                                         <div class="schedule-footer schedule-border <?= $highlightStyle; ?>">
@@ -260,6 +317,9 @@ if ($filter["mode"] === "month") {
                                                     </div>
                                                 <?php } ?>
                                             </div>
+
+
+
                                         </div>
                                     </div>
                                 </div>
