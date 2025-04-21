@@ -5252,7 +5252,7 @@ class Compliance_report_model extends CI_Model
 		$this->db->update('csp_reports_employees', ['manual_email' => $emailId]);
 	}
 
-<<<<<<< HEAD
+
 	public function getCSPAttachedItemById(int $itemId)
 	{
 		$records = $this->db
@@ -5275,7 +5275,8 @@ class Compliance_report_model extends CI_Model
 			->row_array();
 		//
 		return $records;
-=======
+	}
+	
 	public function getAllItemsWithIncidentsCPA(int $companyId, array $filter, bool $isMainCPA = true): array
 	{
 		$this->db->select([
@@ -5501,6 +5502,5 @@ class Compliance_report_model extends CI_Model
 			$filter,
 			false
 		);
->>>>>>> d7dcda9ab953d6141b84b3b800a93ba4c95e78b8
 	}
 }
