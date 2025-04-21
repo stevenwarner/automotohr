@@ -23,6 +23,10 @@
                     </div>
                     <div class="panel-body">
                         <?php
+
+                        if (!$item["severity_level_sid"]) {
+                            $item["severity_level_sid"] = 1;
+                        }
                         //
                         $level = $severity_status[$item["severity_level_sid"]];
                         //
