@@ -2617,6 +2617,9 @@ $route["compliance_safety_reporting/report/(:num)/incident/(:num)/items/employee
   "v1/Compliance_safety_reporting/updateAttachedItem/$1/$2";
 // Employees
 // overview
+$route["compliance_safety_reporting/employee/dashboard"]["get"] =
+  "v1/Compliance_safety_reporting_employee/dashboard";
+
 $route["compliance_safety_reporting/employee/overview"]["get"] =
   "v1/Compliance_safety_reporting_employee/overview";
 $route["compliance_safety_reporting/employee/overview/reports"]["get"] =
