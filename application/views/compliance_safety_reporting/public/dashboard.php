@@ -19,7 +19,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
         <!-- Buttons -->
         <div class="row">
             <div class="col-sm-12 text-right">
-                <a href="<?= base_url("/csp/overview/reports"); ?>" class="btn btn-blue">
+                <a href="<?= base_url("/csp/overview"); ?>" class="btn btn-blue">
                     <i class="fa fa-pie-chart"></i>
                     Compliance Safety Reporting Overview
                 </a>
@@ -188,14 +188,13 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                             </label>
                                         </td>
                                         <td class="vam">
-                                            <a
-                                                href="<?= base_url("compliance_safety_reporting/edit/" . $record["csp_reports_sid"]); ?>">
+                                            <a href="<?= base_url("csp/edit/" . $record["csp_reports_sid"]); ?>">
                                                 <?= $record["title"]; ?>
                                             </a>
                                         </td>
                                         <td class="vam">
                                             <a
-                                                href="<?= base_url("compliance_safety_reporting/report/" . $record["csp_reports_sid"] . "/incident/edit/" . $record["csp_reports_incidents_sid"]); ?>">
+                                                href="<?= base_url("csp/report/" . $record["csp_reports_sid"] . "/incident/edit/" . $record["csp_reports_incidents_sid"]); ?>">
                                                 <?= $record["compliance_incident_type_name"]; ?>
                                             </a>
                                         </td>
@@ -214,7 +213,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                             <?php endif; ?>
                                         </td>
                                         <td class="vam text-right">
-                                            <a href="<?= base_url("compliance_safety_reporting/incident_item_management/" . $record["csp_reports_sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]); ?>"
+                                            <a href="<?= base_url("csp/incident_item_management/" . $record["csp_reports_sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]); ?>"
                                                 class="btn btn-orange">
                                                 <i class="fa fa-eye"></i>
                                                 View Task
