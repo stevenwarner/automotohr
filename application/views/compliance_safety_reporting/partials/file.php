@@ -1,6 +1,15 @@
+<?php 
+    $style = '';
+    //
+    if ($document['file_type'] == 'image') {
+        $imageUrl = AWS_S3_BUCKET_URL . $document["s3_file_value"]; 
+        $style = "background-image: url('".$imageUrl."'); background-size: cover; background-repeat: no-repeat; background-position: center;";
+    }
+    
+?>
 <div class="col-sm-3">
     <div class="widget-box">
-        <div class="attachment-box full-width jsFileBox" data-id="<?= $document["sid"]; ?>">
+        <div class="attachment-box full-width jsFileBox" style="<?= $style; ?>" data-id="<?= $document["sid"]; ?>">
             <h4 style="padding: 5px;" class="text-white">
                 <?= $document["title"]; ?>
             </h4>
