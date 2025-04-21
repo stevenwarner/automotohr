@@ -54,7 +54,8 @@
                 <div class="alert alert-info">
                     <div class="row">
                         <div class="col-sm-12 text-left">
-                            Last modified by <strong><?= $report['last_modified_by'] ?></strong> at
+                            Last modified by
+                            <strong><?= checkAndShowUser($report['last_modified_by'], $report); ?></strong> at
                             <strong><?= formatDateToDB($report['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></strong>.
                         </div>
                     </div>

@@ -4892,3 +4892,18 @@ if (!function_exists("isLMSManagerDepartmentAndTeams")) {
         }
     }
 }
+
+
+if (!function_exists("checkAndShowUser")) {
+    function checkAndShowUser($lastModifiedBy, $record)
+    {
+        // check if last_modified_by is a number
+        if (is_numeric($lastModifiedBy)) {
+            // get the user details
+            return remakeEmployeeName($record);
+        } else {
+            // check if the last modified by is a string
+            return $lastModifiedBy;
+        }
+    }
+}
