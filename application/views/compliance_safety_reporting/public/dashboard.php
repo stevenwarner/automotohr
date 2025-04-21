@@ -19,11 +19,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
         <!-- Buttons -->
         <div class="row">
             <div class="col-sm-12 text-right">
-                <a href="<?= base_url("/dashboard"); ?>" class="btn btn-black">
-                    <i class="fa fa-arrow-left"></i> Back to Dashboard
-                </a>
-                <a href="<?= base_url("/compliance_safety_reporting/employee/overview/reports"); ?>"
-                    class="btn btn-blue">
+                <a href="<?= base_url("/csp/overview/reports"); ?>" class="btn btn-blue">
                     <i class="fa fa-pie-chart"></i>
                     Compliance Safety Reporting Overview
                 </a>
@@ -45,8 +41,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                 </h3>
             </div>
             <div class="panel-body">
-                <form id="filterForm" method="get"
-                    action="<?= base_url("/compliance_safety_reporting/employee/dashboard"); ?>">
+                <form id="filterForm" method="get" action="<?= base_url("/csp/dashboard"); ?>">
                     <!--  -->
                     <div class="row">
                         <div class="col-md-4">

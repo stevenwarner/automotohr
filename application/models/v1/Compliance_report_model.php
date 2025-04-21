@@ -5438,4 +5438,32 @@ class Compliance_report_model extends CI_Model
 			false
 		);
 	}
+
+	public function getAllEmployeeIncidentsWithReportsPublic(
+		int $companyId,
+		string $emailOrId
+	): array {
+		//
+		$this->getAllowedCSPIdsById($emailOrId);
+
+		return $this->getAllIncidentsWithReports(
+			$companyId,
+			false
+		);
+	}
+
+	public function getAllEmployeeItemsWithIncidentsCPAPublic(
+		int $companyId,
+		string $emailOrId,
+		array $filter
+	): array {
+		//
+		$this->getAllowedCSPIdsById($emailOrId);
+
+		return $this->getAllItemsWithIncidentsCPA(
+			$companyId,
+			$filter,
+			false
+		);
+	}
 }

@@ -2653,6 +2653,9 @@ $route["csp/report/(:num)/incident/edit/(:num)"]["get"] =
 $route["csp/report/(:num)/incident/edit/(:num)"]["post"] =
   "v1/Compliance_safety_reporting_public/processIncidentEdit/$1/$2";
 
+$route["csp/dashboard"]["get"] =
+  "v1/Compliance_safety_reporting_public/dashboard";
+
 $route["csp/overview"]["get"] =
   "v1/Compliance_safety_reporting_public/overview";
 

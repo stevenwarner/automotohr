@@ -2,6 +2,15 @@
     <div class="container-fluid">
         <div style="position: relative">
             <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
+
+            <div class="row">
+                <div class="col-sm-12 text-right">
+                    <a href="<?= base_url("csp/dashboard") ?>" class="btn btn-orange">
+                        <i class="fa fa-pie-chart"></i>
+                        Compliance Dashboard
+                    </a>
+                </div>
+            </div>
             <!--  -->
             <div class="row">
                 <div class="col-lg-12">
@@ -31,9 +40,13 @@
                 <div class="col-sm-3">
                     <div class="panel panel-default">
                         <div class="panel-body" style="background: #e6e7ff; border-radius: 4px;">
-                            <h2 style="">Completed: <span style="color: #ef6c34;" id="jsOverViewTrainings"><?= count($completedReports); ?></span></h2>
-                            <h3 style="margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon"><?= count($pendingReports); ?></span> Pending</h3>
-                            <h3 style="margin-top: 0px;"><span id="jsOverViewCourseTotal"><?= count($pendingReports) + count($completedReports) + count($onHoldReports);; ?></span> Total</h3>
+                            <h2 style="">Completed: <span style="color: #ef6c34;"
+                                    id="jsOverViewTrainings"><?= count($completedReports); ?></span></h2>
+                            <h3 style="margin-bottom: 0px;"><span
+                                    id="jsOverViewCourseDueSoon"><?= count($pendingReports); ?></span> Pending</h3>
+                            <h3 style="margin-top: 0px;"><span id="jsOverViewCourseTotal"><?= count($pendingReports) + count($completedReports) + count($onHoldReports);
+                            ; ?></span>
+                                Total</h3>
                         </div>
                     </div>
 
@@ -94,8 +107,8 @@
 
 <script>
     const reportGraphData = <?= json_encode([
-                                "pending" => count($pendingReports),
-                                "on_hold" => count($onHoldReports),
-                                "completed" => count($completedReports),
-                            ]); ?>;
+        "pending" => count($pendingReports),
+        "on_hold" => count($onHoldReports),
+        "completed" => count($completedReports),
+    ]); ?>;
 </script>
