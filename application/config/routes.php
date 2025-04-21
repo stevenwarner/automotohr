@@ -286,7 +286,7 @@ $route['admin-event-handler'] = 'home/admin_event_handler';
 // Added on: 12-03-2019
 $route['manage_admin/event-detail/(:num)'] = 'manage_admin/calendar/event_detail/$1';
 $route['manage_admin/process-event'] = 'manage_admin/calendar/process_event';
-$route['manage_admin/get-events']    = 'manage_admin/calendar/get_events';
+$route['manage_admin/get-events'] = 'manage_admin/calendar/get_events';
 // Added on: 10-03-2019
 $route['manage_admin/invoice/list_admin_invoices/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/invoice/list_admin_invoices/$1/$2/$3/$4/$5';
 // Added on: 03-03-2019
@@ -2552,6 +2552,9 @@ $route["manage_admin/compliance_safety/incident_types/enable_disable_question/(:
 
 // Employee Compliance Safety Reporting
 // overview
+$route["compliance_safety_reporting/dashboard"]["get"] =
+  "v1/Compliance_safety_reporting/dashboard";
+
 $route["compliance_safety_reporting/overview"]["get"] =
   "v1/Compliance_safety_reporting/overview";
 // listing all
@@ -2614,6 +2617,9 @@ $route["compliance_safety_reporting/report/(:num)/incident/(:num)/items/employee
   "v1/Compliance_safety_reporting/updateAttachedItem/$1/$2";
 // Employees
 // overview
+$route["compliance_safety_reporting/employee/dashboard"]["get"] =
+  "v1/Compliance_safety_reporting_employee/dashboard";
+
 $route["compliance_safety_reporting/employee/overview"]["get"] =
   "v1/Compliance_safety_reporting_employee/overview";
 $route["compliance_safety_reporting/employee/overview/reports"]["get"] =
@@ -2646,6 +2652,9 @@ $route["csp/report/(:num)/incident/edit/(:num)"]["get"] =
 // Edit the report
 $route["csp/report/(:num)/incident/edit/(:num)"]["post"] =
   "v1/Compliance_safety_reporting_public/processIncidentEdit/$1/$2";
+
+$route["csp/dashboard"]["get"] =
+  "v1/Compliance_safety_reporting_public/dashboard";
 
 $route["csp/overview"]["get"] =
   "v1/Compliance_safety_reporting_public/overview";
@@ -2685,7 +2694,7 @@ $route["compliance_safety_reporting_public/update_email_read_flag"]["post"] =
 
 $route["compliance_safety_reporting_public/view_compliance_safety_report_email/(:num)/(:num)/(:any)/(:any)"]["get"] =
   "v1/Compliance_safety_reporting_public/viewComplianceSafetyReportEmail/$1/$2/$3/$4";
-  
+
 $route["compliance_safety_reporting_public/view_compliance_safety_report_email/(:num)/(:num)/(:num)/(:any)/(:any)"]["get"] =
   "v1/Compliance_safety_reporting_public/viewComplianceSafetyReportEmail/$1/$2/$3/$4/$5";
 
@@ -2733,7 +2742,7 @@ $route["compliance_safety_reporting/incident_item_management/(:num)/(:num)/(:num
 
 // add notes to incident item
 $route["compliance_safety_reporting/notes/(:num)/(:num)/(:num)"]["post"] =
-"v1/Compliance_safety_reporting/processIncidentItemNotes/$1/$2/$3";
+  "v1/Compliance_safety_reporting/processIncidentItemNotes/$1/$2/$3";
 
 $route["csp/incident_item_management/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting_public/manageIncidentItem/$1/$2/$3";
@@ -2742,14 +2751,22 @@ $route["csp/incident_item_management/(:num)/(:num)/(:num)"]["post"] =
   "v1/Compliance_safety_reporting_public/processIncidentItem/$1/$2/$3";
 
 $route["csp/add_file_to_incident_item"]["post"] =
-  "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";  
+  "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";
 
 $route["csp/notes/(:num)/(:num)/(:num)"]["post"] =
-  "v1/Compliance_safety_reporting_public/processIncidentItemNotes/$1/$2/$3"; 
+  "v1/Compliance_safety_reporting_public/processIncidentItemNotes/$1/$2/$3";
 
 $route["compliance_safety_reporting/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting/downloadCSPIncidentItem/$1/$2/$3";
 
 $route["csp/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting_public/downloadCSPIncidentItem/$1/$2/$3";
+
+//
+$route["settings/shifts/opensingle/create"]["post"] = "Settings/processCreateOpenSingleShift";
+$route["settings/shifts/opensingle/claim"]["post"] = "Settings/processClaimOpenSingleShift";
+
+$route["settings/openshifts/approval"]["get"] = "Settings/openShiftsApprovals";
+$route["settings/shifts/claimshiftsreject"]["post"] = "Settings/processClaimShiftsReject";
+$route["settings/shifts/claimshiftsapprove"]["post"] = "Settings/processClaimShiftsApprove";
 

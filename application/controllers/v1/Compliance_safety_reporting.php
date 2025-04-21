@@ -18,6 +18,48 @@ class Compliance_safety_reporting extends Base_csp
     /**
      * overview
      */
+    public function dashboard()
+    {
+        if (!isMainAllowedForCSP()) {
+            return redirect("dashboard");
+        }
+        // set the title
+        $this->data['title'] = 'Compliance Safety Reporting | Dashboard';
+        // load JS
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
+        $this->data['pageJs'][] = 'csp/dashboard';
+        // get filter
+        $this->data["filter"] = [
+            "severity_level" => $this->input->get("severityLevel", true) ?? "-1",
+            "incident" => $this->input->get("incidentType", true) ?? "-1",
+            "status" => $this->input->get("status", true) ?? "pending",
+        ];
+
+        // get all the incidents
+        $this->data["incidents"] = $this
+            ->compliance_report_model
+            ->getAllIncidentsWithReports(
+                $this->getLoggedInCompany("sid")
+            );
+
+        // get the reports
+        $this->data["reports"] = $this
+            ->compliance_report_model
+            ->getAllItemsWithIncidentsCPA(
+                $this->getLoggedInCompany("sid"),
+                $this->data["filter"]
+            );
+        //
+        $this->renderView('compliance_safety_reporting/dashboard');
+    }
+
+    /**
+     * overview
+     */
     public function overview()
     {
         if (!isMainAllowedForCSP()) {
@@ -746,7 +788,7 @@ class Compliance_safety_reporting extends Base_csp
                         "file" => $file
                     ],
                     true
-                ), 
+                ),
                 "data" => $file
             ]
         );
@@ -860,22 +902,22 @@ class Compliance_safety_reporting extends Base_csp
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
             //
             $this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => $incidentId,
-					'incidentItemId' => $itemId,
-					'type' => 'emails',
-					'userType' => 'employee',
-					'userId' => $employeeId,
-					'jsonData' => [
-						'action' => 'send email',
-						'dateTime' => getSystemDate(),
-						'receiver' => $to,
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
+                    'incidentItemId' => $itemId,
+                    'type' => 'emails',
+                    'userType' => 'employee',
+                    'userId' => $employeeId,
+                    'jsonData' => [
+                        'action' => 'send email',
+                        'dateTime' => getSystemDate(),
+                        'receiver' => $to,
                         'subject' => $_POST['subject'],
                         'message' => $_POST['message']
-					]
-				]
-			);
+                    ]
+                ]
+            );
             //
         } else if ($send_email_type == 'system') {
             $receivers = explode(',', $_POST['receivers']);
@@ -947,22 +989,22 @@ class Compliance_safety_reporting extends Base_csp
             }
             //
             $this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => $incidentId,
-					'incidentItemId' => $itemId,
-					'type' => 'emails',
-					'userType' => 'employee',
-					'userId' => $employeeId,
-					'jsonData' => [
-						'action' => 'send email',
-						'dateTime' => getSystemDate(),
-						'receiver' => $receivers,
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
+                    'incidentItemId' => $itemId,
+                    'type' => 'emails',
+                    'userType' => 'employee',
+                    'userId' => $employeeId,
+                    'jsonData' => [
+                        'action' => 'send email',
+                        'dateTime' => getSystemDate(),
+                        'receiver' => $receivers,
                         'subject' => $_POST['subject'],
                         'message' => $_POST['message']
-					]
-				]
-			);
+                    ]
+                ]
+            );
         }
         //
         return sendResponse(
@@ -1531,8 +1573,9 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
-    public function downloadCSPIncidentItem (int $reportId, int $incidentId, int $itemId) {
-        
+    public function downloadCSPIncidentItem(int $reportId, int $incidentId, int $itemId)
+    {
+
         $employeeId = $this->getLoggedInEmployee("sid");
         $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($employeeId, $reportId, $incidentId);
 

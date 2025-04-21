@@ -31,12 +31,55 @@ class Compliance_safety_reporting_public extends Base_csp
         $this->session->set_userdata('tokenDetails', $tokenDetails);
 
         // get the specific report or incident
-        if ((int)$tokenDetails["csp_report_incident_sid"] !== 0) {
+        if ((int) $tokenDetails["csp_report_incident_sid"] !== 0) {
             //
             return $this->editReportIncident($tokenDetails["csp_reports_sid"], $tokenDetails["csp_report_incident_sid"]);
         } else {
             return $this->edit($tokenDetails["csp_reports_sid"]);
         }
+    }
+
+    public function dashboard()
+    {
+
+        // set the title
+        $this->data['title'] = 'Compliance Safety Reporting | Dashboard';
+        // load JS
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
+        $this->data['pageJs'][] = 'csp/dashboard';
+        // get filter
+        $this->data["filter"] = [
+            "severity_level" => $this->input->get("severityLevel", true) ?? "-1",
+            "incident" => $this->input->get("incidentType", true) ?? "-1",
+            "status" => $this->input->get("status", true) ?? "pending",
+        ];
+
+        // get all the incidents
+        $this->data["incidents"] = $this
+            ->compliance_report_model
+            ->getAllEmployeeIncidentsWithReportsPublic(
+                $this->getPublicSessionData("company_sid"),
+                $this->getPublicSessionData("is_external_employee") == 1
+                ? $this->getPublicSessionData("external_email")
+                : $this->getPublicSessionData("employee_sid")
+            );
+
+        // get the reports
+        $this->data["reports"] = $this
+            ->compliance_report_model
+            ->getAllEmployeeItemsWithIncidentsCPAPublic(
+                $this->getPublicSessionData("company_sid"),
+                $this->getPublicSessionData("is_external_employee") == 1
+                ? $this->getPublicSessionData("external_email")
+                : $this->getPublicSessionData("employee_sid"),
+                $this->data["filter"]
+            );
+        //
+        $this->renderView('compliance_safety_reporting/public/dashboard');
     }
 
     /**
@@ -53,8 +96,8 @@ class Compliance_safety_reporting_public extends Base_csp
             ->getCSPReportPublic(
                 $this->getPublicSessionData("company_sid"),
                 $this->getPublicSessionData("is_external_employee") == 1
-                    ? $this->getPublicSessionData("external_email")
-                    : $this->getPublicSessionData("employee_sid"),
+                ? $this->getPublicSessionData("external_email")
+                : $this->getPublicSessionData("employee_sid"),
                 "pending"
             );
         // get types
@@ -63,8 +106,8 @@ class Compliance_safety_reporting_public extends Base_csp
             ->getCSPReportPublic(
                 $this->getPublicSessionData("company_sid"),
                 $this->getPublicSessionData("is_external_employee") == 1
-                    ? $this->getPublicSessionData("external_email")
-                    : $this->getPublicSessionData("employee_sid"),
+                ? $this->getPublicSessionData("external_email")
+                : $this->getPublicSessionData("employee_sid"),
                 "completed"
             );
         $this->data["onHoldReports"] = $this
@@ -72,8 +115,8 @@ class Compliance_safety_reporting_public extends Base_csp
             ->getCSPReportPublic(
                 $this->getPublicSessionData("company_sid"),
                 $this->getPublicSessionData("is_external_employee") == 1
-                    ? $this->getPublicSessionData("external_email")
-                    : $this->getPublicSessionData("employee_sid"),
+                ? $this->getPublicSessionData("external_email")
+                : $this->getPublicSessionData("employee_sid"),
                 "on_hold"
             );
         // load JS
@@ -103,8 +146,8 @@ class Compliance_safety_reporting_public extends Base_csp
             ->compliance_report_model
             ->getCSPAllowedIncidentsPublic(
                 $this->getPublicSessionData("is_external_employee") == 1
-                    ? $this->getPublicSessionData("external_email")
-                    : $this->getPublicSessionData("employee_sid"),
+                ? $this->getPublicSessionData("external_email")
+                : $this->getPublicSessionData("employee_sid"),
                 [
                     "compliance_incident_types.compliance_incident_type_name",
                     "csp_reports.title",
@@ -120,8 +163,8 @@ class Compliance_safety_reporting_public extends Base_csp
             ->compliance_report_model
             ->getCSPAllowedIncidentsPublic(
                 $this->getPublicSessionData("is_external_employee") == 1
-                    ? $this->getPublicSessionData("external_email")
-                    : $this->getPublicSessionData("employee_sid"),
+                ? $this->getPublicSessionData("external_email")
+                : $this->getPublicSessionData("employee_sid"),
                 [
                     "csp_reports.title",
                     "csp_reports.sid as reportId",
@@ -136,8 +179,8 @@ class Compliance_safety_reporting_public extends Base_csp
             ->compliance_report_model
             ->getCSPAllowedIncidentsPublic(
                 $this->getPublicSessionData("is_external_employee") == 1
-                    ? $this->getPublicSessionData("external_email")
-                    : $this->getPublicSessionData("employee_sid"),
+                ? $this->getPublicSessionData("external_email")
+                : $this->getPublicSessionData("employee_sid"),
                 [
                     "compliance_incident_types.compliance_incident_type_name",
                     "csp_reports.title",
@@ -346,21 +389,21 @@ class Compliance_safety_reporting_public extends Base_csp
             $reportId,
             $post,
             $this->getPublicSessionData("employee_sid")
-                ? $this->getPublicSessionData("employee_sid")
-                : 0
+            ? $this->getPublicSessionData("employee_sid")
+            : 0
         );
         //
         if ($this->getPublicSessionData("is_external_employee") == 1) {
             //
             $loggedInEmployeeName = getManualUserNameByEmailId(
-                $reportId, 
-                0, 
+                $reportId,
+                0,
                 $this->getPublicSessionData("external_email")
             );
             //
             $dataToUpdate = [
                 "last_modified_by" => $loggedInEmployeeName
-            ];    
+            ];
             //
             $this->compliance_report_model->addManualUserEmail(
                 $reportId,
@@ -394,7 +437,7 @@ class Compliance_safety_reporting_public extends Base_csp
                     ]
                 ]
             );
-            
+
         }
         // return the success
         return sendResponse(
@@ -483,7 +526,7 @@ class Compliance_safety_reporting_public extends Base_csp
         $this->data["incidentId"] = $incidentId;
         $this->data["itemId"] = 0;
 
-        $this->data["manageItemUrl"] = base_url('csp/incident_item_management/'.$reportId.'/'.$incidentId);
+        $this->data["manageItemUrl"] = base_url('csp/incident_item_management/' . $reportId . '/' . $incidentId);
         //
         $this->renderView('compliance_safety_reporting/public/edit_incident');
     }
@@ -516,26 +559,27 @@ class Compliance_safety_reporting_public extends Base_csp
         $this->compliance_report_model->editReport(
             $reportId,
             $this->getPublicSessionData("employee_sid")
-                ? $this->getPublicSessionData("employee_sid")
-                : 0,
+            ? $this->getPublicSessionData("employee_sid")
+            : 0,
             $post
         );
         //
         if ($this->getPublicSessionData("is_external_employee") == 1) {
             //
             $loggedInEmployeeName = getManualUserNameByEmailId(
-                $reportId, 
-                0, 
+                $reportId,
+                0,
                 $this->getPublicSessionData("external_email")
             );
             //
             $dataToUpdate = [
                 "last_modified_by" => $loggedInEmployeeName
-            ];    
+            ];
             //
             if ($post["report_status"] == 'completed' && $currentStatus != 'completed') {
                 $dataToUpdate['completed_by'] = $loggedInEmployeeName;
-            } else if ($post["report_status"] != 'completed' && $currentStatus == 'completed') {echo "down<br>";
+            } else if ($post["report_status"] != 'completed' && $currentStatus == 'completed') {
+                echo "down<br>";
                 $dataToUpdate['completed_by'] = null;
             }
             //
@@ -559,19 +603,19 @@ class Compliance_safety_reporting_public extends Base_csp
                     'reportId' => $reportId,
                     'incidentId' => 0,
                     'incidentItemId' => 0,
-                    'type' => 'main', 
+                    'type' => 'main',
                     'userType' => 'external',
                     'userId' => $this->getPublicSessionData("external_email"),
                     'jsonData' => [
                         'action' => 'update',
                         'type' => 'report',
-                        'title' =>  $post["report_title"],
+                        'title' => $post["report_title"],
                         'dateTime' => getSystemDate(),
                         'fields' => [
-							'report_date' => $post['report_date'],
-							'completion_date' => $post['report_completion_date'],
-							'status' => $post['report_status']
-						],
+                            'report_date' => $post['report_date'],
+                            'completion_date' => $post['report_completion_date'],
+                            'status' => $post['report_status']
+                        ],
                         'internalEmployees' => $post['report_employees'],
                         'externalEmployees' => $post['external_employees_emails']
 
@@ -579,7 +623,7 @@ class Compliance_safety_reporting_public extends Base_csp
                     ]
                 ]
             );
-            
+
         }
         // return the success
         return sendResponse(
@@ -603,25 +647,26 @@ class Compliance_safety_reporting_public extends Base_csp
             $reportId,
             $incidentId,
             $this->getPublicSessionData("employee_sid")
-                ?  $this->getPublicSessionData("employee_sid")
-                : 0,
+            ? $this->getPublicSessionData("employee_sid")
+            : 0,
             $post
         );
         //
         if ($this->getPublicSessionData("is_external_employee") == 1) {
             $loggedInEmployeeName = getManualUserNameByEmailId(
-                $reportId, 
-                0, 
+                $reportId,
+                0,
                 $this->getPublicSessionData("external_email")
             );
             //
             $dataToUpdate = [
                 "last_modified_by" => $loggedInEmployeeName
-            ];    
+            ];
             //
             if ($post["report_status"] == 'completed' && $currentStatus != 'completed') {
                 $dataToUpdate['completed_by'] = $loggedInEmployeeName;
-            } else if ($post["report_status"] != 'completed' && $currentStatus == 'completed') {echo "down<br>";
+            } else if ($post["report_status"] != 'completed' && $currentStatus == 'completed') {
+                echo "down<br>";
                 $dataToUpdate['completed_by'] = null;
             }
             //
@@ -638,28 +683,28 @@ class Compliance_safety_reporting_public extends Base_csp
                 0,
                 $this->getPublicSessionData("external_email")
             );
-			// Save log on update incident
-			$this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => $incidentId,
+            // Save log on update incident
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
                     'incidentItemId' => 0,
-					'type' => 'incidents',
-					'userType' => 'external',
-					'userId' => $this->getPublicSessionData("external_email"),
-					'jsonData' => [
-						'action' => 'update',
-						'dateTime' => getSystemDate(),
-						'fields' => [
-							'completion_date' => $post['report_completion_date'],
-							'status' => $post['report_status']
-						],
-						'internalEmployees' => $post['report_employees'],
+                    'type' => 'incidents',
+                    'userType' => 'external',
+                    'userId' => $this->getPublicSessionData("external_email"),
+                    'jsonData' => [
+                        'action' => 'update',
+                        'dateTime' => getSystemDate(),
+                        'fields' => [
+                            'completion_date' => $post['report_completion_date'],
+                            'status' => $post['report_status']
+                        ],
+                        'internalEmployees' => $post['report_employees'],
                         'externalEmployees' => $post['external_employees_emails']
-					]
-				]
-			);
-		}
+                    ]
+                ]
+            );
+        }
         // return the success
         return sendResponse(
             200,
@@ -710,8 +755,8 @@ class Compliance_safety_reporting_public extends Base_csp
             $reportId,
             $incidentId,
             $this->getPublicSessionData("employee_sid")
-                ? $this->getPublicSessionData("employee_sid")
-                : 0,
+            ? $this->getPublicSessionData("employee_sid")
+            : 0,
             $post
         );
         //
@@ -778,8 +823,8 @@ class Compliance_safety_reporting_public extends Base_csp
                     $incidentId,
                     0,
                     $this->getPublicSessionData("employee_sid")
-                        ? $this->getPublicSessionData("employee_sid")
-                        : 0,
+                    ? $this->getPublicSessionData("employee_sid")
+                    : 0,
                     $post["link"],
                     $post["type"],
                     $this->input->post("title")
@@ -794,16 +839,16 @@ class Compliance_safety_reporting_public extends Base_csp
             if ($this->getPublicSessionData("is_external_employee") == 1) {
                 //
                 $loggedInEmployeeName = getManualUserNameByEmailId(
-                    $reportId, 
-                    $incidentId, 
+                    $reportId,
+                    $incidentId,
                     $this->getPublicSessionData("external_email")
                 );
                 //
                 $dataToUpdate = [
                     "last_modified_by" => $loggedInEmployeeName
-                ];    
+                ];
                 //
-                if($reportId != 0 && $incidentId == 0) {
+                if ($reportId != 0 && $incidentId == 0) {
                     $this->compliance_report_model->addManualUserEmail(
                         $reportId,
                         $dataToUpdate,
@@ -811,7 +856,7 @@ class Compliance_safety_reporting_public extends Base_csp
                     );
                 }
 
-                if($incidentId != 0 && $itemId == 0) {
+                if ($incidentId != 0 && $itemId == 0) {
                     $this->compliance_report_model->addManualUserEmail(
                         $incidentId,
                         $dataToUpdate,
@@ -886,8 +931,8 @@ class Compliance_safety_reporting_public extends Base_csp
                         $incidentId,
                         0,
                         $this->getPublicSessionData("employee_sid")
-                            ? $this->getPublicSessionData("employee_sid")
-                            : 0,
+                        ? $this->getPublicSessionData("employee_sid")
+                        : 0,
                         $fileName,
                         $_FILES["file"]["name"],
                         $type,
@@ -904,24 +949,24 @@ class Compliance_safety_reporting_public extends Base_csp
                 if ($this->getPublicSessionData("is_external_employee") == 1) {
                     //
                     $loggedInEmployeeName = getManualUserNameByEmailId(
-                        $reportId, 
-                        $incidentId, 
+                        $reportId,
+                        $incidentId,
                         $this->getPublicSessionData("external_email")
                     );
                     //
                     $dataToUpdate = [
                         "last_modified_by" => $loggedInEmployeeName
-                    ];    
+                    ];
                     //
-                    if($reportId != 0 && $incidentId == 0) {
+                    if ($reportId != 0 && $incidentId == 0) {
                         $this->compliance_report_model->addManualUserEmail(
                             $reportId,
                             $dataToUpdate,
                             'csp_reports'
                         );
                     }
-    
-                    if($incidentId != 0 && $itemId == 0) {
+
+                    if ($incidentId != 0 && $itemId == 0) {
                         $this->compliance_report_model->addManualUserEmail(
                             $incidentId,
                             $dataToUpdate,
@@ -1098,13 +1143,13 @@ class Compliance_safety_reporting_public extends Base_csp
         $attachments = isset($_POST['attach_files']) ? explode(',', $_POST['attach_files']) : [];
         $reportId = $_POST['report_id'];
         $incidentId = $_POST['incident_id'];
-        $itemId = $_POST['item_id']; 
+        $itemId = $_POST['item_id'];
         //
         $email_hf = message_header_footer_domain($companyId, $companyName);
         //
         if ($send_email_type == 'manual') {
             //
-            $manual_email   = $_POST['manual_email'];
+            $manual_email = $_POST['manual_email'];
             //
             $receiver_name = '';
             $conversation_key = '';
@@ -1123,24 +1168,24 @@ class Compliance_safety_reporting_public extends Base_csp
                 $receiver_name = $name[0];
             }
             //
-            $subject        = $_POST['subject'];
-            $message        = $_POST['message'];
+            $subject = $_POST['subject'];
+            $message = $_POST['message'];
             //
             $manual_email_to_insert = array();
-            $manual_email_to_insert['csp_reports_sid']          = $reportId;
-            $manual_email_to_insert['csp_incident_type_sid']    = $incidentId;
-            $manual_email_to_insert['csp_reports_incidents_items_sid']    = $itemId;
+            $manual_email_to_insert['csp_reports_sid'] = $reportId;
+            $manual_email_to_insert['csp_incident_type_sid'] = $incidentId;
+            $manual_email_to_insert['csp_reports_incidents_items_sid'] = $itemId;
             //
             if ($isEmployee) {
-                $manual_email_to_insert['receiver_sid']         = $receiverId;
+                $manual_email_to_insert['receiver_sid'] = $receiverId;
             } else {
-                $manual_email_to_insert['manual_email']         = $manual_email;
-                $manual_email_to_insert['receiver_sid']         = 0;
+                $manual_email_to_insert['manual_email'] = $manual_email;
+                $manual_email_to_insert['receiver_sid'] = 0;
             }
             //
-            $manual_email_to_insert['sender_sid']               = $employeeId;
-            $manual_email_to_insert['subject']                  = $subject;
-            $manual_email_to_insert['message_body']             = $message;
+            $manual_email_to_insert['sender_sid'] = $employeeId;
+            $manual_email_to_insert['subject'] = $subject;
+            $manual_email_to_insert['message_body'] = $message;
             //
             $inserted_email_sid = $this->compliance_report_model->addComplianceReportEmail($manual_email_to_insert);
             //
@@ -1148,11 +1193,11 @@ class Compliance_safety_reporting_public extends Base_csp
                 //
                 foreach ($attachments as $attachmentId) {
 
-                    $insert_attachment                      = array();
+                    $insert_attachment = array();
                     $insert_attachment['csp_reports_email_sid'] = $inserted_email_sid;
-                    $insert_attachment['csp_reports_file_sid']  = $attachmentId;
-                    $insert_attachment['attached_by']           = $employeeId;
-                    $insert_attachment['attached_date']         = date('Y-m-d H:i:s');
+                    $insert_attachment['csp_reports_file_sid'] = $attachmentId;
+                    $insert_attachment['attached_by'] = $employeeId;
+                    $insert_attachment['attached_date'] = date('Y-m-d H:i:s');
 
                     $this->compliance_report_model->addComplianceEmailAttachment($insert_attachment);
                 }
@@ -1190,22 +1235,22 @@ class Compliance_safety_reporting_public extends Base_csp
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
             //
             $this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => $incidentId,
-					'incidentItemId' => $itemId,
-					'type' => 'emails',
-					'userType' => $employeeType,
-					'userId' => $employeeType == 'external' ? $employeeEmail : $employeeId,
-					'jsonData' => [
-						'action' => 'send email',
-						'dateTime' => getSystemDate(),
-						'receiver' => $to,
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
+                    'incidentItemId' => $itemId,
+                    'type' => 'emails',
+                    'userType' => $employeeType,
+                    'userId' => $employeeType == 'external' ? $employeeEmail : $employeeId,
+                    'jsonData' => [
+                        'action' => 'send email',
+                        'dateTime' => getSystemDate(),
+                        'receiver' => $to,
                         'subject' => $_POST['subject'],
                         'message' => $_POST['message']
-					]
-				]
-			);
+                    ]
+                ]
+            );
             //
         } else if ($send_email_type == 'system') {
             //
@@ -1220,9 +1265,9 @@ class Compliance_safety_reporting_public extends Base_csp
                 $message_body = $_POST['message'];
 
                 $data_to_insert = array();
-                $data_to_insert['csp_reports_sid']          = $reportId;
-                $data_to_insert['csp_incident_type_sid']    = $incidentId;
-                $data_to_insert['csp_reports_incidents_items_sid']    = $itemId;
+                $data_to_insert['csp_reports_sid'] = $reportId;
+                $data_to_insert['csp_incident_type_sid'] = $incidentId;
+                $data_to_insert['csp_reports_incidents_items_sid'] = $itemId;
                 //
                 if ($employeeType == 'internal') {
                     $data_to_insert['sender_sid'] = $employeeId;
@@ -1248,11 +1293,11 @@ class Compliance_safety_reporting_public extends Base_csp
                     //
                     foreach ($attachments as $attachmentId) {
 
-                        $insert_attachment                      = array();
+                        $insert_attachment = array();
                         $insert_attachment['csp_reports_email_sid'] = $inserted_email_sid;
-                        $insert_attachment['csp_reports_file_sid']  = $attachmentId;
-                        $insert_attachment['attached_by']           = $employeeId;
-                        $insert_attachment['attached_date']         = date('Y-m-d H:i:s');
+                        $insert_attachment['csp_reports_file_sid'] = $attachmentId;
+                        $insert_attachment['attached_by'] = $employeeId;
+                        $insert_attachment['attached_date'] = date('Y-m-d H:i:s');
 
                         $this->compliance_report_model->addComplianceEmailAttachment($insert_attachment);
                     }
@@ -1287,22 +1332,22 @@ class Compliance_safety_reporting_public extends Base_csp
             }
             //
             $this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => $incidentId,
-					'incidentItemId' => $itemId,
-					'type' => 'emails',
-					'userType' => $employeeType,
-					'userId' => $employeeType == 'external' ? $employeeEmail : $employeeId,
-					'jsonData' => [
-						'action' => 'send email',
-						'dateTime' => getSystemDate(),
-						'receiver' => $receivers,
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
+                    'incidentItemId' => $itemId,
+                    'type' => 'emails',
+                    'userType' => $employeeType,
+                    'userId' => $employeeType == 'external' ? $employeeEmail : $employeeId,
+                    'jsonData' => [
+                        'action' => 'send email',
+                        'dateTime' => getSystemDate(),
+                        'receiver' => $receivers,
                         'subject' => $_POST['subject'],
                         'message' => $_POST['message']
-					]
-				]
-			);
+                    ]
+                ]
+            );
         }
         //
         return sendResponse(
@@ -1326,16 +1371,16 @@ class Compliance_safety_reporting_public extends Base_csp
             $employeeId = $this->getPublicSessionData("employee_sid");
         }
         //
-        $item_title     = $_POST['attachment_title'];
-        $report_sid     = $_POST['report_sid'];
-        $incident_sid   = $_POST['incident_sid'];
-        $item_source    = $_POST['file_type'];
+        $item_title = $_POST['attachment_title'];
+        $report_sid = $_POST['report_sid'];
+        $incident_sid = $_POST['incident_sid'];
+        $item_source = $_POST['file_type'];
         //
         if ($item_source == 'upload_document') {
             if (!empty($_FILES) && isset($_FILES['file']) && $_FILES['file']['size'] > 0) {
 
-                $file_name          = $_POST['file_name'];
-                $file_extension     = $_POST['file_ext'];
+                $file_name = $_POST['file_name'];
+                $file_extension = $_POST['file_ext'];
                 $upload_incident_doc = upload_file_to_aws('file', $companyId, 'file', '', AWS_S3_BUCKET_NAME);
 
                 if (!empty($upload_incident_doc) && $upload_incident_doc != 'error') {
@@ -1366,11 +1411,11 @@ class Compliance_safety_reporting_public extends Base_csp
                             );
                     }
                     //
-                    $return_data                    = array();
-                    $return_data['item_sid']        = $insert_document_sid;
-                    $return_data['item_title']      = $item_title;
-                    $return_data['item_type']       = 'Document';
-                    $return_data['item_source']     = strtoupper($file_extension);
+                    $return_data = array();
+                    $return_data['item_sid'] = $insert_document_sid;
+                    $return_data['item_title'] = $item_title;
+                    $return_data['item_type'] = 'Document';
+                    $return_data['item_source'] = strtoupper($file_extension);
 
                     echo json_encode($return_data);
                 }
@@ -1444,11 +1489,11 @@ class Compliance_safety_reporting_public extends Base_csp
                     );
             }
 
-            $return_data                    = array();
-            $return_data['item_sid']        = $insert_video_sid;
-            $return_data['item_title']      = $item_title;
-            $return_data['item_type']       = 'Media';
-            $return_data['item_source']     = $item_source;
+            $return_data = array();
+            $return_data['item_sid'] = $insert_video_sid;
+            $return_data['item_title'] = $item_title;
+            $return_data['item_type'] = 'Media';
+            $return_data['item_source'] = $item_source;
 
             echo json_encode($return_data);
         }
@@ -1502,27 +1547,27 @@ class Compliance_safety_reporting_public extends Base_csp
 
     function updateEmailReadFlag()
     {
-        $email_sid              = $_POST['email_sid'];
+        $email_sid = $_POST['email_sid'];
 
-        $data_to_update             = array();
-        $data_to_update['is_read']  = 1;
+        $data_to_update = array();
+        $data_to_update['is_read'] = 1;
         $this->compliance_report_model->updateEmailReadFlag($email_sid, $data_to_update);
         //
         if (isset($_POST['receiver_sid'])) {
-            $receiver_sid           = $_POST['receiver_sid'];
-            $sender_info            = $this->compliance_report_model->getEmailSenderInfo($email_sid);
+            $receiver_sid = $_POST['receiver_sid'];
+            $sender_info = $this->compliance_report_model->getEmailSenderInfo($email_sid);
 
-            $reportId             = $sender_info['csp_reports_sid'];
-            $incidentId           = $sender_info['csp_incident_type_sid'];
-            $senderId             = $sender_info['sender_sid'] == 0 ? $sender_info['manual_email'] : $sender_info['sender_sid'];
+            $reportId = $sender_info['csp_reports_sid'];
+            $incidentId = $sender_info['csp_incident_type_sid'];
+            $senderId = $sender_info['sender_sid'] == 0 ? $sender_info['manual_email'] : $sender_info['sender_sid'];
 
-            $log_in_user_status     = $this->compliance_report_model->isUserHaveNewEmail($receiver_sid, $reportId, $incidentId);
+            $log_in_user_status = $this->compliance_report_model->isUserHaveNewEmail($receiver_sid, $reportId, $incidentId);
             $status_one = 0;
             if ($log_in_user_status > 0) {
                 $status_one = 1;
             }
 
-            $current_user_status    = $this->compliance_report_model->isUserHaveUnreadMessage($receiver_sid, $senderId, $reportId, $incidentId);
+            $current_user_status = $this->compliance_report_model->isUserHaveUnreadMessage($receiver_sid, $senderId, $reportId, $incidentId);
             $status_two = 0;
             if ($current_user_status > 0) {
                 $status_two = 1;
@@ -1533,10 +1578,10 @@ class Compliance_safety_reporting_public extends Base_csp
                 $senderId = $split_email[0];
             }
 
-            $return_data                = array();
-            $return_data['status_one']  = $status_one;
-            $return_data['status_two']  = $status_two;
-            $return_data['senderId']  = $senderId;
+            $return_data = array();
+            $return_data['status_one'] = $status_one;
+            $return_data['status_two'] = $status_two;
+            $return_data['senderId'] = $senderId;
 
             echo json_encode($return_data);
         } else {
@@ -1565,45 +1610,45 @@ class Compliance_safety_reporting_public extends Base_csp
         }
 
         if (!empty($emails)) {
-            $user_email         = '';
-            $user_first_name    = '';
-            $user_last_name     = '';
-            $user_picture       = '';
-            $user_phone         = '';
-            $user_type          = '';
-            $sender_type        = '';
-            $company_sid        = '';
-            $sender_email       = '';
-            $manual_user_name   = '';
-            $incident_users     = array();
-            $to_sid             = $senderId;
-            $from_sid           = $receiverId;
+            $user_email = '';
+            $user_first_name = '';
+            $user_last_name = '';
+            $user_picture = '';
+            $user_phone = '';
+            $user_type = '';
+            $sender_type = '';
+            $company_sid = '';
+            $sender_email = '';
+            $manual_user_name = '';
+            $incident_users = array();
+            $to_sid = $senderId;
+            $from_sid = $receiverId;
             //
             if (filter_var($senderId, FILTER_VALIDATE_EMAIL)) {
-                $sender_type    = 'manual';
+                $sender_type = 'manual';
             } else {
-                $sender_type    = 'employee';
+                $sender_type = 'employee';
             }
             //
             if ($manual_user == 'yes' && filter_var($receiverId, FILTER_VALIDATE_EMAIL)) {
                 $name = explode("@", $receiverId);
-                $manual_user_name   = $name[0];
-                $user_first_name    = 'N/';
-                $user_last_name     = 'A';
-                $user_phone         = 'N/A';
-                $user_email         = $receiverId;
-                $user_type          = 'manual';
-                $company_sid        = $this->compliance_report_model->getCompanyIDByComplianceSafetyReportID($reportId);
+                $manual_user_name = $name[0];
+                $user_first_name = 'N/';
+                $user_last_name = 'A';
+                $user_phone = 'N/A';
+                $user_email = $receiverId;
+                $user_type = 'manual';
+                $company_sid = $this->compliance_report_model->getCompanyIDByComplianceSafetyReportID($reportId);
             } else {
                 $user_info = $this->compliance_report_model->get_employee_info_by_id($receiverId);
-                $company_sid        = $user_info['parent_sid'];
-                $user_email         = $user_info['email'];
-                $user_picture       = $user_info['profile_picture'];
-                $user_phone         = $user_info['PhoneNumber'];
-                $user_type          = 'employee';
+                $company_sid = $user_info['parent_sid'];
+                $user_email = $user_info['email'];
+                $user_picture = $user_info['profile_picture'];
+                $user_phone = $user_info['PhoneNumber'];
+                $user_type = 'employee';
 
-                $user_first_name    = isset($user_info['first_name']) ? $user_info['first_name'] : '';
-                $user_last_name     = isset($user_info['last_name']) ? $user_info['last_name'] : '';
+                $user_first_name = isset($user_info['first_name']) ? $user_info['first_name'] : '';
+                $user_last_name = isset($user_info['last_name']) ? $user_info['last_name'] : '';
             }
             //
             $tokenDetails = [
@@ -1630,27 +1675,27 @@ class Compliance_safety_reporting_public extends Base_csp
             // Fetch Document For Media
             $libraryItems = $this->compliance_report_model->getComplianceReportFiles($reportId, $incidentId, $itemId);
 
-            $this->data['emails']             = $emails;
-            $this->data['title']              = 'Compliance Safety Emails';
-            $this->data['company_sid']        = $company_sid;
-            $this->data['company_name']       = $company_name;
-            $this->data['user_first_name']    = $user_first_name;
-            $this->data['user_last_name']     = $user_last_name;
-            $this->data['user_email']         = $user_email;
-            $this->data['user_picture']       = $user_picture;
-            $this->data['user_phone']         = $user_phone;
-            $this->data['user_type']          = $user_type;
-            $this->data['sender_email']       = $sender_email;
-            $this->data['user_sid']           = $from_sid;
-            $this->data['incident_users']     = $incident_users;
-            $this->data['current_user']       = $from_sid;
-            $this->data['receiver_user']      = $to_sid;
-            $this->data['reportId']           = $reportId;
-            $this->data['incidentId']         = $incidentId;
-            $this->data['itemId']             = $itemId;
-            $this->data['libraryItems']       = $libraryItems;
-            $this->data['senderType']         = $sender_type;
-            $this->data['pageJs'][]           = 'csp/send_email_view';
+            $this->data['emails'] = $emails;
+            $this->data['title'] = 'Compliance Safety Emails';
+            $this->data['company_sid'] = $company_sid;
+            $this->data['company_name'] = $company_name;
+            $this->data['user_first_name'] = $user_first_name;
+            $this->data['user_last_name'] = $user_last_name;
+            $this->data['user_email'] = $user_email;
+            $this->data['user_picture'] = $user_picture;
+            $this->data['user_phone'] = $user_phone;
+            $this->data['user_type'] = $user_type;
+            $this->data['sender_email'] = $sender_email;
+            $this->data['user_sid'] = $from_sid;
+            $this->data['incident_users'] = $incident_users;
+            $this->data['current_user'] = $from_sid;
+            $this->data['receiver_user'] = $to_sid;
+            $this->data['reportId'] = $reportId;
+            $this->data['incidentId'] = $incidentId;
+            $this->data['itemId'] = $itemId;
+            $this->data['libraryItems'] = $libraryItems;
+            $this->data['senderType'] = $sender_type;
+            $this->data['pageJs'][] = 'csp/send_email_view';
             //
             $this->data['template'] = message_header_footer(
                 $company_sid,
@@ -1691,45 +1736,45 @@ class Compliance_safety_reporting_public extends Base_csp
         if ($this->getPublicSessionData("is_external_employee") == 1) {
             //
             $loggedInEmployeeName = getManualUserNameByEmailId(
-                $reportId, 
-                $incidentId, 
+                $reportId,
+                $incidentId,
                 $this->getPublicSessionData("external_email")
             );
-			//
-			$dataToUpdate = [
-				"last_modified_by" => $loggedInEmployeeName
-			];    
-			//
-			$this->compliance_report_model->addManualUserEmail(
-				$post["id"],
-				$dataToUpdate,
-				'csp_reports_incidents_items'
-			);
+            //
+            $dataToUpdate = [
+                "last_modified_by" => $loggedInEmployeeName
+            ];
+            //
+            $this->compliance_report_model->addManualUserEmail(
+                $post["id"],
+                $dataToUpdate,
+                'csp_reports_incidents_items'
+            );
             //
             // Save log on update report
             $this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => $incidentId,
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
                     'incidentItemId' => 0,
-					'type' => 'incidents',
-					'userType' => 'external',
+                    'type' => 'incidents',
+                    'userType' => 'external',
                     'userId' => $this->getPublicSessionData("external_email"),
-					'jsonData' => [
-						'action' => 'update',
-						'type' => 'items',
-						'item_id' => $post["id"],
-						'dateTime' => getSystemDate(),
-						'fields' => [
-							'dynamicInput' => $post["dynamicInput"],
-							'dynamicCheckbox' => $post['dynamicCheckbox'],
-							'status' => $post['status'],
-							'level' => $post['level'],
-						],
-					]
-				]
-			);
-		}
+                    'jsonData' => [
+                        'action' => 'update',
+                        'type' => 'items',
+                        'item_id' => $post["id"],
+                        'dateTime' => getSystemDate(),
+                        'fields' => [
+                            'dynamicInput' => $post["dynamicInput"],
+                            'dynamicCheckbox' => $post['dynamicCheckbox'],
+                            'status' => $post['status'],
+                            'level' => $post['level'],
+                        ],
+                    ]
+                ]
+            );
+        }
         // return the success
         return sendResponse(
             200,
@@ -1737,7 +1782,8 @@ class Compliance_safety_reporting_public extends Base_csp
         );
     }
 
-    public function downloadCSPIncident ($reportId, $incidentId) {
+    public function downloadCSPIncident($reportId, $incidentId)
+    {
         //
         $userId = '';
         if ($this->getPublicSessionData("is_external_employee") == 1) {
@@ -1755,7 +1801,7 @@ class Compliance_safety_reporting_public extends Base_csp
                     $reportId,
                     $incidentId,
                     true
-                );    
+                );
             //
             $companyId = $this->getPublicSessionData("company_sid");
             $employeeName = '';
@@ -1770,17 +1816,18 @@ class Compliance_safety_reporting_public extends Base_csp
             $this->data['report_sid'] = $reportId;
             $this->data['company_name'] = $this->compliance_report_model->get_company_name_by_sid($companyId);
             $this->data['action_date'] = 'Downloaded Date';
-            $this->data['action_by'] = "Downloaded By"; 
-            $this->data['action'] = "download"; 
-            $this->data['action_by_name'] = $employeeName; 
+            $this->data['action_by'] = "Downloaded By";
+            $this->data['action'] = "download";
+            $this->data['action_by_name'] = $employeeName;
             //
-            $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident', $this->data);  
+            $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident', $this->data);
         } else {
             return redirect("/");
-        }    
+        }
     }
 
-    public function getUploadAttachmentView () {
+    public function getUploadAttachmentView()
+    {
         return sendResponse(
             200,
             [
@@ -1793,7 +1840,8 @@ class Compliance_safety_reporting_public extends Base_csp
         );
     }
 
-    public function uploadAttachmentItemFile () {
+    public function uploadAttachmentItemFile()
+    {
         //
         $post = $this->input->post(null, true);
         //
@@ -1821,14 +1869,14 @@ class Compliance_safety_reporting_public extends Base_csp
             if ($this->getPublicSessionData("is_external_employee") == 1) {
                 //
                 $loggedInEmployeeName = getManualUserNameByEmailId(
-                    $post['reportId'], 
-                    $post['incidentId'], 
+                    $post['reportId'],
+                    $post['incidentId'],
                     $this->getPublicSessionData("external_email")
                 );
                 //
                 $dataToUpdate = [
                     "last_modified_by" => $loggedInEmployeeName
-                ];    
+                ];
                 //
                 $this->compliance_report_model->addManualUserEmail(
                     $post['itemId'],
@@ -1904,14 +1952,14 @@ class Compliance_safety_reporting_public extends Base_csp
                 //
                 if ($this->getPublicSessionData("is_external_employee") == 1) {
                     $loggedInEmployeeName = getManualUserNameByEmailId(
-                        $post['reportId'], 
-                        $post['incidentId'], 
+                        $post['reportId'],
+                        $post['incidentId'],
                         $this->getPublicSessionData("external_email")
                     );
                     //
                     $dataToUpdate = [
                         "last_modified_by" => $loggedInEmployeeName
-                    ];    
+                    ];
                     //
                     $this->compliance_report_model->addManualUserEmail(
                         $post['itemId'],
@@ -1962,7 +2010,8 @@ class Compliance_safety_reporting_public extends Base_csp
         }
     }
 
-    public function manageIncidentItem ($reportId, $incidentId, $itemId) {
+    public function manageIncidentItem($reportId, $incidentId, $itemId)
+    {
         // get types
         $this->data["report"] = $this
             ->compliance_report_model
@@ -2036,8 +2085,8 @@ class Compliance_safety_reporting_public extends Base_csp
         $post = $this->input->post(null, true);
         //
         $employeeId = $this->getPublicSessionData("employee_sid")
-                ? $this->getPublicSessionData("employee_sid")
-                : 0;
+            ? $this->getPublicSessionData("employee_sid")
+            : 0;
         //allowed_internal_system_count
         $fileId = $this->compliance_report_model->editIncidentItem(
             $reportId,
@@ -2049,20 +2098,20 @@ class Compliance_safety_reporting_public extends Base_csp
         //
         if ($this->getPublicSessionData("is_external_employee") == 1) {
             $loggedInEmployeeName = getManualUserNameByEmailId(
-                $reportId, 
-                $incidentId, 
+                $reportId,
+                $incidentId,
                 $this->getPublicSessionData("external_email")
             );
-			//
-			$dataToUpdate = [
-				"last_modified_by" => $loggedInEmployeeName
-			];    
-			//
-			$this->compliance_report_model->addManualUserEmail(
-				$itemId,
-				$dataToUpdate,
-				'csp_reports_incidents_items'
-			);
+            //
+            $dataToUpdate = [
+                "last_modified_by" => $loggedInEmployeeName
+            ];
+            //
+            $this->compliance_report_model->addManualUserEmail(
+                $itemId,
+                $dataToUpdate,
+                'csp_reports_incidents_items'
+            );
             //
             $emailId = $this->getPublicSessionData("external_email");
             //
@@ -2100,8 +2149,8 @@ class Compliance_safety_reporting_public extends Base_csp
         // get the post
         $post = $this->input->post(null, true);
         $employeeId = $this->getPublicSessionData("employee_sid")
-                ? $this->getPublicSessionData("employee_sid")
-                : 0;
+            ? $this->getPublicSessionData("employee_sid")
+            : 0;
         //allowed_internal_system_count
         $noteId = $this->compliance_report_model->addNotesToIncidentItem(
             $reportId,
@@ -2127,7 +2176,8 @@ class Compliance_safety_reporting_public extends Base_csp
         );
     }
 
-    public function downloadCSPIncidentItem ($reportId, $incidentId, $itemId) {
+    public function downloadCSPIncidentItem($reportId, $incidentId, $itemId)
+    {
         //
         $userId = '';
         //
@@ -2147,7 +2197,7 @@ class Compliance_safety_reporting_public extends Base_csp
                     $incidentId,
                     $itemId,
                     true
-                );   
+                );
             //
             $companyId = $this->getPublicSessionData("company_sid");
             $employeeName = '';
@@ -2162,14 +2212,14 @@ class Compliance_safety_reporting_public extends Base_csp
             $this->data['report_sid'] = $reportId;
             $this->data['company_name'] = $this->compliance_report_model->get_company_name_by_sid($companyId);
             $this->data['action_date'] = 'Downloaded Date';
-            $this->data['action_by'] = "Downloaded By"; 
-            $this->data['action'] = "download"; 
-            $this->data['action_by_name'] = $employeeName; 
+            $this->data['action_by'] = "Downloaded By";
+            $this->data['action'] = "download";
+            $this->data['action_by_name'] = $employeeName;
             //
-            $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident_item', $this->data);  
+            $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident_item', $this->data);
         } else {
             return redirect("/");
-        }    
+        }
     }
 
 }

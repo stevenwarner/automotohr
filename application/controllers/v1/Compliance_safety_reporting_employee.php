@@ -22,6 +22,45 @@ class Compliance_safety_reporting_employee extends Base_csp
         }
     }
 
+    public function dashboard()
+    {
+
+        // set the title
+        $this->data['title'] = 'Compliance Safety Reporting | Dashboard';
+        // load JS
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
+        $this->data['pageJs'][] = 'csp/dashboard';
+        // get filter
+        $this->data["filter"] = [
+            "severity_level" => $this->input->get("severityLevel", true) ?? "-1",
+            "incident" => $this->input->get("incidentType", true) ?? "-1",
+            "status" => $this->input->get("status", true) ?? "pending",
+        ];
+
+        // get all the incidents
+        $this->data["incidents"] = $this
+            ->compliance_report_model
+            ->getAllEmployeeIncidentsWithReports(
+                $this->getLoggedInCompany("sid"),
+                $this->getLoggedInEmployee("sid")
+            );
+
+        // get the reports
+        $this->data["reports"] = $this
+            ->compliance_report_model
+            ->getAllEmployeeItemsWithIncidentsCPA(
+                $this->getLoggedInCompany("sid"),
+                $this->getLoggedInEmployee("sid"),
+                $this->data["filter"]
+            );
+        //
+        $this->renderView('compliance_safety_reporting/employee/dashboard');
+    }
+
     /**
      * overview
      */
@@ -105,7 +144,7 @@ class Compliance_safety_reporting_employee extends Base_csp
                 "csp_reports_incidents.sid",
                 "csp_reports_incidents.completed_at",
                 "csp_reports_incidents.status",
-            ], "on_hold"); 
+            ], "on_hold");
         // load JS
         $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
         $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';

@@ -65,11 +65,11 @@ foreach ($monthDates as $monthDate) {
                             </a>
 
                             <?php if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
-                                <a href="<?= base_url("shifts/my"); ?>" class="btn btn-orange" >
-                                <i class="fa fa-calendar" aria-hidden="true"></i>    
-                                &nbsp;My Shifts
+                                <a href="<?= base_url("shifts/my"); ?>" class="btn btn-orange">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                    &nbsp;My Shifts
                                 </a>
-                                <?php }?>
+                            <?php } ?>
                             <a href="<?= base_url("settings/shifts/breaks"); ?>" class="btn btn-orange">
                                 <i class="fa fa-cogs" aria-hidden="true"></i>
                                 &nbsp;Manage Breaks
@@ -81,20 +81,27 @@ foreach ($monthDates as $monthDate) {
 
 
                             <?php if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
-                                                              <a href="<?= base_url("shifts/my/subordinates"); ?>" class="btn btn-orange" >
-                                <i class="fa fa-users" aria-hidden="true"></i>     
-                                &nbsp;My Team Shifts
+                                <a href="<?= base_url("shifts/my/subordinates"); ?>" class="btn btn-orange">
+                                    <i class="fa fa-users" aria-hidden="true"></i>
+                                    &nbsp;My Team Shifts
                                 </a>
 
-                                <a href="<?= base_url("shifts/myTrade"); ?>" class="btn btn-orange" >
-                                <i class="fa fa-exchange" aria-hidden="true"></i>                                
-                                &nbsp;Shift Swap Requests
+                                <a href="<?= base_url("shifts/myTrade"); ?>" class="btn btn-orange">
+                                    <i class="fa fa-exchange" aria-hidden="true"></i>
+                                    &nbsp;Shift Swap Requests
                                 </a>
 
                                 <?php if (isPayrollOrPlus()) { ?>
                                     <a href="<?= base_url("settings/shifts/trade"); ?>" class="btn btn-orange">
-                                    <i class="fa fa-exchange" aria-hidden="true"></i>
+                                        <i class="fa fa-exchange" aria-hidden="true"></i>
                                         &nbsp;Shift Swap Approvals
+                                    </a>
+                                <?php } ?>
+
+                                <?php if (isPayrollOrPlus()) { ?>
+                                    <a href="<?= base_url("settings/openshifts/approval"); ?>" class="btn btn-orange">
+                                        <i class="fa fa-exchange" aria-hidden="true"></i>
+                                        &nbsp;Open Shift Approvals
                                     </a>
                                 <?php } ?>
 
@@ -249,10 +256,28 @@ foreach ($monthDates as $monthDate) {
                                                         </span>
                                                     </div>
                                                     <!-- employee boxes -->
-                                                    <?php if ($employees) {
+                                                    <?php if ($employees) { ?>
+
+                                                        <!-- OpenShifts-->
+                                                        <div class="schedule-employee-row" data-id="0" style="background-color: #ceffef;">
+                                                            <div class="row">
+
+                                                                <div class="col-sm-2">&nbsp;</div>
+                                                                <div class="col-sm-8">
+                                                                <p class="text-medium weight-6 text-center"> Open Shifts</p>
+                                                                </div>
+                                                                <div class="col-sm-2 text-right">
+                                                                    <span class="text-small">
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- end-->
+
+                                                        <?php
                                                         foreach ($employees as $employee) {
                                                             $employeeShiftRow = $shifts[$employee["userId"]];
-                                                    ?>
+                                                        ?>
                                                             <div class="schedule-employee-row" data-id="<?= $employee["userId"]; ?>">
                                                                 <a href="<?= base_url("employee_profile/" . $employee["userId"]); ?>">
                                                                     <div class="row">
@@ -304,13 +329,58 @@ foreach ($monthDates as $monthDate) {
                                                                 <?= formatDateToDB($monthDate, DB_DATE, "D d"); ?>
                                                                 </p>
                                                             </div>
-                                                            <?php if ($employees) {
+
+
+                                                            <!-- Open Shifts -->                                                         
+                                                            <div class="schedule-column schedule-column-clickable-openshift schedule-column-0 text-center" data-eid="0" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
+                                                                <?php
+                                                                $employeeOpenShift = $openShifts[0]["dates"][$monthDate];
+                                                                ?>
+
+                                                                <?php if ($employeeOpenShift) {
+                                                                    $totalHoursInSeconds += $employeeOpenShift["totalTime"];
+                                                                ?>
+                                                                    <div class="schedule-item-openshift" data-id="<?= $employeeOpenShift["sid"]; ?>" style="background: <? echo $employeeOpenShift["is_published"] == 0 ? DB_UNPUBLISHED_SHIFTS : $bgColor; ?> ; color: <? echo $employeeOpenShift["is_published"] == 0 ? FONT_COLOR_UNPUBLISHED_SHIFTS : ''; ?>" title="<?= $employeeOpenShift["job_title"]; ?>" placement="top">
+
+                                                                        <?php if ($employeeOpenShift["job_sites"] && $employeeOpenShift["job_sites"][0]) { ?>
+                                                                            <span class="circle circle-orange"></span>
+                                                                        <?php } ?>
+                                                                        <p class="text-small">
+                                                                            <?= formatDateToDB(
+                                                                                $employeeOpenShift["start_time"],
+                                                                                "H:i:s",
+                                                                                "h:i a"
+                                                                            ); ?> -
+                                                                            <?= formatDateToDB(
+                                                                                $employeeOpenShift["end_time"],
+                                                                                "H:i:s",
+                                                                                "h:i a"
+                                                                            ); ?>
+                                                                        </p>
+                                                                    </div>
+                                                                <?php } elseif ($holidays[$monthDate]) { ?>
+                                                                    <div class="schedule-dayoff">
+                                                                        <button class="btn btn-red text-small btn-xs">
+                                                                            <?= $holidays[$monthDate]["title"]; ?>
+                                                                        </button>
+                                                                    </div>
+                                                                <?php } else { ?>
+                                                                <?php } ?>
+                                                            </div>
+                                                            <!-- End-->
+
+
+
+                                                            <?php if ($employees) { ?>
+
+                                                                <?php
                                                                 foreach ($employees as $employee) {
+
                                                                     $employeeLeave = $leaves[$employee["userId"]][$monthDate];
                                                                     // get the employee shift
                                                                     $employeeShift = $shifts[$employee["userId"]]["dates"][$monthDate];
                                                                     $bgColor = $shifts[$employee["userId"]]["jobColor"] ?? "";
-                                                            ?>
+                                                                ?>
                                                                     <div class="schedule-column <?= $employeeLeave ? "" : "schedule-column-clickable"; ?> schedule-column-<?= $employee["userId"]; ?> text-center" data-eid="<?= $employee["userId"]; ?>" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
                                                                         <?php if ($employeeLeave) { ?>
                                                                             <div class="schedule-dayoff text-primary text-small">

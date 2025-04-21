@@ -28,11 +28,13 @@
         <div class="row">
             <hr>
             <div class="col-md-12 col-xs-12 text-center">
-                <a class="btn btn-orange" href="<?= base_url("csp/report/" . $display_box_data["reportId"]) . "/incident/edit/" . $display_box_data["sid"]; ?>">
+                <a class="btn btn-orange"
+                    href="<?= base_url("csp/report/" . $display_box_data["reportId"]) . "/incident/edit/" . $display_box_data["sid"]; ?>">
                     <i class="fa fa-pencil"></i>
                     Edit
                 </a>
-                <a class="btn btn-black" target="_blank" href="<?= base_url("csp/download_incident/" . $display_box_data["reportId"] . '/' .$display_box_data["sid"]); ?>">
+                <a class="btn btn-black" target="_blank"
+                    href="<?= base_url("csp/download_incident/" . $display_box_data["reportId"] . '/' . $display_box_data["sid"]); ?>">
                     <i class="fa fa-download"></i>
                     Download
                 </a>
