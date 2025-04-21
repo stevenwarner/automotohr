@@ -4797,6 +4797,9 @@ class Compliance_report_model extends CI_Model
 			return [];
 		}
 		//
+		$itemData['incidentItemsSelected'] = $this->getCSPAttachedItemById($itemId);
+		$itemData["severity_status"] = $this->getSeverityLevels();
+		//
 		$itemData["created_date"] = $item['created_at'];
 		$itemData["completion_date"] = $item['completion_date'];
 		$itemData["completion_status"] = $item['completion_status'];
@@ -4889,13 +4892,24 @@ class Compliance_report_model extends CI_Model
 	) {
 		//
 		$updateItem = [];
-		$updateItem['completion_date'] = formatDateToDB(
-			$_POST['item_completion_date'],
-			"m/d/Y",
-			DB_DATE
-		); 
-		$updateItem['completion_status'] = $_POST['report_status']; 
+		//
+		if ($post['item_completion_date']) {
+			$updateItem['completion_date'] = formatDateToDB(
+				$post['item_completion_date'],
+				"m/d/Y",
+				DB_DATE
+			);
+		}
+		//
+		$updateItem['completion_status'] = $post['report_status']; 
 		$updateItem['last_modified_by'] = $loggedInEmployeeId; 
+		$updateItem['severity_level_sid'] = $post["jsIncidentSeverityLevel"];
+		$updateItem['answers_json'] = json_encode([
+			"dynamicInput" => [$post["itemInput"]],
+			"dynamicCheckbox" => [$post["itemCheckbox"]],
+		]);
+		//
+		// _e($updateItem,true,true);
 		//
 		$this->db
 			->where('sid', $itemId)
@@ -5234,5 +5248,29 @@ class Compliance_report_model extends CI_Model
 		$this->db->or_where('manual_email', '');
 		$this->db->group_end();
 		$this->db->update('csp_reports_employees', ['manual_email' => $emailId]);
+	}
+
+	public function getCSPAttachedItemById(int $itemId)
+	{
+		$records = $this->db
+			->select([
+				"csp_reports_incidents_items.answers_json",
+				"csp_reports_incidents_items.severity_level_sid",
+				"compliance_report_incident_types.description",
+				"csp_reports_incidents_items.compliance_report_incident_types_sid",
+			])
+			->where([
+				'csp_reports_incidents_items.sid' => $itemId,
+				'csp_reports_incidents_items.status' => 1,
+			])
+			->join(
+				"compliance_report_incident_types",
+				"compliance_report_incident_types.sid = csp_reports_incidents_items.compliance_report_incident_types_sid",
+				"inner"
+			)
+			->get('csp_reports_incidents_items')
+			->row_array();
+		//
+		return $records;
 	}
 }

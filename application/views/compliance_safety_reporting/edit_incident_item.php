@@ -54,7 +54,14 @@
                 <div class="alert alert-info">
                     <div class="row">
                         <div class="col-sm-12 text-left">
-                            Last modified by <strong><?= $report['last_modified_by'] ?></strong> at <strong><?= formatDateToDB($report['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></strong>.
+                            <?php 
+                                $lastModifiedBy = $report['last_modified_by'];
+                                //
+                                if (is_numeric($report['last_modified_by'])) {
+                                    $lastModifiedBy = getUserNameBySID($report['last_modified_by']);
+                                }
+                            ?>
+                            Last modified by <strong><?= $lastModifiedBy ?></strong> at <strong><?= formatDateToDB($report['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></strong>.
                         </div>
                     </div>
                 </div>
@@ -71,7 +78,7 @@
                         <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
                             <div class="form-group">
                                 <label for="item_completion_date">Completion Date</label>
-                                <input type="text" class="form-control" id="item_completion_date" name="item_completion_date" value="<?= $report['completion_date'] ? formatDateToDB($report['completion_date'], DB_DATE, "m/d/Y") : ""; ?>" />
+                                <input type="text" class="form-control" id="item_completion_date" readonly name="item_completion_date" value="<?= $report['completion_date'] ? formatDateToDB($report['completion_date'], DB_DATE, "m/d/Y") : ""; ?>" />
                             </div>
                         </div>
 
@@ -86,6 +93,77 @@
                             </div>
                         </div>
                     </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h1 class="panel-heading-text text-medium">
+                                <strong>Item Info</strong>
+                            </h1>
+                        </div>
+                        <div class="panel-body">
+                            <?php
+                                $item = $report["incidentItemsSelected"];
+                                $severity_status = $report['severity_status'];
+                                //
+                                if (!$item["severity_level_sid"]) {
+                                    $item["severity_level_sid"] = 1;
+                                }
+                                //
+                                $level = $severity_status[$item["severity_level_sid"]];
+                                //
+                                $decodedJSON = json_decode(
+                                    $item["answers_json"],
+                                    true
+                                );
+                            ?>  
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <?= $item["description"]
+                                        ? convertCSPTags($item["description"], $decodedJSON ?? [])
+                                        : $item["description"];
+                                    ?>
+                                </div>
+                                <div class="col-sm-4" style="vertical-align: middle">
+                                    <div class="candidate-status">
+                                        <input type="hidden" name="jsIncidentSeverityLevel" class="jsIncidentSeverityLevel" value="<?= $item["severity_level_sid"] ? $item["severity_level_sid"] : $severity_status[1]["sid"]; ?>" />
+                                        <div class="label-wrapper-outer">
+                                            <div class="row">
+                                                <div class="col-xs-10 jsSelectedPill">
+                                                    <?php if ($item["severity_level_sid"]): ?>
+                                                        <div data-id="<?= $item["severity_level_sid"]; ?>" class="csLabelPill jsSelectedLabelPill text-center" style="background-color: <?= $severity_status[$item["severity_level_sid"]]["bg_color"]; ?>; color: <?= $severity_status[$item["severity_level_sid"]]["txt_color"]; ?>;">Severity Level <?= $severity_status[$item["severity_level_sid"]]["level"]; ?></div>
+                                                    <?php else: ?>
+                                                        <div data-id="<?= $severity_status[1]["sid"]; ?>" class="csLabelPill jsSelectedLabelPill text-center" style="background-color: <?= $severity_status[1]["bg_color"]; ?>; color: <?= $severity_status[1]["txt_color"]; ?>;">Severity Level <?= $severity_status[1]["level"]; ?></div>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div class="col-xs-2 text-left">
+                                                    <div class="btn btn-orange show-status-box">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Selected one -->
+                                            <div class="lable-wrapper">
+                                                <div style="height:20px;">
+                                                    <i class="fa fa-times cross"></i>
+                                                </div>
+
+                                                <?php if ($severity_status) : ?>
+                                                    <?php foreach ($severity_status as $v1): ?>
+                                                        <div class="row">
+                                                            <div data-id="<?= $v1["sid"]; ?>" class="col-sm-12 label applicant csLabelPill" style="background-color:<?= $v1["bg_color"]; ?>; color:<?= $v1["txt_color"]; ?>;">
+                                                                <div class="jsSeverityLevelText">Severity Level <?= $v1["level"]; ?></div>
+                                                                <i class="fa fa-check-square check"></i>
+                                                            </div>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
 
                     <?php $this->load->view("compliance_safety_reporting/partials/files/documents"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/audio"); ?>
@@ -284,6 +362,74 @@
         </div>
     </div>
 </div>
+
+<style>
+    .candidate-status {
+        width: 100%;
+        height: 50px;
+    }
+
+    .label-wrapper-outer {
+        width: 100%;
+        position: relative;
+    }
+
+    .candidate-status .lable-wrapper {
+        top: 40px;
+        border-radius: 5px;
+        padding: 20px;
+        width: 100%;
+    }
+
+    .lable-wrapper {
+        display: none;
+        background-color: white;
+        padding: 20px;
+        padding-top: 0;
+        box-shadow: 0px 0px 6px #888888;
+        right: 0;
+        position: absolute;
+        top: 30px;
+        z-index: 999;
+    }
+
+    .label.csLabelPill {
+        display: block !important;
+    }
+
+    .csLabelPill {
+        font-family: arial;
+        font-weight: bold;
+        padding: 6px;
+        font-size: 13px;
+        margin-bottom: 3px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+    }
+
+    .candidate-status .label {
+        height: 30px;
+        line-height: 24px;
+        font-style: italic;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .candidate-status .fa.fa-times.cross {
+        background-color: #000;
+        border-radius: 100%;
+        color: #fff;
+        font-size: 9px;
+        height: 20px;
+        line-height: 19px;
+        padding: 0;
+        position: absolute;
+        right: 20px;
+        text-align: center;
+        top: 10px;
+        width: 20px;
+    }
+</style>
 
 <script>
     var reportId = '<?php echo $reportId; ?>';

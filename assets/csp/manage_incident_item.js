@@ -254,6 +254,20 @@ $(function Overview() {
 			//
 			ml(true, "jsPageLoader");
 			//
+
+
+			let dynamicInputs = $('input[name="dynamicInput[]"]').val();
+			let isChecked = $('input[name="dynamicCheckbox[]"]').is(':checked');
+			let dynamicCheckboxes = 'off';
+			//
+			if (isChecked) {
+				dynamicCheckboxes = 'on';
+			}
+			//
+			var data = $(form).serializeArray(); // convert form to array
+			data.push({ name: 'itemInput', value: dynamicInputs });
+			data.push({ name: 'itemCheckbox', value: dynamicCheckboxes });
+
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/incident_item_management/" +
@@ -264,7 +278,7 @@ $(function Overview() {
 						itemId
 				),
 				method: "POST",
-				data: $(form).serializeArray(),
+				data: $.param(data),
 			})
 				.always(function () {
 					XHR = null;
