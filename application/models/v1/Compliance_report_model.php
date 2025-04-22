@@ -1704,7 +1704,7 @@ class Compliance_report_model extends CI_Model
 			return [];
 		}
 		//
-		$report["internal_employees"] = $this->getCSPReportInternalEmployeesById($reportId, [
+		$report["internal_employees"] = $this->getCSPReportInternalEmployeesByIdNew($reportId, [
 			"csp_reports_employees.sid",
 			"csp_reports_employees.employee_sid",
 			"csp_reports_employees.unique_code",
@@ -1713,7 +1713,7 @@ class Compliance_report_model extends CI_Model
 			"users.last_name",
 			"users.email",
 		], true);
-		$report["external_employees"] = $this->getCSPReportExternalEmployeesById($reportId, [
+		$report["external_employees"] = $this->getCSPReportExternalEmployeesByIdNew($reportId, [
 			"sid",
 			"csp_reports_employees.unique_code",
 			"csp_reports_employees.csp_reports_incidents_items_sid",
@@ -1925,6 +1925,32 @@ class Compliance_report_model extends CI_Model
 	 * Get all compliance reports
 	 *
 	 * @param int $reportId
+	 * @return array
+	 */
+	public function getCSPReportInternalEmployeesByIdNew(int $reportId, array $columns, bool $join = false)
+	{
+		//
+		if ($join) {
+			$this
+				->db
+				->join(
+					"users",
+					"users.sid = csp_reports_employees.employee_sid"
+				);
+		}
+		return $this->db
+			->select($columns)
+			->where("csp_reports_employees.csp_reports_sid", $reportId)
+			->where("csp_reports_employees.is_external_employee", 0)
+			->where("csp_reports_employees.status", 1)
+			->get("csp_reports_employees")
+			->result_array();
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
 	 * @param int $incidentId
 	 * @param int $itemId
 	 * @return array
@@ -2024,6 +2050,23 @@ class Compliance_report_model extends CI_Model
 			->where("csp_reports_sid", $reportId)
 			->where("is_external_employee", 1)
 			->where("csp_report_incident_sid", 0)
+			->where("status", 1)
+			->get("csp_reports_employees")
+			->result_array();
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @return array
+	 */
+	public function getCSPReportExternalEmployeesByIdNew(int $reportId, array $columns)
+	{
+		return $this->db
+			->select($columns)
+			->where("csp_reports_sid", $reportId)
+			->where("is_external_employee", 1)
 			->where("status", 1)
 			->get("csp_reports_employees")
 			->result_array();
