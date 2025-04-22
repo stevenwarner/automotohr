@@ -4900,7 +4900,15 @@ if (!function_exists("checkAndShowUser")) {
         // check if last_modified_by is a number
         if (is_numeric($lastModifiedBy)) {
             // get the user details
-            return remakeEmployeeName($record);
+            $employee = remakeEmployeeName($record);
+            //
+            if (strlen(trim($employee)) === 2) {
+                return getUserNameBySID(
+                    $lastModifiedBy,
+                    true
+                );
+            }
+            return $employee;
         } else {
             // check if the last modified by is a string
             return $lastModifiedBy;

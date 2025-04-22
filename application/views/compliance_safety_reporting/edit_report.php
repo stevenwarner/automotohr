@@ -54,14 +54,15 @@
                 <div class="alert alert-info">
                     <div class="row">
                         <div class="col-sm-12 text-left">
-                            <?php 
-                                $lastModifiedBy = $report['last_modified_by'];
-                                //
-                                if (is_numeric($report['last_modified_by'])) {
-                                    $lastModifiedBy = getUserNameBySID($report['last_modified_by']);
-                                }
+                            <?php
+                            $lastModifiedBy = $report['last_modified_by'];
+                            //
+                            if (is_numeric($report['last_modified_by'])) {
+                                $lastModifiedBy = getUserNameBySID($report['last_modified_by']);
+                            }
                             ?>
-                            Last modified by <strong><?= $lastModifiedBy ?></strong> at <strong><?= formatDateToDB($report['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></strong>.
+                            Last modified by <strong><?= $lastModifiedBy ?></strong> at
+                            <strong><?= formatDateToDB($report['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></strong>.
                         </div>
                     </div>
                 </div>
@@ -278,7 +279,8 @@
                                             <div class="col-md-1">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label>
-                                                    <button type="button" class="btn btn-red btn-block jsRemoveExternalEmployee">
+                                                    <button type="button"
+                                                        class="btn btn-red btn-block jsRemoveExternalEmployee">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </div>
@@ -293,7 +295,7 @@
 
                             </div>
                         </div>
-                    </div>    
+                    </div>
 
                     <!--  -->
                     <div class="row">

@@ -1661,6 +1661,9 @@ class Compliance_report_model extends CI_Model
 		$report["incidents"] = $this->getCSPReportIncidents($reportId, [
 			"compliance_incident_types.compliance_incident_type_name",
 			"csp_reports_incidents.sid",
+			"csp_reports_incidents.status",
+			"csp_reports_incidents.completed_at",
+			"csp_reports_incidents.completed_by",
 			"csp_reports_incidents.updated_at",
 			"csp_reports_incidents.created_by"
 		]);
@@ -2508,6 +2511,7 @@ class Compliance_report_model extends CI_Model
 			"compliance_incident_types.id = csp_reports_incidents.incident_type_sid",
 			"inner"
 		);
+		$this->db->order_by("csp_reports_incidents.sid", "DESC");
 		if ($status !== "all") {
 			$this->db->where(
 				"csp_reports_incidents.status",
