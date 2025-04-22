@@ -12,7 +12,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h1 class="panel-heading-text text-medium" style="padding: 14px 0px;">
-                            <strong>Item <?php echo $i; $i++;?></strong>
+                            <strong><?php echo $item['title'];?></strong>
                             <span class="pull-right">
                                 <a type="button" class="btn btn-orange" href="<?= $manageItemUrl.'/'.$item["sid"]; ?>">
                                     <i class="fa fa-info"></i>
@@ -44,6 +44,8 @@
                             <div class="col-sm-9 jsCSPItemDescription">
                                 <?= convertCSPTags($item["description"], $decodedJSON ?? []); ?>
                             </div>
+                        </div>    
+                        <div class="row">
                             <?php if ($item["attachments"]) { ?>
                                 <hr>
                                 <div class="col-sm-12">

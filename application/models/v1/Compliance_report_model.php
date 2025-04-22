@@ -4367,6 +4367,7 @@ class Compliance_report_model extends CI_Model
 				"csp_reports_incidents_items.sid",
 				"csp_reports_incidents_items.answers_json",
 				"csp_reports_incidents_items.severity_level_sid",
+				"compliance_report_incident_types.title",
 				"compliance_report_incident_types.description",
 				"csp_reports_incidents_items.compliance_report_incident_types_sid",
 			])
