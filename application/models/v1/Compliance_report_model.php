@@ -1705,6 +1705,7 @@ class Compliance_report_model extends CI_Model
 			"csp_reports_employees.sid",
 			"csp_reports_employees.employee_sid",
 			"csp_reports_employees.unique_code",
+			"csp_reports_employees.csp_reports_incidents_items_sid",
 			"users.first_name",
 			"users.last_name",
 			"users.email",
@@ -1712,6 +1713,7 @@ class Compliance_report_model extends CI_Model
 		$report["external_employees"] = $this->getCSPReportExternalEmployeesById($reportId, [
 			"sid",
 			"csp_reports_employees.unique_code",
+			"csp_reports_employees.csp_reports_incidents_items_sid",
 			"external_name",
 			"external_email",
 		]);
@@ -1867,19 +1869,21 @@ class Compliance_report_model extends CI_Model
 		}
 		//
 		$report["internal_employees"] = $this
-			->getCSPIncidentInternalEmployeesById($report["csp_reports_sid"], $incidentId, 0, [
+			->getCSPIncidentInternalEmployeesByIdNew($report["csp_reports_sid"], $incidentId, [
 				"csp_reports_employees.sid",
 				"csp_reports_employees.employee_sid",
 				"csp_reports_employees.unique_code",
+				"csp_reports_employees.csp_reports_incidents_items_sid",
 				"users.first_name",
 				"users.last_name",
 				"users.email",
 			]);
 		//
 		$report["external_employees"] = $this
-			->getCSPIncidentExternalEmployeesById($report["csp_reports_sid"], $incidentId, 0, [
+			->getCSPIncidentExternalEmployeesByIdNew($report["csp_reports_sid"], $incidentId, [
 				"sid",
 				"csp_reports_employees.unique_code",
+				"csp_reports_employees.csp_reports_incidents_items_sid",
 				"external_name",
 				"external_email",
 			]);
@@ -1956,6 +1960,50 @@ class Compliance_report_model extends CI_Model
 			->where("csp_report_incident_sid", $incidentId)
 			->where("csp_reports_incidents_items_sid", $itemId)
 			->where("status", 1)
+			->get("csp_reports_employees")
+			->result_array();
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @param int $incidentId
+	 * @param int $itemId
+	 * @return array
+	 */
+	public function getCSPIncidentExternalEmployeesByIdNew(int $reportId, int $incidentId, array $columns)
+	{
+		return $this->db
+			->select($columns)
+			->where("csp_reports_sid", $reportId)
+			->where("is_external_employee", 1)
+			->where("csp_report_incident_sid", $incidentId)
+			->where("status", 1)
+			->get("csp_reports_employees")
+			->result_array();
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @param int $incidentId
+	 * @param int $itemId
+	 * @return array
+	 */
+	public function getCSPIncidentInternalEmployeesByIdNew(int $reportId, int $incidentId, array $columns)
+	{
+		return $this->db
+			->select($columns)
+			->where("csp_reports_employees.csp_reports_sid", $reportId)
+			->where("csp_reports_employees.is_external_employee", 0)
+			->where("csp_reports_employees.csp_report_incident_sid", $incidentId)
+			->where("csp_reports_employees.status", 1)
+			->join(
+				"users",
+				"users.sid = csp_reports_employees.employee_sid"
+			)
 			->get("csp_reports_employees")
 			->result_array();
 	}
@@ -3044,85 +3092,89 @@ class Compliance_report_model extends CI_Model
 
 		if ($report["external_employees"]) {
 			foreach ($report["external_employees"] as $item) {
-				//
-				if (!$item["unique_code"]) {
+				if ($item['csp_reports_incidents_items_sid'] != 0) {
 					//
-					$code = generateUniqueCode(15);
-					// update unique code
-					$this
-						->db
-						->where("sid", $item["sid"])
-						->update("csp_reports_employees", [
-							"unique_code" => $code
-						]);
-				} else {
-					$code = $item["unique_code"];
-				}
-				// set replace array
-				$ra = [
-					"first_name" => $item["external_name"],
-					"title" => $report["title"],
-					"last_name" => "",
-					"email" => $item["external_email"],
-					"company_name" => $companyName,
-					"csp_public_url" => generateEmailButton(
-						"#fd7a2a",
-						("csp/single/{$code}"),
-						"View Compliance Safety Report"
-					),
-					"base_url" => base_url(),
-				];
-				//
-				log_and_send_templated_email(
-					$templateId,
-					$item["external_email"],
-					$ra,
-					$hf,
-					1,
-					[]
-				);
+					if (!$item["unique_code"]) {
+						//
+						$code = generateUniqueCode(15);
+						// update unique code
+						$this
+							->db
+							->where("sid", $item["sid"])
+							->update("csp_reports_employees", [
+								"unique_code" => $code
+							]);
+					} else {
+						$code = $item["unique_code"];
+					}
+					// set replace array
+					$ra = [
+						"first_name" => $item["external_name"],
+						"title" => $report["title"],
+						"last_name" => "",
+						"email" => $item["external_email"],
+						"company_name" => $companyName,
+						"csp_public_url" => generateEmailButton(
+							"#fd7a2a",
+							("csp/single/{$code}"),
+							"View Compliance Safety Report"
+						),
+						"base_url" => base_url(),
+					];
+					//
+					log_and_send_templated_email(
+						$templateId,
+						$item["external_email"],
+						$ra,
+						$hf,
+						1,
+						[]
+					);
+				}		
 			}
 		}
 
 		if ($report["internal_employees"]) {
 			foreach ($report["internal_employees"] as $item) {
-				//
-				if (!$item["unique_code"]) {
+				if ($item['csp_reports_incidents_items_sid'] != 0) {
 					//
-					$code = generateUniqueCode(15);
-					// update unique code
-					$this
-						->db
-						->where("sid", $item["sid"])
-						->update("csp_reports_employees", [
-							"unique_code" => $code
-						]);
-				} else {
-					$code = $item["unique_code"];
-				}
-				// set replace array
-				$ra = [
-					"first_name" => $item["first_name"],
-					"last_name" => $item["last_name"],
-					"title" => $report["title"],
-					"email" => $item["email"],
-					"company_name" => $companyName,
-					"csp_public_url" => generateEmailButton(
-						"#fd7a2a",
-						("csp/single/{$code}"),
-						"View Compliance Safety Report"
-					),
-					"base_url" => base_url(),
-				];
-				//
-				log_and_send_templated_email(
-					$templateId,
-					$item["email"],
-					$ra,
-					$hf,
-					1,
-					[]
-				);
+					if (!$item["unique_code"]) {
+						//
+						$code = generateUniqueCode(15);
+						// update unique code
+						$this
+							->db
+							->where("sid", $item["sid"])
+							->update("csp_reports_employees", [
+								"unique_code" => $code
+							]);
+					} else {
+						$code = $item["unique_code"];
+					}
+					// set replace array
+					$ra = [
+						"first_name" => $item["first_name"],
+						"last_name" => $item["last_name"],
+						"title" => $report["title"],
+						"email" => $item["email"],
+						"company_name" => $companyName,
+						"csp_public_url" => generateEmailButton(
+							"#fd7a2a",
+							("csp/single/{$code}"),
+							"View Compliance Safety Report"
+						),
+						"base_url" => base_url(),
+					];
+					//
+					log_and_send_templated_email(
+						$templateId,
+						$item["email"],
+						$ra,
+						$hf,
+						1,
+						[]
+					);
+				}	
 			}
 		}
 	}
@@ -3149,85 +3201,89 @@ class Compliance_report_model extends CI_Model
 
 		if ($report["external_employees"]) {
 			foreach ($report["external_employees"] as $item) {
-				//
-				if (!$item["unique_code"]) {
+				if ($item['csp_reports_incidents_items_sid'] != 0) {
 					//
-					$code = generateUniqueCode(15);
-					// update unique code
-					$this
-						->db
-						->where("sid", $item["sid"])
-						->update("csp_reports_employees", [
-							"unique_code" => $code
-						]);
-				} else {
-					$code = $item["unique_code"];
-				}
-				// set replace array
-				$ra = [
-					"first_name" => $item["external_name"],
-					"title" => $report["compliance_incident_type_name"],
-					"last_name" => "",
-					"email" => $item["external_email"],
-					"company_name" => $companyName,
-					"csp_public_url" => generateEmailButton(
-						"#fd7a2a",
-						("csp/single/{$code}"),
-						"View Compliance Safety Report Incident"
-					),
-					"base_url" => base_url(),
-				];
-				//
-				log_and_send_templated_email(
-					$templateId,
-					$item["external_email"],
-					$ra,
-					$hf,
-					1,
-					[]
-				);
+					if (!$item["unique_code"]) {
+						//
+						$code = generateUniqueCode(15);
+						// update unique code
+						$this
+							->db
+							->where("sid", $item["sid"])
+							->update("csp_reports_employees", [
+								"unique_code" => $code
+							]);
+					} else {
+						$code = $item["unique_code"];
+					}
+					// set replace array
+					$ra = [
+						"first_name" => $item["external_name"],
+						"title" => $report["compliance_incident_type_name"],
+						"last_name" => "",
+						"email" => $item["external_email"],
+						"company_name" => $companyName,
+						"csp_public_url" => generateEmailButton(
+							"#fd7a2a",
+							("csp/single/{$code}"),
+							"View Compliance Safety Report Incident"
+						),
+						"base_url" => base_url(),
+					];
+					//
+					log_and_send_templated_email(
+						$templateId,
+						$item["external_email"],
+						$ra,
+						$hf,
+						1,
+						[]
+					);
+				}			
 			}
 		}
 
 		if ($report["internal_employees"]) {
 			foreach ($report["internal_employees"] as $item) {
-				//
-				if (!$item["unique_code"]) {
+				if ($item['csp_reports_incidents_items_sid'] != 0) {
 					//
-					$code = generateUniqueCode(15);
-					// update unique code
-					$this
-						->db
-						->where("sid", $item["sid"])
-						->update("csp_reports_employees", [
-							"unique_code" => $code
-						]);
-				} else {
-					$code = $item["unique_code"];
-				}
-				// set replace array
-				$ra = [
-					"first_name" => $item["first_name"],
-					"last_name" => $item["last_name"],
-					"title" => $report["compliance_incident_type_name"],
-					"email" => $item["email"],
-					"company_name" => $companyName,
-					"csp_public_url" => generateEmailButton(
-						"#fd7a2a",
-						("csp/single/{$code}"),
-						"View Compliance Safety Report Incident"
-					),
-					"base_url" => base_url(),
-				];
-				//
-				log_and_send_templated_email(
-					$templateId,
-					$item["email"],
-					$ra,
-					$hf,
-					1,
-					[]
-				);
+					if (!$item["unique_code"]) {
+						//
+						$code = generateUniqueCode(15);
+						// update unique code
+						$this
+							->db
+							->where("sid", $item["sid"])
+							->update("csp_reports_employees", [
+								"unique_code" => $code
+							]);
+					} else {
+						$code = $item["unique_code"];
+					}
+					// set replace array
+					$ra = [
+						"first_name" => $item["first_name"],
+						"last_name" => $item["last_name"],
+						"title" => $report["compliance_incident_type_name"],
+						"email" => $item["email"],
+						"company_name" => $companyName,
+						"csp_public_url" => generateEmailButton(
+							"#fd7a2a",
+							("csp/single/{$code}"),
+							"View Compliance Safety Report Incident"
+						),
+						"base_url" => base_url(),
+					];
+					//
+					log_and_send_templated_email(
+						$templateId,
+						$item["email"],
+						$ra,
+						$hf,
+						1,
+						[]
+					);
+				}	
 			}
 		}
 	}
