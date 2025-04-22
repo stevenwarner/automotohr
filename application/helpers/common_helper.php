@@ -13137,6 +13137,40 @@ if (!function_exists('downloadAWSFileToBrowser')) {
     }
 }
 
+/**
+ * Store applicant data in queue
+ * 
+ * @employee Mubashir Ahmed
+ * @date     04/22/2025
+ * 
+ * @param String $data
+ * 
+ * @return Void
+ */
+if(!function_exists('storeApplicantApplicationInQueue'))
+{
+    function storeApplicantApplicationInQueue($data) {
+        // Get CI instance
+        $_this = &get_instance();
+        $_this->load->model('All_feed_model');
+        
+        $applicant_id = $data['portal_applicant_job_sid'];
+        if(empty($applicant_id)) {
+            $applicant = $_this->All_feed_model->get_applicant_job();
+            $applicant_id = $applicant->sid;
+        }
+
+        if(!empty($applicant))
+        {
+            $_this->All_feed_model->insert_applicant_job_queue([
+                'portal_applicant_job_sid' => $applicant_id,
+                'portal_job_applications_sid' => $data['portal_job_applications_sid'],
+                'company_sid' => $data['company_sid'],
+                'job_sid' => $data['job_sid']
+            ]);
+        }
+    }
+}
 
 
 /**
