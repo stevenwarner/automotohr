@@ -396,6 +396,7 @@ class Compliance_safety extends Admin_Controller
                 "compliance_report_incident_types",
                 [
                     "compliance_report_incident_sid" => $incidentTypeId,
+                    "title" => $this->input->post("title", true),
                     "description" => $description,
                     "created_at" => getSystemDate(),
                     "updated_at" => getSystemDate(),
@@ -459,6 +460,7 @@ class Compliance_safety extends Admin_Controller
             ->update(
                 "compliance_report_incident_types",
                 [
+                    "title" => $this->input->post("title", true),
                     "description" => $description,
                     "updated_at" => getSystemDate()
                 ]

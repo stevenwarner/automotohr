@@ -598,5 +598,63 @@ $(function Overview() {
 		}
 	}
 
+
+	$("#jsIssueStatus").change(function () {
+		$("#jsIssueCompletionDate").prop("disabled", $(this).val() != "completed");
+	});
+
+	$(".jsIssueProgressUpdateBtn").click(function (event) {
+		event.preventDefault();
+		const obj = {
+			status: $("#jsIssueStatus").val(),
+			completionDate: $("#jsIssueCompletionDate").val(),
+			itemId: getSegment(7),
+			reportId: getSegment(3),
+			incidentId: getSegment(5),
+		};
+		//
+		if (obj.status.trim() === "") {
+			_error("Please select a status.");
+			return;
+		}
+		if (obj.status === "completed" && obj.completionDate.trim() === "") {
+			_error("Please select a completion date.");
+			return;
+		}
+		
+		const _html = callButtonHook($(this), true);
+
+		updateProgress(obj)
+			.always(function () {
+				XHR = null;
+							ml(false, "jsPageLoader");
+
+				callButtonHook(_html, false);
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.message, function () {
+					window.location.reload();
+				});
+			});
+	});
+
+	updateProgress = function (obj) {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/issue/progress/update"
+				),
+				method: "POST",
+				data: obj,
+			});
+		}
+		return XHR;
+	};
+
 	ml(false, "jsPageLoader");
 });

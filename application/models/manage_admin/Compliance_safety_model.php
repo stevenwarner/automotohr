@@ -39,7 +39,7 @@ class Compliance_safety_model extends CI_Model
     {
         return $this
             ->db
-            ->select("sid, description")
+            ->select("sid, title, description")
             ->where("compliance_report_incident_sid", $incidentId)
             ->order_by("sid", "DESC")
             ->get("compliance_report_incident_types")
@@ -48,7 +48,7 @@ class Compliance_safety_model extends CI_Model
 
     public function getReportTypeById(int $reportTypeId)
     {
-        $record =  $this
+        $record = $this
             ->db
             ->select([
                 "compliance_report_name",
@@ -73,7 +73,7 @@ class Compliance_safety_model extends CI_Model
 
     public function getReportMapping(int $reportTypeId)
     {
-        $records =  $this
+        $records = $this
             ->db
             ->select([
                 "incident_sid",

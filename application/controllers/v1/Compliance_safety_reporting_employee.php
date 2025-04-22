@@ -24,7 +24,6 @@ class Compliance_safety_reporting_employee extends Base_csp
 
     public function dashboard()
     {
-
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Dashboard';
         // load JS
@@ -40,7 +39,6 @@ class Compliance_safety_reporting_employee extends Base_csp
             "incident" => $this->input->get("incidentType", true) ?? "-1",
             "status" => $this->input->get("status", true) ?? "pending",
         ];
-
         // get all the incidents
         $this->data["incidents"] = $this
             ->compliance_report_model
@@ -61,11 +59,55 @@ class Compliance_safety_reporting_employee extends Base_csp
         $this->renderView('compliance_safety_reporting/employee/dashboard');
     }
 
+
+    public function manageIncidentItem($reportId, $incidentId, $itemId)
+    {
+        // get types
+        $this->data["report"] = $this
+            ->compliance_report_model
+            ->getCSPIncidentItemInfo(
+                $reportId,
+                $incidentId,
+                $itemId
+            );
+
+        //
+        $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, $incidentId, $this->getLoggedInEmployee("sid"));
+        //
+        if ($this->data["report"]["notes"]) {
+            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
+                if ($v0["note_type"] === "personal" && $v0["created_by"] != $this->getLoggedInEmployee("sid")) {
+                    unset($this->data["report"]["notes"][$k0]);
+                }
+            }
+        }
+        //
+        // set the title
+        $this->data['title'] = 'Compliance Safety Incident Item Management';
+        $this->data['pageJs'][] = 'csp/manage_incident_item';
+        $this->data['pageJs'][] = 'csp/send_email';
+        // get the employees
+        $this->data["employees"] = $this
+            ->compliance_report_model
+            ->getActiveEmployees(
+                $this->getLoggedInCompany("sid"),
+                0
+            );
+        //
+        $this->data["reportId"] = $reportId;
+        $this->data["incidentId"] = $incidentId;
+        $this->data["itemId"] = $itemId;
+        $this->data['pageType'] = 'not_public';
+        //
+        $this->renderView('compliance_safety_reporting/employee/edit_item');
+    }
+
     /**
      * overview
      */
     public function overview(string $mode = "reports")
     {
+        return redirect("compliance_safety_reporting/dashboard");
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Overview';
         //
@@ -111,6 +153,7 @@ class Compliance_safety_reporting_employee extends Base_csp
      */
     public function overviewIncidents()
     {
+        return redirect("compliance_safety_reporting/dashboard");
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Incidents';
         // get types

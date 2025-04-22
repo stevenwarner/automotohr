@@ -5,12 +5,14 @@
         <div class="row">
             <?php if ($pageType == "not_public") { ?>
                 <div class="col-lg-12 text-right">
-                    <a href="<?php echo $employee['access_level'] == 'Employee' ?  base_url('employee_management_system') : base_url('dashboard'); ?>" class="btn btn-black">
+                    <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('employee_management_system') : base_url('dashboard'); ?>"
+                        class="btn btn-black">
                         <i class="fa fa-arrow-left"></i>
                         Dashboard
                     </a>
-                    <?php if (isMainAllowedForCSP()) : ?>
-                        <a href="<?= base_url('compliance_safety_reporting/report/' . $reportId .'/incident/edit/' . $itemId); ?>" class="btn btn-black">
+                    <?php if (isMainAllowedForCSP()): ?>
+                        <a href="<?= base_url('compliance_safety_reporting/report/' . $reportId . '/incident/edit/' . $itemId); ?>"
+                            class="btn btn-black">
                             <i class="fa fa-arrow-left"></i>
                             Back to Incident
                         </a>
@@ -18,26 +20,29 @@
                             <i class="fa fa-pie-chart"></i>
                             Compliance Safety Reporting
                         </a>
+                        <a class="btn btn-black" target="_blank"
+                            href="<?= base_url("compliance_safety_reporting/download_incident_item/" . $reportId . '/' . $incidentId . '/' . $itemId); ?>">
+                            <i class="fa fa-download"></i>
+                            Download
+                        </a>
                     <?php else: ?>
-                        <a href="<?= base_url("compliance_safety_reporting/employee/overview") ?>" class="btn btn-blue">
+                        <a href="<?= base_url("compliance_safety_reporting/employee/dashboard") ?>" class="btn btn-orange">
                             <i class="fa fa-pie-chart"></i>
-                            Compliance Safety Reporting
+                            Compliance Dashboard
                         </a>
                     <?php endif; ?>
 
-                    <a class="btn btn-black" target="_blank" href="<?= base_url("compliance_safety_reporting/download_incident_item/" . $reportId . '/' . $incidentId . '/' . $itemId); ?>">
-                        <i class="fa fa-download"></i>
-                        Download
-                    </a>
 
                 </div>
             <?php } else { ?>
                 <div class="col-lg-12 text-right">
-                    <a href="<?= base_url('csp/report/' . $reportId .'/incident/edit/' . $incidentId); ?>" class="btn btn-black">
+                    <a href="<?= base_url('csp/report/' . $reportId . '/incident/edit/' . $incidentId); ?>"
+                        class="btn btn-black">
                         <i class="fa fa-arrow-left"></i>
                         Back to Incident
                     </a>
-                    <a class="btn btn-black" target="_blank" href="<?= base_url("csp/download_incident_item/" . $reportId . '/' . $incidentId . '/' . $itemId); ?>">
+                    <a class="btn btn-black" target="_blank"
+                        href="<?= base_url("csp/download_incident_item/" . $reportId . '/' . $incidentId . '/' . $itemId); ?>">
                         <i class="fa fa-download"></i>
                         Download
                     </a>
@@ -54,14 +59,15 @@
                 <div class="alert alert-info">
                     <div class="row">
                         <div class="col-sm-12 text-left">
-                            <?php 
-                                $lastModifiedBy = $report['last_modified_by'];
-                                //
-                                if (is_numeric($report['last_modified_by'])) {
-                                    $lastModifiedBy = getUserNameBySID($report['last_modified_by']);
-                                }
+                            <?php
+                            $lastModifiedBy = $report['last_modified_by'];
+                            //
+                            if (is_numeric($report['last_modified_by'])) {
+                                $lastModifiedBy = getUserNameBySID($report['last_modified_by']);
+                            }
                             ?>
-                            Last modified by <strong><?= $lastModifiedBy ?></strong> at <strong><?= formatDateToDB($report['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></strong>.
+                            Last modified by <strong><?= $lastModifiedBy ?></strong> at
+                            <strong><?= formatDateToDB($report['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></strong>.
                         </div>
                     </div>
                 </div>
@@ -71,14 +77,17 @@
                         <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
                             <div class="form-group">
                                 <label for="report_date">Created Date <strong class="text-danger">*</strong></label>
-                                <input type="text" class="form-control" readonly value="<?= formatDateToDB($report['created_date'], DB_DATE_WITH_TIME, "m/d/Y"); ?>" />
+                                <input type="text" class="form-control" readonly
+                                    value="<?= formatDateToDB($report['created_date'], DB_DATE_WITH_TIME, "m/d/Y"); ?>" />
                             </div>
                         </div>
 
                         <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
                             <div class="form-group">
                                 <label for="item_completion_date">Completion Date</label>
-                                <input type="text" class="form-control" id="item_completion_date" readonly name="item_completion_date" value="<?= $report['completion_date'] ? formatDateToDB($report['completion_date'], DB_DATE, "m/d/Y") : ""; ?>" />
+                                <input type="text" class="form-control" id="item_completion_date" readonly
+                                    name="item_completion_date"
+                                    value="<?= $report['completion_date'] ? formatDateToDB($report['completion_date'], DB_DATE, "m/d/Y") : ""; ?>" />
                             </div>
                         </div>
 
@@ -86,9 +95,12 @@
                             <div class="form-group">
                                 <label for="report_status">Status</label>
                                 <select name="report_status" id="report_status" style="width: 100%;">
-                                    <option <?= $report['completion_status'] === "pending" ? "selected" : ""; ?> value="pending">Pending</option>
-                                    <option <?= $report['completion_status'] === "on_hold" ? "selected" : ""; ?> value="on_hold">On Hold</option>
-                                    <option <?= $report['completion_status'] === "completed" ? "selected" : ""; ?> value="completed">Completed</option>
+                                    <option <?= $report['completion_status'] === "pending" ? "selected" : ""; ?>
+                                        value="pending">Pending</option>
+                                    <option <?= $report['completion_status'] === "on_hold" ? "selected" : ""; ?>
+                                        value="on_hold">On Hold</option>
+                                    <option <?= $report['completion_status'] === "completed" ? "selected" : ""; ?>
+                                        value="completed">Completed</option>
                                 </select>
                             </div>
                         </div>
@@ -101,20 +113,20 @@
                         </div>
                         <div class="panel-body">
                             <?php
-                                $item = $report["incidentItemsSelected"];
-                                $severity_status = $report['severity_status'];
-                                //
-                                if (!$item["severity_level_sid"]) {
-                                    $item["severity_level_sid"] = 1;
-                                }
-                                //
-                                $level = $severity_status[$item["severity_level_sid"]];
-                                //
-                                $decodedJSON = json_decode(
-                                    $item["answers_json"],
-                                    true
-                                );
-                            ?>  
+                            $item = $report["incidentItemsSelected"];
+                            $severity_status = $report['severity_status'];
+                            //
+                            if (!$item["severity_level_sid"]) {
+                                $item["severity_level_sid"] = 1;
+                            }
+                            //
+                            $level = $severity_status[$item["severity_level_sid"]];
+                            //
+                            $decodedJSON = json_decode(
+                                $item["answers_json"],
+                                true
+                            );
+                            ?>
                             <div class="row">
                                 <div class="col-md-7">
                                     <?= $item["description"]
@@ -124,14 +136,24 @@
                                 </div>
                                 <div class="col-sm-4" style="vertical-align: middle">
                                     <div class="candidate-status">
-                                        <input type="hidden" name="jsIncidentSeverityLevel" class="jsIncidentSeverityLevel" value="<?= $item["severity_level_sid"] ? $item["severity_level_sid"] : $severity_status[1]["sid"]; ?>" />
+                                        <input type="hidden" name="jsIncidentSeverityLevel"
+                                            class="jsIncidentSeverityLevel"
+                                            value="<?= $item["severity_level_sid"] ? $item["severity_level_sid"] : $severity_status[1]["sid"]; ?>" />
                                         <div class="label-wrapper-outer">
                                             <div class="row">
                                                 <div class="col-xs-10 jsSelectedPill">
                                                     <?php if ($item["severity_level_sid"]): ?>
-                                                        <div data-id="<?= $item["severity_level_sid"]; ?>" class="csLabelPill jsSelectedLabelPill text-center" style="background-color: <?= $severity_status[$item["severity_level_sid"]]["bg_color"]; ?>; color: <?= $severity_status[$item["severity_level_sid"]]["txt_color"]; ?>;">Severity Level <?= $severity_status[$item["severity_level_sid"]]["level"]; ?></div>
+                                                        <div data-id="<?= $item["severity_level_sid"]; ?>"
+                                                            class="csLabelPill jsSelectedLabelPill text-center"
+                                                            style="background-color: <?= $severity_status[$item["severity_level_sid"]]["bg_color"]; ?>; color: <?= $severity_status[$item["severity_level_sid"]]["txt_color"]; ?>;">
+                                                            Severity Level
+                                                            <?= $severity_status[$item["severity_level_sid"]]["level"]; ?>
+                                                        </div>
                                                     <?php else: ?>
-                                                        <div data-id="<?= $severity_status[1]["sid"]; ?>" class="csLabelPill jsSelectedLabelPill text-center" style="background-color: <?= $severity_status[1]["bg_color"]; ?>; color: <?= $severity_status[1]["txt_color"]; ?>;">Severity Level <?= $severity_status[1]["level"]; ?></div>
+                                                        <div data-id="<?= $severity_status[1]["sid"]; ?>"
+                                                            class="csLabelPill jsSelectedLabelPill text-center"
+                                                            style="background-color: <?= $severity_status[1]["bg_color"]; ?>; color: <?= $severity_status[1]["txt_color"]; ?>;">
+                                                            Severity Level <?= $severity_status[1]["level"]; ?></div>
                                                     <?php endif; ?>
                                                 </div>
                                                 <div class="col-xs-2 text-left">
@@ -146,11 +168,15 @@
                                                     <i class="fa fa-times cross"></i>
                                                 </div>
 
-                                                <?php if ($severity_status) : ?>
+                                                <?php if ($severity_status): ?>
                                                     <?php foreach ($severity_status as $v1): ?>
                                                         <div class="row">
-                                                            <div data-id="<?= $v1["sid"]; ?>" class="col-sm-12 label applicant csLabelPill" style="background-color:<?= $v1["bg_color"]; ?>; color:<?= $v1["txt_color"]; ?>;">
-                                                                <div class="jsSeverityLevelText">Severity Level <?= $v1["level"]; ?></div>
+                                                            <div data-id="<?= $v1["sid"]; ?>"
+                                                                class="col-sm-12 label applicant csLabelPill"
+                                                                style="background-color:<?= $v1["bg_color"]; ?>; color:<?= $v1["txt_color"]; ?>;">
+                                                                <div class="jsSeverityLevelText">Severity Level
+                                                                    <?= $v1["level"]; ?>
+                                                                </div>
                                                                 <i class="fa fa-check-square check"></i>
                                                             </div>
                                                         </div>
@@ -163,16 +189,16 @@
                             </div>
                         </div>
                     </div>
-                    
+
 
                     <?php $this->load->view("compliance_safety_reporting/partials/files/documents"); ?>
                     <?php $this->load->view("compliance_safety_reporting/partials/files/audio"); ?>
-                    <?php 
-                        if ($pageType == "not_public") {
-                            $this->load->view("compliance_safety_reporting/partials/files/emails");
-                        } else {
-                            $this->load->view("compliance_safety_reporting/partials/files/emails_public_view");
-                        }
+                    <?php
+                    if ($pageType == "not_public") {
+                        $this->load->view("compliance_safety_reporting/partials/files/emails");
+                    } else {
+                        $this->load->view("compliance_safety_reporting/partials/files/emails_public_view");
+                    }
                     ?>
 
                     <!-- Add Notes -->
@@ -186,7 +212,8 @@
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="form-group">
-                                        <label for="report_note_type">Type <strong class="text-danger">*</strong></label>
+                                        <label for="report_note_type">Type <strong
+                                                class="text-danger">*</strong></label>
                                         <select name="report_note_type" id="report_note_type">
                                             <option value="personal">Personal Note</option>
                                             <option value="employee">Employee Note</option>
@@ -199,7 +226,8 @@
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label for="report_note">Note <strong class="text-danger">*</strong></label>
-                                        <textarea class="form-control" id="report_note" name="report_note" rows="5"></textarea>
+                                        <textarea class="form-control" id="report_note" name="report_note"
+                                            rows="5"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -221,8 +249,8 @@
                         </div>
                         <div class="panel-body">
                             <div class="respond">
-                                <?php if (!empty($report['notes'])) : ?>
-                                    <?php foreach ($report['notes'] as $note) : ?>
+                                <?php if (!empty($report['notes'])): ?>
+                                    <?php foreach ($report['notes'] as $note): ?>
                                         <article>
                                             <figure>
                                                 <img class="img-responsive" src="<?= getImageURL($note["profile_picture"]) ?>">
@@ -232,11 +260,11 @@
                                                     <div class="message-title">
                                                         <h2>
                                                             <?php
-                                                                if ($note['manual_email']) {
-                                                                    echo getManualUserNameByEmailId($reportId, $incidentId, $note['manual_email']);
-                                                                } else {
-                                                                    echo remakeEmployeeName($note);
-                                                                }
+                                                            if ($note['manual_email']) {
+                                                                echo getManualUserNameByEmailId($reportId, $incidentId, $note['manual_email']);
+                                                            } else {
+                                                                echo remakeEmployeeName($note);
+                                                            }
                                                             ?>
                                                         </h2>
                                                         <p class="text-danger"><?= ucfirst($note['note_type']); ?></p>
@@ -251,7 +279,7 @@
                                             </div>
                                         </article>
                                     <?php endforeach; ?>
-                                <?php else : ?>
+                                <?php else: ?>
                                     <div class="alert alert-info text-center">
                                         No notes found.
                                     </div>
@@ -260,7 +288,7 @@
                         </div>
                     </div>
 
-                    <div class="hidden">
+                    <div class="">
                         <!-- Employees -->
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -269,20 +297,21 @@
                                 </h1>
                             </div>
                             <div class="panel-body">
-                                <?php if ($employees) :
+                                <?php if ($employees):
                                     $selectedEmployees = array_column($report["internal_employees"], "employee_sid"); ?>
                                     <div class="row">
-                                        <?php foreach ($employees as $employee) : ?>
+                                        <?php foreach ($employees as $employee): ?>
                                             <div class="col-lg-4">
                                                 <label class="control control--checkbox">
-                                                    <input type="checkbox" name="report_employees[]" value="<?= $employee["sid"]; ?>" <?= in_array($employee["sid"], $selectedEmployees) ? "checked" : ""; ?> />
+                                                    <input type="checkbox" name="report_employees[]"
+                                                        value="<?= $employee["sid"]; ?>" <?= in_array($employee["sid"], $selectedEmployees) ? "checked" : ""; ?> />
                                                     <div class="control__indicator"></div>
                                                     <span><?= remakeEmployeeName($employee); ?></span>
                                                 </label>
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
-                                <?php else : ?>
+                                <?php else: ?>
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <p class="text-danger">No employees found.</p>
@@ -313,32 +342,35 @@
                                 </div>
                             </div>
                             <div class="panel-body jsAddExternalBody">
-                                <?php if ($report["external_employees"]) : ?>
-                                    <?php foreach ($report["external_employees"] as $key => $item) : ?>
+                                <?php if ($report["external_employees"]): ?>
+                                    <?php foreach ($report["external_employees"] as $key => $item): ?>
                                         <div class="row jsEER" data-external="<?= $key; ?>" data-id="<?= $item["sid"]; ?>">
                                             <div class="col-md-5">
                                                 <div class="form-group">
                                                     <label for="external_employee_name">Name</label>
-                                                    <input type="text" name="external_employees_names[<?= $key; ?>]['name']" class="form-control" value="<?= $item["external_name"]; ?>" required>
+                                                    <input type="text" name="external_employees_names[<?= $key; ?>]['name']"
+                                                        class="form-control" value="<?= $item["external_name"]; ?>" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-5">
                                                 <div class="form-group">
                                                     <label for="external_employee_email">Email</label>
-                                                    <input type="email" name="external_employees_emails[<?= $key; ?>]['email']" class="form-control" value="<?= $item["external_email"]; ?>" required>
+                                                    <input type="email" name="external_employees_emails[<?= $key; ?>]['email']"
+                                                        class="form-control" value="<?= $item["external_email"]; ?>" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-1">
                                                 <div class="form-group">
                                                     <label>&nbsp;</label>
-                                                    <button type="button" class="btn btn-red btn-block jsRemoveExternalEmployee">
+                                                    <button type="button"
+                                                        class="btn btn-red btn-block jsRemoveExternalEmployee">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
-                                <?php else : ?>
+                                <?php else: ?>
                                     <div class="alert alert-info text-center">
                                         No External employees found
                                     </div>
