@@ -206,12 +206,14 @@ class Compliance_safety_reporting extends Base_csp
                     $reportTypeId
                 );
         // get the employees
-        $this->data["employees"] = $this
-            ->compliance_report_model
-            ->getActiveEmployees(
-                $this->getLoggedInCompany("sid"),
-                $this->getLoggedInEmployee("sid")
-            );
+        // $this->data["employees"] = $this
+        //     ->compliance_report_model
+        //     ->getActiveEmployees(
+        //         $this->getLoggedInCompany("sid"),
+        //         $this->getLoggedInEmployee("sid")
+        //     );
+        // get the employees
+        $this->data["employees"] = [];
         //
         $this->renderView('compliance_safety_reporting/add_report');
     }

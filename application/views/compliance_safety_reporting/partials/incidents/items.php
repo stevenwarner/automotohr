@@ -1,12 +1,12 @@
 <!-- Manage Documents -->
 <div class="panel panel-default">
-    <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#manageIssues"
-        aria-expanded="false" aria-controls="manageIssues">
-        <h1 class="panel-heading-text text-medium">
-            <strong>Manage Issues</strong>
+    <div class="panel-heading">
+        <h1 class="panel-heading-text text-medium panel-accordion" aria-expanded="false" data-toggle="collapse"
+            data-target="#mia">
+            <strong>All Issues</strong>
         </h1>
     </div>
-    <div class="panel-collapse collapse" id="manageIssues">
+    <div class="panel-collapse collapse" id="mia">
         <div class="panel-body">
             <p class="alert alert-danger">
                 <strong>

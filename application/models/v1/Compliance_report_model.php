@@ -3040,27 +3040,34 @@ class Compliance_report_model extends CI_Model
 	{
 		//
 		$where = [
-			"csp_reports_employees.employee_sid" => $employeeId
+			"csp_reports_employees.employee_sid" => $employeeId,
+			"csp_reports_employees.csp_reports_incidents_items_sid <> " => 0,
 		];
 		//
 		$records = $this
 			->db
 			->select("csp_reports_employees.csp_reports_sid")
 			->select("csp_reports_employees.csp_report_incident_sid")
+			->select("csp_reports_employees.csp_reports_incidents_items_sid")
 			->where($where)
 			->get("csp_reports_employees")
 			->result_array();
 		//
 		if ($records) {
 			$reports = [];
+			$tasks = [];
 			$incidents = [];
 			//
 			foreach ($records as $item) {
-				if (!in_array($item["csp_reports_sid"], $reports) && $item["csp_report_incident_sid"] == 0) {
+				// add report ids
+				if (!in_array($item["csp_reports_sid"], $reports)) {
 					$reports[] = $item["csp_reports_sid"];
 				}
-				if (!in_array($item["csp_report_incident_sid"], $incidents) && $item["csp_report_incident_sid"] != 0) {
+				if (!in_array($item["csp_report_incident_sid"], $incidents)) {
 					$incidents[] = $item["csp_report_incident_sid"];
+				}
+				if (!in_array($item["csp_reports_incidents_items_sid"], $tasks)) {
+					$tasks[] = $item["csp_reports_incidents_items_sid"];
 				}
 			}
 		}
@@ -3068,6 +3075,7 @@ class Compliance_report_model extends CI_Model
 		$this->allowedCSP["implements"] = true;
 		$this->allowedCSP["reports"] = $reports;
 		$this->allowedCSP["incidents"] = $incidents;
+		$this->allowedCSP["tasks"] = $tasks;
 	}
 
 	/**
@@ -3348,6 +3356,13 @@ class Compliance_report_model extends CI_Model
 				->where_not_in('employee_sid', $employeeIds)
 				->delete("csp_reports_employees");
 		} else {
+			$this
+				->db
+				->where('csp_reports_sid', $reportId)
+				->where('csp_report_incident_sid', $incidentId)
+				->where('csp_reports_incidents_items_sid', $itemId)
+				->where('is_external_employee', 0)
+				->delete('csp_reports_employees');
 			// update the count
 			$this
 				->db
@@ -3411,6 +3426,13 @@ class Compliance_report_model extends CI_Model
 				->where_not_in('external_email', $employeeIds)
 				->delete("csp_reports_employees");
 		} else {
+			$this
+				->db
+				->where('csp_reports_sid', $reportId)
+				->where('csp_report_incident_sid', $incidentId)
+				->where('csp_reports_incidents_items_sid', $itemId)
+				->where('is_external_employee', 1)
+				->delete('csp_reports_employees');
 			// update the count
 			$this
 				->db
@@ -5475,15 +5497,8 @@ class Compliance_report_model extends CI_Model
 			);
 		} else {
 			if (!$isMainCPA) {
-				if ($this->allowedCSP["reports"] && $this->allowedCSP["incidents"]) {
-					$this->db->group_start();
-					$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
-					$this->db->or_where_in("csp_reports_incidents.sid", $this->allowedCSP["incidents"]);
-					$this->db->group_end();
-				} else if ($this->allowedCSP["reports"] && !$this->allowedCSP["incidents"]) {
-					$this->db->where_in("csp_reports.sid", $this->allowedCSP["reports"]);
-				} else if (!$this->allowedCSP["reports"] && $this->allowedCSP["incidents"]) {
-					$this->db->where_in("csp_reports_incidents.sid", $this->allowedCSP["incidents"]);
+				if ($this->allowedCSP["tasks"]) {
+					$this->db->where_in("csp_reports_incidents_items.sid", $this->allowedCSP["tasks"]);
 				}
 			}
 		}
