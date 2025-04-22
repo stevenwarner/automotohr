@@ -332,7 +332,7 @@ class Compliance_safety_reporting extends Base_csp
             ->getCSPIncident(
                 $reportId,
                 $incidentId
-            ); 
+            );
         //
         $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, $incidentId, $this->getLoggedInEmployee("sid"));
         //
@@ -1569,7 +1569,8 @@ class Compliance_safety_reporting extends Base_csp
                 $reportId,
                 $incidentId,
                 $itemId
-            );     
+            );
+
         //
         $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, $incidentId, $this->getLoggedInEmployee("sid"));
         //
