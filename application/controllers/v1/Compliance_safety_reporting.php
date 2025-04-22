@@ -755,6 +755,32 @@ class Compliance_safety_reporting extends Base_csp
             return redirect()->back();
         }
         //
+        //
+        $logType = 'main';
+        //
+        if ($file['csp_reports_sid'] != 0 && $file['csp_reports_incidents_items_sid'] != 0) {
+            $logType = 'incidents';
+        } else if ($file['csp_reports_sid'] != 0 && $file['csp_reports_incidents_items_sid'] != 0 && $file['csp_reports_incidents_items_sid'] != 0) {
+            $logType = 'incident_item';
+        }
+        // Save log on view file
+        $this->compliance_report_model->saveComplianceSafetyReportLog(
+            [
+                'reportId' => $file['csp_reports_sid'],
+                'incidentId' => $file['csp_incident_type_sid'],
+                'incidentItemId' => $file['csp_reports_incidents_items_sid'],
+                'type' => $logType,
+                'userType' => 'employee',
+                'userId' => $this->getLoggedInEmployee("sid"),
+                'jsonData' => [
+                    'action' => 'download '.$file['file_type'],
+                    'file_id' => $fileId,
+                    'file_name' => $file['title'],
+                    'dateTime' => getSystemDate()
+                ]
+            ]
+        );
+        //
         header("Content-Type: {$fileContent->get("ContentType")}");
         header("Content-Disposition: attachment; filename=\"" . basename($file['file_value']) . "\"");
         header("Content-Length: " . strlen($fileContent['Body']));
@@ -774,11 +800,40 @@ class Compliance_safety_reporting extends Base_csp
             "title",
             "file_type",
             "file_value",
+            "csp_reports_sid",
+            "csp_incident_type_sid",
+            "csp_reports_incidents_items_sid"
         ]);
         //
         if (!$file) {
             return SendResponse(400, ["errors" => "Failed to verify the file."]);
         }
+        //
+        $logType = 'main';
+        //
+        if ($file['csp_reports_sid'] != 0 && $file['csp_reports_incidents_items_sid'] != 0) {
+            $logType = 'incidents';
+        } else if ($file['csp_reports_sid'] != 0 && $file['csp_reports_incidents_items_sid'] != 0 && $file['csp_reports_incidents_items_sid'] != 0) {
+            $logType = 'incident_item';
+        }
+        // Save log on view file
+        $this->compliance_report_model->saveComplianceSafetyReportLog(
+            [
+                'reportId' => $file['csp_reports_sid'],
+                'incidentId' => $file['csp_incident_type_sid'],
+                'incidentItemId' => $file['csp_reports_incidents_items_sid'],
+                'type' => $logType,
+                'userType' => 'employee',
+                'userId' => $this->getLoggedInEmployee("sid"),
+                'jsonData' => [
+                    'action' => 'view '.$file['file_type'],
+                    'file_id' => $fileId,
+                    'file_name' => $file['title'],
+                    'dateTime' => getSystemDate()
+                ]
+            ]
+        );
+        //
         return sendResponse(
             200,
             [
@@ -1299,6 +1354,22 @@ class Compliance_safety_reporting extends Base_csp
             $this->data['action'] = "download";
             $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
             //
+            // Save log on download report
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => 0,
+					'incidentItemId' => 0,
+					'type' => 'main',
+					'userType' => 'employee',
+					'userId' => $employeeId,
+					'jsonData' => [
+						'action' => 'download report',
+						'dateTime' => getSystemDate()
+					]
+				]
+			);
+            //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report', $this->data);
         } else {
             return redirect("dashboard");
@@ -1310,7 +1381,6 @@ class Compliance_safety_reporting extends Base_csp
         //
         $employeeId = $this->getLoggedInEmployee("sid");
         $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($employeeId, $reportId, $incidentId);
-
         //
         if ($haveAccess == 'access_report' || $haveAccess == 'access_incident') {
             //
@@ -1328,6 +1398,22 @@ class Compliance_safety_reporting extends Base_csp
             $this->data['action_by'] = "Downloaded By";
             $this->data['action'] = "download";
             $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
+            //
+            // Save log on download incident
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'incidentItemId' => 0,
+					'type' => 'incidents',
+					'userType' => 'employee',
+					'userId' => $employeeId,
+					'jsonData' => [
+						'action' => 'download incident',
+						'dateTime' => getSystemDate()
+					]
+				]
+			);
             //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident', $this->data);
         } else {
@@ -1597,6 +1683,22 @@ class Compliance_safety_reporting extends Base_csp
             $this->data['action_by'] = "Downloaded By";
             $this->data['action'] = "download";
             $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
+            //
+            // Save log on download incident item
+			$this->compliance_report_model->saveComplianceSafetyReportLog(
+				[
+					'reportId' => $reportId,
+					'incidentId' => $incidentId,
+					'incidentItemId' => $itemId,
+					'type' => 'incident_item',
+					'userType' => 'employee',
+					'userId' => $employeeId,
+					'jsonData' => [
+						'action' => 'download incident item',
+						'dateTime' => getSystemDate()
+					]
+				]
+			);
             //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident_item', $this->data);
         } else {
