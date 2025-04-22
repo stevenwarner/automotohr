@@ -160,6 +160,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                 <th class="bg-black">Severity<br />Level</th>
                                 <th class="bg-black">Report</th>
                                 <th class="bg-black">Incident</th>
+                                <th class="bg-black">Issue</th>
                                 <th class="bg-black">Status</th>
                                 <th class="bg-black">Completed<br />By</th>
                                 <th class="bg-black text-right">Actions</th>
@@ -205,6 +206,9 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                                 href="<?= base_url("compliance_safety_reporting/report/" . $record["csp_reports_sid"] . "/incident/edit/" . $record["csp_reports_incidents_sid"]); ?>">
                                                 <?= $record["compliance_incident_type_name"]; ?>
                                             </a>
+                                        </td>
+                                        <td class="vam">
+                                            <?= $record["item_title"]; ?>
                                         </td>
                                         <td class="vam">
                                             <label class="btn btn-<?= $statusClass ?> form-control" style="border-radius: 5px;">
