@@ -2776,3 +2776,5 @@ $route["settings/openshifts/approval"]["get"] = "Settings/openShiftsApprovals";
 $route["settings/shifts/claimshiftsreject"]["post"] = "Settings/processClaimShiftsReject";
 $route["settings/shifts/claimshiftsapprove"]["post"] = "Settings/processClaimShiftsApprove";
 
+$route["compliance_safety_reporting/issue/progress/update"]["post"] =
+  "v1/Compliance_safety_reporting_employee/updateIssueProgress";

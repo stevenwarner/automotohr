@@ -4794,6 +4794,7 @@ class Compliance_report_model extends CI_Model
 				"csp_reports_incidents_items.sid",
 				"csp_reports_incidents_items.completion_status",
 				"csp_reports_incidents_items.completion_date",
+				"csp_reports_incidents_items.completed_by",
 				"csp_reports_incidents_items.created_at",
 				"csp_reports_incidents_items.updated_at",
 				"csp_reports_incidents_items.last_modified_by",
@@ -5548,5 +5549,44 @@ class Compliance_report_model extends CI_Model
 			$filter,
 			false
 		);
+	}
+
+	public function updateIncidentItemStatus(
+		int $reportId,
+		int $incidentId,
+		int $itemId,
+		int $loggedInEmployeeId,
+		string $status,
+		string $completedAt
+	) {
+		//
+		$updateItem = [];
+		//
+		if ($status == "completed") {
+			$updateItem['completion_date'] = $completedAt;
+			$updateItem['completed_by'] = $loggedInEmployeeId;
+		}
+		$updateItem['completion_status'] = $status;
+		$updateItem['last_modified_by'] = $loggedInEmployeeId;
+		$updateItem['updated_at'] = getSystemDate();
+		$this->db
+			->where('sid', $itemId)
+			->update('csp_reports_incidents_items', $updateItem);
+
+		$this->saveComplianceSafetyReportLog(
+			[
+				'reportId' => $reportId,
+				'incidentId' => $incidentId,
+				'incidentItemId' => $itemId,
+				'type' => 'issue_progress',
+				'userType' => 'employee',
+				'userId' => $loggedInEmployeeId,
+				'jsonData' => [
+					"status" => $status,
+					"completed_at" => $completedAt,
+				]
+			]
+		);
+		return true;
 	}
 }

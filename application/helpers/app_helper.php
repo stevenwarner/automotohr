@@ -4754,7 +4754,7 @@ if (!function_exists("convertCSPTags")) {
      * default []
      * @return string
      */
-    function convertCSPTags($description, array $dynamicData = []): string
+    function convertCSPTags($description, array $dynamicData = [], $isDisabled = false): string
     {
         // Prepare the inputs and checkboxes content
         $inputCounter = $checkboxCounter = 0;
@@ -4765,13 +4765,13 @@ if (!function_exists("convertCSPTags")) {
                 // Replace inputs
                 $description = preg_replace_callback(
                     "/{{input}}/i",
-                    function ($matches) use ($dynamicData, &$inputCounter) {
+                    function ($matches) use ($dynamicData, &$inputCounter, $isDisabled) {
                         $value = $dynamicData['dynamicInput'][$inputCounter] ?? '';
                         $inputCounter++;
                         if ($value) {
-                            return '<input type="text" name="dynamicInput[]" style="width: ' . ((strlen($value) * 8) + 5) . 'px;" value="' . htmlspecialchars($value) . '" />';
+                            return '<input type="text" ' . ($isDisabled ? "disabled" : "") . ' name="dynamicInput[]" style="width: ' . ((strlen($value) * 8) + 5) . 'px;" value="' . htmlspecialchars($value) . '" />';
                         } else {
-                            return '<input type="text" name="dynamicInput[]" style="max-width: 400px;" value="" />';
+                            return '<input type="text" ' . ($isDisabled ? "disabled" : "") . ' name="dynamicInput[]" style="max-width: 400px;" value="" />';
 
                         }
                     },
@@ -4783,10 +4783,10 @@ if (!function_exists("convertCSPTags")) {
                 // Replace checkboxes 
                 $description = preg_replace_callback(
                     "/{{checkbox}}/i",
-                    function ($matches) use ($dynamicData, &$checkboxCounter) {
+                    function ($matches) use ($dynamicData, &$checkboxCounter, $isDisabled) {
                         $checked = $dynamicData['dynamicCheckbox'][$checkboxCounter] == "on" ? true : false;
                         $checkboxCounter++;
-                        return '<input type="checkbox" name="dynamicCheckbox[]" style="width: 20px; height: 20px;"' . ($checked ? ' checked' : '') . ' />';
+                        return '<input type="checkbox" ' . ($isDisabled ? "disabled" : "") . ' name="dynamicCheckbox[]" style="width: 20px; height: 20px;"' . ($checked ? ' checked' : '') . ' />';
                     },
                     $description
                 );

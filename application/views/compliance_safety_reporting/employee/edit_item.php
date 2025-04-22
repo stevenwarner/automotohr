@@ -75,7 +75,8 @@
                                                                 $report["completed_by"],
                                                                 $report
                                                             ) ?>
-                                                            <?= formatDateToDB($report["completed_at"], DB_DATE_WITH_TIME, DATE); ?>
+                                                            <br>
+                                                            <?= formatDateToDB($report["completion_date"], DB_DATE, DATE); ?>
                                                         </span>
                                                     <?php else: ?>
                                                         -
@@ -133,7 +134,8 @@
                                                 </th>
                                                 <td class="vam">
                                                     <input type="date" class="form-control"
-                                                        <?= $report["completion_status"] == "completed" ? "" : "disabled"; ?> id="jsIssueCompletionDate" />
+                                                        <?= $report["completion_status"] == "completed" ? "" : "disabled"; ?> id="jsIssueCompletionDate"
+                                                        value="<?= ($report["completion_date"] ?? ""); ?>" />
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -156,286 +158,266 @@
 
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                 <!--  -->
-                <form method="post" enctype="multipart/form-data" autocomplete="off" id="jsAddIncidentItemForm">
 
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h1 class="panel-heading-text text-medium">
-                                <strong>Issue</strong>
-                            </h1>
-                        </div>
-                        <div class="panel-body">
-                            <?php
-                            $item = $report["description"];
-                            //
-                            $decodedJSON = json_decode(
-                                $report["answers_json"],
-                                true
-                            );
-                            ?>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <?= $report["description"]
-                                        ? convertCSPTags($report["description"], $decodedJSON ?? [])
-                                        : $report["description"];
-                                    ?>
-                                </div>
-                                <!--  -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-heading-text text-medium">
+                            <strong>Issue</strong>
+                        </h1>
+                    </div>
+                    <div class="panel-body">
+                        <?php
+                        $item = $report["description"];
+                        //
+                        $decodedJSON = json_decode(
+                            $report["answers_json"],
+                            true
+                        );
+                        ?>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <?= $report["description"]
+                                    ? convertCSPTags($report["description"], $decodedJSON ?? [], true)
+                                    : $report["description"];
+                                ?>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <hr />
-                                    <div class="jsDocumentsArea">
-                                        <?php if ($report["documents"]): ?>
-                                            <div class="row jsFirst">
-                                                <?php foreach ($report["documents"] as $document): ?>
-                                                    <?php
-                                                    $style = '';
-                                                    //
-                                                    if ($document['file_type'] == 'image') {
-                                                        $imageUrl = AWS_S3_BUCKET_URL . $document["s3_file_value"];
-                                                        $style = "background-image: url('" . $imageUrl . "'); background-size: cover; background-repeat: no-repeat; background-position: center;";
-                                                    }
+                            <!--  -->
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr />
+                                <div class="jsDocumentsArea">
+                                    <?php if ($report["documents"]): ?>
+                                        <div class="row jsFirst">
+                                            <?php foreach ($report["documents"] as $document): ?>
+                                                <?php
+                                                $style = '';
+                                                //
+                                                if ($document['file_type'] == 'image') {
+                                                    $imageUrl = AWS_S3_BUCKET_URL . $document["s3_file_value"];
+                                                    $style = "background-image: url('" . $imageUrl . "'); background-size: cover; background-repeat: no-repeat; background-position: center;";
+                                                }
 
-                                                    ?>
-                                                    <div class="col-sm-3">
-                                                        <div class="widget-box">
-                                                            <div class="attachment-box full-width jsFileBox"
-                                                                style="<?= $style; ?>" data-id="<?= $document["sid"]; ?>">
-                                                                <h4 style="padding: 5px;" class="text-white">
-                                                                    <?= $document["title"]; ?>
-                                                                </h4>
-                                                                <p style=" margin-left: 5px;" class="text-white">
-                                                                    <small>
+                                                ?>
+                                                <div class="col-sm-3">
+                                                    <div class="widget-box">
+                                                        <div class="attachment-box full-width jsFileBox" style="<?= $style; ?>"
+                                                            data-id="<?= $document["sid"]; ?>">
+                                                            <h4 style="padding: 5px;" class="text-white">
+                                                                <?= $document["title"]; ?>
+                                                            </h4>
+                                                            <p style=" margin-left: 5px;" class="text-white">
+                                                                <small>
 
-                                                                        <?= formatDateToDB($document['created_at'], DB_DATE_WITH_TIME, DATE); ?>
-                                                                        <br>
+                                                                    <?= formatDateToDB($document['created_at'], DB_DATE_WITH_TIME, DATE); ?>
+                                                                    <br>
 
+                                                                    <?php
+                                                                    if ($document['manual_email']) {
+                                                                        echo getManualUserNameByEmailId($reportId, $incidentId, $document['manual_email']);
+                                                                    } else {
+                                                                        echo remakeEmployeeName($document);
+                                                                    }
+                                                                    ?>
+                                                                </small>
+                                                            </p>
+                                                            <div class="status-panel">
+                                                                <div class="row">
+                                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                        <button class="btn btn-info jsViewFile">
+                                                                            <i class="fa fa-eye"></i>
+                                                                        </button>
+                                                                        <a target="_blank"
+                                                                            href="<?= base_url("compliance_safety_reporting/file/download/" . $document["sid"]); ?>"
+                                                                            class="btn btn-info btn-info">
+                                                                            <i class="fa fa-download"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="jsAudioArea">
+                                    <?php if ($report["audios"]): ?>
+                                        <div class="row jsFirst">
+                                            <?php foreach ($report["audios"] as $file): ?>
+                                                <div class="col-sm-3">
+                                                    <div class="widget-box">
+                                                        <div class="attachment-box full-width jsFileBox"
+                                                            data-id="<?= $file["sid"]; ?>">
+                                                            <h4 style="padding: 5px;" class="text-white">
+                                                                <?= $file["title"]; ?>
+                                                            </h4>
+                                                            <p style=" margin-left: 5px;" class="text-white">
+                                                                <small>
+
+                                                                    <?= formatDateToDB($file['created_at'], DB_DATE_WITH_TIME, DATE); ?>
+                                                                    <br>
+
+                                                                    <?php
+                                                                    if ($file['manual_email']) {
+                                                                        echo getManualUserNameByEmailId($reportId, $incidentId, $file['manual_email']);
+                                                                    } else {
+                                                                        echo remakeEmployeeName($file);
+                                                                    }
+                                                                    ?>
+                                                                </small>
+                                                            </p>
+                                                            <div class="status-panel">
+                                                                <div class="row">
+                                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                        <button class="btn btn-info jsViewFile">
+                                                                            <i class="fa fa-eye"></i>
+                                                                        </button>
                                                                         <?php
-                                                                        if ($document['manual_email']) {
-                                                                            echo getManualUserNameByEmailId($reportId, $incidentId, $document['manual_email']);
-                                                                        } else {
-                                                                            echo remakeEmployeeName($document);
-                                                                        }
-                                                                        ?>
-                                                                    </small>
-                                                                </p>
-                                                                <div class="status-panel">
-                                                                    <div class="row">
-                                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                            <button class="btn btn-info jsViewFile">
-                                                                                <i class="fa fa-eye"></i>
-                                                                            </button>
+                                                                        if ($file["file_type"] != "link"): ?>
                                                                             <a target="_blank"
-                                                                                href="<?= base_url("compliance_safety_reporting/file/download/" . $document["sid"]); ?>"
+                                                                                href="<?= base_url("compliance_safety_reporting/file/download/" . $file["sid"]); ?>"
                                                                                 class="btn btn-info btn-info">
                                                                                 <i class="fa fa-download"></i>
                                                                             </a>
-                                                                        </div>
+                                                                        <?php endif; ?>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                <?php endforeach; ?>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="jsAudioArea">
-                                        <?php if ($report["audios"]): ?>
-                                            <div class="row jsFirst">
-                                                <?php foreach ($report["audios"] as $file): ?>
-                                                    <div class="col-sm-3">
-                                                        <div class="widget-box">
-                                                            <div class="attachment-box full-width jsFileBox"
-                                                                data-id="<?= $file["sid"]; ?>">
-                                                                <h4 style="padding: 5px;" class="text-white">
-                                                                    <?= $file["title"]; ?>
-                                                                </h4>
-                                                                <p style=" margin-left: 5px;" class="text-white">
-                                                                    <small>
-
-                                                                        <?= formatDateToDB($file['created_at'], DB_DATE_WITH_TIME, DATE); ?>
-                                                                        <br>
-
-                                                                        <?php
-                                                                        if ($file['manual_email']) {
-                                                                            echo getManualUserNameByEmailId($reportId, $incidentId, $file['manual_email']);
-                                                                        } else {
-                                                                            echo remakeEmployeeName($file);
-                                                                        }
-                                                                        ?>
-                                                                    </small>
-                                                                </p>
-                                                                <div class="status-panel">
-                                                                    <div class="row">
-                                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                            <button class="btn btn-info jsViewFile">
-                                                                                <i class="fa fa-eye"></i>
-                                                                            </button>
-                                                                            <?php
-                                                                            if ($file["file_type"] != "link"): ?>
-                                                                                <a target="_blank"
-                                                                                    href="<?= base_url("compliance_safety_reporting/file/download/" . $file["sid"]); ?>"
-                                                                                    class="btn btn-info btn-info">
-                                                                                    <i class="fa fa-download"></i>
-                                                                                </a>
-                                                                            <?php endif; ?>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                <?php endforeach; ?>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                    <!-- end -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Documents -->
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h1 class="panel-heading-text text-medium">
-                                <strong>Upload Files</strong>
-                            </h1>
-                        </div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label for="document_title">Title <strong class="text-danger">*</strong></label>
-                                        <input type="text" class="form-control" id="document_title"
-                                            name="document_title" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <input type="file" class="hidden" id="report_documents"
-                                            name="report_documents" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel-footer text-right">
-                            <button class="btn btn-orange jsAddDocument" type="button">
-                                <i class="fa fa-plus"></i>
-                                Add File
-                            </button>
-                        </div>
-                    </div>
-
-
-                    <?php
-                    if ($pageType == "not_public") {
-                        $this->load->view("compliance_safety_reporting/partials/files/emails");
-                    } else {
-                        $this->load->view("compliance_safety_reporting/partials/files/emails_public_view");
-                    }
-                    ?>
-
-                    <!-- Add Notes -->
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h1 class="panel-heading-text text-medium">
-                                <strong>Add New Note</strong>
-                            </h1>
-                        </div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label for="report_note_type">Type <strong
-                                                class="text-danger">*</strong></label>
-                                        <select name="report_note_type" id="report_note_type">
-                                            <option value="personal">Personal Note</option>
-                                            <option value="employee">Employee Note</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="form-group">
-                                        <label for="report_note">Note <strong class="text-danger">*</strong></label>
-                                        <textarea class="form-control" id="report_note" name="report_note"
-                                            rows="5"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel-footer text-right">
-                            <button class="btn btn-orange jsAddNote">
-                                <i class="fa fa-plus-circle"></i>
-                                Add Note
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Notes -->
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h1 class="panel-heading-text text-medium">
-                                <strong>Notes</strong>
-                            </h1>
-                        </div>
-                        <div class="panel-body">
-                            <div class="respond">
-                                <?php if (!empty($report['notes'])): ?>
-                                    <?php foreach ($report['notes'] as $note): ?>
-                                        <article>
-                                            <figure>
-                                                <img class="img-responsive" src="<?= getImageURL($note["profile_picture"]) ?>">
-                                            </figure>
-                                            <div class="text">
-                                                <div class="message-header">
-                                                    <div class="message-title">
-                                                        <h2>
-                                                            <?php
-                                                            if ($note['manual_email']) {
-                                                                echo getManualUserNameByEmailId($reportId, $incidentId, $note['manual_email']);
-                                                            } else {
-                                                                echo remakeEmployeeName($note);
-                                                            }
-                                                            ?>
-                                                        </h2>
-                                                        <p class="text-danger"><?= ucfirst($note['note_type']); ?></p>
-                                                    </div>
-                                                    <ul class="message-option">
-                                                        <li>
-                                                            <time><?= formatDateToDB($note['updated_at'], DB_DATE_WITH_TIME, DATE); ?></time>
-                                                        </li>
-                                                    </ul>
                                                 </div>
-                                                <p><?= $note["notes"]; ?></p>
-                                            </div>
-                                        </article>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <div class="alert alert-info text-center">
-                                        No notes found.
-                                    </div>
-                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                                <!-- end -->
                             </div>
                         </div>
                     </div>
-                    <!--  -->
-                    <div class="row">
-                        <div class="col-sm-12 text-right">
-                            <button class="btn btn-orange">
-                                <i class="fa fa-save jsUpdateItemBtn"></i>
-                                Update Issue
-                            </button>
+                </div>
+
+                <!-- Documents -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-heading-text text-medium">
+                            <strong>Upload Files</strong>
+                        </h1>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="document_title">Title <strong class="text-danger">*</strong></label>
+                                    <input type="text" class="form-control" id="document_title" name="document_title" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <input type="file" class="hidden" id="report_documents" name="report_documents" />
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </form>
+                    <div class="panel-footer text-right">
+                        <button class="btn btn-orange jsAddDocument" type="button">
+                            <i class="fa fa-plus"></i>
+                            Add File
+                        </button>
+                    </div>
+                </div>
+
+
+                <?php $this->load->view("compliance_safety_reporting/partials/files/emails"); ?>
+
+                <!-- Add Notes -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-heading-text text-medium">
+                            <strong>Add New Note</strong>
+                        </h1>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="report_note_type">Type <strong class="text-danger">*</strong></label>
+                                    <select name="report_note_type" id="report_note_type">
+                                        <option value="personal">Personal Note</option>
+                                        <option value="employee">Employee Note</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="report_note">Note <strong class="text-danger">*</strong></label>
+                                    <textarea class="form-control" id="report_note" name="report_note"
+                                        rows="5"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer text-right">
+                        <button class="btn btn-orange jsAddNote">
+                            <i class="fa fa-plus-circle"></i>
+                            Add Note
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-heading-text text-medium">
+                            <strong>Notes</strong>
+                        </h1>
+                    </div>
+                    <div class="panel-body">
+                        <div class="respond">
+                            <?php if (!empty($report['notes'])): ?>
+                                <?php foreach ($report['notes'] as $note): ?>
+                                    <article>
+                                        <figure>
+                                            <img class="img-responsive" src="<?= getImageURL($note["profile_picture"]) ?>">
+                                        </figure>
+                                        <div class="text">
+                                            <div class="message-header">
+                                                <div class="message-title">
+                                                    <h2>
+                                                        <?php
+                                                        if ($note['manual_email']) {
+                                                            echo getManualUserNameByEmailId($reportId, $incidentId, $note['manual_email']);
+                                                        } else {
+                                                            echo remakeEmployeeName($note);
+                                                        }
+                                                        ?>
+                                                    </h2>
+                                                    <p class="text-danger"><?= ucfirst($note['note_type']); ?></p>
+                                                </div>
+                                                <ul class="message-option">
+                                                    <li>
+                                                        <time><?= formatDateToDB($note['updated_at'], DB_DATE_WITH_TIME, DATE); ?></time>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <p><?= $note["notes"]; ?></p>
+                                        </div>
+                                    </article>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="alert alert-info text-center">
+                                    No notes found.
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
