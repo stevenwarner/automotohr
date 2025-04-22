@@ -84,7 +84,7 @@ class Compliance_safety_reporting_employee extends Base_csp
         //
         // set the title
         $this->data['title'] = 'Compliance Safety Incident Item Management';
-        $this->data['pageJs'][] = 'csp/manage_incident_item';
+        $this->data['pageJs'][] = 'csp/manage_incident_item_employee';
         $this->data['pageJs'][] = 'csp/send_email';
         // get the employees
         $this->data["employees"] = $this
@@ -197,5 +197,26 @@ class Compliance_safety_reporting_employee extends Base_csp
         $this->data['pageJs'][] = 'csp/overview_incidents';
         //
         $this->renderView('compliance_safety_reporting/employee/incidents/overview');
+    }
+
+    public function updateIssueProgress()
+    {
+        $reportId = $this->input->post("reportId", true);
+        $incidentId = $this->input->post("incidentId", true);
+        $itemId = $this->input->post("itemId", true);
+        $status = $this->input->post("status", true);
+        $completedAt = $this->input->post("completionDate", true);
+        // update the status
+        if ($this->compliance_report_model->updateIncidentItemStatus($reportId, $incidentId, $itemId, $this->getLoggedInEmployee("sid"), $status, $completedAt)) {
+            echo SendResponse(200, [
+                "status" => "success",
+                "message" => "Status updated successfully",
+            ]);
+        } else {
+            echo SendResponse(400, [
+                "status" => "error",
+                "message" => "Failed to update status",
+            ]);
+        }
     }
 }

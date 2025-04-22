@@ -776,7 +776,7 @@ class Compliance_safety_reporting extends Base_csp
                 'userType' => 'employee',
                 'userId' => $this->getLoggedInEmployee("sid"),
                 'jsonData' => [
-                    'action' => 'download '.$file['file_type'],
+                    'action' => 'download ' . $file['file_type'],
                     'file_id' => $fileId,
                     'file_name' => $file['title'],
                     'dateTime' => getSystemDate()
@@ -829,7 +829,7 @@ class Compliance_safety_reporting extends Base_csp
                 'userType' => 'employee',
                 'userId' => $this->getLoggedInEmployee("sid"),
                 'jsonData' => [
-                    'action' => 'view '.$file['file_type'],
+                    'action' => 'view ' . $file['file_type'],
                     'file_id' => $fileId,
                     'file_name' => $file['title'],
                     'dateTime' => getSystemDate()
@@ -1359,19 +1359,19 @@ class Compliance_safety_reporting extends Base_csp
             //
             // Save log on download report
             $this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => 0,
-					'incidentItemId' => 0,
-					'type' => 'main',
-					'userType' => 'employee',
-					'userId' => $employeeId,
-					'jsonData' => [
-						'action' => 'download report',
-						'dateTime' => getSystemDate()
-					]
-				]
-			);
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => 0,
+                    'incidentItemId' => 0,
+                    'type' => 'main',
+                    'userType' => 'employee',
+                    'userId' => $employeeId,
+                    'jsonData' => [
+                        'action' => 'download report',
+                        'dateTime' => getSystemDate()
+                    ]
+                ]
+            );
             //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report', $this->data);
         } else {
@@ -1404,19 +1404,19 @@ class Compliance_safety_reporting extends Base_csp
             //
             // Save log on download incident
             $this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => $incidentId,
-					'incidentItemId' => 0,
-					'type' => 'incidents',
-					'userType' => 'employee',
-					'userId' => $employeeId,
-					'jsonData' => [
-						'action' => 'download incident',
-						'dateTime' => getSystemDate()
-					]
-				]
-			);
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
+                    'incidentItemId' => 0,
+                    'type' => 'incidents',
+                    'userType' => 'employee',
+                    'userId' => $employeeId,
+                    'jsonData' => [
+                        'action' => 'download incident',
+                        'dateTime' => getSystemDate()
+                    ]
+                ]
+            );
             //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident', $this->data);
         } else {
@@ -1689,24 +1689,45 @@ class Compliance_safety_reporting extends Base_csp
             $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
             //
             // Save log on download incident item
-			$this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => $incidentId,
-					'incidentItemId' => $itemId,
-					'type' => 'incident_item',
-					'userType' => 'employee',
-					'userId' => $employeeId,
-					'jsonData' => [
-						'action' => 'download incident item',
-						'dateTime' => getSystemDate()
-					]
-				]
-			);
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
+                    'incidentItemId' => $itemId,
+                    'type' => 'incident_item',
+                    'userType' => 'employee',
+                    'userId' => $employeeId,
+                    'jsonData' => [
+                        'action' => 'download incident item',
+                        'dateTime' => getSystemDate()
+                    ]
+                ]
+            );
             //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident_item', $this->data);
         } else {
             return redirect("dashboard");
+        }
+    }
+
+    public function updateIssueProgress()
+    {
+        $reportId = $this->input->post("reportId", true);
+        $incidentId = $this->input->post("incidentId", true);
+        $itemId = $this->input->post("itemId", true);
+        $status = $this->input->post("status", true);
+        $completedAt = $this->input->post("completionDate", true);
+        // update the status
+        if ($this->compliance_report_model->updateIncidentItemStatus($reportId, $incidentId, $itemId, $this->getLoggedInEmployee("sid"), $status, $completedAt)) {
+            echo SendResponse(200, [
+                "status" => "success",
+                "message" => "Status updated successfully",
+            ]);
+        } else {
+            echo SendResponse(400, [
+                "status" => "error",
+                "message" => "Failed to update status",
+            ]);
         }
     }
 

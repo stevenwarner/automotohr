@@ -603,14 +603,14 @@ $(function Overview() {
 		$("#jsIssueCompletionDate").prop("disabled", $(this).val() != "completed");
 	});
 
-	$(".jsIssueProgressUpdateBtn").click(function (event) {
+	$(document).on("click", ".jsIssueProgressUpdateBtn", function (event) {
 		event.preventDefault();
 		const obj = {
 			status: $("#jsIssueStatus").val(),
 			completionDate: $("#jsIssueCompletionDate").val(),
-			itemId: getSegment(4),
+			itemId: getSegment(7),
 			reportId: getSegment(3),
-			incidentId: getSegment(2),
+			incidentId: getSegment(5),
 		};
 		//
 		if (obj.status.trim() === "") {
@@ -627,8 +627,7 @@ $(function Overview() {
 		updateProgress(obj)
 			.always(function () {
 				XHR = null;
-							ml(false, "jsPageLoader");
-
+				ml(false, "jsPageLoader");
 				callButtonHook(_html, false);
 			})
 			.fail(handleErrorResponse)
@@ -647,7 +646,7 @@ $(function Overview() {
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/issue/progress/update/main"
+					"compliance_safety_reporting/issue/progress/update"
 				),
 				method: "POST",
 				data: obj,

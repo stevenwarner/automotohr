@@ -3429,6 +3429,7 @@ class Compliance_report_model extends CI_Model
 			->db
 			->select("csp_reports_employees.csp_reports_sid")
 			->select("csp_reports_employees.csp_report_incident_sid")
+			->select("csp_reports_employees.csp_reports_incidents_items_sid")
 			->where($where)
 			->get("csp_reports_employees")
 			->result_array();
@@ -3436,6 +3437,7 @@ class Compliance_report_model extends CI_Model
 		if ($records) {
 			$reports = [];
 			$incidents = [];
+			$tasks = [];
 			//
 			foreach ($records as $item) {
 				if (!in_array($item["csp_reports_sid"], $reports) && $item["csp_report_incident_sid"] == 0) {
@@ -3444,12 +3446,16 @@ class Compliance_report_model extends CI_Model
 				if (!in_array($item["csp_report_incident_sid"], $incidents) && $item["csp_report_incident_sid"] != 0) {
 					$incidents[] = $item["csp_report_incident_sid"];
 				}
+				if (!in_array($item["csp_reports_incidents_items_sid"], $tasks) && $item["csp_reports_incidents_items_sid"] != 0) {
+					$tasks[] = $item["csp_reports_incidents_items_sid"];
+				}
 			}
 		}
 		//
 		$this->allowedCSP["implements"] = true;
 		$this->allowedCSP["reports"] = $reports;
 		$this->allowedCSP["incidents"] = $incidents;
+		$this->allowedCSP["tasks"] = $tasks;
 	}
 
 
@@ -4795,6 +4801,7 @@ class Compliance_report_model extends CI_Model
 				"csp_reports_incidents_items.sid",
 				"csp_reports_incidents_items.completion_status",
 				"csp_reports_incidents_items.completion_date",
+				"csp_reports_incidents_items.completed_by",
 				"csp_reports_incidents_items.created_at",
 				"csp_reports_incidents_items.updated_at",
 				"csp_reports_incidents_items.last_modified_by",
@@ -4947,15 +4954,22 @@ class Compliance_report_model extends CI_Model
 				DB_DATE
 			);
 		}
+		if ($post["report_status"]) {
+			$updateItem['completion_status'] = $post['report_status'];
+		}
+		if ($post["jsIncidentSeverityLevel"]) {
+			$updateItem['severity_level_sid'] = $post['jsIncidentSeverityLevel'];
+		}
 		//
-		$updateItem['completion_status'] = $post['report_status'];
 		$updateItem['last_modified_by'] = $loggedInEmployeeId;
 		$updateItem['updated_at'] = getSystemDate();
-		$updateItem['severity_level_sid'] = $post["jsIncidentSeverityLevel"];
-		$updateItem['answers_json'] = json_encode([
-			"dynamicInput" => [$post["itemInput"]],
-			"dynamicCheckbox" => [$post["itemCheckbox"]],
-		]);
+		if ($post["itemInput"] || $post["itemCheckbox"]) {
+			//
+			$updateItem['answers_json'] = json_encode([
+				"dynamicInput" => [$post["itemInput"]],
+				"dynamicCheckbox" => [$post["itemCheckbox"]],
+			]);
+		}
 		//
 		$this->db
 			->where('sid', $itemId)
@@ -5549,5 +5563,44 @@ class Compliance_report_model extends CI_Model
 			$filter,
 			false
 		);
+	}
+
+	public function updateIncidentItemStatus(
+		int $reportId,
+		int $incidentId,
+		int $itemId,
+		int $loggedInEmployeeId,
+		string $status,
+		string $completedAt
+	) {
+		//
+		$updateItem = [];
+		//
+		if ($status == "completed") {
+			$updateItem['completion_date'] = $completedAt;
+			$updateItem['completed_by'] = $loggedInEmployeeId;
+		}
+		$updateItem['completion_status'] = $status;
+		$updateItem['last_modified_by'] = $loggedInEmployeeId;
+		$updateItem['updated_at'] = getSystemDate();
+		$this->db
+			->where('sid', $itemId)
+			->update('csp_reports_incidents_items', $updateItem);
+
+		$this->saveComplianceSafetyReportLog(
+			[
+				'reportId' => $reportId,
+				'incidentId' => $incidentId,
+				'incidentItemId' => $itemId,
+				'type' => 'issue_progress',
+				'userType' => 'employee',
+				'userId' => $loggedInEmployeeId,
+				'jsonData' => [
+					"status" => $status,
+					"completed_at" => $completedAt,
+				]
+			]
+		);
+		return true;
 	}
 }
