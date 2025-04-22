@@ -5,13 +5,8 @@
 
         <div class="row">
             <div class="col-sm-12 text-right">
-                <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('employee_management_system') : base_url('dashboard'); ?>"
-                    class="btn btn-black">
-                    <i class="fa fa-arrow-left"></i>
-                    Dashboard
-                </a>
 
-                <a href="<?= base_url("compliance_safety_reporting/employee/dashboard") ?>" class="btn btn-orange">
+                <a href="<?= base_url("csp/dashboard") ?>" class="btn btn-orange">
                     <i class="fa fa-pie-chart"></i>
                     Compliance Dashboard
                 </a>

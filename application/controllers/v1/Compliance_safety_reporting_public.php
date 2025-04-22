@@ -78,6 +78,10 @@ class Compliance_safety_reporting_public extends Base_csp
                 : $this->getPublicSessionData("employee_sid"),
                 $this->data["filter"]
             );
+        $this->data["template"] = message_header_footer(
+            $this->getPublicSessionData("company_sid"),
+            getCompanyColumnById($this->getPublicSessionData("company_sid"), "CompanyName")["CompanyName"]
+        );
         //
         $this->renderView('compliance_safety_reporting/public/dashboard');
     }
@@ -1607,6 +1611,10 @@ class Compliance_safety_reporting_public extends Base_csp
             "incidentId" => $incidentId,
             "itemId" => $itemId
         ];
+        $this->data["template"] = message_header_footer(
+            $this->getPublicSessionData("company_sid"),
+            getCompanyColumnById($this->getPublicSessionData("company_sid"), "CompanyName")["CompanyName"]
+        );
 
         //
         $this->renderView('compliance_safety_reporting/public/edit_item_public');
