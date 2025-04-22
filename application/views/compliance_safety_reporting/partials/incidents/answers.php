@@ -1,12 +1,13 @@
 <!-- Manage Documents -->
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h1 class="panel-heading-text text-medium">
+        <h1 class="panel-heading-text text-medium panel-accordion" aria-expanded="false" data-toggle="collapse"
+            data-target="#qa">
             <strong>Questions/Answers</strong>
         </h1>
     </div>
-    <div class="panel-body">
-        <?php foreach ($report["question_answers"] as $item) {?>
+    <div class="panel-body collapse" id="qa">
+        <?php foreach ($report["question_answers"] as $item) { ?>
             <div class="table-responsive">
                 <div class="table-wrp data-table">
                     <table class="table table-bordered table-hover table-stripped" id="reference_network_table">

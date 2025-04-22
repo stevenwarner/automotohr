@@ -13,7 +13,7 @@
                 <?php if (isMainAllowedForCSP()): ?>
                     <a href="<?= base_url("{$firstSegment}/overview") ?>" class="btn btn-blue">
                         <i class="fa fa-pie-chart"></i>
-                        Compliance Safety Reporting
+                        Overview
                     </a>
                     <a href="javascript:void(0)" class="btn btn-orange jsSendReminderEmails">
                         <i class="fa fa-send"></i>

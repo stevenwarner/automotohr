@@ -3,7 +3,8 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12 text-right">
-                <a href="<?php echo $employee['access_level'] == 'Employee' ?  base_url('employee_management_system') : base_url('dashboard'); ?>" class="btn btn-black">
+                <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('employee_management_system') : base_url('dashboard'); ?>"
+                    class="btn btn-black">
                     <i class="fa fa-arrow-left"></i>
                     Dashboard
                 </a>
@@ -25,7 +26,8 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
                                 <label for="report_title">Report Title <strong class="text-danger">*</strong></label>
-                                <input type="text" class="form-control" id="report_title" name="report_title" value="<?= $type['report_title'] ?>" />
+                                <input type="text" class="form-control" id="report_title" name="report_title"
+                                    value="<?= $type['report_title'] ?>" />
                             </div>
                         </div>
                     </div>
@@ -34,14 +36,16 @@
                         <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
                             <div class="form-group">
                                 <label for="report_date">Report Date <strong class="text-danger">*</strong></label>
-                                <input type="text" class="form-control" id="report_date" name="report_date" value="<?= $type['report_date'] ?>" />
+                                <input type="text" class="form-control" id="report_date" name="report_date"
+                                    value="<?= $type['report_date'] ?>" />
                             </div>
                         </div>
 
                         <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
                             <div class="form-group">
                                 <label for="report_completion_date">Completion Date</label>
-                                <input type="text" class="form-control" id="report_completion_date" name="report_completion_date" value="<?= $type['report_completion_date'] ?>" />
+                                <input type="text" class="form-control" id="report_completion_date"
+                                    name="report_completion_date" value="<?= $type['report_completion_date'] ?>" />
                             </div>
                         </div>
 
@@ -61,26 +65,27 @@
                     <?php $this->load->view("compliance_safety_reporting/partials/incidents/questions"); ?>
 
                     <!-- Employees -->
-                    <div class="panel panel-default">
+                    <div class="panel panel-default hidden">
                         <div class="panel-heading">
                             <h1 class="panel-heading-text text-medium">
                                 <strong>Internal Employees</strong>
                             </h1>
                         </div>
                         <div class="panel-body">
-                            <?php if ($employees) : ?>
+                            <?php if ($employees): ?>
                                 <div class="row">
-                                    <?php foreach ($employees as $employee) : ?>
+                                    <?php foreach ($employees as $employee): ?>
                                         <div class="col-lg-4">
                                             <label class="control control--checkbox">
-                                                <input type="checkbox" name="report_employees[]" value="<?= $employee["sid"]; ?>" />
+                                                <input type="checkbox" name="report_employees[]"
+                                                    value="<?= $employee["sid"]; ?>" />
                                                 <div class="control__indicator"></div>
                                                 <span><?= remakeEmployeeName($employee); ?></span>
                                             </label>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
-                            <?php else : ?>
+                            <?php else: ?>
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <p class="text-danger">No employees found.</p>
@@ -91,7 +96,7 @@
                     </div>
 
                     <!-- Employees -->
-                    <div class="panel panel-default">
+                    <div class="panel panel-default hidden">
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-sm-6">
