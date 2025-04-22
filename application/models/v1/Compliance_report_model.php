@@ -3429,6 +3429,7 @@ class Compliance_report_model extends CI_Model
 			->db
 			->select("csp_reports_employees.csp_reports_sid")
 			->select("csp_reports_employees.csp_report_incident_sid")
+			->select("csp_reports_employees.csp_reports_incidents_items_sid")
 			->where($where)
 			->get("csp_reports_employees")
 			->result_array();
@@ -3436,6 +3437,7 @@ class Compliance_report_model extends CI_Model
 		if ($records) {
 			$reports = [];
 			$incidents = [];
+			$tasks = [];
 			//
 			foreach ($records as $item) {
 				if (!in_array($item["csp_reports_sid"], $reports) && $item["csp_report_incident_sid"] == 0) {
@@ -3444,12 +3446,16 @@ class Compliance_report_model extends CI_Model
 				if (!in_array($item["csp_report_incident_sid"], $incidents) && $item["csp_report_incident_sid"] != 0) {
 					$incidents[] = $item["csp_report_incident_sid"];
 				}
+				if (!in_array($item["csp_reports_incidents_items_sid"], $tasks) && $item["csp_reports_incidents_items_sid"] != 0) {
+					$tasks[] = $item["csp_reports_incidents_items_sid"];
+				}
 			}
 		}
 		//
 		$this->allowedCSP["implements"] = true;
 		$this->allowedCSP["reports"] = $reports;
 		$this->allowedCSP["incidents"] = $incidents;
+		$this->allowedCSP["tasks"] = $tasks;
 	}
 
 
@@ -4947,15 +4953,22 @@ class Compliance_report_model extends CI_Model
 				DB_DATE
 			);
 		}
+		if ($post["report_status"]) {
+			$updateItem['completion_status'] = $post['report_status'];
+		}
+		if ($post["jsIncidentSeverityLevel"]) {
+			$updateItem['severity_level_sid'] = $post['jsIncidentSeverityLevel'];
+		}
 		//
-		$updateItem['completion_status'] = $post['report_status'];
 		$updateItem['last_modified_by'] = $loggedInEmployeeId;
 		$updateItem['updated_at'] = getSystemDate();
-		$updateItem['severity_level_sid'] = $post["jsIncidentSeverityLevel"];
-		$updateItem['answers_json'] = json_encode([
-			"dynamicInput" => [$post["itemInput"]],
-			"dynamicCheckbox" => [$post["itemCheckbox"]],
-		]);
+		if ($post["itemInput"] || $post["itemCheckbox"]) {
+			//
+			$updateItem['answers_json'] = json_encode([
+				"dynamicInput" => [$post["itemInput"]],
+				"dynamicCheckbox" => [$post["itemCheckbox"]],
+			]);
+		}
 		//
 		$this->db
 			->where('sid', $itemId)

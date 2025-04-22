@@ -2778,3 +2778,6 @@ $route["settings/shifts/claimshiftsapprove"]["post"] = "Settings/processClaimShi
 
 $route["compliance_safety_reporting/issue/progress/update"]["post"] =
   "v1/Compliance_safety_reporting_employee/updateIssueProgress";
+
+$route["compliance_safety_reporting/issue/progress/update/main"]["post"] =
+  "v1/Compliance_safety_reporting/updateIssueProgress";

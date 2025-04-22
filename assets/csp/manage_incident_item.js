@@ -608,9 +608,9 @@ $(function Overview() {
 		const obj = {
 			status: $("#jsIssueStatus").val(),
 			completionDate: $("#jsIssueCompletionDate").val(),
-			itemId: getSegment(7),
+			itemId: getSegment(4),
 			reportId: getSegment(3),
-			incidentId: getSegment(5),
+			incidentId: getSegment(2),
 		};
 		//
 		if (obj.status.trim() === "") {
@@ -647,7 +647,7 @@ $(function Overview() {
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/issue/progress/update"
+					"compliance_safety_reporting/issue/progress/update/main"
 				),
 				method: "POST",
 				data: obj,
