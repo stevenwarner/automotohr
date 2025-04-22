@@ -2781,3 +2781,9 @@ $route["compliance_safety_reporting/issue/progress/update"]["post"] =
 
 $route["compliance_safety_reporting/issue/progress/update/main"]["post"] =
   "v1/Compliance_safety_reporting/updateIssueProgress";
+
+$route["csp/report/(:num)/incident/(:num)/issue/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_public/manageIncidentItem/$1/$2/$3";
+
+$route["csp/issue/progress/update/public"]["post"] =
+  "v1/Compliance_safety_reporting_public/updateIssueProgress";

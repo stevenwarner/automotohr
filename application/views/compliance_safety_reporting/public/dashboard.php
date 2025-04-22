@@ -17,14 +17,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
 <div class="main csPageWrap">
     <div class="container-fluid">
         <!-- Buttons -->
-        <div class="row">
-            <div class="col-sm-12 text-right">
-                <a href="<?= base_url("/csp/overview"); ?>" class="btn btn-blue">
-                    <i class="fa fa-pie-chart"></i>
-                    Compliance Safety Reporting Overview
-                </a>
-            </div>
-        </div>
+
 
         <br />
 
@@ -153,6 +146,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                 <th class="bg-black">Severity<br />Level</th>
                                 <th class="bg-black">Report</th>
                                 <th class="bg-black">Incident</th>
+                                <th class="bg-black">Issue</th>
                                 <th class="bg-black">Status</th>
                                 <th class="bg-black">Completed<br />By</th>
                                 <th class="bg-black text-right">Actions</th>
@@ -188,15 +182,13 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                             </label>
                                         </td>
                                         <td class="vam">
-                                            <a href="<?= base_url("csp/edit/" . $record["csp_reports_sid"]); ?>">
-                                                <?= $record["title"]; ?>
-                                            </a>
+                                            <?= $record["title"]; ?>
                                         </td>
                                         <td class="vam">
-                                            <a
-                                                href="<?= base_url("csp/report/" . $record["csp_reports_sid"] . "/incident/edit/" . $record["csp_reports_incidents_sid"]); ?>">
-                                                <?= $record["compliance_incident_type_name"]; ?>
-                                            </a>
+                                            <?= $record["compliance_incident_type_name"]; ?>
+                                        </td>
+                                        <td class="vam">
+                                            <?= $record["item_title"]; ?>
                                         </td>
                                         <td class="vam">
                                             <label class="btn btn-<?= $statusClass ?> form-control" style="border-radius: 5px;">
@@ -213,7 +205,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                             <?php endif; ?>
                                         </td>
                                         <td class="vam text-right">
-                                            <a href="<?= base_url("csp/incident_item_management/" . $record["csp_reports_sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]); ?>"
+                                            <a href="<?= base_url("csp/report/" . $record["csp_reports_sid"] . "/incident/" . $record["csp_reports_incidents_sid"] . "/issue/" . $record["sid"]); ?>"
                                                 class="btn btn-orange">
                                                 <i class="fa fa-eye"></i>
                                                 View Task

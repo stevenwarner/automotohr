@@ -572,5 +572,61 @@ $(function Overview() {
 		}
 	}
 
+	$("#jsIssueStatus").change(function () {
+		$("#jsIssueCompletionDate").prop("disabled", $(this).val() != "completed");
+	});
+
+	$(document).on("click", ".jsIssueProgressUpdateBtn", function (event) {
+		event.preventDefault();
+		const obj = {
+			status: $("#jsIssueStatus").val(),
+			completionDate: $("#jsIssueCompletionDate").val(),
+			itemId: getSegment(6),
+			reportId: getSegment(2),
+			incidentId: getSegment(4),
+		};
+		//
+		if (obj.status.trim() === "") {
+			_error("Please select a status.");
+			return;
+		}
+		if (obj.status === "completed" && obj.completionDate.trim() === "") {
+			_error("Please select a completion date.");
+			return;
+		}
+		
+		const _html = callButtonHook($(this), true);
+
+		updateProgress(obj)
+			.always(function () {
+				XHR = null;
+				ml(false, "jsPageLoader");
+				callButtonHook(_html, false);
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.message, function () {
+					window.location.reload();
+				});
+			});
+	});
+
+	updateProgress = function (obj) {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"csp/issue/progress/update/public"
+				),
+				method: "POST",
+				data: obj,
+			});
+		}
+		return XHR;
+	};
+
 	ml(false, "jsPageLoader");
 });
