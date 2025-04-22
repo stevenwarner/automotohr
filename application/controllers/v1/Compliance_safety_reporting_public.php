@@ -78,658 +78,14 @@ class Compliance_safety_reporting_public extends Base_csp
                 : $this->getPublicSessionData("employee_sid"),
                 $this->data["filter"]
             );
+        $this->data["template"] = message_header_footer(
+            $this->getPublicSessionData("company_sid"),
+            getCompanyColumnById($this->getPublicSessionData("company_sid"), "CompanyName")["CompanyName"]
+        );
         //
         $this->renderView('compliance_safety_reporting/public/dashboard');
     }
 
-    /**
-     * overview
-     */
-    public function overview()
-    {
-        $this->checkPublicSession();
-        // set the title
-        $this->data['title'] = 'Compliance Safety Reporting | Overview';
-        // get types
-        $this->data["pendingReports"] = $this
-            ->compliance_report_model
-            ->getCSPReportPublic(
-                $this->getPublicSessionData("company_sid"),
-                $this->getPublicSessionData("is_external_employee") == 1
-                ? $this->getPublicSessionData("external_email")
-                : $this->getPublicSessionData("employee_sid"),
-                "pending"
-            );
-        // get types
-        $this->data["completedReports"] = $this
-            ->compliance_report_model
-            ->getCSPReportPublic(
-                $this->getPublicSessionData("company_sid"),
-                $this->getPublicSessionData("is_external_employee") == 1
-                ? $this->getPublicSessionData("external_email")
-                : $this->getPublicSessionData("employee_sid"),
-                "completed"
-            );
-        $this->data["onHoldReports"] = $this
-            ->compliance_report_model
-            ->getCSPReportPublic(
-                $this->getPublicSessionData("company_sid"),
-                $this->getPublicSessionData("is_external_employee") == 1
-                ? $this->getPublicSessionData("external_email")
-                : $this->getPublicSessionData("employee_sid"),
-                "on_hold"
-            );
-        // load JS
-        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
-        $this->data['pageJs'][] = 'csp/overview';
-        //
-        $this->renderView('compliance_safety_reporting/public/report_overview');
-    }
-
-    /**
-     * Report incidents
-     *
-     * @param int $reportId
-     */
-    public function overviewIncidents()
-    {
-        $this->checkPublicSession();
-
-        // set the title
-        $this->data['title'] = 'Compliance Safety Reporting | Incidents';
-        // get types
-        $this->data["pendingReports"] = $this
-            ->compliance_report_model
-            ->getCSPAllowedIncidentsPublic(
-                $this->getPublicSessionData("is_external_employee") == 1
-                ? $this->getPublicSessionData("external_email")
-                : $this->getPublicSessionData("employee_sid"),
-                [
-                    "compliance_incident_types.compliance_incident_type_name",
-                    "csp_reports.title",
-                    "csp_reports.sid as reportId",
-                    "csp_reports_incidents.sid",
-                    "csp_reports_incidents.completed_at",
-                    "csp_reports_incidents.status",
-                ],
-                "pending"
-            );
-        // get types
-        $this->data["completedReports"] = $this
-            ->compliance_report_model
-            ->getCSPAllowedIncidentsPublic(
-                $this->getPublicSessionData("is_external_employee") == 1
-                ? $this->getPublicSessionData("external_email")
-                : $this->getPublicSessionData("employee_sid"),
-                [
-                    "csp_reports.title",
-                    "csp_reports.sid as reportId",
-                    "compliance_incident_types.compliance_incident_type_name",
-                    "csp_reports_incidents.sid",
-                    "csp_reports_incidents.completed_at",
-                    "csp_reports_incidents.status",
-                ],
-                "completed"
-            );
-        $this->data["onHoldReports"] = $this
-            ->compliance_report_model
-            ->getCSPAllowedIncidentsPublic(
-                $this->getPublicSessionData("is_external_employee") == 1
-                ? $this->getPublicSessionData("external_email")
-                : $this->getPublicSessionData("employee_sid"),
-                [
-                    "compliance_incident_types.compliance_incident_type_name",
-                    "csp_reports.title",
-                    "csp_reports.sid as reportId",
-                    "csp_reports_incidents.sid",
-                    "csp_reports_incidents.completed_at",
-                    "csp_reports_incidents.status",
-                ],
-                "on_hold"
-            );
-        // load JS
-        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
-        $this->data['pageJs'][] = 'csp/overview_incidents';
-        //
-        $this->renderView('compliance_safety_reporting/public/incident_overview');
-    }
-
-    /**
-     * Report incidents
-     *
-     * @param int $reportId
-     */
-    public function reportIncidents(int $reportId)
-    {
-        $this->checkPublicSession();
-        // get types
-        $this->data["report"] = $this
-            ->compliance_report_model
-            ->getCSPReportById(
-                $reportId,
-                [
-                    "csp_reports.sid",
-                    "csp_reports.title",
-                    "csp_reports.report_date",
-                    "csp_reports.completion_date",
-                    "csp_reports.status",
-                ]
-            );
-        // set the title
-        $this->data['title'] = 'Compliance Safety Reporting | Incidents of report ' . $this->data["report"]["title"];
-        // get types
-        $this->data["pendingReports"] = $this
-            ->compliance_report_model
-            ->getCSPReportIncidents($reportId, [
-                "compliance_incident_types.compliance_incident_type_name",
-                "csp_reports_incidents.sid",
-                "csp_reports_incidents.completed_at",
-                "csp_reports_incidents.status",
-            ], "pending");
-        // get types
-        $this->data["completedReports"] = $this
-            ->compliance_report_model
-            ->getCSPReportIncidents($reportId, [
-                "compliance_incident_types.compliance_incident_type_name",
-                "csp_reports_incidents.sid",
-                "csp_reports_incidents.completed_at",
-                "csp_reports_incidents.status",
-            ], "completed");
-        $this->data["onHoldReports"] = $this
-            ->compliance_report_model
-            ->getCSPReportIncidents($reportId, [
-                "compliance_incident_types.compliance_incident_type_name",
-                "csp_reports_incidents.sid",
-                "csp_reports_incidents.completed_at",
-                "csp_reports_incidents.status",
-            ], "on_hold");
-        // load JS
-        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
-        $this->data['pageJs'][] = 'csp/overview_incidents';
-        //
-        $this->renderView('compliance_safety_reporting/reports/incidents');
-    }
-
-    /**
-     * listing
-     */
-    public function listing()
-    {
-        // set the title
-        $this->data['title'] = 'Compliance Safety Reporting';
-        // get types
-        $this->data["types"] = $this
-            ->compliance_report_model
-            ->getAllReportTypes(
-                $this->getLoggedInCompany("sid")
-            );
-        //
-        $this->renderView('compliance_safety_reporting/listings');
-    }
-
-    /**
-     * edit
-     *
-     * @param int $reportId
-     */
-    public function edit(int $reportId)
-    {
-        $this->checkPublicSession();
-
-        // get types
-        $this->data["report"] = $this
-            ->compliance_report_model
-            ->getCSPReportById(
-                $reportId,
-                [
-                    "csp_reports.sid",
-                    "csp_reports.title",
-                    "csp_reports.company_sid",
-                    "csp_reports.report_date",
-                    "csp_reports.report_type_sid",
-                    "csp_reports.completion_date",
-                    "csp_reports.status",
-                    "csp_reports.updated_at",
-                    "csp_reports.last_modified_by",
-                    "compliance_report_types.compliance_report_name",
-                    "users.first_name",
-                    "users.last_name",
-                    "users.middle_name",
-                    "users.access_level",
-                    "users.access_level_plus",
-                    "users.pay_plan_flag",
-                    "users.job_title",
-                    "users.is_executive_admin",
-                ]
-            );
-        //
-        // set the title
-        $this->data['segments'] = [
-            "reportId" => $this->data["report"]["sid"],
-            "incidentId" => 0,
-            "itemId" => 0
-        ];
-        $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
-        $this->data['pageJs'][] = 'csp/edit_report_public';
-        $this->data['pageJs'][] = 'csp/send_email_public';
-        $this->data['template'] = message_header_footer(
-            $this->data["report"]["company_sid"],
-            getCompanyColumnById($this->data["report"]["company_sid"], "CompanyName")["CompanyName"]
-        );
-        // get the employees
-        $this->data["employees"] = $this
-            ->compliance_report_model
-            ->getActiveEmployees(
-                $this->getPublicSessionData("company_sid"),
-                0
-            );
-        // get the report incident types
-        $this->data["incidentTypes"] = $this
-            ->compliance_report_model
-            ->getAllIncidents();
-        //
-        $currentUser = '';
-        //
-        if ($this->getPublicSessionData("is_external_employee") == 1) {
-            $this->data['employee_type'] = 'external';
-            $currentUser = $this->getPublicSessionData("external_email");
-        } else {
-            $this->data['employee_type'] = 'internal';
-            $currentUser = $this->getPublicSessionData("employee_sid");
-        }
-        //
-        $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, 0, $currentUser);
-        //
-        if ($this->data["report"]["notes"]) {
-            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
-                if ($this->data['employee_type'] == 'external') {
-                    if ($v0["note_type"] === "personal" && $v0["manual_email"] != $currentUser) {
-                        unset($this->data["report"]["notes"][$k0]);
-                    }
-                } else {
-                    if ($v0["note_type"] === "personal" && $v0["created_by"] != $currentUser) {
-                        unset($this->data["report"]["notes"][$k0]);
-                    }
-                }
-            }
-        }
-        //
-        $this->data["reportId"] = $reportId;
-        $this->data["incidentId"] = 0;
-        $this->data["itemId"] = 0;
-        //
-        $this->renderView('compliance_safety_reporting/public/edit_report');
-    }
-
-    /**
-     * process edit
-     * 
-     * @param int $reportId
-     * @param int $incidentId
-     */
-    public function addIncidentToReport(int $reportId)
-    {
-        $this->checkPublicSession();
-        // get the post
-        $post = $this->input->post("incidentId", true);
-        //allowed_internal_system_count
-        $id = $this->compliance_report_model->attachIncidentToReport(
-            $reportId,
-            $post,
-            $this->getPublicSessionData("employee_sid")
-            ? $this->getPublicSessionData("employee_sid")
-            : 0
-        );
-        //
-        if ($this->getPublicSessionData("is_external_employee") == 1) {
-            //
-            $loggedInEmployeeName = getManualUserNameByEmailId(
-                $reportId,
-                0,
-                $this->getPublicSessionData("external_email")
-            );
-            //
-            $dataToUpdate = [
-                "last_modified_by" => $loggedInEmployeeName
-            ];
-            //
-            $this->compliance_report_model->addManualUserEmail(
-                $reportId,
-                $dataToUpdate,
-                'csp_reports'
-            );
-            //
-            $this->compliance_report_model->addManualUserEmail(
-                $id,
-                [
-                    'created_by' => $loggedInEmployeeName
-                ],
-                'csp_reports_incidents'
-            );
-            //
-            // Save log on update report
-            $this->compliance_report_model->saveComplianceSafetyReportLog(
-                [
-                    'reportId' => $reportId,
-                    'incidentId' => $id,
-                    'incidentItemId' => 0,
-                    'type' => 'main',
-                    'userType' => 'external',
-                    'userId' => $this->getPublicSessionData("external_email"),
-                    'jsonData' => [
-                        'action' => 'create',
-                        'type' => 'incident',
-                        'incidentId' => $id,
-                        'incidentTypeId' => $post['incidentId'],
-                        'dateTime' => getSystemDate()
-                    ]
-                ]
-            );
-
-        }
-        // return the success
-        return sendResponse(
-            200,
-            ["message" => "Incident added to report successfully."]
-        );
-    }
-
-    /**
-     * edit
-     *
-     * @param int $reportId
-     */
-    public function editReportIncident(int $reportId, int $incidentId)
-    {
-        $this->checkPublicSession();
-
-        // get types
-        $this->data["report"] = $this
-            ->compliance_report_model
-            ->getCSPIncident(
-                $reportId,
-                $incidentId
-            );
-        //
-        $this->data['segments'] = [
-            "reportId" => $reportId,
-            "incidentId" => $incidentId,
-            "itemId" => 0
-        ];
-        $this->data["report"]["description"] = convertCSPTags($this->data["report"]["description"]);
-
-        // set the title
-        $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
-        $this->data['pageJs'][] = 'csp/edit_incident_public';
-        $this->data['pageJs'][] = 'csp/send_email_public';
-        // get the employees
-        $this->data["employees"] = $this
-            ->compliance_report_model
-            ->getActiveEmployees(
-                $this->getPublicSessionData("company_sid"),
-                0
-            );
-        // get the severity status
-        $this->data["severity_status"] = $this
-            ->compliance_report_model
-            ->getSeverityLevels();
-        if ($this->data["report"]["disable_answers"] != 1) {
-            // get incident questions and content
-            $this->data["questions"] = $this
-                ->compliance_report_model
-                ->fetchQuestions(
-                    $this->data["report"]["incident_type_sid"]
-                );
-        } else {
-            $this->data["questions"] = [];
-        }
-        //
-        $currentUser = '';
-        //
-        if ($this->getPublicSessionData("is_external_employee") == 1) {
-            $this->data['employee_type'] = 'external';
-            $currentUser = $this->getPublicSessionData("external_email");
-        } else {
-            $this->data['employee_type'] = 'internal';
-            $currentUser = $this->getPublicSessionData("employee_sid");
-        }
-        //
-        $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, $incidentId, $currentUser);
-        //
-        if ($this->data["report"]["notes"]) {
-            foreach ($this->data["report"]["notes"] as $k0 => $v0) {
-                if ($this->data['employee_type'] == 'external') {
-                    if ($v0["note_type"] === "personal" && $v0["manual_email"] != $currentUser) {
-                        unset($this->data["report"]["notes"][$k0]);
-                    }
-                } else {
-                    if ($v0["note_type"] === "personal" && $v0["created_by"] != $currentUser) {
-                        unset($this->data["report"]["notes"][$k0]);
-                    }
-                }
-            }
-        }
-        //
-        $this->data["reportId"] = $reportId;
-        $this->data["incidentId"] = $incidentId;
-        $this->data["itemId"] = 0;
-
-        $this->data["manageItemUrl"] = base_url('csp/incident_item_management/' . $reportId . '/' . $incidentId);
-        //
-        $this->renderView('compliance_safety_reporting/public/edit_incident');
-    }
-
-    /**
-     * process edit
-     * 
-     * @param int $reportTypeId
-     */
-    public function processEdit(int $reportId)
-    {
-        $this->checkPublicSession();
-        //
-        $this->form_validation->set_rules('report_title', 'Report Title', 'required');
-        $this->form_validation->set_rules('report_date', 'Report Date', 'required');
-
-        if (!$this->form_validation->run()) {
-            return sendResponse(
-                400,
-                ["errors" => explode("\n", validation_errors())]
-            );
-        }
-        // get the post
-        $post = $this->input->post(null, true);
-        //
-        if ($this->getPublicSessionData("is_external_employee") == 1) {
-            $currentStatus = $this->compliance_report_model->getReportCurrentStatus($reportId);
-        }
-        //allowed_internal_system_count
-        $this->compliance_report_model->editReport(
-            $reportId,
-            $this->getPublicSessionData("employee_sid")
-            ? $this->getPublicSessionData("employee_sid")
-            : 0,
-            $post
-        );
-        //
-        if ($this->getPublicSessionData("is_external_employee") == 1) {
-            //
-            $loggedInEmployeeName = getManualUserNameByEmailId(
-                $reportId,
-                0,
-                $this->getPublicSessionData("external_email")
-            );
-            //
-            $dataToUpdate = [
-                "last_modified_by" => $loggedInEmployeeName
-            ];
-            //
-            if ($post["report_status"] == 'completed' && $currentStatus != 'completed') {
-                $dataToUpdate['completed_by'] = $loggedInEmployeeName;
-            } else if ($post["report_status"] != 'completed' && $currentStatus == 'completed') {
-                echo "down<br>";
-                $dataToUpdate['completed_by'] = null;
-            }
-            //
-            $this->compliance_report_model->addManualUserEmail(
-                $reportId,
-                $dataToUpdate,
-                'csp_reports'
-            );
-            //
-            // check and add external user email in employee
-            $this->compliance_report_model->checkAndAddEmailInAddEmployee(
-                $reportId,
-                0,
-                0,
-                $this->getPublicSessionData("external_email")
-            );
-            //
-            // Save log on update report
-            $this->compliance_report_model->saveComplianceSafetyReportLog(
-                [
-                    'reportId' => $reportId,
-                    'incidentId' => 0,
-                    'incidentItemId' => 0,
-                    'type' => 'main',
-                    'userType' => 'external',
-                    'userId' => $this->getPublicSessionData("external_email"),
-                    'jsonData' => [
-                        'action' => 'update',
-                        'type' => 'report',
-                        'title' => $post["report_title"],
-                        'dateTime' => getSystemDate(),
-                        'fields' => [
-                            'report_date' => $post['report_date'],
-                            'completion_date' => $post['report_completion_date'],
-                            'status' => $post['report_status']
-                        ],
-                        'internalEmployees' => $post['report_employees'],
-                        'externalEmployees' => $post['external_employees_emails']
-
-
-                    ]
-                ]
-            );
-
-        }
-        // return the success
-        return sendResponse(
-            200,
-            ["message" => "Report updated successfully."]
-        );
-    }
-
-    /**
-     * process edit
-     * 
-     * @param int $reportTypeId
-     */
-    public function processIncidentEdit(int $reportId, int $incidentId)
-    {
-        // get the post
-        $post = $this->input->post(null, true);
-        $currentStatus = $this->compliance_report_model->getIncidentCurrentStatus($incidentId);
-        //allowed_internal_system_count
-        $this->compliance_report_model->editIncidentReport(
-            $reportId,
-            $incidentId,
-            $this->getPublicSessionData("employee_sid")
-            ? $this->getPublicSessionData("employee_sid")
-            : 0,
-            $post
-        );
-        //
-        if ($this->getPublicSessionData("is_external_employee") == 1) {
-            $loggedInEmployeeName = getManualUserNameByEmailId(
-                $reportId,
-                0,
-                $this->getPublicSessionData("external_email")
-            );
-            //
-            $dataToUpdate = [
-                "last_modified_by" => $loggedInEmployeeName
-            ];
-            //
-            if ($post["report_status"] == 'completed' && $currentStatus != 'completed') {
-                $dataToUpdate['completed_by'] = $loggedInEmployeeName;
-            } else if ($post["report_status"] != 'completed' && $currentStatus == 'completed') {
-                echo "down<br>";
-                $dataToUpdate['completed_by'] = null;
-            }
-            //
-            $this->compliance_report_model->addManualUserEmail(
-                $incidentId,
-                $dataToUpdate,
-                'csp_reports_incidents'
-            );
-            //
-            // check and add external user email in employee
-            $this->compliance_report_model->checkAndAddEmailInAddEmployee(
-                $reportId,
-                $incidentId,
-                0,
-                $this->getPublicSessionData("external_email")
-            );
-            // Save log on update incident
-            $this->compliance_report_model->saveComplianceSafetyReportLog(
-                [
-                    'reportId' => $reportId,
-                    'incidentId' => $incidentId,
-                    'incidentItemId' => 0,
-                    'type' => 'incidents',
-                    'userType' => 'external',
-                    'userId' => $this->getPublicSessionData("external_email"),
-                    'jsonData' => [
-                        'action' => 'update',
-                        'dateTime' => getSystemDate(),
-                        'fields' => [
-                            'completion_date' => $post['report_completion_date'],
-                            'status' => $post['report_status']
-                        ],
-                        'internalEmployees' => $post['report_employees'],
-                        'externalEmployees' => $post['external_employees_emails']
-                    ]
-                ]
-            );
-        }
-        // return the success
-        return sendResponse(
-            200,
-            ["message" => "Incident updated successfully."]
-        );
-    }
-
-    /**
-     * delete external employee
-     *
-     * @param int $reportId
-     * @param int $recordId
-     */
-    public function deleteExternalEmployee(int $reportId, int $recordId)
-    {
-        $this->compliance_report_model->deleteExternalEmployee(
-            $reportId,
-            $recordId
-        );
-        // return the success
-        return sendResponse(
-            200,
-            ["message" => "External employee removed successfully."]
-        );
-    }
 
     /**
      * process edit
@@ -1086,7 +442,7 @@ class Compliance_safety_reporting_public extends Base_csp
                 'userType' => $userType,
                 'userId' => $userId,
                 'jsonData' => [
-                    'action' => 'download '.$file['file_type'],
+                    'action' => 'download ' . $file['file_type'],
                     'file_id' => $fileId,
                     'file_name' => $file['title'],
                     'dateTime' => getSystemDate()
@@ -1151,7 +507,7 @@ class Compliance_safety_reporting_public extends Base_csp
                 'userType' => $userType,
                 'userId' => $userId,
                 'jsonData' => [
-                    'action' => 'view '.$file['file_type'],
+                    'action' => 'view ' . $file['file_type'],
                     'file_id' => $fileId,
                     'file_name' => $file['title'],
                     'dateTime' => getSystemDate()
@@ -1929,19 +1285,19 @@ class Compliance_safety_reporting_public extends Base_csp
             //
             // Save log on download report
             $this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => 0,
-					'incidentItemId' => 0,
-					'type' => 'main',
-					'userType' => $userType,
-					'userId' => $userId,
-					'jsonData' => [
-						'action' => 'download report',
-						'dateTime' => getSystemDate()
-					]
-				]
-			);
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => 0,
+                    'incidentItemId' => 0,
+                    'type' => 'main',
+                    'userType' => $userType,
+                    'userId' => $userId,
+                    'jsonData' => [
+                        'action' => 'download report',
+                        'dateTime' => getSystemDate()
+                    ]
+                ]
+            );
             //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report', $this->data);
         } else {
@@ -1994,19 +1350,19 @@ class Compliance_safety_reporting_public extends Base_csp
             //
             // Save log on download incident
             $this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => $incidentId,
-					'incidentItemId' => 0,
-					'type' => 'incidents',
-					'userType' => $userType,
-					'userId' => $userId,
-					'jsonData' => [
-						'action' => 'download incident',
-						'dateTime' => getSystemDate()
-					]
-				]
-			);
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
+                    'incidentItemId' => 0,
+                    'type' => 'incidents',
+                    'userType' => $userType,
+                    'userId' => $userId,
+                    'jsonData' => [
+                        'action' => 'download incident',
+                        'dateTime' => getSystemDate()
+                    ]
+                ]
+            );
             //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident', $this->data);
         } else {
@@ -2255,9 +1611,34 @@ class Compliance_safety_reporting_public extends Base_csp
             "incidentId" => $incidentId,
             "itemId" => $itemId
         ];
+        $this->data["template"] = message_header_footer(
+            $this->getPublicSessionData("company_sid"),
+            getCompanyColumnById($this->getPublicSessionData("company_sid"), "CompanyName")["CompanyName"]
+        );
 
         //
-        $this->renderView('compliance_safety_reporting/edit_incident_item');
+        $this->renderView('compliance_safety_reporting/public/edit_item_public');
+    }
+
+    public function updateIssueProgress()
+    {
+        $reportId = $this->input->post("reportId", true);
+        $incidentId = $this->input->post("incidentId", true);
+        $itemId = $this->input->post("itemId", true);
+        $status = $this->input->post("status", true);
+        $completedAt = $this->input->post("completionDate", true);
+        // update the status
+        if ($this->compliance_report_model->updateIncidentItemStatus($reportId, $incidentId, $itemId, $this->getPublicSessionData("employee_sid"), $status, $completedAt)) {
+            echo SendResponse(200, [
+                "status" => "success",
+                "message" => "Status updated successfully",
+            ]);
+        } else {
+            echo SendResponse(400, [
+                "status" => "error",
+                "message" => "Failed to update status",
+            ]);
+        }
     }
 
     /**
@@ -2408,20 +1789,20 @@ class Compliance_safety_reporting_public extends Base_csp
             $this->data['action_by_name'] = $employeeName;
             //
             // Save log on download incident item
-			$this->compliance_report_model->saveComplianceSafetyReportLog(
-				[
-					'reportId' => $reportId,
-					'incidentId' => $incidentId,
-					'incidentItemId' => $itemId,
-					'type' => 'incident_item',
-					'userType' => $userType,
-					'userId' => $userId,
-					'jsonData' => [
-						'action' => 'download incident item',
-						'dateTime' => getSystemDate()
-					]
-				]
-			);
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
+                    'incidentItemId' => $itemId,
+                    'type' => 'incident_item',
+                    'userType' => $userType,
+                    'userId' => $userId,
+                    'jsonData' => [
+                        'action' => 'download incident item',
+                        'dateTime' => getSystemDate()
+                    ]
+                ]
+            );
             //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident_item', $this->data);
         } else {

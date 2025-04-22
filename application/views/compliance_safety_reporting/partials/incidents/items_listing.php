@@ -2,21 +2,21 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h1 class="panel-heading-text text-medium">
-            <strong>Checklist</strong>
+            <strong>Attached Issues</strong>
         </h1>
     </div>
     <div class="panel-body">
-        <?php if ($report["incidentItemsSelected"]) : ?>
+        <?php if ($report["incidentItemsSelected"]): ?>
             <?php $i = 1; ?>
-            <?php foreach ($report["incidentItemsSelected"] as $k0 => $item) : ?>
+            <?php foreach ($report["incidentItemsSelected"] as $k0 => $item): ?>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h1 class="panel-heading-text text-medium" style="padding: 14px 0px;">
-                            <strong><?php echo $item['title'];?></strong>
+                            <strong><?php echo $item['title']; ?></strong>
                             <span class="pull-right">
-                                <a type="button" class="btn btn-orange" href="<?= $manageItemUrl.'/'.$item["sid"]; ?>">
+                                <a type="button" class="btn btn-orange" href="<?= $manageItemUrl . '/' . $item["sid"]; ?>">
                                     <i class="fa fa-info"></i>
-                                    Manage Item
+                                    Manage Issue
                                 </a>
                             </span>
                         </h1>
@@ -37,32 +37,32 @@
                         ?>
                         <div class="row jsCSPItemListingRow" data-id="<?= $item["sid"]; ?>">
                             <div class="col-sm-3">
-                                <div class="csLabelPill jsSelectedLabelPill text-center"
-                                    style="background-color: <?= $level["bg_color"]; ?>; 
+                                <div class="csLabelPill jsSelectedLabelPill text-center" style="background-color: <?= $level["bg_color"]; ?>; 
                                 color: <?= $level["txt_color"]; ?>;">Severity Level <?= $level["level"]; ?></div>
                             </div>
                             <div class="col-sm-9 jsCSPItemDescription">
                                 <?= convertCSPTags($item["description"], $decodedJSON ?? []); ?>
                             </div>
-                        </div>    
+                        </div>
                         <div class="row">
                             <?php if ($item["attachments"]) { ?>
                                 <hr>
                                 <div class="col-sm-12">
                                     <div class="row jsFirst">
                                         <?php foreach ($item["attachments"] as $attachFile) { ?>
-                                            <?php 
-                                                $style = '';
-                                                //
-                                                if ($attachFile['file_type'] == 'image') {
-                                                    $imageUrl = AWS_S3_BUCKET_URL . $attachFile["s3_file_value"]; 
-                                                    $style = "background-image: url('".$imageUrl."'); background-size: cover; background-repeat: no-repeat; background-position: center;";
-                                                }
-                                                
+                                            <?php
+                                            $style = '';
+                                            //
+                                            if ($attachFile['file_type'] == 'image') {
+                                                $imageUrl = AWS_S3_BUCKET_URL . $attachFile["s3_file_value"];
+                                                $style = "background-image: url('" . $imageUrl . "'); background-size: cover; background-repeat: no-repeat; background-position: center;";
+                                            }
+
                                             ?>
                                             <div class="col-sm-3">
                                                 <div class="widget-box">
-                                                    <div class="attachment-box full-width jsFileBox" style="<?= $style; ?>" data-id="<?= $attachFile["sid"]; ?>">
+                                                    <div class="attachment-box full-width jsFileBox" style="<?= $style; ?>"
+                                                        data-id="<?= $attachFile["sid"]; ?>">
                                                         <h4 style="padding: 5px;" class="text-white">
                                                             <?= $attachFile["title"]; ?>
                                                         </h4>
@@ -73,11 +73,11 @@
                                                                 <br>
 
                                                                 <?php
-                                                                    if ($attachFile['manual_email'] && filter_var($attachFile['manual_email'], FILTER_VALIDATE_EMAIL)) {
-                                                                        echo getManualUserNameByEmailId($reportId, $incidentId, $attachFile['manual_email']);
-                                                                    } else {
-                                                                        echo getUserNameBySID($attachFile['created_by']);
-                                                                    }
+                                                                if ($attachFile['manual_email'] && filter_var($attachFile['manual_email'], FILTER_VALIDATE_EMAIL)) {
+                                                                    echo getManualUserNameByEmailId($reportId, $incidentId, $attachFile['manual_email']);
+                                                                } else {
+                                                                    echo getUserNameBySID($attachFile['created_by']);
+                                                                }
                                                                 ?>
                                                             </small>
                                                         </p>
@@ -89,7 +89,9 @@
                                                                     </button>
                                                                     <?php
                                                                     if ($file["file_type"] != "link"): ?>
-                                                                        <a target="_blank" href="<?= base_url("compliance_safety_reporting/file/download/" . $attachFile["sid"]); ?>" class="btn btn-info btn-info">
+                                                                        <a target="_blank"
+                                                                            href="<?= base_url("compliance_safety_reporting/file/download/" . $attachFile["sid"]); ?>"
+                                                                            class="btn btn-info btn-info">
                                                                             <i class="fa fa-download"></i>
                                                                         </a>
                                                                     <?php endif; ?>
@@ -100,12 +102,12 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
-                                    </div>  
+                                    </div>
                                 </div>
-                            <?php } ?>    
+                            <?php } ?>
                         </div>
                     </div>
-                </div>        
+                </div>
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
