@@ -738,6 +738,9 @@ class Compliance_safety_reporting extends Base_csp
         $file = $this->compliance_report_model->getFileById($fileId, [
             "s3_file_value",
             "file_value",
+            "csp_reports_sid",
+            "csp_incident_type_sid",
+            "csp_reports_incidents_items_sid"
         ]);
         //
         if (!$file) {
