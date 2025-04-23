@@ -190,6 +190,18 @@ $(function Overview() {
 		);
 	});
 
+	$(document).on("click", ".jsDeleteFile", function (event) {
+		event.preventDefault();
+		const fileId = $(this).data("file_id");
+		const fileType = $(this).data("file_type");
+		_confirm(
+			"Are you sure you want to remove this "+fileType+"? It will be removed from this issue permanently as well.",
+			function () {
+				deleteFileFromIssue(fileId, fileType);
+			}
+		);
+	});
+
 	function generateExternalEmployees() {
 		let html = `
         <div class="row" data-external="${externalPointer}">
@@ -254,15 +266,17 @@ $(function Overview() {
 			//
 			ml(true, "jsPageLoader");
 			//
-
-
-			let dynamicInputs = $('input[name="dynamicInput[]"]').val();
-			let isChecked = $('input[name="dynamicCheckbox[]"]').is(':checked');
-			let dynamicCheckboxes = 'off';
+			let dynamicInputs = $('input[name="dynamicInput[]"]')
+			.map(function () {
+				return $(this).val();
+			})
+			.get();
 			//
-			if (isChecked) {
-				dynamicCheckboxes = 'on';
-			}
+			let dynamicCheckboxes =$('input[name="dynamicCheckbox[]"]')
+			.map(function () {
+				return $(this).prop("checked") ? "on" : "off";
+			})
+			.get();
 			//
 			var data = $(form).serializeArray(); // convert form to array
 			data.push({ name: 'itemInput', value: dynamicInputs });
@@ -404,6 +418,32 @@ $(function Overview() {
 							window.location.refresh();
 						}
 					);
+				});
+		}
+	}
+
+	function deleteFileFromIssue (fileId, fileType) {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/delete_file/" +
+						fileId 
+				),
+				method: "DELETE",
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success("Removed " + fileType + " successfully", function () {
+						window.location.reload();
+					});
 				});
 		}
 	}

@@ -5088,11 +5088,12 @@ class Compliance_report_model extends CI_Model
 		//
 		$updateItem['last_modified_by'] = $loggedInEmployeeId;
 		$updateItem['updated_at'] = getSystemDate();
+		//
 		if ($post["itemInput"] || $post["itemCheckbox"]) {
 			//
 			$updateItem['answers_json'] = json_encode([
-				"dynamicInput" => [$post["itemInput"]],
-				"dynamicCheckbox" => [$post["itemCheckbox"]],
+				"dynamicInput" => explode(',', $post["itemInput"]),
+				"dynamicCheckbox" => explode(',', $post["itemCheckbox"]),
 			]);
 		}
 		//
@@ -5720,5 +5721,18 @@ class Compliance_report_model extends CI_Model
 			]
 		);
 		return true;
+	}
+
+	/**
+	 * Delete attached file
+	 *
+	 * @param int $fileId
+	 *
+	 */
+	public function deleteAttachedFile (int $fileId)
+	{
+		$this->db
+			->where("sid", $fileId)
+			->delete("csp_reports_files");
 	}
 }

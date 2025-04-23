@@ -187,7 +187,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <?= $report["description"]
-                                    ? convertCSPTags($report["description"], $decodedJSON ?? [], true)
+                                    ? convertCSPTags($report["description"], $decodedJSON ?? [], false)
                                     : $report["description"];
                                 ?>
                             </div>
@@ -242,6 +242,9 @@
                                                                             class="btn btn-info btn-info">
                                                                             <i class="fa fa-download"></i>
                                                                         </a>
+                                                                        <button class="btn btn-info jsDeleteFile" data-file_id="<?php echo $document["sid"]; ?>" data-file_type="<?php echo $document['file_type']; ?>">
+                                                                            <i class="fa fa-trash"></i>
+                                                                        </button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -292,6 +295,9 @@
                                                                                 <i class="fa fa-download"></i>
                                                                             </a>
                                                                         <?php endif; ?>
+                                                                        <button class="btn btn-info jsDeleteFile" data-file_id="<?php echo $file["sid"]; ?>" data-file_type="<?php echo $file['file_type']; ?>">
+                                                                            <i class="fa fa-trash"></i>
+                                                                        </button>
                                                                     </div>
                                                                 </div>
                                                             </div>

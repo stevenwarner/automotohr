@@ -2787,3 +2787,7 @@ $route["csp/report/(:num)/incident/(:num)/issue/(:num)"]["get"] =
 
 $route["csp/issue/progress/update/public"]["post"] =
   "v1/Compliance_safety_reporting_public/updateIssueProgress";
+
+  
+$route["compliance_safety_reporting/delete_file/(:num)"]["delete"] =
+  "v1/Compliance_safety_reporting/deleteFileById/$1";
