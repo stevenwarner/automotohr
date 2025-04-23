@@ -96,7 +96,7 @@
                                                                         </a>
                                                                     <?php endif; ?>
 
-                                                                    <button class="btn btn-info jsDeleteFile" data-file_id="<?php echo $file["sid"]; ?>" data-file_type="<?php echo $file['file_type']; ?>">
+                                                                    <button class="btn btn-info jsDeleteFile" data-file_id="<?php echo $attachFile["sid"]; ?>" data-file_type="<?php echo $attachFile['file_type']; ?>">
                                                                         <i class="fa fa-trash"></i>
                                                                     </button>
                                                                 </div>
