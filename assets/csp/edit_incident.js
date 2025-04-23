@@ -359,6 +359,44 @@ $(function Overview() {
 		}
 	});
 
+	$(document).on("click", ".jsDeleteFile", function (event) {
+		event.preventDefault();
+		const fileId = $(this).data("file_id");
+		const fileType = $(this).data("file_type");
+		_confirm(
+			"Are you sure you want to remove this "+fileType+"? It will be removed from this issue permanently as well.",
+			function () {
+				deleteFileFromIssue(fileId, fileType);
+			}
+		);
+	});
+
+	function deleteFileFromIssue (fileId, fileType) {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/delete_file/" +
+						fileId 
+				),
+				method: "DELETE",
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success("Removed " + fileType + " successfully", function () {
+						window.location.reload();
+					});
+				});
+		}
+	}
+
 	function generateExternalEmployees() {
 		let html = `
         <div class="row" data-external="${externalPointer}">

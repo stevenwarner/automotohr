@@ -295,6 +295,7 @@
                                                                                 <i class="fa fa-download"></i>
                                                                             </a>
                                                                         <?php endif; ?>
+                                                                        
                                                                         <button class="btn btn-info jsDeleteFile" data-file_id="<?php echo $file["sid"]; ?>" data-file_type="<?php echo $file['file_type']; ?>">
                                                                             <i class="fa fa-trash"></i>
                                                                         </button>
