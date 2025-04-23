@@ -55,7 +55,7 @@ class Compliance_safety_reporting_public extends Base_csp
         $this->data["filter"] = [
             "severity_level" => $this->input->get("severityLevel", true) ?? "-1",
             "incident" => $this->input->get("incidentType", true) ?? "-1",
-            "status" => $this->input->get("status", true) ?? "pending",
+            "status" => $this->input->get("status", true) ?? "-1",
         ];
 
         // get all the incidents

@@ -3185,7 +3185,7 @@ class Compliance_report_model extends CI_Model
 						1,
 						[]
 					);
-				}		
+				}
 			}
 		}
 
@@ -3229,7 +3229,7 @@ class Compliance_report_model extends CI_Model
 						1,
 						[]
 					);
-				}	
+				}
 			}
 		}
 	}
@@ -3294,7 +3294,7 @@ class Compliance_report_model extends CI_Model
 						1,
 						[]
 					);
-				}			
+				}
 			}
 		}
 
@@ -3338,7 +3338,7 @@ class Compliance_report_model extends CI_Model
 						1,
 						[]
 					);
-				}	
+				}
 			}
 		}
 	}
@@ -5484,6 +5484,7 @@ class Compliance_report_model extends CI_Model
 			"compliance_incident_types.compliance_incident_type_name",
 			// get report title
 			"csp_reports.title",
+			"csp_reports.report_date",
 			"csp_reports_incidents.csp_reports_sid",
 		]);
 		//
@@ -5729,7 +5730,7 @@ class Compliance_report_model extends CI_Model
 	 * @param int $fileId
 	 *
 	 */
-	public function deleteAttachedFile (int $fileId)
+	public function deleteAttachedFile(int $fileId)
 	{
 		$this->db
 			->where("sid", $fileId)

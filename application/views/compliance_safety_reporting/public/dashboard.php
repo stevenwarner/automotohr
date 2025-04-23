@@ -183,6 +183,9 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                         </td>
                                         <td class="vam">
                                             <?= $record["title"]; ?>
+                                            <p class="text-small">
+                                                Report Date: <?= formatDateToDB($record["report_date"], DB_DATE, DATE); ?>
+                                            </p>
                                         </td>
                                         <td class="vam">
                                             <?= $record["compliance_incident_type_name"]; ?>

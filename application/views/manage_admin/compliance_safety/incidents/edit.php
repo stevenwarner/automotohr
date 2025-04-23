@@ -239,7 +239,7 @@
             $("#addItemModal").remove();
 
             var modalHtml = `
-                <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" aria-hidden="true" data-backdrop="static">
+                <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" data-backdrop="static">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -262,9 +262,10 @@
             $("body").append(modalHtml);
             let ht = generateHtml();
             $(".jsModalBody").html(ht.html);
-            CKEDITOR.replace(`textarea_${ht.index}`);
 
             $("#addItemModal").modal('show');
+
+            removeAllCKEditor(`textarea_${ht.index}`);
         });
 
         $(document).on("click", ".jsDeleteItemBtn", function (event) {
@@ -349,7 +350,7 @@
         });
 
         //
-        $(".jsEditItemBtn").click(function (event) {
+        $(document).on("click", ".jsEditItemBtn", function (event) {
             event.preventDefault();
             $("#editItemModal").remove();
 
@@ -357,7 +358,7 @@
             const recordId = $(this).closest("tr").data("key")
 
             var modalHtml = `
-                <div class="modal fade" id="editItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" aria-hidden="true" data-backdrop="static">
+                <div class="modal fade" id="editItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" data-backdrop="static">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -379,11 +380,8 @@
             `;
 
             $("body").append(modalHtml);
-            // CKEDITOR.replace(`textarea_${ht.index}`);
-
-            loadItemDetails(recordId)
-
             $("#editItemModal").modal('show');
+            loadItemDetails(recordId)
         });
 
         //
@@ -504,8 +502,8 @@
                 success: function (response) {
                     // Hide loader
                     $(".jsModalBody").html(response.view);
-                    CKEDITOR.replace('textarea_edit');
                     $("#updateItemBtn").removeClass("hidden")
+                    removeAllCKEditor("textarea_edit");
                 },
                 error: function () {
                     // Hide loader
@@ -514,6 +512,18 @@
             });
         }
     });
+
+    function removeAllCKEditor(incomingId) {
+
+        if (CKEDITOR.instances[incomingId]) {
+            console.log("destroying instance: " + incomingId);
+            CKEDITOR.instances[incomingId].destroy(true);
+        }
+        setTimeout(function () {
+            console.log("creating instance: " + incomingId);
+            CKEDITOR.replace(incomingId);
+        }, 1000);
+    }
 
     $(document).ready(function () {
         CKEDITOR.replace('description');
