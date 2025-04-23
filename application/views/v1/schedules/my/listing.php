@@ -47,11 +47,6 @@ if ($filter["mode"] === "month") {
                             <?php } ?>
                         </div>
                         <div class="col-sm-8 text-right">
-
-
-
-
-
                             <a href="<?= base_url("shifts/my/subordinates"); ?>" class="btn btn-orange">
                                 <i class="fa fa-users" aria-hidden="true"></i>
                                 &nbsp;My Team Shifts
@@ -170,7 +165,7 @@ if ($filter["mode"] === "month") {
                                                     <div class="row">
                                                         <div class="col-sm-2">
                                                         </div>
-                                                        <div class="col-sm-8">
+                                                        <div class="col-sm-8 schedule-footer" style="border: 0px;">
                                                         <p class="text-medium weight-6 text-center"> Open Shifts</p>                                                      
                                                         </div>
                                                         <div class="col-sm-2 text-right">
@@ -256,14 +251,7 @@ if ($filter["mode"] === "month") {
                                                                         ); ?>
                                                                     </p>
                                                                 </div>
-                                                            <?php } elseif ($holidays[$monthDate]) { ?>
-                                                                <div class="schedule-dayoff">
-                                                                    <button class="btn btn-red text-small btn-xs">
-                                                                        <?= $holidays[$monthDate]["title"]; ?>
-                                                                    </button>
-                                                                </div>
-                                                            <?php } else { ?>
-                                                            <?php } ?>
+                                                            <?php }  ?>
                                                         </div>
                                                      <!-- End--->
 

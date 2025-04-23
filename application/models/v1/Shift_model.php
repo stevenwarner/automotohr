@@ -2148,6 +2148,11 @@ class Shift_model extends CI_Model
             //
             foreach ($records as $v0) {
                 //
+
+                $openShiftpendingApprovalCount = $this->db->where("shift_sid", $v0["sid"])
+                    ->where("shift_status", 0)
+                    ->count_all_results("open_shifts_approval");
+
                 if (!$employees[$v0["employee_sid"]]) {
                     $employees[$v0["employee_sid"]] = [
                         "totalTimeText" => '0h',
@@ -2168,6 +2173,8 @@ class Shift_model extends CI_Model
                     ),
                     "is_published" => $v0["is_published"],
                     "shift_date" => $v0["shift_date"],
+                    "pendingapprovals" => $openShiftpendingApprovalCount,
+
 
                 ];
                 //
@@ -2180,6 +2187,8 @@ class Shift_model extends CI_Model
                     $employees[$v0["employee_sid"]]["totalTime"]
                 );
             }
+
+            //
             $records = $employees;
         }
 
@@ -2193,6 +2202,13 @@ class Shift_model extends CI_Model
         array $post,
         $sendShift = false
     ) {
+        //
+        $approvalData = $this->db
+            ->where("employee_sid", checkAndGetSession("employee")["sid"])
+            ->where("company_sid", $companyId)
+            ->where("shift_sid", $post["id"])
+            ->where("shift_status", 2)
+            ->delete("open_shifts_approval");
 
         //
         $shiftData = $this->db
@@ -2202,7 +2218,6 @@ class Shift_model extends CI_Model
             ->where("sid", $post["id"])
             ->get("cl_shifts")
             ->row_array();
-
         if (!empty($shiftData)) {
 
             $approvalData = $this->db
@@ -2214,7 +2229,6 @@ class Shift_model extends CI_Model
                 ->row_array();
 
             if (!empty($approvalData)) {
-
                 $status = 200;
                 $response = ["msg" => "You have already submitted an approval request for this shift."];
             } else {
@@ -2254,35 +2268,37 @@ class Shift_model extends CI_Model
             //
             if ($post["id"]) {
                 // check if entry already exists
+
+                /*
                 if ($this->db->where([
                     "company_sid" => $companyId,
                     "employee_sid" => checkAndGetSession("employee")["sid"],
                     "shift_date" => $post["shift_date"],
                 ])->count_all_results("cl_shifts")) {
                     $response["msg"] = "Shift already exists.";
-                } else {
-                    // update
-                    $this->db
-                        ->where("sid", $post["id"])
-                        ->update("cl_shifts", [
-                            "employee_sid" => checkAndGetSession("employee")["sid"],
-                            "updated_at" => getSystemDate(),
-                            "is_published" => 1,
-                            "employee_can_claim" => 0,
-                        ]);
+*/
 
-                    $ins = [];
-                    $ins["cl_shift_sid"] = $post["id"];
-                    $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
-                    $ins["action"] = "claim Open Shift";
-                    $ins["action_json"] = "{}";
-                    $ins["created_at"] = getSystemDate();
-                    //
-                    $this->db->insert("cl_shifts_logs", $ins);
+                // update
+                $this->db
+                    ->where("sid", $post["id"])
+                    ->update("cl_shifts", [
+                        "employee_sid" => checkAndGetSession("employee")["sid"],
+                        "updated_at" => getSystemDate(),
+                        "is_published" => 1,
+                        "employee_can_claim" => 0,
+                    ]);
 
-                    $status = 200;
-                    $response = ["msg" => "Shift successfully claimed."];
-                }
+                $ins = [];
+                $ins["cl_shift_sid"] = $post["id"];
+                $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
+                $ins["action"] = "claim Open Shift";
+                $ins["action_json"] = "{}";
+                $ins["created_at"] = getSystemDate();
+                //
+                $this->db->insert("cl_shifts_logs", $ins);
+
+                $status = 200;
+                $response = ["msg" => "Shift successfully claimed."];
             }
             //
         }
@@ -2347,8 +2363,21 @@ class Shift_model extends CI_Model
     public function updateOpenShiftsRequest($shiftId, $toEmployeeId, $data)
     {
         $shiftIds = explode(',', $shiftId);
+      
 
         if (!empty($toEmployeeId)) {
+            //
+            $shiftExist = $this->db
+                ->select("shift_sid")
+                ->where("employee_sid", $toEmployeeId)
+                ->where_in("shift_sid", $shiftIds)
+                ->get("open_shifts_approval")
+                ->row_array();
+            
+            if (empty($shiftExist)) {
+                return 1;              
+            }
+            //
             $this->db->where("employee_sid", $toEmployeeId);
         }
         $this->db
@@ -2382,7 +2411,6 @@ class Shift_model extends CI_Model
     //
     public function getOpenShiftsRequestById($shiftIds, $shiftstatus = '')
     {
-
         //
         $this->db->select("
             cl_shifts.sid, 
@@ -2403,6 +2431,10 @@ class Shift_model extends CI_Model
         //
         if ($shiftstatus == 'approved') {
             $this->db->where_in("open_shifts_approval.shift_status", 1);
+        }
+
+        if ($shiftstatus == 'pending') {
+            $this->db->where_in("open_shifts_approval.shift_status", 0);
         }
 
         $this->db->join(
@@ -2434,5 +2466,53 @@ class Shift_model extends CI_Model
         }
 
         return $records;
+    }
+
+
+    //
+    public function isShiftExist($companyId, $shiftId, $employeeId)
+    {
+
+        $record = $this->db
+            ->select(
+                "cl_shifts.employee_sid,
+                cl_shifts.shift_date,
+                cl_shifts.start_time,
+                cl_shifts.end_time,
+                cl_shifts.breaks_json,
+                cl_shifts.breaks_count,
+                "
+            )
+            ->where("cl_shifts.sid", $shiftId)
+            ->where("cl_shifts.company_sid", $companyId)
+            ->get("cl_shifts")
+            ->row_array();
+
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('start_time <', $record['end_time']);
+        $this->db->where('end_time >', $record['start_time']);
+
+        return $this->db->count_all_results("cl_shifts");
+    }
+
+    //
+    public function isShifRequestExist($companyId, $shiftId, $employeeId)
+    {
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('shift_sid', $shiftId);
+        $this->db->where('shift_status', 0);
+        return $this->db->count_all_results("open_shifts_approval");
+    }
+
+    //
+    public function cancelShiftClaimRequestFromEmployee($companyId, $shiftId, $employeeId)
+    {
+
+        $this->db
+            ->where("shift_sid", $shiftId)
+            ->where("employee_sid", $employeeId)
+            ->where("company_sid", $companyId)
+            ->delete("open_shifts_approval");
     }
 }

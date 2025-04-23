@@ -131,47 +131,95 @@ $(function manageMyShifts() {
 		applyTimePicker();
 	});
 
-//
+	//
 
-function callToEditOpenBox(shiftId) {
-	makePage("Claim Shift", "open_single_shift_claim", shiftId, function (resp) {
-		// hides the loader
-		ml(false, modalLoader);
-		//
+	$(document).on("click", ".jsCancelRequestBtn", function (event) {
+		event.preventDefault();
 
-		applyTimePicker();
 
-		//
-		validatorRef = $("#jsPageCreateSingleShiftForm").validate({
-			rules: {
-				//shift_employee: { required: true },
-				shift_date: { required: true },
-				start_time: { required: true, timeIn12Format: true },
-				end_time: { required: true, timeIn12Format: true },
-			},
-			errorPlacement: function (error, element) {
-				if ($(element).parent().hasClass("input-group")) {
-					$(element).parent().after(error);
-				} else {
-					$(element).after(error);
-				}
-			},
-			submitHandler: function (form) {
-				return processCallWithoutContentType(
-					formArrayToObj($(form).serializeArray()),
-					$(".jsPageCreateSingleShiftBtn"),
-					"settings/shifts/opensingle/claim",
+		let shiftId = $(this).data('shiftid');
+		let employeeId = $(this).data('employeeid');
+		let companyId = $(this).data('companyid');
+
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to cancel request?',
+			function () {
+				//
+				const formObj = new FormData();
+				// set the file object
+				formObj.append("shiftid", shiftId);
+				formObj.append("companyId", companyId);
+				formObj.append("employeeId", employeeId);
+				// 
+				processCallWithoutContentType(
+					formObj,
+					'',
+					"settings/shifts/cancelclaimrequest",
 					function (resp) {
+						// show the message
 						_success(resp.msg, function () {
 							window.location.reload();
 						});
 					}
 				);
 			},
-		});
-	});
-}
+			function () {
 
+			}
+		)
+
+	});
+
+
+	function callToEditOpenBox(shiftId) {
+		makePage("", "open_single_shift_claim", shiftId, function (resp) {
+			// hides the loader
+			ml(false, modalLoader);
+			//
+			applyTimePicker();
+			//
+			validatorRef = $("#jsPageCreateSingleShiftForm").validate({
+				rules: {
+					//shift_employee: { required: true },
+					shift_date: { required: true },
+					start_time: { required: true, timeIn12Format: true },
+					end_time: { required: true, timeIn12Format: true },
+				},
+				errorPlacement: function (error, element) {
+					if ($(element).parent().hasClass("input-group")) {
+						$(element).parent().after(error);
+					} else {
+						$(element).after(error);
+					}
+				},
+				submitHandler: function (form) {
+
+					alertify.confirm(
+						'Are You Sure?',
+						'Are you sure want to claim request?',
+						function () {
+							//
+							return processCallWithoutContentType(
+								formArrayToObj($(form).serializeArray()),
+								$(".jsPageCreateSingleShiftBtn"),
+								"settings/shifts/opensingle/claim",
+								function (resp) {
+									_success(resp.msg, function () {
+										window.location.reload();
+									});
+								}
+							);
+
+						},
+						function () {
+
+						}
+					)
+				},
+			});
+		});
+	}
 
 
 	/**
@@ -224,13 +272,13 @@ function callToEditOpenBox(shiftId) {
 			});
 	}
 
-/**
-	 * process the call
-	 * @param {object} formObj
-	 * @param {string} buttonRef
-	 * @param {string} url
-	 * @param {Object} cb
-	 */
+	/**
+		 * process the call
+		 * @param {object} formObj
+		 * @param {string} buttonRef
+		 * @param {string} url
+		 * @param {Object} cb
+		 */
 	function processCallWithoutContentType(formObj, buttonRef, url, cb) {
 		// check if call is already made
 		if (XHR !== null) {

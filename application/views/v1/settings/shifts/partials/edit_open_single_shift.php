@@ -1,5 +1,5 @@
-<form action="javascript:void(0)" id="jsPageCreateSingleShiftForm" autocomplete="off">
-    <div class="container">
+<div class="container">
+    <form action="javascript:void(0)" id="jsPageCreateSingleShiftForm" autocomplete="off">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="row">
@@ -9,10 +9,10 @@
                             Edit Open Shift
                         </h2>
                     </div>
-                 
+
                 </div>
             </div>
-            <div class="panel-body">              
+            <div class="panel-body">
                 <!--  -->
                 <div class="form-group">
                     <label class="text-medium">
@@ -121,14 +121,14 @@
                 </div>
 
 
-                <div class="col-sm-6">
+                <div class="form-group">
                     <label class="control control--checkbox">
-                        <input type="checkbox" name="employee_can_claim" value="1"  <?php echo $shift['employee_can_claim']? 'checked':'' ?>/>
+                        <input type="checkbox" name="employee_can_claim" value="1" <?php echo $shift['employee_can_claim'] ? 'checked' : '' ?> />
                         Employee Can Claim Shift
                         <div class="control__indicator"></div>
-                    </label>
+                    </label><br>
                     <label class="control control--checkbox">
-                        <input type="checkbox" name="employee_need_approval_for_claim" value="1" <?php echo $shift['employee_need_approval_for_claim']? 'checked':'' ?> />
+                        <input type="checkbox" name="employee_need_approval_for_claim" value="1" <?php echo $shift['employee_need_approval_for_claim'] ? 'checked' : '' ?> />
                         Employee Need Approval For Claim Shift
                         <div class="control__indicator"></div>
                     </label>
@@ -146,6 +146,13 @@
             ?>
 
             <div class="panel-footer text-right">
+                <?php if (!empty($openRequests)) { ?>
+                    <button class="btn btn-orange" type="button" data-toggle="collapse" data-target="#demo">
+                        <i class="fa fa-eye" aria-hidden="true"></i>
+                        &nbsp;Claim Requests
+                    </button>
+                <?php } ?>
+
 
                 <button class="btn btn-orange jsPageCreateSingleShiftBtn">
                     <i class="fa fa-save" aria-hidden="true"></i>
@@ -158,9 +165,81 @@
 
             </div>
         </div>
-    </div>
-</form>
+    </form>
 
-<script>
-    breaksObject = <?= json_encode($breaks); ?>
-</script>
+    <?php if (!empty($openRequests)) { ?>
+        <div class="table-responsive collapse" id="demo">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <h2 class="text-medium panel-heading-text weight-6">
+                                Requests
+                            </h2>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="panel-body">
+
+                    <div class="col-sm-12 text-right" id="jsApprovedRejectBtn" style="padding-right: -50px;">
+                        <button class="btn btn-red jsAdminRejectOpenShiftRequests">
+                            Reject requests
+                        </button>
+
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead style="background-color: #fd7a2a;" class="js-table-head">
+
+
+                    </div>
+                    <tr>
+                        <th style="width:5%">
+                            <label class="control control--checkbox" style="margin-bottom: 20px;">
+                                <input type="checkbox" name="checkit[]" id="check_all">
+                                <div class="control__indicator"></div>
+                            </label>
+                        </th>
+                        <th style="width:25%">Employee</th>
+                        <th style="width:10%">Requested At</th>
+                        <th style="width:20%;padding-right: 30px;" class="text-right">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="js-data-area">
+                        <?php
+                        foreach ($openRequests as $requestRow) {
+                        ?>
+
+                            <tr id="rowId<?php echo $requestRow['shift_sid'] ?>">
+                                <td class="text-left">
+                                    <label class="control control--checkbox">
+                                        <input type="checkbox" name="checkit[]" value="<?php echo $requestRow['shift_sid']; ?>" class="my_checkbox" data-status="">
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </td>
+                                <td class="text-left"><?php echo $requestRow['from_employee'] ?> </td>
+                                <td class="text-left"><?php echo $requestRow['created_at'] ?></td>
+
+                                <td>
+                                    <div class="col-sm-12 text-right">
+                                        <button class="btn btn-red jsAdminRejectOpenShiftRequest" data-shiftid="<?php echo $requestRow['shift_sid'] ?>" data-toemployeeid="<?php echo $requestRow['employee_sid']; ?>">Reject
+                                        </button>
+
+                                        <button class="btn btn-orange jsApproveOpenShiftRequest" data-shiftid="<?php echo $requestRow['shift_sid'] ?>" data-toemployeeid="<?php echo $requestRow['employee_sid']; ?>">Approve
+                                        </button>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php  } ?>
+
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+
+        <?php } ?>
+
+        </div>
+        <script>
+            breaksObject = <?= json_encode($breaks); ?>
+        </script>

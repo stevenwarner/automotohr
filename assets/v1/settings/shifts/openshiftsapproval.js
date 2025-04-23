@@ -382,7 +382,6 @@ $(function shiftsTrade() {
                 shiftsArrayIds.push(shiftId);
                 formObj.append("shiftids", shiftsArrayIds);
                 formObj.append("toEmployeeId", toEmployeeId);
-
                 // 
 
                 processCallWithoutContentType(

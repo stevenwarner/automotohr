@@ -149,7 +149,6 @@ foreach ($monthDates as $monthDate) {
                                         if ($filter_team != '') {
                                             $filterEmployeesSid = implode(',', $filter_employees);
                                             $filterJobtitle = implode(',', $filter_jobtitle);
-
                                             $filterFields = '&employees=' . $filterEmployeesSid . '&team=' . $filter_team . '&jobtitle=' . $filterJobtitle;
                                         }
 
@@ -184,9 +183,6 @@ foreach ($monthDates as $monthDate) {
                                             <i class="fa fa-filter" aria-hidden="true"></i>
                                             Filters
                                         </button>
-
-
-
                                     </div>
                                 </div>
 
@@ -223,9 +219,7 @@ foreach ($monthDates as $monthDate) {
                                         </span>
                                     </div>
                                 </div>
-
                                 <br />
-
                                 <!--  -->
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -263,8 +257,8 @@ foreach ($monthDates as $monthDate) {
                                                             <div class="row">
 
                                                                 <div class="col-sm-2">&nbsp;</div>
-                                                                <div class="col-sm-8">
-                                                                <p class="text-medium weight-6 text-center"> Open Shifts</p>
+                                                                <div class="col-sm-8 schedule-footer" style="border: 0px;">
+                                                                    <p class="text-medium weight-6 text-center"> Open Shifts </p>
                                                                 </div>
                                                                 <div class="col-sm-2 text-right">
                                                                     <span class="text-small">
@@ -330,9 +324,8 @@ foreach ($monthDates as $monthDate) {
                                                                 </p>
                                                             </div>
 
-
-                                                            <!-- Open Shifts -->                                                         
-                                                            <div class="schedule-column schedule-column-clickable-openshift schedule-column-0 text-center" data-eid="0" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
+                                                            <!-- Open Shifts -->
+                                                            <div class="schedule-column schedule-column-clickable-openshift schedule-column-0 text-center " data-eid="0" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
                                                                 <?php
                                                                 $employeeOpenShift = $openShifts[0]["dates"][$monthDate];
                                                                 ?>
@@ -340,7 +333,7 @@ foreach ($monthDates as $monthDate) {
                                                                 <?php if ($employeeOpenShift) {
                                                                     $totalHoursInSeconds += $employeeOpenShift["totalTime"];
                                                                 ?>
-                                                                    <div class="schedule-item-openshift" data-id="<?= $employeeOpenShift["sid"]; ?>" style="background: <? echo $employeeOpenShift["is_published"] == 0 ? DB_UNPUBLISHED_SHIFTS : $bgColor; ?> ; color: <? echo $employeeOpenShift["is_published"] == 0 ? FONT_COLOR_UNPUBLISHED_SHIFTS : ''; ?>" title="<?= $employeeOpenShift["job_title"]; ?>" placement="top">
+                                                                    <div class="schedule-item-openshift <?php echo $employeeOpenShift['pendingapprovals'] > 0 ? 'blibkforapproval' : '' ?>" data-id="<?= $employeeOpenShift["sid"]; ?>" style="background: <? echo $employeeOpenShift["is_published"] == 0 ? DB_UNPUBLISHED_SHIFTS : $bgColor; ?> ; color: <? echo $employeeOpenShift["is_published"] == 0 ? FONT_COLOR_UNPUBLISHED_SHIFTS : ''; ?>" title="<?= $employeeOpenShift["job_title"]; ?>" placement="top">
 
                                                                         <?php if ($employeeOpenShift["job_sites"] && $employeeOpenShift["job_sites"][0]) { ?>
                                                                             <span class="circle circle-orange"></span>
@@ -358,21 +351,10 @@ foreach ($monthDates as $monthDate) {
                                                                             ); ?>
                                                                         </p>
                                                                     </div>
-                                                                <?php } elseif ($holidays[$monthDate]) { ?>
-                                                                    <div class="schedule-dayoff">
-                                                                        <button class="btn btn-red text-small btn-xs">
-                                                                            <?= $holidays[$monthDate]["title"]; ?>
-                                                                        </button>
-                                                                    </div>
-                                                                <?php } else { ?>
                                                                 <?php } ?>
                                                             </div>
                                                             <!-- End-->
-
-
-
                                                             <?php if ($employees) { ?>
-
                                                                 <?php
                                                                 foreach ($employees as $employee) {
 
@@ -455,10 +437,6 @@ foreach ($monthDates as $monthDate) {
         </div>
     </div>
 </div>
-
-
-
-
 <script>
     let filterTeam = '<?php echo $filter_team; ?>'
     let filterEmployees = '<?php echo $filter_employees; ?>'
