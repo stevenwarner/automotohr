@@ -417,9 +417,7 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/" +
-						getSegment(2) +
-						"/" +
-						getSegment(5) +
+						reportId +
 						"/" +
 						external.data("id")
 				),

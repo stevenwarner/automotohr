@@ -75,7 +75,7 @@ $firstSegment = $this->uri->segment(1);
                                     <?= formatDateToDB($item['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                 </td>
                                 <td style="vertical-align: middle;">
-                                    <a target="_blank"
+                                    <a
                                         href="<?= base_url("{$firstSegment}/report/{$report["sid"]}/incident/edit/" . $item["sid"]); ?>"
                                         class="btn btn-orange">
                                         <i class="fa fa-eye"></i>
