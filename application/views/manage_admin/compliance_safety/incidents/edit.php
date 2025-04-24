@@ -5,7 +5,7 @@
             <div class="inner-content">
                 <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
-                    <div class="dashboard-content">
+                    = <div class="dashboard-content">
                         <div class="dash-inner-block">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -117,8 +117,9 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th class="col-sm-1" scope="col">Item #</th>
+                                                                    <th class="col-sm-2" scope="col">Severity</th>
                                                                     <th class="col-sm-2" scope="col">Title</th>
-                                                                    <th class="col-sm-7" scope="col">Description</th>
+                                                                    <th class="col-sm-5" scope="col">Description</th>
                                                                     <th class="col-sm-2" scope="col">Actions</th>
                                                                 </tr>
                                                             </thead>
@@ -129,6 +130,14 @@
                                                                         <tr class="jsItemRow" data-key="<?= $item["sid"]; ?>">
                                                                             <td style="vertical-align: middle;">
                                                                                 <?= $itemNumber; ?>
+                                                                            </td>
+                                                                            <td style="vertical-align: middle;">
+                                                                                <button type="button" class="btn"
+                                                                                    style="background-color: <?= $severity_status[$item["severity_level_sid"]]["bg_color"]; ?>; color: <?= $severity_status[$item["severity_level_sid"]]["txt_color"]; ?>;">
+
+                                                                                    Severity Level
+                                                                                    <?= $item["severity_level_sid"]; ?>
+                                                                                </button>
                                                                             </td>
                                                                             <td style="vertical-align: middle;">
                                                                                 <?= $item["title"]; ?>
@@ -233,40 +242,7 @@
             }
         });
 
-        //
-        $(".jsAddItemBtn").click(function (event) {
-            event.preventDefault();
-            $("#addItemModal").remove();
 
-            var modalHtml = `
-                <div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" data-backdrop="static">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="addItemModalLabel">Add Item</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body jsModalBody">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" id="saveItemBtn">Save</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            $("body").append(modalHtml);
-            let ht = generateHtml();
-            $(".jsModalBody").html(ht.html);
-
-            $("#addItemModal").modal('show');
-
-            removeAllCKEditor(`textarea_${ht.index}`);
-        });
 
         $(document).on("click", ".jsDeleteItemBtn", function (event) {
             //
@@ -285,11 +261,12 @@
         });
 
         //
-        $(document).on("click", "#saveItemBtn", function (event) {
+        $(document).on("click", "#jsItemUpdateBtn", function (event) {
             //
             event.preventDefault();
-            const title = $(`#text_${$(".jsModalBody").find(".jsItemRow").data("key")}`).val();
-            var itemDescription = CKEDITOR.instances[`textarea_${$(".jsModalBody").find(".jsItemRow").data("key")}`].getData();
+            const recordId = $("#jsItemId").val();
+            const title = $("#jsItemTitle").val();
+            var itemDescription = CKEDITOR.instances["jsItemDescription"].getData();
             if (title.trim() === "") {
                 alertify.alert("Item title cannot be empty");
                 return false;
@@ -298,178 +275,44 @@
                 alertify.alert("Item description cannot be empty");
                 return false;
             }
-            var newItemHtml = `
-            <tr class="jsItemRow" data-key="{{itemId}}">
-                <td style="vertical-align: middle;">
-                    ${$(".jsMainArea tr").length + 1}
-                </td>
-                <td style="vertical-align: middle;">
-                    ${title}
-                </td>
-                <td style="vertical-align: middle;">
-                    ${itemDescription}
-                </td>
-                <td style="vertical-align: middle;" class="text-center">
-                    <button type="button" class="btn btn-warning jsEditItemBtn">
-                        <i class="fa fa-edit"></i>
-                    </button>
-                    <button type="button" class="btn btn-danger jsDeleteItemBtn">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-            `;
+            const severityLevel = $("#jsItemSeverityLevel").val();
 
-            // Show loader
-            $(".jsModalBody").append('<div class="loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>');
+            toggleButtonLoading($("#jsItemUpdateBtn"), true);
 
-            // Save item to database
-            $.ajax({
-                url: '<?= base_url('manage_admin/compliance_safety/incident_types/' . $incidentId . '/save_item'); ?>',
-                type: 'POST',
-                data: {
-                    title: title,
-                    description: itemDescription,
-                },
-                success: function (response) {
-                    // Hide loader
-                    $(".loader").remove();
-                    //
-                    alertify.success(response.message);
-                    // Append item to table
-                    $(".jsMainArea").prepend(newItemHtml.replace('{{itemId}}', response.id));
-                    // Hide modal
-                    $("#addItemModal").modal('hide');
-                },
-                error: function () {
-                    // Hide loader
-                    $(".loader").remove();
-                    alertify.error('Error occurred while saving item');
-                }
-            });
-        });
-
-        //
-        $(document).on("click", ".jsEditItemBtn", function (event) {
-            event.preventDefault();
-            $("#editItemModal").remove();
-
-            //
-            const recordId = $(this).closest("tr").data("key")
-
-            var modalHtml = `
-                <div class="modal fade" id="editItemModal" tabindex="-1" role="dialog" aria-labelledby="addItemModalLabel" data-backdrop="static">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="addItemModalLabel">Edit Item</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body jsModalBody">
-                                <p class="alert text-center">Please wait, while we are generating view.</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary hidden" id="updateItemBtn">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            $("body").append(modalHtml);
-            $("#editItemModal").modal('show');
-            loadItemDetails(recordId)
-        });
-
-        //
-        $(document).on("click", "#updateItemBtn", function (event) {
-            //
-            event.preventDefault();
-            const title = $(`#text_title`).val();
-            if (title.trim() === "") {
-                alertify.alert("Item title cannot be empty");
-                return false;
-            }
-            var itemDescription = CKEDITOR.instances[`textarea_edit`].getData();
-            if (itemDescription.trim() === "") {
-                alertify.alert("Item description cannot be empty");
-                return false;
-            }
-            //
-            const recordId = $("#itemId").val();
-            //
-            $(".jsModalBody").append('<div class="loader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; display: flex; justify-content: center; align-items: center;"><div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div></div>');
-
-            // Save item to database
             $.ajax({
                 url: '<?= base_url('manage_admin/compliance_safety/incident_types_item'); ?>/' + recordId + '/update',
                 type: 'POST',
                 data: {
                     title: title,
                     description: itemDescription,
+                    severityLevel: severityLevel
                 },
                 success: function (response) {
                     // Hide loader
-                    $(".loader").remove();
                     //
                     alertify.success(response.message);
                     // Append item to table
-                    $(`.jsItemRow[data-key='${recordId}']`).find("td:eq(1)").html(title);
-                    $(`.jsItemRow[data-key='${recordId}']`).find("td:eq(2)").html(itemDescription);
+                    $(`.jsItemRow[data-key='${recordId}']`).find("td:eq(1)")
+                        .find(".jsSeverityLevelText").html(`Severity Level ${severityLevel}`);
+                    $(`.jsItemRow[data-key='${recordId}']`).find("td:eq(1)")
+                        .find("button").css({
+                            "background-color": severity_status[severityLevel]["bg_color"],
+                            "color": severity_status[severityLevel]["txt_color"]
+                        });
+                    $(`.jsItemRow[data-key='${recordId}']`).find("td:eq(2)").html(title);
+                    $(`.jsItemRow[data-key='${recordId}']`).find("td:eq(3)").html(itemDescription);
                     // Hide modal
-                    $("#editItemModal").modal('hide');
+                    $("#jsIssueModal").modal('hide');
                 },
                 error: function () {
                     // Hide loader
-                    $(".loader").remove();
                     alertify.error('Error occurred while updating item');
                 }
             });
+
         });
 
         //
-        function generateHtml() {
-            var randomNumber = Math.floor(Math.random() * 1000000);
-            var newItem = `
-                    <div class="row jsItemRow" data-key="${randomNumber}">
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="">
-                                <label for="item_title">Item Title</label>
-                                <input name="item_title[]" id="text_${randomNumber}" class="hr-form-fileds" />
-                            </div>
-                        </div>
-                    </div>
-                `;
-            newItem += `
-                    <div class="row jsItemRow" data-key="${randomNumber}">
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                            <div class="">
-                                <label for="item_description">Item Description</label>
-                                <textarea name="item_description[]" id="textarea_${randomNumber}" class="hr-form-fileds" rows="4" cols="50"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            newItem += `
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                        <div style="background-color: lightyellow; padding: 10px; margin-top: 10px;">
-                            <strong>{{input}}</strong>
-                            <strong>{{checkbox}}</strong>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            return {
-                html: newItem,
-                index: randomNumber
-            };
-        }
-
         function deleteTheItem(recordId) {
             $.ajax({
                 url: '<?= base_url('manage_admin/compliance_safety/incident_types_item'); ?>/' + recordId,
@@ -494,16 +337,80 @@
                 }
             });
         }
+
+        // new logic
+        CKEDITOR.replace('description');
+
+
+        //
+        $(".jsAddItemBtn").click(function (event) {
+            event.preventDefault();
+            loadModal();
+            //
+            $("#jsIssueModalLabel").html("Add Item");
+        });
+
+        $(document).on("click", "#jsItemSubmitBtn", function (event) {
+            event.preventDefault();
+            const title = $("#jsItemTitle").val();
+            if (title.trim() === "") {
+                alertify.alert("Item title cannot be empty");
+                return false;
+            }
+            var itemDescription = CKEDITOR.instances["jsItemDescription"].getData();
+            if (itemDescription.trim() === "") {
+                alertify.alert("Item description cannot be empty");
+                return false;
+            }
+            const severityLevel = $("#jsItemSeverityLevel").val();
+            toggleButtonLoading($("#jsItemSubmitBtn"), true);
+            //
+            $.ajax({
+                url: '<?= base_url('manage_admin/compliance_safety/incident_types/' . $incidentId . '/save_item'); ?>',
+                type: 'POST',
+                data: {
+                    title: title,
+                    description: itemDescription,
+                    severityLevel: severityLevel
+                },
+                always: function () {
+                    toggleButtonLoading($("#jsItemSubmitBtn"), false);
+                },
+                success: function (response) {
+                    //
+                    alertify.success(response.message);
+                    // Append item to table
+                    generateRow(response.id, title, itemDescription, severityLevel);
+                    // Hide modal
+                    $("#jsIssueModal").modal('hide');
+                },
+                error: function () {
+                    // Hide loader
+                    alertify.error('Error occurred while saving item');
+                }
+            });
+        });
+
+        // Edit
+        //
+        $(document).on("click", ".jsEditItemBtn", function (event) {
+            event.preventDefault();
+            //
+            const recordId = $(this).closest("tr").data("key");
+            loadModal();
+            $("#jsIssueModalLabel").html("Edit Item");
+            //
+            loadItemDetails(recordId)
+        });
+
         //
         function loadItemDetails(recordId) {
             $.ajax({
                 url: '<?= base_url('manage_admin/compliance_safety/incident_types_item'); ?>/' + recordId,
                 type: 'get',
                 success: function (response) {
-                    // Hide loader
-                    $(".jsModalBody").html(response.view);
-                    $("#updateItemBtn").removeClass("hidden")
-                    removeAllCKEditor("textarea_edit");
+                    //
+                    populateModalValues(response.title, response.description, recordId, "edit", response.severity_level_sid);
                 },
                 error: function () {
                     // Hide loader
@@ -511,21 +418,318 @@
                 }
             });
         }
-    });
 
-    function removeAllCKEditor(incomingId) {
-
-        if (CKEDITOR.instances[incomingId]) {
-            console.log("destroying instance: " + incomingId);
-            CKEDITOR.instances[incomingId].destroy(true);
+        function toggleButtonLoading(_html, doLoad) {
+            _html.html(doLoad ? "Saving..." : "Save changes");
         }
-        setTimeout(function () {
-            console.log("creating instance: " + incomingId);
-            CKEDITOR.replace(incomingId);
-        }, 1000);
-    }
 
-    $(document).ready(function () {
-        CKEDITOR.replace('description');
+
+        const severity_status = <?= json_encode($severity_status); ?>;
+
+
+        // Load the modal when the page is ready
+        function loadModal() {
+            // Check if the modal already exists
+            if (!$("#jsIssueModal").length) {
+                addModalToBody();
+            }
+            //
+            populateModalValues("", "", 0, "add");
+            // Show the modal
+            $("#jsIssueModal").modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+            // Set the modal to be static
+            $("#jsIssueModal").modal("show");
+        }
+
+        function addModalToBody() {
+            //
+            let severityLevelList = "";
+            if (severity_status) {
+                $.each(severity_status, function (index, value) {
+                    severityLevelList += `
+                        <div class="col-xs-12">
+                            <div data-id="${value["sid"]}"
+                                class="csLabelPill applicant jsSelectedLabelPill text-center"
+                                style="background-color: ${value["bg_color"]}; color: ${value["txt_color"]};">
+                                Severity Level ${value["level"]}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            var modalHtml = `
+               <!-- Bootstrap Modal -->
+                <div class="modal fade" id="jsIssueModal" tabindex="-1" role="dialog" aria-labelledby="jsIssueModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="jsIssueModalLabel">Modal Title</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Modal content goes here -->
+                                <form action="" id="jsItemForm"> 
+                                    <div class="form-group">
+                                        <label>Title <strong class="text-danger">*</strong></label>
+                                        <input type="text" name="title" class="form-control jsItemTitle" id="jsItemTitle" required />
+                                        <input type="hidden" id="jsItemId" />
+                                        <input type="hidden" id="jsItemSeverityLevel" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Description <strong class="text-danger">*</strong></label>
+                                        <textarea name="description" class="form-control jsItemDescription" rows="4"
+                                            required id="jsItemDescription"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Severity Level <strong class="text-danger">*</strong></label>
+                                        <div class="label-wrapper-outer">
+                                            <div class="row">
+                                                <div class="col-xs-10 jsSelectedPill">
+                                                    <div id="jsItemSelectedSeverityLevel" data-id="${severity_status[1]["sid"]}"
+                                                        class="csLabelPill jsSelectedLabelPill text-center"
+                                                        style="background-color: ${severity_status[1]["bg_color"]}; color: ${severity_status[1]["txt_color"]};">
+                                                        Severity Level ${severity_status[1]["level"]}
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-2 text-left">
+                                                    <div class="btn btn-primary show-status-box">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Selected one -->
+                                            <div class="lable-wrapper">
+                                                <div style="height:20px;">
+                                                    <i class="fa fa-times cross"></i>
+                                                </div>
+                                                ${severityLevelList}       
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        <div style="background-color: lightyellow; padding: 10px; margin-top: 10px;">
+                                            <p>
+                                                <strong>{{input}}</strong>
+                                            </p>
+                                            <p>
+                                                <strong>{{checkbox}}</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary hidden" id="jsItemSubmitBtn">Save changes</button>
+                                <button type="button" class="btn btn-warning hidden" id="jsItemUpdateBtn">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $("body").append(modalHtml);
+            //
+            if (typeof CKEDITOR.instances["jsItemDescription"] === "undefined") {
+                CKEDITOR.replace("jsItemDescription");
+            }
+        }
+
+        //
+        function generateRow(itemId, itemTitle, itemDescription, itemSeverityLevel) {
+            var newItemHtml = `
+            <tr class="jsItemRow" data-key="{{itemId}}">
+                <td style="vertical-align: middle;">
+                    ${$(".jsMainArea tr").length + 1}
+                </td>
+                <td style="vertical-align: middle;">
+                    <button type="button" class="btn"
+                        style="background-color: ${severity_status[itemSeverityLevel]["bg_color"]}; color: ${severity_status[itemSeverityLevel]["txt_color"]};">
+                    <span class="jsSeverityLevelText">
+                        Severity Level ${itemSeverityLevel}
+                    </span>
+                    </button>
+                </td>
+                <td style="vertical-align: middle;">
+                    ${itemTitle}
+                </td>
+                <td style="vertical-align: middle;">
+                    ${itemDescription}
+                </td>
+                <td style="vertical-align: middle;" class="text-center">
+                    <button type="button" class="btn btn-warning jsEditItemBtn">
+                        <i class="fa fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger jsDeleteItemBtn">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            `;
+            $(".jsMainArea").prepend(newItemHtml.replace('{{itemId}}', itemId));
+
+        }
+
+        //
+        function populateModalValues(title, description, itemId = 0, type = "add", severityLevel = 1) {
+            // Populate the modal with values
+            $("#jsItemSubmitBtn").html("Save changes");
+            $("#jsItemUpdateBtn").html("Save changes");
+            //
+            $("#jsItemTitle").val(title);
+            CKEDITOR.instances["jsItemDescription"].setData(description);
+            $("#jsItemId").val(itemId);
+            $("#jsItemSeverityLevel").val(severityLevel);
+            $("#jsItemSelectedSeverityLevel").data("id", severityLevel);
+            $("#jsItemSelectedSeverityLevel").html(`
+                Severity Level ${severity_status[severityLevel]["level"]}
+            `);
+            $("#jsItemSelectedSeverityLevel").css({
+                "background-color": severity_status[severityLevel]["bg_color"],
+                "color": severity_status[severityLevel]["txt_color"]
+            });
+            //
+            if (type === "edit") {
+                $("#jsItemSubmitBtn").addClass("hidden");
+                $("#jsItemUpdateBtn").removeClass("hidden");
+            } else {
+                $("#jsItemSubmitBtn").removeClass("hidden");
+                $("#jsItemUpdateBtn").addClass("hidden");
+            }
+        }
+
+        $(document).on("click", ".jsSelectedLabelPill", function () {
+            $(this).closest(".row").next().show();
+        });
+
+
+
+        $(document).on("click", ".show-status-box", function () {
+            $(this).closest(".row").next().show();
+        });
+
+        $(document).on("hover", ".applicant",
+            function () {
+                $(this).find(".jsSeverityLevelText").animate(
+                    {
+                        "padding-top": 0,
+                        "padding-right": 0,
+                        "padding-bottom": 0,
+                        "padding-left": 15,
+                    },
+                    "fast"
+                );
+            },
+            function () {
+                $(this).find(".jsSeverityLevelText").animate(
+                    {
+                        "padding-top": 0,
+                        "padding-right": 0,
+                        "padding-bottom": 0,
+                        "padding-left": 5,
+                    },
+                    "fast"
+                );
+            }
+        );
+
+        $(document).on("click", ".applicant", function () {
+            //
+            const id = $(this).data("id");
+
+            $("#jsItemSelectedSeverityLevel").data("id", id);
+            $("#jsItemSelectedSeverityLevel").css({
+                "background-color": $(this).css("background-color"),
+                "color": $(this).css("color"),
+            });
+            $("#jsItemSelectedSeverityLevel").html(`
+                Severity Level ${$(this).find(".jsSeverityLevelText").text()}
+            `);
+
+
+            $("#jsItemSeverityLevel").val(id);
+        });
+
+        $(document).on("click", ".cross", function () {
+            $(this).parent().parent().css("display", "none");
+        });
+
+
     });
 </script>
+
+
+<style>
+    .candidate-status {
+        width: 100%;
+        height: 50px;
+    }
+
+    .label-wrapper-outer {
+        width: 100%;
+        position: relative;
+    }
+
+    .candidate-status .lable-wrapper {
+        top: 40px;
+        border-radius: 5px;
+        padding: 20px;
+        width: 100%;
+    }
+
+    .lable-wrapper {
+        width: 100%;
+        display: none;
+        background-color: white;
+        padding: 20px;
+        padding-top: 0;
+        box-shadow: 0px 0px 6px #888888;
+        right: 0;
+        position: absolute;
+        top: 30px;
+        z-index: 999;
+    }
+
+    .label.csLabelPill {
+        display: block !important;
+    }
+
+    .csLabelPill {
+        font-family: arial;
+        font-weight: bold;
+        padding: 6px;
+        font-size: 13px;
+        margin-bottom: 3px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+    }
+
+    .candidate-status .label {
+        height: 30px;
+        line-height: 24px;
+        font-style: italic;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .candidate-status .fa.fa-times.cross {
+        background-color: #000;
+        border-radius: 100%;
+        color: #fff;
+        font-size: 9px;
+        height: 20px;
+        line-height: 19px;
+        padding: 0;
+        position: absolute;
+        right: 20px;
+        text-align: center;
+        top: 10px;
+        width: 20px;
+    }
+</style>
