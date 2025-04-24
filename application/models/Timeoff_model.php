@@ -73,7 +73,8 @@ class Timeoff_model extends CI_Model
             ->where('timeoff_policies.status', 1)
             ->order_by('timeoff_policies.sort_order', 'ASC');
         //
-        if ($type == 'specific') $this->db->where('timeoff_policies.is_admin', 0);
+        if ($type == 'specific')
+            $this->db->where('timeoff_policies.is_admin', 0);
         //
         $result = $this->db->get();
         //
@@ -131,7 +132,8 @@ class Timeoff_model extends CI_Model
                 ->where('active', 1)
                 ->where('terminated_status', 0);
         }
-        if (!empty($ids)) $this->db->where_in('sid', $ids);
+        if (!empty($ids))
+            $this->db->where_in('sid', $ids);
 
         $result = $this->db->get();
         //
@@ -190,7 +192,8 @@ class Timeoff_model extends CI_Model
             ->where('active', 1)
             ->where('terminated_status', 0)
             ->order_by('first_name', 'ASC');
-        if (!empty($ids)) $this->db->where_in('sid', $ids);
+        if (!empty($ids))
+            $this->db->where_in('sid', $ids);
 
         $result = $this->db->get();
         //
@@ -221,7 +224,8 @@ class Timeoff_model extends CI_Model
             ->where('title', $policyTitle)
             ->where('company_sid', $companyId);
         //
-        if ($policyId !=  0) $this->db->where("sid <> $policyId", null);
+        if ($policyId != 0)
+            $this->db->where("sid <> $policyId", null);
         //
         return $this->db->count_all_results();
     }
@@ -333,21 +337,26 @@ class Timeoff_model extends CI_Model
         //
         if (!empty($formpost['filter'])) {
             // Search Filter
-            if ($formpost['filter']['status'] != '' && $formpost['filter']['status'] != -1) $this->db->where('timeoff_policies.status', $formpost['filter']['status']);
-            if ($formpost['filter']['policy'] != '' && $formpost['filter']['policy'] != 0) $this->db->where('timeoff_policies.sid', $formpost['filter']['policy']);
-            if ($formpost['filter']['startDate'] != '' && $formpost['filter']['endDate'] != '') $this->db->where('timeoff_policies.created_at BETWEEN "' . (formatDate($formpost['filter']['startDate'], 'm-d-Y', 'Y-m-d')) . '" AND "' . (formatDate($formpost['filter']['endDate'], 'm-d-Y', 'Y-m-d')) . '"', null, false);
+            if ($formpost['filter']['status'] != '' && $formpost['filter']['status'] != -1)
+                $this->db->where('timeoff_policies.status', $formpost['filter']['status']);
+            if ($formpost['filter']['policy'] != '' && $formpost['filter']['policy'] != 0)
+                $this->db->where('timeoff_policies.sid', $formpost['filter']['policy']);
+            if ($formpost['filter']['startDate'] != '' && $formpost['filter']['endDate'] != '')
+                $this->db->where('timeoff_policies.created_at BETWEEN "' . (formatDate($formpost['filter']['startDate'], 'm-d-Y', 'Y-m-d')) . '" AND "' . (formatDate($formpost['filter']['endDate'], 'm-d-Y', 'Y-m-d')) . '"', null, false);
         }
 
         //
         $result = $this->db->get();
         $policies = $result->result_array();
-        $result  = $result->free_result();
+        $result = $result->free_result();
         //
-        if (!sizeof($policies)) return array();
+        if (!sizeof($policies))
+            return array();
         //
         $returnArray = array('Policies' => $policies, 'Count' => 0);
         //
-        if ($page != 1) return $returnArray;
+        if ($page != 1)
+            return $returnArray;
         //
         $this->db
             ->from('timeoff_policies')
@@ -356,9 +365,12 @@ class Timeoff_model extends CI_Model
         //
         if (!empty($formpost['filter'])) {
             // Search Filter
-            if ($formpost['filter']['status'] != '' && $formpost['filter']['status'] != -1) $this->db->where('timeoff_policies.status', $formpost['filter']['status']);
-            if ($formpost['filter']['policy'] != '' && $formpost['filter']['policy'] != 0) $this->db->where('timeoff_policies.sid', $formpost['filter']['policy']);
-            if ($formpost['filter']['startDate'] != '' && $formpost['filter']['endDate'] != '') $this->db->where('timeoff_policies.created_at BETWEEN "' . (formatDate($formpost['filter']['startDate'], 'm-d-Y', 'Y-m-d')) . '" AND "' . (formatDate($formpost['filter']['endDate'], 'm-d-Y', 'Y-m-d')) . '"', null, false);
+            if ($formpost['filter']['status'] != '' && $formpost['filter']['status'] != -1)
+                $this->db->where('timeoff_policies.status', $formpost['filter']['status']);
+            if ($formpost['filter']['policy'] != '' && $formpost['filter']['policy'] != 0)
+                $this->db->where('timeoff_policies.sid', $formpost['filter']['policy']);
+            if ($formpost['filter']['startDate'] != '' && $formpost['filter']['endDate'] != '')
+                $this->db->where('timeoff_policies.created_at BETWEEN "' . (formatDate($formpost['filter']['startDate'], 'm-d-Y', 'Y-m-d')) . '" AND "' . (formatDate($formpost['filter']['endDate'], 'm-d-Y', 'Y-m-d')) . '"', null, false);
         }
         //
         $returnArray['Count'] = $this->db->count_all_results();
@@ -492,7 +504,8 @@ class Timeoff_model extends CI_Model
             //
             foreach ($policies as $policy) {
                 //
-                if (!isset($tmp[$policy['type_sid']])) $tmp[$policy['type_sid']] = [];
+                if (!isset($tmp[$policy['type_sid']]))
+                    $tmp[$policy['type_sid']] = [];
                 //
                 $tmp[$policy['type_sid']][] = $policy['title'];
             }
@@ -523,22 +536,28 @@ class Timeoff_model extends CI_Model
         //
         if (!empty($post['filter'])) {
             // Search Filter
-            if ($post['filter']['type'] != '' && $post['filter']['type'] != -1) $this->db->where('timeoff_categories.sid', $post['filter']['type']);
-            if ($post['filter']['status'] != '' && $post['filter']['status'] != -1) $this->db->where('timeoff_categories.status', $post['filter']['status']);
-            if ($post['filter']['startDate'] != '' && $post['filter']['endDate'] != '') $this->db->where('timeoff_categories.created_at BETWEEN "' . (formatDate($post['filter']['startDate'], 'm-d-Y', 'Y-m-d')) . '" AND "' . (formatDate($post['filter']['endDate'], 'm-d-Y', 'Y-m-d')) . '"', null, false);
+            if ($post['filter']['type'] != '' && $post['filter']['type'] != -1)
+                $this->db->where('timeoff_categories.sid', $post['filter']['type']);
+            if ($post['filter']['status'] != '' && $post['filter']['status'] != -1)
+                $this->db->where('timeoff_categories.status', $post['filter']['status']);
+            if ($post['filter']['startDate'] != '' && $post['filter']['endDate'] != '')
+                $this->db->where('timeoff_categories.created_at BETWEEN "' . (formatDate($post['filter']['startDate'], 'm-d-Y', 'Y-m-d')) . '" AND "' . (formatDate($post['filter']['endDate'], 'm-d-Y', 'Y-m-d')) . '"', null, false);
         }
         //
         $result = $this->db->get('timeoff_categories');
         $types = $result->result_array();
-        $result  = $result->free_result();
+        $result = $result->free_result();
         //
-        if (!sizeof($types)) return array();
+        if (!sizeof($types))
+            return array();
         //
-        foreach ($types as $k => $v) $types[$k]['policies'] = isset($policies[$v['type_sid']]) ? $policies[$v['type_sid']] : null;
+        foreach ($types as $k => $v)
+            $types[$k]['policies'] = isset($policies[$v['type_sid']]) ? $policies[$v['type_sid']] : null;
         //
         $returnArray = array('Types' => $types, 'Count' => 0);
         //
-        if ($page != 1) return $returnArray;
+        if ($page != 1)
+            return $returnArray;
         //
         $this->db
             ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
@@ -548,9 +567,12 @@ class Timeoff_model extends CI_Model
         //
         if (!empty($post['filter'])) {
             // Search Filter
-            if ($post['filter']['type'] != '' && $post['filter']['type'] != -1) $this->db->where('timeoff_categories.sid', $post['filter']['type']);
-            if ($post['filter']['status'] != '' && $post['filter']['status'] != -1) $this->db->where('timeoff_categories.status', $post['filter']['status']);
-            if ($post['filter']['startDate'] != '' && $post['filter']['endDate'] != '') $this->db->where('timeoff_categories.created_at BETWEEN "' . (formatDate($post['filter']['startDate'], 'm-d-Y', 'Y-m-d')) . '" AND "' . (formatDate($post['filter']['endDate'], 'm-d-Y', 'Y-m-d')) . '"', null, false);
+            if ($post['filter']['type'] != '' && $post['filter']['type'] != -1)
+                $this->db->where('timeoff_categories.sid', $post['filter']['type']);
+            if ($post['filter']['status'] != '' && $post['filter']['status'] != -1)
+                $this->db->where('timeoff_categories.status', $post['filter']['status']);
+            if ($post['filter']['startDate'] != '' && $post['filter']['endDate'] != '')
+                $this->db->where('timeoff_categories.created_at BETWEEN "' . (formatDate($post['filter']['startDate'], 'm-d-Y', 'Y-m-d')) . '" AND "' . (formatDate($post['filter']['endDate'], 'm-d-Y', 'Y-m-d')) . '"', null, false);
         }
         //
         $returnArray['Count'] = $this->db->count_all_results('timeoff_categories');
@@ -578,20 +600,22 @@ class Timeoff_model extends CI_Model
         //
         $categoryArray =
             $this->db
-            ->select('sid')
-            ->from('timeoff_category_list')
-            ->where('category_name', $typeTitle)
-            ->get()
-            ->row_array();
+                ->select('sid')
+                ->from('timeoff_category_list')
+                ->where('category_name', $typeTitle)
+                ->get()
+                ->row_array();
         //
-        if (empty($categoryArray)) return [0, 0];
+        if (empty($categoryArray))
+            return [0, 0];
         //
         $this->db
             ->from('timeoff_categories')
             ->where('timeoff_category_list_sid', $categoryArray['sid'])
             ->where('company_sid', $companyId);
         //
-        if ($typeId !=  0) $this->db->where("sid <> $typeId", null);
+        if ($typeId != 0)
+            $this->db->where("sid <> $typeId", null);
         //
         return [$categoryArray['sid'], $this->db->count_all_results()];
     }
@@ -690,7 +714,8 @@ class Timeoff_model extends CI_Model
         $this->db
             ->where_in('company_sid', $companyId);
         //
-        if ($policyIds != 0) $this->db->where_in('sid', $policyIds);
+        if ($policyIds != 0)
+            $this->db->where_in('sid', $policyIds);
         //
         $this->db
             ->update(
@@ -779,7 +804,7 @@ class Timeoff_model extends CI_Model
     {
         $types =
             $this->db
-            ->select('
+                ->select('
             timeoff_categories.sid as type_sid, 
             timeoff_categories.is_archived,
             timeoff_categories.default_type,
@@ -787,11 +812,11 @@ class Timeoff_model extends CI_Model
             timeoff_category_list.category_name as type
             
         ')
-            ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
-            ->where('timeoff_categories.sid', $typeId)
-            ->where('timeoff_categories.company_sid', $companyId)
-            ->get('timeoff_categories')
-            ->row_array();
+                ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
+                ->where('timeoff_categories.sid', $typeId)
+                ->where('timeoff_categories.company_sid', $companyId)
+                ->get('timeoff_categories')
+                ->row_array();
         //
         if (!empty($types)) {
             $types['policies'] = $this->db
@@ -848,26 +873,32 @@ class Timeoff_model extends CI_Model
             ->order_by('timeoff_holidays.from_date', 'ASC')
             ->limit($limit, $start);
         // Search Filter
-        if ($post['filter']['years'] != '' && $post['filter']['years'] != -1) $this->db->where('timeoff_holidays.holiday_year', $post['filter']['years']);
-        else $this->db->where('timeoff_holidays.holiday_year', date('Y'));
+        if ($post['filter']['years'] != '' && $post['filter']['years'] != -1)
+            $this->db->where('timeoff_holidays.holiday_year', $post['filter']['years']);
+        else
+            $this->db->where('timeoff_holidays.holiday_year', date('Y'));
         //
         $result = $this->db->get();
         $holidays = $result->result_array();
-        $result  = $result->free_result();
+        $result = $result->free_result();
         //
-        if (!sizeof($holidays)) return array();
+        if (!sizeof($holidays))
+            return array();
         //
         $returnArray = array('Holidays' => $holidays, 'Count' => 0);
         //
-        if ($page != 1) return $returnArray;
+        if ($page != 1)
+            return $returnArray;
         //
         $this->db
             ->from('timeoff_holidays')
             ->where('timeoff_holidays.is_archived', $post['filter']['archived'] == 0 ? 0 : 1)
             ->where('timeoff_holidays.company_sid', $post['companyId']);
         // Search Filter
-        if ($post['filter']['years'] != '' && $post['filter']['years'] != -1) $this->db->where('timeoff_holidays.holiday_year', $post['filter']['years']); //
-        else $this->db->where('timeoff_holidays.holiday_year', date('Y'));
+        if ($post['filter']['years'] != '' && $post['filter']['years'] != -1)
+            $this->db->where('timeoff_holidays.holiday_year', $post['filter']['years']); //
+        else
+            $this->db->where('timeoff_holidays.holiday_year', date('Y'));
         //
         $returnArray['Count'] = $this->db->count_all_results();
 
@@ -959,11 +990,13 @@ class Timeoff_model extends CI_Model
         $b = $a->result_array();
         $a = $a->free_result();
         //
-        if (!sizeof($b)) return array();
+        if (!sizeof($b))
+            return array();
         //
         $c = array();
         //
-        foreach ($b as $v) $c[] = $v['holiday_year'];
+        foreach ($b as $v)
+            $c[] = $v['holiday_year'];
         //
         return $c;
     }
@@ -988,7 +1021,8 @@ class Timeoff_model extends CI_Model
             ->where('timeoff_holidays.holiday_title', $post['holiday'])
             ->where('timeoff_holidays.holiday_year', $post['year']);
         //
-        if (isset($post['holidayId'])) $this->db->where('timeoff_holidays.sid <>', $post['holidayId']);
+        if (isset($post['holidayId']))
+            $this->db->where('timeoff_holidays.sid <>', $post['holidayId']);
         //
         return $this->db->count_all_results();
     }
@@ -1229,7 +1263,7 @@ class Timeoff_model extends CI_Model
             'Teams' => []
         ];
         // Get departments
-        $a =  $this->db
+        $a = $this->db
             ->select('sid as department_id, name as title')
             ->where('company_sid', $companyId)
             ->where('status', 1)
@@ -1247,8 +1281,10 @@ class Timeoff_model extends CI_Model
             ->where('is_deleted', 0)
             ->group_start();
         //
-        if (count($r['Departments'])) $this->db->where_in('department_sid', array_column($r['Departments'], 'department_id'))->or_where('department_sid', 0);
-        else $this->db->where('department_sid', 0);
+        if (count($r['Departments']))
+            $this->db->where_in('department_sid', array_column($r['Departments'], 'department_id'))->or_where('department_sid', 0);
+        else
+            $this->db->where('department_sid', 0);
         $this->db
             ->group_end()
             ->order_by('name', 'ASC');
@@ -1308,27 +1344,35 @@ class Timeoff_model extends CI_Model
             ->order_by('users.first_name', 'ASC')
             ->limit($limit, $start);
         // Search Filter
-        if ($formpost['filter']['status'] != '' && $formpost['filter']['status'] != -1) $this->db->where('timeoff_approvers.status', $formpost['filter']['status']);
+        if ($formpost['filter']['status'] != '' && $formpost['filter']['status'] != -1)
+            $this->db->where('timeoff_approvers.status', $formpost['filter']['status']);
         if (!empty($formpost['filter']['departments']) && !in_array('all', $formpost['filter']['departments'])) {
             foreach ($formpost['filter']['departments'] as $k => $dt) {
-                if ($k == 0) $this->db->where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
-                else $this->db->or_where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
+                if ($k == 0)
+                    $this->db->where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
+                else
+                    $this->db->or_where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
             }
         }
         if (!empty($formpost['filter']['teams']) && !in_array('all', $formpost['filter']['teams'])) {
             foreach ($formpost['filter']['teams'] as $k => $dt) {
-                if ($k == 0) $this->db->where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
-                else $this->db->or_where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
+                if ($k == 0)
+                    $this->db->where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
+                else
+                    $this->db->or_where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
             }
         }
-        if (isset($formpost['filter']['employees']) && $formpost['filter']['employees'] != '' && $formpost['filter']['employees'] != 'all') $this->db->where('timeoff_approvers.employee_sid', $formpost['filter']['employees']);
-        if ($formpost['filter']['startDate'] != '' && $formpost['filter']['endDate']) $this->db->where('DATE_FORMAT(timeoff_approvers.created_at, "%m-%d-%Y") BETWEEN ' . ($formpost['filter']['startDate']) . ' AND ' . ($formpost['filter']['endDate']) . '');
+        if (isset($formpost['filter']['employees']) && $formpost['filter']['employees'] != '' && $formpost['filter']['employees'] != 'all')
+            $this->db->where('timeoff_approvers.employee_sid', $formpost['filter']['employees']);
+        if ($formpost['filter']['startDate'] != '' && $formpost['filter']['endDate'])
+            $this->db->where('DATE_FORMAT(timeoff_approvers.created_at, "%m-%d-%Y") BETWEEN ' . ($formpost['filter']['startDate']) . ' AND ' . ($formpost['filter']['endDate']) . '');
         //
         $result = $this->db->get();
         $approvers = $result->result_array();
-        $result  = $result->free_result();
+        $result = $result->free_result();
         //
-        if (!sizeof($approvers)) return array();
+        if (!sizeof($approvers))
+            return array();
         //
         foreach ($approvers as $k => $approver) {
             //
@@ -1378,7 +1422,8 @@ class Timeoff_model extends CI_Model
         //
         $returnArray = array('Approvers' => $approvers, 'Count' => 0);
         //
-        if ($page != 1) return $returnArray;
+        if ($page != 1)
+            return $returnArray;
         //
         $this->db
             ->from('timeoff_approvers')
@@ -1388,21 +1433,28 @@ class Timeoff_model extends CI_Model
             ->where('timeoff_approvers.company_sid', $formpost['companyId'])
             ->order_by('timeoff_approvers.sid', 'DESC');
         // Search Filter
-        if ($formpost['filter']['status'] != '' && $formpost['filter']['status'] != -1) $this->db->where('timeoff_approvers.status', $formpost['filter']['status']);
+        if ($formpost['filter']['status'] != '' && $formpost['filter']['status'] != -1)
+            $this->db->where('timeoff_approvers.status', $formpost['filter']['status']);
         if (!empty($formpost['filter']['departments']) && !in_array('all', $formpost['filter']['departments'])) {
             foreach ($formpost['filter']['departments'] as $k => $dt) {
-                if ($k == 0) $this->db->where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
-                else $this->db->or_where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
+                if ($k == 0)
+                    $this->db->where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
+                else
+                    $this->db->or_where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
             }
         }
         if (!empty($formpost['filter']['teams']) && !in_array('all', $formpost['filter']['teams'])) {
             foreach ($formpost['filter']['teams'] as $k => $dt) {
-                if ($k == 0) $this->db->where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
-                else $this->db->or_where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
+                if ($k == 0)
+                    $this->db->where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
+                else
+                    $this->db->or_where('find_in_set("' . ($dt) . '", timeoff_approvers.department_sid)', false, false);
             }
         }
-        if (isset($formpost['filter']['employees']) && $formpost['filter']['employees'] != '' && $formpost['filter']['employees'] != 'all') $this->db->where('timeoff_approvers.employee_sid', $formpost['filter']['employees']);
-        if ($formpost['filter']['startDate'] != '' && $formpost['filter']['endDate']) $this->db->where('DATE_FORMAT(timeoff_approvers.created_at, "%m-%d-%Y") BETWEEN ' . ($formpost['filter']['startDate']) . ' AND ' . ($formpost['filter']['endDate']) . '');
+        if (isset($formpost['filter']['employees']) && $formpost['filter']['employees'] != '' && $formpost['filter']['employees'] != 'all')
+            $this->db->where('timeoff_approvers.employee_sid', $formpost['filter']['employees']);
+        if ($formpost['filter']['startDate'] != '' && $formpost['filter']['endDate'])
+            $this->db->where('DATE_FORMAT(timeoff_approvers.created_at, "%m-%d-%Y") BETWEEN ' . ($formpost['filter']['startDate']) . ' AND ' . ($formpost['filter']['endDate']) . '');
         //
         $returnArray['Count'] = $this->db->count_all_results();
 
@@ -1590,14 +1642,19 @@ class Timeoff_model extends CI_Model
         $this->db->group_start();
         //
         foreach ($post['selectedEmployees'] as $k => $dt) {
-            if ($k == 0) $this->db->where('find_in_set("' . ($dt) . '", department_sid) > 0', false, false);
-            else $this->db->or_where('find_in_set("' . ($dt) . '", department_sid) > 0', false, false);
+            if ($k == 0)
+                $this->db->where('find_in_set("' . ($dt) . '", department_sid) > 0', false, false);
+            else
+                $this->db->or_where('find_in_set("' . ($dt) . '", department_sid) > 0', false, false);
         }
         $this->db->group_end();
         //
-        if (isset($post['type']) && $post['type'] == 1) $this->db->where('is_department', '1');
-        else if (isset($post['type']) && $post['type'] == 0) $this->db->where('is_department', '0');
-        if (isset($post['approverId'])) $this->db->where('sid <> ' . ($post['approverId']) . '', null);
+        if (isset($post['type']) && $post['type'] == 1)
+            $this->db->where('is_department', '1');
+        else if (isset($post['type']) && $post['type'] == 0)
+            $this->db->where('is_department', '0');
+        if (isset($post['approverId']))
+            $this->db->where('sid <> ' . ($post['approverId']) . '', null);
         //
         return $this->db->count_all_results();
     }
@@ -1695,38 +1752,45 @@ class Timeoff_model extends CI_Model
         // Get departments & teams
         $approvers =
             $this->db
-            ->select('
+                ->select('
             is_department,
             department_sid
         ')
-            ->where('employee_sid', $employeeId)
-            ->where('is_archived', 0)
-            ->get('timeoff_approvers')
-            ->result_array();
+                ->where('employee_sid', $employeeId)
+                ->where('is_archived', 0)
+                ->get('timeoff_approvers')
+                ->result_array();
         //
-        if (empty($approvers)) return [];
+        if (empty($approvers))
+            return [];
         //
         $teams = [];
         $departments = [];
         //
         foreach ($approvers as $approver) {
-            if ($approver['is_department'] == 1) $departments[] = explode(',', $approver['department_sid']);
-            else $teams[] = explode(',', $approver['department_sid']);
+            if ($approver['is_department'] == 1)
+                $departments[] = explode(',', $approver['department_sid']);
+            else
+                $teams[] = explode(',', $approver['department_sid']);
         }
         //
-        if (in_array('all', $departments)) $departments = 'all';
+        if (in_array('all', $departments))
+            $departments = 'all';
         else {
             $nt = [];
             foreach ($departments as $department) {
-                foreach ($department as $t) $nt[] = $t;
+                foreach ($department as $t)
+                    $nt[] = $t;
             }
             $departments = $nt;
         }
-        if (in_array('all', $teams)) $teams = 'all';
+        if (in_array('all', $teams))
+            $teams = 'all';
         else {
             $nt = [];
             foreach ($teams as $team) {
-                foreach ($team as $t) $nt[] = $t;
+                foreach ($team as $t)
+                    $nt[] = $t;
             }
             $teams = $nt;
         }
@@ -1745,7 +1809,8 @@ class Timeoff_model extends CI_Model
                 ->where('departments_team_management.status ', 1)
                 ->where('departments_team_management.is_deleted ', 0);
             //
-            if ($departments != 'all' && !empty($departments)) $this->db->where_in('departments_employee_2_team.department_sid', $departments);
+            if ($departments != 'all' && !empty($departments))
+                $this->db->where_in('departments_employee_2_team.department_sid', $departments);
             //
             $de = $this->db
                 ->get('departments_employee_2_team')
@@ -1763,7 +1828,8 @@ class Timeoff_model extends CI_Model
                 ->where('departments_team_management.status ', 1)
                 ->where('departments_team_management.is_deleted ', 0);
             //
-            if ($teams != 'all' && !empty($teams)) $this->db->where_in('departments_employee_2_team.team_sid', $teams);
+            if ($teams != 'all' && !empty($teams))
+                $this->db->where_in('departments_employee_2_team.team_sid', $teams);
             //
             $te = $this->db
                 ->get('departments_employee_2_team')
@@ -1782,7 +1848,8 @@ class Timeoff_model extends CI_Model
                 SORT_STRING
             ),
             function ($emp) {
-                if ($emp != 0) return $emp;
+                if ($emp != 0)
+                    return $emp;
             }
         );
     }
@@ -1832,8 +1899,10 @@ class Timeoff_model extends CI_Model
             $this->db->where('timeoff_policies.is_archived', 0);
         }
         //
-        if ($withInclude) $this->db->where('timeoff_policies.is_included', 1);
-        if (!empty($policies)) $this->db->where_in('timeoff_policies.sid', $policies);
+        if ($withInclude)
+            $this->db->where('timeoff_policies.is_included', 1);
+        if (!empty($policies))
+            $this->db->where_in('timeoff_policies.sid', $policies);
         //
         $policies = $this->db->get('timeoff_policies')
             ->result_array();
@@ -1857,21 +1926,22 @@ class Timeoff_model extends CI_Model
     ) {
         $balances =
             $this->db
-            ->select('
+                ->select('
             timeoff_balances.policy_sid,
             timeoff_balances.user_sid,
             timeoff_balances.is_added,
             timeoff_balances.added_time
         ')
-            ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner')
-            ->where('timeoff_policies.company_sid', $companyId)
-            ->where('timeoff_policies.is_archived', 0)
-            ->where('timeoff_balances.effective_at <=', 'CURDATE()', FALSE)
-            ->where('date_format(timeoff_balances.effective_at, "%Y") =', date('Y', strtotime('now')))
-            ->get('timeoff_balances')
-            ->result_array();
+                ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner')
+                ->where('timeoff_policies.company_sid', $companyId)
+                ->where('timeoff_policies.is_archived', 0)
+                ->where('timeoff_balances.effective_at <=', 'CURDATE()', FALSE)
+                ->where('date_format(timeoff_balances.effective_at, "%Y") =', date('Y', strtotime('now')))
+                ->get('timeoff_balances')
+                ->result_array();
         //
-        if (empty($balances)) return [];
+        if (empty($balances))
+            return [];
         //
         $t = [];
         //
@@ -1879,10 +1949,13 @@ class Timeoff_model extends CI_Model
             //
             $bb = $balance['user_sid'] . '-' . $balance['policy_sid'];
             //
-            if (!isset($t[$bb])) $t[$bb] = 0;
+            if (!isset($t[$bb]))
+                $t[$bb] = 0;
             //
-            if ($balance['is_added'] == '1') $t[$bb] += $balance['added_time'];
-            else $t[$bb] -= $balance['added_time'];
+            if ($balance['is_added'] == '1')
+                $t[$bb] += $balance['added_time'];
+            else
+                $t[$bb] -= $balance['added_time'];
         }
         //
         return $t;
@@ -1905,20 +1978,21 @@ class Timeoff_model extends CI_Model
     ) {
         $balances =
             $this->db
-            ->select('
+                ->select('
             timeoff_balances.policy_sid,
             timeoff_balances.user_sid,
             timeoff_balances.is_added,
             timeoff_balances.added_time
         ')
-            ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner')
-            ->where('timeoff_policies.company_sid', $companyId)
-            ->where('timeoff_balances.user_sid', $employeeId)
-            ->where('timeoff_policies.is_archived', 0)
-            ->get('timeoff_balances')
-            ->result_array();
+                ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner')
+                ->where('timeoff_policies.company_sid', $companyId)
+                ->where('timeoff_balances.user_sid', $employeeId)
+                ->where('timeoff_policies.is_archived', 0)
+                ->get('timeoff_balances')
+                ->result_array();
         //
-        if (empty($balances)) return [];
+        if (empty($balances))
+            return [];
         //
         $t = [];
         //
@@ -1973,7 +2047,8 @@ class Timeoff_model extends CI_Model
         $employee = $a->row_array();
         $a->free_result();
         //
-        if (empty($employee)) return [];
+        if (empty($employee))
+            return [];
         //
         if ($employee['is_executive_admin'] == 1) {
             return [];
@@ -2032,14 +2107,16 @@ class Timeoff_model extends CI_Model
                     continue;
                 }
 
-                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                    continue;
             } else {
                 //
                 if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
                     continue;
                 }
                 // Not-Entitled
-                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                    continue;
             }
             //
             $accruals = json_decode($policy['accruals'], true);
@@ -2047,8 +2124,10 @@ class Timeoff_model extends CI_Model
             //
 
             //
-            if (!isset($accruals['employeeTypes'])) continue;
-            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
+            if (!isset($accruals['employeeTypes']))
+                continue;
+            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes']))
+                continue;
 
 
 
@@ -2129,7 +2208,8 @@ class Timeoff_model extends CI_Model
         $employee = $a->row_array();
         $a->free_result();
         //
-        if (empty($employee)) return $e;
+        if (empty($employee))
+            return $e;
         //
         if ($employee['is_executive_admin'] == 1) {
             return $e;
@@ -2201,7 +2281,8 @@ class Timeoff_model extends CI_Model
                     continue;
                 }
 
-                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                    continue;
             } else {
                 //
 
@@ -2209,14 +2290,17 @@ class Timeoff_model extends CI_Model
                     continue;
                 }
                 // Not-Entitled
-                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                    continue;
             }
             //
             $accruals = json_decode($policy['accruals'], true);
             $accruals["employee_type_original"] = $employementType;
             //
-            if (!isset($accruals['employeeTypes'])) continue;
-            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
+            if (!isset($accruals['employeeTypes']))
+                continue;
+            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes']))
+                continue;
             //
             $t = getEmployeeAccrual(
                 $policy['sid'], // Policy id
@@ -2303,14 +2387,16 @@ class Timeoff_model extends CI_Model
                     continue;
                 }
                 //
-                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                    continue;
             } else {
 
                 if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
                     continue;
                 }
                 // Not-Entitled
-                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                    continue;
             }
 
             //
@@ -2319,8 +2405,10 @@ class Timeoff_model extends CI_Model
 
             $accruals["employee_type_original"] = $employementType;
             //
-            if (!isset($accruals['employeeTypes'])) continue;
-            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
+            if (!isset($accruals['employeeTypes']))
+                continue;
+            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes']))
+                continue;
             //
             $t = getEmployeeAccrual(
                 $policy['sid'], // Policy id
@@ -2647,28 +2735,32 @@ class Timeoff_model extends CI_Model
             $newTime = $accrualRateInMinutes * $monthsWorked;
             $cNewTime = $carryOverInMinutes * $monthsWorked;
             //
-            if ($newTime > $cNewTime) return $cNewTime;
+            if ($newTime > $cNewTime)
+                return $cNewTime;
             return $newTime;
         }
         if ($frequency == 'monthly') {
             $newTime = $accrualRateInMinutes * $monthsWorked;
             $cNewTime = $carryOverInMinutes * $monthsWorked;
             //
-            if ($newTime > $cNewTime) return $cNewTime;
+            if ($newTime > $cNewTime)
+                return $cNewTime;
             return $newTime;
         }
         if ($frequency == 'yearly') {
             $newTime = $accrualRateInMinutes * $years;
             $cNewTime = $carryOverInMinutes * $years;
             //
-            if ($newTime > $cNewTime) return $cNewTime;
+            if ($newTime > $cNewTime)
+                return $cNewTime;
             return $newTime;
         }
         if ($frequency == 'custom') {
             $newTime = $accrualRateInMinutes * $years;
             $cNewTime = $carryOverInMinutes * $years;
             //
-            if ($newTime > $cNewTime) return $cNewTime;
+            if ($newTime > $cNewTime)
+                return $cNewTime;
             return $newTime;
         }
         //
@@ -2690,16 +2782,16 @@ class Timeoff_model extends CI_Model
     ) {
         return
             $this->db
-            ->select('
+                ->select('
             timeoff_settings.send_email_to_supervisor,
             timeoff_settings.off_days,
             timeoff_formats.slug
         ')
-            ->join('timeoff_formats', 'timeoff_formats.sid = timeoff_settings.timeoff_format_sid', 'inner')
-            ->where('timeoff_settings.company_sid', $companyId)
-            ->where('timeoff_formats.status', 1)
-            ->get('timeoff_settings')
-            ->row_array();
+                ->join('timeoff_formats', 'timeoff_formats.sid = timeoff_settings.timeoff_format_sid', 'inner')
+                ->where('timeoff_settings.company_sid', $companyId)
+                ->where('timeoff_formats.status', 1)
+                ->get('timeoff_settings')
+                ->row_array();
     }
 
     /** 
@@ -2730,7 +2822,8 @@ class Timeoff_model extends CI_Model
         $employee = $a->row_array();
         $a->free_result();
         //
-        if (empty($employee)) return [];
+        if (empty($employee))
+            return [];
         //
         $settings = $this->getSettings($companyId);
         //
@@ -2826,13 +2919,13 @@ class Timeoff_model extends CI_Model
                     users.pay_plan_flag,
                     users.job_title
                 ')
-                    ->join('users', 'users.sid = timeoff_request_timeline.employee_sid')
-                    ->where('timeoff_request_timeline.request_sid', $balance['sid'])
-                    ->where("timeoff_request_timeline.note regexp '$status'", NULL, NULL)
-                    ->where("timeoff_request_timeline.note regexp '$canApprove'", NULL, NULL)
-                    ->order_by('timeoff_request_timeline.sid', 'DESC')
-                    ->get('timeoff_request_timeline')
-                    ->row_array();
+                        ->join('users', 'users.sid = timeoff_request_timeline.employee_sid')
+                        ->where('timeoff_request_timeline.request_sid', $balance['sid'])
+                        ->where("timeoff_request_timeline.note regexp '$status'", NULL, NULL)
+                        ->where("timeoff_request_timeline.note regexp '$canApprove'", NULL, NULL)
+                        ->order_by('timeoff_request_timeline.sid', 'DESC')
+                        ->get('timeoff_request_timeline')
+                        ->row_array();
                 //
                 if (!empty($e)) {
                     $c[$key]['approverName'] = ucwords($e['first_name'] . ' ' . $e['last_name']);
@@ -2983,7 +3076,8 @@ class Timeoff_model extends CI_Model
         $employee = $a->row_array();
         $a->free_result();
         //
-        if (empty($employee)) return $r;
+        if (empty($employee))
+            return $r;
         //
         if ($employee['is_executive_admin'] == 1) {
             return $r;
@@ -3055,17 +3149,21 @@ class Timeoff_model extends CI_Model
             // Entitled
             if ($policy['is_entitled_employee'] == 1) {
 
-                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                    continue;
             } else {
                 // Not-Entitled
-                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                    continue;
             }
             //
             $accruals = json_decode($policy['accruals'], true);
             $accruals["employee_type_original"] = $employementType;
             //
-            if (!isset($accruals['employeeTypes'])) continue;
-            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
+            if (!isset($accruals['employeeTypes']))
+                continue;
+            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes']))
+                continue;
 
 
             $t = getEmployeeAccrual(
@@ -3117,7 +3215,7 @@ class Timeoff_model extends CI_Model
         //
         $request =
             $this->db
-            ->select('
+                ->select('
             timeoff_requests.*,
             timeoff_policies.title,
             company.CompanyName,
@@ -3125,12 +3223,12 @@ class Timeoff_model extends CI_Model
             users.user_shift_minutes,
             ' . (getUserFields()) . '
         ')
-            ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
-            ->join('users as company', 'company.sid = timeoff_requests.company_sid', 'inner')
-            ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
-            ->where('timeoff_requests.sid', $requestId)
-            ->get('timeoff_requests')
-            ->row_array();
+                ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
+                ->join('users as company', 'company.sid = timeoff_requests.company_sid', 'inner')
+                ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
+                ->where('timeoff_requests.sid', $requestId)
+                ->get('timeoff_requests')
+                ->row_array();
         $request['history'] = $this->timeoff_model->getHistory(
             'request_sid',
             $request['sid'],
@@ -3145,10 +3243,10 @@ class Timeoff_model extends CI_Model
             //
             $user =
                 $this->db
-                ->select('user_shift_hours, user_shift_minutes')
-                ->where('sid', $request['userId'])
-                ->get('users')
-                ->row_array();
+                    ->select('user_shift_hours, user_shift_minutes')
+                    ->where('sid', $request['userId'])
+                    ->get('users')
+                    ->row_array();
             //
             $json = [
                 'totalTime' => $request['requested_time'],
@@ -3176,7 +3274,8 @@ class Timeoff_model extends CI_Model
                         //
                         $time = $user['user_shift_hours'];
                         //
-                    } else $time = $totalTimeInHours;
+                    } else
+                        $time = $totalTimeInHours;
                     // 
                     $totalTimeInHours -= $time;
                 }
@@ -3254,7 +3353,8 @@ class Timeoff_model extends CI_Model
             $notIds = [];
             $this->db->where('timeoff_requests.employee_sid', $post['employeeId']);
         } else {
-            if ($post['level'] == 0 && empty($notIds)) return [];
+            if ($post['level'] == 0 && empty($notIds))
+                return [];
         }
         //
         if (!empty($notIds)) {
@@ -3324,7 +3424,8 @@ class Timeoff_model extends CI_Model
                 foreach ($requests as $request) {
                     if ($request['request_from_date'] > date('Y-m-d', strtotime('now'))) {
                         $newRequests[] = $request;
-                    } else $oldRequests[] = $request;
+                    } else
+                        $oldRequests[] = $request;
                 }
                 //
                 $requests = array_merge(
@@ -3566,7 +3667,8 @@ class Timeoff_model extends CI_Model
         $e = $a->result_array();
         $a->free_result();
         //
-        if (!sizeof($e)) return $e;
+        if (!sizeof($e))
+            return $e;
         // Check for access level plus check
         if ($post['isSuper'] == 0) {
             // Start filtering
@@ -3591,9 +3693,11 @@ class Timeoff_model extends CI_Model
                     $t = $a->result_array();
                     $a->free_result();
                     //
-                    if (!sizeof($t)) continue;
+                    if (!sizeof($t))
+                        continue;
                     //
-                    foreach ($t as $v1) $ts[$v1['sid']] = $v1['sid'];
+                    foreach ($t as $v1)
+                        $ts[$v1['sid']] = $v1['sid'];
                 }
             }
             // Check in teams
@@ -3605,7 +3709,9 @@ class Timeoff_model extends CI_Model
             $t = $a->result_array();
             $a->free_result();
             //
-            if (sizeof($t)) foreach ($t as $v) $ts[$v['sid']] = $v['sid'];
+            if (sizeof($t))
+                foreach ($t as $v)
+                    $ts[$v['sid']] = $v['sid'];
             //
             $ts = array_values($ts);
         }
@@ -3620,7 +3726,8 @@ class Timeoff_model extends CI_Model
                     ->where('employee_sid', $v['employeeId'])
                     ->count_all_results('departments_employee_2_team');
                 //
-                if (!$a) continue;
+                if (!$a)
+                    continue;
             }
 
             $r[] = $v;
@@ -3652,9 +3759,10 @@ class Timeoff_model extends CI_Model
         //
         $result = $this->db->get();
         $policies = $result->result_array();
-        $result  = $result->free_result();
+        $result = $result->free_result();
         //
-        if (!sizeof($policies)) return array();
+        if (!sizeof($policies))
+            return array();
         //
         return $policies;
     }
@@ -3710,6 +3818,12 @@ class Timeoff_model extends CI_Model
         $a->free_result();
         //
         $settings = $this->getSettings($companyId);
+        if (!$employee["user_shift_hours"]) {
+            $employee["user_shift_hours"] = 8;
+        }
+        if (!$employee["user_shift_minutes"]) {
+            $employee["user_shift_minutes"] = 0;
+        }
         //
         if (empty($employee) || $employee['is_executive_admin']) {
             $r['Balance']['Remaining'] = get_array_from_minutes(
@@ -3809,7 +3923,8 @@ class Timeoff_model extends CI_Model
                             //
                             $time = $employee['user_shift_hours'];
                             //
-                        } else $time = $totalTimeInHours;
+                        } else
+                            $time = $totalTimeInHours;
                         // 
                         $totalTimeInHours -= $time;
                         //
@@ -3831,7 +3946,8 @@ class Timeoff_model extends CI_Model
                 //
                 $jta = json_decode($timeoff['timeoff_days'], true);
                 //
-                if (!empty($jta)) $r['Timeoffs'][$month][1] += $jta['totalTime'];
+                if (!empty($jta))
+                    $r['Timeoffs'][$month][1] += $jta['totalTime'];
             }
             //
             foreach ($r['Timeoffs'] as $k => $ti) {
@@ -3853,21 +3969,21 @@ class Timeoff_model extends CI_Model
         // Get team leads and supervisors
         $n =
             $this->db
-            ->select('
+                ->select('
             departments_team_management.sid as team_sid,
             departments_management.sid
         ')
-            ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner')
-            ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid', 'inner')
-            ->where('departments_team_management.status', 1)
-            ->where('departments_team_management.is_deleted', 0)
-            ->where('departments_team_management.company_sid', $companyId)
-            ->where('departments_management.status', 1)
-            ->where('departments_management.is_deleted', 0)
-            ->where('departments_management.company_sid', $companyId)
-            ->where('departments_employee_2_team.employee_sid', $employeeId)
-            ->get('departments_employee_2_team')
-            ->result_array();
+                ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner')
+                ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid', 'inner')
+                ->where('departments_team_management.status', 1)
+                ->where('departments_team_management.is_deleted', 0)
+                ->where('departments_team_management.company_sid', $companyId)
+                ->where('departments_management.status', 1)
+                ->where('departments_management.is_deleted', 0)
+                ->where('departments_management.company_sid', $companyId)
+                ->where('departments_employee_2_team.employee_sid', $employeeId)
+                ->get('departments_employee_2_team')
+                ->result_array();
         //
         $teamIds = array_column($n, 'team_sid');
         $departmentIds = array_column($n, 'sid');
@@ -3888,11 +4004,13 @@ class Timeoff_model extends CI_Model
             ->where('timeoff_approvers.is_archived', 0);
         //
         if (!empty($teamIds)) {
-            foreach ($teamIds as $teamId) $tWhere .= "FIND_IN_SET($teamId, timeoff_approvers.department_sid) > 0 OR ";
+            foreach ($teamIds as $teamId)
+                $tWhere .= "FIND_IN_SET($teamId, timeoff_approvers.department_sid) > 0 OR ";
             $tWhere = rtrim($tWhere, " OR ");
         }
         if (!empty($departmentIds)) {
-            foreach ($departmentIds as $departmentId) $dWhere .= "FIND_IN_SET($departmentId, timeoff_approvers.department_sid) > 0 OR ";
+            foreach ($departmentIds as $departmentId)
+                $dWhere .= "FIND_IN_SET($departmentId, timeoff_approvers.department_sid) > 0 OR ";
             $dWhere = rtrim($dWhere, " OR ");
         }
         $this->db->group_start();
@@ -3969,14 +4087,15 @@ class Timeoff_model extends CI_Model
         //
         $b =
             $this->db
-            ->where('sid', $employeeId)
-            ->group_start()
-            ->where('access_level_plus', 1)
-            ->or_where('pay_plan_flag', 1)
-            ->group_end()
-            ->count_all_results('users');
+                ->where('sid', $employeeId)
+                ->group_start()
+                ->where('access_level_plus', 1)
+                ->or_where('pay_plan_flag', 1)
+                ->group_end()
+                ->count_all_results('users');
         //
-        if ($b != 0) return 1;
+        if ($b != 0)
+            return 1;
         // Check approver
         $this->db
             ->where('employee_sid', $employeeId);
@@ -4020,28 +4139,28 @@ class Timeoff_model extends CI_Model
         if (!empty($category_sid) && $category_sid != 0) {
             //            
             $accruals = [];
-            $accruals['method']                 = 'days_per_year';
-            $accruals['time']                   = 'none';
-            $accruals['frequency']              = 'none';
-            $accruals['frequencyVal']           = 0;
-            $accruals['rate']                   = 0;
-            $accruals['rateType']               = 'days';
-            $accruals['applicableTime']         = 0;
-            $accruals['applicableTimeType']     = 'hours';
-            $accruals['carryOverCheck']         = 'no';
-            $accruals['carryOverType']          = 'days';
-            $accruals['carryOverVal']           = 0;
-            $accruals['negativeBalanceCheck']   = 'no';
-            $accruals['negativeBalanceType']    = 'days';
-            $accruals['negativeBalanceVal']     = 0;
-            $accruals['applicableDate']         = 0;
-            $accruals['applicableDateType']     = 'hireDate';
-            $accruals['resetDate']              = 0;
-            $accruals['resetDateType']          = 'policyDate';
-            $accruals['newHireTime']            = 0;
-            $accruals['newHireTimeType']        = 'hours';
-            $accruals['newHireRate']            = 0;
-            $accruals['plans']                  = array();
+            $accruals['method'] = 'days_per_year';
+            $accruals['time'] = 'none';
+            $accruals['frequency'] = 'none';
+            $accruals['frequencyVal'] = 0;
+            $accruals['rate'] = 0;
+            $accruals['rateType'] = 'days';
+            $accruals['applicableTime'] = 0;
+            $accruals['applicableTimeType'] = 'hours';
+            $accruals['carryOverCheck'] = 'no';
+            $accruals['carryOverType'] = 'days';
+            $accruals['carryOverVal'] = 0;
+            $accruals['negativeBalanceCheck'] = 'no';
+            $accruals['negativeBalanceType'] = 'days';
+            $accruals['negativeBalanceVal'] = 0;
+            $accruals['applicableDate'] = 0;
+            $accruals['applicableDateType'] = 'hireDate';
+            $accruals['resetDate'] = 0;
+            $accruals['resetDateType'] = 'policyDate';
+            $accruals['newHireTime'] = 0;
+            $accruals['newHireTimeType'] = 'hours';
+            $accruals['newHireRate'] = 0;
+            $accruals['plans'] = array();
             //
             //
             foreach ($companies_sid as $key => $company_sid) {
@@ -4094,25 +4213,25 @@ class Timeoff_model extends CI_Model
                     //
                     $insert_time_off_policy = array();
                     //
-                    $insert_time_off_policy['company_sid']          = $company_sid['company_sid'];
-                    $insert_time_off_policy['type_sid']             = $time_off_category_sid;
-                    $insert_time_off_policy['creator_sid']          = $creator_sid;
-                    $insert_time_off_policy['title']                = 'Unpaid';
-                    $insert_time_off_policy['assigned_employees']   = 'all';
-                    $insert_time_off_policy['note']                 = NULL;
-                    $insert_time_off_policy['is_default']           = 0;
-                    $insert_time_off_policy['for_admin']            = 0;
-                    $insert_time_off_policy['is_archived']          = 0;
-                    $insert_time_off_policy['is_included']          = 1;
-                    $insert_time_off_policy['is_unlimited']         = 1;
-                    $insert_time_off_policy['creator_type']         = 'employee';
-                    $insert_time_off_policy['status']               = 1;
-                    $insert_time_off_policy['sort_order']           = 1;
-                    $insert_time_off_policy['fmla_range']           = NULL;
-                    $insert_time_off_policy['accruals']             = json_encode($accruals);
-                    $insert_time_off_policy['policy_start_date']    = NULL;
-                    $insert_time_off_policy['reset_policy']         = $insert_time_off_policy['accruals'];
-                    $insert_time_off_policy['default_policy']       = 1;
+                    $insert_time_off_policy['company_sid'] = $company_sid['company_sid'];
+                    $insert_time_off_policy['type_sid'] = $time_off_category_sid;
+                    $insert_time_off_policy['creator_sid'] = $creator_sid;
+                    $insert_time_off_policy['title'] = 'Unpaid';
+                    $insert_time_off_policy['assigned_employees'] = 'all';
+                    $insert_time_off_policy['note'] = NULL;
+                    $insert_time_off_policy['is_default'] = 0;
+                    $insert_time_off_policy['for_admin'] = 0;
+                    $insert_time_off_policy['is_archived'] = 0;
+                    $insert_time_off_policy['is_included'] = 1;
+                    $insert_time_off_policy['is_unlimited'] = 1;
+                    $insert_time_off_policy['creator_type'] = 'employee';
+                    $insert_time_off_policy['status'] = 1;
+                    $insert_time_off_policy['sort_order'] = 1;
+                    $insert_time_off_policy['fmla_range'] = NULL;
+                    $insert_time_off_policy['accruals'] = json_encode($accruals);
+                    $insert_time_off_policy['policy_start_date'] = NULL;
+                    $insert_time_off_policy['reset_policy'] = $insert_time_off_policy['accruals'];
+                    $insert_time_off_policy['default_policy'] = 1;
                     //
                     $this->db->insert('timeoff_policies', $insert_time_off_policy);
                     //
@@ -4126,25 +4245,25 @@ class Timeoff_model extends CI_Model
                         //
                         $update_time_off_policy = array();
                         //
-                        $update_time_off_policy['company_sid']          = $company_sid['company_sid'];
-                        $update_time_off_policy['type_sid']             = $time_off_category_sid;
-                        $update_time_off_policy['creator_sid']          = $creator_sid;
-                        $update_time_off_policy['title']                = 'Unpaid';
-                        $update_time_off_policy['assigned_employees']   = 'all';
-                        $update_time_off_policy['note']                 = NULL;
-                        $update_time_off_policy['is_default']           = 0;
-                        $update_time_off_policy['for_admin']            = 0;
-                        $update_time_off_policy['is_archived']          = 0;
-                        $update_time_off_policy['is_unlimited']         = 1;
-                        $update_time_off_policy['creator_type']         = 'employee';
-                        $update_time_off_policy['status']               = 1;
-                        $update_time_off_policy['sort_order']           = 1;
-                        $update_time_off_policy['fmla_range']           = NULL;
-                        $update_time_off_policy['policy_start_date']    = NULL;
-                        $update_time_off_policy['is_included']          = 1;
-                        $update_time_off_policy['accruals']             = json_encode($accruals);
-                        $update_time_off_policy['reset_policy']         = $update_time_off_policy['accruals'];
-                        $update_time_off_policy['default_policy']       = 1;
+                        $update_time_off_policy['company_sid'] = $company_sid['company_sid'];
+                        $update_time_off_policy['type_sid'] = $time_off_category_sid;
+                        $update_time_off_policy['creator_sid'] = $creator_sid;
+                        $update_time_off_policy['title'] = 'Unpaid';
+                        $update_time_off_policy['assigned_employees'] = 'all';
+                        $update_time_off_policy['note'] = NULL;
+                        $update_time_off_policy['is_default'] = 0;
+                        $update_time_off_policy['for_admin'] = 0;
+                        $update_time_off_policy['is_archived'] = 0;
+                        $update_time_off_policy['is_unlimited'] = 1;
+                        $update_time_off_policy['creator_type'] = 'employee';
+                        $update_time_off_policy['status'] = 1;
+                        $update_time_off_policy['sort_order'] = 1;
+                        $update_time_off_policy['fmla_range'] = NULL;
+                        $update_time_off_policy['policy_start_date'] = NULL;
+                        $update_time_off_policy['is_included'] = 1;
+                        $update_time_off_policy['accruals'] = json_encode($accruals);
+                        $update_time_off_policy['reset_policy'] = $update_time_off_policy['accruals'];
+                        $update_time_off_policy['default_policy'] = 1;
                         //
                         $this->db
                             ->where('sid', $time_off_policy_sid)
@@ -4180,10 +4299,11 @@ class Timeoff_model extends CI_Model
         if ($accessOBJ['access_level_plus'] != 1 && $accessOBJ['pay_plan_flag'] != 1) {
             $ids = $this->getEmployeeTeamMemberIds($employeeId);
             //
-            if (empty($ids)) return [
-                'TodaysCount' => 0,
-                'TotalCount' => 0
-            ];
+            if (empty($ids))
+                return [
+                    'TodaysCount' => 0,
+                    'TotalCount' => 0
+                ];
         }
 
         $this->db
@@ -4193,7 +4313,8 @@ class Timeoff_model extends CI_Model
             ->where('created_at >= ', date('Y-m-d 00:00:00', strtotime('now')))
             ->where('created_at <= ', date('Y-m-d 23:59:59', strtotime('now')));
         //
-        if (!empty($ids)) $this->db->where_in('employee_sid', $ids);
+        if (!empty($ids))
+            $this->db->where_in('employee_sid', $ids);
         //
         $r['TodaysCount'] = $this->db->count_all_results('timeoff_requests');
 
@@ -4202,7 +4323,8 @@ class Timeoff_model extends CI_Model
             ->where('company_sid', $companySid)
             ->where('status', 'pending');
         //
-        if (!empty($ids)) $this->db->where_in('employee_sid', $ids);
+        if (!empty($ids))
+            $this->db->where_in('employee_sid', $ids);
         //
         $r['TotalCount'] = $this->db->count_all_results('timeoff_requests');
         //
@@ -4245,7 +4367,8 @@ class Timeoff_model extends CI_Model
         $employee = $a->row_array();
         $a->free_result();
         //
-        if (empty($employee)) return [];
+        if (empty($employee))
+            return [];
         //
         if ($employee['is_executive_admin'] == 1) {
             return [];
@@ -4288,7 +4411,9 @@ class Timeoff_model extends CI_Model
                 if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
                     $balance['Implements'] = false;
                 } else {
-                    if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) $balance['Implements'] = false;;
+                    if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                        $balance['Implements'] = false;
+                    ;
                 }
             } else {
                 //
@@ -4296,7 +4421,9 @@ class Timeoff_model extends CI_Model
                     $balance['Implements'] = false;
                 } else {
                     // Not-Entitled
-                    if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) $balance['Implements'] = false;;
+                    if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                        $balance['Implements'] = false;
+                    ;
                 }
             }
             //
@@ -4345,11 +4472,13 @@ class Timeoff_model extends CI_Model
         //
         $policies = $this->getCompanyPoliciesWithAccruals($companyId, true);
         //
-        if (empty($policies)) return false;
+        if (empty($policies))
+            return false;
         //
         foreach ($policies as $policy) {
             //
-            if ($policy['default_policy'] == 1) continue;
+            if ($policy['default_policy'] == 1)
+                continue;
             //
             $assignedemployees = explode(',', $policy['assigned_employees']);
             //
@@ -4449,7 +4578,8 @@ class Timeoff_model extends CI_Model
                     ->get('timeoff_policy_categories')
                     ->result_array();
                 //
-                if (!empty($policyPlans)) $newPolicy['type_sid'] = array_column($policyPlans, 'timeoff_category_sid')[0];
+                if (!empty($policyPlans))
+                    $newPolicy['type_sid'] = array_column($policyPlans, 'timeoff_category_sid')[0];
                 // Fetch awards
                 $policyAwards = $this->db
                     ->where('timeoff_policy_sid', $policy['policyId'])
@@ -4471,8 +4601,10 @@ class Timeoff_model extends CI_Model
                 $accruals['rate'] = $policy['accrual_rate'];
                 $accruals['applicableTime'] = $policy['minimum_applicable_hours'];
                 //
-                if (empty($policy['accrual_frequency'])) $accruals['accrual_frequency'] = 'none';
-                else if ($policy['accrual_frequency'] == 'monthly') $accruals['accrual_frequency'] = 'yearly';
+                if (empty($policy['accrual_frequency']))
+                    $accruals['accrual_frequency'] = 'none';
+                else if ($policy['accrual_frequency'] == 'monthly')
+                    $accruals['accrual_frequency'] = 'yearly';
                 //
                 $accruals['carryOverCheck'] = $policy['carryover_cap_check'] == 1 ? 'on' : 'off';
                 $accruals['carryOverVal'] = $policy['carryover_cap'];
@@ -4510,16 +4642,20 @@ class Timeoff_model extends CI_Model
             ->get('timeoff_requests')
             ->result_array();
         //
-        if (empty($requests)) return false;
+        if (empty($requests))
+            return false;
         //
         foreach ($requests as $request) {
             //
-            if (empty($request['timeoff_days'])) continue;
+            if (empty($request['timeoff_days']))
+                continue;
             //
             $days = json_decode($request['timeoff_days'], true);
             //
-            if (empty($days)) continue;
-            if (isset($days['totalTime'])) continue;
+            if (empty($days))
+                continue;
+            if (isset($days['totalTime']))
+                continue;
             //
             $totalTime = 0;
             $newDays = [
@@ -4607,15 +4743,16 @@ class Timeoff_model extends CI_Model
     {
         $employerTeams =
             $this->db
-            ->select('departments_team_management.sid')
-            ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner')
-            ->where('departments_team_management.status', 1)
-            ->where('departments_team_management.is_deleted', 0)
-            ->where('departments_employee_2_team.employee_sid', $employerSid)
-            ->get('departments_employee_2_team')
-            ->result_array();
+                ->select('departments_team_management.sid')
+                ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner')
+                ->where('departments_team_management.status', 1)
+                ->where('departments_team_management.is_deleted', 0)
+                ->where('departments_employee_2_team.employee_sid', $employerSid)
+                ->get('departments_employee_2_team')
+                ->result_array();
         //
-        if (empty($employerTeams)) return 0;
+        if (empty($employerTeams))
+            return 0;
         //
         return $this->db
             ->where('departments_employee_2_team.employee_sid', $employeeSid)
@@ -4663,7 +4800,8 @@ class Timeoff_model extends CI_Model
         $format = $result->row_array();
         $result = $result->free_result();
         //
-        if ($doExplode === false) return $format;
+        if ($doExplode === false)
+            return $format;
         return !sizeof($format) ? array('H', 'M') : explode(':', $format['slug']);
     }
 
@@ -4764,7 +4902,8 @@ class Timeoff_model extends CI_Model
         $b = $a->result_array();
         $a->free_result();
         //
-        if (!sizeof($b)) return $r;
+        if (!sizeof($b))
+            return $r;
 
         // Get company default time
         $a = $this->db
@@ -4796,8 +4935,10 @@ class Timeoff_model extends CI_Model
                 }
                 $isSame = $v['employee_sid'] != $employer_id ? 0 : 1;
                 //
-                if ($isColleague) $asApprover = 2;
-                if ($isSame) $asApprover = 1;
+                if ($isColleague)
+                    $asApprover = 2;
+                if ($isSame)
+                    $asApprover = 1;
                 //
                 if ($isTeamMember == 0 && $isColleague == 0 && $isSame == 0) {
                     unset($b[$k]);
@@ -4849,16 +4990,17 @@ class Timeoff_model extends CI_Model
             );
 
             // Sort by policy
-            if (!isset($r[ucwords($v['policy_title'])])) $r[ucwords($v['policy_title'])] = ucwords($v['policy_title']);
+            if (!isset($r[ucwords($v['policy_title'])]))
+                $r[ucwords($v['policy_title'])] = ucwords($v['policy_title']);
             $start_datetime = $v['requested_date'] . "T" . $shift_start_time;
             $end_datetime = $v['request_to_date'] . "T" . $shift_start_time;
             // $time = new \DateTime($start_datetime);
             // $time->add(new \DateInterval('PT' . $v['requested_time'] . 'M'));
             // $end_datetime = $time->format('Y-m-dTH:i');
             $timeoff_requests[] = [
-                'title' =>  $full_name . " - " . ucwords($v['policy_title']) . " - " . $timeoff_breakdown['text'],
-                'start' =>  $start_datetime,
-                'end' =>  $end_datetime,
+                'title' => $full_name . " - " . ucwords($v['policy_title']) . " - " . $timeoff_breakdown['text'],
+                'start' => $start_datetime,
+                'end' => $end_datetime,
                 'color' => "#5cb85c",
                 'date' => $v['requested_date'],
                 'status' => "confirmed",
@@ -4901,14 +5043,14 @@ class Timeoff_model extends CI_Model
             $endDate = $year . '-' . $month . '-' . $day;
         } else { // month, week
             $startDate = $year . '-' . $week_start;
-            $endDate   = $year . '-' . $week_end;
+            $endDate = $year . '-' . $week_end;
             if (substr($week_start, 0, 2) == '11' && substr($week_start, 3, 4) == '29') {
                 $startDate = $year . '-' . $week_start;
                 $endDate = date('Y', strtotime('' . ($year) . '+1 year')) . '-' . $week_end;
             }
             if (substr($week_start, 0, 2) == '12' && substr($week_start, 3, 4) == '27') {
                 $startDate = date('Y', strtotime("$year -1 year")) . '-' . $week_start;
-                $endDate   = $year . '-' . $week_end;
+                $endDate = $year . '-' . $week_end;
             }
         }
         //
@@ -4988,7 +5130,7 @@ class Timeoff_model extends CI_Model
         //
         $result = $this->db->get();
         $holidays = $result->result_array();
-        $result  = $result->free_result();
+        $result = $result->free_result();
 
         return $holidays;
     }
@@ -5004,7 +5146,8 @@ class Timeoff_model extends CI_Model
             ->result_array();
         //
         //
-        if (empty($b)) return;
+        if (empty($b))
+            return;
         $this->db
             ->where('holiday_year', '2021')
             ->delete('timeoff_holidays');
@@ -5102,7 +5245,8 @@ class Timeoff_model extends CI_Model
         $employee = $a->row_array();
         $a->free_result();
         //
-        if (empty($employee)) return [];
+        if (empty($employee))
+            return [];
         //
         if ($employee['is_executive_admin'] == 1) {
             return [];
@@ -5154,21 +5298,25 @@ class Timeoff_model extends CI_Model
                     continue;
                 }
 
-                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                    continue;
             } else {
                 //
                 if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
                     continue;
                 }
                 // Not-Entitled
-                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees'])))
+                    continue;
             }
             //
             $accruals = json_decode($policy['accruals'], true);
             $accruals["employee_type_original"] = $employementType;
             //
-            if (!isset($accruals['employeeTypes'])) continue;
-            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes'])) continue;
+            if (!isset($accruals['employeeTypes']))
+                continue;
+            if (!in_array('all', $accruals['employeeTypes']) && !in_array($employementType, $accruals['employeeTypes']))
+                continue;
             //
             $t = getEmployeeAccrual(
                 $policy['sid'], // Policy id
@@ -5292,7 +5440,8 @@ class Timeoff_model extends CI_Model
         if ($ses['access_level_plus'] == 0 && $ses['pay_plan_flag'] == 0) {
             $notIds = $this->getEmployeeTeamMemberIds($post['employerId']);
             //
-            if (empty($notIds)) return [];
+            if (empty($notIds))
+                return [];
         }
         //
         $nowDate = getSystemDate(DB_DATE);
@@ -5316,7 +5465,8 @@ class Timeoff_model extends CI_Model
         $this->db->where('timeoff_requests.request_from_date <=', $nowDate);
         $this->db->where('timeoff_requests.request_to_date >=', $nowDate);
         //
-        if (!empty($notIds)) $this->db->where_in('timeoff_requests.employee_sid', $notIds);
+        if (!empty($notIds))
+            $this->db->where_in('timeoff_requests.employee_sid', $notIds);
         //
         if ($count) {
             return $this->db->count_all_results('timeoff_requests');
@@ -5352,7 +5502,8 @@ class Timeoff_model extends CI_Model
             //
             foreach ($policies as $policy) {
                 //
-                if (!isset($tmp[$policy['type_sid']])) $tmp[$policy['type_sid']] = [];
+                if (!isset($tmp[$policy['type_sid']]))
+                    $tmp[$policy['type_sid']] = [];
                 //
                 $tmp[$policy['type_sid']][] = $policy['title'];
             }
@@ -5374,11 +5525,13 @@ class Timeoff_model extends CI_Model
         //
         $result = $this->db->get('timeoff_categories');
         $types = $result->result_array();
-        $result  = $result->free_result();
+        $result = $result->free_result();
         //
-        if (!sizeof($types)) return array();
+        if (!sizeof($types))
+            return array();
         //
-        foreach ($types as $k => $v) $types[$k]['policies'] = isset($policies[$v['sid']]) ? $policies[$v['sid']] : null;
+        foreach ($types as $k => $v)
+            $types[$k]['policies'] = isset($policies[$v['sid']]) ? $policies[$v['sid']] : null;
         //
         return $types;
     }
@@ -5442,18 +5595,19 @@ class Timeoff_model extends CI_Model
         // Fetch admin policies
         $policies =
             $this->db
-            ->select('title, company_sid')
-            ->from('timeoff_policies')
-            ->where('timeoff_policies.company_sid <>', 0)
-            ->get()
-            ->result_array();
+                ->select('title, company_sid')
+                ->from('timeoff_policies')
+                ->where('timeoff_policies.company_sid <>', 0)
+                ->get()
+                ->result_array();
         //
         if (!empty($policies)) {
             foreach ($policies as $policy) {
                 //
                 $slug = $policy['company_sid'];
                 //
-                if (!isset($cPolicies[$slug])) $cPolicies[$slug] = [];
+                if (!isset($cPolicies[$slug]))
+                    $cPolicies[$slug] = [];
                 //
                 $cPolicies[$slug][] = $policy;
             }
@@ -5466,30 +5620,31 @@ class Timeoff_model extends CI_Model
         // Fetch companies
         $cp =
             $this->db
-            ->select('sid, CompanyName')
-            ->from('users')
-            ->where('is_paid', 1)
-            ->where('active', 1)
-            ->where('parent_sid', 0)
-            ->order_by('CompanyName', 'ASC')
-            ->get()
-            ->result_array();
+                ->select('sid, CompanyName')
+                ->from('users')
+                ->where('is_paid', 1)
+                ->where('active', 1)
+                ->where('parent_sid', 0)
+                ->order_by('CompanyName', 'ASC')
+                ->get()
+                ->result_array();
         //
         if (!empty($cp)) {
             foreach ($cp as $k => $company) {
                 $returnArray['Companies'][$company['sid']] = $company;
                 $returnArray['Companies'][$company['sid']]['Policies'] = isset($cPolicies[$company['sid']]) ? $cPolicies[$company['sid']] : [];
             }
-        } else $returnArray['Companies'] = [];
+        } else
+            $returnArray['Companies'] = [];
         // Fetch admin policies
         $returnArray['Policies'] =
             $this->db
-            ->select('sid, title')
-            ->from('timeoff_policies')
-            ->where('timeoff_policies.company_sid', 0)
-            ->order_by('timeoff_policies.sort_order', 'ASC')
-            ->get()
-            ->result_array();
+                ->select('sid, title')
+                ->from('timeoff_policies')
+                ->where('timeoff_policies.company_sid', 0)
+                ->order_by('timeoff_policies.sort_order', 'ASC')
+                ->get()
+                ->result_array();
         //
         return $returnArray;
     }
@@ -5500,17 +5655,17 @@ class Timeoff_model extends CI_Model
     {
         return
             $this->db
-            ->select('
+                ->select('
             timeoff_policies.*,
             timeoff_category_list.category_name as category,
             timeoff_category_list.sid as category_sid
         ')
-            ->from('timeoff_policies')
-            ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'left')
-            ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
-            ->where_in('timeoff_policies.sid', $ids)
-            ->get()
-            ->result_array();
+                ->from('timeoff_policies')
+                ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'left')
+                ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
+                ->where_in('timeoff_policies.sid', $ids)
+                ->get()
+                ->result_array();
     }
 
     function assignAdminPoliciesToCompany($insert_time_off_policy)
@@ -5626,7 +5781,8 @@ class Timeoff_model extends CI_Model
         $b = $a->row_array();
         $a = $a->free_result();
         //
-        if (!count($b)) return [];
+        if (!count($b))
+            return [];
         //
         return [
             'Subject' => $b['subject'],
@@ -5969,12 +6125,12 @@ class Timeoff_model extends CI_Model
     {
         $records =
             $this->db
-            ->select('sid, first_name, last_name')
-            ->where('parent_sid', $companyId)
-            ->where('is_executive_admin', 0)
-            ->where_in('LOWER(REGEXP_REPLACE(CONCAT(first_name,"",last_name), "[^a-zA-Z]", ""))', $names)
-            ->get('users')
-            ->result_array();
+                ->select('sid, first_name, last_name')
+                ->where('parent_sid', $companyId)
+                ->where('is_executive_admin', 0)
+                ->where_in('LOWER(REGEXP_REPLACE(CONCAT(first_name,"",last_name), "[^a-zA-Z]", ""))', $names)
+                ->get('users')
+                ->result_array();
         //
         if (empty($records)) {
             return [];
@@ -6005,11 +6161,11 @@ class Timeoff_model extends CI_Model
         //
         $records =
             $this->db
-            ->select('sid, title')
-            ->from('timeoff_policies')
-            ->where('timeoff_policies.company_sid', $companyId)
-            ->get()
-            ->result_array();
+                ->select('sid, title')
+                ->from('timeoff_policies')
+                ->where('timeoff_policies.company_sid', $companyId)
+                ->get()
+                ->result_array();
         //
         if (empty($records)) {
             return [];
@@ -6052,14 +6208,14 @@ class Timeoff_model extends CI_Model
         //
         return
             $this->db
-            ->where([
-                'company_sid' => $companyId,
-                'employee_sid' => $employeeId,
-                'timeoff_policy_sid' => $policyId
-            ])
-            ->where('request_from_date >= ', $startDate)
-            ->where('request_to_date <= ', $endDate)
-            ->count_all_results('timeoff_requests');
+                ->where([
+                    'company_sid' => $companyId,
+                    'employee_sid' => $employeeId,
+                    'timeoff_policy_sid' => $policyId
+                ])
+                ->where('request_from_date >= ', $startDate)
+                ->where('request_to_date <= ', $endDate)
+                ->count_all_results('timeoff_requests');
     }
 
     /**
@@ -6113,12 +6269,12 @@ class Timeoff_model extends CI_Model
         //
         return
             $this->db
-            ->where('user_sid', $employeeId)
-            ->where('policy_sid', $policyId)
-            ->where('is_added', $is_added)
-            ->where('effective_at', $effactedDate)
-            ->where('added_time', $allowedTime)
-            ->count_all_results('timeoff_allowed_balances');
+                ->where('user_sid', $employeeId)
+                ->where('policy_sid', $policyId)
+                ->where('is_added', $is_added)
+                ->where('effective_at', $effactedDate)
+                ->where('added_time', $allowedTime)
+                ->count_all_results('timeoff_allowed_balances');
     }
 
     //
@@ -6275,7 +6431,7 @@ class Timeoff_model extends CI_Model
                 $b[$k]['consumed_time'] = $tmp['text'];
                 $b[$k]['timeoff_category'] = $this->getTimeOffPolicyType($request['timeoff_policy_sid'], $companyId);
                 //
-                $policiesDetail  = $this->getEmployeePoliciesByDate(
+                $policiesDetail = $this->getEmployeePoliciesByDate(
                     $companyId,
                     $request['employeeId'],
                     $request['request_from_date'],
@@ -6292,7 +6448,8 @@ class Timeoff_model extends CI_Model
                 //
                 $b[$k]['allowed_time'] = $policiesDetail[0]['AllowedTime']['text'];
                 $b[$k]['remaining_time'] = $policiesDetail[0]['RemainingTime']['text'];
-                $b[$k]['anniversary_date'] = DateTime::createfromformat('Y-m-d', $employeeAnniversaryDate['upcomingAnniversaryDate'])->format('m/d/Y');;
+                $b[$k]['anniversary_date'] = DateTime::createfromformat('Y-m-d', $employeeAnniversaryDate['upcomingAnniversaryDate'])->format('m/d/Y');
+                ;
                 //
             }
         }
@@ -6314,8 +6471,10 @@ class Timeoff_model extends CI_Model
         $this->db->where('timeoff_requests.is_draft', 0);
         $this->db->where('timeoff_requests.archive', $post['archive']);
 
-        if (!in_array('all', $post['employees'])) $this->db->where_in('timeoff_requests.employee_sid', $post['employees']);
-        if (!in_array('all', $post['status'])) $this->db->where_in('timeoff_requests.status', $post['status']);
+        if (!in_array('all', $post['employees']))
+            $this->db->where_in('timeoff_requests.employee_sid', $post['employees']);
+        if (!in_array('all', $post['status']))
+            $this->db->where_in('timeoff_requests.status', $post['status']);
 
         if ((!empty($post['fromDate']) || !is_null($post['fromDate'])) && (!empty($post['toDate']) || !is_null($post['toDate']))) {
             $this->db->where('timeoff_requests.request_from_date BETWEEN \'' . $post['fromDate'] . '\' AND \'' . $post['toDate'] . '\'');
@@ -6374,7 +6533,8 @@ class Timeoff_model extends CI_Model
         $b = $a->result_array();
         $a->free_result();
         //
-        if (!sizeof($b)) return $r;
+        if (!sizeof($b))
+            return $r;
         // Get company default time
         $a = $this->db
             ->select('timeoff_settings.default_timeslot, timeoff_formats.slug')
@@ -6536,7 +6696,8 @@ class Timeoff_model extends CI_Model
             $b[$k]['Category'] = '';
             $aa = $a->row_array();
             $a->free_result();
-            if (sizeof($aa)) $b[$k]['Category'] = $aa['category_name'];
+            if (sizeof($aa))
+                $b[$k]['Category'] = $aa['category_name'];
 
             // Sort by policy
             // Let's fetch the history
@@ -6571,7 +6732,8 @@ class Timeoff_model extends CI_Model
                 ->result_array();
 
             // Sort by policy
-            if (!isset($r[ucwords($v['policy_title'])])) $r[ucwords($v['policy_title'])] = ucwords($v['policy_title']);
+            if (!isset($r[ucwords($v['policy_title'])]))
+                $r[ucwords($v['policy_title'])] = ucwords($v['policy_title']);
         }
 
         return array_values($b);
@@ -6650,7 +6812,8 @@ class Timeoff_model extends CI_Model
                 $post['employerId']
             );
             //
-            if (empty($inIds)) return $r;
+            if (empty($inIds))
+                return $r;
         }
         // _e($post, true, true);
         // Fetch all active employees 
@@ -6669,8 +6832,10 @@ class Timeoff_model extends CI_Model
             ->where('is_executive_admin', 0)
             ->limit($post['offset'], $post['inset']);
         //
-        if (!empty($inIds)) $this->db->where_in('sid', $inIds);
-        if ($post['filter']['employees'] != '' && $post['filter']['employees'] != 'all') $this->db->where('sid', $post['filter']['employees']);
+        if (!empty($inIds))
+            $this->db->where_in('sid', $inIds);
+        if ($post['filter']['employees'] != '' && $post['filter']['employees'] != 'all')
+            $this->db->where('sid', $post['filter']['employees']);
         //
         if ($post["filter"]["all"]) {
             $this->db->where(getTheWhereFromEmployeeStatus($post["filter"]["all"]));
@@ -6685,12 +6850,15 @@ class Timeoff_model extends CI_Model
         $employees = $a->result_array();
         $a->free_result();
         //
-        if (empty($employees)) return $r;
+        if (empty($employees))
+            return $r;
         //
         $filterPolicies = [];
         //
-        if (!is_array($post['filter']['policies'])) $post['filter']['policies'] = explode(',', $post['filter']['policies']);
-        if (!empty($post['filter']['policies']) && !in_array('all', $post['filter']['policies'])) $filterPolicies = $post['filter']['policies'];
+        if (!is_array($post['filter']['policies']))
+            $post['filter']['policies'] = explode(',', $post['filter']['policies']);
+        if (!empty($post['filter']['policies']) && !in_array('all', $post['filter']['policies']))
+            $filterPolicies = $post['filter']['policies'];
         //
 
         $settings = $this->getSettings($post['companyId']);
@@ -6889,7 +7057,8 @@ class Timeoff_model extends CI_Model
         $employees = $a->result_array();
         $a->free_result();
         //
-        if (empty($employees)) return [];
+        if (empty($employees))
+            return [];
         //
         $balances = $this->getBalances($companyId);
         $settings = $this->getSettings($companyId);
@@ -6977,7 +7146,8 @@ class Timeoff_model extends CI_Model
             ->where('timeoff_policies.is_archived', 0)
             ->order_by('timeoff_policies.sort_order', 'ASC');
         //
-        if ($withInclude) $this->db->where('timeoff_policies.is_included', 1);
+        if ($withInclude)
+            $this->db->where('timeoff_policies.is_included', 1);
         $this->db->where('timeoff_policies.sid', $policyId);
         //
         $policies = $this->db->get('timeoff_policies')
@@ -7173,7 +7343,8 @@ class Timeoff_model extends CI_Model
             ->result_array();
 
         //
-        if (empty($policies)) return false;
+        if (empty($policies))
+            return false;
         //
 
         //
