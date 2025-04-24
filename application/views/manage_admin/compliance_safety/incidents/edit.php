@@ -293,7 +293,7 @@
                     alertify.success(response.message);
                     // Append item to table
                     $(`.jsItemRow[data-key='${recordId}']`).find("td:eq(1)")
-                        .find(".jsSeverityLevelText").html(`Severity Level ${severityLevel}`);
+                        .find("button").html(`Severity Level ${severity_status[severityLevel]["level"]}`);
                     $(`.jsItemRow[data-key='${recordId}']`).find("td:eq(1)")
                         .find("button").css({
                             "background-color": severity_status[severityLevel]["bg_color"],
@@ -649,7 +649,7 @@
                 "color": $(this).css("color"),
             });
             $("#jsItemSelectedSeverityLevel").html(`
-                Severity Level ${$(this).find(".jsSeverityLevelText").text()}
+                ${$(this).text()}
             `);
 
 
