@@ -4159,9 +4159,11 @@ class Settings extends Public_Controller
             $employeeIds
         );
 
+
         $data["openShifts"] = $this->shift_model->getOpenShifts(
             $data["filter"]
         );
+
         // load time off model
         $this->load->model("timeoff_model", "timeoff_model");
         // get the leaves
@@ -6868,11 +6870,14 @@ class Settings extends Public_Controller
         $this->load->model("v1/Shift_model", "shift_model");
         // call the function
 
+        $post['shift_employee'] = 0;
+
         $this->shift_model
             ->processCreateOpenSingleShift(
                 $session["company_detail"]["sid"],
                 $post
             );
+ 
     }
 
 
@@ -7059,7 +7064,7 @@ class Settings extends Public_Controller
         $data_update_request['updated_at'] = getSystemDate();
 
         //
-        $requestNotExist= $this->shift_model->updateOpenShiftsRequest($post['shiftids'], $toEmployeeid, $data_update_request);
+        $requestNotExist = $this->shift_model->updateOpenShiftsRequest($post['shiftids'], $toEmployeeid, $data_update_request);
 
         if ($requestNotExist == 1) {
             return SendResponse(200, [
@@ -7146,8 +7151,6 @@ class Settings extends Public_Controller
                     "msg" => "The request does not exist."
                 ]);
             }
-
-        
         }
 
         // send mail
