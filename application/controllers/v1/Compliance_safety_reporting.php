@@ -315,6 +315,9 @@ class Compliance_safety_reporting extends Base_csp
         //     ->compliance_report_model
         //     ->getAllIncidents();
         //
+        $this->data["severity_levels"] = $this
+            ->compliance_report_model
+            ->getSeverityLevels();
         $this->data["reportId"] = $reportId;
         $this->data["incidentId"] = 0;
         $this->data["itemId"] = 0;

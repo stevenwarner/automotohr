@@ -12,7 +12,16 @@
         "y" => 0,
     ],
 ];
-$severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce']];
+
+$severityLevelGraph = ["data" => [], "colors" => [], "categories" => []];
+
+$severityLevelGraph["categories"] = array_column($severity_levels, "level");
+
+foreach ($severity_levels as $ll) {
+    $severityLevelGraph["data"][$ll["level"]] = 0;
+}
+
+$severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
 ?>
 <!-- Issues -->
 <div class="tab-pane <?= $this->input->get("tab", true) == "issues" ? "active" : ""; ?>" id="tab-issues"
@@ -78,7 +87,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                 }
                                 //
                                 $severityLevelGraph["data"][$record["level"]]++;
-                                $severityLevelGraph["colors"][$record["level"]] = $record["bg_color"];
+                                // $severityLevelGraph["data"][$record["level"]] = $record["bg_color"];
                                 ?>
                                 <tr data-id="<?= $record["sid"]; ?>">
                                     <td class="vam">
@@ -130,6 +139,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
         </div>
     </div>
 </div>
+<?php $severityLevelGraph["data"] = array_values($severityLevelGraph["data"]); ?>
 <script>
     progressGraphData = '<?= json_encode(array_values($progressGraphData)); ?>';
     severityLevelGraph = '<?= json_encode(($severityLevelGraph)); ?>';

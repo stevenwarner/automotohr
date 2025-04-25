@@ -45,6 +45,7 @@ $(function () {
         }]
     });
 
+
     Highcharts.chart('jsSeverityGraph', {
         chart: {
             type: 'column'
@@ -56,7 +57,7 @@ $(function () {
             }
         },
         xAxis: {
-            categories: ['1', '2', '3', '4', '5'],
+            categories: JSON.parse(severityLevelGraph).categories, // Reverse categories to show high to low
             title: {
                 text: 'Severity Level',
                 style: {
@@ -105,8 +106,8 @@ $(function () {
         },
         series: [{
             name: 'Issues',
-            data: JSON.parse(severityLevelGraph).data, // Use actual severity level data
-            colors: JSON.parse(severityLevelGraph).colors // Apply colors for each severity level
+            data: JSON.parse(severityLevelGraph).data, //  data to match high to low order
+            colors: JSON.parse(severityLevelGraph).colors // Reverse colors to match high to low order
         }]
     });
 });
