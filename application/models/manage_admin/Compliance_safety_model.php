@@ -8,6 +8,24 @@ class Compliance_safety_model extends CI_Model
         parent::__construct();
     }
 
+    public function getSeverityLevelsObject()
+    {
+        $records = $this
+            ->db
+            ->order_by("sid", "ASC")
+            ->get("compliance_severity_levels")
+            ->result_array();
+        if (!$records) {
+            return [];
+        }
+        $tmp = [];
+        foreach ($records as $record) {
+            $tmp[$record["sid"]] = $record;
+        }
+        return $tmp;
+    }
+
+
     public function getAllReportTypes()
     {
         return $this
@@ -39,7 +57,7 @@ class Compliance_safety_model extends CI_Model
     {
         return $this
             ->db
-            ->select("sid, title, description")
+            ->select("sid, title, description, severity_level_sid")
             ->where("compliance_report_incident_sid", $incidentId)
             ->order_by("sid", "DESC")
             ->get("compliance_report_incident_types")

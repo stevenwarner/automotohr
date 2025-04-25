@@ -233,6 +233,9 @@ class Compliance_safety extends Admin_Controller
         $this->form_validation->set_rules('description', 'Description', 'required');
         //
         if (!$this->form_validation->run()) {
+            $this->data["severity_status"] = $this
+                ->compliance_safety_model
+                ->getSeverityLevelsObject();
             $this->render('manage_admin/compliance_safety/incidents/edit');
         } else {
             // get the sanitized post
@@ -397,6 +400,7 @@ class Compliance_safety extends Admin_Controller
                 [
                     "compliance_report_incident_sid" => $incidentTypeId,
                     "title" => $this->input->post("title", true),
+                    "severity_level_sid" => $this->input->post("severityLevel", true),
                     "description" => $description,
                     "created_at" => getSystemDate(),
                     "updated_at" => getSystemDate(),
@@ -441,11 +445,7 @@ class Compliance_safety extends Admin_Controller
         //
         return SendResponse(
             200,
-            [
-                "view" => $this->load->view("manage_admin/compliance_safety/incidents/item_modal", [
-                    "record" => $record
-                ], true)
-            ]
+            $record
         );
     }
 
@@ -461,6 +461,7 @@ class Compliance_safety extends Admin_Controller
                 "compliance_report_incident_types",
                 [
                     "title" => $this->input->post("title", true),
+                    "severity_level_sid" => $this->input->post("severityLevel", true),
                     "description" => $description,
                     "updated_at" => getSystemDate()
                 ]

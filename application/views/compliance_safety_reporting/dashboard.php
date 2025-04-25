@@ -200,6 +200,9 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                                 href="<?= base_url("compliance_safety_reporting/edit/" . $record["csp_reports_sid"]); ?>">
                                                 <?= $record["title"]; ?>
                                             </a>
+                                            <p class="text-small">
+                                                Report Date: <?= formatDateToDB($record["report_date"], DB_DATE, DATE); ?>
+                                            </p>
                                         </td>
                                         <td class="vam">
                                             <a
