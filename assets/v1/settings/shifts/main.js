@@ -438,17 +438,16 @@ $(function manageShifts() {
 
 
 
-
-//
-$(".schedule-column-clickable-openshift").click(function (event) {
-	// prevent the event from happening
-	event.preventDefault();
 	//
-	callToCreateBoxOpenShift(
-		$(this).data("eid"),
-		$(this).closest(".schedule-column-container").data("date")
-	);
- });
+	$(".schedule-column-clickable-openshift").click(function (event) {
+		// prevent the event from happening
+		event.preventDefault();
+		//
+		callToCreateBoxOpenShift(
+			$(this).data("eid"),
+			$(this).closest(".schedule-column-container").data("date")
+		);
+	});
 
 
 
@@ -682,7 +681,7 @@ $(".schedule-column-clickable-openshift").click(function (event) {
 							"settings/shifts/single/create",
 							function (resp) {
 								if (resp.shiftid != 0) {
-									callToCreateBoxSendShifts(resp.shiftid,resp.shiftdate);
+									callToCreateBoxSendShifts(resp.shiftid, resp.shiftdate);
 
 								} else {
 									_success(resp.msg, function () {
@@ -1026,10 +1025,10 @@ $(".schedule-column-clickable-openshift").click(function (event) {
 	}
 
 
-//
+	//
 	function callToCreateBoxOpenShift(employeeId, date) {
 		makePage(
-			"Create Shift",
+			"",
 			"create_single_open_shift",
 			employeeId,
 			function (resp) {
@@ -1045,7 +1044,7 @@ $(".schedule-column-clickable-openshift").click(function (event) {
 				//
 				validatorRef = $("#jsPageCreateSingleShiftForm").validate({
 					rules: {
-					//	shift_employee: { required: true },
+						//	shift_employee: { required: true },
 						shift_date: { required: true },
 						start_time: { required: true, timeIn12Format: true },
 						end_time: { required: true, timeIn12Format: true },
@@ -1059,14 +1058,13 @@ $(".schedule-column-clickable-openshift").click(function (event) {
 					},
 					submitHandler: function (form) {
 
-
 						return processCallWithoutContentType(
 							formArrayToObj($(form).serializeArray()),
 							$(".jsPageCreateSingleShiftBtn"),
 							"settings/shifts/opensingle/create",
 							function (resp) {
 								if (resp.shiftid != 0) {
-									callToCreateBoxSendShifts(resp.shiftid,resp.shiftdate);
+									callToCreateBoxSendShifts(resp.shiftid, resp.shiftdate);
 
 								} else {
 									_success(resp.msg, function () {
@@ -1085,9 +1083,9 @@ $(".schedule-column-clickable-openshift").click(function (event) {
 
 
 
-//
-function callToEditOpenBox(shiftId) {
-		makePage("Edit Shift", "edit_open_single_shift", shiftId, function (resp) {
+	//
+	function callToEditOpenBox(shiftId) {
+		makePage("", "edit_open_single_shift", shiftId, function (resp) {
 			// hides the loader
 			ml(false, modalLoader);
 			//
@@ -1124,6 +1122,159 @@ function callToEditOpenBox(shiftId) {
 			});
 		});
 	}
+
+
+	//
+
+	//
+	$(document).on("click", '.jsAdminRejectOpenShiftRequest', function (event) {
+		// prevent the event from happening
+		event.preventDefault();
+
+		let shiftsArrayIds = [];
+		let shiftId = $(this).data('shiftid');
+		let toEmployeeId = $(this).data('toemployeeid');
+
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to reject request?',
+			function () {
+				//
+				const formObj = new FormData();
+				// set the file object
+				shiftsArrayIds.push(shiftId);
+				formObj.append("shiftids", shiftsArrayIds);
+				formObj.append("toEmployeeId", toEmployeeId);
+				// 
+				processCallWithoutContentType(
+					formObj,
+					'',
+					"settings/shifts/claimshiftsreject",
+					function (resp) {
+						// show the message
+						_success(resp.msg, function () {
+							$('#rowId' + shiftId).remove();
+						});
+					}
+				);
+			},
+			function () {
+
+			}
+		)
+	});
+
+
+	$(document).on("click", '.jsAdminRejectOpenShiftRequests', function (event) {
+
+		event.preventDefault();
+
+		let shiftsArrayIds = [];
+		$(".my_checkbox:checked").each(function () {
+			shiftsArrayIds.push($(this).val());
+		});
+
+		//
+		if (shiftsArrayIds.length > 0) {
+			alertify.confirm(
+				'Are You Sure?',
+				'Are you sure want to reject requests?',
+				function () {
+					//
+					const formObj = new FormData();
+					// set the file object
+					formObj.append("shiftids", shiftsArrayIds);
+					processCallWithoutContentType(
+						formObj,
+						'',
+						"settings/shifts/claimshiftsreject",
+						function (resp) {
+							// show the message
+							_success(resp.msg, function () {
+								// window.location.reload();
+								shiftsArrayIds.forEach((item, index) => {
+									$('#rowId' + item).remove();
+								});
+
+
+							});
+						}
+					);
+				},
+				function () {
+
+				}
+			)
+		} else {
+
+			alertify.alert('Error! Not selected', 'Please Select at-least one shift ');
+		}
+
+	});
+
+
+
+	$(document).on("click", '.jsApproveOpenShiftRequest', function (event) {
+
+		// prevent the event from happening
+		event.preventDefault();
+
+		let shiftsArrayIds = [];
+		let shiftId = $(this).data('shiftid');
+		let toEmployeeId = $(this).data('toemployeeid');
+		let companyId = $(this).data('toemployeeid');
+
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to approve request?',
+			function () {
+				//
+				const formObj = new FormData();
+				// set the file object
+				shiftsArrayIds.push(shiftId);
+				formObj.append("shiftids", shiftsArrayIds);
+				formObj.append("toEmployeeId", toEmployeeId);
+
+				// 
+
+				processCallWithoutContentType(
+					formObj,
+					'',
+					"settings/shifts/claimshiftsapprove",
+					function (resp) {
+						// show the message
+						_success(resp.msg, function () {
+							if (resp.error == undefined) {
+								window.location.reload();
+							}
+							
+						});
+					}
+				);
+			},
+			function () {
+
+			}
+		)
+	});
+
+
+
+	//
+	$(document).on("click", '#check_all', function (event) {
+
+		if ($('#check_all').is(":checked")) {
+			$('.my_checkbox:checkbox').each(function () {
+				this.checked = true;
+			});
+		} else {
+			$('.my_checkbox:checkbox').each(function () {
+				this.checked = false;
+			});
+		}
+	});
+
+
 
 
 	/**
@@ -1416,7 +1567,7 @@ function callToEditOpenBox(shiftId) {
 		publishUnpublishSingleShiftStatus = $(this).data("publish");
 		_confirm(
 			"Do you really want to unpublish the shift?",
-			function() {
+			function () {
 				unpublishShift(publishUnpublishSingleShiftId);
 			}
 		);
@@ -1469,7 +1620,7 @@ function callToEditOpenBox(shiftId) {
 						}
 					);
 				},
-				function () {}
+				function () { }
 			);
 		}
 	);
@@ -1561,7 +1712,7 @@ function callToEditOpenBox(shiftId) {
 			onPublishAndSendEmails: function () {
 				publishShiftsEmailOption();
 			},
-			oncancel: function () {},
+			oncancel: function () { },
 			labels: {
 				ok: "Publish",
 			},
@@ -1633,7 +1784,7 @@ function callToEditOpenBox(shiftId) {
 					}
 				);
 			},
-			oncancel: function () {},
+			oncancel: function () { },
 			labels: {
 				ok: "Send",
 			},
@@ -1740,7 +1891,7 @@ function callToEditOpenBox(shiftId) {
 			}
 		);
 	}
-	
+
 	function unpublishShift(shiftId) {
 		const formObj = new FormData();
 
@@ -1776,7 +1927,7 @@ function callToEditOpenBox(shiftId) {
 	});
 
 	//
-	function callToCreateBoxSendShifts(sendShiftId,shiftDate) {
+	function callToCreateBoxSendShifts(sendShiftId, shiftDate) {
 		makePage("Send Shift", "send_shift", 0, function () {
 			// hides the loader
 			ml(false, modalLoader);

@@ -2263,9 +2263,6 @@ $route['timeoff/exporttocsv/(:any)'] = 'Time_off/exportTimeoffToCSV/$1';
 //$route['timeoff/exporttocsv/all'] = 'Time_off/exportTimeoffToCSV/$1';
 
 $route["manage_admin/resources/update_sort_order"]["post"] = "manage_admin/resources/updateSortOrder";
-
-
-
 //
 $route["shifts/my"]["get"] = "v1/Shifts/Employee_shifts/my";
 $route["shifts/my/subordinates"]["get"] = "v1/Shifts/Subordinate_shifts/loggedInPersonSubOrdinateShifts";
@@ -2791,3 +2788,4 @@ $route["csp/issue/progress/update/public"]["post"] =
   
 $route["compliance_safety_reporting/delete_file/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting/deleteFileById/$1";
+$route["settings/shifts/cancelclaimrequest"]["post"] = "Settings/processCancelClaimRequest";

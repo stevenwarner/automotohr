@@ -968,17 +968,3 @@ div.ui-timepicker-container.ui-timepicker-standard {
 	background: #000ccc1a !important;
 	/* color: var(--txColor) !important; */
 }
-
-    .panel-accordion[aria-expanded="true"]::after {
-        content: "\2212";
-        font-size: 16px;
-        float: right;
-        /* minus */
-    }
-
-    .panel-accordion[aria-expanded="false"]::after {
-        content: "\002b";
-        font-size: 16px;
-        float: right;
-        /* plus */
-    }
