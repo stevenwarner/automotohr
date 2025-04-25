@@ -8,10 +8,10 @@
                             <i class="fa fa-save text-orange" aria-hidden="true"></i>
                             Claim Open Shift
                         </h2>
-                    </div>                 
+                    </div>
                 </div>
             </div>
-            <div class="panel-body">              
+            <div class="panel-body">
                 <!--  -->
                 <div class="form-group">
                     <label class="text-medium">
@@ -23,7 +23,6 @@
                     <input type="text" class="form-control" readonly name="shift_date" value="<?php echo date("m/d/Y", strtotime($shift['shift_date'])) ?>" />
                 </div>
 
-
                 <!--  -->
                 <div class="row form-group">
                     <div class="col-sm-4">
@@ -31,14 +30,14 @@
                             Start Time
                             <strong class="text-red">*</strong>
                         </label>
-                        <input type="text" class="form-control jsTimeField" name="start_time" placeholder="HH:MM" value="<?php echo formatDateToDB($shift['start_time'], "H:i:s", "h:i A"); ?>" />
+                        <input type="text" class="form-control jsTimeField" name="start_time" placeholder="HH:MM" value="<?php echo formatDateToDB($shift['start_time'], "H:i:s", "h:i A"); ?>"  readonly/>
                     </div>
                     <div class="col-sm-4">
                         <label class="text-medium">
                             End Time
                             <strong class="text-red">*</strong>
                         </label>
-                        <input type="text" class="form-control jsTimeField" name="end_time" placeholder="HH:MM" value="<?php echo formatDateToDB($shift['end_time'], "H:i:s", "h:i A"); ?>" />
+                        <input type="text" class="form-control jsTimeField" name="end_time" placeholder="HH:MM" value="<?php echo formatDateToDB($shift['end_time'], "H:i:s", "h:i A"); ?>" readonly/>
                     </div>
                 </div>
 
@@ -99,7 +98,7 @@
                     <?php }
                     } ?>
 
-                </div>          
+                </div>
                 <!--  -->
                 <div class="form-group">
                     <br>
@@ -109,45 +108,35 @@
                     <textarea name="notes" rows="5" class="form-control" disabled><?php echo $shift['notes']; ?></textarea>
                 </div>
 
+                <?php
+                $todayDate = date('Y-m-d');
+                $pastDate = 0;
+                if (strtotime($shift['shift_date']) < strtotime($todayDate)) {
+                    $pastDate = 1;
+                }
+                ?>
 
-                <div class="col-sm-6">
-                    <label class="control control--checkbox">
-                        <input type="checkbox" name="employee_can_claim" value="1"  <?php echo $shift['employee_can_claim']? 'checked':'' ?> disabled/>
-                        Employee Can Claim Shift
-                        <div class="control__indicator"></div>
-                    </label>
-                    <label class="control control--checkbox">
-                        <input type="checkbox" name="employee_need_approval_for_claim" value="1" <?php echo $shift['employee_need_approval_for_claim']? 'checked':'' ?> disabled/>
-                        Employee Need Approval For Claim Shift
-                        <div class="control__indicator"></div>
-                    </label>
+                <div class="panel-footer text-right">
+                    <?php if ($isRequestExist == 1) { ?>
+                        <button class="btn btn-orange jsCancelRequestBtn" type="button" data-employeeid='<?php echo $employeeid?>' data-shiftid='<?php echo $shiftid?>' data-companyid='<?php echo $companyid?>' data-shiftid='<?php echo $shift['sid']?>' >
+                            <i class="fa fa-times-circle" aria-hidden="true"></i>
+                            &nbsp;Cancel Request
+                        </button>
+                    <?php } else { ?>
+                        <button class="btn btn-orange jsPageCreateSingleShiftBtn">
+                            <i class="fa fa-save" aria-hidden="true"></i>
+                            &nbsp;Claim Shift
+                        </button>
+                    <?php } ?>
+
+                    <button class="btn btn-black jsModalCancel" type="button">
+                        <i class="fa fa-times-circle" aria-hidden="true"></i>
+                        &nbsp;Cancel
+                    </button>
+
                 </div>
             </div>
-            <!--  -->
-
-
-            <?php
-            $todayDate = date('Y-m-d');
-            $pastDate = 0;
-            if (strtotime($shift['shift_date']) < strtotime($todayDate)) {
-                $pastDate = 1;
-            }
-            ?>
-
-            <div class="panel-footer text-right">
-
-                <button class="btn btn-orange jsPageCreateSingleShiftBtn">
-                    <i class="fa fa-save" aria-hidden="true"></i>
-                    &nbsp;Claim Shift
-                </button>
-                <button class="btn btn-black jsModalCancel" type="button">
-                    <i class="fa fa-times-circle" aria-hidden="true"></i>
-                    &nbsp;Cancel
-                </button>
-
-            </div>
         </div>
-    </div>
 </form>
 
 <script>
