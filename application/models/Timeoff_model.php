@@ -6283,6 +6283,20 @@ class Timeoff_model extends CI_Model
         $this->db->insert('timeoff_allowed_balances', $balanceInfo);
     }
 
+    function updateEmployeeAllowedBalance(
+        $employeeId,
+        $policyId,
+        $effactedDate,
+        $balanceInfo
+    ) {
+        $this
+            ->db
+            ->where('user_sid', $employeeId)
+            ->where('policy_sid', $policyId)
+            ->where('effective_at', $effactedDate)
+            ->update('timeoff_allowed_balances', $balanceInfo);
+    }
+
 
     //
     function get_all_policies($company_sid)
