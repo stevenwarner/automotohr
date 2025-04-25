@@ -14,6 +14,7 @@
 ];
 $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce']];
 ?>
+
 <div class="main csPageWrap">
     <div class="container-fluid">
         <!-- Buttons -->
@@ -57,7 +58,14 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                 <select id="severityLevel" name="severityLevel" class="form-control">
                                     <option <?= $filter["severity_level"] == "-1" ? "selected" : ""; ?> value="-1">All
                                     </option>
-                                    <option <?= $filter["severity_level"] == "1" ? "selected" : ""; ?> value="1">Severity
+                                    <?php if ($severity_status) { ?>
+                                        <?php foreach ($severity_status as $status) { ?>
+                                            <option <?= $filter["severity_level"] == $status['sid'] ? "selected" : ""; ?> value="<?php echo $status['sid']; ?>">
+                                                <?php echo $status['level'] ?>
+                                            </option>
+                                        <?php } ?>
+                                    <?php } ?>    
+                                    <!-- <option <?= $filter["severity_level"] == "1" ? "selected" : ""; ?> value="1">Severity
                                         Level 1</option>
                                     <option <?= $filter["severity_level"] == "2" ? "selected" : ""; ?> value="2">Severity
                                         Level 2</option>
@@ -66,7 +74,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                     <option <?= $filter["severity_level"] == "4" ? "selected" : ""; ?> value="4">Severity
                                         Level 4</option>
                                     <option <?= $filter["severity_level"] == "5" ? "selected" : ""; ?> value="5">Severity
-                                        Level 5</option>
+                                        Level 5</option> -->
                                 </select>
                             </div>
                         </div>
@@ -109,6 +117,24 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                         </div>
                     </div>
 
+                    <!--  -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="severityLevel">Report Title</label>
+                                <input type="text" class="form-control" id="incidentTitle" name="title" value="<?php echo $filter["title"]; ?>">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="incidentType">Reported Date</label>
+                                <input type="text" class="form-control" id="jsDateRangePicker" name="date_range" value="<?php echo $filter["date_range"]; ?>">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-sm-12 text-right">
                             <div class="form-group">
@@ -148,8 +174,14 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
         <!-- Table -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-heading-text text-medium">
+                <h3 class="panel-heading-text text-medium" style="padding: 14px 0px;">
                     <i class="fa fa-table text-orange"></i> Compliance Safety Reporting
+                    <span class="pull-right">
+                        <a type="button" class="btn btn-orange jsSendReminderEmails" href="javascript:;">
+                            <i class="fa fa-send"></i>
+                            Send Email 
+                        </a>
+                    </span>
                 </h3>
             </div>
             <div class="panel-body">
@@ -157,6 +189,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                     <table class="table table-striped">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" class="js-check-all" /></th>
                                 <th class="bg-black">Severity<br />Level</th>
                                 <th class="bg-black">Report</th>
                                 <th class="bg-black">Incident</th>
@@ -188,11 +221,12 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                     $severityLevelGraph["data"][$record["level"]]++;
                                     $severityLevelGraph["colors"][$record["level"]] = $record["bg_color"];
                                     ?>
-                                    <tr>
+                                    <tr class="js-tr">
+                                        <td><input type="checkbox" name="issues_ids[]" value="<?=$record["sid"]?>" /></td>
                                         <td class="vam">
                                             <label class="btn form-control"
                                                 style="background: <?= $record["bg_color"]; ?>; color: <?= $record["txt_color"]; ?>; border-radius: 5px;">
-                                                Severity Level <?= $record["level"]; ?>
+                                                <?= $record["level"]; ?>
                                             </label>
                                         </td>
                                         <td class="vam">
@@ -238,7 +272,7 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="5" class="text-center">No records found.</td>
+                                    <td colspan="8" class="text-center">No records found.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
@@ -249,8 +283,6 @@ $severityLevelGraph = ["data" => [0, 0, 0, 0, 0], "colors" => ['#2f7ed8', '#0d23
 
     </div>
 </div>
-
-
 <script>
     progressGraphData = '<?= json_encode(array_values($progressGraphData)); ?>';
     severityLevelGraph = '<?= json_encode(($severityLevelGraph)); ?>';

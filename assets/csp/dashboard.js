@@ -1,4 +1,7 @@
 $(function () {
+    let XHR = null;
+    let selectedIssues = [];
+
     Highcharts.chart('jsProgressGraph', {
         chart: {
             type: 'pie'
@@ -56,7 +59,7 @@ $(function () {
             }
         },
         xAxis: {
-            categories: ['1', '2', '3', '4', '5'],
+            categories: ['Low', '2', '3', '4', '5'],
             title: {
                 text: 'Severity Level',
                 style: {
@@ -109,4 +112,73 @@ $(function () {
             colors: JSON.parse(severityLevelGraph).colors // Apply colors for each severity level
         }]
     });
+
+    $("#jsDateRangePicker").daterangepicker({
+		showDropdowns: true,
+		autoApply: true,
+		locale: {
+			format: "MM/DD/YYYY",
+			separator: " - ",
+		},
+	});
+
+    $(document).on('click', '.js-check-all', selectAllInputs);
+    $(document).on('click', '.js-tr', selectSingleInput);
+
+    // Select all input: checkbox
+    function selectAllInputs() {
+        $('.js-tr').find('input[name="issues_ids[]"]').prop('checked', $(this).prop('checked'));
+    }
+
+    // Select single input: checkbox
+    function selectSingleInput() {
+        $(this).find('input[name="issues_ids[]"]').prop('checked', !$(this).find('input[name="issues_ids[]"]').prop('checked'));
+    }
+
+    $(".jsSendReminderEmails").click(function (event) {
+		event.preventDefault();
+        //
+        $.each($('input[name="issues_ids[]"]:checked'), function() {
+            selectedIssues.push(parseInt($(this).val()));
+        });
+        //
+        if (selectedIssues.length) {
+            _confirm(
+                "Are you sure you want to send emails to the selected employees and external recipients?",
+                sendEmailsForReport
+            );
+        } else {
+            alertify.alert("Please select an issue to send reminder email.");
+            return false;
+        }
+        //
+		
+	});
+
+	function sendEmailsForReport() {
+        //
+        //
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/send_issue_reminder_email"
+				),
+				method: "POST",
+                data: {
+                    issuesIds: selectedIssues
+                },
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message);
+				});
+		}
+	}
 });

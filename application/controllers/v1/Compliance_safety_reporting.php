@@ -32,11 +32,16 @@ class Compliance_safety_reporting extends Base_csp
         $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
         $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
         $this->data['pageJs'][] = 'csp/dashboard';
-        // get filter
+        $this->data['pageJs'][] = main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0");
+        // load CSS
+        $this->data['pageCSS'][] = main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0");
+        // get filter    
         $this->data["filter"] = [
             "severity_level" => $this->input->get("severityLevel", true) ?? "-1",
             "incident" => $this->input->get("incidentType", true) ?? "-1",
             "status" => $this->input->get("status", true) ?? "-1",
+            "title" => $this->input->get("title") ?? "",
+            "date_range" => $this->input->get("date_range", true) ?? ""
         ];
 
         // get all the incidents
@@ -53,6 +58,11 @@ class Compliance_safety_reporting extends Base_csp
                 $this->getLoggedInCompany("sid"),
                 $this->data["filter"]
             );
+        //
+        // get the severity status
+        $this->data["severity_status"] = $this
+            ->compliance_report_model
+            ->getSeverityLevels();
         //
         $this->renderView('compliance_safety_reporting/dashboard');
     }
@@ -1743,6 +1753,31 @@ class Compliance_safety_reporting extends Base_csp
                 "message" => "Failed to update status",
             ]);
         }
+    }
+
+    /**
+     * process edit
+     * 
+     * @param int $reportId
+     * @param int $incidentId
+     */
+    public function sendEmailsForCSPIssues()
+    {
+        //allowed_internal_system_count
+        $issuesIds = $_POST['issuesIds'];
+
+        foreach ($issuesIds as $issueId) {
+            $this
+            ->compliance_report_model
+            ->sendEmailsForCSPIssue(
+                $issueId
+            );
+        }
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "You have successfully send the emails."]
+        );
     }
 
 }

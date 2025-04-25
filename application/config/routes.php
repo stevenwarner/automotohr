@@ -2789,3 +2789,6 @@ $route["csp/issue/progress/update/public"]["post"] =
 $route["compliance_safety_reporting/delete_file/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting/deleteFileById/$1";
 $route["settings/shifts/cancelclaimrequest"]["post"] = "Settings/processCancelClaimRequest";
+
+$route["compliance_safety_reporting/send_issue_reminder_email"]["post"] =
+  "v1/Compliance_safety_reporting/sendEmailsForCSPIssues";
