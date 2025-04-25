@@ -2095,7 +2095,8 @@ if (!function_exists('processESSTPolicy')) {
         //
         // today's date
         $currentDate = getSystemDate('Y-m-d');
-        $allowedTime = $allowedTimeInMinutes;
+        // max allowed time is 48 hours per year
+        $allowedTime = 48 * 60;
         //
         // for adding time off balance
         if (
