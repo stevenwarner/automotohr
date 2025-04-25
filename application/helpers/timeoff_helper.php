@@ -2268,7 +2268,8 @@ if (!function_exists('processESTAPolicy')) {
         //
         // today's date
         $currentDate = getSystemDate('Y-m-d');
-        $allowedTime = $balanceHolder["allowed"] * 60;
+        // all Part time and full time employee allowed time is 72 years
+        $allowedTime = 72 * 60;
         //
         // for adding time off balance
         if (
