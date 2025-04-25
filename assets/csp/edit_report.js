@@ -621,5 +621,364 @@ $(function Overview() {
 		}
 	}
 
+	//
+	$(".jsAddAddIssueBtn").click(
+		function (event) {
+			event.preventDefault();
+			generateAndAddModalToBody();
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/issues/all"
+				),
+				method: "GET",
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					$("#jsAddIssueModal .modal-body").html(resp.view);
+					loadViewOfIssueToProcess(
+						$("#jsNewItemSelect").val()
+					)
+				});
+		}
+	);
+
+	$(document).on("change", "#jsNewItemSelect", function () {
+		loadViewOfIssueToProcess($(this).val());
+	});
+
+	$(document).on("click", ".jsAddIssue", function () {
+		// set the object
+		const addIssueObject = {
+			reportId: getSegment(2),
+			incidentId: $("#jsNewItemIncidentId").val(),
+			issueId: $("#jsNewItemId").val(),
+			severityLevelId: $("#jsNewItemSeverityLevel").val(),
+			dynamicInputs: [],
+			dynamicCheckbox: [],
+		};
+		//
+		addIssueObject["dynamicInputs"] =  $("#jsAddIssuePanelRef")
+			.find('[name="dynamicInput[]"]').length > 0 ? $("#jsAddIssuePanelRef")
+			.find('[name="dynamicInput[]"]')
+			.map(function () {
+				return $(this).val();
+			})
+			.get() : [];
+		//
+		addIssueObject["dynamicCheckbox"] =  $("#jsAddIssuePanelRef")
+			.find('[name="dynamicCheckbox[]"]') > 0 ? $("#jsAddIssuePanelRef")
+			.find('[name="dynamicCheckbox[]"]')
+			.map(function () {
+				return $(this).val();
+			})
+			.get() : [];
+
+		if (!addIssueObject.reportId) {
+			_error("Please provide a report id.")
+			return;
+		}
+		if (!addIssueObject.incidentId) {
+			_error("Please provide a incident id.")
+			return;
+		}
+		if (!addIssueObject.issueId) {
+			_error("Please provide a issue id.")
+			return;
+		}
+		if (!addIssueObject.severityLevelId) {
+			_error("Please select a severity level.")
+			return;
+		}
+		//
+		addIssueToIncident(addIssueObject);
+		
+	});
+
+	function loadViewOfIssueToProcess(issueId)
+	{
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		//
+		XHR = $
+			.ajax({
+				url: baseUrl("compliance_safety_reporting/issues/" + issueId),
+				method: "GET",
+			})
+			.always(function () {
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {				
+				$("#jsAddIssueBox").html(resp.view)
+				$("#jsAddIssueModal .jsAddIssue").removeClass("hidden");
+			});
+	}
+
+
+	function addIssueToIncident(issueObject) {
+		//
+		const button = $(".jsAddIssue");
+		button.prop("disabled", true).text("Adding...");
+
+		if (XHR === null) {
+			XHR = $.ajax({
+				url: baseUrl(
+					`compliance_safety_reporting/issue/add`
+				),
+				method: "POST",
+				data: issueObject,
+			})
+				.always(function () {
+					XHR = null;
+					button.prop("disabled", false).text("Add Issue");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message, function () {
+						window.location.refresh();
+					});
+				});
+		}
+	};
+
+	function editIssueToIncident(issueObject) {
+		//
+		const button = $(".jsEditModalIssue");
+		button.prop("disabled", true).text("Updating...");
+
+		if (XHR === null) {
+			XHR = $.ajax({
+				url: baseUrl(
+					`compliance_safety_reporting/issue/edit`
+				),
+				method: "POST",
+				data: issueObject,
+			})
+				.always(function () {
+					XHR = null;
+					button.prop("disabled", false).text("Save changes");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message, function () {
+						window.location.refresh();
+					});
+				});
+		}
+	};
+
+	//
+	$(".jsEditIssue").click(
+		function (event) {
+			event.preventDefault();
+
+			const issueId = $(this).closest("tr").data("id");
+
+			generateAndEditModalToBody();
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/issues/edit/"+issueId
+				),
+				method: "GET",
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					$("#jsEditIssueModal .modal-body").html(resp.view);
+					$(".jsEditModalIssue").removeClass("hidden");
+				});
+		}
+	);
+
+	$(document).on("click", ".jsEditModalIssue", function () {
+		// set the object
+		const editIssueObject = {
+			issueId: $("#jsNewItemId").val(),
+			severityLevelId: $("#jsNewItemSeverityLevel").val(),
+			dynamicInputs: [],
+			dynamicCheckbox: [],
+		};
+		//
+		editIssueObject["dynamicInputs"] =  $("#jsAddIssuePanelRef")
+			.find('[name="dynamicInput[]"]').length > 0 ? $("#jsAddIssuePanelRef")
+			.find('[name="dynamicInput[]"]')
+			.map(function () {
+				return $(this).val();
+			})
+			.get() : [];
+		//
+		editIssueObject["dynamicCheckbox"] =  $("#jsAddIssuePanelRef")
+			.find('[name="dynamicCheckbox[]"]') > 0 ? $("#jsAddIssuePanelRef")
+			.find('[name="dynamicCheckbox[]"]')
+			.map(function () {
+				return $(this).val();
+			})
+			.get() : [];
+
+		if (!editIssueObject.issueId) {
+			_error("Please provide a issue id.")
+			return;
+		}
+		if (!editIssueObject.severityLevelId) {
+			_error("Please select a severity level.")
+			return;
+		}
+		//
+		editIssueToIncident(editIssueObject);
+		
+	});
+
+
+	$(document).on("click", ".show-status-box", function () {
+		$(this).closest(".row").next().show();
+	});
+
+	$(document).on("click", ".applicant", function () {
+		//
+		const id = $(this).data("id");
+		//
+		$(this).parent().parent().parent().find(".jsSelectedPill").html(`
+			<div id="jsNewItemSelectedSeverity" data-id="${id}" class="csLabelPill jsSelectedLabelPill text-center" 
+			style="
+			background-color: ${$(this).css(
+				"background-color"
+			)}; color: ${$(this).css("color")} ;">${$(this).text()}</div>
+		`);
+
+		$("#jsNewItemSeverityLevel").val(id);
+	});
+
+	$(document).on("click", ".cross", function () {
+		$(this).parent().parent().css("display", "none");
+	});
+
+
+	function generateAndAddModalToBody()
+	{
+		if ($("#jsAddIssueModal").length <= 0) {
+			const modal = `
+			<div class=modal fade" id="jsAddIssueModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Report a new Issue</h5>
+						</div>
+						<div class="modal-body">
+							<div class="alert alert-info text-center">Generating view please wait.</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary jsAddIssue hidden">Add Issue</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			`;
+			$("body").append(modal);
+		}
+		$("#jsAddIssueModal").modal({
+			backdrop: "static",
+			keyboard: false,
+		});
+		$("#jsAddIssueModal").modal("show");
+	}
+
+	function generateAndEditModalToBody()
+	{
+		if ($("#jsEditIssueModal").length <= 0) {
+			const modal = `
+			<div class=modal fade" id="jsEditIssueModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Modify an Issue</h5>
+						</div>
+						<div class="modal-body">
+							<div class="alert alert-info text-center">Generating view please wait.</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-primary jsEditModalIssue hidden">Save changes</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			`;
+			$("body").append(modal);
+		}
+		$("#jsEditIssueModal").modal({
+			backdrop: "static",
+			keyboard: false,
+		});
+		$("#jsEditIssueModal").modal("show");
+	}
+
+
+	// Report Save
+	$(".jsReportBasicUpdateBtn").click(function (event) {
+		event.preventDefault();
+		const reportObject = {
+			title: $(".report_title").val().trim(),
+			report_date: $(".report_date").val(),
+			report_completion_date: $(".report_completion_date").val(),
+			report_status: $(".report_status option:selected").val(),
+			report_id: getSegment(2)
+		};
+
+		if (!reportObject.title) {
+			_error("Please add a report title.");
+			return;
+		}
+
+		if (!reportObject.report_date) {
+			_error("Please add a report date.");
+			return;
+		}
+		
+		if (reportObject.status == "completed" && !reportObject.date) {
+			_error("Please add a report completion date.");
+			return;
+		}
+		
+		//
+		updateReportBasicInfo(reportObject);
+	});
+
+	function updateReportBasicInfo(reportObject) {
+		//
+		const button = $(".jsReportBasicUpdateBtn");
+		button.prop("disabled", true).text("Updating...");
+
+		if (XHR === null) {
+			XHR = $.ajax({
+				url: baseUrl(
+					`compliance_safety_reporting/report/update/`+reportObject.report_id
+				),
+				method: "POST",
+				data: reportObject,
+			})
+				.always(function () {
+					XHR = null;
+					button.prop("disabled", false).text("Save Changes");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message, function () {
+					});
+				});
+		}
+	};
+
 	ml(false, "jsPageLoader");
 });
+0

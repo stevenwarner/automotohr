@@ -262,7 +262,7 @@ class Compliance_safety_reporting extends Base_csp
         // get types
         $this->data["report"] = $this
             ->compliance_report_model
-            ->getCSPReportById(
+            ->getCSPReportByIdNew(
                 $reportId,
                 [
                     "csp_reports.sid",
@@ -285,6 +285,7 @@ class Compliance_safety_reporting extends Base_csp
                     "users.is_executive_admin",
                 ]
             );
+
         //
         $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, 0, $this->getLoggedInEmployee("sid"));
         //
@@ -310,15 +311,23 @@ class Compliance_safety_reporting extends Base_csp
                 0
             );
         // get the report incident types
-        $this->data["incidentTypes"] = $this
-            ->compliance_report_model
-            ->getAllIncidents();
+        // $this->data["incidentTypes"] = $this
+        //     ->compliance_report_model
+        //     ->getAllIncidents();
         //
         $this->data["reportId"] = $reportId;
         $this->data["incidentId"] = 0;
         $this->data["itemId"] = 0;
+
+        // load JS
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
+        $this->data['pageJs'][] = 'csp/dashboard';
         //
-        $this->renderView('compliance_safety_reporting/edit_report');
+        $this->renderView('compliance_safety_reporting/edit_report_new');
     }
 
     /**
@@ -1743,6 +1752,163 @@ class Compliance_safety_reporting extends Base_csp
                 "message" => "Failed to update status",
             ]);
         }
+    }
+
+    public function getAllIssues()
+    {
+        // get the issues
+        $issues = $this
+            ->compliance_report_model
+            ->getAllIssues();
+
+        // return the success
+        return SendResponse(
+            200,
+            [
+                "message" => "Issues fetched successfully.",
+                "view" => $this->load->view(
+                    'compliance_safety_reporting/reporting/issues_modal',
+                    [
+                        "records" => $issues,
+                    ],
+                    true
+                )
+            ]
+        );
+    }
+
+    public function getSingleIssueView($issueId)
+    {
+        // get the issues
+        $issues = $this
+            ->compliance_report_model
+            ->getIssue($issueId);
+
+        // also get the severity level
+        $severityLevels = $this->compliance_report_model->getSeverityLevels();
+        // return the success
+        return SendResponse(
+            200,
+            [
+                "message" => "Issues fetched successfully.",
+                "issues" => $issues,
+                "view" => $this->load->view(
+                    'compliance_safety_reporting/reporting/issue_modal_single',
+                    [
+                        "records" => $issues,
+                        "severity_status" => $severityLevels
+                    ],
+                    true
+                )
+            ]
+        );
+    }
+
+    public function getEditIssueViewByRecordId($issueId)
+    {
+        // get the issues
+        $issues = $this
+            ->compliance_report_model
+            ->getIssueByRecordId($issueId);
+        // also get the severity level
+        $severityLevels = $this->compliance_report_model->getSeverityLevels();
+        // return the success
+        return SendResponse(
+            200,
+            [
+                "message" => "Issues fetched successfully.",
+                "issues" => $issues,
+                "view" => $this->load->view(
+                    'compliance_safety_reporting/reporting/issue_modal_edit',
+                    [
+                        "records" => $issues,
+                        "severity_status" => $severityLevels
+                    ],
+                    true
+                )
+            ]
+        );
+    }
+
+    public function addIssueToReport()
+    {
+        // get the post
+        $post = $this->input->post(null, true);
+        // Check if the incident is already added
+        $cspIncidentId = $this->compliance_report_model->checkIfIncidentExists(
+            $post['reportId'],
+            $post['incidentId'],
+            $this->getLoggedInEmployee("sid")
+        );
+        //
+        $resp = $this
+            ->compliance_report_model
+            ->attachIssueWithReport(
+                $post["reportId"],
+                $cspIncidentId,
+                $post["issueId"],
+                $post["severityLevelId"],
+                $post["dynamicCheckbox"] ?? [],
+                $post["dynamicInputs"] ?? [],
+                $this->getLoggedInEmployee("sid"),
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                "success" => true,
+                "message" => "You have successfully reported a new issue."
+            ]
+        );
+    }
+
+    public function editIssueToReport()
+    {
+        // get the post
+        $post = $this->input->post(null, true);
+
+        $this
+            ->compliance_report_model
+            ->editIssueWithReport(
+                $post["issueId"],
+                $post["severityLevelId"],
+                $post["dynamicCheckbox"] ?? [],
+                $post["dynamicInputs"] ?? [],
+                $this->getLoggedInEmployee("sid"),
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                "success" => true,
+                "message" => "You have successfully updated a reported issue."
+            ]
+        );
+    }
+
+    public function updateReportBasicInformation()
+    {
+        // get the post
+        $post = $this->input->post(null, true);
+
+        $this
+            ->compliance_report_model
+            ->updateReportBasicInformation(
+                $post["report_id"],
+                $post["title"],
+                $post["report_date"],
+                $post["report_completion_date"],
+                $post["report_status"],
+                $this->getLoggedInEmployee("sid"),
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                "success" => true,
+                "message" => "You have successfully updated report."
+            ]
+        );
     }
 
 }

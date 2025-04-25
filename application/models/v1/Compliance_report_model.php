@@ -4468,7 +4468,7 @@ class Compliance_report_model extends CI_Model
 	{
 		$records = $this
 			->db
-			->select("sid, description")
+			->select("sid, description, severity_level_sid, title")
 			->where("compliance_report_incident_sid", $complianceIncidentId)
 			->order_by("sid", "DESC")
 			->get("compliance_report_incident_types")
@@ -5735,5 +5735,384 @@ class Compliance_report_model extends CI_Model
 		$this->db
 			->where("sid", $fileId)
 			->delete("csp_reports_files");
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @return array
+	 */
+	public function getCSPReportByIdNew(int $reportId, array $columns)
+	{
+		$report = $this
+			->db
+			->select($columns)
+			->join(
+				"compliance_report_types",
+				"compliance_report_types.id = csp_reports.report_type_sid",
+				"left"
+			)
+			->join(
+				"users",
+				"users.sid = csp_reports.last_modified_by",
+				"left"
+			)
+			->where("csp_reports.sid", $reportId)
+			->get("csp_reports")
+			->row_array();
+		//
+		if (!$report) {
+			return [];
+		}
+		//
+		$report["notes"] = $this->getCSPReportNotesById($reportId, [
+			$this->userFields,
+			"users.profile_picture",
+			"csp_reports_notes.note_type",
+			"csp_reports_notes.notes",
+			"csp_reports_notes.created_by",
+			"csp_reports_notes.updated_at",
+			"csp_reports_notes.manual_email"
+		]);
+		//
+		$report["documents"] = $this->getCSPReportFilesByType($reportId, [
+			$this->userFields,
+			"csp_reports_files.file_value",
+			"csp_reports_files.sid",
+			"csp_reports_files.title",
+			"csp_reports_files.s3_file_value",
+			"csp_reports_files.file_type",
+			"csp_reports_files.created_at",
+			"csp_reports_files.manual_email",
+		], [
+			"document",
+			"file",
+			"image",
+		]);
+		//
+		$report["audios"] = $this->getCSPReportFilesByType($reportId, [
+			$this->userFields,
+			"csp_reports_files.file_value",
+			"csp_reports_files.sid",
+			"csp_reports_files.title",
+			"csp_reports_files.s3_file_value",
+			"csp_reports_files.file_type",
+			"csp_reports_files.created_at",
+			"csp_reports_files.manual_email",
+		], [
+			"audio",
+			"video",
+			"link",
+		]);
+		//
+		// $report["incidents"] = $this->getCSPReportIncidents($reportId, [
+		// 	"compliance_incident_types.compliance_incident_type_name",
+		// 	"csp_reports_incidents.sid",
+		// 	"csp_reports_incidents.status",
+		// 	"csp_reports_incidents.completed_at",
+		// 	"csp_reports_incidents.completed_by",
+		// 	"csp_reports_incidents.updated_at",
+		// 	"csp_reports_incidents.created_by"
+		// ]);
+
+		$report["issuesWithIncident"] = $this->getIssuesWithIncident($reportId);
+		$report["question_answers"] = $this->getCSPReportQuestionAnswers($reportId);
+		//
+		// $report["emails"] = $this->getComplianceEmails($reportId, 0);
+		$report["libraryItems"] = $this->getComplianceReportFiles($reportId, 0, 0);
+		//
+		return $report;
+	}
+
+	public function getIssuesWithIncident(int $reportId): array
+	{
+		$this->db->select([
+			// Item columns
+			"csp_reports_incidents_items.sid",
+			"csp_reports_incidents_items.answers_json",
+			"csp_reports_incidents_items.completion_status",
+			"csp_reports_incidents_items.completion_date",
+			"csp_reports_incidents_items.completed_by",
+			"csp_reports_incidents_items.csp_reports_incidents_sid",
+			// Add severity columns
+			"compliance_severity_levels.level",
+			"compliance_severity_levels.bg_color",
+			"compliance_severity_levels.txt_color",
+			// get the item description
+			"compliance_report_incident_types.title as title",
+			"compliance_report_incident_types.description",
+			// get the incident description
+			"compliance_incident_types.compliance_incident_type_name",
+			// get report title
+			"csp_reports.report_date",
+		]);
+		//
+		$this->db->select($this->userFields);
+		// join with severity to get the colors
+		$this->db->join(
+			"compliance_severity_levels",
+			"compliance_severity_levels.sid = csp_reports_incidents_items.severity_level_sid",
+			"inner"
+		);
+		// join with the report incident types to get the description
+		$this->db->join(
+			"compliance_report_incident_types",
+			"compliance_report_incident_types.sid = csp_reports_incidents_items.compliance_report_incident_types_sid",
+			"inner"
+		);
+		// join with the incident
+		$this->db->join(
+			"csp_reports_incidents",
+			"csp_reports_incidents.sid = csp_reports_incidents_items.csp_reports_incidents_sid",
+			"inner"
+		);
+		// join with the main incident
+		$this->db->join(
+			"compliance_incident_types",
+			"compliance_incident_types.id = csp_reports_incidents.incident_type_sid",
+			"inner"
+		);
+		// join with the report
+		$this->db->join(
+			"csp_reports",
+			"csp_reports.sid = csp_reports_incidents.csp_reports_sid",
+			"inner"
+		);
+		// join with the completed by
+		$this->db->join(
+			"users",
+			"users.sid = csp_reports_incidents_items.completed_by",
+			"left"
+		);
+		$this->db->where('csp_reports_incidents_items.status', 1);
+		$this->db->where('csp_reports.sid', $reportId);
+
+		//
+		$this->db->order_by("csp_reports_incidents_items.sid", "DESC");
+		$records_obj = $this->db->get('csp_reports_incidents_items');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		//
+		return $records_arr;
+	}
+
+
+	public function getAllIssues()
+	{
+		$this->db->select([
+			// Item columns
+			"compliance_report_incident_types.sid",
+			"compliance_report_incident_types.title",
+			"compliance_report_incident_types.description",
+			"compliance_report_incident_types.compliance_report_incident_sid",
+			// Add severity columns
+			"compliance_severity_levels.level",
+			"compliance_severity_levels.bg_color",
+			"compliance_severity_levels.txt_color",
+			//
+			"compliance_incident_types.compliance_incident_type_name",
+		]);
+		$this->db->from("compliance_report_incident_types");
+		$this->db->where("compliance_incident_types.status", 1);
+		$this->db->order_by("compliance_report_incident_types.title", "ASC");
+		// make join with severity levels
+		$this->db->join(
+			"compliance_severity_levels",
+			"compliance_severity_levels.sid = compliance_report_incident_types.severity_level_sid",
+			"inner"
+		);
+		// now join with incident types
+		$this->db->join(
+			"compliance_incident_types",
+			"compliance_incident_types.id = compliance_report_incident_types.compliance_report_incident_sid",
+			"inner"
+		);
+		$records_obj = $this->db->get();
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		//
+		if ($records_arr) {
+			$issueObject = [];
+			foreach ($records_arr as $record) {
+				if (!array_key_exists($record["compliance_report_incident_sid"], $issueObject)) {
+					$issueObject[$record["compliance_report_incident_sid"]] = [
+						"title" => $record["compliance_incident_type_name"],
+						"issues" => [],
+					];
+				}
+				//
+				$issueObject[$record["compliance_report_incident_sid"]]["issues"][] = [
+					"id" => $record["sid"],
+					"name" => $record["title"],
+					"description" => $record["description"],
+					"level" => $record["level"],
+					"bg_color" => $record["bg_color"],
+					"txt_color" => $record["txt_color"],
+					"incident_id" => $record["compliance_report_incident_sid"],
+				];
+			}
+			return array_values($issueObject);
+		}
+		//
+		return $records_arr;
+	}
+
+	public function checkIfIncidentExists($reportId, $incidentTypeId, $loggedInUserId)
+	{
+		//
+		$this->db->select('sid');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('incident_type_sid', $incidentTypeId);
+		$record = $this->db->get('csp_reports_incidents')->row_array();
+
+		if ($record) {
+			return $record['sid'];
+		} else {
+			$data = [
+				'csp_reports_sid' => $reportId,
+				'incident_type_sid' => $incidentTypeId,
+				'created_by' => $loggedInUserId,
+				'last_modified_by' => $loggedInUserId,
+				'created_at' => date('Y-m-d H:i:s'),
+				'updated_at' => date('Y-m-d H:i:s'),
+			];
+			$this->db->insert('csp_reports_incidents', $data);
+			return $this->db->insert_id();
+		}
+	}
+
+	public function getIssue($issueId)
+	{
+		//
+		$this->db->select([
+			// Item columns
+			"compliance_report_incident_types.sid",
+			"compliance_report_incident_types.title",
+			"compliance_report_incident_types.description",
+			"compliance_report_incident_types.compliance_report_incident_sid",
+			"compliance_report_incident_types.severity_level_sid",
+		]);
+		$this->db->from("compliance_report_incident_types");
+		$this->db->limit(1);
+		$this->db->where("compliance_report_incident_types.sid", $issueId);
+		//
+		$records_obj = $this->db->get();
+		$records_arr = $records_obj->row_array();
+		$records_obj->free_result();
+		//
+		return $records_arr;
+	}
+
+	public function getIssueByRecordId($issueId)
+	{
+		//
+		$this->db->select([
+			// Item columns
+			"csp_reports_incidents_items.sid",
+			"csp_reports_incidents_items.severity_level_sid",
+			"csp_reports_incidents_items.answers_json",
+			//
+			"compliance_report_incident_types.title",
+			"compliance_report_incident_types.description",
+		]);
+		$this->db->join(
+			"compliance_report_incident_types",
+			"compliance_report_incident_types.sid = csp_reports_incidents_items.compliance_report_incident_types_sid",
+			"inner"
+		);
+		$this->db->from("csp_reports_incidents_items");
+		$this->db->limit(1);
+		$this->db->where("csp_reports_incidents_items.sid", $issueId);
+		//
+		$records_obj = $this->db->get();
+		$records_arr = $records_obj->row_array();
+		$records_obj->free_result();
+		//
+		return $records_arr;
+	}
+
+	public function attachIssueWithReport(
+		$reportId,
+		$cspIncidentId,
+		$issueId,
+		$severityLevelId,
+		$checkboxes,
+		$inputs,
+		$loggedInEmployeeId
+	) {
+		$this
+			->db
+			->insert(
+				"csp_reports_incidents_items",
+				[
+					"csp_reports_incidents_sid" => $cspIncidentId,
+					"compliance_report_incident_types_sid" => $issueId,
+					"severity_level_sid" => $severityLevelId,
+					"answers_json" => json_encode([
+						"dynamicInput" => $inputs,
+						"dynamicCheckbox" => $checkboxes,
+					]),
+					"last_modified_by" => $loggedInEmployeeId,
+					"created_by" => $loggedInEmployeeId,
+					"created_at" => getSystemDate(),
+					"updated_at" => getSystemDate(),
+				]
+			);
+		return $this->db->insert_id();
+	}
+
+	public function editIssueWithReport(
+		$issueId,
+		$severityLevelId,
+		$checkboxes,
+		$inputs,
+		$loggedInEmployeeId
+	) {
+		$this
+			->db
+			->where("sid", $issueId)
+			->update(
+				"csp_reports_incidents_items",
+				[
+					"severity_level_sid" => $severityLevelId,
+					"answers_json" => json_encode([
+						"dynamicInput" => $inputs,
+						"dynamicCheckbox" => $checkboxes,
+					]),
+					"last_modified_by" => $loggedInEmployeeId,
+					"updated_at" => getSystemDate(),
+				]
+			);
+	}
+
+	public function updateReportBasicInformation(
+		$reportId,
+		$reportTitle,
+		$reportDate,
+		$reportCompletionDate,
+		$reportStatus,
+		$loggedInEmployeeId
+	) {
+		//
+		$updateArray = [
+			"title" => $reportTitle,
+			"report_date" => $reportDate,
+			"status" => $reportTitle,
+			"last_modified_by" => $loggedInEmployeeId,
+			"updated_at" => getSystemDate(),
+		];
+
+		if ($reportStatus == "completed") {
+			$updateArray["completion_date"] = $reportCompletionDate;
+			$updateArray["completed_by"] = $loggedInEmployeeId;
+		}
+		$this
+			->db
+			->where("sid", $reportId)
+			->update(
+				"csp_reports",
+				$updateArray
+			);
 	}
 }

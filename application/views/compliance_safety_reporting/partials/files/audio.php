@@ -6,9 +6,9 @@
         </h1>
     </div>
     <div class="panel-body jsAudioArea">
-        <?php if ($report["audios"]) : ?>
+        <?php if ($report["audios"]): ?>
             <div class="row jsFirst">
-                <?php foreach ($report["audios"] as $file) : ?>
+                <?php foreach ($report["audios"] as $file): ?>
                     <div class="col-sm-3">
                         <div class="widget-box">
                             <div class="attachment-box full-width jsFileBox" data-id="<?= $file["sid"]; ?>">
@@ -22,11 +22,11 @@
                                         <br>
 
                                         <?php
-                                            if ($file['manual_email']) {
-                                                echo getManualUserNameByEmailId($reportId, $incidentId, $file['manual_email']);
-                                            } else {
-                                                echo remakeEmployeeName($file);
-                                            }
+                                        if ($file['manual_email']) {
+                                            echo getManualUserNameByEmailId($reportId, $incidentId, $file['manual_email']);
+                                        } else {
+                                            echo remakeEmployeeName($file);
+                                        }
                                         ?>
                                     </small>
                                 </p>
@@ -38,7 +38,9 @@
                                             </button>
                                             <?php
                                             if ($file["file_type"] != "link"): ?>
-                                                <a target="_blank" href="<?= base_url("compliance_safety_reporting/file/download/" . $file["sid"]); ?>" class="btn btn-info btn-info">
+                                                <a target="_blank"
+                                                    href="<?= base_url("compliance_safety_reporting/file/download/" . $file["sid"]); ?>"
+                                                    class="btn btn-info btn-info">
                                                     <i class="fa fa-download"></i>
                                                 </a>
                                             <?php endif; ?>
@@ -50,7 +52,7 @@
                     </div>
                 <?php endforeach; ?>
             </div>
-        <?php else : ?>
+        <?php else: ?>
             <div class=" alert alert-info text-center">
                 No files found.
             </div>

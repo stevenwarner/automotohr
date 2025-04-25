@@ -2785,7 +2785,24 @@ $route["csp/report/(:num)/incident/(:num)/issue/(:num)"]["get"] =
 $route["csp/issue/progress/update/public"]["post"] =
   "v1/Compliance_safety_reporting_public/updateIssueProgress";
 
-  
+
 $route["compliance_safety_reporting/delete_file/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting/deleteFileById/$1";
 $route["settings/shifts/cancelclaimrequest"]["post"] = "Settings/processCancelClaimRequest";
+
+$route["compliance_safety_reporting/issues/all"]["get"] =
+  "v1/Compliance_safety_reporting/getAllIssues";
+$route["compliance_safety_reporting/issue/add"]["post"] =
+  "v1/Compliance_safety_reporting/addIssueToReport";
+$route["compliance_safety_reporting/issues/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/getSingleIssueView/$1";
+
+
+$route["compliance_safety_reporting/issues/edit/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/getEditIssueViewByRecordId/$1";
+$route["compliance_safety_reporting/issue/edit"]["post"] =
+  "v1/Compliance_safety_reporting/editIssueToReport";
+
+
+$route["compliance_safety_reporting/report/update/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/updateReportBasicInformation";

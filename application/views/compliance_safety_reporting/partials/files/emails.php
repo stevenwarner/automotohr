@@ -1,16 +1,19 @@
-<?php 
+<?php
 $companyId = $session['company_detail']['sid'];
 $employeeId = $session['employer_detail']['sid'];
 ?>
 <!-- Email Section Start -->
-   	<!-- <script type="text/javascript" src="https://automotohr.com/assets/ckeditor/ckeditor.js?v=1.0.0"></script> -->
-
+<!-- <script type="text/javascript" src="https://automotohr.com/assets/ckeditor/ckeditor.js?v=1.0.0"></script> -->
+<div class="tab-pane <?= $this->input->get("tab", true) == "emails" ? "active" : ""; ?>" id="tab-emails" role="tabpanel">
 <div class="table-responsive table-outer">
-    <div class="panel panel-blue">
-        <div class="panel-heading incident-panal-heading">
-            <strong>Compose Message</strong>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-heading-text text-medium">
+                <i class="fa fa-envelope text-orange"></i>
+                <strong>Compose Message</strong>
+            </h1>
         </div>
-        <div class="panel-body">
+        <div class="panel-body" id="compose_email">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                     <div class="dashboard-conetnt-wrp">
@@ -23,14 +26,18 @@ $employeeId = $session['employer_detail']['sid'];
                                                 <td><b>Select Email Type</b></td>
                                                 <td>
                                                     <div class="form-group edit_filter autoheight">
-                                                        <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
+                                                        <label class="control control--radio"
+                                                            style="margin-left:10px; margin-top:10px;">
                                                             Internal System Email
-                                                            <input <?php echo !empty($employees) ? 'checked="checked"' : ''; ?> name="send_type" class="email_type" type="radio" value="system" />
+                                                            <input <?php echo !empty($employees) ? 'checked="checked"' : ''; ?> name="send_type" class="email_type" type="radio"
+                                                                value="system" />
                                                             <div class="control__indicator"></div>
                                                         </label>
-                                                        <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
+                                                        <label class="control control--radio"
+                                                            style="margin-left:10px; margin-top:10px;">
                                                             Outside Email
-                                                            <input <?php echo empty($employees) ? 'checked="checked"' : ''; ?> class="email_type" name="send_type" type="radio" value="manual" />
+                                                            <input <?php echo empty($employees) ? 'checked="checked"' : ''; ?> class="email_type" name="send_type" type="radio"
+                                                                value="manual" />
                                                             <div class="control__indicator"></div>
                                                         </label>
                                                     </div>
@@ -39,8 +46,9 @@ $employeeId = $session['employer_detail']['sid'];
                                             <tr>
                                                 <td><b>Message To</b> ;</td>
                                                 <td id="system_email">
-                                                    <select multiple class="chosen-select" tabindex="8" name='receivers[]' id="receivers">
-                                                    
+                                                    <select multiple class="chosen-select" tabindex="8"
+                                                        name='receivers[]' id="receivers">
+
                                                         <?php if (!empty($employees)) { ?>
                                                             <?php foreach ($employees as $employee) { ?>
                                                                 <option value="<?php echo $employee['sid']; ?>">
@@ -53,13 +61,15 @@ $employeeId = $session['employer_detail']['sid'];
                                                     </select>
                                                 </td>
                                                 <td id="manual_email">
-                                                    <input type="text" name="manual_email" id="manual_address" value="" class="form-control invoice-fields">
+                                                    <input type="text" name="manual_email" id="manual_address" value=""
+                                                        class="form-control invoice-fields">
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td><b>Subject</b> <span class="required">*</span></td>
                                                 <td>
-                                                    <input type="text" id="subject" name="subject" value="" class="form-control invoice-fields">
+                                                    <input type="text" id="subject" name="subject" value=""
+                                                        class="form-control invoice-fields">
                                                 </td>
                                             </tr>
                                             <tr>
@@ -67,16 +77,23 @@ $employeeId = $session['employer_detail']['sid'];
                                                 <td>
                                                     <div class="row">
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                            <a href="javascript:;" class="btn btn-info btn-block show_media_library">Add Library Attachment</a>
+                                                            <a href="javascript:;"
+                                                                class="btn btn-info btn-block show_media_library">Add
+                                                                Library Attachment</a>
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                            <a href="javascript:;" class="btn btn-info btn-block show_manual_attachment">Add Manual Attachment</a>
+                                                            <a href="javascript:;"
+                                                                class="btn btn-info btn-block show_manual_attachment">Add
+                                                                Manual Attachment</a>
                                                         </div>
                                                     </div>
 
-                                                    <div class="table-responsive table-outer full-width" style="margin-top: 20px; display: none;" id="email_attachment_list">
+                                                    <div class="table-responsive table-outer full-width"
+                                                        style="margin-top: 20px; display: none;"
+                                                        id="email_attachment_list">
                                                         <div class="table-wrp data-table">
-                                                            <table class="table table-bordered table-hover table-stripped">
+                                                            <table
+                                                                class="table table-bordered table-hover table-stripped">
                                                                 <thead>
                                                                     <tr>
                                                                         <th class="text-center">Attachment Title</th>
@@ -98,13 +115,18 @@ $employeeId = $session['employer_detail']['sid'];
                                             <tr>
                                                 <td><b>Message</b> <span class="required">*</span></td>
                                                 <td>
-                                                    <textarea class="ckeditor" style="padding:5px; height:200px; width:100%;" class="invoice-fields" name="message" id="email_message"></textarea>
+                                                    <textarea class="ckeditor"
+                                                        style="padding:5px; height:200px; width:100%;"
+                                                        class="invoice-fields" name="message"
+                                                        id="email_message"></textarea>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td colspan="2">
                                                     <div class="btn-wrp full-width text-right">
-                                                        <button type="button" class="btn btn-info incident-panal-button" name="submit" value="submit" id="send_normal_email">Send Email</button>
+                                                        <button type="button" class="btn btn-info incident-panal-button"
+                                                            name="submit" value="submit" id="send_normal_email">Send
+                                                            Email</button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -130,7 +152,8 @@ $employeeId = $session['employer_detail']['sid'];
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header modal-header-bg">
-                <button type="button" class="close email_pop_up_back_to_compose_email" btn-from="main" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close email_pop_up_back_to_compose_email" btn-from="main"
+                    data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="send_email_pop_up_title"></h4>
             </div>
             <div class="modal-body">
@@ -144,13 +167,15 @@ $employeeId = $session['employer_detail']['sid'];
                             <tr>
                                 <td><b>Message To</b></td>
                                 <td>
-                                    <input type="text" id="send_email_address" value="" class="form-control invoice-fields" readonly="">
+                                    <input type="text" id="send_email_address" value=""
+                                        class="form-control invoice-fields" readonly="">
                                 </td>
                             </tr>
                             <tr>
                                 <td><b>Subject</b> <span class="required">*</span></td>
                                 <td>
-                                    <input type="text" id="send_email_subject" name="subject" value="" class="form-control invoice-fields">
+                                    <input type="text" id="send_email_subject" name="subject" value=""
+                                        class="form-control invoice-fields">
                                 </td>
                             </tr>
                             <tr>
@@ -158,14 +183,17 @@ $employeeId = $session['employer_detail']['sid'];
                                 <td>
                                     <div class="row">
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                            <a href="javascript:;" class="btn btn-info btn-block attachment_pop_up" attachment-type="library">Add Library Attachment</a>
+                                            <a href="javascript:;" class="btn btn-info btn-block attachment_pop_up"
+                                                attachment-type="library">Add Library Attachment</a>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                            <a href="javascript:;" class="btn btn-info btn-block attachment_pop_up" attachment-type="manual">Add Manual Attachment</a>
+                                            <a href="javascript:;" class="btn btn-info btn-block attachment_pop_up"
+                                                attachment-type="manual">Add Manual Attachment</a>
                                         </div>
                                     </div>
 
-                                    <div class="table-responsive table-outer full-width" style="margin-top: 20px; display: none;" id="pop_up_email_attachment_list">
+                                    <div class="table-responsive table-outer full-width"
+                                        style="margin-top: 20px; display: none;" id="pop_up_email_attachment_list">
                                         <div class="table-wrp data-table">
                                             <table class="table table-bordered table-hover table-stripped">
                                                 <thead>
@@ -189,14 +217,17 @@ $employeeId = $session['employer_detail']['sid'];
                             <tr>
                                 <td><b>Message</b> <span class="required">*</span></td>
                                 <td>
-                                    <textarea class="ckeditor" style="padding:5px; height:200px; width:100%;" class="invoice-fields" name="message" id="send_email_message"></textarea>
+                                    <textarea class="ckeditor" style="padding:5px; height:200px; width:100%;"
+                                        class="invoice-fields" name="message" id="send_email_message"></textarea>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="2">
                                     <div class="btn-wrp full-width text-right">
-                                        <button type="button" class="btn btn-black incident-panal-button" data-dismiss="modal">Cancel</button>
-                                        <button type="button" class="btn btn-info incident-panal-button" id="send_pop_up_email" name="submit" value="submit">Send Email</button>
+                                        <button type="button" class="btn btn-black incident-panal-button"
+                                            data-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-info incident-panal-button"
+                                            id="send_pop_up_email" name="submit" value="submit">Send Email</button>
                                     </div>
                                 </td>
                             </tr>
@@ -207,7 +238,9 @@ $employeeId = $session['employer_detail']['sid'];
                 <div id="pop_up_attachment_library_container" style="display: none;">
                     <div class="table-responsive table-outer" id="show_pop_up_library_item">
                         <div class="text-right" style="margin-top:15px;">
-                            <button type="button" class="btn btn-info incident-panal-button email_pop_up_back_to_compose_email" btn-from="library" style="margin-bottom: 20px;">Back To Compose Email</button>
+                            <button type="button"
+                                class="btn btn-info incident-panal-button email_pop_up_back_to_compose_email"
+                                btn-from="library" style="margin-bottom: 20px;">Back To Compose Email</button>
                         </div>
 
                         <div class="table-wrp data-table">
@@ -222,16 +255,16 @@ $employeeId = $session['employer_detail']['sid'];
                                 <tbody>
                                     <?php if (!empty($report['libraryItems'])) { ?>
                                         <?php foreach ($report['libraryItems'] as $d_key => $item) { ?>
-                                            <?php if ($item['file_type'] == 'document' || $item['file_type'] == 'image' ) { ?>
+                                            <?php if ($item['file_type'] == 'document' || $item['file_type'] == 'image') { ?>
                                                 <tr>
                                                     <?php
                                                     $extension = pathinfo($item['s3_file_value'], PATHINFO_EXTENSION);
-                                                    $item_url       = '';
-                                                    $item_category  = '';
-                                                    $item_type      = $item['file_type'];
+                                                    $item_url = '';
+                                                    $item_category = '';
+                                                    $item_type = $item['file_type'];
                                                     $item_extension = strtolower($extension);
-                                                    $item_path      = $item['s3_file_value'];
-                                                    $item_title     = $item['title'];
+                                                    $item_path = $item['s3_file_value'];
+                                                    $item_title = $item['title'];
 
                                                     if ($item_extension == 'pdf') {
                                                         $item_category = 'Document';
@@ -250,11 +283,19 @@ $employeeId = $session['employer_detail']['sid'];
                                                         <?php echo $item_category; ?>
                                                     </td>
                                                     <td class="text-center">
-                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem" item-category="document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $item_url; ?>">View Document</a>
+                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem"
+                                                            item-category="document" item-title="<?php echo $item_title; ?>"
+                                                            item-type="<?php echo $item_type; ?>"
+                                                            item-url="<?php echo $item_url; ?>">View Document</a>
                                                     </td>
                                                     <td class="text-center">
-                                                        <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
-                                                            <input class="select_lib_item" id="doc_key_d_<?php echo $item['sid']; ?>" type="checkbox" item-category="Document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-sid="d_<?php echo $item['sid']; ?>" />
+                                                        <label class="control control--checkbox"
+                                                            style="margin-left:10px; margin-top:10px;">
+                                                            <input class="select_lib_item"
+                                                                id="doc_key_d_<?php echo $item['sid']; ?>" type="checkbox"
+                                                                item-category="Document" item-title="<?php echo $item_title; ?>"
+                                                                item-type="<?php echo $item_type; ?>"
+                                                                item-sid="d_<?php echo $item['sid']; ?>" />
                                                             <div class="control__indicator"></div>
                                                         </label>
                                                     </td>
@@ -262,11 +303,11 @@ $employeeId = $session['employer_detail']['sid'];
                                             <?php } else { ?>
                                                 <tr>
                                                     <?php
-                                                    $media_url      = '';
+                                                    $media_url = '';
                                                     $media_category = '';
                                                     $media_btn_text = 'Watch Video';
-                                                    $media_title    = $item['title'];
-                                                    $item_type     = strtolower($item['file_type']);
+                                                    $media_title = $item['title'];
+                                                    $item_type = strtolower($item['file_type']);
 
                                                     if ($item_type == 'link') {
                                                         $media_category = 'Link';
@@ -284,17 +325,25 @@ $employeeId = $session['employer_detail']['sid'];
                                                     <td class="text-center"><?php echo $media_title; ?></td>
                                                     <td class="text-center"><?php echo $media_category; ?></td>
                                                     <td class="text-center">
-                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem" item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
+                                                        <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem"
+                                                            item-category="media" item-title="<?php echo $media_title; ?>"
+                                                            item-type="<?php echo $item_type; ?>"
+                                                            item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
                                                     </td>
                                                     <td class="text-center">
-                                                        <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
-                                                            <input class="select_lib_item" id="med_key_m_<?php echo $item['sid']; ?>" type="checkbox" item-category="Media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-sid="m_<?php echo $item['sid']; ?>" />
+                                                        <label class="control control--checkbox"
+                                                            style="margin-left:10px; margin-top:10px;">
+                                                            <input class="select_lib_item"
+                                                                id="med_key_m_<?php echo $item['sid']; ?>" type="checkbox"
+                                                                item-category="Media" item-title="<?php echo $media_title; ?>"
+                                                                item-type="<?php echo $item_type; ?>"
+                                                                item-sid="m_<?php echo $item['sid']; ?>" />
                                                             <div class="control__indicator"></div>
                                                         </label>
                                                     </td>
                                                 </tr>
                                             <?php } ?>
-                                        <?php } ?>    
+                                        <?php } ?>
                                     <?php } else { ?>
                                         <tr>
                                             <td colspan="4">
@@ -309,7 +358,9 @@ $employeeId = $session['employer_detail']['sid'];
                         </div>
 
                         <div class="text-right" style="margin-top:15px;">
-                            <button type="button" class="btn btn-info incident-panal-button email_pop_up_back_to_compose_email" btn-from="library">Back To Compose Email</button>
+                            <button type="button"
+                                class="btn btn-info incident-panal-button email_pop_up_back_to_compose_email"
+                                btn-from="library">Back To Compose Email</button>
                         </div>
                     </div>
                     <div id="view_pop_up_library_item" style="display:none;">
@@ -338,7 +389,9 @@ $employeeId = $session['employer_detail']['sid'];
                             </div>
                         </div>
                         <div class="text-right" style="margin-top:15px;">
-                            <button type="button" class="btn btn-info incident-panal-button email_pop_up_back_to_library">Back To Library</button>
+                            <button type="button"
+                                class="btn btn-info incident-panal-button email_pop_up_back_to_library">Back To
+                                Library</button>
                         </div>
                     </div>
                 </div>
@@ -347,27 +400,32 @@ $employeeId = $session['employer_detail']['sid'];
                         <label for="attachment_type">Select Attachment Type</label>
                         <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                             <?php echo YOUTUBE_VIDEO; ?>
-                            <input id="default_manual_pop_up" class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source" value="youtube" checked="checked" />
+                            <input id="default_manual_pop_up" class="pop_up_attach_item_source" type="radio"
+                                name="pop_up_attach_item_source" value="youtube" checked="checked" />
                             <div class="control__indicator"></div>
                         </label>
                         <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                             <?php echo VIMEO_VIDEO; ?>
-                            <input class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source" value="vimeo" />
+                            <input class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source"
+                                value="vimeo" />
                             <div class="control__indicator"></div>
                         </label>
                         <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                             <?php echo UPLOAD_VIDEO; ?>
-                            <input class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source" value="upload_video" />
+                            <input class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source"
+                                value="upload_video" />
                             <div class="control__indicator"></div>
                         </label>
                         <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                             <?php echo UPLOAD_AUDIO; ?>
-                            <input class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source" value="upload_audio" />
+                            <input class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source"
+                                value="upload_audio" />
                             <div class="control__indicator"></div>
                         </label>
                         <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                             Document
-                            <input class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source" value="upload_document" />
+                            <input class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source"
+                                value="upload_document" />
                             <div class="control__indicator"></div>
                         </label>
                     </div>
@@ -376,8 +434,10 @@ $employeeId = $session['employer_detail']['sid'];
                         <div class="field-row">
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-wrp">
                                 <div class="form-group autoheight">
-                                    <label for="attachment_title">Attachment Title <span class="required">*</span></label>
-                                    <input type="text" name="attachment_title" class="form-control" id="pop_up_attachment_item_title">
+                                    <label for="attachment_title">Attachment Title <span
+                                            class="required">*</span></label>
+                                    <input type="text" name="attachment_title" class="form-control"
+                                        id="pop_up_attachment_item_title">
                                 </div>
                             </div>
                         </div>
@@ -388,13 +448,15 @@ $employeeId = $session['employer_detail']['sid'];
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-wrp">
                                 <div class="form-group autoheight" id="pop_up_attachment_yt_vm_video_input_container">
                                     <label for="video_id">Video Url <span class="required">*</span></label>
-                                    <input type="text" name="pop_up_attach_social_video" value="" class="form-control" id="pop_up_attach_social_video">
+                                    <input type="text" name="pop_up_attach_social_video" value="" class="form-control"
+                                        id="pop_up_attach_social_video">
                                 </div>
                                 <div class="form-group autoheight" id="pop_up_attachment_upload_video_input_container">
                                     <label>Attach Video <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_video"></span>
-                                        <input type="file" name="pop_up_attach_video" id="pop_up_attach_video" class="jsPopUpCheckAttachVideo">
+                                        <input type="file" name="pop_up_attach_video" id="pop_up_attach_video"
+                                            class="jsPopUpCheckAttachVideo">
                                         <a href="javascript:;">Choose Video</a>
                                     </div>
                                 </div>
@@ -402,15 +464,18 @@ $employeeId = $session['employer_detail']['sid'];
                                     <label>Attach Audio <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_audio"></span>
-                                        <input type="file" name="pop_up_attach_audio" id="pop_up_attach_audio" class="jsPopUpCheckAttachAudio">
+                                        <input type="file" name="pop_up_attach_audio" id="pop_up_attach_audio"
+                                            class="jsPopUpCheckAttachAudio">
                                         <a href="javascript:;">Choose Audio</a>
                                     </div>
                                 </div>
-                                <div class="form-group autoheight" id="pop_up_attachment_upload_document_input_container">
+                                <div class="form-group autoheight"
+                                    id="pop_up_attachment_upload_document_input_container">
                                     <label>Attach Document <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_document"></span>
-                                        <input type="file" name="pop_up_attach_document" id="pop_up_attach_document" class="jsPopUpCheckAttachDocument" >
+                                        <input type="file" name="pop_up_attach_document" id="pop_up_attach_document"
+                                            class="jsPopUpCheckAttachDocument">
                                         <a href="javascript:;">Choose Document</a>
                                     </div>
                                 </div>
@@ -421,8 +486,11 @@ $employeeId = $session['employer_detail']['sid'];
                     <div class="row">
                         <div class="field-row">
                             <div class="col-lg-12 text-right">
-                                <button type="button" class="btn btn-info incident-panal-button email_pop_up_back_to_compose_email" btn-from="manual">Back To Compose Email</button>
-                                <button type="button" class="btn btn-info incident-panal-button" id="pop_up_save_attach_item">Save Attachment</button>
+                                <button type="button"
+                                    class="btn btn-info incident-panal-button email_pop_up_back_to_compose_email"
+                                    btn-from="manual">Back To Compose Email</button>
+                                <button type="button" class="btn btn-info incident-panal-button"
+                                    id="pop_up_save_attach_item">Save Attachment</button>
                             </div>
                         </div>
                     </div>
@@ -438,7 +506,8 @@ $employeeId = $session['employer_detail']['sid'];
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content full-width">
             <div class="modal-header modal-header-bg">
-                <button type="button" class="close back_to_library" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close back_to_library" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="library_item_title">Attachment Library</h4>
             </div>
             <div class="modal-body full-width">
@@ -455,16 +524,16 @@ $employeeId = $session['employer_detail']['sid'];
                             <tbody>
                                 <?php if (!empty($report['libraryItems'])) { ?>
                                     <?php foreach ($report['libraryItems'] as $d_key => $item) { ?>
-                                        <?php if ($item['file_type'] == 'document' || $item['file_type'] == 'image' ) { ?>
+                                        <?php if ($item['file_type'] == 'document' || $item['file_type'] == 'image') { ?>
                                             <tr>
                                                 <?php
                                                 $extension = pathinfo($item['s3_file_value'], PATHINFO_EXTENSION);
-                                                $item_url       = '';
-                                                $item_category  = '';
-                                                $item_type      = $item['file_type'];
+                                                $item_url = '';
+                                                $item_category = '';
+                                                $item_type = $item['file_type'];
                                                 $item_extension = strtolower($extension);
-                                                $item_path      = $item['s3_file_value'];
-                                                $item_title     = $item['title'];
+                                                $item_path = $item['s3_file_value'];
+                                                $item_title = $item['title'];
 
                                                 if ($item_extension == 'pdf') {
                                                     $item_category = 'Document';
@@ -483,11 +552,19 @@ $employeeId = $session['employer_detail']['sid'];
                                                     <?php echo $item_category; ?>
                                                 </td>
                                                 <td class="text-center">
-                                                    <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem" item-category="document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $item_url; ?>">View Document</a>
+                                                    <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem"
+                                                        item-category="document" item-title="<?php echo $item_title; ?>"
+                                                        item-type="<?php echo $item_type; ?>"
+                                                        item-url="<?php echo $item_url; ?>">View Document</a>
                                                 </td>
                                                 <td class="text-center">
-                                                    <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
-                                                        <input class="select_lib_item" id="doc_key_d_<?php echo $item['sid']; ?>" type="checkbox" item-category="Document" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_type; ?>" item-sid="d_<?php echo $item['sid']; ?>" />
+                                                    <label class="control control--checkbox"
+                                                        style="margin-left:10px; margin-top:10px;">
+                                                        <input class="select_lib_item" id="doc_key_d_<?php echo $item['sid']; ?>"
+                                                            type="checkbox" item-category="Document"
+                                                            item-title="<?php echo $item_title; ?>"
+                                                            item-type="<?php echo $item_type; ?>"
+                                                            item-sid="d_<?php echo $item['sid']; ?>" />
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </td>
@@ -495,11 +572,11 @@ $employeeId = $session['employer_detail']['sid'];
                                         <?php } else { ?>
                                             <tr>
                                                 <?php
-                                                $media_url      = '';
+                                                $media_url = '';
                                                 $media_category = '';
                                                 $media_btn_text = 'Watch Video';
-                                                $media_title    = $item['title'];
-                                                $item_type     = strtolower($item['file_type']);
+                                                $media_title = $item['title'];
+                                                $item_type = strtolower($item['file_type']);
 
                                                 if ($item_type == 'link') {
                                                     $media_category = 'Link';
@@ -517,17 +594,25 @@ $employeeId = $session['employer_detail']['sid'];
                                                 <td class="text-center"><?php echo $media_title; ?></td>
                                                 <td class="text-center"><?php echo $media_category; ?></td>
                                                 <td class="text-center">
-                                                    <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem" item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
+                                                    <a href="javascript:;" class="btn btn-block btn-info jsViewLibraryItem"
+                                                        item-category="media" item-title="<?php echo $media_title; ?>"
+                                                        item-type="<?php echo $item_type; ?>"
+                                                        item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
                                                 </td>
                                                 <td class="text-center">
-                                                    <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
-                                                        <input class="select_lib_item" id="med_key_m_<?php echo $item['sid']; ?>" type="checkbox" item-category="Media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $item_type; ?>" item-sid="m_<?php echo $item['sid']; ?>" />
+                                                    <label class="control control--checkbox"
+                                                        style="margin-left:10px; margin-top:10px;">
+                                                        <input class="select_lib_item" id="med_key_m_<?php echo $item['sid']; ?>"
+                                                            type="checkbox" item-category="Media"
+                                                            item-title="<?php echo $media_title; ?>"
+                                                            item-type="<?php echo $item_type; ?>"
+                                                            item-sid="m_<?php echo $item['sid']; ?>" />
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </td>
                                             </tr>
                                         <?php } ?>
-                                    <?php } ?>    
+                                    <?php } ?>
                                 <?php } else { ?>
                                     <tr>
                                         <td colspan="4">
@@ -565,7 +650,8 @@ $employeeId = $session['employer_detail']['sid'];
                         </div>
                     </div>
                     <div class="text-right" style="margin-top:15px;">
-                        <button type="button" class="btn btn-info incident-panal-button back_to_library">Back To Library</button>
+                        <button type="button" class="btn btn-info incident-panal-button back_to_library">Back To
+                            Library</button>
                     </div>
                 </div>
             </div>
@@ -582,7 +668,8 @@ $employeeId = $session['employer_detail']['sid'];
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header modal-header-bg">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Manual Attachment</h4>
             </div>
             <div class="modal-body">
@@ -590,7 +677,8 @@ $employeeId = $session['employer_detail']['sid'];
                     <label for="attachment_type">Select Attachment Type</label>
                     <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                         <?php echo YOUTUBE_VIDEO; ?>
-                        <input id="default_manual_select" class="attach_item_source" type="radio" name="attach_item_source" value="youtube" checked="checked" />
+                        <input id="default_manual_select" class="attach_item_source" type="radio"
+                            name="attach_item_source" value="youtube" checked="checked" />
                         <div class="control__indicator"></div>
                     </label>
                     <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
@@ -610,7 +698,8 @@ $employeeId = $session['employer_detail']['sid'];
                     </label>
                     <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                         Document
-                        <input class="attach_item_source" type="radio" name="attach_item_source" value="upload_document" />
+                        <input class="attach_item_source" type="radio" name="attach_item_source"
+                            value="upload_document" />
                         <div class="control__indicator"></div>
                     </label>
                 </div>
@@ -620,7 +709,8 @@ $employeeId = $session['employer_detail']['sid'];
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-wrp">
                             <div class="form-group autoheight">
                                 <label for="attachment_title">Attachment Title <span class="required">*</span></label>
-                                <input type="text" name="attachment_title" class="form-control" id="attachment_item_title">
+                                <input type="text" name="attachment_title" class="form-control"
+                                    id="attachment_item_title">
                             </div>
                         </div>
                     </div>
@@ -631,13 +721,14 @@ $employeeId = $session['employer_detail']['sid'];
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-wrp">
                             <div class="form-group autoheight" id="attachment_yt_vm_video_container">
                                 <label for="video_id">Video Url <span class="required">*</span></label>
-                                <input type="text" name="attach_social_video" value="" class="form-control" id="attach_social_video">
+                                <input type="text" name="attach_social_video" value="" class="form-control"
+                                    id="attach_social_video">
                             </div>
                             <div class="form-group autoheight" id="attachment_video_container">
                                 <label>Attach Video <span class="required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_video"></span>
-                                    <input type="file" name="attach_video" id="attach_video" class="jsCheckAttachVideo" >
+                                    <input type="file" name="attach_video" id="attach_video" class="jsCheckAttachVideo">
                                     <a href="javascript:;">Choose Video</a>
                                 </div>
                             </div>
@@ -653,7 +744,8 @@ $employeeId = $session['employer_detail']['sid'];
                                 <label>Attach Document <span class="required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_document"></span>
-                                    <input type="file" name="attach_document" id="attach_document" class="jsCheckAttachDocument" >
+                                    <input type="file" name="attach_document" id="attach_document"
+                                        class="jsCheckAttachDocument">
                                     <a href="javascript:;">Choose Document</a>
                                 </div>
                             </div>
@@ -682,7 +774,8 @@ $employeeId = $session['employer_detail']['sid'];
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content full-width">
             <div class="modal-header modal-header-bg">
-                <button type="button" class="close close-current-item" data-dismiss="modal" aria-label="Close" id="close_media_document_modal_up"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close close-current-item" data-dismiss="modal" aria-label="Close"
+                    id="close_media_document_modal_up"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="view_item_title"></h4>
             </div>
             <div class="modal-body full-width">
@@ -710,7 +803,8 @@ $employeeId = $session['employer_detail']['sid'];
                 </div>
             </div>
             <div class="modal-footer full-width">
-                <button type="button" class="btn btn-info incident-panal-button close-current-item" data-dismiss="modal" id="close_media_document_modal_down" file-type="">Close</button>
+                <button type="button" class="btn btn-info incident-panal-button close-current-item" data-dismiss="modal"
+                    id="close_media_document_modal_down" file-type="">Close</button>
             </div>
         </div>
     </div>
@@ -722,13 +816,14 @@ $employeeId = $session['employer_detail']['sid'];
     <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
     <div class="loader-icon-box">
         <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
-        <div class="loader-text" style="display:block; margin-top: 35px;">Please wait while we are uploading email attachment...
+        <div class="loader-text" style="display:block; margin-top: 35px;">Please wait while we are uploading email
+            attachment...
         </div>
     </div>
 </div>
 <!-- Email Attachment Loader End -->
-
-<link rel="StyleSheet" type="text/css" href="<?= base_url('assets/css/chosen.css'); ?>"  />
+</div>
+<link rel="StyleSheet" type="text/css" href="<?= base_url('assets/css/chosen.css'); ?>" />
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets/js/chosen.jquery.js'); ?>"></script>
 <script>
     var employeesList = <?= json_encode($employees); ?>;
