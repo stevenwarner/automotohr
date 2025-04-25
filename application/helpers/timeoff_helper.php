@@ -1708,7 +1708,7 @@ if (!function_exists('getButton')) {
         return
             str_replace(array_keys($replaceArray), $replaceArray, '<a href="{{url}}" target="_blank" style="padding: 8px 12px; border: 1px solid {{color}};background-color:{{color}};border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">
 {{text}}             
-</a>');
+</a>'); 
     }
 }
 
@@ -2016,6 +2016,8 @@ if (!function_exists('processESSTPolicy')) {
     ) {
         // get CI instance
         $CI = &get_instance();
+        // Load time off modal
+        $CI->load->model('timeoff_model');
         //
         $CI->db->select('policy_start_date');
         $CI->db->where('sid', $policyId);
@@ -2091,6 +2093,53 @@ if (!function_exists('processESSTPolicy')) {
         //     }
         // }
         //
+        // today's date
+        $currentDate = getSystemDate('Y-m-d');
+        $allowedTime = $allowedTimeInMinutes;
+        //
+        // for adding time off balance
+        if (
+            $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate']
+        ) {
+            //
+            if ($allowedTime != 0) {
+                //
+                $is_added = $CI->timeoff_model->checkAllowedBalanceAdded(
+                    $employeeId,
+                    $policyId,
+                    1,
+                    $employeeAnniversaryDate['lastAnniversaryDate'],
+                    $allowedTime
+                );
+                //
+                if ($is_added == 0) {
+                    // This section add allowed balance of current year
+                    $company_sid = $CI->timeoff_model->getEmployeeCompanySid($employeeId);
+                    $policyName = $CI->timeoff_model->getPolicyNameById($policyId);
+                    //
+                    $added_by = getCompanyAdminSid($company_sid);
+                    //
+                    $balanceToAdd = array();
+                    $balanceToAdd['user_sid'] = $employeeId;
+                    $balanceToAdd['policy_sid'] = $policyId;
+                    $balanceToAdd['added_by'] = $added_by;
+                    $balanceToAdd['is_added'] = 1;
+                    $balanceToAdd['added_time'] = $allowedTime;
+                    $balanceToAdd['note'] = getAddPolicyBalanceNote(
+                        $allowedTime,
+                        $accruals['applicableTime'],
+                        $accruals['applicableTimeType'],
+                        $policyName,
+                        $slug,
+                        $durationInMinutes
+                    );
+                    $balanceToAdd['effective_at'] = $employeeAnniversaryDate['lastAnniversaryDate'];
+                    //
+                    $CI->timeoff_model->addEmployeeAllowedBalance($balanceToAdd);
+                }
+            }
+        }
+        //
         $r['AllowedTime'] = $allowedTimeInMinutes;
         $r['ConsumedTime'] = $consumedTimeInMinutes;
         $r['RemainingTime'] = $allowedTimeInMinutes - $consumedTimeInMinutes;
@@ -2125,6 +2174,8 @@ if (!function_exists('processESTAPolicy')) {
     ) {
         // get CI instance
         $CI = &get_instance();
+        // Load time off modal
+        $CI->load->model('timeoff_model');
         //
         $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
         $todayDate = getFormatedDate($todayDate);
@@ -2213,6 +2264,53 @@ if (!function_exists('processESTAPolicy')) {
                 "consumed" => $consumedTimeInMinutes,
                 "remaining" => ($allowedHours + $balanceInMinutes) - ($consumedTimeInMinutes / 60),
             ];
+        }
+        //
+        // today's date
+        $currentDate = getSystemDate('Y-m-d');
+        $allowedTime = $balanceHolder["allowed"] * 60;
+        //
+        // for adding time off balance
+        if (
+            $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate']
+        ) {
+            //
+            if ($allowedTime != 0) {
+                //
+                $is_added = $CI->timeoff_model->checkAllowedBalanceAdded(
+                    $employeeId,
+                    $policyId,
+                    1,
+                    $employeeAnniversaryDate['lastAnniversaryDate'],
+                    $allowedTime
+                );
+                //
+                if ($is_added == 0) {
+                    // This section add allowed balance of current year
+                    $company_sid = $CI->timeoff_model->getEmployeeCompanySid($employeeId);
+                    $policyName = $CI->timeoff_model->getPolicyNameById($policyId);
+                    //
+                    $added_by = getCompanyAdminSid($company_sid);
+                    //
+                    $balanceToAdd = array();
+                    $balanceToAdd['user_sid'] = $employeeId;
+                    $balanceToAdd['policy_sid'] = $policyId;
+                    $balanceToAdd['added_by'] = $added_by;
+                    $balanceToAdd['is_added'] = 1;
+                    $balanceToAdd['added_time'] = $allowedTime;
+                    $balanceToAdd['note'] = getAddPolicyBalanceNote(
+                        $allowedTime,
+                        $accruals['applicableTime'],
+                        $accruals['applicableTimeType'],
+                        $policyName,
+                        $slug,
+                        $durationInMinutes
+                    );
+                    $balanceToAdd['effective_at'] = $employeeAnniversaryDate['lastAnniversaryDate'];
+                    //
+                    $CI->timeoff_model->addEmployeeAllowedBalance($balanceToAdd);
+                }
+            }
         }
         //
         $remainingTime = $balanceHolder["remaining"] * 60;
