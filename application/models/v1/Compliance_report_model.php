@@ -3049,7 +3049,7 @@ class Compliance_report_model extends CI_Model
 	): int {
 		//
 		$where = [
-			"csp_reports.status" => "pending",
+			"csp_reports_incidents_items.completion_status" => "pending",
 			"csp_reports.company_sid" => $companyId,
 		];
 		//
@@ -3059,19 +3059,21 @@ class Compliance_report_model extends CI_Model
 		//
 		$record = $this
 			->db
-			->select("DISTINCT(csp_reports_employees.csp_reports_sid) AS total")
 			->where($where)
+			->join(
+				"csp_reports_incidents_items",
+				"csp_reports_incidents_items.sid = csp_reports_employees.csp_reports_incidents_items_sid",
+				"inner"
+			)
 			->join(
 				"csp_reports",
 				"csp_reports.sid = csp_reports_employees.csp_reports_sid",
 				"inner"
 			)
-			->get("csp_reports_employees")
-			->row_array();
+			->count_all_results("csp_reports_employees");
+
 		//
-		return $record
-			? $record["total"]
-			: 0;
+		return $record;
 	}
 
 	/**
