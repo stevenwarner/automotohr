@@ -438,19 +438,6 @@ $(function manageShifts() {
 
 
 
-
-<<<<<<< HEAD
-//
-$(".schedule-column-clickable-openshift").click(function (event) {
-	// prevent the event from happening
-	event.preventDefault();
-	//
-	callToCreateBoxOpenShift(
-		$(this).data("eid"),
-		$(this).closest(".schedule-column-container").data("date")
-	);
- });
-=======
 	//
 	$(".schedule-column-clickable-openshift").click(function (event) {
 		// prevent the event from happening
@@ -461,7 +448,6 @@ $(".schedule-column-clickable-openshift").click(function (event) {
 			$(this).closest(".schedule-column-container").data("date")
 		);
 	});
->>>>>>> feature/openshiftsMultishifts
 
 
 

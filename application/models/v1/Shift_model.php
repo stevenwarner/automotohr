@@ -2108,11 +2108,7 @@ class Shift_model extends CI_Model
             // check if entry already exists
             if ($this->db->where([
                 "company_sid" => $companyId,
-<<<<<<< HEAD
-                "employee_sid" => 0,
-=======
                 "employee_sid" => $post["shift_employee"],
->>>>>>> feature/openshiftsMultishifts
                 "shift_date" => $post["shift_date"],
                 "start_time" => $post["start_time"],
                 "end_time" => $post["end_time"],

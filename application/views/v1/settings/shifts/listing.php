@@ -100,10 +100,11 @@ foreach ($monthDates as $monthDate) {
                                 <?php } ?>
 
                                 <?php if (isPayrollOrPlus()) { ?>
+                                    <!--
                                     <a href="<?= base_url("settings/openshifts/approval"); ?>" class="btn btn-orange">
                                         <i class="fa fa-exchange" aria-hidden="true"></i>
                                         &nbsp;Open Shift Approvals
-                                    </a>
+                                    </a> -->
                                 <?php } ?>
                             <?php } ?>
                         </div>
