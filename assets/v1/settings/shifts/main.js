@@ -1633,12 +1633,38 @@ $(function manageShifts() {
 	/**
 	 * Publish Multi Shift
 	 */
-	$(document).on("click", ".jsPublishMultiShiftBtn", function (event) {
+	$(document).on("click", ".jsOpenShiftReminderBtn", function (event) {
 		event.preventDefault();
-		//
-		publishUnpublishSingleShiftId = $(this).data("ids");
-		allShiftsId = $(this).data("shiftsids");
-		showConfirm();
+		//		
+		publishedShiftId = $(this).data("ids");
+
+		alertify.confirm(
+			'Are You Sure?',
+			'you want to send a reminder email about the published shifts"',
+			function () {
+				//
+				const formObj = new FormData();
+				// set the file object
+				formObj.append("shiftIds", publishedShiftId);
+				// 
+				processCallWithoutContentType(
+					formObj,
+					'',
+					"settings/shifts/publishedshiftsreminder",
+					function (resp) {
+						// show the message
+						_success(resp.msg, function () {
+							window.location.reload();
+						});
+					}
+				);
+			},
+			function () {
+
+			}
+		)
+
+
 	});
 
 	//

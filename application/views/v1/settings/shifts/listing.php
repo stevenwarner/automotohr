@@ -26,6 +26,9 @@ $todayDate = date('Y-m-d');
 $publishShiftIds = [];
 $allShiftsIds = [];
 
+
+$sendReminderEmailShiftIds = [];
+
 foreach ($monthDates as $monthDate) {
     if ($employees) {
         foreach ($employees as $employee) {
@@ -36,6 +39,13 @@ foreach ($monthDates as $monthDate) {
                     if (!empty($employeeShift) && $employeeShiftRow['is_published'] == 0) {
                         array_push($publishShiftIds, $employeeShiftRow['sid']);
                     }
+
+
+                    if (!empty($employeeShift) && $employeeShiftRow['is_published'] == 1) {
+                        array_push($sendReminderEmailShiftIds, $employeeShiftRow['sid']);
+                    }
+
+
 
                     if (!empty($employeeShift)) {
                         array_push($allShiftsIds, $employeeShiftRow['sid']);
@@ -163,7 +173,15 @@ foreach ($monthDates as $monthDate) {
                                         </a>
                                     </div>
 
+
                                     <div class="col-sm-4 text-right">
+                                        <?php if (count($sendReminderEmailShiftIds) > 0) { ?>
+                                            <button class="btn btn-orange jsOpenShiftReminderBtn" data-type="month" data-ids="<?= implode(',', $sendReminderEmailShiftIds) ?>">
+                                                <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                                Send Reminder Email
+                                            </button>
+                                        <?php } ?>
+
                                         <?php if (count($publishShiftIds) > 0) { ?>
                                             <button class="btn btn-orange jsPublishMultiShiftBtn" data-type="month" data-ids="<?= implode(',', $publishShiftIds) ?>" data-shiftsids="<?= implode(',', $allShiftsIds) ?>">
                                                 <i class="fa fa-arrow-circle-up" aria-hidden="true"></i>

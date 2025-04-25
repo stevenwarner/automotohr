@@ -7245,4 +7245,53 @@ class Settings extends Public_Controller
 
         return $emailTemplateBody;
     }
+
+    //
+    public function PublishedShiftsReminder()
+    {
+
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        //
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+ 
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $shiftids = explode(',', $post['shiftIds']);
+
+        $message_hf = message_header_footer($loggedInCompany["sid"], $loggedInCompany['CompanyName']);
+
+        $shiftsData = $this->shift_model->getShiftsById($loggedInCompany["sid"], $shiftids);
+
+        $empdata = [];
+
+        foreach ($shiftsData as $key => $row) {
+
+            $empdata[$row['employee_sid']][] = $row;
+        }
+        //
+        $template = get_email_template(
+            SHIFTS_PUBLISH_CONFIRMATION
+        );
+
+        //
+        foreach ($empdata as $empRow) {
+            $this->sendShiftPublishEmailNotification(
+                $empRow,
+                $message_hf,
+                $loggedInCompany['CompanyName'],
+                $template
+            );
+        }
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "The shifts reminder email have been successfully sent."
+            ]
+        );
+    }
 }
