@@ -15,9 +15,14 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right">
-                                            <a href="<?php echo base_url('manage_admin/compliance_safety/dashboard') ?>" class="btn btn-success"><i class="fa fa-arrow-left"> </i> Dashboard</a>
-                                            <a href="<?php echo base_url('manage_admin/compliance_safety/report_types/add') ?>" class="btn btn-success"><i class="fa fa-plus-circle"> </i> Add A Report Type</a>
-                                            <a href="<?php echo base_url('manage_admin/compliance_safety/incident_types/add') ?>" class="btn btn-success"><i class="fa fa-plus-circle"> </i> Add An Incident Type</a>
+                                            <a href="<?php echo base_url('manage_admin/compliance_safety/dashboard') ?>"
+                                                class="btn btn-success"><i class="fa fa-arrow-left"> </i> Dashboard</a>
+                                            <a href="<?php echo base_url('manage_admin/compliance_safety/report_types/add') ?>"
+                                                class="btn btn-success"><i class="fa fa-plus-circle"> </i> Add A Report
+                                                Type</a>
+                                            <a href="<?php echo base_url('manage_admin/compliance_safety/incident_types/add') ?>"
+                                                class="btn btn-success"><i class="fa fa-plus-circle"> </i> Add An
+                                                Incident Type</a>
                                         </div>
                                     </div>
 
@@ -42,23 +47,30 @@
 
                                                         <?php if ($severity_levels) {
                                                             foreach ($severity_levels as $type) {
-                                                        ?>
+                                                                ?>
                                                                 <tr data-id="<?= $type["sid"]; ?>">
                                                                     <td style="vertical-align: middle;">
-                                                                        <?= $type['level'] ?>
+                                                                        <input type="text" value="<?= $type['level'] ?>"
+                                                                            class="form-control jsLevel">
+
                                                                     </td>
                                                                     <td style="vertical-align: middle;">
-                                                                        <input type="color" name="bg_color" class="form-control jsBgColor" value="<?= $type['bg_color'] ?>" />
+                                                                        <input type="color" name="bg_color"
+                                                                            class="form-control jsBgColor"
+                                                                            value="<?= $type['bg_color'] ?>" />
                                                                     </td>
                                                                     <td style="vertical-align: middle;">
-                                                                        <input type="color" name="txt_color" class="form-control jsTxtColor" value="<?= $type['txt_color'] ?>" />
+                                                                        <input type="color" name="txt_color"
+                                                                            class="form-control jsTxtColor"
+                                                                            value="<?= $type['txt_color'] ?>" />
                                                                     </td>
                                                                 </tr>
                                                             <?php }
                                                         } else { ?>
                                                             <tr>
                                                                 <td colspan="3" class="text-center">
-                                                                    <span class="no-data">No Compliance Report Types Found</span>
+                                                                    <span class="no-data">No Compliance Report Types
+                                                                        Found</span>
                                                                 </td>
                                                             </tr>
                                                         <?php } ?>
@@ -80,17 +92,29 @@
 
 
 <script>
-    $(function() {
+    $(function () {
 
         let XHR = null;
 
-        $(document).on("change", ".jsBgColor", function(event) {
+        let debounceTimer;
+        $(document).on("keyup", ".jsLevel", function (event) {
+            event.preventDefault();
+            const recordId = $(this).closest("tr").data("id");
+            const val = $(this).val();
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                updateLevel(recordId, val, "level");
+            }, 600); // 300ms debounce delay
+        });
+
+        $(document).on("change", ".jsBgColor", function (event) {
             event.preventDefault();
             const recordId = $(this).closest("tr").data("id");
             const val = $(this).val();
             updateLevel(recordId, val, "bg");
         });
- $(document).on("change", ".jsTxtColor", function(event) {
+        $(document).on("change", ".jsTxtColor", function (event) {
             event.preventDefault();
             const recordId = $(this).closest("tr").data("id");
             const val = $(this).val();
@@ -110,12 +134,12 @@
                     }
                 })
                 .always()
-                .fail(function(resp) {
+                .fail(function (resp) {
                     alerify.alert(
                         "Errors!"
                     );
                 })
-                .done(function(resp) {
+                .done(function (resp) {
                     alertify.success(
                         resp.message
                     );

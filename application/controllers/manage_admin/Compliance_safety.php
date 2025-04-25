@@ -369,15 +369,23 @@ class Compliance_safety extends Admin_Controller
     {
         // get the sanitized post
         $post = $this->input->post(null, true);
+        if ($post["type"] === "level") {
+            $updateArray = [
+                "level" => $post["cl"]
+            ];
+        } else {
+            $updateArray = [
+                $post["type"] === "bg" ? "bg_color" : "txt_color" => $post["cl"]
+            ];
+        }
+
         // update
         $this
             ->db
             ->where("sid", $post["id"])
             ->update(
                 "compliance_severity_levels",
-                [
-                    $post["type"] === "bg" ? "bg_color" : "txt_color" => $post["cl"]
-                ]
+                $updateArray
             );
         //
         return SendResponse(
