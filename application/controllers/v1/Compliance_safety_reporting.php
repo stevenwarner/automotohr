@@ -45,6 +45,9 @@ class Compliance_safety_reporting extends Base_csp
             ->getAllIncidentsWithReports(
                 $this->getLoggedInCompany("sid")
             );
+        $this->data["severity_levels"] = $this
+            ->compliance_report_model
+            ->getSeverityLevels();
 
         // get the reports
         $this->data["reports"] = $this

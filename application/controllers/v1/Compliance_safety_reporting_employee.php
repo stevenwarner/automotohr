@@ -39,6 +39,9 @@ class Compliance_safety_reporting_employee extends Base_csp
             "incident" => $this->input->get("incidentType", true) ?? "-1",
             "status" => $this->input->get("status", true) ?? "-1",
         ];
+        $this->data["severity_levels"] = $this
+            ->compliance_report_model
+            ->getSeverityLevels();
         // get all the incidents
         $this->data["incidents"] = $this
             ->compliance_report_model
