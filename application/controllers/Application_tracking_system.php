@@ -1056,6 +1056,22 @@ class Application_tracking_system extends Public_Controller
         }
     }
 
+    public function applicant_submitted_resume_result($app_id = NULL, $applicant_id = NULL) {
+        // if ($app_id == NULL || $applicant_id == NULL) {
+        //     redirect('application_tracking_system/active/all/all/all/all/all/all');
+        //     return;
+        // }
+
+        $ats_params = $this->session->userdata('ats_params');
+        $data = applicant_right_nav($app_id, $applicant_id, $ats_params);
+        $data['submitted_resume_data'] = $this->application_tracking_system_model->get_submitted_resume_data($applicant_id);
+
+
+        $this->load->view('main/header', $data);
+        $this->load->view('manage_employer/application_tracking_system/submitted_resume');
+        $this->load->view('main/footer');
+    }
+
     public function upload_extra_attachment()
     {
         if (isset($_FILES['newlife']) && $_FILES['newlife']['name'] != '') { //uploading Files to AWS if any

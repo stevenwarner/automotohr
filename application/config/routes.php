@@ -573,6 +573,7 @@ $route['applicant_profile/upload_attachment/(:any)'] = 'application_tracking_sys
 $route['applicant_profile/downloadFile/(:any)'] = 'application_tracking_system/downloadFile/$1';
 $route['applicant_profile/(:num)'] = 'application_tracking_system/applicant_profile/$1';
 $route['applicant_profile/(:num)/(:num)'] = 'application_tracking_system/applicant_profile/$1/$2';
+$route['applicant_profile/submitted/resume/(:num)/(:num)'] = 'application_tracking_system/applicant_submitted_resume_result/$1/$2';
 $route['archive_single_applicant'] = 'application_tracking_system/archive_single_applicant';
 $route['active_single_applicant'] = 'application_tracking_system/active_single_applicant';
 $route['delete_single_applicant'] = 'application_tracking_system/delete_single_applicant';

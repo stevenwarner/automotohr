@@ -388,7 +388,7 @@ class Indeed_feed extends CI_Controller
                 ], false);
             }
 
-            if(isset($resume) && !empty($resume))
+            if(isset($resume) && !empty($resume) && $companyId == 21)
             {
                 storeApplicantApplicationInQueue([
                     'portal_applicant_job_sid' => null,

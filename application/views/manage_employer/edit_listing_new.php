@@ -178,15 +178,6 @@
 
                                         </li>
 
-                                        <div class="form-col-100">
-                                            <button
-                                                class="generate-button"
-                                                type="button"
-                                                id="generate_questionnaire"
-                                                onclick="generateQuestionnaire()"
-                                            >Generate Questionnaire</button>
-                                        </div>
-
                                         <li class="form-col-50-left">
                                             <div class="form-col-50-left">
                                                 <label>Salary From:</label>
@@ -2191,40 +2182,6 @@
     // $('#select_template').select2();
     const CompanyName = '<?= $session['company_detail']['CompanyName'] ?>';
 
-    async function generateQuestionnaire() {
-        let generateButton = document.querySelector('button#generate_questionnaire');
-        generateButton.disabled = true;
-        // const input = `Generate 5 different interview or screening questions based on the following job post and description. Each question should include:
-
-        // 1. The question text
-        // 2. The answer type, which must be one of the following: "text", "yes_no", "multiple_choice", "single_choice"
-        // 3. If the answer type is "multiple_choice" or "single_choice", include a list of options
-
-        // Format the output strictly in JSON as an array of objects. Here is the job post and description:
-
-        // ${CKEDITOR.instances.JobDescription.getData()}`;
-        // const resp = await generateJDOpenAiCall(input, '');
-        
-        // const questions = JSON.parse(resp.result)
-        // console.log('resp', questions);
-        
-        // let questionHtml = '';
-        // for(let i = 0; i < questions.length; i++) {
-        //     questionHtml +=`<div style="margin-bottom: 15px;">
-        //         <label for="generate_prompt_input">Question:</label>
-        //         <p style="margin: 0px;">${questions[i].question_text}</p>
-        //         <strong>Type: </strong> <span>${questions[i].answer_type == 'text' ? 'text' : 'Yes / No'}</span>
-        //     </div>`;
-        // }
-
-        // $('#questionnaire_generated_body_data').html(questionHtml);
-        // $('#generate_questionnaire_modal').modal('show');
-
-        const res = await analyzeJDAndQuestions(CKEDITOR.instances.JobDescription.getData())
-        console.log('res', res)
-        generateButton.disabled = false;
-    }
-
     async function generateJobDescription(newInput = "") {
         // Start Submission
         document.querySelector('button#generate_button').disabled = true;
@@ -2301,19 +2258,6 @@
         },
         body: JSON.stringify({
           instructions,
-          input
-        }),
-      }).then(async response => response.json())
-      .catch(e => e);
-    }
-
-    async function analyzeJDAndQuestions(input) {
-        return await fetch("http://127.0.0.1:3000/openai/generate-screening-questionnaires", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
           input
         }),
       }).then(async response => response.json())
