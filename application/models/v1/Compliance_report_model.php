@@ -5751,18 +5751,21 @@ class Compliance_report_model extends CI_Model
 			->delete("csp_reports_files");
 	}
 
-
 	/**
-	 * Send email to the report employees
+	 * Send email to the issue employees
 	 *
-	 * @param int $reportId
+	 * @param int $issueId
 	 */
-	public function sendEmailsForCSPIssue(int $issueId, int $templateId = CSP_INCIDENT_ASSIGNED_EMAIL_TEMPLATE_ID)
+	public function sendEmailsForCSPIssue(int $issueId, int $templateId = CSP_ASSIGNED_EMAIL_TEMPLATE_ID)
 	{
 		// get report
 		$report = $this
 			->getCSPIssueForEmail(
-				$issueId
+				$issueId,
+				[
+					"csp_reports.company_sid",
+					"csp_reports.title",
+				]
 			);
 		//
 		$companyName = getCompanyColumnById($report["company_sid"], "CompanyName")["CompanyName"];
@@ -5792,14 +5795,14 @@ class Compliance_report_model extends CI_Model
 					// set replace array
 					$ra = [
 						"first_name" => $item["external_name"],
-						"title" => $report["compliance_incident_type_name"],
+						"title" => $report["title"],
 						"last_name" => "",
 						"email" => $item["external_email"],
 						"company_name" => $companyName,
 						"csp_public_url" => generateEmailButton(
 							"#fd7a2a",
 							("csp/single/{$code}"),
-							"View Compliance Safety Report Incident"
+							"View Compliance Safety Report"
 						),
 						"base_url" => base_url(),
 					];
@@ -5837,13 +5840,13 @@ class Compliance_report_model extends CI_Model
 					$ra = [
 						"first_name" => $item["first_name"],
 						"last_name" => $item["last_name"],
-						"title" => $report["compliance_incident_type_name"],
+						"title" => $report["title"],
 						"email" => $item["email"],
 						"company_name" => $companyName,
 						"csp_public_url" => generateEmailButton(
 							"#fd7a2a",
 							("csp/single/{$code}"),
-							"View Compliance Safety Report Incident"
+							"View Compliance Safety Report"
 						),
 						"base_url" => base_url(),
 					];
@@ -5862,9 +5865,9 @@ class Compliance_report_model extends CI_Model
 	}
 
 	/**
-	 * Get all compliance reports
+	 * Send emails to employees
 	 *
-	 * @param int $reportId
+	 * @param int $issueId
 	 * @return array
 	 */
 	public function getCSPIssueForEmail(int $issueId)
@@ -5922,9 +5925,50 @@ class Compliance_report_model extends CI_Model
 				"external_name",
 				"external_email",
 			]);
+		//
+		return $report;
+	}	
+	
+	/**
+	 * Get all external employees
+	 *
+	 * @param int $issueId
+	 * @param array $columns
+	 * @return array
+	 */
+	public function getCSPIssueExternalEmployeesById(int $issueId, array $columns)
+	{
+		return $this->db
+			->select($columns)
+			->where("csp_reports_incidents_items_sid", $issueId)
+			->where("is_external_employee", 1)
+			->where("status", 1)
+			->get("csp_reports_employees")
+			->result_array();
+	}
+
+	/**
+	 * Get all internal employees
+	 *
+	 * @param int $issueId
+	 * @param array $columns
+	 * @return array
+	 */
+	public function getCSPIssueInternalEmployeesById(int $issueId, array $columns)
+	{
+		return $this->db
+			->select($columns)
+			->where("csp_reports_employees.csp_reports_incidents_items_sid", $issueId)
+			->where("csp_reports_employees.is_external_employee", 0)
+			->where("csp_reports_employees.status", 1)
+			->join(
+				"users",
+				"users.sid = csp_reports_employees.employee_sid"
+			)
+			->get("csp_reports_employees")
+			->result_array();
 	}		
 
-			
 	public function getCSPReportByIdNew(int $reportId, array $columns)
 	{
 		$report = $this
@@ -5947,50 +5991,7 @@ class Compliance_report_model extends CI_Model
 		if (!$report) {
 			return [];
 		}
-		
-		return $report;
-	}
-
-	/**
-	 * Get all compliance reports
-	 *
-	 * @param int $reportId
-	 * @param int $incidentId
-	 * @param int $itemId
-	 * @return array
-	 */
-	public function getCSPIssueExternalEmployeesById(int $issueId, array $columns)
-	{
-		return $this->db
-			->select($columns)
-			->where("csp_reports_incidents_items_sid", $issueId)
-			->where("is_external_employee", 1)
-			->where("status", 1)
-			->get("csp_reports_employees")
-			->result_array();
-	}
-
-	/**
-	 * Get all compliance reports
-	 *
-	 * @param int $reportId
-	 * @param int $incidentId
-	 * @param int $itemId
-	 * @return array
-	 */
-	public function getCSPIssueInternalEmployeesById(int $issueId, array $columns)
-	{
-		return $this->db
-			->select($columns)
-			->where("csp_reports_employees.csp_reports_incidents_items_sid", $issueId)
-			->where("csp_reports_employees.is_external_employee", 0)
-			->where("csp_reports_employees.status", 1)
-			->join(
-				"users",
-				"users.sid = csp_reports_employees.employee_sid"
-			)
-			->get("csp_reports_employees")
-			->result_array();
+		//
 		$report["notes"] = $this->getCSPReportNotesById($reportId, [
 			$this->userFields,
 			"users.profile_picture",

@@ -58,6 +58,10 @@ class Compliance_safety_reporting_public extends Base_csp
             "status" => $this->input->get("status", true) ?? "-1",
         ];
 
+        $this->data["severity_levels"] = $this
+            ->compliance_report_model
+            ->getSeverityLevels();
+
         // get all the incidents
         $this->data["incidents"] = $this
             ->compliance_report_model
