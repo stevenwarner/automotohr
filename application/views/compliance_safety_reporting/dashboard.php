@@ -240,7 +240,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                         <td class="vam">
                                             <label class="btn form-control"
                                                 style="background: <?= $record["bg_color"]; ?>; color: <?= $record["txt_color"]; ?>; border-radius: 5px;">
-                                                <?= $record["level"]; ?>
+                                                <?= is_numeric($record["level"]) ? " Severity Level ".$record["level"] : $record["level"] ?>
                                             </label>
                                         </td>
                                         <td class="vam">
