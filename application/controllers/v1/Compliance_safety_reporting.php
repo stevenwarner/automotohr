@@ -1952,4 +1952,66 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
+    public function deleteIssueById ($issueId) {
+        $this->compliance_report_model->deleteIssueFromReport(
+            $issueId
+        );
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Issue removed successfully."]
+        );
+    }
+
+    public function exportCSVReport () {
+        if (!isMainAllowedForCSP()) {
+            return redirect("dashboard");
+        }
+        // set the title
+        $this->data['title'] = 'Compliance Safety Reporting | Dashboard';
+        // load JS
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
+        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
+        $this->data['pageJs'][] = 'csp/dashboard';
+        $this->data['pageJs'][] = main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0");
+        // load CSS
+        $this->data['pageCSS'][] = main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0");
+        // get filter    
+        $this->data["filter"] = [
+            "severity_level" => $this->input->get("severityLevel", true) ?? "-1",
+            "incident" => $this->input->get("incidentType", true) ?? "-1",
+            "status" => $this->input->get("status", true) ?? "-1",
+            "title" => $this->input->get("title") ?? "",
+            "date_range" => $this->input->get("date_range", true) ?? ""
+        ];
+
+        // get all the incidents
+        $this->data["incidents"] = $this
+            ->compliance_report_model
+            ->getAllIncidentsWithReports(
+                $this->getLoggedInCompany("sid")
+            );
+        $this->data["severity_levels"] = $this
+            ->compliance_report_model
+            ->getSeverityLevels();
+
+        // get the reports
+        $this->data["reports"] = $this
+            ->compliance_report_model
+            ->getAllItemsWithIncidentsCPA(
+                $this->getLoggedInCompany("sid"),
+                $this->data["filter"]
+            );
+        //
+        // get the severity status
+        $this->data["severity_status"] = $this
+            ->compliance_report_model
+            ->getSeverityLevels();
+        //
+        $this->renderView('compliance_safety_reporting/dashboard');
+    }
+
 }

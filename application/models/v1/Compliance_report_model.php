@@ -6341,4 +6341,10 @@ class Compliance_report_model extends CI_Model
 				$updateArray
 			);
 	}
+
+	public function deleteIssueFromReport ($issueId) {
+		$this->db
+			->where("sid", $issueId)
+			->delete("csp_reports_incidents_items");
+	}
 }

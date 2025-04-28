@@ -125,6 +125,10 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                             <i class="fa fa-eye"></i>
                                             Manage Task
                                         </a>
+                                        <button class="btn btn-red jsDeleteIssue" type="button" data-issue_id="<?=$record['sid']?>">
+                                            <i class="fa fa-trash"></i>
+                                            Delete Issue
+                                        </button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

@@ -1,6 +1,7 @@
 $(function Overview() {
 	let externalPointer = $(".jsAddExternalBody .jsEER").length;
 	let XHR = null;
+	let issue = 0;
 
 	const config = {
 		document: {
@@ -978,6 +979,43 @@ $(function Overview() {
 				});
 		}
 	};
+
+	$(".jsDeleteIssue").click(function (event) {
+		event.preventDefault();
+		issueId = $(this).data('issue_id');
+        //
+		_confirm(
+			"Are you sure you want to delete this issue?",
+			deleteIssueFromReport
+		);
+		
+	});
+
+	function deleteIssueFromReport() {
+        //
+        //
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/delete_issue_from_report/"+ issueId
+				),
+				method: "Delete"
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message, function () {
+                        window.location.reload();
+                    });
+				});
+		}
+	}
 
 	ml(false, "jsPageLoader");
 });

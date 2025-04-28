@@ -189,6 +189,10 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                             <i class="fa fa-send"></i>
                             Send Email 
                         </a>
+                        <a type="button" class="btn btn-green hidden" id="jsCSVButton" href="<?= base_url("/compliance_safety_reporting/export_csv"); ?>">
+                            <i class="fa fa-download"></i>
+                            Export CSV
+                        </a>
                     </span>
                 </h3>
             </div>
@@ -197,7 +201,9 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th><input type="checkbox" class="js-check-all" /></th>
+                                <th class="bg-black">
+                                    <input type="checkbox" class="js-check-all" />
+                                </th>
                                 <th class="bg-black">Severity<br />Level</th>
                                 <th class="bg-black">Report</th>
                                 <th class="bg-black">Incident</th>

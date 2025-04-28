@@ -2788,6 +2788,7 @@ $route["csp/issue/progress/update/public"]["post"] =
 
 $route["compliance_safety_reporting/delete_file/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting/deleteFileById/$1";
+
 $route["settings/shifts/cancelclaimrequest"]["post"] = "Settings/processCancelClaimRequest";
 
 $route["compliance_safety_reporting/send_issue_reminder_email"]["post"] =
@@ -2810,3 +2811,9 @@ $route["compliance_safety_reporting/issue/edit"]["post"] =
 
 $route["compliance_safety_reporting/report/update/(:num)"]["post"] =
   "v1/Compliance_safety_reporting/updateReportBasicInformation";
+
+$route["compliance_safety_reporting/delete_issue_from_report/(:num)"]["delete"] =
+  "v1/Compliance_safety_reporting/deleteIssueById/$1";
+
+  $route["compliance_safety_reporting/export_csv"]["get"] =
+  "v1/Compliance_safety_reporting/exportCSVReport";
