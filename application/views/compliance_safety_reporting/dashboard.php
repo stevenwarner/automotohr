@@ -69,7 +69,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                     <?php if ($severity_status) { ?>
                                         <?php foreach ($severity_status as $status) { ?>
                                             <option <?= $filter["severity_level"] == $status['sid'] ? "selected" : ""; ?> value="<?php echo $status['sid']; ?>">
-                                                <?php echo is_numeric($record["level"]) ? " Severity Level ".$record["level"] : $record["level"];  ?>
+                                                <?php echo is_numeric($status["level"]) ? " Severity Level ".$status["level"] : $status["level"];  ?>
                                             </option>
                                         <?php } ?>
                                     <?php } ?>    
