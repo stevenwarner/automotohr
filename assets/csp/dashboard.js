@@ -178,7 +178,9 @@ $(function () {
 				})
 				.fail(handleErrorResponse)
 				.done(function (resp) {
-					_success(resp.message);
+					_success(resp.message, function () {
+                        window.location.reload();
+                    });
 				});
 		}
 	}
