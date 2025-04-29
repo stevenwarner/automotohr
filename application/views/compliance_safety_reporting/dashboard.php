@@ -182,7 +182,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
         <!-- Table -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-heading-text text-medium" style="vertical-align: middle;">
+                <h3 class="panel-heading-text text-medium" style="padding: 14px 0px;">
                     <i class="fa fa-table text-orange"></i> Compliance Safety Reporting
                     <span class="pull-right">
                         <a type="button" class="btn btn-orange jsSendReminderEmails" href="javascript:;">
@@ -236,7 +236,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                     $severityLevelGraph["colors"][$record["level"]] = $record["bg_color"];
                                     ?>
                                     <tr class="js-tr">
-                                        <td style="padding: 22px 8px;">
+                                        <td style="vertical-align: middle;">
                                             <input type="checkbox" name="issues_ids[]" value="<?=$record["sid"]?>" />
                                         </td>
                                         <td class="vam">
