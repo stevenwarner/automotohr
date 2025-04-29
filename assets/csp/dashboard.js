@@ -1,6 +1,41 @@
 $(function () {
     let XHR = null;
     let selectedIssues = [];
+    let cspIssueId = 0;
+    const config = {
+        document: {
+            allowedTypes: [
+                // images
+                "jpg",
+                "jpeg",
+                "png",
+                "gif",
+                "webp",
+                // documents
+                "rtf",
+                "pdf",
+                "doc",
+                "docx",
+                "pptx",
+                "ppt",
+                "xls",
+                "xlsx",
+                "csv",
+                // video
+                "mov",
+                "mp4",
+                "webm",
+                // audio
+                "wav",
+                "mp3",
+            ],
+            fileLimit: "200mb",
+            allowLinks: true,
+            allowCapture: true,
+        },
+    };
+
+let fileUploaderReference = {};
 
     Highcharts.chart('jsProgressGraph', {
         chart: {
@@ -184,43 +219,6 @@ $(function () {
 				});
 		}
 	}
-
-    let cspIssueId = 0;
-    	const config = {
-		document: {
-			allowedTypes: [
-				// images
-				"jpg",
-				"jpeg",
-				"png",
-				"gif",
-				"webp",
-				// documents
-				"rtf",
-				"pdf",
-				"doc",
-				"docx",
-				"pptx",
-				"ppt",
-				"xls",
-				"xlsx",
-				"csv",
-				// video
-				"mov",
-				"mp4",
-				"webm",
-				// audio
-				"wav",
-				"mp3",
-			],
-			fileLimit: "200mb",
-			allowLinks: true,
-			allowCapture: true,
-		},
-        };
-    
-    let fileUploaderReference = {};
-    let XHR = null;
 
     // Upload file
     $(".jsIssueUploadFileBtn").click(

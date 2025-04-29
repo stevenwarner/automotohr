@@ -236,7 +236,9 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                     $severityLevelGraph["colors"][$record["level"]] = $record["bg_color"];
                                     ?>
                                     <tr class="js-tr">
-                                        <td><input type="checkbox" name="issues_ids[]" value="<?=$record["sid"]?>" /></td>
+                                        <td style="padding: 22px 8px;">
+                                            <input type="checkbox" name="issues_ids[]" value="<?=$record["sid"]?>" />
+                                        </td>
                                         <td class="vam">
                                             <label class="btn form-control"
                                                 style="background: <?= $record["bg_color"]; ?>; color: <?= $record["txt_color"]; ?>; border-radius: 5px;">
@@ -253,10 +255,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                             </p>
                                         </td>
                                         <td class="vam">
-                                            <a
-                                                href="<?= base_url("compliance_safety_reporting/report/" . $record["csp_reports_sid"] . "/incident/edit/" . $record["csp_reports_incidents_sid"]); ?>">
-                                                <?= $record["compliance_incident_type_name"]; ?>
-                                            </a>
+                                            <?= $record["compliance_incident_type_name"]; ?>
                                         </td>
                                         <td class="vam">
                                             <?= $record["item_title"]; ?>
