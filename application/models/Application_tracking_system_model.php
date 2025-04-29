@@ -3575,7 +3575,12 @@ class Application_tracking_system_model extends CI_Model
         $this->db->select('*');
         $this->db->where('portal_applicant_job_sid', $applicant_id);
         $this->db->from('portal_applicant_resume_analysis');
-        return $this->db->order_by('sid', 'desc')->get()->result_array();
+        return $this->db->order_by('sid', 'desc')->get()->row_array();
+    }
+
+    function update_submitted_resume($resume_id, $data) {
+        $this->db->where('sid', $resume_id);
+        $this->db->update('portal_applicant_resume_analysis', $data);
     }
 }
 

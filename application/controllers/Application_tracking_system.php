@@ -1062,6 +1062,24 @@ class Application_tracking_system extends Public_Controller
         //     return;
         // }
 
+        if(isset($_POST['resume_id'])) {
+            
+            $data = array();
+            if(isset($_POST['questions']))
+            {
+                $questions = $_POST['questions'];
+                $data = array('screening_questions' => json_encode($questions));
+            }
+
+            if(isset($_POST['score']))
+            {
+                $score = $_POST['score'];
+                $data = array('match_score' => $score);
+            }
+            $this->application_tracking_system_model->update_submitted_resume($_POST['resume_id'], $data);
+            return redirect("applicant_profile/submitted/resume/" . $app_id . '/' . $applicant_id);
+        }
+
         $ats_params = $this->session->userdata('ats_params');
         $data = applicant_right_nav($app_id, $applicant_id, $ats_params);
         $data['submitted_resume_data'] = $this->application_tracking_system_model->get_submitted_resume_data($applicant_id);
