@@ -2037,7 +2037,7 @@ class Compliance_safety_reporting extends Base_csp
                 $a[] = $report['report_date'];
                 $a[] = $report['compliance_incident_type_name'];
                 $a[] = $report['item_title'];
-                $a[] = $$report['level'];
+                $a[] = $report['level'];
                 $a[] = $report['completion_status'];
                 $a[] = $report['completion_date'];
                 $a[] = $report['completed_by'] ? getEmployeeOnlyNameBySID($report['completed_by']) : '';
