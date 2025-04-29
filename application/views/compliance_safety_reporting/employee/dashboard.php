@@ -186,9 +186,8 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color"); ?>
                                     }
                                     //
                                     $severityLevelGraph["data"][$record["level"]]++;
-                                    $severityLevelGraph["colors"][$record["level"]] = $record["bg_color"];
                                     ?>
-                                    <tr>
+                                    <tr data-id="<?= $record["sid"]; ?>">
                                         <td class="vam">
                                             <label class="btn form-control"
                                                 style="background: <?= $record["bg_color"]; ?>; color: <?= $record["txt_color"]; ?>; border-radius: 5px;">
@@ -216,10 +215,21 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color"); ?>
                                             </label>
                                         </td>
                                         <td class="vam text-right">
+                                            <button class="btn btn-orange jsIssueUploadFileBtn" title="Attach Files">
+                                                <i class="fa fa-upload"></i>
+                                            </button>
+
+                                            <button class="btn btn-orange jsIssueAddNotesBtn" title="Attach Notes">
+                                                <i class="fa fa-comments"></i>
+                                            </button>
+
+                                            <button class="btn btn-orange jsIssueEditBtn" title="Attach Notes">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+
                                             <a href="<?= base_url("compliance_safety_reporting/employee/report/" . $record["csp_reports_sid"] . "/incident/" . $record["csp_reports_incidents_sid"] . "/item/" . $record["sid"]); ?>"
                                                 class="btn btn-orange">
                                                 <i class="fa fa-eye"></i>
-                                                View Task
                                             </a>
                                         </td>
                                     </tr>
@@ -234,11 +244,9 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color"); ?>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 <?php $severityLevelGraph["data"] = array_values($severityLevelGraph["data"]); ?>
-
 
 <script>
     progressGraphData = '<?= json_encode(array_values($progressGraphData)); ?>';

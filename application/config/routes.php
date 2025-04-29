@@ -2815,5 +2815,25 @@ $route["compliance_safety_reporting/report/update/(:num)"]["post"] =
 $route["compliance_safety_reporting/delete_issue_from_report/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting/deleteIssueById/$1";
 
-  $route["compliance_safety_reporting/export_csv"]["get"] =
+$route["compliance_safety_reporting/export_csv"]["get"] =
   "v1/Compliance_safety_reporting/exportCSVReport";
+
+$route["compliance_safety_reporting/issues/all"]["get"] =
+  "v1/Compliance_safety_reporting/getAllIssues";
+$route["compliance_safety_reporting/issue/add"]["post"] =
+  "v1/Compliance_safety_reporting/addIssueToReport";
+$route["compliance_safety_reporting/issues/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/getSingleIssueView/$1";
+
+
+$route["compliance_safety_reporting/issues/edit/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/getEditIssueViewByRecordId/$1";
+$route["compliance_safety_reporting/issue/edit"]["post"] =
+  "v1/Compliance_safety_reporting/editIssueToReport";
+
+
+$route["compliance_safety_reporting/report/update/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/updateReportBasicInformation";
+
+$route["compliance_safety_reporting/issues/(:num)/attach-file"]["post"] =
+  "v1/Compliance_safety_reporting/uploadAndAttachFileToIssue";
