@@ -201,7 +201,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th class="bg-black">
+                                <th class="bg-black" style="vertical-align: middle;">
                                     <input type="checkbox" class="js-check-all" />
                                 </th>
                                 <th class="bg-black">Severity<br />Level</th>
