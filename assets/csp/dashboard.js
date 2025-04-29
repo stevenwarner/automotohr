@@ -185,30 +185,6 @@ $(function () {
 		}
 	}
 
-    $('#jsCSVButton').on('click', function(e) {
-        e.preventDefault();
-        generateCSVUrl();
-
-        window.location = $(this).attr('href').toString();
-    });
-
-    function generateCSVUrl() {
-        var severityLevel = $('#severityLevel').val();
-        var incidentType = $('#incidentType').val();
-        var status = $('#status').val();
-        var incidentTitle = $('#applicant_status').val();
-        var DateRange = $('#jsDateRangePicker').val();
-
-        severityLevel = severityLevel != '' && severityLevel != null && severityLevel != undefined && severityLevel != 0 ? encodeURIComponent(severityLevel) : '-1';
-        incidentType = incidentType != '' && incidentType != null && incidentType != undefined && incidentType != 0 ? encodeURIComponent(incidentType) : '-1';
-        status = status != '' && status != null && status != undefined && status != 0 ? encodeURIComponent(status) : '-1';
-        incidentTitle = incidentTitle != '' && incidentTitle != null && incidentTitle != undefined && incidentTitle != 0 ? encodeURIComponent(incidentTitle) : '-1';
-        DateRange = DateRange != '' && DateRange != null && DateRange != undefined && DateRange != 0 ? encodeURIComponent(DateRange) : '';
-
-        var url = baseUrl("compliance_safety_reporting/export_csv?")+ '/' + severityLevel + '/' + incidentType + '/' + status + '/' + incidentTitle + '/' + DateRange;
-
-        $('#jsCSVButton').attr('href', url);
-    }
     let cspIssueId = 0;
     	const config = {
 		document: {

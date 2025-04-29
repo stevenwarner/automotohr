@@ -43,7 +43,14 @@ class Compliance_safety_reporting extends Base_csp
             "title" => $this->input->get("title") ?? "",
             "date_range" => $this->input->get("date_range", true) ?? ""
         ];
-
+        //
+        $queryString = $_SERVER['QUERY_STRING'];
+        $this->data['CSVUrl'] = base_url('compliance_safety_reporting/export_csv');
+        //
+        if ($queryString) {
+            $this->data['CSVUrl'] = $this->data['CSVUrl'] . '?' . $queryString;
+        }
+        //
         // get all the incidents
         $this->data["incidents"] = $this
             ->compliance_report_model
@@ -1964,54 +1971,144 @@ class Compliance_safety_reporting extends Base_csp
     }
 
     public function exportCSVReport () {
+        //
         if (!isMainAllowedForCSP()) {
             return redirect("dashboard");
         }
-        // set the title
-        $this->data['title'] = 'Compliance Safety Reporting | Dashboard';
-        // load JS
-        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/highcharts-more.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/exporting.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
-        $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
-        $this->data['pageJs'][] = 'csp/dashboard';
-        $this->data['pageJs'][] = main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0");
-        // load CSS
-        $this->data['pageCSS'][] = main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0");
         // get filter    
-        $this->data["filter"] = [
+        $filter = [
             "severity_level" => $this->input->get("severityLevel", true) ?? "-1",
             "incident" => $this->input->get("incidentType", true) ?? "-1",
             "status" => $this->input->get("status", true) ?? "-1",
             "title" => $this->input->get("title") ?? "",
             "date_range" => $this->input->get("date_range", true) ?? ""
         ];
-
-        // get all the incidents
-        $this->data["incidents"] = $this
-            ->compliance_report_model
-            ->getAllIncidentsWithReports(
-                $this->getLoggedInCompany("sid")
-            );
-        $this->data["severity_levels"] = $this
-            ->compliance_report_model
-            ->getSeverityLevels();
-
         // get the reports
-        $this->data["reports"] = $this
+        $reports = $this
             ->compliance_report_model
             ->getAllItemsWithIncidentsCPA(
                 $this->getLoggedInCompany("sid"),
-                $this->data["filter"]
+                $filter
             );
         //
-        // get the severity status
-        $this->data["severity_status"] = $this
-            ->compliance_report_model
-            ->getSeverityLevels();
+        $companyName = $this->getLoggedInCompany("CompanyName");
+        $employeeName = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
         //
-        $this->renderView('compliance_safety_reporting/dashboard');
+        $exportRows = '';
+        //
+        if ($reports) {
+            foreach ($reports as $report) {
+                //
+                $exportRow = '';
+                //
+                if ($report['title']) {
+                    $exportRow .= $report['title'] . ',';
+                    substr($exportRow, 0, -1);
+                } else {
+                    $exportRow .= ' ,';
+                    substr($exportRow, 0, -1);
+                } 
+
+                if ($report['report_date']) {
+                    $exportRow .= $report['report_date'] . ',';
+                    substr($exportRow, 0, -1);
+                } else {
+                    $exportRow .= ' ,';
+                    substr($exportRow, 0, -1);
+                }
+
+                if ($report['compliance_incident_type_name']) {
+                    $exportRow .= $report['compliance_incident_type_name'] . ',';
+                    substr($exportRow, 0, -1);
+                } else {
+                    $exportRow .= ' ,';
+                    substr($exportRow, 0, -1);
+                }
+
+                if ($report['item_title']) {
+                    $exportRow .= $report['item_title'] . ',';
+                    substr($exportRow, 0, -1);
+                } else {
+                    $exportRow .= ' ,';
+                    substr($exportRow, 0, -1);
+                }
+
+                if ($report['level']) {
+                    $exportRow .= $report['level'] . ',';
+                    substr($exportRow, 0, -1);
+                } else {
+                    $exportRow .= ' ,';
+                    substr($exportRow, 0, -1);
+                }
+
+                if ($report['completion_status']) {
+                    $exportRow .= $report['completion_status'] . ',';
+                    substr($exportRow, 0, -1);
+                } else {
+                    $exportRow .= ' ,';
+                    substr($exportRow, 0, -1);
+                }
+
+                if ($report['completion_date']) {
+                    $exportRow .= $report['completion_date'] . ',';
+                    substr($exportRow, 0, -1);
+                } else {
+                    $exportRow .= ' ,';
+                    substr($exportRow, 0, -1);
+                }
+
+                if ($report['completed_by']) {
+                    $exportRow .= getEmployeeOnlyNameBySID($report['completed_by']);
+                    substr($exportRow, 0, -1);
+                } else {
+                    $exportRow .= '';
+                    substr($exportRow, 0, -1);
+                }
+                //
+                $exportRows .= $exportRow . PHP_EOL;
+            }
+        }
+        //
+        if (!empty($exportRows)) {
+            //
+            $header = '';
+            $header .= "Company, " . $companyName .',,,,,,,'. PHP_EOL;
+            $header .= "Exporter, " . $employeeName .',,,,,,,'. PHP_EOL;
+            $header .= "Date/Time, " . getSystemDate(DATE_WITH_TIME) . ',,,,,,,' . PHP_EOL;
+            $header .= ',,,,,,,,' . PHP_EOL;
+            $header .= 'Report Title,Report Date,Incident Name,Issue Title,Issue Level,Completion Status,Completed Date,Completed By';
+            //
+            $file_content = '';
+            $file_content .= $header . PHP_EOL;
+            $file_content .= $exportRows;
+            $file_size = 0;
+            //
+            if (function_exists('mb_strlen')) {
+                $file_size = mb_strlen($file_content, '8bit');
+            } else {
+                $file_size = strlen($file_content);
+            }
+
+            //
+            $fileName = 'compliance_safety_report/Company_Name:' . str_replace(" ", "_", $companyName) . "/Generated_By:" . $employeeName . "/Generated_Date:" . date('Y_m_d-H:i:s') . '.csv';
+
+            header('Pragma: public');     // required
+            header('Expires: 0');         // no cache
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: private', false);
+            header('Content-Type: text/csv');  // Add the mime type from Code igniter.
+            header('Content-Disposition: attachment; filename="' . $fileName . '"');  // Add the file name
+            header('Content-Transfer-Encoding: binary');
+            header('Content-Length: ' . $file_size); // provide file size
+            header('Connection: close');
+            echo $file_content;
+            // echo $header_row . PHP_EOL;
+            // echo $exportRows;
+        } else {
+            $this->session->set_flashdata('message', '<b>Error:</b> Record(s) Not Found!');
+            redirect('lms/courses/export_course_csv');
+        }
+      
     }
 
 }

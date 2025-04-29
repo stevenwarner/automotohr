@@ -189,7 +189,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                             <i class="fa fa-send"></i>
                             Send Email 
                         </a>
-                        <a type="button" class="btn btn-green hidden" id="jsCSVButton" href="<?= base_url("/compliance_safety_reporting/export_csv"); ?>">
+                        <a type="button" class="btn btn-green" target="_blank" id="jsCSVButton" href="<?=$CSVUrl?>">
                             <i class="fa fa-download"></i>
                             Export CSV
                         </a>
