@@ -1993,122 +1993,61 @@ class Compliance_safety_reporting extends Base_csp
         //
         $companyName = $this->getLoggedInCompany("CompanyName");
         $employeeName = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
+        $fileName = 'compliance_safety_report/Company_Name:' . str_replace(" ", "_", $companyName) . "/Generated_By:" . $employeeName . "/Generated_Date:" . date('Y_m_d-H:i:s') . '.csv';
         //
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $fileName . '"');
+        $output = fopen('php://output', 'w');
+
+        fputcsv($output, array(
+            "CompanyName",
+            $companyName,
+        ));
+
+        fputcsv($output, array(
+            "Exported By",
+            $employeeName
+        ));
+
+        fputcsv($output, array(
+            "Export Date",
+            date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
+        ));
+
+        fputcsv(
+            $output,
+            array(
+                'Report Title',
+                'Report Date',
+                'Incident Name',
+                'Issue Title',
+                'Issue Level',
+                'Completion Status',
+                'Completed Date',
+                'Completed By'
+            )
+        );
+
         $exportRows = '';
         //
         if ($reports) {
             foreach ($reports as $report) {
+                $a = [];
+                $a[] = $report['title'];
+                $a[] = $report['report_date'];
+                $a[] = $report['compliance_incident_type_name'];
+                $a[] = $report['item_title'];
+                $a[] = $$report['level'];
+                $a[] = $report['completion_status'];
+                $a[] = $report['completion_date'];
+                $a[] = $report['completed_by'] ? getEmployeeOnlyNameBySID($report['completed_by']) : '';
                 //
-                $exportRow = '';
-                //
-                if ($report['title']) {
-                    $exportRow .= $report['title'] . ',';
-                    substr($exportRow, 0, -1);
-                } else {
-                    $exportRow .= ' ,';
-                    substr($exportRow, 0, -1);
-                } 
-
-                if ($report['report_date']) {
-                    $exportRow .= $report['report_date'] . ',';
-                    substr($exportRow, 0, -1);
-                } else {
-                    $exportRow .= ' ,';
-                    substr($exportRow, 0, -1);
-                }
-
-                if ($report['compliance_incident_type_name']) {
-                    $exportRow .= $report['compliance_incident_type_name'] . ',';
-                    substr($exportRow, 0, -1);
-                } else {
-                    $exportRow .= ' ,';
-                    substr($exportRow, 0, -1);
-                }
-
-                if ($report['item_title']) {
-                    $exportRow .= $report['item_title'] . ',';
-                    substr($exportRow, 0, -1);
-                } else {
-                    $exportRow .= ' ,';
-                    substr($exportRow, 0, -1);
-                }
-
-                if ($report['level']) {
-                    $exportRow .= $report['level'] . ',';
-                    substr($exportRow, 0, -1);
-                } else {
-                    $exportRow .= ' ,';
-                    substr($exportRow, 0, -1);
-                }
-
-                if ($report['completion_status']) {
-                    $exportRow .= $report['completion_status'] . ',';
-                    substr($exportRow, 0, -1);
-                } else {
-                    $exportRow .= ' ,';
-                    substr($exportRow, 0, -1);
-                }
-
-                if ($report['completion_date']) {
-                    $exportRow .= $report['completion_date'] . ',';
-                    substr($exportRow, 0, -1);
-                } else {
-                    $exportRow .= ' ,';
-                    substr($exportRow, 0, -1);
-                }
-
-                if ($report['completed_by']) {
-                    $exportRow .= getEmployeeOnlyNameBySID($report['completed_by']);
-                    substr($exportRow, 0, -1);
-                } else {
-                    $exportRow .= '';
-                    substr($exportRow, 0, -1);
-                }
-                //
-                $exportRows .= $exportRow . PHP_EOL;
+                fputcsv($output, $a);
             }
         }
-        //
-        if (!empty($exportRows)) {
-            //
-            $header = '';
-            $header .= "Company, " . $companyName .',,,,,,,'. PHP_EOL;
-            $header .= "Exporter, " . $employeeName .',,,,,,,'. PHP_EOL;
-            $header .= "Date/Time, " . getSystemDate(DATE_WITH_TIME) . ',,,,,,,' . PHP_EOL;
-            $header .= ',,,,,,,,' . PHP_EOL;
-            $header .= 'Report Title,Report Date,Incident Name,Issue Title,Issue Level,Completion Status,Completed Date,Completed By';
-            //
-            $file_content = '';
-            $file_content .= $header . PHP_EOL;
-            $file_content .= $exportRows;
-            $file_size = 0;
-            //
-            if (function_exists('mb_strlen')) {
-                $file_size = mb_strlen($file_content, '8bit');
-            } else {
-                $file_size = strlen($file_content);
-            }
 
-            //
-            $fileName = 'compliance_safety_report/Company_Name:' . str_replace(" ", "_", $companyName) . "/Generated_By:" . $employeeName . "/Generated_Date:" . date('Y_m_d-H:i:s') . '.csv';
-
-            header('Pragma: public');     // required
-            header('Expires: 0');         // no cache
-            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-            header('Cache-Control: private', false);
-            header('Content-Type: text/csv');  // Add the mime type from Code igniter.
-            header('Content-Disposition: attachment; filename="' . $fileName . '"');  // Add the file name
-            header('Content-Transfer-Encoding: binary');
-            header('Content-Length: ' . $file_size); // provide file size
-            header('Connection: close');
-            echo $file_content;
-            // echo $header_row . PHP_EOL;
-            // echo $exportRows;
-        } else {
-            $this->session->set_flashdata('message', '<b>Error:</b> Record(s) Not Found!');
-            redirect('lms/courses/export_course_csv');
-        }
-      
+        fclose($output);
+        exit;
     }
 
 }
