@@ -182,7 +182,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
         <!-- Table -->
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-heading-text text-medium" style="    vertical-align: middle;">
+                <h3 class="panel-heading-text text-medium" style="vertical-align: middle;">
                     <i class="fa fa-table text-orange"></i> Compliance Safety Reporting
                     <span class="pull-right">
                         <a type="button" class="btn btn-orange jsSendReminderEmails" href="javascript:;">
