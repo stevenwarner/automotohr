@@ -9,15 +9,19 @@
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
-                                <a class="dashboard-link-btn" href="<?php echo base_url('my_listings') ?>"><i class="fa fa-chevron-left"></i>My Jobs</a>
+                            <span
+                                class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
+                                <a class="dashboard-link-btn" href="<?php echo base_url('my_listings') ?>"><i
+                                        class="fa fa-chevron-left"></i>My Jobs</a>
                                 Edit Job
                             </span>
                         </div>
                         <div class="create-job-wrap">
                             <div class="job-title-text">
-                                <p>Enter information about your job.Fields marked with an asterisk (<span>*</span>) are mandatory.</p>
-                                <p><button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#preview_listing">Preview Job</button></p>
+                                <p>Enter information about your job.Fields marked with an asterisk (<span>*</span>) are
+                                    mandatory.</p>
+                                <p><button type="button" class="btn btn-info btn-sm" data-toggle="modal"
+                                        data-target="#preview_listing">Preview Job</button></p>
                                 <p><?php echo $job_creater_details; ?></p>
                             </div>
                             <div class="universal-form-style-v2">
@@ -25,7 +29,8 @@
                                     <form id="employers_add_job" method="POST" enctype="multipart/form-data">
                                         <li class="form-col-50-left">
                                             <label>Title:<span class="staric">*</span></label>
-                                            <input type="text" class="invoice-fields" name="Title" id="Title" value="<?php echo set_value('Title', $listing["Title"]); ?>">
+                                            <input type="text" class="invoice-fields" name="Title" id="Title"
+                                                value="<?php echo set_value('Title', $listing["Title"]); ?>">
                                             <?php echo form_error('Title'); ?>
                                         </li>
                                         <li class="form-col-50-right">
@@ -64,29 +69,34 @@
                                         <li class="form-col-100">
                                             <label>Job Category(s):<span class="staric">*</span></label>
                                             <div class="Category_chosen">
-                                                <select data-placeholder="- Please Select -" multiple="multiple" name="JobCategory[]" id="Category" class="chosen-select">
+                                                <select data-placeholder="- Please Select -" multiple="multiple"
+                                                    name="JobCategory[]" id="Category" class="chosen-select">
                                                     <?php $JobCategoryArray = explode(',', $listing['JobCategory']);
 
                                                     foreach ($data_list as $data) { ?>
                                                         <option value="<?= $data['id']; ?>" data-badge="" <?php if (isset($listing['JobCategory']) && in_array($data['id'], $JobCategoryArray)) { ?> selected <?php } ?>>
                                                             <?= $data['value']; ?>
                                                         </option>
-                                                    <?php                       } ?>
+                                                    <?php } ?>
                                                 </select>
                                             </div>
                                             <div style="display: none;" id="choiceLimit">5</div>
-                                            <span class="available"><samp id="choicelimitavailable">5</samp> available</span>
+                                            <span class="available"><samp id="choicelimitavailable">5</samp>
+                                                available</span>
                                             <?php echo form_error('JobCategory'); ?>
                                         </li>
                                         <li class="form-col-50-left">
                                             <label>Country: <span class="staric">*</span></label>
                                             <div class="hr-select-dropdown">
-                                                <select class="invoice-fields" name="Location_Country" onchange="getStates(this.value, <?php echo $states; ?>)">
+                                                <select class="invoice-fields" name="Location_Country"
+                                                    onchange="getStates(this.value, <?php echo $states; ?>)">
                                                     <?php foreach ($active_countries as $active_country) { ?>
-                                                        <option value="<?= $active_country["sid"]; ?>" <?php if ($listing["Location_Country"] == $active_country["sid"]) { ?> selected <?php $country_id = $active_country["sid"];
-                                                                                                                                                                                    } ?>><?= $active_country["country_name"]; ?>
+                                                        <option value="<?= $active_country["sid"]; ?>" <?php if ($listing["Location_Country"] == $active_country["sid"]) { ?>
+                                                                selected <?php $country_id = $active_country["sid"];
+                                                          } ?>>
+                                                            <?= $active_country["country_name"]; ?>
                                                         </option>
-                                                    <?php                       } ?>
+                                                    <?php } ?>
                                                 </select>
                                             </div>
                                             <?php echo form_error('Location_Country'); ?>
@@ -97,12 +107,13 @@
                                                 <select class="invoice-fields" name="Location_State" id="state">
                                                     <?php if (empty($country_id)) { ?>
                                                         <option value="">Select State</option>
-                                                        <?php       } else {
+                                                    <?php } else {
                                                         foreach ($active_states[$country_id] as $active_state) { ?>
-                                                            <option value="<?= $active_state["sid"] ?>" <?php if (isset($listing['Location_State']) && $listing['Location_State'] == $active_state["sid"]) { ?> selected<?php } ?>>
+                                                            <option value="<?= $active_state["sid"] ?>" <?php if (isset($listing['Location_State']) && $listing['Location_State'] == $active_state["sid"]) { ?>
+                                                                    selected<?php } ?>>
                                                                 <?= $active_state["state_name"] ?>
                                                             </option>
-                                                    <?php           }
+                                                        <?php }
                                                     } ?>
                                                 </select>
                                             </div>
@@ -111,13 +122,16 @@
 
                                         <li class="form-col-50-left">
                                             <label>City: <span class="staric">*</span></label>
-                                            <input class="invoice-fields" type="text" name="Location_City" id="city" value="<?php echo set_value('Location_City', $listing["Location_City"]); ?>">
+                                            <input class="invoice-fields" type="text" name="Location_City" id="city"
+                                                value="<?php echo set_value('Location_City', $listing["Location_City"]); ?>">
                                             <?php echo form_error('Location_City'); ?>
                                         </li>
 
                                         <li class="form-col-50-right">
                                             <label>Zip Code: <span class="staric">*</span></label>
-                                            <input class="invoice-fields" type="text" name="Location_ZipCode" id="zip_code" value="<?php echo set_value('Location_ZipCode', $listing["Location_ZipCode"]); ?>">
+                                            <input class="invoice-fields" type="text" name="Location_ZipCode"
+                                                id="zip_code"
+                                                value="<?php echo set_value('Location_ZipCode', $listing["Location_ZipCode"]); ?>">
                                             <?php echo form_error('Location_ZipCode'); ?>
                                         </li>
 
@@ -126,37 +140,60 @@
 
                                         <?php if (!empty($templates)) { ?>
                                             <li class="form-col-100 autoheight">
-                                                <label class="autoheight" for="select_template">Select Job Description and Job Requirement Templates ( Please read through the templates and edit or review any text that is in "QUOTATIONS" so that it reflects your company branding and message.)</label>
+                                                <label class="autoheight" for="select_template">Select Job Description and
+                                                    Job Requirement Templates ( Please read through the templates and edit
+                                                    or review any text that is in "QUOTATIONS" so that it reflects your
+                                                    company branding and message.)</label>
                                                 <div class="csSelect2WithBg">
-                                                    <select class="invoice-fields" style="background-color:#fd7a2a" id="select_template">
-                                                        <option value="" style="background-color:#f7f7f7">Select Template</option>
+                                                    <select class="invoice-fields" style="background-color:#fd7a2a"
+                                                        id="select_template">
+                                                        <option value="" style="background-color:#f7f7f7">Select Template
+                                                        </option>
 
                                                         <?php foreach ($templates as $template) { ?>
-                                                            <option id="template_<?php echo $template['sid'] ?>" data-description="<?php echo $template['description'] ?>" data-requirements="<?php echo $template['requirements'] ?>" value="<?php echo $template['sid'] ?>" style="background-color:#f7f7f7"><?php echo $template['title'] ?></option>
-                                                        <?php           } ?>
+                                                            <option id="template_<?php echo $template['sid'] ?>"
+                                                                data-description="<?php echo $template['description'] ?>"
+                                                                data-requirements="<?php echo $template['requirements'] ?>"
+                                                                value="<?php echo $template['sid'] ?>"
+                                                                style="background-color:#f7f7f7">
+                                                                <?php echo $template['title'] ?>
+                                                            </option>
+                                                        <?php } ?>
                                                     </select>
                                                 </div>
                                             </li>
-                                        <?php           } ?>
+                                        <?php } ?>
 
                                         <div class="description-editor">
                                             <label>Job Description:<span class="staric">*</span></label>
-                                            <div style='margin-bottom:5px;'><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
-                                            <textarea class="ckeditor" name="JobDescription" id="JobDescription" cols="67" rows="6">
+                                            <div style='margin-bottom:5px;'>
+                                                <?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?>
+                                            </div>
+                                            <textarea class="ckeditor" name="JobDescription" id="JobDescription"
+                                                cols="67" rows="6">
                                                             <?php echo $listing["JobDescription"]; ?></textarea>
                                             <?php echo form_error('JobDescription'); ?>
                                         </div>
 
                                         <div class="description-editor">
                                             <label>Job Requirements:</label>
-                                            <div style='margin-bottom:5px;'><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
-                                            <textarea class="ckeditor" name="JobRequirements" id="JobRequirements" cols="67" rows="6">
+                                            <div style='margin-bottom:5px;'>
+                                                <?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?>
+                                            </div>
+                                            <textarea class="ckeditor" name="JobRequirements" id="JobRequirements"
+                                                cols="67" rows="6">
                                                     <?php echo $listing["JobRequirements"]; ?></textarea>
                                         </div>
 
                                         <li class="form-col-100 autoheight">
 
-                                            <p class="text-danger" style="margin-bottom: -10px; font-size: 16px;"><strong>Note: Your State may have recently mandated a Required Salary Range be added to all jobs that you post.<br> Please Add a Salary or Salary Range here. <a href="#" class=" jsSalaryInfo" style="text-decoration: underline;">Click Here for More Details</a></strong></p></label>
+                                            <p class="text-danger" style="margin-bottom: -10px; font-size: 16px;">
+                                                <strong>Note: Your State may have recently mandated a Required Salary
+                                                    Range be added to all jobs that you post.<br> Please Add a Salary or
+                                                    Salary Range here. <a href="#" class=" jsSalaryInfo"
+                                                        style="text-decoration: underline;">Click Here for More
+                                                        Details</a></strong>
+                                            </p></label>
                                         </li>
 
                                         <li class="form-col-50-left">
@@ -164,7 +201,9 @@
                                                 <label>Salary From:
                                                     <div class="input-group">
                                                         <span class="input-group-addon" id="basic-addon1">$</span>
-                                                        <input class="invoice-fields" type="text" name="minSalary" id="minSalary" value="<?php echo set_value('minSalary', $listing["minSalary"]); ?>">
+                                                        <input class="invoice-fields" type="text" name="minSalary"
+                                                            id="minSalary"
+                                                            value="<?php echo set_value('minSalary', $listing["minSalary"]); ?>">
                                                         <?php echo form_error('minSalary'); ?>
                                                     </div>
                                             </div>
@@ -172,7 +211,9 @@
                                                 <label>Salary To:
                                                     <div class="input-group">
                                                         <span class="input-group-addon" id="basic-addon1">$</span>
-                                                        <input class="invoice-fields" type="text" name="maxSalary" id="maxSalary" value="<?php echo set_value('maxSalary', $listing["maxSalary"]); ?>">
+                                                        <input class="invoice-fields" type="text" name="maxSalary"
+                                                            id="maxSalary"
+                                                            value="<?php echo set_value('maxSalary', $listing["maxSalary"]); ?>">
                                                         <?php echo form_error('maxSalary'); ?>
                                                     </div>
                                             </div>
@@ -206,7 +247,8 @@
                                                     <select class="invoice-fields" name="questionnaire_sid">
                                                         <option value="">Select Screening Questionnaire</option>
                                                         <?php foreach ($screening_questions as $screening_question) { ?>
-                                                            <option value="<?= $screening_question['sid'] ?>" <?php if (isset($listing['questionnaire_sid']) && $listing['questionnaire_sid'] == $screening_question['sid']) { ?> selected <?php } ?>>
+                                                            <option value="<?= $screening_question['sid'] ?>" <?php if (isset($listing['questionnaire_sid']) && $listing['questionnaire_sid'] == $screening_question['sid']) { ?>
+                                                                    selected <?php } ?>>
                                                                 <?= $screening_question['caption'] ?>
                                                             </option>
                                                         <?php } ?>
@@ -220,13 +262,17 @@
                                                 <?php $selected_questionnaire = (isset($listing['interview_questionnaire_sid']) ? $listing['interview_questionnaire_sid'] : ''); ?>
                                                 <label>Interview Questionnaire:</label>
                                                 <div class="hr-select-dropdown">
-                                                    <select class="invoice-fields" id="interview_questionnaire_sid" name="interview_questionnaire_sid">
+                                                    <select class="invoice-fields" id="interview_questionnaire_sid"
+                                                        name="interview_questionnaire_sid">
                                                         <option value="">Select Interview Questionnaire</option>
                                                         <?php if (!empty($interview_questionnaires['default'])) { ?>
                                                             <optgroup label="Default">
                                                                 <?php foreach ($interview_questionnaires['default'] as $questionnaire) { ?>
                                                                     <?php $default_selected = ($questionnaire['sid'] == $selected_questionnaire ? true : false); ?>
-                                                                    <option <?php echo set_select('interview_questionnaire_sid', $questionnaire['sid'], $default_selected); ?> value="<?php echo $questionnaire['sid']; ?>"><?php echo $questionnaire['title']; ?></option>
+                                                                    <option <?php echo set_select('interview_questionnaire_sid', $questionnaire['sid'], $default_selected); ?>
+                                                                        value="<?php echo $questionnaire['sid']; ?>">
+                                                                        <?php echo $questionnaire['title']; ?>
+                                                                    </option>
                                                                 <?php } ?>
                                                             </optgroup>
                                                         <?php } ?>
@@ -234,7 +280,10 @@
                                                             <optgroup label="Custom">
                                                                 <?php foreach ($interview_questionnaires['custom'] as $questionnaire) { ?>
                                                                     <?php $default_selected = ($questionnaire['sid'] == $selected_questionnaire ? true : false); ?>
-                                                                    <option <?php echo set_select('interview_questionnaire_sid', $questionnaire['sid'], $default_selected); ?> value="<?php echo $questionnaire['sid']; ?>"><?php echo $questionnaire['title']; ?></option>
+                                                                    <option <?php echo set_select('interview_questionnaire_sid', $questionnaire['sid'], $default_selected); ?>
+                                                                        value="<?php echo $questionnaire['sid']; ?>">
+                                                                        <?php echo $questionnaire['title']; ?>
+                                                                    </option>
                                                                 <?php } ?>
                                                             </optgroup>
                                                         <?php } ?>
@@ -246,15 +295,21 @@
                                         <li class="form-col-50-left">
                                             <?php $selected_logo = $listing['pictures']; ?>
                                             <label>Listing Logo:</label>
-                                            <select name="select_from_logo" title="Select Listing Logo" class="selectpicker">
-                                                <option value="<?php echo $listing['pictures']; ?>">Select From Existing</option>
-                                                <option data-thumbnail="<?= base_url('assets') ?>/images/NoLogo.jpg" value="no_logo">No Logo</option>
+                                            <select name="select_from_logo" title="Select Listing Logo"
+                                                class="selectpicker">
+                                                <option value="<?php echo $listing['pictures']; ?>">Select From Existing
+                                                </option>
+                                                <option data-thumbnail="<?= base_url('assets') ?>/images/NoLogo.jpg"
+                                                    value="no_logo">No Logo</option>
                                                 <?php if (!empty($all_job_logos)) { ?>
                                                     <?php foreach ($all_job_logos as $key => $job_logo) {
                                                         $default_selected = ($job_logo['pictures'] == $selected_logo ? ' selected="selected"' : ''); ?>
-                                                        <option value="<?php echo $job_logo['pictures']; ?>" data-thumbnail="<?php echo AWS_S3_BUCKET_URL . $job_logo['pictures']; ?>"><?php echo $key; ?></option>
-                                                    <?php   } ?>
-                                                <?php   } ?>
+                                                        <option value="<?php echo $job_logo['pictures']; ?>"
+                                                            data-thumbnail="<?php echo AWS_S3_BUCKET_URL . $job_logo['pictures']; ?>">
+                                                            <?php echo $key; ?>
+                                                        </option>
+                                                    <?php } ?>
+                                                <?php } ?>
                                             </select>
                                         </li>
 
@@ -271,7 +326,8 @@
                                                     </div>
                                                 <?php } ?>
                                                 <span class="selected-file" id="name_pictures">No file selected</span>
-                                                <input class="customImage" type="file" name="pictures" id="pictures" onchange="check_file('pictures')">
+                                                <input class="customImage" type="file" name="pictures" id="pictures"
+                                                    onchange="check_file('pictures')">
                                                 <a href="javascript:;">Choose File</a>
                                             </div>
                                         </li>
@@ -280,33 +336,43 @@
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight">
                                                 <div class="form-group">
                                                     <div class="row">
-                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3" style="padding: 0px;">
+                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"
+                                                            style="padding: 0px;">
                                                             <label for="YouTubeVideo">Select Video:</label>
                                                         </div>
                                                         <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9">
                                                             <div class="row">
                                                                 <?php $video_source = $listing['video_source']; ?>
                                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                    <label class="control control--radio"><?php echo NO_VIDEO; ?>
-                                                                        <input type="radio" name="video_source" class="video_source" value="no_video" checked="">
+                                                                    <label
+                                                                        class="control control--radio"><?php echo NO_VIDEO; ?>
+                                                                        <input type="radio" name="video_source"
+                                                                            class="video_source" value="no_video"
+                                                                            checked="">
                                                                         <div class="control__indicator"></div>
                                                                     </label>
                                                                 </div>
                                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                    <label class="control control--radio"><?php echo YOUTUBE_VIDEO; ?>
-                                                                        <input type="radio" name="video_source" class="video_source" value="youtube" <?php echo $video_source == 'youtube' && !empty($listing['YouTube_Video']) ? 'checked="checked"' : ''; ?>>
+                                                                    <label
+                                                                        class="control control--radio"><?php echo YOUTUBE_VIDEO; ?>
+                                                                        <input type="radio" name="video_source"
+                                                                            class="video_source" value="youtube" <?php echo $video_source == 'youtube' && !empty($listing['YouTube_Video']) ? 'checked="checked"' : ''; ?>>
                                                                         <div class="control__indicator"></div>
                                                                     </label>
                                                                 </div>
                                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                    <label class="control control--radio"><?php echo VIMEO_VIDEO; ?>
-                                                                        <input type="radio" name="video_source" class="video_source" value="vimeo" <?php echo $video_source == 'vimeo' && !empty($listing['YouTube_Video']) ? 'checked="checked"' : ''; ?>>
+                                                                    <label
+                                                                        class="control control--radio"><?php echo VIMEO_VIDEO; ?>
+                                                                        <input type="radio" name="video_source"
+                                                                            class="video_source" value="vimeo" <?php echo $video_source == 'vimeo' && !empty($listing['YouTube_Video']) ? 'checked="checked"' : ''; ?>>
                                                                         <div class="control__indicator"></div>
                                                                     </label>
                                                                 </div>
                                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                    <label class="control control--radio"><?php echo UPLOAD_VIDEO; ?>
-                                                                        <input type="radio" name="video_source" class="video_source" value="uploaded" <?php echo $video_source == 'uploaded' && !empty($listing['YouTube_Video']) ? 'checked="checked"' : ''; ?>>
+                                                                    <label
+                                                                        class="control control--radio"><?php echo UPLOAD_VIDEO; ?>
+                                                                        <input type="radio" name="video_source"
+                                                                            class="video_source" value="uploaded" <?php echo $video_source == 'uploaded' && !empty($listing['YouTube_Video']) ? 'checked="checked"' : ''; ?>>
                                                                         <div class="control__indicator"></div>
                                                                     </label>
                                                                 </div>
@@ -315,7 +381,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight" id="youtube_vimeo_input">
+                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight"
+                                                id="youtube_vimeo_input">
                                                 <div class="form-group">
                                                     <div class="row">
                                                         <?php
@@ -327,26 +394,41 @@
                                                             $video_link = '';
                                                         }
                                                         ?>
-                                                        <label for="YouTube_Video" id="label_youtube">Youtube Video For This Job:</label>
-                                                        <label for="Vimeo_Video" id="label_vimeo" style="display: none">Vimeo Video For This Job:</label>
-                                                        <input type="text" name="yt_vm_video_url" value="<?php echo $video_link; ?>" class="invoice-fields" id="yt_vm_video_url">
-                                                        <div id="YouTube_Video_hint" class="video-link" style='font-style: italic;'><b>e.g.</b> https://www.youtube.com/watch?v=XXXXXXXXXXX </div>
-                                                        <div id="Vimeo_Video_hint" class="video-link" style='font-style: italic; display: none'><b>e.g.</b> https://vimeo.com/XXXXXXX </div>
+                                                        <label for="YouTube_Video" id="label_youtube">Youtube Video For
+                                                            This Job:</label>
+                                                        <label for="Vimeo_Video" id="label_vimeo"
+                                                            style="display: none">Vimeo Video For This Job:</label>
+                                                        <input type="text" name="yt_vm_video_url"
+                                                            value="<?php echo $video_link; ?>" class="invoice-fields"
+                                                            id="yt_vm_video_url">
+                                                        <div id="YouTube_Video_hint" class="video-link"
+                                                            style='font-style: italic;'><b>e.g.</b>
+                                                            https://www.youtube.com/watch?v=XXXXXXXXXXX </div>
+                                                        <div id="Vimeo_Video_hint" class="video-link"
+                                                            style='font-style: italic; display: none'><b>e.g.</b>
+                                                            https://vimeo.com/XXXXXXX </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight" id="upload_input" style="display: none">
+                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight"
+                                                id="upload_input" style="display: none">
                                                 <div class="form-group">
                                                     <div class="row">
                                                         <?php if (!empty($listing['YouTube_Video']) && $listing['video_source'] == 'uploaded') { ?>
-                                                            <input type="hidden" id="pre_upload_video_url" name="pre_upload_video_url" value="<?php echo $listing['YouTube_Video']; ?>">
-                                                        <?php   } else { ?>
-                                                            <input type="hidden" id="pre_upload_video_url" name="pre_upload_video_url" value="">
-                                                        <?php   } ?>
+                                                            <input type="hidden" id="pre_upload_video_url"
+                                                                name="pre_upload_video_url"
+                                                                value="<?php echo $listing['YouTube_Video']; ?>">
+                                                        <?php } else { ?>
+                                                            <input type="hidden" id="pre_upload_video_url"
+                                                                name="pre_upload_video_url" value="">
+                                                        <?php } ?>
                                                         <label for="YouTubeVideo">Upload Video For This Job:</label>
                                                         <div class="upload-file invoice-fields">
-                                                            <span class="selected-file" id="name_upload_video">No video selected</span>
-                                                            <input name="upload_video" id="upload_video" onchange="upload_video_checker('upload_video')" type="file">
+                                                            <span class="selected-file" id="name_upload_video">No video
+                                                                selected</span>
+                                                            <input name="upload_video" id="upload_video"
+                                                                onchange="upload_video_checker('upload_video')"
+                                                                type="file">
                                                             <a href="javascript:;">Choose Video</a>
                                                         </div>
                                                     </div>
@@ -361,14 +443,22 @@
                                                         <div class="embed-responsive embed-responsive-16by9">
 
                                                             <?php if ($listing['video_source'] == 'youtube') { ?>
-                                                                <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/<?php echo $listing['YouTube_Video']; ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                                                            <?php   } elseif ($listing['video_source'] == 'vimeo') { ?>
-                                                                <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $listing['YouTube_Video']; ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                                                            <?php   } else { ?>
+                                                                <iframe class="embed-responsive-item"
+                                                                    src="https://www.youtube.com/embed/<?php echo $listing['YouTube_Video']; ?>"
+                                                                    frameborder="0" webkitallowfullscreen mozallowfullscreen
+                                                                    allowfullscreen></iframe>
+                                                            <?php } elseif ($listing['video_source'] == 'vimeo') { ?>
+                                                                <iframe class="embed-responsive-item"
+                                                                    src="https://player.vimeo.com/video/<?php echo $listing['YouTube_Video']; ?>"
+                                                                    frameborder="0" webkitallowfullscreen mozallowfullscreen
+                                                                    allowfullscreen></iframe>
+                                                            <?php } else { ?>
                                                                 <video controls>
-                                                                    <source src="<?php echo base_url() . 'assets/uploaded_videos/' . $listing['YouTube_Video']; ?>" type='video/mp4'>
+                                                                    <source
+                                                                        src="<?php echo base_url() . 'assets/uploaded_videos/' . $listing['YouTube_Video']; ?>"
+                                                                        type='video/mp4'>
                                                                 </video>
-                                                            <?php   } ?>
+                                                            <?php } ?>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -379,16 +469,19 @@
                                         ?>
                                         <?php if (in_array('full_access', $security_details) || in_array('listing_visibility_event', $security_details) || in_array($logged_in_user_sid, $employeesArray)) { ?>
                                             <li class="form-col-100 autoheight">
-                                                <label>Make this listing Only Visible to Following Employees:<span class="staric">*</span></label>
+                                                <label>Make this listing Only Visible to Following Employees:<span
+                                                        class="staric">*</span></label>
                                                 <div class="Category_chosen">
-                                                    <select data-placeholder="Please Select" multiple="multiple" onchange="" name="employees[]" id="employees" class="chosen-select">
+                                                    <select data-placeholder="Please Select" multiple="multiple" onchange=""
+                                                        name="employees[]" id="employees" class="chosen-select">
                                                         <!--<option value="0">Please Select</option>-->
                                                         <?php if (empty($employeesArray)) {
                                                             $employeesArray = set_value('employees');
                                                         }
 
                                                         foreach ($current_employees as $current_employee) { ?>
-                                                            <option <?php if (in_array($current_employee['sid'], $employeesArray)) { ?> selected <?php } ?> value="<?php echo $current_employee['sid']; ?>">
+                                                            <option <?php if (in_array($current_employee['sid'], $employeesArray)) { ?> selected <?php } ?>
+                                                                value="<?php echo $current_employee['sid']; ?>">
                                                                 <?php echo remakeEmployeeName($current_employee); ?>
                                                             </option>
                                                         <?php } ?>
@@ -397,29 +490,33 @@
                                                 <?php echo form_error('employees'); ?>
                                             </li>
                                         <?php } else { ?>
-                                            <input type="hidden" value="none" name="visibility_perms" id="visibility_perms" />
+                                            <input type="hidden" value="none" name="visibility_perms"
+                                                id="visibility_perms" />
                                         <?php } ?>
                                         <?php if ($per_job_listing_charge == 0) { ?>
                                             <li class="form-col-50-left autoheight">
                                                 <div class="form-group autoheight">
                                                     <?php $field_id = 'expiration_date'; ?>
                                                     <?php                   //$stored_value = isset($listing[$field_id]) ? DateTime::createFromFormat('Y-m-d H:i:s', $listing['expiration_date'])->format('m/d/Y') : ''; 
-                                                    ?>
+                                                        ?>
                                                     <?php $stored_value = isset($listing[$field_id]) ? reset_datetime(array('datetime' => $listing['expiration_date'], '_this' => $this, 'format' => 'm/d/Y')) : ''; ?>
                                                     <?php echo form_label('Expiration Date', $field_id); ?>
                                                     <?php echo form_input($field_id, set_value($field_id, $stored_value), 'class="invoice-fields" id="' . $field_id . '" autocomplete="off"'); ?>
                                                     <?php echo form_error($field_id); ?>
-                                                    <div class="help-block text-warning"><b>Caution:</b> Only set an expiration date if you want the job to auto deactivate on a specified date, Otherwise please leave it blank.</div>
+                                                    <div class="help-block text-warning"><b>Caution:</b> Only set an
+                                                        expiration date if you want the job to auto deactivate on a
+                                                        specified date, Otherwise please leave it blank.</div>
                                                 </div>
                                             </li>
-                                        <?php       } ?>
+                                        <?php } ?>
 
                                         <?php       //if($per_job_listing_charge == 0 && $career_site_listings_only == 0) { 
                                         ?>
                                         <li class="form-col-100 autoheight send-email">
                                             <label class="control control--checkbox">
                                                 Display this job on my Career page
-                                                <input id="published_on_career_page" type="checkbox" name="published_on_career_page" value="1" <?php echo $listing['published_on_career_page'] == 1 ? 'checked="checked"' : ''; ?> />
+                                                <input id="published_on_career_page" type="checkbox"
+                                                    name="published_on_career_page" value="1" <?php echo $listing['published_on_career_page'] == 1 ? 'checked="checked"' : ''; ?> />
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </li>
@@ -436,239 +533,306 @@
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </li>
-                                        <?php       } else if ($per_job_listing_charge == 1 && $career_site_listings_only == 0 && $listing['active']) { ?>
-                                            <li class="form-col-100">
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6" style="padding: 0px;">
-                                                                <label>Sponsor This Job With The Major Job Aggregators:</label>
-                                                            </div>
-                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                <div class="row">
-                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                        <label class="control control--radio">No
-                                                                            <input type="radio" name="sponsor_this_job" class="sponsor_this_job" value="not_required" checked="">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                        <label class="control control--radio">Yes
-                                                                            <input type="radio" name="sponsor_this_job" class="sponsor_this_job" value="sponsor_it">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
+                                        <?php } else if ($per_job_listing_charge == 1 && $career_site_listings_only == 0 && $listing['active']) { ?>
+                                                <li class="form-col-100">
+                                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6"
+                                                                    style="padding: 0px;">
+                                                                    <label>Sponsor This Job With The Major Job
+                                                                        Aggregators:</label>
+                                                                </div>
+                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                            <label class="control control--radio">No
+                                                                                <input type="radio" name="sponsor_this_job"
+                                                                                    class="sponsor_this_job"
+                                                                                    value="not_required" checked="">
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                            <label class="control control--radio">Yes
+                                                                                <input type="radio" name="sponsor_this_job"
+                                                                                    class="sponsor_this_job" value="sponsor_it">
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </li>
+                                                </li>
 
-                                            <div class="produt-block" id="sponsor_container" style="display: none;">
+                                                <div class="produt-block" id="sponsor_container" style="display: none;">
 
                                                 <?php if ($sponsor_radio == 'yes') { ?>
-                                                    <header class="form-col-100">
-                                                        <h2 class="section-title">Sponsored Product Already Purchased.</h2>
-                                                    </header>
-                                                    <div class="pre-purchased-products advertising-boxes">
-                                                        <p>&nbsp;&nbsp;&nbsp;<b>Product Name: <?= $productDetail['name']; ?></b> </p>
-                                                        <!--                                                            <p>&nbsp;&nbsp;&nbsp;<b>Expiring In : --><? //= $expiring_in;
-                                                                                                                                                                    ?>
-                                                        <!-- Days</b> </p>-->
+                                                        <header class="form-col-100">
+                                                            <h2 class="section-title">Sponsored Product Already Purchased.</h2>
+                                                        </header>
+                                                        <div class="pre-purchased-products advertising-boxes">
+                                                            <p>&nbsp;&nbsp;&nbsp;<b>Product Name: <?= $productDetail['name']; ?></b>
+                                                            </p>
+                                                            <!--                                                            <p>&nbsp;&nbsp;&nbsp;<b>Expiring In : --><? //= $expiring_in;
+                                                                    ?>
+                                                            <!-- Days</b> </p>-->
                                                         <?php if ($listing['ppj_activation_date'] == NULL) {
                                                             echo "<p>&nbsp;&nbsp;&nbsp;<b>Awaiting Job Approval</b></p>";
                                                         } else {
                                                             echo "<p>&nbsp;&nbsp;&nbsp;<b>Expiration Date : " . date('M d, Y', strtotime($listing['ppj_activation_date'] . ' + ' . $listing['ppj_expiry_days'] . ' days ')) . "</b> </p>";
                                                         } ?>
-                                                    </div>
+                                                        </div>
                                                 <?php } else { ?>
-                                                    <header class="form-col-100">
-                                                        <h2 class="section-title">Products</h2>
-                                                    </header>
-                                                    <div class="pre-purchased-products advertising-boxes">
+                                                        <header class="form-col-100">
+                                                            <h2 class="section-title">Products</h2>
+                                                        </header>
+                                                        <div class="pre-purchased-products advertising-boxes">
                                                         <?php if (!empty($purchasedProducts)) {
                                                             foreach ($purchasedProducts as $product) { ?>
-                                                                <article class="purchased-product">
-                                                                    <input style="display: none;" name="pay_per_job_details" id="ppj_<?php echo $product['product_sid']; ?>" class="product-checkbox" value="<?php echo $product['product_sid']; ?>" type="radio" />
-                                                                    <p class="remaining-qty num-of-days">No of Days: <?php echo $product['no_of_days']; ?></p>
-                                                                    <p class="remaining-qty">Remaining Qty: <?php echo $product['remaining_qty']; ?></p>
-                                                                    <h2 class="post-title"><?php echo $product['name']; ?></h2>
-                                                                    <figure><img src="<?php echo $product['product_image'] != NULL ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>" alt="Category images"></figure>
+                                                                    <article class="purchased-product">
+                                                                        <input style="display: none;" name="pay_per_job_details"
+                                                                            id="ppj_<?php echo $product['product_sid']; ?>"
+                                                                            class="product-checkbox"
+                                                                            value="<?php echo $product['product_sid']; ?>" type="radio" />
+                                                                        <p class="remaining-qty num-of-days">No of Days:
+                                                                        <?php echo $product['no_of_days']; ?>
+                                                                        </p>
+                                                                        <p class="remaining-qty">Remaining Qty:
+                                                                        <?php echo $product['remaining_qty']; ?>
+                                                                        </p>
+                                                                        <h2 class="post-title"><?php echo $product['name']; ?></h2>
+                                                                        <figure><img
+                                                                                src="<?php echo $product['product_image'] != NULL ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>"
+                                                                                alt="Category images"></figure>
 
-                                                                    <div class="button-panel incart-btn-fixed">
-                                                                        <div class="cart-btns">
-                                                                            <input style="position: relative; margin: auto; left: auto;" type="button" class="site-btn outCart outCart_<?php echo $product['product_sid']; ?>" id="<?php echo $product['product_sid']; ?>" onclick="add_to_cart(this.id, 'out')" value="Sponsor">
-                                                                            <a class="submit-btn inCart" style="display: none" id="inCart_<?php echo $product['product_sid']; ?>" href="javascript:;">Sponsor</a>
+                                                                        <div class="button-panel incart-btn-fixed">
+                                                                            <div class="cart-btns">
+                                                                                <input style="position: relative; margin: auto; left: auto;"
+                                                                                    type="button"
+                                                                                    class="site-btn outCart outCart_<?php echo $product['product_sid']; ?>"
+                                                                                    id="<?php echo $product['product_sid']; ?>"
+                                                                                    onclick="add_to_cart(this.id, 'out')" value="Sponsor">
+                                                                                <a class="submit-btn inCart" style="display: none"
+                                                                                    id="inCart_<?php echo $product['product_sid']; ?>"
+                                                                                    href="javascript:;">Sponsor</a>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                </article>
-                                                        <?php }
+                                                                    </article>
+                                                            <?php }
                                                         } ?>
 
                                                         <?php if (!empty($notPurchasedProducts)) {
                                                             foreach ($notPurchasedProducts as $product) { ?>
-                                                                <article class="purchased-product">
-                                                                    <p class="remaining-qty num-of-days">No of Days: <?php echo $product['expiry_days']; ?></p>
-                                                                    <p class="remaining-qty">Purchased Qty: 0</p>
-                                                                    <h2 class="post-title"><?php echo $product['name']; ?></h2>
-                                                                    <figure><img src="<?php echo $product['product_image'] != NULL ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>" alt="Category images" /></figure>
-                                                                    <div class="count-box">$<?php
-                                                                                            echo $product['price'];
-                                                                                            if ($product['daily'] == 1) echo '/day';
-                                                                                            ?></div>
+                                                                    <article class="purchased-product">
+                                                                        <p class="remaining-qty num-of-days">No of Days:
+                                                                        <?php echo $product['expiry_days']; ?>
+                                                                        </p>
+                                                                        <p class="remaining-qty">Purchased Qty: 0</p>
+                                                                        <h2 class="post-title"><?php echo $product['name']; ?></h2>
+                                                                        <figure><img
+                                                                                src="<?php echo $product['product_image'] != NULL ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>"
+                                                                                alt="Category images" /></figure>
+                                                                        <div class="count-box">$<?php
+                                                                        echo $product['price'];
+                                                                        if ($product['daily'] == 1)
+                                                                            echo '/day';
+                                                                        ?></div>
 
-                                                                    <div class="button-panel incart-btn-fixed">
-                                                                        <div class="cart-btns">
-                                                                            <input style="display: none;" type="radio" name="pay_per_job_details" id="ppj_<?php echo $product['sid']; ?>" value="<?php echo $product['sid']; ?>">
-                                                                            <input style="position: relative; margin: auto; left: auto;" type="button" class="site-btn outCart outCart_<?php echo $product['sid']; ?>" id="<?php echo $product['sid']; ?>" onclick="add_to_cart(this.id, 'cart')" value="Add to Cart">
-                                                                            <a class="submit-btn inCart" style="display: none" id="inCart_<?php echo $product['sid']; ?>" href="javascript:;">Sponsor</a>
+                                                                        <div class="button-panel incart-btn-fixed">
+                                                                            <div class="cart-btns">
+                                                                                <input style="display: none;" type="radio"
+                                                                                    name="pay_per_job_details"
+                                                                                    id="ppj_<?php echo $product['sid']; ?>"
+                                                                                    value="<?php echo $product['sid']; ?>">
+                                                                                <input style="position: relative; margin: auto; left: auto;"
+                                                                                    type="button"
+                                                                                    class="site-btn outCart outCart_<?php echo $product['sid']; ?>"
+                                                                                    id="<?php echo $product['sid']; ?>"
+                                                                                    onclick="add_to_cart(this.id, 'cart')"
+                                                                                    value="Add to Cart">
+                                                                                <a class="submit-btn inCart" style="display: none"
+                                                                                    id="inCart_<?php echo $product['sid']; ?>"
+                                                                                    href="javascript:;">Sponsor</a>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                </article>
-                                                        <?php       }
+                                                                    </article>
+                                                            <?php }
                                                         } ?>
-                                                    </div>
-                                                    <div class="universal-form-style-v2 payment-area">
-                                                        <div id="free_no_payment_mini">
-                                                            <div class="form-col-100">
-                                                                <div id="free_checkout_mini_cart"></div>
-                                                                <div id="maincartcouponarea_mini_free"></div>
-                                                                <div class="col-xs-12">
-                                                                    <div id="free_spinner" class="spinner hide"><i class="fa fa-refresh fa-spin"></i> Processing...</div>
-                                                                    <input type="hidden" id="is_free_checkout_mini" name="is_free_checkout_mini" value="0" />
+                                                        </div>
+                                                        <div class="universal-form-style-v2 payment-area">
+                                                            <div id="free_no_payment_mini">
+                                                                <div class="form-col-100">
+                                                                    <div id="free_checkout_mini_cart"></div>
+                                                                    <div id="maincartcouponarea_mini_free"></div>
+                                                                    <div class="col-xs-12">
+                                                                        <div id="free_spinner" class="spinner hide"><i
+                                                                                class="fa fa-refresh fa-spin"></i> Processing...
+                                                                        </div>
+                                                                        <input type="hidden" id="is_free_checkout_mini"
+                                                                            name="is_free_checkout_mini" value="0" />
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
 
-                                                        <div id="cr_card_payment_mini" style="display: none;">
-                                                            <ul>
-                                                                <div class="row">
-                                                                    <div class="form-col-100">
-                                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                            <li>
-                                                                                <label>Payment with</label>
-                                                                                <div class="hr-select-dropdown">
-                                                                                    <select name="p_with_main" id="p_with_mini" onchange="payment_ccd(this.value)" class="invoice-fields">
-                                                                                        <option value="new">Add new credit card</option>
-                                                                                        <?php
-                                                                                        $get_data = $this->session->userdata('logged_in');
-                                                                                        $cards = db_get_card_details($get_data['company_detail']['sid']);
-
-                                                                                        if (!empty($cards)) {
-                                                                                            foreach ($cards as $card) {
-                                                                                                echo '<option value="' . $card['sid'] . '">' . $card['number'] . ' - ' . $card['type'] . ' ';
-                                                                                                echo ($card['is_default'] == 1) ? '(Default)' : '';
-                                                                                                echo '</option>';
-                                                                                            }
-                                                                                        } ?>
-                                                                                    </select>
-                                                                                </div>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                            <div class="payment-method"><img src="<?= base_url() ?>assets/images/payment-img.jpg"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-col-100 savedccd">
-                                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                            <span>(<span class="staric hint-str">*</span>) Denotes required fields</span>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <input type="hidden" name="process_credit_card" id="process_credit_card" value="1">
-                                                                    <div id="novalidatemain"></div>
-                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 savedccd">
-                                                                        <header class="payment-heading">
-                                                                            <h2>Credit Card Details</h2>
-                                                                        </header>
+                                                            <div id="cr_card_payment_mini" style="display: none;">
+                                                                <ul>
+                                                                    <div class="row">
                                                                         <div class="form-col-100">
-                                                                            <li>
-                                                                                <label>Number<span class="staric">*</span></label>
-                                                                                <input id="cc_sponsor_card_no" type="text" name="cc_card_no" value="" class="invoice-fields">
-                                                                                <div id="cc_card_no_response"></div>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="form-col-100">
-                                                                            <div class="row">
-                                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                                    <li>
-                                                                                        <label>Expiration Month<span class="staric">*</span></label>
+                                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                                <li>
+                                                                                    <label>Payment with</label>
+                                                                                    <div class="hr-select-dropdown">
+                                                                                        <select name="p_with_main" id="p_with_mini"
+                                                                                            onchange="payment_ccd(this.value)"
+                                                                                            class="invoice-fields">
+                                                                                            <option value="new">Add new credit card
+                                                                                            </option>
+                                                                                            <?php
+                                                                                            $get_data = $this->session->userdata('logged_in');
+                                                                                            $cards = db_get_card_details($get_data['company_detail']['sid']);
 
-                                                                                        <div class="hr-select-dropdown">
-                                                                                            <select id="cc_sponsor_expire_month" name="cc_expire_month" class="invoice-fields">
-                                                                                                <option value=""></option>
-                                                                                                <option value="01">01</option>
-                                                                                                <option value="02">02</option>
-                                                                                                <option value="03">03</option>
-                                                                                                <option value="04">04</option>
-                                                                                                <option value="05">05</option>
-                                                                                                <option value="06">06</option>
-                                                                                                <option value="07">07</option>
-                                                                                                <option value="08">08</option>
-                                                                                                <option value="09">09</option>
-                                                                                                <option value="10">10</option>
-                                                                                                <option value="11">11</option>
-                                                                                                <option value="12">12</option>
-                                                                                            </select>
-                                                                                        </div>
-
-                                                                                        <div id="cc_expire_month_response"></div>
-                                                                                    </li>
+                                                                                            if (!empty($cards)) {
+                                                                                                foreach ($cards as $card) {
+                                                                                                    echo '<option value="' . $card['sid'] . '">' . $card['number'] . ' - ' . $card['type'] . ' ';
+                                                                                                    echo ($card['is_default'] == 1) ? '(Default)' : '';
+                                                                                                    echo '</option>';
+                                                                                                }
+                                                                                            } ?>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </li>
+                                                                            </div>
+                                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                                <div class="payment-method"><img
+                                                                                        src="<?= base_url() ?>assets/images/payment-img.jpg">
                                                                                 </div>
-                                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                                    <li>
-                                                                                        <label>Year<span class="staric">*</span></label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-col-100 savedccd">
+                                                                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                                <span>(<span class="staric hint-str">*</span>)
+                                                                                    Denotes required fields</span>
+                                                                            </div>
+                                                                        </div>
 
-                                                                                        <div class="hr-select-dropdown">
+                                                                        <input type="hidden" name="process_credit_card"
+                                                                            id="process_credit_card" value="1">
+                                                                        <div id="novalidatemain"></div>
+                                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 savedccd">
+                                                                            <header class="payment-heading">
+                                                                                <h2>Credit Card Details</h2>
+                                                                            </header>
+                                                                            <div class="form-col-100">
+                                                                                <li>
+                                                                                    <label>Number<span
+                                                                                            class="staric">*</span></label>
+                                                                                    <input id="cc_sponsor_card_no" type="text"
+                                                                                        name="cc_card_no" value=""
+                                                                                        class="invoice-fields">
+                                                                                    <div id="cc_card_no_response"></div>
+                                                                                </li>
+                                                                            </div>
+                                                                            <div class="form-col-100">
+                                                                                <div class="row">
+                                                                                    <div
+                                                                                        class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                                        <li>
+                                                                                            <label>Expiration Month<span
+                                                                                                    class="staric">*</span></label>
+
+                                                                                            <div class="hr-select-dropdown">
+                                                                                                <select id="cc_sponsor_expire_month"
+                                                                                                    name="cc_expire_month"
+                                                                                                    class="invoice-fields">
+                                                                                                    <option value=""></option>
+                                                                                                    <option value="01">01</option>
+                                                                                                    <option value="02">02</option>
+                                                                                                    <option value="03">03</option>
+                                                                                                    <option value="04">04</option>
+                                                                                                    <option value="05">05</option>
+                                                                                                    <option value="06">06</option>
+                                                                                                    <option value="07">07</option>
+                                                                                                    <option value="08">08</option>
+                                                                                                    <option value="09">09</option>
+                                                                                                    <option value="10">10</option>
+                                                                                                    <option value="11">11</option>
+                                                                                                    <option value="12">12</option>
+                                                                                                </select>
+                                                                                            </div>
+
+                                                                                            <div id="cc_expire_month_response">
+                                                                                            </div>
+                                                                                        </li>
+                                                                                    </div>
+                                                                                    <div
+                                                                                        class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                                        <li>
+                                                                                            <label>Year<span
+                                                                                                    class="staric">*</span></label>
+
+                                                                                            <div class="hr-select-dropdown">
                                                                                             <?php $current_year = date('Y'); ?>
-                                                                                            <select id="cc_sponsor_expire_year" name="cc_expire_year" class="invoice-fields">
-                                                                                                <option value=""></option>
+                                                                                                <select id="cc_sponsor_expire_year"
+                                                                                                    name="cc_expire_year"
+                                                                                                    class="invoice-fields">
+                                                                                                    <option value=""></option>
                                                                                                 <?php for ($i = $current_year; $i <= $current_year + 10; $i++) { ?>
-                                                                                                    <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                                                                                                <?php   } ?>
-                                                                                            </select>
-                                                                                        </div>
+                                                                                                        <option
+                                                                                                            value="<?php echo $i; ?>">
+                                                                                                        <?php echo $i; ?>
+                                                                                                        </option>
+                                                                                                <?php } ?>
+                                                                                                </select>
+                                                                                            </div>
 
-                                                                                        <div id="cc_expire_year_response"></div>
-                                                                                    </li>
+                                                                                            <div id="cc_expire_year_response"></div>
+                                                                                        </li>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 savedccd">
-                                                                        <header class="payment-heading">
-                                                                            <h2>&nbsp;</h2>
-                                                                        </header>
-                                                                        <div class="form-col-100">
-                                                                            <li>
-                                                                                <label>Type<span class="staric">*</span></label>
-                                                                                <div class="hr-select-dropdown">
-                                                                                    <select id="cc_sponsor_type" name="cc_type" class="invoice-fields">
-                                                                                        <option value=""></option>
-                                                                                        <option value="visa">Visa</option>
-                                                                                        <option value="mastercard">Mastercard</option>
-                                                                                        <option value="discover">Discover</option>
-                                                                                        <option value="amex">Amex</option>
-                                                                                    </select>
-                                                                                </div>
+                                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 savedccd">
+                                                                            <header class="payment-heading">
+                                                                                <h2>&nbsp;</h2>
+                                                                            </header>
+                                                                            <div class="form-col-100">
+                                                                                <li>
+                                                                                    <label>Type<span class="staric">*</span></label>
+                                                                                    <div class="hr-select-dropdown">
+                                                                                        <select id="cc_sponsor_type" name="cc_type"
+                                                                                            class="invoice-fields">
+                                                                                            <option value=""></option>
+                                                                                            <option value="visa">Visa</option>
+                                                                                            <option value="mastercard">Mastercard
+                                                                                            </option>
+                                                                                            <option value="discover">Discover
+                                                                                            </option>
+                                                                                            <option value="amex">Amex</option>
+                                                                                        </select>
+                                                                                    </div>
 
-                                                                                <div id="cc_type_response"></div>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="form-col-100">
-                                                                            <div class="row">
-                                                                                <div class="col-lg-7 col-md-7 col-xs-12 col-sm-6">
-                                                                                    <li>
-                                                                                        <label class="small-case">ccv</label>
-                                                                                        <input id="cc_ccv" type="text" name="cc_ccv" value="" class="invoice-fields">
-                                                                                    </li>
+                                                                                    <div id="cc_type_response"></div>
+                                                                                </li>
+                                                                            </div>
+                                                                            <div class="form-col-100">
+                                                                                <div class="row">
+                                                                                    <div
+                                                                                        class="col-lg-7 col-md-7 col-xs-12 col-sm-6">
+                                                                                        <li>
+                                                                                            <label class="small-case">ccv</label>
+                                                                                            <input id="cc_ccv" type="text"
+                                                                                                name="cc_ccv" value=""
+                                                                                                class="invoice-fields">
+                                                                                        </li>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
 
-                                                                    <!--                                                                    <div class="form-col-100 autoheight">
+                                                                        <!--                                                                    <div class="form-col-100 autoheight">
                                                                                                                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                                                                                                     <div class="checkbox-field savedccd">
                                                                                                                                                         <input type="checkbox" name="cc_future_payment" id="future-payment">
@@ -676,255 +840,323 @@
                                                                                                                                                     </div>
                                                                                                                                                 </div>
                                                                                                                                             </div>-->
-                                                                </div>
-                                                                <input type="hidden" id="cc_validate" value="1">
-                                                                <div class="modal-footer">
-                                                                    <div class="row">
-                                                                        <div class="col-lg-8 col-md-8 col-xs-12 col-sm-6">
-                                                                            <div class="media-content">
-                                                                                <h3 class="details-title">Secure payment</h3>
-                                                                                <p class="details-desc">This is a secure 256-bit SSL encrypted payment</p>
+                                                                    </div>
+                                                                    <input type="hidden" id="cc_validate" value="1">
+                                                                    <div class="modal-footer">
+                                                                        <div class="row">
+                                                                            <div class="col-lg-8 col-md-8 col-xs-12 col-sm-6">
+                                                                                <div class="media-content">
+                                                                                    <h3 class="details-title">Secure payment</h3>
+                                                                                    <p class="details-desc">This is a secure 256-bit
+                                                                                        SSL encrypted payment</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                                                <span class="payment-secured">powered by
+                                                                                    <strong>Paypal</strong></span>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                                                            <span class="payment-secured">powered by <strong>Paypal</strong></span>
+                                                                    </div>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                <?php } ?>
+                                                </div>
+                                        <?php } else if ($per_job_listing_charge == 1 && $career_site_listings_only == 1 && $listing['active']) { ?>
+                                                    <li class="form-col-100">
+                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight">
+                                                            <div class="form-group">
+                                                                <div class="row">
+                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6"
+                                                                        style="padding: 0px;">
+                                                                        <label>Sponsor This Job With The Major Job
+                                                                            Aggregators:</label>
+                                                                    </div>
+                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                        <div class="row">
+                                                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                                <label class="control control--radio">No
+                                                                                    <input type="radio" name="sponsor_this_job"
+                                                                                        class="sponsor_this_job"
+                                                                                        value="not_required" checked="">
+                                                                                    <div class="control__indicator"></div>
+                                                                                </label>
+                                                                            </div>
+                                                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                                <label class="control control--radio">Yes
+                                                                                    <input type="radio" name="sponsor_this_job"
+                                                                                        class="sponsor_this_job" value="sponsor_it">
+                                                                                    <div class="control__indicator"></div>
+                                                                                </label>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                <?php } ?>
-                                            </div>
-                                        <?php       } else if ($per_job_listing_charge == 1 && $career_site_listings_only == 1 && $listing['active']) { ?>
-                                            <li class="form-col-100">
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 autoheight">
-                                                    <div class="form-group">
-                                                        <div class="row">
-                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6" style="padding: 0px;">
-                                                                <label>Sponsor This Job With The Major Job Aggregators:</label>
-                                                            </div>
-                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                <div class="row">
-                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                        <label class="control control--radio">No
-                                                                            <input type="radio" name="sponsor_this_job" class="sponsor_this_job" value="not_required" checked="">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                        <label class="control control--radio">Yes
-                                                                            <input type="radio" name="sponsor_this_job" class="sponsor_this_job" value="sponsor_it">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <div class="produt-block" id="sponsor_container" style="display: none;">
+                                                    </li>
+                                                    <div class="produt-block" id="sponsor_container" style="display: none;">
 
                                                 <?php if ($sponsor_radio == 'yes') { ?>
-                                                    <header class="form-col-100">
-                                                        <h2 class="section-title">Sponsored Product Already Purchased.</h2>
-                                                    </header>
-                                                    <div class="pre-purchased-products advertising-boxes">
-                                                        <p>&nbsp;&nbsp;&nbsp;<b>Product Name: <?= $productDetail['name']; ?></b> </p>
-                                                        <!--                                                            <p>&nbsp;&nbsp;&nbsp;<b>Expiring In : --><? //= $expiring_in;
-                                                                                                                                                                    ?>
-                                                        <!-- Days</b> </p>-->
+                                                            <header class="form-col-100">
+                                                                <h2 class="section-title">Sponsored Product Already Purchased.</h2>
+                                                            </header>
+                                                            <div class="pre-purchased-products advertising-boxes">
+                                                                <p>&nbsp;&nbsp;&nbsp;<b>Product Name: <?= $productDetail['name']; ?></b>
+                                                                </p>
+                                                                <!--                                                            <p>&nbsp;&nbsp;&nbsp;<b>Expiring In : --><? //= $expiring_in;
+                                                                        ?>
+                                                                <!-- Days</b> </p>-->
                                                         <?php if ($listing['ppj_activation_date'] == NULL) {
                                                             echo "<p>&nbsp;&nbsp;&nbsp;<b>Awaiting Job Approval</b></p>";
                                                         } else {
                                                             echo "<p>&nbsp;&nbsp;&nbsp;<b>Expiration Date : " . date('M d, Y', strtotime($listing['ppj_activation_date'] . ' + ' . $listing['ppj_expiry_days'] . ' days ')) . "</b> </p>";
                                                         } ?>
-                                                    </div>
+                                                            </div>
                                                 <?php } else { ?>
-                                                    <header class="form-col-100">
-                                                        <h2 class="section-title">Products</h2>
-                                                    </header>
-                                                    <div class="pre-purchased-products advertising-boxes">
+                                                            <header class="form-col-100">
+                                                                <h2 class="section-title">Products</h2>
+                                                            </header>
+                                                            <div class="pre-purchased-products advertising-boxes">
                                                         <?php if (!empty($purchasedProducts)) {
                                                             foreach ($purchasedProducts as $product) { ?>
-                                                                <article class="purchased-product">
-                                                                    <input style="display: none;" name="pay_per_job_details" id="ppj_<?php echo $product['product_sid']; ?>" class="product-checkbox" value="<?php echo $product['product_sid']; ?>" type="radio" />
-                                                                    <p class="remaining-qty num-of-days">No of Days: <?php echo $product['no_of_days']; ?></p>
-                                                                    <p class="remaining-qty">Remaining Qty: <?php echo $product['remaining_qty']; ?></p>
-                                                                    <h2 class="post-title"><?php echo $product['name']; ?></h2>
-                                                                    <figure><img src="<?php echo $product['product_image'] != NULL ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>" alt="Category images"></figure>
+                                                                        <article class="purchased-product">
+                                                                            <input style="display: none;" name="pay_per_job_details"
+                                                                                id="ppj_<?php echo $product['product_sid']; ?>"
+                                                                                class="product-checkbox"
+                                                                                value="<?php echo $product['product_sid']; ?>" type="radio" />
+                                                                            <p class="remaining-qty num-of-days">No of Days:
+                                                                        <?php echo $product['no_of_days']; ?>
+                                                                            </p>
+                                                                            <p class="remaining-qty">Remaining Qty:
+                                                                        <?php echo $product['remaining_qty']; ?>
+                                                                            </p>
+                                                                            <h2 class="post-title"><?php echo $product['name']; ?></h2>
+                                                                            <figure><img
+                                                                                    src="<?php echo $product['product_image'] != NULL ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>"
+                                                                                    alt="Category images"></figure>
 
-                                                                    <div class="button-panel incart-btn-fixed">
-                                                                        <div class="cart-btns">
-                                                                            <input style="position: relative; margin: auto; left: auto;" type="button" class="site-btn outCart outCart_<?php echo $product['product_sid']; ?>" id="<?php echo $product['product_sid']; ?>" onclick="add_to_cart(this.id, 'out')" value="Sponsor">
-                                                                            <a class="submit-btn inCart" style="display: none" id="inCart_<?php echo $product['product_sid']; ?>" href="javascript:;">Sponsor</a>
-                                                                        </div>
-                                                                    </div>
-                                                                </article>
-                                                        <?php }
+                                                                            <div class="button-panel incart-btn-fixed">
+                                                                                <div class="cart-btns">
+                                                                                    <input style="position: relative; margin: auto; left: auto;"
+                                                                                        type="button"
+                                                                                        class="site-btn outCart outCart_<?php echo $product['product_sid']; ?>"
+                                                                                        id="<?php echo $product['product_sid']; ?>"
+                                                                                        onclick="add_to_cart(this.id, 'out')" value="Sponsor">
+                                                                                    <a class="submit-btn inCart" style="display: none"
+                                                                                        id="inCart_<?php echo $product['product_sid']; ?>"
+                                                                                        href="javascript:;">Sponsor</a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </article>
+                                                            <?php }
                                                         } ?>
 
                                                         <?php if (!empty($notPurchasedProducts)) {
                                                             foreach ($notPurchasedProducts as $product) { ?>
-                                                                <article class="purchased-product">
-                                                                    <p class="remaining-qty num-of-days">No of Days: <?php echo $product['expiry_days']; ?></p>
-                                                                    <p class="remaining-qty">Purchased Qty: 0</p>
-                                                                    <h2 class="post-title"><?php echo $product['name']; ?></h2>
-                                                                    <figure><img src="<?php echo $product['product_image'] != NULL ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>" alt="Category images" /></figure>
-                                                                    <div class="count-box">$<?php echo $product['price']; ?></div>
+                                                                        <article class="purchased-product">
+                                                                            <p class="remaining-qty num-of-days">No of Days:
+                                                                        <?php echo $product['expiry_days']; ?>
+                                                                            </p>
+                                                                            <p class="remaining-qty">Purchased Qty: 0</p>
+                                                                            <h2 class="post-title"><?php echo $product['name']; ?></h2>
+                                                                            <figure><img
+                                                                                    src="<?php echo $product['product_image'] != NULL ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>"
+                                                                                    alt="Category images" /></figure>
+                                                                            <div class="count-box">$<?php echo $product['price']; ?></div>
 
-                                                                    <div class="button-panel incart-btn-fixed">
-                                                                        <div class="cart-btns">
-                                                                            <input style="display: none;" type="radio" name="pay_per_job_details" id="ppj_<?php echo $product['sid']; ?>" value="<?php echo $product['sid']; ?>">
-                                                                            <input style="position: relative; margin: auto; left: auto;" type="button" class="site-btn outCart outCart_<?php echo $product['sid']; ?>" id="<?php echo $product['sid']; ?>" onclick="add_to_cart(this.id, 'cart')" value="Add to Cart">
-                                                                            <a class="submit-btn inCart" style="display: none" id="inCart_<?php echo $product['sid']; ?>" href="javascript:;">Sponsor</a>
-                                                                        </div>
-                                                                    </div>
-                                                                </article>
-                                                        <?php       }
+                                                                            <div class="button-panel incart-btn-fixed">
+                                                                                <div class="cart-btns">
+                                                                                    <input style="display: none;" type="radio"
+                                                                                        name="pay_per_job_details"
+                                                                                        id="ppj_<?php echo $product['sid']; ?>"
+                                                                                        value="<?php echo $product['sid']; ?>">
+                                                                                    <input style="position: relative; margin: auto; left: auto;"
+                                                                                        type="button"
+                                                                                        class="site-btn outCart outCart_<?php echo $product['sid']; ?>"
+                                                                                        id="<?php echo $product['sid']; ?>"
+                                                                                        onclick="add_to_cart(this.id, 'cart')"
+                                                                                        value="Add to Cart">
+                                                                                    <a class="submit-btn inCart" style="display: none"
+                                                                                        id="inCart_<?php echo $product['sid']; ?>"
+                                                                                        href="javascript:;">Sponsor</a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </article>
+                                                            <?php }
                                                         } ?>
-                                                    </div>
-                                                    <div class="universal-form-style-v2 payment-area">
-                                                        <div id="free_no_payment_mini">
-                                                            <div class="form-col-100">
-                                                                <div id="free_checkout_mini_cart"></div>
-                                                                <div id="maincartcouponarea_mini_free"></div>
-                                                                <div class="col-xs-12">
-                                                                    <div id="free_spinner" class="spinner hide"><i class="fa fa-refresh fa-spin"></i> Processing...</div>
-                                                                    <input type="hidden" id="is_free_checkout_mini" name="is_free_checkout_mini" value="0" />
-                                                                </div>
                                                             </div>
-                                                        </div>
-
-                                                        <div id="cr_card_payment_mini" style="display: none;">
-                                                            <ul>
-                                                                <div class="row">
+                                                            <div class="universal-form-style-v2 payment-area">
+                                                                <div id="free_no_payment_mini">
                                                                     <div class="form-col-100">
-                                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                            <li>
-                                                                                <label>Payment with</label>
-                                                                                <div class="hr-select-dropdown">
-                                                                                    <select name="p_with_main" id="p_with_mini" onchange="payment_ccd(this.value)" class="invoice-fields">
-                                                                                        <option value="new">Add new credit card</option>
-                                                                                        <?php
-                                                                                        $get_data = $this->session->userdata('logged_in');
-                                                                                        $cards = db_get_card_details($get_data['company_detail']['sid']);
-
-                                                                                        if (!empty($cards)) {
-                                                                                            foreach ($cards as $card) {
-                                                                                                echo '<option value="' . $card['sid'] . '">' . $card['number'] . ' - ' . $card['type'] . ' ';
-                                                                                                echo ($card['is_default'] == 1) ? '(Default)' : '';
-                                                                                                echo '</option>';
-                                                                                            }
-                                                                                        } ?>
-                                                                                    </select>
-                                                                                </div>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                            <div class="payment-method"><img src="<?= base_url() ?>assets/images/payment-img.jpg"></div>
+                                                                        <div id="free_checkout_mini_cart"></div>
+                                                                        <div id="maincartcouponarea_mini_free"></div>
+                                                                        <div class="col-xs-12">
+                                                                            <div id="free_spinner" class="spinner hide"><i
+                                                                                    class="fa fa-refresh fa-spin"></i> Processing...
+                                                                            </div>
+                                                                            <input type="hidden" id="is_free_checkout_mini"
+                                                                                name="is_free_checkout_mini" value="0" />
                                                                         </div>
                                                                     </div>
-                                                                    <div class="form-col-100 savedccd">
-                                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                            <span>(<span class="staric hint-str">*</span>) Denotes required fields</span>
-                                                                        </div>
-                                                                    </div>
+                                                                </div>
 
-                                                                    <input type="hidden" name="process_credit_card" id="process_credit_card" value="1">
-                                                                    <div id="novalidatemain"></div>
-                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 savedccd">
-                                                                        <header class="payment-heading">
-                                                                            <h2>Credit Card Details</h2>
-                                                                        </header>
-                                                                        <div class="form-col-100">
-                                                                            <li>
-                                                                                <label>Number<span class="staric">*</span></label>
-                                                                                <input id="cc_sponsor_card_no" type="text" name="cc_card_no" value="" class="invoice-fields">
-                                                                                <div id="cc_card_no_response"></div>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="form-col-100">
-                                                                            <div class="row">
+                                                                <div id="cr_card_payment_mini" style="display: none;">
+                                                                    <ul>
+                                                                        <div class="row">
+                                                                            <div class="form-col-100">
                                                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                                                     <li>
-                                                                                        <label>Expiration Month<span class="staric">*</span></label>
-
+                                                                                        <label>Payment with</label>
                                                                                         <div class="hr-select-dropdown">
-                                                                                            <select id="cc_sponsor_expire_month" name="cc_expire_month" class="invoice-fields">
-                                                                                                <option value=""></option>
-                                                                                                <option value="01">01</option>
-                                                                                                <option value="02">02</option>
-                                                                                                <option value="03">03</option>
-                                                                                                <option value="04">04</option>
-                                                                                                <option value="05">05</option>
-                                                                                                <option value="06">06</option>
-                                                                                                <option value="07">07</option>
-                                                                                                <option value="08">08</option>
-                                                                                                <option value="09">09</option>
-                                                                                                <option value="10">10</option>
-                                                                                                <option value="11">11</option>
-                                                                                                <option value="12">12</option>
+                                                                                            <select name="p_with_main" id="p_with_mini"
+                                                                                                onchange="payment_ccd(this.value)"
+                                                                                                class="invoice-fields">
+                                                                                                <option value="new">Add new credit card
+                                                                                                </option>
+                                                                                            <?php
+                                                                                            $get_data = $this->session->userdata('logged_in');
+                                                                                            $cards = db_get_card_details($get_data['company_detail']['sid']);
+
+                                                                                            if (!empty($cards)) {
+                                                                                                foreach ($cards as $card) {
+                                                                                                    echo '<option value="' . $card['sid'] . '">' . $card['number'] . ' - ' . $card['type'] . ' ';
+                                                                                                    echo ($card['is_default'] == 1) ? '(Default)' : '';
+                                                                                                    echo '</option>';
+                                                                                                }
+                                                                                            } ?>
                                                                                             </select>
                                                                                         </div>
-
-                                                                                        <div id="cc_expire_month_response"></div>
                                                                                     </li>
                                                                                 </div>
                                                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                                    <li>
-                                                                                        <label>Year<span class="staric">*</span></label>
+                                                                                    <div class="payment-method"><img
+                                                                                            src="<?= base_url() ?>assets/images/payment-img.jpg">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="form-col-100 savedccd">
+                                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                                    <span>(<span class="staric hint-str">*</span>)
+                                                                                        Denotes required fields</span>
+                                                                                </div>
+                                                                            </div>
 
-                                                                                        <div class="hr-select-dropdown">
+                                                                            <input type="hidden" name="process_credit_card"
+                                                                                id="process_credit_card" value="1">
+                                                                            <div id="novalidatemain"></div>
+                                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 savedccd">
+                                                                                <header class="payment-heading">
+                                                                                    <h2>Credit Card Details</h2>
+                                                                                </header>
+                                                                                <div class="form-col-100">
+                                                                                    <li>
+                                                                                        <label>Number<span
+                                                                                                class="staric">*</span></label>
+                                                                                        <input id="cc_sponsor_card_no" type="text"
+                                                                                            name="cc_card_no" value=""
+                                                                                            class="invoice-fields">
+                                                                                        <div id="cc_card_no_response"></div>
+                                                                                    </li>
+                                                                                </div>
+                                                                                <div class="form-col-100">
+                                                                                    <div class="row">
+                                                                                        <div
+                                                                                            class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                                            <li>
+                                                                                                <label>Expiration Month<span
+                                                                                                        class="staric">*</span></label>
+
+                                                                                                <div class="hr-select-dropdown">
+                                                                                                    <select id="cc_sponsor_expire_month"
+                                                                                                        name="cc_expire_month"
+                                                                                                        class="invoice-fields">
+                                                                                                        <option value=""></option>
+                                                                                                        <option value="01">01</option>
+                                                                                                        <option value="02">02</option>
+                                                                                                        <option value="03">03</option>
+                                                                                                        <option value="04">04</option>
+                                                                                                        <option value="05">05</option>
+                                                                                                        <option value="06">06</option>
+                                                                                                        <option value="07">07</option>
+                                                                                                        <option value="08">08</option>
+                                                                                                        <option value="09">09</option>
+                                                                                                        <option value="10">10</option>
+                                                                                                        <option value="11">11</option>
+                                                                                                        <option value="12">12</option>
+                                                                                                    </select>
+                                                                                                </div>
+
+                                                                                                <div id="cc_expire_month_response">
+                                                                                                </div>
+                                                                                            </li>
+                                                                                        </div>
+                                                                                        <div
+                                                                                            class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                                            <li>
+                                                                                                <label>Year<span
+                                                                                                        class="staric">*</span></label>
+
+                                                                                                <div class="hr-select-dropdown">
                                                                                             <?php $current_year = date('Y'); ?>
-                                                                                            <select id="cc_sponsor_expire_year" name="cc_expire_year" class="invoice-fields">
-                                                                                                <option value=""></option>
+                                                                                                    <select id="cc_sponsor_expire_year"
+                                                                                                        name="cc_expire_year"
+                                                                                                        class="invoice-fields">
+                                                                                                        <option value=""></option>
                                                                                                 <?php for ($i = $current_year; $i <= $current_year + 10; $i++) { ?>
-                                                                                                    <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
-                                                                                                <?php   } ?>
+                                                                                                            <option
+                                                                                                                value="<?php echo $i; ?>">
+                                                                                                        <?php echo $i; ?>
+                                                                                                            </option>
+                                                                                                <?php } ?>
+                                                                                                    </select>
+                                                                                                </div>
+
+                                                                                                <div id="cc_expire_year_response"></div>
+                                                                                            </li>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 savedccd">
+                                                                                <header class="payment-heading">
+                                                                                    <h2>&nbsp;</h2>
+                                                                                </header>
+                                                                                <div class="form-col-100">
+                                                                                    <li>
+                                                                                        <label>Type<span class="staric">*</span></label>
+                                                                                        <div class="hr-select-dropdown">
+                                                                                            <select id="cc_sponsor_type" name="cc_type"
+                                                                                                class="invoice-fields">
+                                                                                                <option value=""></option>
+                                                                                                <option value="visa">Visa</option>
+                                                                                                <option value="mastercard">Mastercard
+                                                                                                </option>
+                                                                                                <option value="discover">Discover
+                                                                                                </option>
+                                                                                                <option value="amex">Amex</option>
                                                                                             </select>
                                                                                         </div>
 
-                                                                                        <div id="cc_expire_year_response"></div>
+                                                                                        <div id="cc_type_response"></div>
                                                                                     </li>
                                                                                 </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 savedccd">
-                                                                        <header class="payment-heading">
-                                                                            <h2>&nbsp;</h2>
-                                                                        </header>
-                                                                        <div class="form-col-100">
-                                                                            <li>
-                                                                                <label>Type<span class="staric">*</span></label>
-                                                                                <div class="hr-select-dropdown">
-                                                                                    <select id="cc_sponsor_type" name="cc_type" class="invoice-fields">
-                                                                                        <option value=""></option>
-                                                                                        <option value="visa">Visa</option>
-                                                                                        <option value="mastercard">Mastercard</option>
-                                                                                        <option value="discover">Discover</option>
-                                                                                        <option value="amex">Amex</option>
-                                                                                    </select>
-                                                                                </div>
-
-                                                                                <div id="cc_type_response"></div>
-                                                                            </li>
-                                                                        </div>
-                                                                        <div class="form-col-100">
-                                                                            <div class="row">
-                                                                                <div class="col-lg-7 col-md-7 col-xs-12 col-sm-6">
-                                                                                    <li>
-                                                                                        <label class="small-case">ccv</label>
-                                                                                        <input id="cc_ccv" type="text" name="cc_ccv" value="" class="invoice-fields">
-                                                                                    </li>
+                                                                                <div class="form-col-100">
+                                                                                    <div class="row">
+                                                                                        <div
+                                                                                            class="col-lg-7 col-md-7 col-xs-12 col-sm-6">
+                                                                                            <li>
+                                                                                                <label class="small-case">ccv</label>
+                                                                                                <input id="cc_ccv" type="text"
+                                                                                                    name="cc_ccv" value=""
+                                                                                                    class="invoice-fields">
+                                                                                            </li>
+                                                                                        </div>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </div>
 
-                                                                    <!--                                                                    <div class="form-col-100 autoheight">
+                                                                            <!--                                                                    <div class="form-col-100 autoheight">
                                                                                                                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                                                                                                     <div class="checkbox-field savedccd">
                                                                                                                                                         <input type="checkbox" name="cc_future_payment" id="future-payment">
@@ -932,50 +1164,59 @@
                                                                                                                                                     </div>
                                                                                                                                                 </div>
                                                                                                                                             </div>-->
-                                                                </div>
-                                                                <input type="hidden" id="cc_validate" value="1">
-                                                                <div class="modal-footer">
-                                                                    <div class="row">
-                                                                        <div class="col-lg-8 col-md-8 col-xs-12 col-sm-6">
-                                                                            <div class="media-content">
-                                                                                <h3 class="details-title">Secure payment</h3>
-                                                                                <p class="details-desc">This is a secure 256-bit SSL encrypted payment</p>
+                                                                        </div>
+                                                                        <input type="hidden" id="cc_validate" value="1">
+                                                                        <div class="modal-footer">
+                                                                            <div class="row">
+                                                                                <div class="col-lg-8 col-md-8 col-xs-12 col-sm-6">
+                                                                                    <div class="media-content">
+                                                                                        <h3 class="details-title">Secure payment</h3>
+                                                                                        <p class="details-desc">This is a secure 256-bit
+                                                                                            SSL encrypted payment</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                                                    <span class="payment-secured">powered by
+                                                                                        <strong>Paypal</strong></span>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                                                            <span class="payment-secured">powered by <strong>Paypal</strong></span>
-                                                                        </div>
-                                                                    </div>
+                                                                    </ul>
                                                                 </div>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
+                                                            </div>
                                                 <?php } ?>
-                                            </div>
-                                        <?php       } ?>
+                                                    </div>
+                                        <?php } ?>
 
                                         <!--                                            <input id="listing_status" type="hidden" name="listing_status" value="--><?php //echo $listing['active']; 
-                                                                                                                                                                    ?>
+                                        ?>
                                         <!--"  />-->
                                         <!--                                            <li class="form-col-100 autoheight">-->
                                         <!--                                                <input type="submit" onclick="return validate_form()" value="Update" class="submit-btn">-->
                                         <!--                                                <input type="button" value="Cancel" class="submit-btn btn-cancel" onClick="document.location.href = '<? //= base_url('my_listings') 
-                                                                                                                                                                                                    ?>'"/>-->
+                                        ?>'"/>-->
                                         <!--                                            </li>-->
                                         <input type="hidden" id="ppj_purchased" value="1" />
-                                        <input id="listing_status" type="hidden" name="listing_status" value="<?php echo $listing['active'] ?>" />
+                                        <input id="listing_status" type="hidden" name="listing_status"
+                                            value="<?php echo $listing['active'] ?>" />
                                         <li class="form-col-100 autoheight submit_action_btn">
-                                            <input type="submit" value="Update" onclick="return validate_form()" class="submit-btn">
-                                            <input type="button" value="Cancel" class="submit-btn btn-cancel" onClick="document.location.href = '<?= base_url('my_listings') ?>'" />
+                                            <input type="submit" value="Update" onclick="return validate_form()"
+                                                class="submit-btn">
+                                            <input type="button" value="Cancel" class="submit-btn btn-cancel"
+                                                onClick="document.location.href = '<?= base_url('my_listings') ?>'" />
                                         </li>
-                                        <div class="form-col-100 autoheight submit_action_paypal" style="display: none;">
+                                        <div class="form-col-100 autoheight submit_action_paypal"
+                                            style="display: none;">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                 <div id="maincartcouponarea_mini"></div>
                                                 <div class="checkout-popup-cart"></div>
-                                                <div id="cc_spinner" class="spinner hide"><i class="fa fa-refresh fa-spin"></i> Processing... </div>
+                                                <div id="cc_spinner" class="spinner hide"><i
+                                                        class="fa fa-refresh fa-spin"></i> Processing... </div>
                                                 <div class="btn-panel">
-                                                    <input type="button" value="Cancel" class="submit-btn btn-cancel" onClick="document.location.href = '<?= base_url('my_listings') ?>'" />
-                                                    <input type="button" id="cc_sponsor_send" value="Confirm payment & Update" class="submit-btn">
+                                                    <input type="button" value="Cancel" class="submit-btn btn-cancel"
+                                                        onClick="document.location.href = '<?= base_url('my_listings') ?>'" />
+                                                    <input type="button" id="cc_sponsor_send"
+                                                        value="Confirm payment & Update" class="submit-btn">
                                                 </div>
                                                 <p id="checkout_error_message"></p>
                                             </div>
@@ -986,14 +1227,19 @@
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <label class="control control--checkbox">
                                                         Sponser this job with Indeed
-                                                        <input id="js_sponsor_indeed" type="checkbox" name="sponsor_indeed" value="1" <?php echo $listing['indeed_sponsored'] == 1 ? 'checked="checked"' : ''; ?> />
+                                                        <input id="js_sponsor_indeed" type="checkbox" name="sponsor_indeed"
+                                                            value="1" <?php echo $listing['indeed_sponsored'] == 1 ? 'checked="checked"' : ''; ?> />
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 js-sponsor-box" <?= $listing['indeed_sponsored'] == 1 ? '' : 'style="display: none;"'; ?>>
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 js-sponsor-box"
+                                                    <?= $listing['indeed_sponsored'] == 1 ? '' : 'style="display: none;"'; ?>>
                                                     <br />
-                                                    <p class="cs-step1-content" style="<?= $listing['indeed_sponsored'] == 1 ? 'display: none;' : ''; ?>">
-                                                        You can sponsor the job in two simple steps; <br /><strong>1.</strong> Define the budget <br /> <strong>2.</strong> Type in your phone number
+                                                    <p class="cs-step1-content"
+                                                        style="<?= $listing['indeed_sponsored'] == 1 ? 'display: none;' : ''; ?>">
+                                                        You can sponsor the job in two simple steps;
+                                                        <br /><strong>1.</strong> Define the budget <br />
+                                                        <strong>2.</strong> Type in your phone number
                                                         <!-- By default this job will be posted on Indeed as an Organic Job but if you want to advertise it on Indeed you can do it by Sponsoring it. You can sponsor the job in two simple steps; <br /><strong>1.</strong> Define the budget <br /> <strong>2.</strong> Type in your phone number -->
                                                     </p>
                                                     <!-- Indeed Products -->
@@ -1001,16 +1247,26 @@
                                                     $indeedPackage = loadIndeedPackage($IndeedBudget, $session);
                                                     ?>
                                                     <div style="border: 1px solid #ccc; padding: 10px;">
-                                                        <h3 class="cs-step1-content" style="<?= $listing['indeed_sponsored'] == 1 ? 'display: none;' : ''; ?>">Sponser job with Indeed <span class="pull-right"><button type="button" name="button" class="btn btn-default js-sponsor-back-button" style="display: none;"> <i class="fa fa-arrow-left"></i>&nbsp; Back</button> </span> </h3>
+                                                        <h3 class="cs-step1-content"
+                                                            style="<?= $listing['indeed_sponsored'] == 1 ? 'display: none;' : ''; ?>">
+                                                            Sponser job with Indeed <span class="pull-right"><button
+                                                                    type="button" name="button"
+                                                                    class="btn btn-default js-sponsor-back-button"
+                                                                    style="display: none;"> <i
+                                                                        class="fa fa-arrow-left"></i>&nbsp; Back</button>
+                                                            </span> </h3>
                                                         <hr />
-                                                        <article class="purchased-product cs-purchased-product" style="width: 100%; height: auto !important;">
-                                                            <div class="cs-step1-box" style="<?= $listing['indeed_sponsored'] == 1 ? 'display: none;' : ''; ?>">
+                                                        <article class="purchased-product cs-purchased-product"
+                                                            style="width: 100%; height: auto !important;">
+                                                            <div class="cs-step1-box"
+                                                                style="<?= $listing['indeed_sponsored'] == 1 ? 'display: none;' : ''; ?>">
                                                                 <?= $indeedPackage['Step1']; ?>
                                                             </div>
                                                             <div class="cs-step2-box" style="display: none;">
                                                                 <?= $indeedPackage['Step2']; ?>
                                                             </div>
-                                                            <div class="cs-step4-box" style="<?= $listing['indeed_sponsored'] != 1 ? 'display: none;' : ''; ?>">
+                                                            <div class="cs-step4-box"
+                                                                style="<?= $listing['indeed_sponsored'] != 1 ? 'display: none;' : ''; ?>">
                                                                 <?= $indeedPackage['Step4']; ?>
                                                             </div>
                                                         </article>
@@ -1056,29 +1312,31 @@
     </div>
 </div>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/bootstrap_select/js2/bootstrap-select.js"></script>
+<script language="JavaScript" type="text/javascript"
+    src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
+<script language="JavaScript" type="text/javascript"
+    src="<?= base_url('assets') ?>/bootstrap_select/js2/bootstrap-select.js"></script>
 <script language="JavaScript" type="text/javascript">
     $('a[rel=popover]').popover({
         html: true,
         trigger: 'hover',
         placement: 'bottom',
-        content: function() {
+        content: function () {
             return '<div class="text-center" style="width:250px;"><img src="<?php echo base_url('assets/images/logo-5-small-new1.jpg') ?>" /> <img src="<?php echo base_url('assets/images/logo-6-small-new.jpg') ?>" /> <img src="<?php echo base_url('assets/images/glassdoor-logo.jpg') ?>" /><br/>\n\ <div class="text-center popover-bottom-text">Plus Many More</div>';
         }
     });
     var sponsor_radio = '<?php echo $sponsor_radio ?>';
-    $(document).ready(function() {
+    $(document).ready(function () {
 
         //
-        $('#js-add-budget').click(function(e) {
+        $('#js-add-budget').click(function (e) {
             e.preventDefault();
             $('.cs-step4-box').fadeOut();
             $('.cs-step1-content').fadeIn();
             $('.cs-step1-box').fadeIn();
         });
 
-        $('#js-end-compaign').click(function(e) {
+        $('#js-end-compaign').click(function (e) {
             e.preventDefault();
             $('#js_sponsor_indeed').prop('checked', false);
             $('#employers_add_job').submit();
@@ -1092,18 +1350,18 @@
             showOn: 'focus',
             showButtonPanel: true,
             closeText: 'Clear', // Text to show for "close" button
-            onClose: function() {
+            onClose: function () {
                 var event = arguments.callee.caller.caller.arguments[0];
                 // If "Clear" gets clicked, then really clear it
                 if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
                     $(this).val('');
                 }
             },
-            beforeShow: function(input) {
-                setTimeout(function() {
+            beforeShow: function (input) {
+                setTimeout(function () {
                     $(input).datepicker("widget").find(".ui-datepicker-current").hide();
                     var clearButton = $(input).datepicker("widget").find(".ui-datepicker-close");
-                    clearButton.unbind("click").bind("click", function() {
+                    clearButton.unbind("click").bind("click", function () {
                         $.datepicker._clearDate(input);
                     });
                 }, 1);
@@ -1113,7 +1371,7 @@
         CKEDITOR.replace('JobDescription');
         CKEDITOR.replace('JobRequirements');
 
-        $('.video_source').on('click', function() {
+        $('.video_source').on('click', function () {
             var selected = $(this).val();
             console.log(selected);
 
@@ -1132,7 +1390,7 @@
 
         $('.video_source:checked').trigger('click');
 
-        $('#select_template').on('change', function() {
+        $('#select_template').on('change', function () {
             var template_sid = $(this).val();
             var selectedTemplate = $('#template_' + template_sid);
             var sDescription = $(selectedTemplate).attr('data-description');
@@ -1156,19 +1414,19 @@
     function image_remove(id) {
         url = "<?= base_url() ?>job_listings/job_task";
         alertify.confirm('Confirmation', "Are you sure you want to delete this picture?",
-            function() {
+            function () {
                 $('#remove_image').hide();
                 $.post(url, {
-                        action: 'delete_img',
-                        sid: id
-                    })
-                    .done(function(data) {
+                    action: 'delete_img',
+                    sid: id
+                })
+                    .done(function (data) {
                         document.getElementById("delete_image").value = '1';
                     });
                 alertify.success('Image removed.');
 
             },
-            function() {
+            function () {
 
             });
     }
@@ -1213,7 +1471,7 @@
                 },
                 Location_ZipCode: {
                     required: true,
-                    pattern: /^[0-9\-]+$/
+                    pattern: /^[0-9a-zA-Z\-]+$/
                 }
             },
             messages: {
@@ -1236,7 +1494,7 @@
                     pattern: 'Numeric values only'
                 }
             },
-            submitHandler: function(form, event) {
+            submitHandler: function (form, event) {
                 var sponsor_this_job = $('input[name="sponsor_this_job"]:checked').val();
                 var sponser_ans = 0;
                 var items_length = $('#Category :selected').length;
@@ -1255,7 +1513,7 @@
                 // //
                 let minSalary = $("#minSalary").val()
                 if (minSalary && minSalary.match(/[^0-9.,]/) !== null) {
-                     alertify.alert(
+                    alertify.alert(
                         "Error! Salary from can only be a number."
                     );
                     return false;
@@ -1263,7 +1521,7 @@
 
                 let maxSalary = $("#maxSalary").val()
                 if (maxSalary && maxSalary.match(/[^0-9.,]/) !== null) {
-                     alertify.alert(
+                    alertify.alert(
                         "Error! Salary to can only be a number."
                     );
                     return false;
@@ -1308,7 +1566,7 @@
                                     url: $('#yt_vm_video_url').val()
                                 },
                                 async: false,
-                                success: function(data) {
+                                success: function (data) {
                                     if (data == false) {
                                         alertify.error('Not a Valid Vimeo URL');
                                         flag = 0;
@@ -1317,7 +1575,7 @@
                                         flag = 1;
                                     }
                                 },
-                                error: function(data) {}
+                                error: function (data) { }
                             });
                         } else {
                             flag = 0;
@@ -1368,10 +1626,10 @@
                     alertify.confirm(
                         'Job Sponsorship Confirmation',
                         'Are you sure you want to forcefully cancel sponsorship?',
-                        function() {
+                        function () {
                             form.submit();
                         },
-                        function() {
+                        function () {
                             alertify.error('Cancelled');
                         }
                     );
@@ -1418,7 +1676,7 @@
         var i = 1;
 
         if (items_length > total_allowed) {
-            $('#Category option:selected').each(function() {
+            $('#Category option:selected').each(function () {
                 if (i > total_allowed) {
                     $(this).removeAttr("selected");
                     no_error = 1;
@@ -1432,7 +1690,7 @@
         }
     }
 
-    $('.video_source').on('click', function() {
+    $('.video_source').on('click', function () {
         var selected = $(this).val();
         if (selected == 'youtube') {
             $('#label_youtube').show();
@@ -1496,7 +1754,7 @@
         }
     }
 
-    $('.sponsor_this_job').on('click', function() {
+    $('.sponsor_this_job').on('click', function () {
         var selected = $(this).val();
 
         if (selected == 'not_required') {
@@ -1534,7 +1792,7 @@
         }
     }
 
-    $('#cc_sponsor_send').on('click', function() {
+    $('#cc_sponsor_send').on('click', function () {
 
         $("#employers_add_job").validate({
             ignore: ":hidden:not(select)",
@@ -1554,7 +1812,7 @@
                     pattern: /^[a-zA-Z0-9\- ]+$/
                 },
                 Location_ZipCode: {
-                    pattern: /^[0-9\-]+$/
+                    pattern: /^[0-9a-zA-Z\-]+$/
                 }
                 //                salary: {
                 //                    pattern: /^[0-9\-]+$/
@@ -1620,7 +1878,7 @@
                 cc_card_no_error = false;
             }
 
-            cc_card_no.addEventListener("input", function() {
+            cc_card_no.addEventListener("input", function () {
                 if ((this.value).length < 12 || (this.value).length > 19) {
                     $('#cc_sponsor_card_no').addClass('error');
                     $('#cc_card_no_response').html('<p class="error"><i class="fa fa-exclamation-circle"></i> Invalid Credit Card No!</p>');
@@ -1640,7 +1898,7 @@
                 cc_type_error = false;
             }
 
-            cc_type.addEventListener("input", function() {
+            cc_type.addEventListener("input", function () {
                 if ((this.value).length < 1) {
                     $('#cc_sponsor_type').addClass('error');
                     $('#cc_type_response').html('<p class="error"><i class="fa fa-exclamation-circle"></i> Credit Card Type Required!</p>');
@@ -1660,7 +1918,7 @@
                 cc_expire_month_error = false;
             }
 
-            cc_expire_month.addEventListener("input", function() {
+            cc_expire_month.addEventListener("input", function () {
                 if ((this.value).length < 1) {
                     $('#cc_sponsor_expire_month').addClass('error');
                     $('#cc_expire_month_response').html('<p class="error"><i class="fa fa-exclamation-circle"></i> Expiration Month Required!</p>');
@@ -1680,7 +1938,7 @@
                 cc_expire_year_error = false;
             }
 
-            cc_expire_year.addEventListener("input", function() {
+            cc_expire_year.addEventListener("input", function () {
                 if ((this.value).length < 1) {
                     $('#cc_sponsor_expire_year').addClass('error');
                     $('#cc_expire_year_response').html('<p class="error"><i class="fa fa-exclamation-circle"></i> Expiration Year Required!</p>');
@@ -1710,7 +1968,7 @@
                 url: "<?= base_url() ?>misc/pay_per_job",
                 type: "POST",
                 data: '&cc_card_no=' + cc_card_no.value + '&cc_type=' + cc_type.value + '&cc_expire_month=' + cc_expire_month.value + '&cc_expire_year=' + cc_expire_year.value + '&cc_ccv=' + cc_ccv.value + '&ppj_id=' + ppj_id + '&payment_type=' + payment_type,
-                success: function(response) {
+                success: function (response) {
                     response = JSON.parse(response);
                     $('#cc_sponsor_send').prop('disabled', false);
                     $('#cc_sponsor_send').removeClass("disabled-btn");
@@ -1731,7 +1989,7 @@
                         $("#employers_add_job").submit();
                     }
                 },
-                error: function(request, status, error) {
+                error: function (request, status, error) {
                     $('#checkout_error_message').html('<div class="flash_error_message"><div class="alert alert-info alert-dismissible error" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>Error: Your card could not be processed, Please check card details and try again!</div></div>');
                     $('#checkout_error_message_coupon').html('');
                     $('#cc_sponsor_send').prop('disabled', false);
@@ -1763,7 +2021,7 @@
 <link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
 <script type="text/javascript">
-    $('body').ready(function() {
+    $('body').ready(function () {
         var mylimit = parseInt($('#choiceLimit').html());
         // multiselectbox();
         // $("#Category").chosen({max_selected_options: mylimit});  // .chosen-select
@@ -1786,11 +2044,11 @@
             tags: false
         });
 
-        setTimeout(function() {
+        setTimeout(function () {
             $('#choicelimitavailable').text(parseInt($('#choiceLimit').text()) - ($("#Category").val() != null ? $("#Category").val().length : 1));
         }, 100);
 
-        $("#Category").on('select2:select', function(e) {
+        $("#Category").on('select2:select', function (e) {
             var items_length = $('#Category :selected').length;
             var total_allowed = parseInt($('#choiceLimit').html());
             var total_left = total_allowed - items_length;
@@ -1815,7 +2073,7 @@
             }
         })
 
-        $("#Category").on('select2:unselect', function(e) {
+        $("#Category").on('select2:unselect', function (e) {
             $('#choicelimitavailable').text(parseInt($('#choiceLimit').text()) - ($("#Category").val() != null ? $("#Category").val().length : 0));
         })
 
@@ -1930,10 +2188,10 @@
 <?php if ($hasNewModuleAccess) { ?>
 
     <script type="text/javascript">
-        $(function() {
+        $(function () {
             var megaOBJ = {};
             //
-            $('.js-indeed-package-btn').click(function() {
+            $('.js-indeed-package-btn').click(function () {
                 var localOBJ = {};
                 megaOBJ = {};
                 megaOBJ.action = 'add_job_budget';
@@ -1960,17 +2218,17 @@
                 $('.js-sponsor-back-button').fadeIn();
             });
             //
-            $('.js-indeed-package').click(function() {
+            $('.js-indeed-package').click(function () {
                 $('.js-custom-indeed-package').val('')
             });
-            $('.js-custom-indeed-package').keyup(function() {
+            $('.js-custom-indeed-package').keyup(function () {
                 $(this).val(
                     $(this).val().replace(/[^0-9]/g, '').substr(0, 5)
                 );
                 $('.js-indeed-package').prop('checked', false)
             });
             //
-            $('.js-indeed-package-phone-btn').click(function() {
+            $('.js-indeed-package-phone-btn').click(function () {
                 //
                 var phonenumber = $('.js-indeed-package-phone-input').val();
                 if (phonenumber.replace(/[^0-9]/, '').length < 10) {
@@ -1982,7 +2240,7 @@
                 buyPackage();
             });
             //
-            $('.js-indeed-package-skip-btn').click(function() {
+            $('.js-indeed-package-skip-btn').click(function () {
                 megaOBJ.phoneNumber = null;
                 buyPackage();
             });
@@ -1997,28 +2255,28 @@
                     megaOBJ.budgetSid = parseInt(budget.val());
                 }
                 // $('#my_loader').show();
-                $.post("<?= base_url('job_listings/handler'); ?>", megaOBJ, function(resp) {
+                $.post("<?= base_url('job_listings/handler'); ?>", megaOBJ, function (resp) {
                     $('#my_loader').hide();
                     if (resp.Status === false) {
                         alertify.alert('ERROR!', resp.Response, moveToSponsorBox);
                         return;
                     }
                     //
-                    alertify.alert('SUCCESS!', resp.Response, function() {
+                    alertify.alert('SUCCESS!', resp.Response, function () {
                         $('#employers_add_job').submit();
                         // window.location.reload();
                     });
                 });
             }
             //
-            $('#js_sponsor_indeed').click(function() {
+            $('#js_sponsor_indeed').click(function () {
                 if ($(this).prop('checked') === true) {
                     $('.js-sponsor-box').show();
                     moveToSponsorBox();
                 } else $('.js-sponsor-box').hide();
             });
             //
-            $('.js-sponsor-back-button').click(function() {
+            $('.js-sponsor-back-button').click(function () {
                 $(this).fadeOut();
                 // Hide Step 2
                 $('.cs-step2-box').fadeOut();

@@ -38,56 +38,56 @@ class Job_listings extends Public_Controller
     public function add_listing()
     {
         if ($this->session->has_userdata('logged_in')) {
-            $data['session']                                                    = $this->session->userdata('logged_in');
-            $security_sid                                                       = $data['session']['employer_detail']['sid'];
-            $security_details                                                   = db_get_access_level_details($security_sid);
-            $data['security_details']                                           = $security_details;
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
             check_access_permissions($security_details, 'dashboard', 'add_listing'); // Param2: Redirect URL, Param3: Function Name
-            $data['company_id'] = $company_id                                    = $data['session']['company_detail']['sid'];
-            $employer_id                                                        = $data['session']['employer_detail']['sid'];
-            $logged_in_user_sid                                                 = $data['session']['employer_detail']['sid'];
-            $job_listing_template_group                                         = $data['session']['company_detail']['job_listing_template_group'];
-            $ppjl_charge                                                        = $this->dashboard_model->get_pay_per_job_status($company_id);
-            $career_site_listings_only                                          = $ppjl_charge['career_site_listings_only'];
-            $per_job_listing_charge                                             = $ppjl_charge['per_job_listing_charge'];
-            $data['per_job_listing_charge']                                     = $per_job_listing_charge;
-            $data['career_site_listings_only']                                  = $career_site_listings_only;
-            $allow_create_job                                                   = true;
-            $allow_additional_purchase                                          = true;
+            $data['company_id'] = $company_id = $data['session']['company_detail']['sid'];
+            $employer_id = $data['session']['employer_detail']['sid'];
+            $logged_in_user_sid = $data['session']['employer_detail']['sid'];
+            $job_listing_template_group = $data['session']['company_detail']['job_listing_template_group'];
+            $ppjl_charge = $this->dashboard_model->get_pay_per_job_status($company_id);
+            $career_site_listings_only = $ppjl_charge['career_site_listings_only'];
+            $per_job_listing_charge = $ppjl_charge['per_job_listing_charge'];
+            $data['per_job_listing_charge'] = $per_job_listing_charge;
+            $data['career_site_listings_only'] = $career_site_listings_only;
+            $allow_create_job = true;
+            $allow_additional_purchase = true;
 
             if ($per_job_listing_charge == 1) {
-                $allow_create_job                                               = false;
+                $allow_create_job = false;
                 //                $allow_additional_purchase                                      = false;
-                $product_type                                                   = 'pay-per-job';
-                $purchasedProducts                                              = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
-                $data['purchasedProducts']                                      = $purchasedProducts;
-                $i                                                          = 0;
-                $product_ids                                                = NULL;
+                $product_type = 'pay-per-job';
+                $purchasedProducts = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
+                $data['purchasedProducts'] = $purchasedProducts;
+                $i = 0;
+                $product_ids = NULL;
 
                 if (!empty($purchasedProducts)) {
                     foreach ($purchasedProducts as $product) {
-                        $product_ids[$i]                                    = $product['product_sid'];
+                        $product_ids[$i] = $product['product_sid'];
                         $i++;
                     }
                 }
 
-                $notPurchasedProducts                                       = $this->dashboard_model->notPurchasedProducts($product_ids, $product_type);
-                $data['notPurchasedProducts']                               = $notPurchasedProducts;
+                $notPurchasedProducts = $this->dashboard_model->notPurchasedProducts($product_ids, $product_type);
+                $data['notPurchasedProducts'] = $notPurchasedProducts;
 
                 if (!empty($purchasedProducts)) {
-                    $allow_create_job                                           = true;
+                    $allow_create_job = true;
                 }
             }
 
-            $data['allow_create_job']                                           = $allow_create_job;
-            $data['allow_additional_purchase']                                  = $allow_additional_purchase;
+            $data['allow_create_job'] = $allow_create_job;
+            $data['allow_additional_purchase'] = $allow_additional_purchase;
 
             if (empty($job_listing_template_group)) {
-                $job_listing_template_group                                     = 1;
+                $job_listing_template_group = 1;
             }
 
-            $current_employees                                                  = $this->dashboard_model->GetAllUsersNew($company_id);
-            $data['current_employees']                                          = $current_employees;
+            $current_employees = $this->dashboard_model->GetAllUsersNew($company_id);
+            $data['current_employees'] = $current_employees;
 
             $config = array(
                 array(
@@ -128,7 +128,7 @@ class Job_listings extends Public_Controller
                 array(
                     'field' => 'Location_ZipCode',
                     'label' => 'ZipCode',
-                    'rules' => 'numeric'
+                    'rules' => 'alpha_numeric'
                 ),
                 array(
                     'field' => 'JobCategory[]',
@@ -143,66 +143,66 @@ class Job_listings extends Public_Controller
             $data['hasNewModuleAccess'] = $hasNewModuleAccess = checkIfAppIsEnabled('indeed_sponsor', FALSE);
             //
             if ($this->form_validation->run() == FALSE) {
-                $data_countries                                                 = db_get_active_countries();
+                $data_countries = db_get_active_countries();
 
                 foreach ($data_countries as $value) {
-                    $data_states[$value['sid']]                                 = db_get_active_states($value['sid']);
+                    $data_states[$value['sid']] = db_get_active_states($value['sid']);
                 }
 
-                $data['active_countries']                                       = $data_countries;
-                $data['active_states']                                          = $data_states;
-                $data_states_encode                                             = htmlentities(json_encode($data_states));
-                $data['states']                                                 = $data_states_encode;
-                $assigned_industry                                              = $this->dashboard_model->check_is_assigned_industry($company_id);
+                $data['active_countries'] = $data_countries;
+                $data['active_states'] = $data_states;
+                $data_states_encode = htmlentities(json_encode($data_states));
+                $data['states'] = $data_states_encode;
+                $assigned_industry = $this->dashboard_model->check_is_assigned_industry($company_id);
 
                 if ($assigned_industry == false) {
-                    $categories                                                 = $this->multi_table_data->getJobCategory(); //job category list from DB
+                    $categories = $this->multi_table_data->getJobCategory(); //job category list from DB
                 } else {
-                    $categories                                                 = $this->dashboard_model->get_industry_specific_categories($company_id, $company_id, $assigned_industry);
+                    $categories = $this->dashboard_model->get_industry_specific_categories($company_id, $company_id, $assigned_industry);
                 }
 
                 if (!empty($formpost['employees'])) { //Handle employees list
-                    $employeesArray                                             = $formpost['employees'];
-                    $data['employeesArray']                                     = $employeesArray;
+                    $employeesArray = $formpost['employees'];
+                    $data['employeesArray'] = $employeesArray;
                 }
 
-                $data['data_list']                                              = $categories;
-                $data['screening_questions']                                    = $this->multi_table_data->getScreeningQuestionnaires($company_id); //Screening Questionnaires list from DB
-                $data['title']                                                  = 'Add listing'; //page title
-                $templateGroup                                                  = $this->dashboard_model->GetJobListingTemplateGroupDetail($job_listing_template_group); //Get Template Group Detail
-                $availableTemplatesIds                                          = null;
+                $data['data_list'] = $categories;
+                $data['screening_questions'] = $this->multi_table_data->getScreeningQuestionnaires($company_id); //Screening Questionnaires list from DB
+                $data['title'] = 'Add listing'; //page title
+                $templateGroup = $this->dashboard_model->GetJobListingTemplateGroupDetail($job_listing_template_group); //Get Template Group Detail
+                $availableTemplatesIds = null;
 
                 if (!empty($templateGroup[0]['templates'])) {
-                    $availableTemplatesIds                                      = unserialize($templateGroup[0]['templates']);
+                    $availableTemplatesIds = unserialize($templateGroup[0]['templates']);
                 } else {
-                    $availableTemplatesIds                                      = array();
+                    $availableTemplatesIds = array();
                 }
 
                 if ($availableTemplatesIds == null || empty($availableTemplatesIds)) {
-                    $availableTemplatesIds                                      = array();
+                    $availableTemplatesIds = array();
                 }
 
-                $templates                                                      = array();
-                $templates                                                      = $this->dashboard_model->GetJobListingTemplateDetail($availableTemplatesIds);
-                $job_title_special_chars                                        = $this->dashboard_model->get_special_chars_status($company_id);
-                $data['job_title_special_chars']                                = $job_title_special_chars;
+                $templates = array();
+                $templates = $this->dashboard_model->GetJobListingTemplateDetail($availableTemplatesIds);
+                $job_title_special_chars = $this->dashboard_model->get_special_chars_status($company_id);
+                $data['job_title_special_chars'] = $job_title_special_chars;
 
                 if (intval($job_listing_template_group) == 0) {
-                    $data['templates']                                          = array();
+                    $data['templates'] = array();
                 } else {
-                    $data['templates']                                          = $templates;
+                    $data['templates'] = $templates;
                 }
 
-                $interview_questionnaires                                       = $this->dashboard_model->get_interview_questionnaires($company_id);
-                $data['interview_questionnaires']                               = $interview_questionnaires;
-                $all_job_logos                                                  = $this->dashboard_model->get_all_job_logos($company_id);
-                $data['all_job_logos']                                          = $all_job_logos;
+                $interview_questionnaires = $this->dashboard_model->get_interview_questionnaires($company_id);
+                $data['interview_questionnaires'] = $interview_questionnaires;
+                $all_job_logos = $this->dashboard_model->get_all_job_logos($company_id);
+                $data['all_job_logos'] = $all_job_logos;
 
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/add_listing_newest');
                 $this->load->view('main/footer');
             } else {
-                $formpost                                                       = $this->input->post(NULL, TRUE);
+                $formpost = $this->input->post(NULL, TRUE);
 
                 if (!isset($formpost['interview_questionnaire_sid']) || $formpost['interview_questionnaire_sid'] == '') {
                     $formpost['interview_questionnaire_sid'] = 0;
@@ -215,15 +215,15 @@ class Job_listings extends Public_Controller
                 }
 
                 //                $formpost['questionnaire_sid']                                  = $formpost['questionnaire_sid'] == '' ? 0 : $formpost['questionnaire_sid'];
-                $listing_data                                                   = array();
+                $listing_data = array();
 
                 if ($per_job_listing_charge == 1) {
-                    $per_job_listing_error_flag                                 = false;
+                    $per_job_listing_error_flag = false;
                     //                    echo '<pre>';
                     //                    print_r($formpost);
 
                     if ((isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && isset($formpost['pay_per_job_details']) && $formpost['pay_per_job_details'] != '') { // verify that product is purchased otherwise don't create error
-                        $ppj_product_id                                         = $formpost['pay_per_job_details'];
+                        $ppj_product_id = $formpost['pay_per_job_details'];
 
                         if ($ppj_product_id > 0) { //verify that company has stock to purchase the product
                             $productCounter = $this->dashboard_model->checkPurchasedProductQty(array($ppj_product_id), $company_id, 'pay-per-job'); // it is required to check QTY
@@ -234,16 +234,16 @@ class Job_listings extends Public_Controller
                                 $ppj_product_name = $productCounter[0]['name'];
 
                                 if ($ppj_remaining_qty > 0) { // allow job creation
-                                    $listing_data['ppj_product_id']             = $ppj_product_id;
-                                    $listing_data['ppj_expiry_days']            = $ppj_expiry_days;
+                                    $listing_data['ppj_product_id'] = $ppj_product_id;
+                                    $listing_data['ppj_expiry_days'] = $ppj_expiry_days;
                                 } else { // Do not have the quatity to publish the job
-                                    $per_job_listing_error_flag                 = true;
+                                    $per_job_listing_error_flag = true;
                                 }
                             } else { // product not found error!
-                                $per_job_listing_error_flag                     = true;
+                                $per_job_listing_error_flag = true;
                             }
                         } else { // Product not purchased error
-                            $per_job_listing_error_flag                         = true;
+                            $per_job_listing_error_flag = true;
                         }
                         // Need forced expiration days. No of days from the product will be stored in it. it will check activation date then force activation will be implemented
                     }
@@ -292,30 +292,30 @@ class Job_listings extends Public_Controller
                         $key != 'sponsor_this_job'
                     ) { // exclude these values from array
                         if (is_array($value)) {
-                            $value                                              = implode(',', $value);
+                            $value = implode(',', $value);
                         }
 
-                        $listing_data[$key]                                     = $value;
+                        $listing_data[$key] = $value;
                     }
                 }
 
                 if (!empty($formpost['expiration_date'])) {
-                    $expiration_date                                            = DateTime::createFromFormat('m/d/Y', $formpost['expiration_date'])->format('Y-m-d H:i:s');
-                    $listing_data['expiration_date']                            = $expiration_date;
+                    $expiration_date = DateTime::createFromFormat('m/d/Y', $formpost['expiration_date'])->format('Y-m-d H:i:s');
+                    $listing_data['expiration_date'] = $expiration_date;
                 }
 
-                $job_title                                                      = $formpost['Title'];
-                $video_source                                                   = $this->input->post('video_source');
-                $video_id                                                       = '';
+                $job_title = $formpost['Title'];
+                $video_source = $this->input->post('video_source');
+                $video_id = '';
 
                 if ($video_source != 'no_video') {
                     if (isset($_FILES['upload_video']) && !empty($_FILES['upload_video']['name'])) {
-                        $random                                                 = generateRandomString(5);
-                        $target_file_name                                       = basename($_FILES['upload_video']['name']);
-                        $file_name                                              = strtolower($company_id . '/' . $random . '_' . $target_file_name);
-                        $target_dir                                             = "assets/uploaded_videos/";
-                        $target_file                                            = $target_dir . $file_name;
-                        $filename                                               = $target_dir . $company_id;
+                        $random = generateRandomString(5);
+                        $target_file_name = basename($_FILES['upload_video']['name']);
+                        $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
+                        $target_dir = "assets/uploaded_videos/";
+                        $target_file = $target_dir . $file_name;
+                        $filename = $target_dir . $company_id;
 
                         if (!file_exists($filename)) {
                             mkdir($filename);
@@ -328,104 +328,104 @@ class Job_listings extends Public_Controller
                             redirect('job_listings/add_listing', 'refresh');
                         }
 
-                        $video_id                                               = $file_name;
+                        $video_id = $file_name;
                     } else {
-                        $video_id                                               = $this->input->post('yt_vm_video_url');
+                        $video_id = $this->input->post('yt_vm_video_url');
 
                         if ($video_source == 'youtube') {
-                            $url_prams                                          = array();
+                            $url_prams = array();
                             parse_str(parse_url($video_id, PHP_URL_QUERY), $url_prams);
 
                             if (isset($url_prams['v'])) {
-                                $video_id                                       = $url_prams['v'];
+                                $video_id = $url_prams['v'];
                             } else {
-                                $video_id                                       = '';
+                                $video_id = '';
                             }
                         } else if ($video_source == 'vimeo') {
-                            $video_id                                           = $this->vimeo_get_id($video_id);
+                            $video_id = $this->vimeo_get_id($video_id);
                         }
                     }
                 }
 
                 if ($video_id != '') {
-                    $listing_data['YouTube_Video']                              = $video_id;
+                    $listing_data['YouTube_Video'] = $video_id;
                 } else {
-                    $listing_data['YouTube_Video']                              = NULL;
+                    $listing_data['YouTube_Video'] = NULL;
                 }
 
-                $listing_data['video_source']                                   = $video_source;
-                $listing_data['user_sid']                                       = $company_id;
-                $listing_data['job_creater_sid']                                = $employer_id;
-                $listing_data['JobDescription']                                 = html_entity_decode($this->input->post('JobDescription', false));
+                $listing_data['video_source'] = $video_source;
+                $listing_data['user_sid'] = $company_id;
+                $listing_data['job_creater_sid'] = $employer_id;
+                $listing_data['JobDescription'] = html_entity_decode($this->input->post('JobDescription', false));
 
                 if (!empty($formpost['JobRequirements']) && $formpost['JobRequirements'] != "") {
-                    $listing_data['JobRequirements']                            = html_entity_decode($this->input->post('JobRequirements', false));
+                    $listing_data['JobRequirements'] = html_entity_decode($this->input->post('JobRequirements', false));
                 }
 
                 if (isset($formpost['listing_status']) && !empty($formpost['listing_status']) && $formpost['listing_status'] != '') {
                     if (intval($formpost['listing_status']) == 1) {
-                        $listing_data['active']                                 = 1;
+                        $listing_data['active'] = 1;
                     } else {
-                        $listing_data['active']                                 = 0;
+                        $listing_data['active'] = 0;
                     }
                 } else {
-                    $listing_data['active']                                     = 0;
+                    $listing_data['active'] = 0;
                 }
 
                 if (isset($formpost['published_on_career_page']) && !empty($formpost['published_on_career_page']) && $formpost['published_on_career_page'] != '') {
                     if (intval($formpost['published_on_career_page']) == 1) {
-                        $listing_data['published_on_career_page']               = 1;
+                        $listing_data['published_on_career_page'] = 1;
                     } else {
-                        $listing_data['published_on_career_page']               = 0;
+                        $listing_data['published_on_career_page'] = 0;
                     }
                 } else {
-                    $listing_data['published_on_career_page']                   = 0;
+                    $listing_data['published_on_career_page'] = 0;
                 }
 
-                if ($per_job_listing_charge == 1 || $career_site_listings_only  == 1) {
-                    $listing_data['published_on_career_page']                   = 1;
+                if ($per_job_listing_charge == 1 || $career_site_listings_only == 1) {
+                    $listing_data['published_on_career_page'] = 1;
                 }
 
                 if (isset($_FILES['pictures']) && $_FILES['pictures']['name'] != '') { //uploading image to AWS
-                    $uploaded_file_name                                         = upload_file_to_aws('pictures', $company_id, 'listing_logo');
+                    $uploaded_file_name = upload_file_to_aws('pictures', $company_id, 'listing_logo');
 
                     if ($uploaded_file_name != 'error') {
-                        $listing_data['pictures']                               = $uploaded_file_name;
+                        $listing_data['pictures'] = $uploaded_file_name;
                     }
                 } else {
                     if ($formpost['select_from_logo'] != 'no_logo') {
-                        $listing_data['pictures']                               = $formpost['select_from_logo'];
+                        $listing_data['pictures'] = $formpost['select_from_logo'];
                     }
                 }
 
-                $job_approval_module_status                                     = get_job_approval_module_status($company_id);
-                $employee_approval_module_status                                = 0;
+                $job_approval_module_status = get_job_approval_module_status($company_id);
+                $employee_approval_module_status = 0;
 
                 if ($job_approval_module_status == 0) {
-                    $listing_data['approval_status']                            = 'approved';
-                    $listing_data['approval_status_by']                         = $employer_id;
-                    $approval_status_change_datetime                            = date('Y-m-d H:i:s');
-                    $listing_data['activation_date']                            = date('Y-m-d H:i:s');
-                    $listing_data['approval_status_change_datetime']            = $approval_status_change_datetime;
+                    $listing_data['approval_status'] = 'approved';
+                    $listing_data['approval_status_by'] = $employer_id;
+                    $approval_status_change_datetime = date('Y-m-d H:i:s');
+                    $listing_data['activation_date'] = date('Y-m-d H:i:s');
+                    $listing_data['approval_status_change_datetime'] = $approval_status_change_datetime;
 
                     if ((isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && $per_job_listing_charge == 1) {
-                        $listing_data['ppj_activation_date']                    = $approval_status_change_datetime;
+                        $listing_data['ppj_activation_date'] = $approval_status_change_datetime;
                     }
                 } else { // check if the creator of the job as rights to approve job
-                    $employee_approval_module_status                            = get_job_approval_module_status($employer_id);
+                    $employee_approval_module_status = get_job_approval_module_status($employer_id);
 
                     if ($employee_approval_module_status == 1) { // auto approve job as employee has job approval rights
-                        $listing_data['approval_status']                        = 'approved';
-                        $listing_data['approval_status_by']                     = $employer_id;
-                        $approval_status_change_datetime                        = date('Y-m-d H:i:s');
-                        $listing_data['activation_date']                        = date('Y-m-d H:i:s');
-                        $listing_data['approval_status_change_datetime']        = $approval_status_change_datetime;
+                        $listing_data['approval_status'] = 'approved';
+                        $listing_data['approval_status_by'] = $employer_id;
+                        $approval_status_change_datetime = date('Y-m-d H:i:s');
+                        $listing_data['activation_date'] = date('Y-m-d H:i:s');
+                        $listing_data['approval_status_change_datetime'] = $approval_status_change_datetime;
 
                         if ((isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && $per_job_listing_charge == 1) {
-                            $listing_data['ppj_activation_date']                = $approval_status_change_datetime;
+                            $listing_data['ppj_activation_date'] = $approval_status_change_datetime;
                         }
                     } else {
-                        $listing_data['approval_status']                    = 'pending';
+                        $listing_data['approval_status'] = 'pending';
                     }
                 }
 
@@ -442,7 +442,7 @@ class Job_listings extends Public_Controller
                     $formpost["maxSalary"],
                 );
 
-                $jobId                                                          = $this->dashboard_model->add_listing($listing_data);  //Now call dashboard_model function to insert data in DB
+                $jobId = $this->dashboard_model->add_listing($listing_data);  //Now call dashboard_model function to insert data in DB
 
                 $this->load->model("Job_sync_api_model");
                 $this->Job_sync_api_model->checkAndAddJob($jobId);
@@ -473,91 +473,91 @@ class Job_listings extends Public_Controller
                     ));
                 }
 
-                $record_data                                                    = array();
-                $record_data['company_sid']                                     = $company_id;
-                $record_data['company_name']                                    = $data['session']['company_detail']['CompanyName'];
-                $record_data['portal_job_listings_sid']                         = $jobId;
-                $record_data['active']                                          = $listing_data['active'];
-                $record_data['created_by_name']                                 = $data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name'];
-                $record_data['created_by_sid']                                  = $employer_id;
-                $record_data['create_date']                                     = date('Y-m-d H:i:s');
-                $record_data['approval_status']                                 = 'pending';
+                $record_data = array();
+                $record_data['company_sid'] = $company_id;
+                $record_data['company_name'] = $data['session']['company_detail']['CompanyName'];
+                $record_data['portal_job_listings_sid'] = $jobId;
+                $record_data['active'] = $listing_data['active'];
+                $record_data['created_by_name'] = $data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name'];
+                $record_data['created_by_sid'] = $employer_id;
+                $record_data['create_date'] = date('Y-m-d H:i:s');
+                $record_data['approval_status'] = 'pending';
 
                 if (isset($listing_data['approval_status'])) {
-                    $record_data['approval_status']                             = $listing_data['approval_status'];
-                    $record_data['approval_status_by']                          = $employer_id;
-                    $record_data['approval_status_change_datetime']             = date('Y-m-d H:i:s');
+                    $record_data['approval_status'] = $listing_data['approval_status'];
+                    $record_data['approval_status_by'] = $employer_id;
+                    $record_data['approval_status_change_datetime'] = date('Y-m-d H:i:s');
                 }
 
                 if ($listing_data['active']) {
-                    $record_data['activation_date']                             = date('Y-m-d H:i:s');
-                    $record_data['edit_place']                                  = 'Activated at the time of creation.';
+                    $record_data['activation_date'] = date('Y-m-d H:i:s');
+                    $record_data['edit_place'] = 'Activated at the time of creation.';
                 } else {
-                    $record_data['deactive_date']                               = date('Y-m-d H:i:s');
-                    $record_data['deactive_by_name']                            = $data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name'];
-                    $record_data['deactive_by_sid']                             = $employer_id;
-                    $record_data['edit_place']                                  = 'De-Activated at the time of creation.';
+                    $record_data['deactive_date'] = date('Y-m-d H:i:s');
+                    $record_data['deactive_by_name'] = $data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name'];
+                    $record_data['deactive_by_sid'] = $employer_id;
+                    $record_data['edit_place'] = 'De-Activated at the time of creation.';
                 }
 
-                $record_data['Title']                                           = $job_title;
+                $record_data['Title'] = $job_title;
 
                 if (isset($listing_data['organic_feed']) && $career_site_listings_only == 0) {
-                    $record_data['organic_feed']                                = 1;
+                    $record_data['organic_feed'] = 1;
                 } else {
-                    $record_data['organic_feed']                                = 0;
+                    $record_data['organic_feed'] = 0;
                 }
 
                 $this->dashboard_model->insert_jobs_records($record_data);
 
                 if (!empty($formpost['employees'])) { //Handle Visibility to Employees Start
-                    $employeesArray                                             = $formpost['employees'];
+                    $employeesArray = $formpost['employees'];
                 } else {
-                    $employeesArray                                             = array();
+                    $employeesArray = array();
                     array_push($employeesArray, $logged_in_user_sid);
                 }
 
                 $this->job_listings_visibility_model->InsertNewVisibilityGroup($company_id, $jobId, $employeesArray);
                 //$myListing = $this->dashboard_model->get_listing($jobId, $company_id); // no need for it we already have job title
-                $employess_with_job_visibility                                  = $employeesArray;
-                $notifications_status                                           = get_notifications_status($company_id);
-                $company_sms_notification_status                                = get_company_sms_status($this, $company_id);
-                $approval_management_email_notification                         = 0;
+                $employess_with_job_visibility = $employeesArray;
+                $notifications_status = get_notifications_status($company_id);
+                $company_sms_notification_status = get_company_sms_status($this, $company_id);
+                $approval_management_email_notification = 0;
 
                 if (($key = array_search($logged_in_user_sid, $employess_with_job_visibility)) !== false) { // exclude job creator from the list as he don't need to be notified for the email of new job
                     unset($employess_with_job_visibility[$key]);
                 }
 
                 if (!empty($notifications_status)) {
-                    $approval_management_email_notification                     = $notifications_status['approval_rights_notifications'];
+                    $approval_management_email_notification = $notifications_status['approval_rights_notifications'];
                 }
 
-                $email_sent_to_employees                                        = array();
+                $email_sent_to_employees = array();
 
                 if ($job_approval_module_status == 1 && $approval_management_email_notification == 1) { //Send email to Users With Job Approval Rights + they are registered to recived notifications
-                    $emailTemplateData                                          = get_email_template(NEW_LISTING_NOTIFICATION_TO_USER_WITH_APPROVAL_RIGHTS);
-                    $employer_name                                              = $data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name'];
-                    $approval_management_email_contacts                         = get_notification_email_contacts($company_id, 'approval_management');
+                    $emailTemplateData = get_email_template(NEW_LISTING_NOTIFICATION_TO_USER_WITH_APPROVAL_RIGHTS);
+                    $employer_name = $data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name'];
+                    $approval_management_email_contacts = get_notification_email_contacts($company_id, 'approval_management');
 
                     if (!empty($approval_management_email_contacts)) { // someone is registered to receive email. Please verify and send email
-                        $employee_registered_to_receive_emails                  = array();
+                        $employee_registered_to_receive_emails = array();
 
                         foreach ($approval_management_email_contacts as $key => $value) {
                             if ($value['employer_sid'] > 0) {
-                                $employee_registered_to_receive_emails[]        = $value['employer_sid'];
+                                $employee_registered_to_receive_emails[] = $value['employer_sid'];
                             }
                         }
 
-                        $usersWithRights                                        = $this->job_approval_rights_model->GetUsersWithApprovalRights($company_id);
-                        $alluserswithrights                                     = array();
-                        $userrightsdetails                                      = array();
+                        $usersWithRights = $this->job_approval_rights_model->GetUsersWithApprovalRights($company_id);
+                        $alluserswithrights = array();
+                        $userrightsdetails = array();
 
                         foreach ($usersWithRights as $uwr) {
-                            $uwr_sid                                            = $uwr['sid'];
-                            $alluserswithrights[]                               = $uwr_sid;
+                            $uwr_sid = $uwr['sid'];
+                            $alluserswithrights[] = $uwr_sid;
                             $userrightsdetails[$uwr_sid] = array(
                                 'first_name' => $uwr['first_name'],
                                 'last_name' => $uwr['last_name'],
-                                'email'     => $uwr['email']
+                                'email' => $uwr['email']
                             );
                         }
 
@@ -766,14 +766,14 @@ class Job_listings extends Public_Controller
                 $config['num_tag_open'] = '<li class="page">';
                 $config['num_tag_close'] = '</li>';
                 $this->pagination->initialize($config);
-                $data['links']                                                  = $this->pagination->create_links();
-                $data['listings_active']                                        = $job_listings;
-                $data['job_approval_module_status']                             = get_job_approval_module_status($company_sid);
-                $ppjl_charge                                                    = $this->dashboard_model->get_pay_per_job_status($company_sid);
-                $career_site_listings_only                                      = $ppjl_charge['career_site_listings_only'];
-                $per_job_listing_charge                                         = $ppjl_charge['per_job_listing_charge'];
-                $data['per_job_listing_charge']                                 = $per_job_listing_charge;
-                $data['career_site_listings_only']                              = $career_site_listings_only;
+                $data['links'] = $this->pagination->create_links();
+                $data['listings_active'] = $job_listings;
+                $data['job_approval_module_status'] = get_job_approval_module_status($company_sid);
+                $ppjl_charge = $this->dashboard_model->get_pay_per_job_status($company_sid);
+                $career_site_listings_only = $ppjl_charge['career_site_listings_only'];
+                $per_job_listing_charge = $ppjl_charge['per_job_listing_charge'];
+                $data['per_job_listing_charge'] = $per_job_listing_charge;
+                $data['career_site_listings_only'] = $career_site_listings_only;
 
                 if ($per_job_listing_charge == 1 && $career_site_listings_only == 1) {
                     $enable_advertise = TRUE;
@@ -783,7 +783,7 @@ class Job_listings extends Public_Controller
                     $enable_advertise = FALSE;
                 }
 
-                $data['enable_advertise']                                       = false;
+                $data['enable_advertise'] = false;
                 //
                 if ($status == 'inactive') {
                     //
@@ -838,71 +838,71 @@ class Job_listings extends Public_Controller
         } else {
             if ($this->session->userdata('logged_in')) {
                 $data['jobSid'] = $id;
-                $data['session']                                                = $this->session->userdata('logged_in');
-                $security_sid                                                   = $data['session']['employer_detail']['sid'];
-                $employer_id                                                    = $data['session']['employer_detail']['sid'];
+                $data['session'] = $this->session->userdata('logged_in');
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $employer_id = $data['session']['employer_detail']['sid'];
                 $data['employeeSid'] = $employer_id;
-                $security_details                                               = db_get_access_level_details($security_sid);
-                $data['security_details']                                       = $security_details;
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
                 check_access_permissions($security_details, 'dashboard', 'add_listing'); // Param2: Redirect URL, Param3: Function Name
-                $data['title']                                                  = 'Edit Listing';
-                $company_id                                                     = $data['session']['company_detail']['sid'];
-                $logged_in_user_sid                                             = $data['session']['employer_detail']['sid'];
-                $data['logged_in_user_sid']                                     = $logged_in_user_sid;
-                $current_employees                                              = $this->dashboard_model->GetAllUsersNew($company_id);
-                $data['current_employees']                                      = $current_employees;
-                $id                                                             = $this->uri->segment(2);
-                $myListing                                                      = $this->dashboard_model->get_listing($id, $company_id);
-                $visible_to                                                     = $this->job_listings_visibility_model->GetEmployerIds($id);
-                $jobs_approval_module_status                                    = get_job_approval_module_status($company_id);
-                $has_rights                                                     = 0;
+                $data['title'] = 'Edit Listing';
+                $company_id = $data['session']['company_detail']['sid'];
+                $logged_in_user_sid = $data['session']['employer_detail']['sid'];
+                $data['logged_in_user_sid'] = $logged_in_user_sid;
+                $current_employees = $this->dashboard_model->GetAllUsersNew($company_id);
+                $data['current_employees'] = $current_employees;
+                $id = $this->uri->segment(2);
+                $myListing = $this->dashboard_model->get_listing($id, $company_id);
+                $visible_to = $this->job_listings_visibility_model->GetEmployerIds($id);
+                $jobs_approval_module_status = get_job_approval_module_status($company_id);
+                $has_rights = 0;
 
 
 
                 if (!is_admin($employer_id) && $jobs_approval_module_status == 1) {
-                    $employee_approval_module_status                            = get_job_approval_module_status($employer_id);
+                    $employee_approval_module_status = get_job_approval_module_status($employer_id);
 
                     if ($employee_approval_module_status == 1) {
-                        $has_rights                                             = 1;
+                        $has_rights = 1;
                     }
                 } else {
-                    $has_rights                                                 = 1;
+                    $has_rights = 1;
                 }
 
-                $data['has_rights']                                             = $has_rights;
+                $data['has_rights'] = $has_rights;
 
                 if (!empty($visible_to)) {
-                    $data['employeesArray']                                     = $visible_to;
+                    $data['employeesArray'] = $visible_to;
                 } else {
-                    $data['employeesArray']                                     = array($logged_in_user_sid);
+                    $data['employeesArray'] = array($logged_in_user_sid);
                 }
 
-                $job_creater_sid                                                = $myListing['job_creater_sid'];
-                $data['job_creater_details']                                    = '';
+                $job_creater_sid = $myListing['job_creater_sid'];
+                $data['job_creater_details'] = '';
 
                 if ($job_creater_sid > 0) { // get creator Name
-                    $job_creator_credentials                                    = $this->dashboard_model->get_employee_name($job_creater_sid);
-                    $data['job_creater_details']                                = 'Job Created by: <b>' . $job_creator_credentials['first_name'] . '&nbsp;' . $job_creator_credentials['last_name'] . '&nbsp;[' . $job_creator_credentials['email'] . ']</b>';
+                    $job_creator_credentials = $this->dashboard_model->get_employee_name($job_creater_sid);
+                    $data['job_creater_details'] = 'Job Created by: <b>' . $job_creator_credentials['first_name'] . '&nbsp;' . $job_creator_credentials['last_name'] . '&nbsp;[' . $job_creator_credentials['email'] . ']</b>';
                 }
                 //
                 $salaryBreakDown = breakSalary($myListing["Salary"], $myListing["SalaryType"]);
                 $myListing["minSalary"] = $salaryBreakDown["min"];
                 $myListing["maxSalary"] = $salaryBreakDown["max"];
 
-                $data['listing']                                                = $myListing;
-                $job_listing_template_group                                     = $data['session']['company_detail']['job_listing_template_group']; // templates code start
+                $data['listing'] = $myListing;
+                $job_listing_template_group = $data['session']['company_detail']['job_listing_template_group']; // templates code start
 
                 if (empty($job_listing_template_group)) {
-                    $job_listing_template_group                                 = 1;
+                    $job_listing_template_group = 1;
                 }
 
-                $templateGroup                                                  = $this->dashboard_model->GetJobListingTemplateGroupDetail($job_listing_template_group);
-                $availableTemplatesIds                                          = null;
+                $templateGroup = $this->dashboard_model->GetJobListingTemplateGroupDetail($job_listing_template_group);
+                $availableTemplatesIds = null;
 
                 if (!empty($templateGroup[0]['templates'])) {
-                    $availableTemplatesIds                                      = unserialize($templateGroup[0]['templates']);
+                    $availableTemplatesIds = unserialize($templateGroup[0]['templates']);
                 } else {
-                    $availableTemplatesIds                                      = array();
+                    $availableTemplatesIds = array();
                 }
 
                 if ($availableTemplatesIds == null || empty($availableTemplatesIds)) {
@@ -910,20 +910,20 @@ class Job_listings extends Public_Controller
                         = array();
                 }
 
-                $templates                                                      = array();
+                $templates = array();
 
                 foreach ($availableTemplatesIds as $templateId) {
-                    $template                                                   = $this->dashboard_model->GetJobListingTemplateDetail($templateId);
+                    $template = $this->dashboard_model->GetJobListingTemplateDetail($templateId);
 
                     if (!empty($template)) {
-                        $templates[]                                            = $template[0];
+                        $templates[] = $template[0];
                     }
                 }
 
                 if (intval($job_listing_template_group) == 0) {
-                    $data['templates']                                          = array();
+                    $data['templates'] = array();
                 } else {
-                    $data['templates']                                          = $templates;
+                    $data['templates'] = $templates;
                 } // templates code end
 
                 if (empty($data['listing'])) {
@@ -970,7 +970,7 @@ class Job_listings extends Public_Controller
                     array(
                         'field' => 'Location_ZipCode',
                         'label' => 'ZipCode',
-                        'rules' => 'numeric'
+                        'rules' => 'alpha_numeric'
                     ),
                     array(
                         'field' => 'JobCategory[]',
@@ -982,37 +982,37 @@ class Job_listings extends Public_Controller
                 $this->form_validation->set_error_delimiters('<label class="error">', '</label>');
                 $this->form_validation->set_rules($config);
 
-                $ppjl_charge                                                    = $this->dashboard_model->get_pay_per_job_status($company_id);
-                $career_site_listings_only                                      = $ppjl_charge['career_site_listings_only'];
-                $per_job_listing_charge                                         = $ppjl_charge['per_job_listing_charge'];
-                $data['per_job_listing_charge']                                 = $per_job_listing_charge;
-                $data['career_site_listings_only']                              = $career_site_listings_only;
-                $data['sponsor_radio']                                          = 'no'; // if per job is disabled from manage_admin
+                $ppjl_charge = $this->dashboard_model->get_pay_per_job_status($company_id);
+                $career_site_listings_only = $ppjl_charge['career_site_listings_only'];
+                $per_job_listing_charge = $ppjl_charge['per_job_listing_charge'];
+                $data['per_job_listing_charge'] = $per_job_listing_charge;
+                $data['career_site_listings_only'] = $career_site_listings_only;
+                $data['sponsor_radio'] = 'no'; // if per job is disabled from manage_admin
 
                 if ($per_job_listing_charge == 1) {
-                    $allow_create_job                                               = false;
-                    $product_type                                                   = 'pay-per-job';
-                    $purchasedProducts                                              = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
-                    $data['purchasedProducts']                                      = $purchasedProducts;
-                    $i                                                          = 0;
-                    $product_ids                                                = NULL;
+                    $allow_create_job = false;
+                    $product_type = 'pay-per-job';
+                    $purchasedProducts = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
+                    $data['purchasedProducts'] = $purchasedProducts;
+                    $i = 0;
+                    $product_ids = NULL;
 
                     if (!empty($purchasedProducts)) {
                         foreach ($purchasedProducts as $product) {
-                            $product_ids[$i]                                    = $product['product_sid'];
+                            $product_ids[$i] = $product['product_sid'];
                             $i++;
                         }
                     }
 
-                    $notPurchasedProducts                                       = $this->dashboard_model->notPurchasedProducts($product_ids, $product_type);
-                    $data['notPurchasedProducts']                               = $notPurchasedProducts;
+                    $notPurchasedProducts = $this->dashboard_model->notPurchasedProducts($product_ids, $product_type);
+                    $data['notPurchasedProducts'] = $notPurchasedProducts;
 
                     if (!empty($purchasedProducts)) {
-                        $allow_create_job                                           = true;
+                        $allow_create_job = true;
                     }
 
                     $expired = 0;
-                    $data['sponsor_radio']  = $myListing['ppj_product_id'] == 0 ? 'no' : 'yes';
+                    $data['sponsor_radio'] = $myListing['ppj_product_id'] == 0 ? 'no' : 'yes';
 
                     if ($data['sponsor_radio'] == 'yes' && date('Y-m-d H:i:s') >= date('Y-m-d H:i:s', strtotime($myListing['ppj_activation_date'] . ' + ' . $myListing['ppj_expiry_days'] . ' days '))) {
                         $data['sponsor_radio'] = 'no';
@@ -1033,33 +1033,33 @@ class Job_listings extends Public_Controller
                 $data['hasNewModuleAccess'] = $hasNewModuleAccess = checkIfAppIsEnabled('indeed_sponsor', FALSE);
 
                 if ($this->form_validation->run() == FALSE) {
-                    $data_countries                                             = db_get_active_countries();
+                    $data_countries = db_get_active_countries();
 
                     foreach ($data_countries as $value) {
-                        $data_states[$value['sid']]                             = db_get_active_states($value['sid']);
+                        $data_states[$value['sid']] = db_get_active_states($value['sid']);
                     }
 
-                    $data['active_countries']                                   = $data_countries;
-                    $data['active_states']                                      = $data_states;
-                    $data_states_encode                                         = htmlentities(json_encode($data_states));
-                    $data['states']                                             = $data_states_encode;
-                    $job_title_special_chars                                    = $this->dashboard_model->get_special_chars_status($company_id);
-                    $data['job_title_special_chars']                            = $job_title_special_chars;
-                    $assigned_industry                                          = $this->dashboard_model->check_is_assigned_industry($company_id);
+                    $data['active_countries'] = $data_countries;
+                    $data['active_states'] = $data_states;
+                    $data_states_encode = htmlentities(json_encode($data_states));
+                    $data['states'] = $data_states_encode;
+                    $job_title_special_chars = $this->dashboard_model->get_special_chars_status($company_id);
+                    $data['job_title_special_chars'] = $job_title_special_chars;
+                    $assigned_industry = $this->dashboard_model->check_is_assigned_industry($company_id);
 
                     if ($assigned_industry == false) {
-                        $data['data_list']                                      = $this->multi_table_data->getJobCategory(); //job category list from DB
+                        $data['data_list'] = $this->multi_table_data->getJobCategory(); //job category list from DB
                     } else {
-                        $data['data_list']                                      = $this->dashboard_model->get_industry_specific_categories($company_id, $employer_id, $assigned_industry);
+                        $data['data_list'] = $this->dashboard_model->get_industry_specific_categories($company_id, $employer_id, $assigned_industry);
                     }
 
-                    $data['screening_questions']                                = $this->multi_table_data->getScreeningQuestionnaires($company_id); //Questionaier
-                    $interview_questionnaires                                   = $this->dashboard_model->get_interview_questionnaires($company_id); //interview questionnaires
-                    $data['interview_questionnaires']                           = $interview_questionnaires;
-                    $all_job_logos                                              = $this->dashboard_model->get_all_job_logos($company_id);
-                    $data['all_job_logos']                                      = $all_job_logos;
-                    $sub_domain                                                 = $data['session']['portal_detail']['sub_domain'];
-                    $job_url                                                    = 'https://' . $sub_domain . '/preview_job/' . $id;
+                    $data['screening_questions'] = $this->multi_table_data->getScreeningQuestionnaires($company_id); //Questionaier
+                    $interview_questionnaires = $this->dashboard_model->get_interview_questionnaires($company_id); //interview questionnaires
+                    $data['interview_questionnaires'] = $interview_questionnaires;
+                    $all_job_logos = $this->dashboard_model->get_all_job_logos($company_id);
+                    $data['all_job_logos'] = $all_job_logos;
+                    $sub_domain = $data['session']['portal_detail']['sub_domain'];
+                    $job_url = 'https://' . $sub_domain . '/preview_job/' . $id;
 
                     $ch = curl_init();
                     curl_setopt($ch, CURLOPT_URL, $job_url);
@@ -1080,12 +1080,13 @@ class Job_listings extends Public_Controller
                     if ($hasNewModuleAccess) {
                         //Indeed package
                         $data['IndeedBudget'] = $this->checkAndUpdateIndeedBudget($data['jobSid']);
-                        if (!sizeof($data['IndeedBudget'])) $data['listing']['indeed_sponsored'] = 0;
+                        if (!sizeof($data['IndeedBudget']))
+                            $data['listing']['indeed_sponsored'] = 0;
                     }
 
-                    $preview_link                                               = base_url('preview_listing_iframe') . '/' . $id;
-                    $data['preview_content']                                    = $contents;
-                    $data['preview_link']                                       = $preview_link;
+                    $preview_link = base_url('preview_listing_iframe') . '/' . $id;
+                    $data['preview_content'] = $contents;
+                    $data['preview_link'] = $preview_link;
 
                     $this->load->view('main/header', $data);
                     $this->load->view('manage_employer/edit_listing_new');
@@ -1107,37 +1108,37 @@ class Job_listings extends Public_Controller
                     }
 
                     if ($per_job_listing_charge == 1 && $formpost['listing_status']) {
-                        $per_job_listing_error_flag                             = false;
+                        $per_job_listing_error_flag = false;
 
                         if ($data['sponsor_radio'] == 'no' && (isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && isset($formpost['pay_per_job_details']) && $formpost['pay_per_job_details'] != '') { // verify that product is purchased otherwise don't create error
-                            $ppj_product_id                                     = $formpost['pay_per_job_details'];
+                            $ppj_product_id = $formpost['pay_per_job_details'];
 
                             if ($ppj_product_id > 0) { //verify that company has stock to purchase the product
-                                $productCounter                                 = $this->dashboard_model->checkPurchasedProductQty(array($ppj_product_id), $company_id, 'pay-per-job'); // it is required to check QTY
+                                $productCounter = $this->dashboard_model->checkPurchasedProductQty(array($ppj_product_id), $company_id, 'pay-per-job'); // it is required to check QTY
                                 if (!empty($productCounter)) {
-                                    $ppj_expiry_days                            = $productCounter[0]['no_of_days'];
-                                    $ppj_remaining_qty                          = $productCounter[0]['remaining_qty'];
-                                    $ppj_product_name                           = $productCounter[0]['name'];
+                                    $ppj_expiry_days = $productCounter[0]['no_of_days'];
+                                    $ppj_remaining_qty = $productCounter[0]['remaining_qty'];
+                                    $ppj_product_name = $productCounter[0]['name'];
 
                                     if ($ppj_remaining_qty > 0) { // allow job creation
-                                        $listing_data['ppj_product_id']         = $ppj_product_id;
-                                        $listing_data['ppj_expiry_days']        = $ppj_expiry_days;
-                                        $listing_data['ppj_activation_date']    = NULL;
+                                        $listing_data['ppj_product_id'] = $ppj_product_id;
+                                        $listing_data['ppj_expiry_days'] = $ppj_expiry_days;
+                                        $listing_data['ppj_activation_date'] = NULL;
                                     } else { // Do not have the quatity to publish the job
-                                        $per_job_listing_error_flag             = true;
+                                        $per_job_listing_error_flag = true;
                                     }
                                 } else { // product not found error!
-                                    $per_job_listing_error_flag                 = true;
+                                    $per_job_listing_error_flag = true;
                                 }
                             } else { // Product not purchased error
-                                $per_job_listing_error_flag                     = true;
+                                $per_job_listing_error_flag = true;
                             }
                             // Need forced expiration days. No of days from the product will be stored in it. it will check activation date then force activation will be implemented
                         }
 
                         if ($expired == 2 && (isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'not_required')) { //Check for If user forcefully cancel sponsorship
-                            $listing_data['ppj_activation_date']        = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' - 1 days '));
-                            $listing_data['ppj_expiry_days']            = 0;
+                            $listing_data['ppj_activation_date'] = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s') . ' - 1 days '));
+                            $listing_data['ppj_expiry_days'] = 0;
                             if ($myListing['ppj_activation_date'] == NULL && $myListing['approval_status'] == 'pending') { // Refund if Job is not activated
                                 $this->job_approval_rights_model->refund_pay_per_job($myListing['Title'], $myListing['ppj_product_id']);
                             }
@@ -1302,8 +1303,8 @@ class Job_listings extends Public_Controller
                         $listing_data['published_on_career_page'] = 0;
                     }
 
-                    if ($per_job_listing_charge == 1 || $career_site_listings_only  == 1) {
-                        $listing_data['published_on_career_page']               = 1;
+                    if ($per_job_listing_charge == 1 || $career_site_listings_only == 1) {
+                        $listing_data['published_on_career_page'] = 1;
                     }
 
                     $insert_record = array();
@@ -1366,30 +1367,30 @@ class Job_listings extends Public_Controller
                     }
 
                     $modifications_list = array();
-                    $job_approval_module_status                                 = get_job_approval_module_status($company_id);
-                    $employee_approval_module_status                            = 0;
+                    $job_approval_module_status = get_job_approval_module_status($company_id);
+                    $employee_approval_module_status = 0;
 
                     if ($formpost['listing_status']) {
                         if ($job_approval_module_status == 0) {
-                            $listing_data['approval_status']                        = 'approved';
-                            $listing_data['approval_status_by']                     = $logged_in_user_sid;
-                            $approval_status_change_datetime                        = date('Y-m-d H:i:s');
-                            $listing_data['approval_status_change_datetime']        = $approval_status_change_datetime;
+                            $listing_data['approval_status'] = 'approved';
+                            $listing_data['approval_status_by'] = $logged_in_user_sid;
+                            $approval_status_change_datetime = date('Y-m-d H:i:s');
+                            $listing_data['approval_status_change_datetime'] = $approval_status_change_datetime;
 
                             if (($data['sponsor_radio'] == 'no' || $myListing['approval_status'] == 'pending') && (isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && $per_job_listing_charge == 1) {
-                                $listing_data['ppj_activation_date']                = $approval_status_change_datetime;
+                                $listing_data['ppj_activation_date'] = $approval_status_change_datetime;
                             }
                         } else { // check if the creator of the job as rights to approve job
                             $employee_approval_module_status = get_job_approval_module_status($logged_in_user_sid);
 
                             if ($employee_approval_module_status == 1) { // auto approve job as employee has job approval rights
-                                $listing_data['approval_status']                    = 'approved';
-                                $listing_data['approval_status_by']                 = $logged_in_user_sid;
-                                $approval_status_change_datetime                    = date('Y-m-d H:i:s');
-                                $listing_data['approval_status_change_datetime']    = $approval_status_change_datetime;
+                                $listing_data['approval_status'] = 'approved';
+                                $listing_data['approval_status_by'] = $logged_in_user_sid;
+                                $approval_status_change_datetime = date('Y-m-d H:i:s');
+                                $listing_data['approval_status_change_datetime'] = $approval_status_change_datetime;
 
                                 if (($data['sponsor_radio'] == 'no' || $myListing['approval_status'] == 'pending') && (isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && $per_job_listing_charge == 1) {
-                                    $listing_data['ppj_activation_date']            = $approval_status_change_datetime;
+                                    $listing_data['ppj_activation_date'] = $approval_status_change_datetime;
                                 }
                             }
                         }
@@ -1471,50 +1472,50 @@ class Job_listings extends Public_Controller
             redirect('my_listings', 'refresh');
         } else {
             if ($this->session->userdata('logged_in')) {
-                $data['session']                                                = $this->session->userdata('logged_in');
-                $security_sid                                                   = $data['session']['employer_detail']['sid'];
-                $security_details                                               = db_get_access_level_details($security_sid);
-                $data['security_details']                                       = $security_details;
+                $data['session'] = $this->session->userdata('logged_in');
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
                 check_access_permissions($security_details, 'my_listings', 'clone_listing'); // Param2: Redirect URL, Param3: Function Name
-                $data['title']                                                  = 'Clone Listing';
-                $company_id                                                     = $data['session']['company_detail']['sid'];
-                $logged_in_user_sid                                             = $data['session']['employer_detail']['sid'];
-                $job_listing_template_group                                     = $data['session']['company_detail']['job_listing_template_group'];
-                $data['logged_in_user_sid']                                     = $logged_in_user_sid;
-                $current_employees                                              = $this->dashboard_model->GetAllUsersNew($company_id);
-                $data['current_employees']                                      = $current_employees;
+                $data['title'] = 'Clone Listing';
+                $company_id = $data['session']['company_detail']['sid'];
+                $logged_in_user_sid = $data['session']['employer_detail']['sid'];
+                $job_listing_template_group = $data['session']['company_detail']['job_listing_template_group'];
+                $data['logged_in_user_sid'] = $logged_in_user_sid;
+                $current_employees = $this->dashboard_model->GetAllUsersNew($company_id);
+                $data['current_employees'] = $current_employees;
 
                 if (empty($job_listing_template_group)) {
-                    $job_listing_template_group                                 = 1;
+                    $job_listing_template_group = 1;
                 }
 
-                $templateGroup                                                  = $this->dashboard_model->GetJobListingTemplateGroupDetail($job_listing_template_group);
-                $availableTemplatesIds                                          = null;
+                $templateGroup = $this->dashboard_model->GetJobListingTemplateGroupDetail($job_listing_template_group);
+                $availableTemplatesIds = null;
 
                 if (!empty($templateGroup[0]['templates'])) {
-                    $availableTemplatesIds                                      = unserialize($templateGroup[0]['templates']);
+                    $availableTemplatesIds = unserialize($templateGroup[0]['templates']);
                 } else {
-                    $availableTemplatesIds                                      = array();
+                    $availableTemplatesIds = array();
                 }
 
                 if ($availableTemplatesIds == null || empty($availableTemplatesIds)) {
-                    $availableTemplatesIds                                      = array();
+                    $availableTemplatesIds = array();
                 }
 
-                $templates                                                      = array();
+                $templates = array();
 
                 foreach ($availableTemplatesIds as $templateId) {
-                    $template                                                   = $this->dashboard_model->GetJobListingTemplateDetail($templateId);
+                    $template = $this->dashboard_model->GetJobListingTemplateDetail($templateId);
 
                     if (!empty($template)) {
-                        $templates[]                                            = $template[0];
+                        $templates[] = $template[0];
                     }
                 }
 
                 if (intval($job_listing_template_group) == 0) {
-                    $data['templates']                                          = array();
+                    $data['templates'] = array();
                 } else {
-                    $data['templates']                                          = $templates;
+                    $data['templates'] = $templates;
                 } // templates code end
 
                 $config = array(
@@ -1556,7 +1557,7 @@ class Job_listings extends Public_Controller
                     array(
                         'field' => 'Location_ZipCode',
                         'label' => 'ZipCode',
-                        'rules' => 'numeric'
+                        'rules' => 'alpha_numeric'
                     ),
                     array(
                         'field' => 'JobCategory[]',
@@ -1568,91 +1569,91 @@ class Job_listings extends Public_Controller
                 $this->form_validation->set_error_delimiters('<label class="error">', '</label>');
                 $this->form_validation->set_rules($config);
 
-                $ppjl_charge                                                    = $this->dashboard_model->get_pay_per_job_status($company_id);
-                $career_site_listings_only                                      = $ppjl_charge['career_site_listings_only'];
-                $per_job_listing_charge                                         = $ppjl_charge['per_job_listing_charge'];
-                $data['per_job_listing_charge']                                 = $per_job_listing_charge;
-                $data['career_site_listings_only']                              = $career_site_listings_only;
-                $allow_create_job                                               = true;
+                $ppjl_charge = $this->dashboard_model->get_pay_per_job_status($company_id);
+                $career_site_listings_only = $ppjl_charge['career_site_listings_only'];
+                $per_job_listing_charge = $ppjl_charge['per_job_listing_charge'];
+                $data['per_job_listing_charge'] = $per_job_listing_charge;
+                $data['career_site_listings_only'] = $career_site_listings_only;
+                $allow_create_job = true;
 
                 if ($per_job_listing_charge == 1) {
-                    $allow_create_job                                               = false;
-                    $product_type                                                   = 'pay-per-job';
-                    $purchasedProducts                                              = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
-                    $data['purchasedProducts']                                      = $purchasedProducts;
-                    $i                                                          = 0;
-                    $product_ids                                                = NULL;
+                    $allow_create_job = false;
+                    $product_type = 'pay-per-job';
+                    $purchasedProducts = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
+                    $data['purchasedProducts'] = $purchasedProducts;
+                    $i = 0;
+                    $product_ids = NULL;
 
                     if (!empty($purchasedProducts)) {
                         foreach ($purchasedProducts as $product) {
-                            $product_ids[$i]                                    = $product['product_sid'];
+                            $product_ids[$i] = $product['product_sid'];
                             $i++;
                         }
                     }
 
-                    $notPurchasedProducts                                       = $this->dashboard_model->notPurchasedProducts($product_ids, $product_type);
-                    $data['notPurchasedProducts']                               = $notPurchasedProducts;
+                    $notPurchasedProducts = $this->dashboard_model->notPurchasedProducts($product_ids, $product_type);
+                    $data['notPurchasedProducts'] = $notPurchasedProducts;
 
                     if (!empty($purchasedProducts)) {
-                        $allow_create_job                                           = true;
+                        $allow_create_job = true;
                     }
                 }
 
                 if ($this->form_validation->run() == FALSE) { //calling Model function
-                    $id                                                         = $this->uri->segment(2);
-                    $myListing                                                  = $this->dashboard_model->get_listing($id, $company_id);
-                    $visible_to                                                 = $this->job_listings_visibility_model->GetEmployerIds($id);
+                    $id = $this->uri->segment(2);
+                    $myListing = $this->dashboard_model->get_listing($id, $company_id);
+                    $visible_to = $this->job_listings_visibility_model->GetEmployerIds($id);
 
                     if (!empty($visible_to)) {
-                        $data['employeesArray']                                 = $visible_to;
+                        $data['employeesArray'] = $visible_to;
                     } else {
-                        $data['employeesArray']                                 = array($logged_in_user_sid);
+                        $data['employeesArray'] = array($logged_in_user_sid);
                     }
 
                     $salaryBreakDown = breakSalary($myListing["Salary"], $myListing["SalaryType"]);
                     $myListing["minSalary"] = $salaryBreakDown["min"];
                     $myListing["maxSalary"] = $salaryBreakDown["max"];
 
-                    $data['listing']                                            = $myListing;
+                    $data['listing'] = $myListing;
 
                     if (empty($data['listing'])) {
                         $this->session->set_flashdata('message', '<b>Error:</b> You are not owner of this job!');
                         redirect('my_listings', 'refresh');
                     }
 
-                    $data_countries                                             = db_get_active_countries();
+                    $data_countries = db_get_active_countries();
 
                     foreach ($data_countries as $value) {
-                        $data_states[$value['sid']]                             = db_get_active_states($value['sid']);
+                        $data_states[$value['sid']] = db_get_active_states($value['sid']);
                     }
 
-                    $data['active_countries']                                   = $data_countries;
-                    $data['active_states']                                      = $data_states;
-                    $data_states_encode                                         = htmlentities(json_encode($data_states));
-                    $data['states']                                             = $data_states_encode;
-                    $assigned_industry                                          = $this->dashboard_model->check_is_assigned_industry($company_id);
+                    $data['active_countries'] = $data_countries;
+                    $data['active_states'] = $data_states;
+                    $data_states_encode = htmlentities(json_encode($data_states));
+                    $data['states'] = $data_states_encode;
+                    $assigned_industry = $this->dashboard_model->check_is_assigned_industry($company_id);
 
                     if ($assigned_industry == false) {
-                        $data['data_list']                                      = $this->multi_table_data->getJobCategory(); //job category list from DB
+                        $data['data_list'] = $this->multi_table_data->getJobCategory(); //job category list from DB
                     } else {
-                        $data['data_list']                                      = $this->dashboard_model->get_industry_specific_categories($company_id, $logged_in_user_sid, $assigned_industry);
+                        $data['data_list'] = $this->dashboard_model->get_industry_specific_categories($company_id, $logged_in_user_sid, $assigned_industry);
                     }
 
-                    $job_title_special_chars                                    = $this->dashboard_model->get_special_chars_status($company_id);
-                    $data['job_title_special_chars']                            = $job_title_special_chars;
-                    $data['screening_questions']                                = $this->multi_table_data->getScreeningQuestionnaires($company_id);  //Questionaier
-                    $interview_questionnaires                                   = $this->dashboard_model->get_interview_questionnaires($company_id); //Interview Questionnaires
-                    $data['interview_questionnaires']                           = $interview_questionnaires;
-                    $all_job_logos                                              = $this->dashboard_model->get_all_job_logos($company_id);
-                    $data['all_job_logos']                                      = $all_job_logos;
+                    $job_title_special_chars = $this->dashboard_model->get_special_chars_status($company_id);
+                    $data['job_title_special_chars'] = $job_title_special_chars;
+                    $data['screening_questions'] = $this->multi_table_data->getScreeningQuestionnaires($company_id);  //Questionaier
+                    $interview_questionnaires = $this->dashboard_model->get_interview_questionnaires($company_id); //Interview Questionnaires
+                    $data['interview_questionnaires'] = $interview_questionnaires;
+                    $all_job_logos = $this->dashboard_model->get_all_job_logos($company_id);
+                    $data['all_job_logos'] = $all_job_logos;
 
                     $this->load->view('main/header', $data);
                     $this->load->view('manage_employer/clone_listing_new');
                     $this->load->view('main/footer');
                 } else {
-                    $formpost                                                   = $this->input->post(NULL, TRUE);
-                    $formpost['JobDescription']                                 = $this->input->post('JobDescription', false);
-                    $formpost['JobRequirements']                                = $this->input->post('JobRequirements', false);
+                    $formpost = $this->input->post(NULL, TRUE);
+                    $formpost['JobDescription'] = $this->input->post('JobDescription', false);
+                    $formpost['JobRequirements'] = $this->input->post('JobRequirements', false);
 
                     if (!isset($formpost['interview_questionnaire_sid']) || $formpost['interview_questionnaire_sid'] == '') {
                         $formpost['interview_questionnaire_sid'] = 0;
@@ -1662,33 +1663,33 @@ class Job_listings extends Public_Controller
                         $formpost['questionnaire_sid'] = 0;
                     }
 
-                    $listing_data                                               = array();
+                    $listing_data = array();
 
                     if ($per_job_listing_charge == 1) {
-                        $per_job_listing_error_flag                             = false;
+                        $per_job_listing_error_flag = false;
 
                         if ((isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && isset($formpost['pay_per_job_details']) && $formpost['pay_per_job_details'] != '') { // verify that product is purchased otherwise don't create error
-                            $ppj_product_id                                     = $formpost['pay_per_job_details'];
+                            $ppj_product_id = $formpost['pay_per_job_details'];
 
                             if ($ppj_product_id > 0) { //verify that company has stock to purchase the product
-                                $productCounter                                 = $this->dashboard_model->checkPurchasedProductQty(array($ppj_product_id), $company_id, 'pay-per-job'); // it is required to check QTY
+                                $productCounter = $this->dashboard_model->checkPurchasedProductQty(array($ppj_product_id), $company_id, 'pay-per-job'); // it is required to check QTY
 
                                 if (!empty($productCounter)) {
-                                    $ppj_expiry_days                            = $productCounter[0]['no_of_days'];
-                                    $ppj_remaining_qty                          = $productCounter[0]['remaining_qty'];
-                                    $ppj_product_name                           = $productCounter[0]['name'];
+                                    $ppj_expiry_days = $productCounter[0]['no_of_days'];
+                                    $ppj_remaining_qty = $productCounter[0]['remaining_qty'];
+                                    $ppj_product_name = $productCounter[0]['name'];
 
                                     if ($ppj_remaining_qty > 0) { // allow job creation
-                                        $listing_data['ppj_product_id']         = $ppj_product_id;
-                                        $listing_data['ppj_expiry_days']        = $ppj_expiry_days;
+                                        $listing_data['ppj_product_id'] = $ppj_product_id;
+                                        $listing_data['ppj_expiry_days'] = $ppj_expiry_days;
                                     } else { // Do not have the quatity to publish the job
-                                        $per_job_listing_error_flag             = true;
+                                        $per_job_listing_error_flag = true;
                                     }
                                 } else { // product not found error!
-                                    $per_job_listing_error_flag                 = true;
+                                    $per_job_listing_error_flag = true;
                                 }
                             } else { // Product not purchased error
-                                $per_job_listing_error_flag                     = true;
+                                $per_job_listing_error_flag = true;
                             }
                             // Need forced expiration days. No of days from the product will be stored in it. it will check activation date then force activation will be implemented
                         }
@@ -1729,26 +1730,26 @@ class Job_listings extends Public_Controller
                             $key != 'sponsor_this_job'
                         ) { // exclude these values from array
                             if (is_array($value)) {
-                                $value                                          = implode(',', $value);
+                                $value = implode(',', $value);
                             }
 
-                            $listing_data[$key]                                 = $value;
+                            $listing_data[$key] = $value;
                         }
                     }
 
                     if (!empty($formpost['expiration_date'])) {
-                        $expiration_date                                        = DateTime::createFromFormat('m/d/Y', $formpost['expiration_date'])->format('Y-m-d H:i:s');
-                        $listing_data['expiration_date']                        = $expiration_date;
+                        $expiration_date = DateTime::createFromFormat('m/d/Y', $formpost['expiration_date'])->format('Y-m-d H:i:s');
+                        $listing_data['expiration_date'] = $expiration_date;
                     }
 
-                    $listing_data['JobDescription']                             = html_entity_decode($formpost['JobDescription']);
+                    $listing_data['JobDescription'] = html_entity_decode($formpost['JobDescription']);
 
                     if (!empty($formpost['JobRequirements']) && $formpost['JobRequirements'] != "") {
-                        $listing_data['JobRequirements']                        = html_entity_decode($formpost['JobRequirements']);
+                        $listing_data['JobRequirements'] = html_entity_decode($formpost['JobRequirements']);
                     }
 
-                    $video_source                                               = $this->input->post('video_source');
-                    $video_id                                                   = '';
+                    $video_source = $this->input->post('video_source');
+                    $video_id = '';
 
                     if ($video_source != 'no_video') {
                         if (isset($_FILES['upload_video']) && !empty($_FILES['upload_video']['name'])) {
@@ -1792,88 +1793,88 @@ class Job_listings extends Public_Controller
                     }
 
                     if ($video_id != '') {
-                        $listing_data['YouTube_Video']                          = $video_id;
+                        $listing_data['YouTube_Video'] = $video_id;
                     } else {
-                        $listing_data['YouTube_Video']                          = NULL;
+                        $listing_data['YouTube_Video'] = NULL;
                     }
 
-                    $listing_data['video_source']                               = $video_source;
+                    $listing_data['video_source'] = $video_source;
 
                     if (!empty($formpost['listing_status']) && $formpost['listing_status'] != '') {
                         if (intval($formpost['listing_status']) == 1) {
-                            $listing_data['active']                             = 1;
+                            $listing_data['active'] = 1;
                         } else {
-                            $listing_data['active']                             = 0;
+                            $listing_data['active'] = 0;
                         }
                     } else {
-                        $listing_data['active']                                 = 0;
+                        $listing_data['active'] = 0;
                     }
 
                     if (isset($formpost['published_on_career_page']) && !empty($formpost['published_on_career_page']) && $formpost['published_on_career_page'] != '') {
                         if (intval($formpost['published_on_career_page']) == 1) {
-                            $listing_data['published_on_career_page']           = 1;
+                            $listing_data['published_on_career_page'] = 1;
                         } else {
-                            $listing_data['published_on_career_page']           = 0;
+                            $listing_data['published_on_career_page'] = 0;
                         }
                     } else {
-                        $listing_data['published_on_career_page']               = 0;
+                        $listing_data['published_on_career_page'] = 0;
                     }
 
-                    if ($per_job_listing_charge == 1 || $career_site_listings_only  == 1) {
-                        $listing_data['published_on_career_page']               = 1;
+                    if ($per_job_listing_charge == 1 || $career_site_listings_only == 1) {
+                        $listing_data['published_on_career_page'] = 1;
                     }
 
-                    $listing_data['user_sid']                                   = $company_id;
+                    $listing_data['user_sid'] = $company_id;
 
                     if (isset($_FILES['pictures']) && $_FILES['pictures']['name'] != '') { //uploading image to AWS
-                        $uploaded_file_name                                     = upload_file_to_aws('pictures', $company_id, 'listing_logo');
+                        $uploaded_file_name = upload_file_to_aws('pictures', $company_id, 'listing_logo');
 
                         if ($uploaded_file_name != 'error') {
-                            $listing_data['pictures']                           = $uploaded_file_name;
+                            $listing_data['pictures'] = $uploaded_file_name;
                         }
                     } else {
                         if ($this->input->post('delete_image') == "0") {
                             if ($formpost['select_from_logo'] == $formpost['old_picture']) {
-                                $listing_data['pictures']                       = $formpost['old_picture'];
+                                $listing_data['pictures'] = $formpost['old_picture'];
                             } else if ($formpost['select_from_logo'] != 'no_logo' && ($formpost['select_from_logo'] != $formpost['old_picture'])) {
-                                $listing_data['pictures']                       = $formpost['select_from_logo'];
+                                $listing_data['pictures'] = $formpost['select_from_logo'];
                             } else if ($formpost['select_from_logo'] == 'no_logo') {
-                                $listing_data['pictures']                       = NULL;
+                                $listing_data['pictures'] = NULL;
                             }
                         } else {
-                            $listing_data['pictures']                           = NULL;
+                            $listing_data['pictures'] = NULL;
                         }
                     }
                     //Now call dashboard_model function to insert data in DB
-                    $listing_data['job_creater_sid']                            = $logged_in_user_sid;
-                    $job_approval_module_status                                 = get_job_approval_module_status($company_id);
-                    $employee_approval_module_status                            = 0;
+                    $listing_data['job_creater_sid'] = $logged_in_user_sid;
+                    $job_approval_module_status = get_job_approval_module_status($company_id);
+                    $employee_approval_module_status = 0;
 
                     if ($job_approval_module_status == 0) {
-                        $listing_data['approval_status']                        = 'approved';
-                        $listing_data['approval_status_by']                     = $logged_in_user_sid;
-                        $approval_status_change_datetime                        = date('Y-m-d H:i:s');
-                        $listing_data['approval_status_change_datetime']        = $approval_status_change_datetime;
-                        $listing_data['activation_date']                        = date('Y-m-d H:i:s');
+                        $listing_data['approval_status'] = 'approved';
+                        $listing_data['approval_status_by'] = $logged_in_user_sid;
+                        $approval_status_change_datetime = date('Y-m-d H:i:s');
+                        $listing_data['approval_status_change_datetime'] = $approval_status_change_datetime;
+                        $listing_data['activation_date'] = date('Y-m-d H:i:s');
 
                         if ((isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && $per_job_listing_charge == 1) {
-                            $listing_data['ppj_activation_date']                = $approval_status_change_datetime;
+                            $listing_data['ppj_activation_date'] = $approval_status_change_datetime;
                         }
                     } else { // check if the creator of the job as rights to approve job
                         $employee_approval_module_status = get_job_approval_module_status($logged_in_user_sid);
 
                         if ($employee_approval_module_status == 1) { // auto approve job as employee has job approval rights
-                            $listing_data['approval_status']                    = 'approved';
-                            $listing_data['approval_status_by']                 = $logged_in_user_sid;
-                            $approval_status_change_datetime                    = date('Y-m-d H:i:s');
-                            $listing_data['approval_status_change_datetime']    = $approval_status_change_datetime;
-                            $listing_data['activation_date']                    = date('Y-m-d H:i:s');
+                            $listing_data['approval_status'] = 'approved';
+                            $listing_data['approval_status_by'] = $logged_in_user_sid;
+                            $approval_status_change_datetime = date('Y-m-d H:i:s');
+                            $listing_data['approval_status_change_datetime'] = $approval_status_change_datetime;
+                            $listing_data['activation_date'] = date('Y-m-d H:i:s');
 
                             if ((isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && $per_job_listing_charge == 1) {
-                                $listing_data['ppj_activation_date']            = $approval_status_change_datetime;
+                                $listing_data['ppj_activation_date'] = $approval_status_change_datetime;
                             }
                         } else {
-                            $listing_data['approval_status']                    = 'pending';
+                            $listing_data['approval_status'] = 'pending';
                         }
                     }
 
@@ -1883,7 +1884,7 @@ class Job_listings extends Public_Controller
                         $formpost["maxSalary"],
                     );
 
-                    $jobId                                                      = $this->dashboard_model->add_listing($listing_data);
+                    $jobId = $this->dashboard_model->add_listing($listing_data);
                     $this->load->model("Job_sync_api_model");
                     $this->Job_sync_api_model->checkAndAddJob($jobId);
                     if ($listing_data["organic_feed"] == 1) {
@@ -1902,9 +1903,9 @@ class Job_listings extends Public_Controller
                     }
 
                     if (!empty($formpost['employees'])) { //Handle Visibility to Employees Start
-                        $employeesArray                                         = $formpost['employees'];
+                        $employeesArray = $formpost['employees'];
                     } else {
-                        $employeesArray                                         = array();
+                        $employeesArray = array();
                         array_push($employeesArray, $logged_in_user_sid);
                     }
 
@@ -2279,45 +2280,45 @@ class Job_listings extends Public_Controller
     { // pay per job modifications at advertise level // Hassan Working Area
         if ($this->session->has_userdata('logged_in')) { //cheking the user is login
             if ($jobId != NULL) { // checking the job id Exists
-                $data['session']                                                = $this->session->userdata('logged_in');
-                $security_sid                                                   = $data['session']['employer_detail']['sid'];
-                $security_details                                               = db_get_access_level_details($security_sid);
-                $data['security_details']                                       = $security_details;
+                $data['session'] = $this->session->userdata('logged_in');
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
                 check_access_permissions($security_details, 'my_listings', 'add_listing_advertise'); // Param2: Redirect URL, Param3: Function Name
-                $company_id                                                     = $data['session']['company_detail']['sid'];
-                $employer_sid                                                   = $data['session']['employer_detail']['sid'];
-                $jobCheck                                                       = $this->dashboard_model->checkJobId($company_id, $jobId);
-                $ppjl_charge                                                    = $this->dashboard_model->get_pay_per_job_status($company_id);
-                $career_site_listings_only                                      = $ppjl_charge['career_site_listings_only'];
-                $per_job_listing_charge                                         = $ppjl_charge['per_job_listing_charge'];
-                $data['per_job_listing_charge']                                 = $per_job_listing_charge;
-                $data['career_site_listings_only']                              = $career_site_listings_only;
+                $company_id = $data['session']['company_detail']['sid'];
+                $employer_sid = $data['session']['employer_detail']['sid'];
+                $jobCheck = $this->dashboard_model->checkJobId($company_id, $jobId);
+                $ppjl_charge = $this->dashboard_model->get_pay_per_job_status($company_id);
+                $career_site_listings_only = $ppjl_charge['career_site_listings_only'];
+                $per_job_listing_charge = $ppjl_charge['per_job_listing_charge'];
+                $data['per_job_listing_charge'] = $per_job_listing_charge;
+                $data['career_site_listings_only'] = $career_site_listings_only;
 
                 if ($per_job_listing_charge == 1 && $career_site_listings_only == 0) {
-                    $enable_advertise                                           = TRUE;
-                    $product_type                                                = 'pay-per-job';
+                    $enable_advertise = TRUE;
+                    $product_type = 'pay-per-job';
                 } else if ($per_job_listing_charge == 0 && $career_site_listings_only == 0) {
-                    $enable_advertise                                           = TRUE;
-                    $product_type                                               = 'job-board';
+                    $enable_advertise = TRUE;
+                    $product_type = 'job-board';
                 } else {
-                    $enable_advertise                                           = FALSE;
+                    $enable_advertise = FALSE;
                 }
 
-                $data['enable_advertise']                                       = false;
+                $data['enable_advertise'] = false;
 
                 if ($jobCheck == 1 && $enable_advertise) { //cart checkout functionality starts
                     $formpost = $this->input->post(NULL, TRUE);
 
                     if (isset($formpost['action']) && $formpost['action'] == 'cart_checkout') { //inserting data in Order Table Starts
-                        $orderData['total']                                     = $formpost['total'];
-                        $orderData['order_status']                              = 'paid';
-                        $orderData['employer_sid']                              = $employer_sid;
-                        $orderData['purchased_date']                            = date('Y-m-d H:i:s');
-                        $orderData['company_sid']                               = $company_id;
-                        $product_ids                                            = $formpost['product_id'];
-                        $jobData['job_sid']                                     = $jobId;
-                        $jobData['employer_sid']                                = $employer_sid;
-                        $jobData['purchased_date']                              = date('Y-m-d H:i:s');
+                        $orderData['total'] = $formpost['total'];
+                        $orderData['order_status'] = 'paid';
+                        $orderData['employer_sid'] = $employer_sid;
+                        $orderData['purchased_date'] = date('Y-m-d H:i:s');
+                        $orderData['company_sid'] = $company_id;
+                        $product_ids = $formpost['product_id'];
+                        $jobData['job_sid'] = $jobId;
+                        $jobData['employer_sid'] = $employer_sid;
+                        $jobData['purchased_date'] = date('Y-m-d H:i:s');
 
                         foreach ($product_ids as $productId) {
                             $result = $this->dashboard_model->productDetail($productId);
@@ -2331,55 +2332,55 @@ class Job_listings extends Public_Controller
                         }
                     }
 
-                    $data['title']                                              = 'Add listing advertise';
-                    $data['job_sid']                                            = $jobId;
-                    $jobResult                                                  = $this->dashboard_model->getJobDetail($jobId);
-                    $data['jobDetail']                                          = $jobResult[0];
-                    $data['purchasedProducts']                                  = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
+                    $data['title'] = 'Add listing advertise';
+                    $data['job_sid'] = $jobId;
+                    $jobResult = $this->dashboard_model->getJobDetail($jobId);
+                    $data['jobDetail'] = $jobResult[0];
+                    $data['purchasedProducts'] = $this->dashboard_model->getPurchasedProducts($company_id, $product_type);
                     //checking if job is already being posted on a particular job board Starts
-                    $data['activeProductsOnJob']                                = $this->dashboard_model->active_products($jobId);
+                    $data['activeProductsOnJob'] = $this->dashboard_model->active_products($jobId);
                     //checking if job is already being posted on a particular job board End
                     //Check Products Already in Queue
-                    $products_pending_approval                                  = $this->dashboard_model->get_feed_activation_requests($company_id, $jobId);
-                    $pending_approval_products                                  = array();
+                    $products_pending_approval = $this->dashboard_model->get_feed_activation_requests($company_id, $jobId);
+                    $pending_approval_products = array();
 
                     foreach ($products_pending_approval as $product) {
-                        $product_brand                                          = $product['product_brand'];
-                        $productIdOfSameBrands                                  = $this->dashboard_model->getProductsOfSameBrand($product_brand);  //getting all products of same barnd
+                        $product_brand = $product['product_brand'];
+                        $productIdOfSameBrands = $this->dashboard_model->getProductsOfSameBrand($product_brand);  //getting all products of same barnd
 
                         foreach ($productIdOfSameBrands as $sameBrand) {
-                            $pending_approval_products[]                        = $sameBrand['sid'];
+                            $pending_approval_products[] = $sameBrand['sid'];
                         }
                     }
 
-                    $data['pending_approval_products']                          = $pending_approval_products;
-                    $i                                                          = 0;
-                    $purchasedProductArray[$i]                                  = '';
+                    $data['pending_approval_products'] = $pending_approval_products;
+                    $i = 0;
+                    $purchasedProductArray[$i] = '';
 
                     foreach ($data['activeProductsOnJob'] as $product) {
-                        $productBrand                                           = $this->dashboard_model->getProductBrand($product['product_sid']); //getting product brand
-                        $productIdOfSameBrands                                  = $this->dashboard_model->getProductsOfSameBrand($productBrand);  //getting all products of same barnd
+                        $productBrand = $this->dashboard_model->getProductBrand($product['product_sid']); //getting product brand
+                        $productIdOfSameBrands = $this->dashboard_model->getProductsOfSameBrand($productBrand);  //getting all products of same barnd
 
                         foreach ($productIdOfSameBrands as $sameProductBrand) {
-                            $purchasedProductArray[$i]                          = $sameProductBrand['sid'];
+                            $purchasedProductArray[$i] = $sameProductBrand['sid'];
                             $i++;
                         }
                     }
 
-                    $data['purchasedProductArray']                              = $purchasedProductArray;
-                    $i                                                          = 0;
-                    $product_ids                                                = NULL;
+                    $data['purchasedProductArray'] = $purchasedProductArray;
+                    $i = 0;
+                    $product_ids = NULL;
 
                     if (!empty($data['purchasedProducts'])) {
                         foreach ($data['purchasedProducts'] as $product) {
-                            $product_ids[$i]                                    = $product['product_sid'];
+                            $product_ids[$i] = $product['product_sid'];
                             $i++;
                         }
                     }
 
-                    $data['notPurchasedProducts']                               = $this->dashboard_model->notPurchasedProducts($product_ids, $product_type);
-                    $data['job_sid']                                            = $jobId;
-                    $data['employer_sid']                                       = $employer_sid;
+                    $data['notPurchasedProducts'] = $this->dashboard_model->notPurchasedProducts($product_ids, $product_type);
+                    $data['job_sid'] = $jobId;
+                    $data['employer_sid'] = $employer_sid;
                     $this->load->view('main/header', $data);
                     $this->load->view('manage_employer/add_listing_advertise');
                     $this->load->view('main/footer');
@@ -2914,14 +2915,16 @@ class Job_listings extends Public_Controller
         $deleteXmlJob = FALSE;
         // Organic is 0 then delete job row
         if (
-            (int)$formpost['organic_feed'] === 0 ||
+            (int) $formpost['organic_feed'] === 0 ||
             !$this->job_listings_visibility_model->isMainCompany($jobSid)
-        ) $deleteXmlJob = TRUE;
+        )
+            $deleteXmlJob = TRUE;
         //
         $uid = $jobSid;
         $companySid = $this->job_listings_visibility_model->getCompanyIdByJobSid($jobSid);
         // Check for Approval Job Management check
-        if ((int)$this->job_listings_visibility_model->isApprovalManagementActive($companySid) === 1 && (int)$this->job_listings_visibility_model->isJobApproved($jobSid) != 1) $deleteXmlJob = TRUE;
+        if ((int) $this->job_listings_visibility_model->isApprovalManagementActive($companySid) === 1 && (int) $this->job_listings_visibility_model->isJobApproved($jobSid) != 1)
+            $deleteXmlJob = TRUE;
         // Delete the job from XML
         if ($deleteXmlJob) {
             $this->job_listings_visibility_model->deleteXMlJobById($jobSid);
@@ -2932,7 +2935,8 @@ class Job_listings extends Public_Controller
         //
         $result = $this->job_listings_visibility_model->getUidOfJob($companySid, $jobSid);
         //
-        if ($result === 0) $uid = $jobSid;
+        if ($result === 0)
+            $uid = $jobSid;
         else {
             $uid = $result['uid'];
             $formpost['publish_date'] = $result['publish_date'];
@@ -2969,7 +2973,7 @@ class Job_listings extends Public_Controller
     ) {
         // Check if product is active
         $is_product_purchased = $this->job_listings_visibility_model->isPurchasedJob($jobSid, $this->indeedProductIds);
-        if ((int)$is_product_purchased === 0) {
+        if ((int) $is_product_purchased === 0) {
             // Update xml job indeed check to 0
             $this->job_listings_visibility_model->updateXmlJob(
                 array('is_indeed_job' => 0),
@@ -3024,7 +3028,7 @@ class Job_listings extends Public_Controller
     ) {
         // Check if product is active
         $is_product_purchased = $this->job_listings_visibility_model->isPurchasedJob($jobSid, $this->ziprecruiterProductIds);
-        if ((int)$is_product_purchased === 0) {
+        if ((int) $is_product_purchased === 0) {
             // Update xml job indeed check to 0
             $this->job_listings_visibility_model->updateXmlJob(
                 array('is_ziprecruiter_job' => 0),
@@ -3065,12 +3069,15 @@ class Job_listings extends Public_Controller
     function handler()
     {
         //
-        if (!$this->input->is_ajax_request()) $this->resp();
+        if (!$this->input->is_ajax_request())
+            $this->resp();
         //
         $formpost = $this->input->post(NULL, TRUE);
         //
-        if (!sizeof($formpost)) $this->resp();
-        if (!isset($formpost['action'])) $this->resp();
+        if (!sizeof($formpost))
+            $this->resp();
+        if (!isset($formpost['action']))
+            $this->resp();
 
         // _e($formpost, true);
         //
