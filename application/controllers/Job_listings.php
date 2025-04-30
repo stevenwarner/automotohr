@@ -128,7 +128,7 @@ class Job_listings extends Public_Controller
                 array(
                     'field' => 'Location_ZipCode',
                     'label' => 'ZipCode',
-                    'rules' => 'alpha_numeric'
+                    'rules' => 'regex_match[/^[a-zA-Z0-9 ]+$/]'
                 ),
                 array(
                     'field' => 'JobCategory[]',
@@ -970,7 +970,7 @@ class Job_listings extends Public_Controller
                     array(
                         'field' => 'Location_ZipCode',
                         'label' => 'ZipCode',
-                        'rules' => 'alpha_numeric'
+                        'rules' => 'regex_match[/^[a-zA-Z0-9 ]+$/]'
                     ),
                     array(
                         'field' => 'JobCategory[]',
@@ -1557,7 +1557,7 @@ class Job_listings extends Public_Controller
                     array(
                         'field' => 'Location_ZipCode',
                         'label' => 'ZipCode',
-                        'rules' => 'alpha_numeric'
+                        'rules' => 'regex_match[/^[a-zA-Z0-9 ]+$/]'
                     ),
                     array(
                         'field' => 'JobCategory[]',

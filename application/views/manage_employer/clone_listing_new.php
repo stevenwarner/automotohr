@@ -143,7 +143,8 @@
                                                                 data-requirements="<?php echo $template['requirements'] ?>"
                                                                 value="<?php echo $template['sid'] ?>"
                                                                 style="background-color:#f7f7f7">
-                                                                <?php echo $template['title'] ?></option>
+                                                                <?php echo $template['title'] ?>
+                                                            </option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
@@ -173,7 +174,8 @@
                                                     Range be added to all jobs that you post.<br> Please Add a Salary or
                                                     Salary Range here. <a href="#" class=" jsSalaryInfo"
                                                         style="text-decoration: underline;">Click Here for More
-                                                        Details</a></strong></p></label>
+                                                        Details</a></strong>
+                                            </p></label>
                                         </li>
 
 
@@ -245,7 +247,8 @@
                                                                     <?php $default_selected = ($questionnaire['sid'] == $selected_questionnaire ? true : false); ?>
                                                                     <option <?php echo set_select('interview_questionnaire_sid', $questionnaire['sid'], $default_selected); ?>
                                                                         value="<?php echo $questionnaire['sid']; ?>">
-                                                                        <?php echo $questionnaire['title']; ?></option>
+                                                                        <?php echo $questionnaire['title']; ?>
+                                                                    </option>
                                                                 <?php } ?>
                                                             </optgroup>
                                                         <?php } ?>
@@ -255,7 +258,8 @@
                                                                     <?php $default_selected = ($questionnaire['sid'] == $selected_questionnaire ? true : false); ?>
                                                                     <option <?php echo set_select('interview_questionnaire_sid', $questionnaire['sid'], $default_selected); ?>
                                                                         value="<?php echo $questionnaire['sid']; ?>">
-                                                                        <?php echo $questionnaire['title']; ?></option>
+                                                                        <?php echo $questionnaire['title']; ?>
+                                                                    </option>
                                                                 <?php } ?>
                                                             </optgroup>
                                                         <?php } ?>
@@ -279,7 +283,8 @@
                                                         $default_selected = ($job_logo['pictures'] == $selected_logo ? ' selected="selected"' : ''); ?>
                                                         <option value="<?php echo $job_logo['pictures']; ?>"
                                                             data-thumbnail="<?php echo AWS_S3_BUCKET_URL . $job_logo['pictures']; ?>">
-                                                            <?php echo $key; ?></option>
+                                                            <?php echo $key; ?>
+                                                        </option>
                                                     <?php } ?>
                                                 <?php } ?>
                                             </select>
@@ -541,9 +546,11 @@
                                                                         class="product-checkbox"
                                                                         value="<?php echo $product['product_sid']; ?>" type="radio" />
                                                                     <p class="remaining-qty num-of-days">No of Days:
-                                                                    <?php echo $product['no_of_days']; ?></p>
+                                                                    <?php echo $product['no_of_days']; ?>
+                                                                    </p>
                                                                     <p class="remaining-qty">Remaining Qty:
-                                                                    <?php echo $product['remaining_qty']; ?></p>
+                                                                    <?php echo $product['remaining_qty']; ?>
+                                                                    </p>
                                                                     <h2 class="post-title"><?php echo $product['name']; ?></h2>
                                                                     <figure><img
                                                                             src="<?php echo $product['product_image'] != NULL ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>"
@@ -569,7 +576,8 @@
                                                         foreach ($notPurchasedProducts as $product) { ?>
                                                                 <article class="purchased-product">
                                                                     <p class="remaining-qty num-of-days">No of Days:
-                                                                    <?php echo $product['expiry_days']; ?></p>
+                                                                    <?php echo $product['expiry_days']; ?>
+                                                                    </p>
                                                                     <p class="remaining-qty">Purchased Qty: 0</p>
                                                                     <h2 class="post-title"><?php echo $product['name']; ?></h2>
                                                                     <figure><img
@@ -722,7 +730,8 @@
                                                                                             <?php for ($i = $current_year; $i <= $current_year + 10; $i++) { ?>
                                                                                                     <option
                                                                                                         value="<?php echo $i; ?>">
-                                                                                                    <?php echo $i; ?></option>
+                                                                                                    <?php echo $i; ?>
+                                                                                                    </option>
                                                                                             <?php } ?>
                                                                                             </select>
                                                                                         </div>
@@ -957,7 +966,7 @@
                     },
                     Location_ZipCode: {
                         required: true,
-                        pattern: /^[0-9a-zA-Z\-]+$/
+                        pattern: /^[0-9a-zA-Z\- ]+$/
                     }
                 },
                 messages: {
@@ -1303,7 +1312,7 @@
                     pattern: /^[a-zA-Z0-9\- ]+$/
                 },
                 Location_ZipCode: {
-                    pattern: /^[0-9a-zA-Z\-]+$/
+                    pattern: /^[0-9a-zA-Z\- ]+$/
                 }
                 //                salary: {
                 //                    pattern: /^[0-9\-]+$/

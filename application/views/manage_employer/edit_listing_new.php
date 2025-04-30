@@ -1471,7 +1471,7 @@
                 },
                 Location_ZipCode: {
                     required: true,
-                    pattern: /^[0-9a-zA-Z\-]+$/
+                    pattern: /^[0-9a-zA-Z\- ]+$/
                 }
             },
             messages: {
@@ -1812,7 +1812,7 @@
                     pattern: /^[a-zA-Z0-9\- ]+$/
                 },
                 Location_ZipCode: {
-                    pattern: /^[0-9a-zA-Z\-]+$/
+                    pattern: /^[0-9a-zA-Z\- ]+$/
                 }
                 //                salary: {
                 //                    pattern: /^[0-9\-]+$/

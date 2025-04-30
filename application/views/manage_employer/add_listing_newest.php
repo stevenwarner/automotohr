@@ -120,7 +120,8 @@
                                                             <?php foreach ($all_job_logos as $key => $job_logo) { ?>
                                                                 <option value="<?php echo $job_logo['pictures']; ?>"
                                                                     data-thumbnail="<?php echo AWS_S3_BUCKET_URL . $job_logo['pictures']; ?>">
-                                                                    <?php echo $key; ?></option>
+                                                                    <?php echo $key; ?>
+                                                                </option>
                                                             <?php } ?>
                                                         <?php } ?>
                                                     </select>
@@ -167,7 +168,8 @@
                                                                         <?php foreach ($interview_questionnaires['default'] as $questionnaire) { ?>
                                                                             <option <?php echo set_select('interview_questionnaire_sid', $questionnaire['sid']); ?>
                                                                                 value="<?php echo $questionnaire['sid']; ?>">
-                                                                                <?php echo $questionnaire['title']; ?></option>
+                                                                                <?php echo $questionnaire['title']; ?>
+                                                                            </option>
                                                                         <?php } ?>
                                                                     </optgroup>
                                                                 <?php } ?>
@@ -176,7 +178,8 @@
                                                                         <?php foreach ($interview_questionnaires['custom'] as $questionnaire) { ?>
                                                                             <option <?php echo set_select('interview_questionnaire_sid', $questionnaire['sid']); ?>
                                                                                 value="<?php echo $questionnaire['sid']; ?>">
-                                                                                <?php echo $questionnaire['title']; ?></option>
+                                                                                <?php echo $questionnaire['title']; ?>
+                                                                            </option>
                                                                         <?php } ?>
                                                                     </optgroup>
                                                                 <?php } ?>
@@ -255,7 +258,8 @@
                                                                     https://www.youtube.com/watch?v=XXXXXXXXXXX </div>
                                                                 <div id="Vimeo_Video_hint" class="video-link"
                                                                     style='font-style: italic; display: none'>
-                                                                    <b>e.g.</b> https://vimeo.com/XXXXXXX </div>
+                                                                    <b>e.g.</b> https://vimeo.com/XXXXXXX
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -304,7 +308,8 @@
                                                             foreach ($data_list as $data) { ?>
                                                                 <option <?php if (in_array($data['id'], $JobCategoryArray)) { ?> selected <?php } ?>
                                                                     value="<?php echo $data['id']; ?>">
-                                                                    <?php echo $data['value']; ?></option>
+                                                                    <?php echo $data['value']; ?>
+                                                                </option>
                                                             <?php } ?>
                                                         </select>
                                                     </div>
@@ -384,7 +389,8 @@
                                                                         data-description="<?php echo $template['description'] ?>"
                                                                         data-requirements="<?php echo $template['requirements'] ?>"
                                                                         value="<?php echo $template['sid'] ?>">
-                                                                        <?php echo $template['title'] ?></option>
+                                                                        <?php echo $template['title'] ?>
+                                                                    </option>
                                                                 <?php } ?>
                                                             </select>
                                                         </div>
@@ -521,9 +527,11 @@
                                                                                 value="<?php echo $product['product_sid']; ?>"
                                                                                 type="radio" />
                                                                             <p class="remaining-qty num-of-days">No of Days:
-                                                                            <?php echo $product['no_of_days']; ?></p>
+                                                                            <?php echo $product['no_of_days']; ?>
+                                                                            </p>
                                                                             <p class="remaining-qty">Remaining Qty:
-                                                                            <?php echo $product['remaining_qty']; ?></p>
+                                                                            <?php echo $product['remaining_qty']; ?>
+                                                                            </p>
                                                                             <h2 class="post-title"><?php echo $product['name']; ?></h2>
                                                                             <figure><img
                                                                                     src="<?php echo $product['product_image'] != NULL ? AWS_S3_BUCKET_URL . $product['product_image'] : AWS_S3_BUCKET_URL . 'default_pic-ySWxT.jpg'; ?>"
@@ -551,7 +559,8 @@
                                                                 foreach ($notPurchasedProducts as $product) { ?>
                                                                         <article class="purchased-product">
                                                                             <p class="remaining-qty num-of-days">No of Days:
-                                                                            <?php echo $product['expiry_days']; ?></p>
+                                                                            <?php echo $product['expiry_days']; ?>
+                                                                            </p>
                                                                             <p class="remaining-qty">Purchased Qty: 0</p>
                                                                             <h2 class="post-title"><?php echo $product['name']; ?></h2>
                                                                             <figure><img
@@ -992,7 +1001,7 @@
                 },
                 Location_ZipCode: {
                     required: true,
-                    pattern: /^[0-9a-zA-Z\-]+$/
+                    pattern: /^[0-9a-zA-Z\- ]+$/
                 }
             },
             messages: {
