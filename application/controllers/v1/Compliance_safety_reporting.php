@@ -69,6 +69,18 @@ class Compliance_safety_reporting extends Base_csp
                 $this->data["filter"]
             );
         //
+        if ($this->data["reports"]) {
+            foreach ($this->data["reports"] as $key => $issue) {
+                $filesCount = $this
+                    ->compliance_report_model
+                    ->getAllItemsFilesCount(
+                        $issue['sid']
+                    );
+                //
+                $this->data["reports"][$key]['file_count'] = $filesCount;
+            }
+        }
+        //
         // get the severity status
         $this->data["severity_status"] = $this
             ->compliance_report_model
@@ -305,7 +317,19 @@ class Compliance_safety_reporting extends Base_csp
                     "users.is_executive_admin",
                 ]
             );
-
+        // //
+        // _e($this->data['report']['issuesWithIncident'],true,true);
+        if ($this->data["report"]['issuesWithIncident']) {
+            foreach ($this->data["report"]['issuesWithIncident'] as $key => $issue) {
+                $filesCount = $this
+                    ->compliance_report_model
+                    ->getAllItemsFilesCount(
+                        $issue['sid']
+                    );
+                //
+                $this->data["report"]['issuesWithIncident'][$key]['file_count'] = $filesCount;
+            }
+        }
         //
         $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, 0, $this->getLoggedInEmployee("sid"));
         //
@@ -2027,8 +2051,6 @@ class Compliance_safety_reporting extends Base_csp
                 'Completed By'
             )
         );
-
-        $exportRows = '';
         //
         if ($reports) {
             foreach ($reports as $report) {
@@ -2048,6 +2070,31 @@ class Compliance_safety_reporting extends Base_csp
 
         fclose($output);
         exit;
+    }
+
+    public function getIssueAttachedFilesViewById (int $reportId, int $incidentId, int $issueId) {
+        // get the issues
+        $files = $this
+            ->compliance_report_model
+            ->getAllItemsFiles(
+                $reportId,
+                $incidentId,
+                $issueId
+            );
+        // return the success
+        return SendResponse(
+            200,
+            [
+                "message" => "Files fetched successfully.",
+                "view" => $this->load->view(
+                    'compliance_safety_reporting/partials/files/issue_files',
+                    [
+                        "files" => $files
+                    ],
+                    true
+                )
+            ]
+        );
     }
 
 }

@@ -1,7 +1,12 @@
 $(function () {
+    //
     let XHR = null;
     let selectedIssues = [];
+    let cspReportId = 0;
+    let cspIncidentId = 0;
     let cspIssueId = 0;
+    let fileUploaderReference = {};
+    //
     const config = {
         document: {
             allowedTypes: [
@@ -34,8 +39,6 @@ $(function () {
             allowCapture: true,
         },
     };
-
-let fileUploaderReference = {};
 
     Highcharts.chart('jsProgressGraph', {
         chart: {
@@ -82,7 +85,6 @@ let fileUploaderReference = {};
             })),
         }]
     });
-
 
     Highcharts.chart('jsSeverityGraph', {
         chart: {
@@ -220,12 +222,161 @@ let fileUploaderReference = {};
 		}
 	}
 
+    // viewIssues Files
+    $(".jsViewIssuesFiles").click(
+        function (event) {
+            event.preventDefault();
+
+            loadViewModal({
+                title: "View File(s)",
+                reportId: $(this).data("report_id"),
+                incidentId: $(this).data("incident_id"),
+                issueId: $(this).data("issue_id"),
+                count: $(this).data("files_count")
+            });
+        }
+    );   
+    
+    function loadViewModal(options)
+    {
+        if ($("#jsIssueModalCommon").length <= 0) {
+			const modal = `
+			<div class=modal fade" id="jsIssueModalCommon" tabindex="-1" role="dialog" aria-hidden="true">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title"></h5>
+						</div>
+						<div class="modal-body">
+							<div class="alert alert-info text-center">Generating a view please wait.</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			`;
+			$("body").append(modal);
+        }
+        // let's add options
+        $("#jsIssueModalCommon").find(".modal-title").html(options.title);
+        if (options.count == 0) {
+            $("#jsIssueModalCommon").find(".modal-body").html('<div class="alert alert-info text-center">No file has been attached to this issue.</div>');
+        } else {
+            $("#jsIssueModalCommon").find(".modal-body").html('<div class="alert alert-info text-center">Generating a view please wait.</div>');
+            //
+            if (XHR === null) {
+                //
+                ml(true, "jsPageLoader");
+                //
+                XHR = $.ajax({
+                    url: baseUrl(
+                        "compliance_safety_reporting/get_attached_files/"+options.reportId+"/"+options.incidentId+"/"+options.issueId
+                    ),
+                    method: "GET"
+                })
+                    .always(function () {
+                        XHR = null;
+                        ml(false, "jsPageLoader");
+                    })
+                    .fail(handleErrorResponse)
+                    .done(function (resp) {
+                        $("#jsIssueModalCommon").find(".modal-body").html(resp.view);
+                        _success(resp.message);
+                    });
+            }
+        }
+        
+        //
+		$("#jsIssueModalCommon").modal({
+			backdrop: "static",
+			keyboard: false,
+        });
+        //
+		$("#jsIssueModalCommon").modal("show");
+    }
+
+    $(document).on("click", ".jsViewFile", function (event) {
+		event.preventDefault();
+		const fileId = $(this).closest(".jsFileBox").data("id");
+		Modal(
+			{
+				Id: "jsFileViewModal",
+				Loader: "jsFileViewModalLoader",
+				Title: '<span id="jsFileViewModalTitle"></span>',
+				Body: '<div id="jsFileViewModalBody"></body>',
+			},
+			function () {
+                $("#jsIssueModalCommon").modal("hide");
+				loadView(fileId);
+			}
+		);
+	});
+
+    function loadView(fileId) {
+		$.ajax({
+			url: baseUrl("compliance_safety_reporting/file/view/" + fileId),
+			method: "GET",
+		})
+			.always(function () {
+				XHR = null;
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				$("#jsFileViewModalBody").html(resp.view);
+				$("#jsFileViewModalTitle").html(resp.data.title);
+				ml(false, "jsFileViewModalLoader");
+			});
+	}
+
+    $(document).on("click", ".jsDeleteFile", function (event) {
+		event.preventDefault();
+		const fileId = $(this).data("file_id");
+		const fileType = $(this).data("file_type");
+		_confirm(
+			"Are you sure you want to remove this "+fileType+"? It will be removed from this issue permanently as well.",
+			function () {
+				deleteFileFromIssue(fileId, fileType);
+			}
+		);
+	});
+
+	function deleteFileFromIssue (fileId, fileType) {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/delete_file/" +
+						fileId 
+				),
+				method: "DELETE",
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success("Removed " + fileType + " successfully", function () {
+						window.location.reload();
+					});
+				});
+		}
+	}
+
     // Upload file
     $(".jsIssueUploadFileBtn").click(
         function (event) {
             event.preventDefault();
 
-            cspIssueId = $(this).closest("tr").data("id");
+            cspReportId = $(this).data("report_id");
+            cspIncidentId = $(this).data("incident_id");
+            cspIssueId = $(this).data("issue_id");
 
             loadModal({
                 title: "Attach file",
@@ -271,7 +422,7 @@ let fileUploaderReference = {};
         //
         const issueUploadObject = {
             title: $("#jsIssueFileUploadTitle").val().trim(),
-            file: fileUploaderReference.getValue(),
+            file: $("#jsIssueFileUploadFile").msFileUploader("get"),
         };
         //
         if (!issueUploadObject.title) {
@@ -297,7 +448,7 @@ let fileUploaderReference = {};
         issueUploadObject.fileType = 
             issueUploadObject.file.type === "vimeo" || issueUploadObject.file.type === "youtube"
             ? "link"
-            : getFileType(issueUploadObject.file.type).toLowerCase()
+            : getFileType(issueUploadObject.file).toLowerCase()
         //
         attachFileToIssue(issueUploadObject);
     });
@@ -308,13 +459,22 @@ let fileUploaderReference = {};
         toggleButton.prop("disabled", true);
         //
         const formData = new FormData();
-        formData.append("cspIssueId", cspIssueId);
+        //
+        formData.append("reportId", cspReportId);
+        formData.append("incidentId", cspIncidentId);
+        formData.append("itemId", cspIssueId);
         formData.append("title", issueUploadObject.title);
-        formData.append("file", issueUploadObject.file);
+        formData.append("type", issueUploadObject.fileType);
+        //
+        if (issueUploadObject.file.type === "youtube" || issueUploadObject.file.type === "vimeo") {
+            formData.append("link", issueUploadObject.file.link);
+        } else {
+            formData.append("file", issueUploadObject.file);
+        }
         //
         XHR = $
             .ajax({
-                url: baseUrl(`compliance_safety_reporting/issues/${cspIssueId}/attach-file`),
+                url: baseUrl(`compliance_safety_reporting/add_file_to_incident_item`),
                 method: "POST",
                 data: formData,
                 processData: false,

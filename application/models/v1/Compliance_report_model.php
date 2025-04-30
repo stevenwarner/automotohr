@@ -6347,4 +6347,61 @@ class Compliance_report_model extends CI_Model
 			->where("sid", $issueId)
 			->delete("csp_reports_incidents_items");
 	}
+
+	public function getIssueBasicInfoBySid(int $issueId, array $column)
+	{
+		return $this->db
+			->select($column)
+			->where([
+				'csp_reports_incidents_items.sid' => $issueId,
+			])
+			->join(
+				"csp_reports_incidents",
+				"csp_reports_incidents.sid = csp_reports_incidents_items.csp_reports_incidents_sid",
+				"inner"
+			)
+			->get('csp_reports_incidents_items')
+			->row_array();
+		//
+	}
+
+	/**
+	 * Get report files by type
+	 *
+	 * @param int $reportId
+	 * @param array $columns
+	 * @param array $type
+	 * @return array
+	 */
+	public function getAllItemsFiles(int $reportId, int $incidentId, int $issueId)
+	{
+		$columns = [
+			$this->userFields,
+			"csp_reports_files.file_value",
+			"csp_reports_files.sid",
+			"csp_reports_files.title",
+			"csp_reports_files.s3_file_value",
+			"csp_reports_files.file_type",
+			"csp_reports_files.created_at",
+			"csp_reports_files.manual_email",
+		];
+		//
+		$this->db->select($columns, false);
+		$this->db->where("csp_reports_sid", $reportId);
+		$this->db->where("csp_incident_type_sid", $incidentId);
+		$this->db->where("csp_reports_incidents_items_sid", $issueId);
+		$this->db->join(
+			"users",
+			"users.sid = csp_reports_files.created_by",
+			"left"
+		);
+		return $this->db->get("csp_reports_files")->result_array();
+	}
+
+	public function getAllItemsFilesCount($issueId)
+	{
+		return $this->db
+		->where("csp_reports_incidents_items_sid", $issueId)
+		->count_all_results('csp_reports_files');
+	}
 }

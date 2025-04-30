@@ -1,3 +1,31 @@
+<style>
+    .issue-files-btn {
+        border: 0;
+        margin: 0 20px 0 0;
+        margin-top: -10px;
+        font-size: 32px;
+        border-radius: 5px;
+        cursor: pointer;
+        color: #fff;
+        height: 65px;
+        background-color: transparent;
+        position: relative;
+    }
+
+    .issue-files-count {
+        position: absolute;
+        top: 4px;
+        right: -10px;
+        font-size: 12px;
+        color: #fff;
+        padding: 5px;
+        width: 25px;
+        height: 25px;
+        line-height: 15px;
+        background-color: #b4052c;;
+        border-radius: 100%;
+    }
+</style>
 <?php $progressGraphData = [
     "pending" => [
         "name" => "In Progress",
@@ -116,6 +144,25 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                         <?php endif; ?>
                                     </td>
                                     <td class="vam text-right">
+                                        <button 
+                                            class="issue-files-btn jsViewIssuesFiles" 
+                                            data-files_count="<?=$record['file_count'];?>" 
+                                            data-report_id="<?=$report["sid"];?>" 
+                                            data-incident_id="<?=$record["csp_reports_incidents_sid"];?>" 
+                                            data-issue_id="<?=$record["sid"];?>" >
+                                            <i class="fa fa-file-image-o animated" style="color:rgb(253, 122, 42);"></i>
+                                            <span class="issue-files-count"><?=$record['file_count']?></span>
+                                        </button>
+                                        <a 
+                                            href="javascript:;" 
+                                            data-report_id="<?=$report["sid"];?>" 
+                                            data-incident_id="<?=$record["csp_reports_incidents_sid"];?>" 
+                                            data-issue_id="<?=$record["sid"];?>" 
+                                            class="btn btn-orange jsIssueUploadFileBtn"
+                                        >
+                                            <i class="fa fa-upload"></i>
+                                            Upload File
+                                        </a>
                                         <button class="btn btn-warning jsEditIssue" type="button">
                                             <i class="fa fa-edit"></i>
                                             Edit Issue
