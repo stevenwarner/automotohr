@@ -370,7 +370,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                             <div class="col-md-12">
                                                                 <?= convertCSPTags(
                                                                     $record["description"],
-                                                                    json_decode($record["answers_json"], true),
+                                                                    $record["answers_json"] ? json_decode($record["answers_json"], true) : [],
                                                                     true
                                                                 ); ?>
                                                             </div>
