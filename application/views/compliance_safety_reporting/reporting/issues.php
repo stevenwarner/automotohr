@@ -137,12 +137,12 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                     </button>
                                 <?php endif; ?>
                                 <button class="btn btn-black jsIssueUploadFileBtn" title="Upload files"
-                                    data-report_id="<?= $record["csp_reports_sid"]; ?>"
+                                    data-report_id="<?= $report["sid"]; ?>"
                                     data-incident_id="<?= $record["csp_reports_incidents_sid"]; ?>"
                                     data-issue_id="<?= $record["sid"]; ?>">
                                     <i class="fa fa-upload"></i>
                                 </button>
-                                <a href="<?= base_url("compliance_safety_reporting/incident_item_management/" . $record["csp_reports_sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]); ?>"
+                                <a href="<?= base_url("compliance_safety_reporting/incident_item_management/" . $report["sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]); ?>"
                                     class="btn btn-orange">
                                     <i class="fa fa-eye"></i>
                                 </a>
