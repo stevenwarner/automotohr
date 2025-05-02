@@ -4898,7 +4898,7 @@ if (!function_exists("checkAndShowUser")) {
     function checkAndShowUser($lastModifiedBy, $record)
     {
         // check if last_modified_by is a number
-        if (is_numeric($lastModifiedBy)) {
+        if ($lastModifiedBy && $lastModifiedBy != 0 && is_numeric($lastModifiedBy)) {
             // get the user details
             $employee = remakeEmployeeName($record);
             //
