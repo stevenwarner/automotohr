@@ -1936,6 +1936,11 @@ if (!function_exists('applicant_right_nav')) {
             $data['questions_answered'] = false;
         }
 
+        if($job_list_sid)
+        {
+            $data['applicant_job_queue'] = $CI->application_tracking_system_model->get_applicant_job_queue($job_list_sid);
+        }
+
         return $data;
     }
 }

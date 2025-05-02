@@ -126,26 +126,31 @@
                                 <div class="start-rating">
                                     <input readonly="readonly" id="input-21b" <?php if (!empty($applicant_average_rating)) { ?> value="<?php echo $applicant_average_rating; ?>" <?php } ?> type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
                                 </div>
-                                <?php if (check_blue_panel_status() && $applicant_info['is_onboarding'] == 1) { ?>
 
-                                    <?php $send_notification = checkOnboardingNotification($id); ?>
-                                    <?php if ($send_notification) { ?>
-                                        <span class="badge" style="padding:8px; background-color: green;">On-boarding Request Sent</span>
+                                <div class="" style="display: flex;justify-content:space-between;width: 100%;align-items: center;">
+                                    <?php if (check_blue_panel_status() && $applicant_info['is_onboarding'] == 1) { ?>
+    
+                                        <?php $send_notification = checkOnboardingNotification($id); ?>
+                                        <?php if ($send_notification) { ?>
+                                            <span class="badge" style="padding:8px; background-color: green;">On-boarding Request Sent</span>
+                                        <?php } else { ?>
+                                            <span class="badge" style="padding:8px; background-color: red;">On-boarding Request Pending</span>
+                                        <?php } ?>
+    
+                                        <span class="badge" style="padding:8px; background-color: blue;"><a href="<?php echo $onboarding_url; ?>" style="color:#fff;" target="_black">Preview On-boarding</a></span>
+                                        <?php if (!$send_notification) { ?>
+                                            <p class="" style="padding:18px; color: red;">
+                                                <strong>
+                                                    <?php echo onboardingNotificationPendingText($id); ?>
+                                                </strong>
+                                            </p>
+                                        <?php } ?>
                                     <?php } else { ?>
-                                        <span class="badge" style="padding:8px; background-color: red;">On-boarding Request Pending</span>
+                                        <span class="" style="padding:8px;"><?php echo $applicant_info['applicant_type']; ?></span>
                                     <?php } ?>
-
-                                    <span class="badge" style="padding:8px; background-color: blue;"><a href="<?php echo $onboarding_url; ?>" style="color:#fff;" target="_black">Preview On-boarding</a></span>
-                                    <?php if (!$send_notification) { ?>
-                                        <p class="" style="padding:18px; color: red;">
-                                            <strong>
-                                                <?php echo onboardingNotificationPendingText($id); ?>
-                                            </strong>
-                                        </p>
-                                    <?php } ?>
-                                <?php } else { ?>
-                                    <span class="" style="padding:8px;"><?php echo $applicant_info['applicant_type']; ?></span>
-                                <?php }  ?>
+                                    <span style="padding: 5px;color:white;text-transform:capitalize;"><?php echo $applicant_job_queue['status']; ?></span>
+                                </div>
+                                
                             </div>
                         </article>
                     </div>

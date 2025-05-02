@@ -301,24 +301,27 @@ if ($this->session->userdata('logged_in')) {
                                     <?php } ?>
                                     <!-- Light Bulb Code - End -->
                                 </li>
-
-                                <li>
-                                    <span class="left-addon">
-                                        <i aria-hidden="true" class="fa fa-star"></i>
-                                    </span>
-                                    <h4>Submited Application</h4>
-                                    <a href="<?php echo base_url('applicant_profile/submitted/resume') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                    <!-- Light Bulb Code - Start -->
-                                    <?php $applicant_panel_config_count = count_onboarding_panel_records('applicant', $applicant_info['sid']);?>
-                                    <?php if(intval($applicant_panel_config_count) > 0) { ?>
-                                        <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Applicant Panel Set-up" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
-                                    <?php } else { ?>
-                                        <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Applicant Panel Not Set-up" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
-                                    <?php } ?>
-                                    <!-- Light Bulb Code - End -->
-                                </li>
                             <?php }?>
                         <?php }?>
+
+                        <?php if(isset($applicant_job_queue) && $applicant_job_queue) { ?>
+                            <li>
+                                <span class="left-addon">
+                                    <i aria-hidden="true" class="fa fa-star"></i>
+                                </span>
+                                <h4>Submited Application</h4>
+                                <a href="<?php echo base_url('applicant_profile/submitted/resume') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                <!-- Light Bulb Code - Start -->
+                                <?php $applicant_panel_config_count = count_onboarding_panel_records('applicant', $applicant_info['sid']);?>
+                                <?php if(intval($applicant_panel_config_count) > 0) { ?>
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Applicant Panel Set-up" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                <?php } else { ?>
+                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Applicant Panel Not Set-up" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                <?php } ?>
+                                <!-- Light Bulb Code - End -->
+                            </li>
+                        <?php } ?>
+                        
                         <?php if(
                                 $applicant_info['is_onboarding'] == 1 &&
                                 (
