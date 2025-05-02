@@ -357,7 +357,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                                         <?= $statusText; ?>
                                                                     </label>
                                                                     <?php if ($record["completion_status"] === "completed"): ?>
-                                                                        <?= remakeEmployeeName($record); ?>
+                                                                        <?= checkAndShowUser($record["completed_by"], $record); ?>
                                                                         <br>
                                                                         <?= formatDateToDB($record["completion_date"], DB_DATE, DATE); ?>
                                                                     <?php endif; ?>

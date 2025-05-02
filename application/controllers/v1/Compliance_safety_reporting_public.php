@@ -20,6 +20,7 @@ class Compliance_safety_reporting_public extends Base_csp
      */
     public function view(string $code)
     {
+        // return redirect("csp/dashboard");
         // Verify token and get the record id
         if (!$this->compliance_report_model->verifyToken($code)) {
             return redirect("/");
@@ -29,6 +30,8 @@ class Compliance_safety_reporting_public extends Base_csp
 
         // Set session data
         $this->session->set_userdata('tokenDetails', $tokenDetails);
+
+        return redirect("csp/dashboard");
 
         // get the specific report or incident
         if ((int) $tokenDetails["csp_report_incident_sid"] !== 0) {
@@ -51,12 +54,27 @@ class Compliance_safety_reporting_public extends Base_csp
         $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
         $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
         $this->data['pageJs'][] = 'csp/dashboard';
+        $this->data['pageJs'][] = main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0");
+        // load CSS
+        $this->data['pageCSS'][] = main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0");
+
         // get filter
+
+        // get filter    
         $this->data["filter"] = [
             "severity_level" => $this->input->get("severityLevel", true) ?? "-1",
             "incident" => $this->input->get("incidentType", true) ?? "-1",
             "status" => $this->input->get("status", true) ?? "-1",
+            "title" => $this->input->get("title") ?? "",
+            "date_range" => $this->input->get("date_range", true) ?? ""
         ];
+        //
+        $queryString = $_SERVER['QUERY_STRING'];
+        $this->data['CSVUrl'] = base_url('compliance_safety_reporting/export_csv');
+        //
+        if ($queryString) {
+            $this->data['CSVUrl'] = $this->data['CSVUrl'] . '?' . $queryString;
+        }
 
         $this->data["severity_levels"] = $this
             ->compliance_report_model
@@ -1458,11 +1476,31 @@ class Compliance_safety_reporting_public extends Base_csp
                     ]
                 );
             }
+            //
+            $file = [
+                "title" => $post["title"],
+                "file_type" => $post["type"],
+                "s3_file_value" => $post["link"],
+                "created_at" => getSystemDate(),
+                "manual_email" => false,
+                "sid" => $linkId,
+                "first_name" => $this->getPublicSessionData("first_name"),
+                "last_name" => $this->getPublicSessionData("last_name"),
+                "access_level" => $this->getPublicSessionData("access_level"),
+                "access_level_plus" => $this->getPublicSessionData("access_level_plus"),
+                "is_pay_plan" => $this->getPublicSessionData("is_pay_plan"),
+                "job_title" => $this->getPublicSessionData("job_title"),
+                "is_executive_admin" => $this->getPublicSessionData("is_executive_admin"),
+            ];
             // return the success
             return sendResponse(
                 200,
                 [
-                    "message" => "File is attached successfully."
+                    "message" => "File is attached successfully.",
+                    "view" => $this->load->view("compliance_safety_reporting/single_file", [
+                        "document" => $file,
+                    ], true),
+                    "url" => $post["link"]
                 ]
             );
         } else {
@@ -1541,11 +1579,31 @@ class Compliance_safety_reporting_public extends Base_csp
                         ]
                     );
                 }
+
+                $file = [
+                    "title" => $post["title"],
+                    "file_type" => $post["type"],
+                    "s3_file_value" => $post["link"],
+                    "created_at" => getSystemDate(),
+                    "manual_email" => false,
+                    "sid" => $fileId,
+                    "first_name" => $this->getPublicSessionData("first_name"),
+                    "last_name" => $this->getPublicSessionData("last_name"),
+                    "access_level" => $this->getPublicSessionData("access_level"),
+                    "access_level_plus" => $this->getPublicSessionData("access_level_plus"),
+                    "is_pay_plan" => $this->getPublicSessionData("is_pay_plan"),
+                    "job_title" => $this->getPublicSessionData("job_title"),
+                    "is_executive_admin" => $this->getPublicSessionData("is_executive_admin"),
+                ];
                 // return the success
                 return sendResponse(
                     200,
                     [
-                        "message" => "File is attached successfully."
+                        "message" => "File is attached successfully.",
+                        "view" => $this->load->view("compliance_safety_reporting/single_file", [
+                            "document" => $file,
+                        ], true),
+                        "url" => AWS_S3_BUCKET_URL . "/" . $fileName
                     ]
                 );
                 //
@@ -1812,6 +1870,38 @@ class Compliance_safety_reporting_public extends Base_csp
         } else {
             return redirect("/");
         }
+    }
+
+    public function markIssueCompleted(int $issueId)
+    {
+        $loggedInEmployee = $this->getPublicSessionData("is_external_employee") == 1
+            ? $this->getPublicSessionData("external_email")
+            : $this->getPublicSessionData("employee_sid");
+        // get the issues
+        $files = $this
+            ->compliance_report_model
+            ->markIssueDone(
+                $issueId,
+                $loggedInEmployee
+            );
+
+        //
+        $html = '
+            <label class="btn btn-success" style="border-radius: 5px;">
+                Completed
+            </label>
+                ' . ($loggedInEmployee) . '
+                <br />
+                ' . (getSystemDate(DATE)) . '
+        ';
+        // return the success
+        return SendResponse(
+            200,
+            [
+                "message" => "Issue marked done.",
+                "view" => $html,
+            ]
+        );
     }
 
 }

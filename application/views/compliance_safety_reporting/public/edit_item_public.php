@@ -6,9 +6,9 @@
         <div class="row">
             <div class="col-sm-12 text-right">
 
-                <a href="<?= base_url("csp/dashboard") ?>" class="btn btn-orange">
+                <a href="<?= base_url("csp/dashboard") ?>" class="btn btn-blue">
                     <i class="fa fa-pie-chart"></i>
-                    Compliance Dashboard
+                    Compliance Safety Reporting
                 </a>
             </div>
         </div>

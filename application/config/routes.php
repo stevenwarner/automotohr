@@ -2841,3 +2841,9 @@ $route["compliance_safety_reporting/get_attached_files/(:num)/(:num)/(:num)"]["g
 
 $route["compliance_safety_reporting/issues/(:num)/mark/done"]["post"] =
   "v1/Compliance_safety_reporting/markIssueCompleted/$1";
+
+$route["csp/issues/(:num)/mark/done"]["post"] =
+  "v1/Compliance_safety_reporting_public/markIssueCompleted/$1";
+
+$route["csp/add_file_to_incident_item"]["post"] =
+  "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";

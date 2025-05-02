@@ -6439,7 +6439,7 @@ class Compliance_report_model extends CI_Model
 			->count_all_results('csp_reports_files');
 	}
 
-	public function markIssueDone(int $issueId, int $loggedInEmployeeId)
+	public function markIssueDone(int $issueId, $loggedInEmployeeId)
 	{
 		$this
 			->db

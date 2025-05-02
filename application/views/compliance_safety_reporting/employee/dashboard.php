@@ -56,17 +56,9 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
     <div class="container-fluid">
         <!-- Buttons -->
         <div class="row">
-            <div class="col-sm-12 text-right">
+            <div class="col-md-12 col-xs-12">
                 <a href="<?= base_url("/dashboard"); ?>" class="btn btn-black">
-                    <i class="fa fa-arrow-left"></i> Back to Dashboard
-                </a>
-                <a href="<?= base_url("/compliance_safety_reporting/overview"); ?>" class="btn btn-blue">
-                    <i class="fa fa-pie-chart"></i>
-                    Overview
-                </a>
-                <a href="<?= base_url("compliance_safety_reporting/add/1") ?>" class="btn btn-orange">
-                    <i class="fa fa-plus-circle"></i>
-                    Add New Report
+                    <i class="fa fa-arrow-left"></i> Dashboard
                 </a>
             </div>
         </div>
@@ -86,7 +78,8 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                 </h3>
             </div>
             <div class="panel-body">
-                <form id="filterForm" method="get" action="<?= base_url("/compliance_safety_reporting/dashboard"); ?>">
+                <form id="filterForm" method="get"
+                    action="<?= base_url("/compliance_safety_reporting/employee/dashboard"); ?>">
                     <!--  -->
                     <div class="row">
                         <div class="col-md-4">
@@ -103,16 +96,6 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                             </option>
                                         <?php } ?>
                                     <?php } ?>
-                                    <!-- <option <?= $filter["severity_level"] == "1" ? "selected" : ""; ?> value="1">Severity
-                                        Level 1</option>
-                                    <option <?= $filter["severity_level"] == "2" ? "selected" : ""; ?> value="2">Severity
-                                        Level 2</option>
-                                    <option <?= $filter["severity_level"] == "3" ? "selected" : ""; ?> value="3">Severity
-                                        Level 3</option>
-                                    <option <?= $filter["severity_level"] == "4" ? "selected" : ""; ?> value="4">Severity
-                                        Level 4</option>
-                                    <option <?= $filter["severity_level"] == "5" ? "selected" : ""; ?> value="5">Severity
-                                        Level 5</option> -->
                                 </select>
                             </div>
                         </div>
@@ -223,26 +206,6 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                 </h3>
             </div>
             <div class="panel-body">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <label class="control control--checkbox">
-                            <input type="checkbox" name="" id="" class="js-check-all" />
-                            Select All Issues
-                            <div class="control__indicator"></div>
-                        </label>
-                    </div>
-                    <div class="col-sm-6 text-right">
-                        <button type="button" class="btn btn-orange jsSendReminderEmails">
-                            <i class="fa fa-send"></i>
-                            Send Email
-                        </button>
-                        <a class="btn btn-green" id="jsCSVButton" href="<?= $CSVUrl ?>">
-                            <i class="fa fa-download"></i>
-                            Export CSV
-                        </a>
-                    </div>
-                </div>
-                <br />
 
                 <?php if ($reports): ?>
                     <?php foreach ($reports as $v0): ?>
@@ -303,15 +266,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                     </div>
                                                     <div class="panel-body hidden jsIssuesBody" id="issue<?= $record["sid"]; ?>">
                                                         <div class="row">
-                                                            <div class="col-xs-1">
-                                                                <label class="control control--checkbox">
-                                                                    <input type="checkbox" name="issues_ids[]" class="jsIssueIds"
-                                                                        value="<?= $record["sid"] ?>" />
-                                                                    <div class="control__indicator" style="margin-top: -10px;">
-                                                                    </div>
-                                                                </label>
-                                                            </div>
-                                                            <div class="col-xs-11 text-right">
+                                                            <div class="col-xs-12 text-right">
                                                                 <?php if ($record["completion_status"] != "completed"): ?>
                                                                     <button class="btn btn-green jsMarkIssueDone"
                                                                         data-issue_id="<?= $record["sid"]; ?>"
@@ -341,10 +296,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                                     </small>
                                                                 </label>
                                                                 <br>
-                                                                <a
-                                                                    href="<?= base_url("compliance_safety_reporting/edit/" . $record["csp_reports_sid"]); ?>">
-                                                                    <?= $record["title"]; ?>
-                                                                </a>
+                                                                <?= $record["title"]; ?>
                                                                 (<?= formatDateToDB($v0["report_date"], DB_DATE, DATE); ?>)
                                                             </div>
                                                             <div class="col-md-3">
@@ -369,7 +321,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                                         <?= $statusText; ?>
                                                                     </label>
                                                                     <?php if ($record["completion_status"] === "completed"): ?>
-                                                                        <?= remakeEmployeeName($record); ?>
+                                                                        <?= checkAndShowUser($record["completed_by"], $record); ?>
                                                                         <br>
                                                                         <?= formatDateToDB($record["completion_date"], DB_DATE, DATE); ?>
                                                                     <?php endif; ?>

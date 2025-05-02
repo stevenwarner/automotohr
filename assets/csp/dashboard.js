@@ -6,6 +6,7 @@ $(function () {
     let cspIncidentId = 0;
     let cspIssueId = 0;
     let fileUploaderReference = {};
+    let cspPublic = 0;
     //
     const config = {
         document: {
@@ -420,6 +421,7 @@ $(function () {
             cspReportId = $(this).data("report_id");
             cspIncidentId = $(this).data("incident_id");
             cspIssueId = $(this).data("issue_id");
+            cspPublic = $(this).data("public");
 
             loadModal({
                 title: "Attach file",
@@ -517,7 +519,7 @@ $(function () {
         //
         XHR = $
             .ajax({
-                url: baseUrl(`compliance_safety_reporting/add_file_to_incident_item`),
+                url: baseUrl(`${cspPublic ? "csp/" : "compliance_safety_reporting"}/add_file_to_incident_item`),
                 method: "POST",
                 data: formData,
                 processData: false,
@@ -531,6 +533,10 @@ $(function () {
             .done(function (resp) {
                 $("#jsIssueModalCommon").modal("hide");
                 alertify.success("File attached successfully.")
+
+                if ($(`.jsFilesArea${cspIssueId} .jsDocumentsArea .jsFirst`).length === 0) {
+                    $(`.jsFilesArea${cspIssueId}`).html('<div class="jsDocumentsArea"><div class="jsFirst"></div></div>');
+                }
                 // ;
                 $(`.jsFilesArea${cspIssueId} .jsDocumentsArea .jsFirst`).prepend(resp.view);
             });
@@ -648,4 +654,38 @@ $(function () {
             }
         }
     );
+
+     $(".jsMarkIssueDonePublic").click(
+        function (event) {
+            event.preventDefault();
+            const issueId = $(this).data("issue_id");
+            const btnRef = $(this)
+            //
+            _confirm(
+                "Do you really want to mark this issue completed?",
+                function () {
+                    markTheIssueDonePublic(issueId, btnRef);
+                }
+            );
+        }
+     );
+    
+    function markTheIssueDonePublic(issueId, btnRef) {
+        const _html = callButtonHook(btnRef, true);
+        $.ajax({
+            url: baseUrl("csp/issues/" + issueId+"/mark/done"),
+            method: "POST",
+            data: {
+                status: "completed"
+            }
+        })
+            .always(function () {
+                callButtonHook(_html, false)
+            })
+            .fail(handleErrorResponse)
+            .done(function (resp) {
+                btnRef.remove();
+                $(`.jsStatusRow${issueId}`).html(resp.view);
+            });
+    }
 });

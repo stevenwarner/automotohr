@@ -33,12 +33,25 @@ class Compliance_safety_reporting_employee extends Base_csp
         $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
         $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
         $this->data['pageJs'][] = 'csp/dashboard';
-        // get filter
+        $this->data['pageJs'][] = main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0");
+        // load CSS
+        $this->data['pageCSS'][] = main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0");
+
+        // get filter    
         $this->data["filter"] = [
             "severity_level" => $this->input->get("severityLevel", true) ?? "-1",
             "incident" => $this->input->get("incidentType", true) ?? "-1",
             "status" => $this->input->get("status", true) ?? "-1",
+            "title" => $this->input->get("title") ?? "",
+            "date_range" => $this->input->get("date_range", true) ?? ""
         ];
+        //
+        $queryString = $_SERVER['QUERY_STRING'];
+        $this->data['CSVUrl'] = base_url('compliance_safety_reporting/export_csv');
+        //
+        if ($queryString) {
+            $this->data['CSVUrl'] = $this->data['CSVUrl'] . '?' . $queryString;
+        }
         $this->data["severity_levels"] = $this
             ->compliance_report_model
             ->getSeverityLevels();
