@@ -2164,4 +2164,42 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
+    public function updateItemEmployees(int $reportId, int $incidentId, int $issueId)
+    {
+        $this->compliance_report_model->updateItemEmployees(
+            $reportId,
+            $incidentId,
+            $issueId,
+            $this->input->post("ids", true),
+            $this->getLoggedInEmployee("sid")
+        );
+
+        return SendResponse(
+            200,
+            [
+                "message" => "You have successfully updated the internal employees."
+            ]
+        );
+    }
+
+
+    public function updateItemExternalEmployee(int $reportId, int $incidentId, int $issueId)
+    {
+        $id = $this->compliance_report_model->updateItemExternalEmployee(
+            $reportId,
+            $incidentId,
+            $issueId,
+            $this->input->post("external", true),
+            $this->getLoggedInEmployee("sid")
+        );
+
+        return SendResponse(
+            200,
+            [
+                "message" => "You have successfully updated the internal employees.",
+                "id" => $id,
+            ]
+        );
+    }
+
 }

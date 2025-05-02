@@ -2847,3 +2847,11 @@ $route["csp/issues/(:num)/mark/done"]["post"] =
 
 $route["csp/add_file_to_incident_item"]["post"] =
   "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";
+
+
+$route["compliance_safety_reporting/issues/(:num)/(:num)/(:num)/employees/internal"]["post"] =
+  "v1/Compliance_safety_reporting/updateItemEmployees/$1/$2/$3";
+
+
+$route["compliance_safety_reporting/issues/(:num)/(:num)/(:num)/employees/external"]["post"] =
+  "v1/Compliance_safety_reporting/updateItemExternalEmployee/$1/$2/$3";

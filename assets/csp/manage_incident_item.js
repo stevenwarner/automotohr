@@ -195,7 +195,7 @@ $(function Overview() {
 		const fileId = $(this).data("file_id");
 		const fileType = $(this).data("file_type");
 		_confirm(
-			"Are you sure you want to remove this "+fileType+"? It will be removed from this issue permanently as well.",
+			"Are you sure you want to remove this " + fileType + "? It will be removed from this issue permanently as well.",
 			function () {
 				deleteFileFromIssue(fileId, fileType);
 			}
@@ -208,13 +208,13 @@ $(function Overview() {
             <div class="col-md-5">
                 <div class="form-group">
                     <label for="external_employee_name">Name</label>
-                    <input type="text" name="external_employees_names[${externalPointer}]['name']" class="form-control" required>
+                    <input type="text" name="external_employees_names[${externalPointer}]['name']" class="form-control jsEPName${externalPointer}" required>
                 </div>
             </div>
             <div class="col-md-5">
                 <div class="form-group">
                     <label for="external_employee_email">Email</label>
-                    <input type="email" name="external_employees_emails[${externalPointer}]['email']" class="form-control" required>
+                    <input type="email" name="external_employees_emails[${externalPointer}]['email']" class="form-control jsEPEmail${externalPointer}" required>
                 </div>
             </div>
             <div class="col-md-1">
@@ -222,6 +222,14 @@ $(function Overview() {
                     <label>&nbsp;</label>
                     <button type="button" class="btn btn-red btn-block jsRemoveExternalEmployee">
                         <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+			 <div class="col-md-1 jsAddExternalEmployeeRow">
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-orange btn-block jsAddExternalEmployeeBtn">
+                        <i class="fa fa-plus-circle"></i>
                     </button>
                 </div>
             </div>
@@ -267,16 +275,16 @@ $(function Overview() {
 			ml(true, "jsPageLoader");
 			//
 			let dynamicInputs = $('input[name="dynamicInput[]"]')
-			.map(function () {
-				return $(this).val();
-			})
-			.get();
+				.map(function () {
+					return $(this).val();
+				})
+				.get();
 			//
-			let dynamicCheckboxes =$('input[name="dynamicCheckbox[]"]')
-			.map(function () {
-				return $(this).prop("checked") ? "on" : "off";
-			})
-			.get();
+			let dynamicCheckboxes = $('input[name="dynamicCheckbox[]"]')
+				.map(function () {
+					return $(this).prop("checked") ? "on" : "off";
+				})
+				.get();
 			//
 			var data = $(form).serializeArray(); // convert form to array
 			data.push({ name: 'itemInput', value: dynamicInputs });
@@ -285,11 +293,11 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/incident_item_management/" +
-						reportId +
-                        "/" +
-						incidentId +
-                        "/" +
-						itemId
+					reportId +
+					"/" +
+					incidentId +
+					"/" +
+					itemId
 				),
 				method: "POST",
 				data: $.param(data),
@@ -316,11 +324,11 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/notes/" +
-						reportId +
-						"/" +
-					    incidentId +
-                        "/" +
-						itemId
+					reportId +
+					"/" +
+					incidentId +
+					"/" +
+					itemId
 				),
 				method: "POST",
 				data: obj,
@@ -355,7 +363,7 @@ $(function Overview() {
 			});
 	}
 
-	function loadAttachmentView (itemId, reportId, incidentId) {
+	function loadAttachmentView(itemId, reportId, incidentId) {
 		$.ajax({
 			url: baseUrl("compliance_safety_reporting/get_item_attachment_view"),
 			method: "GET",
@@ -422,7 +430,7 @@ $(function Overview() {
 		}
 	}
 
-	function deleteFileFromIssue (fileId, fileType) {
+	function deleteFileFromIssue(fileId, fileType) {
 		//
 		if (XHR === null) {
 			//
@@ -431,7 +439,7 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/delete_file/" +
-						fileId 
+					fileId
 				),
 				method: "DELETE",
 			})
@@ -457,9 +465,9 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/" +
-						reportId +
-						"/" +
-						external.data("id")
+					reportId +
+					"/" +
+					external.data("id")
 				),
 				method: "DELETE",
 			})
@@ -514,7 +522,7 @@ $(function Overview() {
 				fileType === "application/pdf" ||
 				fileType.startsWith("application/msword") ||
 				fileType ===
-					"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+				"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 			) {
 				fileCategory = "document";
 			}
@@ -587,8 +595,8 @@ $(function Overview() {
 			<div data-id="${id}" class="csLabelPill jsSelectedLabelPill text-center" 
 			style="
 			background-color: ${$(this).css(
-				"background-color"
-			)}; color: ${$(this).css("color")} ;">${$(this).text()}</div>
+			"background-color"
+		)}; color: ${$(this).css("color")} ;">${$(this).text()}</div>
 		`);
 
 		$(this)
@@ -620,8 +628,8 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/" +
-						getSegment(2) +
-						"/emails/send/incidents"
+					getSegment(2) +
+					"/emails/send/incidents"
 				),
 				method: "POST",
 			})
@@ -659,13 +667,13 @@ $(function Overview() {
 			_error("Please select a completion date.");
 			return;
 		}
-		
+
 		const _html = callButtonHook($(this), true);
 
 		updateProgress(obj)
 			.always(function () {
 				XHR = null;
-							ml(false, "jsPageLoader");
+				ml(false, "jsPageLoader");
 
 				callButtonHook(_html, false);
 			})
@@ -695,4 +703,105 @@ $(function Overview() {
 	};
 
 	ml(false, "jsPageLoader");
+
+
+	//
+	$(".jsUpdateItemBtn").click(
+		function (event) {
+			event.preventDefault();
+			//
+			const type = $(this).data("type");
+
+			if (type === "internal") {
+				processInternalEmployees();
+			} else {
+				processExternalEmployees();
+			}
+		}
+	);
+
+
+	function processInternalEmployees() {
+		const selectedEmployeeIds = $(".jsInternalEmployees:checked").length > 0 ? $(".jsInternalEmployees:checked")
+			.map(function () {
+				return $(this).val();
+			})
+			.get() : [];
+		//
+		ml(true, "jsPageLoader")
+		//
+		$
+			.ajax({
+				url: baseUrl(`compliance_safety_reporting/issues/${getSegment(2)}/${getSegment(3)}/${getSegment(4)}/employees/internal`),
+				method: "POST",
+				data: {
+					ids: selectedEmployeeIds,
+				}
+			})
+			.always(function () {
+				ml(false, "jsPageLoader")
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.message)
+			});
+	}
+
+	//
+	$(document).on(
+		"click",
+		".jsAddExternalEmployeeBtn",
+		function (event) {
+			event.preventDefault();
+			processExternalEmployee(
+				$(this).closest(".row").data("external")
+			);
+		}
+	);
+
+	function processExternalEmployee(id) {
+
+		const obj = {
+			name: $(`.jsEPName${id}`).val().trim(),
+			email: $(`.jsEPEmail${id}`).val().trim(),
+		}
+
+		if (!obj.name) {
+			_error("Employee name is required.");
+			return;
+		}
+
+		if (!obj.email) {
+			_error("Employee email is required.");
+			return;
+		}
+
+		let regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+		if (!regex.test(obj.email)) {
+			_error("Employee email is invalid.");
+			return;
+		}
+
+		ml(true, "jsPageLoader")
+		//
+		$
+			.ajax({
+				url: baseUrl(`compliance_safety_reporting/issues/${getSegment(2)}/${getSegment(3)}/${getSegment(4)}/employees/external`),
+				method: "POST",
+				data: {
+					external: obj,
+				}
+			})
+			.always(function () {
+				ml(false, "jsPageLoader")
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.message)
+
+				$(`.row [data-external="${id}"]`).data("id", resp.id);
+				$(`.row [data-external="${id}"]`).find(".jsAddExternalEmployeeRow").remove();
+			});
+	}
 });

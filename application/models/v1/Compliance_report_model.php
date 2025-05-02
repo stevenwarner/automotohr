@@ -6454,4 +6454,93 @@ class Compliance_report_model extends CI_Model
 				]
 			);
 	}
+
+	public function updateItemEmployees($reportId, $incidentId, $issueId, $selectedEmployees, $loggedInEmployeeId)
+	{
+		if ($selectedEmployees) {
+			$employeeIds = [];
+			//
+			$reportEmployees = [];
+			foreach ($selectedEmployees as $employeeId) {
+				//
+				$employeeIds[] = $employeeId;
+				//
+				if (
+					$this
+						->db
+						->where('csp_reports_sid', $reportId)
+						->where('csp_report_incident_sid', $incidentId)
+						->where('csp_reports_incidents_items_sid', $issueId)
+						->where('employee_sid', $employeeId)
+						->count_all_results('csp_reports_employees') > 0
+				) {
+					continue;
+				}
+				$reportEmployees[] = [
+					"csp_reports_sid" => $reportId,
+					"csp_report_incident_sid" => $incidentId,
+					"csp_reports_incidents_items_sid" => $issueId,
+					"employee_sid" => $employeeId,
+					"created_by" => $loggedInEmployeeId,
+					"created_at" => getSystemDate(),
+					"updated_at" => getSystemDate(),
+				];
+			}
+			if ($reportEmployees) {
+				// insert new employees
+				$this->db->insert_batch("csp_reports_employees", $reportEmployees);
+			}
+			// update the count
+			$this
+				->db
+				->where("sid", $reportId)
+				->update("csp_reports", [
+					"allowed_internal_system_count" => count($reportEmployees),
+				]);
+			//
+			// delete
+			$this
+				->db
+				->where('csp_reports_sid', $reportId)
+				->where('csp_report_incident_sid', $incidentId)
+				->where('csp_reports_incidents_items_sid', $issueId)
+				->where('is_external_employee', 0)
+				->where_not_in('employee_sid', $employeeIds)
+				->delete("csp_reports_employees");
+		} else {
+			$this
+				->db
+				->where('csp_reports_sid', $reportId)
+				->where('csp_report_incident_sid', $incidentId)
+				->where('csp_reports_incidents_items_sid', $issueId)
+				->where('is_external_employee', 0)
+				->delete('csp_reports_employees');
+			// update the count
+			$this
+				->db
+				->where("sid", $reportId)
+				->update("csp_reports", [
+					"allowed_internal_system_count" => 0,
+				]);
+		}
+	}
+
+	public function updateItemExternalEmployee($reportId, $incidentId, $issueId, $employee, $loggedInEmployeeId)
+	{
+		// add external employees
+		$externalEmployees = [
+			"csp_reports_sid" => $reportId,
+			"csp_report_incident_sid" => $incidentId,
+			"csp_reports_incidents_items_sid" => $issueId,
+			"is_external_employee" => 1,
+			"external_name" => $employee["name"],
+			"external_email" => $employee["email"],
+			"created_by" => $loggedInEmployeeId,
+			"created_at" => getSystemDate(),
+			"updated_at" => getSystemDate(),
+		];
+		$this->db->insert("csp_reports_employees", $externalEmployees);
+
+		return $this->db->insert_id();
+	}
 }
