@@ -153,7 +153,7 @@ $(function () {
     });
 
     if (typeof daterangepicker !== "undefined") {
-    
+
         $("#jsDateRangePicker").daterangepicker({
             showDropdowns: true,
             autoUpdateInput: false,
@@ -163,14 +163,14 @@ $(function () {
                 cancelLabel: "clear"
             },
         });
-        
-            $("#jsDateRangePicker").on('apply.daterangepicker', function (ev, picker) {
-                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-            });
-        
-            $("#jsDateRangePicker").on('cancel.daterangepicker', function (ev, picker) {
-                $(this).val('');
-            });
+
+        $("#jsDateRangePicker").on('apply.daterangepicker', function (ev, picker) {
+            $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+        });
+
+        $("#jsDateRangePicker").on('cancel.daterangepicker', function (ev, picker) {
+            $(this).val('');
+        });
     }
 
     $(document).on('click', '.js-check-all', selectAllInputs);
@@ -357,11 +357,11 @@ $(function () {
                 ml(false, "jsFileViewModalLoader");
             });
     }
-    
+
     function markTheIssueDone(issueId, btnRef) {
         const _html = callButtonHook(btnRef, true);
         $.ajax({
-            url: baseUrl("compliance_safety_reporting/issues/" + issueId+"/mark/done"),
+            url: baseUrl("compliance_safety_reporting/issues/" + issueId + "/mark/done"),
             method: "POST",
             data: {
                 status: "completed"
@@ -397,7 +397,7 @@ $(function () {
             //
             XHR = $.ajax({
                 url: baseUrl(
-                    "compliance_safety_reporting/delete_file/" +
+                    (getSegment(0) === "csp" ? "csp" : "compliance_safety_reporting") + "/delete_file/" +
                     fileId
                 ),
                 method: "DELETE",
@@ -658,7 +658,7 @@ $(function () {
         }
     );
 
-     $(".jsMarkIssueDonePublic").click(
+    $(".jsMarkIssueDonePublic").click(
         function (event) {
             event.preventDefault();
             const issueId = $(this).data("issue_id");
@@ -671,12 +671,12 @@ $(function () {
                 }
             );
         }
-     );
-    
+    );
+
     function markTheIssueDonePublic(issueId, btnRef) {
         const _html = callButtonHook(btnRef, true);
         $.ajax({
-            url: baseUrl("csp/issues/" + issueId+"/mark/done"),
+            url: baseUrl("csp/issues/" + issueId + "/mark/done"),
             method: "POST",
             data: {
                 status: "completed"

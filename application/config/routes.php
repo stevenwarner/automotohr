@@ -2855,3 +2855,6 @@ $route["compliance_safety_reporting/issues/(:num)/(:num)/(:num)/employees/intern
 
 $route["compliance_safety_reporting/issues/(:num)/(:num)/(:num)/employees/external"]["post"] =
   "v1/Compliance_safety_reporting/updateItemExternalEmployee/$1/$2/$3";
+
+$route["csp/delete_file/(:num)"]["delete"] =
+  "v1/Compliance_safety_reporting_public/deleteFileById/$1";

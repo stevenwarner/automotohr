@@ -1904,4 +1904,17 @@ class Compliance_safety_reporting_public extends Base_csp
         );
     }
 
+    public function deleteFileById($fileId)
+    {
+        $this->compliance_report_model->deleteAttachedFile(
+            $fileId
+        );
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "File removed successfully."]
+        );
+    }
+
+
 }
