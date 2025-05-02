@@ -4,34 +4,38 @@
 
 
     <div class="container-fluid">
+        <!-- buttons -->
+        <div class="row">
+            <div class="col-sm-6">
+                <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('employee_management_system') : base_url('dashboard'); ?>"
+                    class="btn btn-black">
+                    <i class="fa fa-arrow-left"></i>
+                    Dashboard
+                </a>
+            </div>
+            <div class="col-sm-6 text-right">
+                <a href="<?= base_url("compliance_safety_reporting/dashboard"); ?>" class="btn btn-orange">
+                    <i class="fa fa-pie-chart"></i>
+                    Compliance Dashboard
+                </a>
+                <a href="javascript:void(0)" class="btn btn-orange jsSendReminderEmails">
+                    <i class="fa fa-send"></i>
+                    Send Emails
+                </a>
+                <a class="btn btn-black" target="_blank"
+                    href="<?= base_url("{$firstSegment}/download_report/" . $report["sid"]); ?>">
+                    <i class="fa fa-download"></i>
+                    Download
+                </a>
+            </div>
+        </div>
         <!--  -->
         <div style="border-bottom: 2px solid #00e; margin-bottom: 10px;">
             <div class="row">
-                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
+                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                     <h2 class="text-info">
                         <?= $report["compliance_report_name"]; ?>
                     </h2>
-                </div>
-                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12 text-right">
-                    <br>
-                    <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('employee_management_system') : base_url('dashboard'); ?>"
-                        class="btn btn-black">
-                        <i class="fa fa-arrow-left"></i>
-                        Dashboard
-                    </a>
-                    <a href="<?= base_url("compliance_safety_reporting/dashboard"); ?>" class="btn btn-orange">
-                        <i class="fa fa-pie-chart"></i>
-                        Compliance Dashboard
-                    </a>
-                    <a href="javascript:void(0)" class="btn btn-orange jsSendReminderEmails">
-                        <i class="fa fa-send"></i>
-                        Send Emails
-                    </a>
-                    <a class="btn btn-black" target="_blank"
-                        href="<?= base_url("{$firstSegment}/download_report/" . $report["sid"]); ?>">
-                        <i class="fa fa-download"></i>
-                        Download
-                    </a>
                 </div>
             </div>
         </div>
@@ -49,6 +53,7 @@
                     <li class="nav-item <?= $this->input->get("tab", true) == "issues" ? "active" : ""; ?>">
                         <a class="nav-link" data-toggle="tab" href="#tab-issues" role="tab">
                             <i class="fa fa-exclamation-triangle"></i> Issues
+                            (<?= count($report["issuesWithIncident"]); ?>)
                         </a>
                     </li>
                     <li class="nav-item <?= $this->input->get("tab", true) == "questions" ? "active" : ""; ?>">

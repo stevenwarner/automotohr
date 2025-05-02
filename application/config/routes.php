@@ -2837,3 +2837,7 @@ $route["compliance_safety_reporting/report/update/(:num)"]["post"] =
 
 $route["compliance_safety_reporting/get_attached_files/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting/getIssueAttachedFilesViewById/$1/$2/$3";
+
+
+$route["compliance_safety_reporting/issues/(:num)/mark/done"]["post"] =
+  "v1/Compliance_safety_reporting/markIssueCompleted/$1";

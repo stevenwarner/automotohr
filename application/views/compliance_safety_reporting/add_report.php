@@ -2,13 +2,15 @@
     <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-12 text-right">
+            <div class="col-sm-6">
                 <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('employee_management_system') : base_url('dashboard'); ?>"
                     class="btn btn-black">
                     <i class="fa fa-arrow-left"></i>
                     Dashboard
                 </a>
-                <a href="<?= base_url('compliance_safety_reporting/overview') ?>" class="btn btn-blue">
+            </div>
+            <div class="col-sm-6 text-right">
+                <a href="<?= base_url('compliance_safety_reporting/dashboard') ?>" class="btn btn-blue">
                     <i class="fa fa-pie-chart"></i>
                     Compliance Safety Reporting
                 </a>

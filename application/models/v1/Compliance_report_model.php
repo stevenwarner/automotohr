@@ -5535,7 +5535,7 @@ class Compliance_report_model extends CI_Model
 			$between = "report_date between '" . formatDateToDB($start_date, SITE_DATE, DB_DATE) . "' and '" . formatDateToDB($end_date, SITE_DATE, DB_DATE) . "'";
 			$this->db->where($between);
 		}
-		
+
 		// check for severity status
 		if (array_key_exists("severity_level", $filter) && $filter["severity_level"] != "-1") {
 			$this->db->where(
@@ -5569,11 +5569,42 @@ class Compliance_report_model extends CI_Model
 			$this->db->where($like);
 		}
 		//
-		$this->db->order_by("compliance_severity_levels.level", "ASC");
+		$this->db->order_by("csp_reports_incidents_items.sid", "DESC");
 		$records_obj = $this->db->get('csp_reports_incidents_items');
 		$records_arr = $records_obj->result_array();
 		$records_obj->free_result();
+
 		//
+		if ($records_arr) {
+			$recordHolder = [];
+			//
+			foreach ($records_arr as $v0) {
+				// check if 
+				$reportId = $v0["csp_reports_sid"];
+				//
+				if (!array_key_exists($reportId, $recordHolder)) {
+					$recordHolder[$reportId] = [
+						"id" => $reportId,
+						"title" => $v0["title"],
+						"report_date" => $v0["report_date"],
+						"issues" => [],
+					];
+				}
+
+				// get attachments
+				$v0["files"] = $this->getAllItemsFiles(
+					$reportId,
+					$v0["csp_reports_incidents_sid"],
+					$v0["sid"]
+				);
+
+				//
+				$recordHolder[$reportId]["issues"][] = $v0;
+			}
+			//
+			$records_arr = array_values($recordHolder);
+		}
+
 		return $records_arr;
 	}
 
@@ -5873,10 +5904,10 @@ class Compliance_report_model extends CI_Model
 	public function getCSPIssueForEmail(int $issueId)
 	{
 		$incidentId = $this->db
-		->select('csp_reports_incidents_sid')
-		->where("sid", $issueId)
-		->get("csp_reports_incidents_items")
-		->row_array()['csp_reports_incidents_sid'];
+			->select('csp_reports_incidents_sid')
+			->where("sid", $issueId)
+			->get("csp_reports_incidents_items")
+			->row_array()['csp_reports_incidents_sid'];
 
 		$report = $this
 			->db
@@ -5927,8 +5958,8 @@ class Compliance_report_model extends CI_Model
 			]);
 		//
 		return $report;
-	}	
-	
+	}
+
 	/**
 	 * Get all external employees
 	 *
@@ -5967,7 +5998,7 @@ class Compliance_report_model extends CI_Model
 			)
 			->get("csp_reports_employees")
 			->result_array();
-	}		
+	}
 
 	public function getCSPReportByIdNew(int $reportId, array $columns)
 	{
@@ -6342,7 +6373,8 @@ class Compliance_report_model extends CI_Model
 			);
 	}
 
-	public function deleteIssueFromReport ($issueId) {
+	public function deleteIssueFromReport($issueId)
+	{
 		$this->db
 			->where("sid", $issueId)
 			->delete("csp_reports_incidents_items");
@@ -6390,6 +6422,8 @@ class Compliance_report_model extends CI_Model
 		$this->db->where("csp_reports_sid", $reportId);
 		$this->db->where("csp_incident_type_sid", $incidentId);
 		$this->db->where("csp_reports_incidents_items_sid", $issueId);
+		$this->db->order_by("csp_reports_files.sid", "DESC");
+
 		$this->db->join(
 			"users",
 			"users.sid = csp_reports_files.created_by",
@@ -6401,7 +6435,23 @@ class Compliance_report_model extends CI_Model
 	public function getAllItemsFilesCount($issueId)
 	{
 		return $this->db
-		->where("csp_reports_incidents_items_sid", $issueId)
-		->count_all_results('csp_reports_files');
+			->where("csp_reports_incidents_items_sid", $issueId)
+			->count_all_results('csp_reports_files');
+	}
+
+	public function markIssueDone(int $issueId, int $loggedInEmployeeId)
+	{
+		$this
+			->db
+			->where("sid", $issueId)
+			->update(
+				"csp_reports_incidents_items",
+				[
+					"completion_status" => "completed",
+					"completed_by" => $loggedInEmployeeId,
+					"completion_date" => getSystemDate(DB_DATE),
+					"updated_at" => getSystemDate()
+				]
+			);
 	}
 }

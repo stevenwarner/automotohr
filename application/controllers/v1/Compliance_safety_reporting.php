@@ -69,18 +69,6 @@ class Compliance_safety_reporting extends Base_csp
                 $this->data["filter"]
             );
         //
-        if ($this->data["reports"]) {
-            foreach ($this->data["reports"] as $key => $issue) {
-                $filesCount = $this
-                    ->compliance_report_model
-                    ->getAllItemsFilesCount(
-                        $issue['sid']
-                    );
-                //
-                $this->data["reports"][$key]['file_count'] = $filesCount;
-            }
-        }
-        //
         // get the severity status
         $this->data["severity_status"] = $this
             ->compliance_report_model
@@ -1564,7 +1552,7 @@ class Compliance_safety_reporting extends Base_csp
         $post = $this->input->post(null, true);
 
         if ($post["link"]) {
-            $this
+            $id = $this
                 ->compliance_report_model
                 ->addFilesLinkToIncidentItem(
                     $post['reportId'],
@@ -1575,11 +1563,31 @@ class Compliance_safety_reporting extends Base_csp
                     $post["type"],
                     $post['title']
                 );
+            //
+            $file = [
+                "title" => $post["title"],
+                "file_type" => $post["type"],
+                "s3_file_value" => $post["link"],
+                "created_at" => getSystemDate(),
+                "manual_email" => false,
+                "sid" => $id,
+                "first_name" => $this->getLoggedInEmployee("first_name"),
+                "last_name" => $this->getLoggedInEmployee("last_name"),
+                "access_level" => $this->getLoggedInEmployee("access_level"),
+                "access_level_plus" => $this->getLoggedInEmployee("access_level_plus"),
+                "is_pay_plan" => $this->getLoggedInEmployee("is_pay_plan"),
+                "job_title" => $this->getLoggedInEmployee("job_title"),
+                "is_executive_admin" => $this->getLoggedInEmployee("is_executive_admin"),
+            ];
             // return the success
             return sendResponse(
                 200,
                 [
-                    "message" => "File is attached successfully."
+                    "message" => "File is attached successfully.",
+                    "view" => $this->load->view("compliance_safety_reporting/single_file", [
+                        "document" => $file,
+                    ], true),
+                    "url" => $post["link"]
                 ]
             );
         } else {
@@ -1601,7 +1609,7 @@ class Compliance_safety_reporting extends Base_csp
                 ];
                 //
                 $this->aws_lib->put_object($options);
-                $this
+                $id = $this
                     ->compliance_report_model
                     ->addFilesToIncidentItem(
                         $post['reportId'],
@@ -1613,11 +1621,30 @@ class Compliance_safety_reporting extends Base_csp
                         $post["type"],
                         $post['title']
                     );
+                $file = [
+                    "title" => $post["title"],
+                    "file_type" => $post["type"],
+                    "s3_file_value" => $post["link"],
+                    "created_at" => getSystemDate(),
+                    "manual_email" => false,
+                    "sid" => $id,
+                    "first_name" => $this->getLoggedInEmployee("first_name"),
+                    "last_name" => $this->getLoggedInEmployee("last_name"),
+                    "access_level" => $this->getLoggedInEmployee("access_level"),
+                    "access_level_plus" => $this->getLoggedInEmployee("access_level_plus"),
+                    "is_pay_plan" => $this->getLoggedInEmployee("is_pay_plan"),
+                    "job_title" => $this->getLoggedInEmployee("job_title"),
+                    "is_executive_admin" => $this->getLoggedInEmployee("is_executive_admin"),
+                ];
                 // return the success
                 return sendResponse(
                     200,
                     [
-                        "message" => "File is attached successfully."
+                        "message" => "File is attached successfully.",
+                        "view" => $this->load->view("compliance_safety_reporting/single_file", [
+                            "document" => $file,
+                        ], true),
+                        "url" => AWS_S3_BUCKET_URL . "/" . $fileName
                     ]
                 );
                 //
@@ -1640,6 +1667,8 @@ class Compliance_safety_reporting extends Base_csp
                 $incidentId,
                 $itemId
             );
+
+        $this->data["report_id"] = $reportId;
 
         //
         $this->data["report"]["emails"] = $this->compliance_report_model->getComplianceEmails($reportId, $incidentId, $this->getLoggedInEmployee("sid"));
@@ -1814,17 +1843,17 @@ class Compliance_safety_reporting extends Base_csp
 
         foreach ($issuesIds as $issueId) {
             $this
-            ->compliance_report_model
-            ->sendEmailsForCSPIssue(
-                $issueId
-            );
+                ->compliance_report_model
+                ->sendEmailsForCSPIssue(
+                    $issueId
+                );
         }
         // return the success
         return sendResponse(
             200,
             ["message" => "You have successfully send the emails."]
         );
-    }    
+    }
 
     public function getAllIssues()
     {
@@ -1983,7 +2012,8 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
-    public function deleteIssueById ($issueId) {
+    public function deleteIssueById($issueId)
+    {
         $this->compliance_report_model->deleteIssueFromReport(
             $issueId
         );
@@ -1994,7 +2024,8 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
-    public function exportCSVReport () {
+    public function exportCSVReport()
+    {
         //
         if (!isMainAllowedForCSP()) {
             return redirect("dashboard");
@@ -2044,7 +2075,7 @@ class Compliance_safety_reporting extends Base_csp
                 'Report Title',
                 'Report Date',
                 'Incident Name',
-                'Issue Title',
+                'Issue',
                 'Issue Level',
                 'Completion Status',
                 'Completed Date',
@@ -2053,18 +2084,24 @@ class Compliance_safety_reporting extends Base_csp
         );
         //
         if ($reports) {
-            foreach ($reports as $report) {
-                $a = [];
-                $a[] = $report['title'];
-                $a[] = $report['report_date'];
-                $a[] = $report['compliance_incident_type_name'];
-                $a[] = $report['item_title'];
-                $a[] = $report['level'];
-                $a[] = $report['completion_status'];
-                $a[] = $report['completion_date'];
-                $a[] = $report['completed_by'] ? getEmployeeOnlyNameBySID($report['completed_by']) : '';
-                //
-                fputcsv($output, $a);
+            foreach ($reports as $v0) {
+                foreach ($v0["issues"] as $report) {
+
+                    $a = [];
+                    $a[] = $report['title'];
+                    $a[] = $report['report_date'];
+                    $a[] = $report['compliance_incident_type_name'];
+                    $a[] = strip_tags(convertCSPTags($report['description'], json_decode(
+                        $report["answers_json"],
+                        true,
+                    ), true));
+                    $a[] = $report['level'];
+                    $a[] = $report['completion_status'];
+                    $a[] = $report['completion_date'];
+                    $a[] = $report['completed_by'] ? getEmployeeOnlyNameBySID($report['completed_by']) : '';
+                    //
+                    fputcsv($output, $a);
+                }
             }
         }
 
@@ -2072,7 +2109,8 @@ class Compliance_safety_reporting extends Base_csp
         exit;
     }
 
-    public function getIssueAttachedFilesViewById (int $reportId, int $incidentId, int $issueId) {
+    public function getIssueAttachedFilesViewById(int $reportId, int $incidentId, int $issueId)
+    {
         // get the issues
         $files = $this
             ->compliance_report_model
@@ -2093,6 +2131,34 @@ class Compliance_safety_reporting extends Base_csp
                     ],
                     true
                 )
+            ]
+        );
+    }
+
+    public function markIssueCompleted(int $issueId)
+    {
+        // get the issues
+        $files = $this
+            ->compliance_report_model
+            ->markIssueDone(
+                $issueId,
+                $this->getLoggedInEmployee("sid")
+            );
+        //
+        $html = '
+            <label class="btn btn-success" style="border-radius: 5px;">
+                Completed
+            </label>
+                ' . (remakeEmployeeName($this->loggedInEmployee)) . '
+                <br />
+                ' . (getSystemDate(DATE)) . '
+        ';
+        // return the success
+        return SendResponse(
+            200,
+            [
+                "message" => "Issue marked done.",
+                "view" => $html,
             ]
         );
     }

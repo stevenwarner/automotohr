@@ -3,29 +3,24 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-12 text-right">
+            <div class="col-sm-6">
                 <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('employee_management_system') : base_url('dashboard'); ?>"
                     class="btn btn-black">
                     <i class="fa fa-arrow-left"></i>
                     Dashboard
                 </a>
-
-                <a href="<?= base_url("compliance_safety_reporting/report/$reportId/incident/edit/$incidentId") ?>"
-                    class="btn btn-black">
-                    <i class="fa fa-arrow-left"></i>
-                    Back To Incident
-                </a>
-                <a href="<?= base_url("compliance_safety_reporting/dashboard") ?>" class="btn btn-orange">
-                    <i class="fa fa-pie-chart"></i>
-                    Compliance Dashboard
-                </a>
-
-                <a href="<?= base_url("compliance_safety_reporting/overview") ?>" class="btn btn-blue">
-                    <i class="fa fa-pie-chart"></i>
-                    Overview
-                </a>
-
             </div>
+            <div class="col-sm-6 text-right">
+                <a href="<?= base_url('compliance_safety_reporting/edit/' . $report_id) ?>" class="btn btn-black">
+                    <i class="fa fa-arrow-left"></i>
+                    Back To Report
+                </a>
+                <a href="<?= base_url('compliance_safety_reporting/dashboard') ?>" class="btn btn-blue">
+                    <i class="fa fa-pie-chart"></i>
+                    Compliance Safety Reporting
+                </a>
+            </div>
+
         </div>
 
         <div class="page-header">
@@ -242,7 +237,9 @@
                                                                             class="btn btn-info btn-info">
                                                                             <i class="fa fa-download"></i>
                                                                         </a>
-                                                                        <button class="btn btn-info jsDeleteFile" data-file_id="<?php echo $document["sid"]; ?>" data-file_type="<?php echo $document['file_type']; ?>">
+                                                                        <button class="btn btn-info jsDeleteFile"
+                                                                            data-file_id="<?php echo $document["sid"]; ?>"
+                                                                            data-file_type="<?php echo $document['file_type']; ?>">
                                                                             <i class="fa fa-trash"></i>
                                                                         </button>
                                                                     </div>
@@ -295,8 +292,10 @@
                                                                                 <i class="fa fa-download"></i>
                                                                             </a>
                                                                         <?php endif; ?>
-                                                                        
-                                                                        <button class="btn btn-info jsDeleteFile" data-file_id="<?php echo $file["sid"]; ?>" data-file_type="<?php echo $file['file_type']; ?>">
+
+                                                                        <button class="btn btn-info jsDeleteFile"
+                                                                            data-file_id="<?php echo $file["sid"]; ?>"
+                                                                            data-file_type="<?php echo $file['file_type']; ?>">
                                                                             <i class="fa fa-trash"></i>
                                                                         </button>
                                                                     </div>
