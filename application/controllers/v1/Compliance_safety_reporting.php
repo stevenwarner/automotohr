@@ -342,6 +342,7 @@ class Compliance_safety_reporting extends Base_csp
                 $this->getLoggedInCompany("sid"),
                 0
             );
+        $this->data["employees"] = [];
         // get the report incident types
         // $this->data["incidentTypes"] = $this
         //     ->compliance_report_model

@@ -238,7 +238,10 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                             <div class="panel-heading jsToggle" data-target="jsChildRows<?= $v0["id"]; ?>"
                                 style="cursor: pointer;">
                                 <i class="fa fa-chevron-right jsToggleIcon"></i>
-                                <?= $v0["title"]; ?>
+                                <button type="button" class="btn btn-link jsReportEditBtn"
+                                    data-href="<?= base_url("compliance_safety_reporting/edit/" . $v0["id"]); ?>">
+                                    <?= $v0["title"]; ?>
+                                </button>
                                 (<?= count($v0["issues"]); ?> Issues)
                                 <span class="pull-right">
                                     <?= formatDateToDB($v0["report_date"], DB_DATE, DATE); ?>

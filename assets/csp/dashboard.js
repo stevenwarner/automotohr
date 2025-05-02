@@ -152,23 +152,26 @@ $(function () {
         }]
     });
 
-    $("#jsDateRangePicker").daterangepicker({
-        showDropdowns: true,
-        autoUpdateInput: false,
-        locale: {
-            format: "MM/DD/YYYY",
-            separator: " - ",
-            cancelLabel: "clear"
-        },
-    });
-
-    $("#jsDateRangePicker").on('apply.daterangepicker', function (ev, picker) {
-        $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-    });
-
-    $("#jsDateRangePicker").on('cancel.daterangepicker', function (ev, picker) {
-        $(this).val('');
-    });
+    if (typeof daterangepicker !== "undefined") {
+    
+        $("#jsDateRangePicker").daterangepicker({
+            showDropdowns: true,
+            autoUpdateInput: false,
+            locale: {
+                format: "MM/DD/YYYY",
+                separator: " - ",
+                cancelLabel: "clear"
+            },
+        });
+        
+            $("#jsDateRangePicker").on('apply.daterangepicker', function (ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+            });
+        
+            $("#jsDateRangePicker").on('cancel.daterangepicker', function (ev, picker) {
+                $(this).val('');
+            });
+    }
 
     $(document).on('click', '.js-check-all', selectAllInputs);
     // $(document).on('click', '.jsIssueIds', selectSingleInput);
@@ -688,4 +691,13 @@ $(function () {
                 $(`.jsStatusRow${issueId}`).html(resp.view);
             });
     }
+
+    $(".jsReportEditBtn").click(
+        function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            window.location.href = $(this).data("href")
+        }
+    );
 });

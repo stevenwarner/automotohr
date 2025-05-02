@@ -783,7 +783,7 @@ $(function Overview() {
 		function (event) {
 			event.preventDefault();
 
-			const issueId = $(this).closest("tr").data("id");
+			const issueId = $(this).data("id");
 
 			generateAndEditModalToBody();
 			//
@@ -1370,4 +1370,3 @@ $(function Overview() {
 
 	ml(false, "jsPageLoader");
 });
-0
