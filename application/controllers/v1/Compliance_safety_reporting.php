@@ -2094,7 +2094,7 @@ class Compliance_safety_reporting extends Base_csp
                     $a[] = $report['answers_json'] ? strip_tags(convertCSPTags($report['description'], json_decode(
                         $report["answers_json"],
                         true,
-                    ), true)) : [];
+                    ), true)) : "";
                     $a[] = $report['level'];
                     $a[] = $report['completion_status'];
                     $a[] = $report['completion_date'];
