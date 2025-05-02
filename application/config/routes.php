@@ -2746,3 +2746,4 @@ $route["compliance_safety_reporting/download_incident_item/(:num)/(:num)/(:num)"
 $route["csp/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting_public/downloadCSPIncidentItem/$1/$2/$3";
 
+$route['interview/(:any)'] = 'Applicant_interviews/interviewCall/$1';
