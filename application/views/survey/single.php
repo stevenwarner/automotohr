@@ -1,0 +1,116 @@
+<div class="main-content">
+    <div class="dashboard-wrp">
+        <div class="container-fluid">
+            <div class="row">
+                <!--  -->
+                <?php $this->load->view('loader', ['props' => 'id="jsPayrollLoader"']); ?>
+                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
+                    <?php $this->load->view('survey/employer_sidebar'); ?>
+                </div>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
+                    <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
+                    <div class="dashboard-conetnt-wrp">
+                        <div class="page-header-area">
+                            <span class="page-heading down-arrow">
+                                <?php $this->load->view('manage_employer/company_logo_name'); ?>
+                                Survey Templates
+                            </span>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <!-- Filter-->
+                        <div class="panel panel-default">
+                            <div class="panel-heading" data-toggle="collapse" data-parent="#accordion"
+                                href="#collapseOne" aria-expanded="true">
+                                <h1 class="panel-heading-text text-medium">
+                                    <strong>
+                                        <i class="fa fa-filter text-orange"></i>
+                                        Filter
+                                    </strong>
+                                </h1>
+                            </div>
+                            <form action="<?= current_url(); ?>" type="GET">
+                                <div class="panel-collapse collapse in" id="collapseOne">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="keyword" class="text-medium">Keyword</label>
+                                                    <input type="text" class="form-control" name="keyword"
+                                                        placeholder="Keywords" required />
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-6">
+                                                <div class="form-group">
+                                                    <label for="status" class="text-medium">Status</label>
+                                                    <select name="status" class="form-control">
+                                                        <option value="-1">All</option>
+                                                        <option value="1">Active</option>
+                                                        <option value="0">Archived</option>
+                                                        <option value="complete">Completed</option>
+                                                        <option value="draft">Draft</option>
+                                                        <option value="publish">Published</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-footer text-right">
+                                        <button type="button" class="btn btn-black">
+                                            <i class="fa fa-times-circle"></i>
+                                            Clear
+                                        </button>
+                                        <button type="submit" class="btn btn-orange">
+                                            <i class="fa fa-search"></i>
+                                            Apply
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <?php $this->load->view(
+                            "survey/partials/tab",
+                            [
+                                "tabData" => [
+                                    "key" => "draft",
+                                    "heading" => "Draft",
+                                    "subHeading" => "Surveys marked as draft.",
+                                    "pagination" => [],
+                                    "records" => [],
+                                ],
+                            ]
+                        ); ?>
+
+
+                        <?php $this->load->view(
+                            "survey/partials/tab",
+                            [
+                                "tabData" => [
+                                    "key" => "publish",
+                                    "heading" => "Published",
+                                    "subHeading" => "Surveys marked as published.",
+                                    "pagination" => [],
+                                    "records" => [],
+                                ],
+                            ]
+                        ); ?>
+
+                        <?php $this->load->view(
+                            "survey/partials/tab",
+                            [
+                                "tabData" => [
+                                    "key" => "publish",
+                                    "heading" => "Published",
+                                    "subHeading" => "Surveys marked as published.",
+                                    "pagination" => [],
+                                    "records" => [],
+                                ],
+                            ]
+                        ); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

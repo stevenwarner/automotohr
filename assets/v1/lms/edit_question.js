@@ -164,8 +164,8 @@ $(function editQuestion() {
 
 		$(
 			'#jsEditQuestionType option[value="' +
-				questionObj.question_type +
-				'"]'
+			questionObj.question_type +
+			'"]'
 		).prop("selected", true);
 		$("#jsEditQuestionType").select2({
 			minimumResultsForSearch: -1,
@@ -189,8 +189,8 @@ $(function editQuestion() {
 		if (questionObj.video_type === "none") {
 			$(
 				'.jsEditQuestionVideoType[value="' +
-					questionObj.video_type +
-					'"]'
+				questionObj.video_type +
+				'"]'
 			).prop("checked", true);
 			$(".jsEditQuestionUploadVideoBox").addClass("hidden");
 			$(".jsEditQuestionRecordVideoBox").addClass("hidden");
@@ -199,8 +199,8 @@ $(function editQuestion() {
 		} else if (questionObj.video_type === "link") {
 			$(
 				'.jsEditQuestionVideoType[value="' +
-					questionObj.video_type +
-					'"]'
+				questionObj.video_type +
+				'"]'
 			).prop("checked", true);
 			$(".jsEditQuestionUploadVideoBox").addClass("hidden");
 			$(".jsEditQuestionRecordVideoBox").addClass("hidden");
@@ -246,23 +246,23 @@ $(function editQuestion() {
 			$(".jsEditQuestionYesNo").removeClass("hidden");
 			$(
 				'#jsEditQuestionYesNoYSelect option[value="' +
-					questionObj.choice_list["yes"]["score"] +
-					'"]'
+				questionObj.choice_list["yes"]["score"] +
+				'"]'
 			).prop("selected", true);
 			$(
 				'#jsEditQuestionYesNoYStatus option[value="' +
-					questionObj.choice_list["yes"]["status"] +
-					'"]'
+				questionObj.choice_list["yes"]["status"] +
+				'"]'
 			).prop("selected", true);
 			$(
 				'#jsEditQuestionYesNoNSelect option[value="' +
-					questionObj.choice_list["no"]["score"] +
-					'"]'
+				questionObj.choice_list["no"]["score"] +
+				'"]'
 			).prop("selected", true);
 			$(
 				'#jsEditQuestionYesNoNStatus option[value="' +
-					questionObj.choice_list["no"]["status"] +
-					'"]'
+				questionObj.choice_list["no"]["status"] +
+				'"]'
 			).prop("selected", true);
 		} else if (
 			questionObj.question_type === "single_choice" ||
@@ -276,14 +276,14 @@ $(function editQuestion() {
 			//
 			$(
 				'.jsEditQuestionChoiceAnswerPrimaryScore option[value="' +
-					questionObj.choice_list[0]["answer_score"] +
-					'"]'
+				questionObj.choice_list[0]["answer_score"] +
+				'"]'
 			).prop("selected", true);
 			//
 			$(
 				'.jsEditQuestionChoiceAnswerPrimaryStatus option[value="' +
-					questionObj.choice_list[0]["answer_status"] +
-					'"]'
+				questionObj.choice_list[0]["answer_status"] +
+				'"]'
 			).prop("selected", true);
 
 			//
@@ -296,69 +296,61 @@ $(function editQuestion() {
 							<div class="row">
 								<div class="col-xs-12 col-sm-5">
 									<label>Answer Choice <strong class="text-danger">*</strong></label>
-									<input type="text" class="form-control jsEditQuestionChoiceAnswer" value="${
-										questionObj.choice_list[index][
-											"answer_choice"
-										]
-									}" />
+									<input type="text" class="form-control jsEditQuestionChoiceAnswer" value="${questionObj.choice_list[index][
+						"answer_choice"
+						]
+						}" />
 								</div>
 								<div class="col-xs-12 col-sm-3">
 									<label>Question Score <strong class="text-danger">*</strong></label>
 									<select class="form-control jsEditQuestionChoiceAnswerScore">
-										<option ${
-											questionObj.choice_list[index][
-												"answer_score"
-											] === "0"
-												? "selected"
-												: ""
-										} value="0">Not acceptable - 0</option>
-										<option ${
-											questionObj.choice_list[index][
-												"answer_score"
-											] === "1"
-												? "selected"
-												: ""
-										} value="1">Acceptable - 1</option>
-										<option ${
-											questionObj.choice_list[index][
-												"answer_score"
-											] === "2"
-												? "selected"
-												: ""
-										} value="2">Good - 2</option>
-										<option ${
-											questionObj.choice_list[index][
-												"answer_score"
-											] === "3"
-												? "selected"
-												: ""
-										} value="3">Very Good - 3</option>
-										<option ${
-											questionObj.choice_list[index][
-												"answer_score"
-											] === "4"
-												? "selected"
-												: ""
-										} value="4">Excellent - 4</option>
+										<option ${questionObj.choice_list[index][
+							"answer_score"
+						] === "0"
+							? "selected"
+							: ""
+						} value="0">Not acceptable - 0</option>
+										<option ${questionObj.choice_list[index][
+							"answer_score"
+						] === "1"
+							? "selected"
+							: ""
+						} value="1">Acceptable - 1</option>
+										<option ${questionObj.choice_list[index][
+							"answer_score"
+						] === "2"
+							? "selected"
+							: ""
+						} value="2">Good - 2</option>
+										<option ${questionObj.choice_list[index][
+							"answer_score"
+						] === "3"
+							? "selected"
+							: ""
+						} value="3">Very Good - 3</option>
+										<option ${questionObj.choice_list[index][
+							"answer_score"
+						] === "4"
+							? "selected"
+							: ""
+						} value="4">Excellent - 4</option>
 									</select>
 								</div>
 								<div class="col-xs-12 col-sm-2">
 									<label>Status <strong class="text-danger">*</strong></label>
 									<select class="form-control jsEditQuestionChoiceAnswerStatus">
-										<option ${
-											questionObj.choice_list[index][
-												"answer_status"
-											] === "pass"
-												? "selected"
-												: ""
-										} value="pass">Pass</option>
-										<option ${
-											questionObj.choice_list[index][
-												"answer_status"
-											] === "fail"
-												? "selected"
-												: ""
-										} value="fail">Fail</option>
+										<option ${questionObj.choice_list[index][
+							"answer_status"
+						] === "pass"
+							? "selected"
+							: ""
+						} value="pass">Pass</option>
+										<option ${questionObj.choice_list[index][
+							"answer_status"
+						] === "fail"
+							? "selected"
+							: ""
+						} value="fail">Fail</option>
 									</select>
 								</div>
 								<div class="col-xs-12 col-sm-1">

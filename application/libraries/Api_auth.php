@@ -41,9 +41,9 @@ class Api_auth
             return ['errors' => ['Required Id not found.']];
         }
         // check and expire token
-        $this->checkAndGenerateApiTokenCode();
+        $accessToken = $this->checkAndGenerateApiTokenCode();
         //
-        return ['success' => 'Successfully authenticated.'];
+        return ['success' => 'Successfully authenticated.', 'access_token' => $accessToken];
     }
 
 
@@ -54,7 +54,7 @@ class Api_auth
     {
         // set default result
         $result = $this->ci->db
-            ->select('sid, client_id, client_secret, expires_in, updated_at, iat, exp')
+            ->select('sid, client_id, client_secret, access_token, expires_in, updated_at, iat, exp')
             ->where([
                 'user_sid' => $this->userId,
                 'company_sid' => $this->companyId
@@ -70,7 +70,7 @@ class Api_auth
             $this->ci->db->insert('api_credentials', $ins);
             // set default result
             $result = $this->ci->db
-                ->select('sid, client_id, client_secret, expires_in, iat, exp')
+                ->select('sid, client_id, client_secret, access_token, expires_in, iat, exp')
                 ->where([
                     'user_sid' => $this->userId,
                     'company_sid' => $this->companyId
@@ -87,8 +87,15 @@ class Api_auth
                     'company_sid' => $this->companyId
                 ])->update('api_credentials', ["access_token" => ""]);
             // generate a new access token
-            $this->loginToAPIServer($result);
+            $response = $this->loginToAPIServer($result);
+            //
+            if ($response["access_token"]) {
+                return $response["access_token"];
+            }
+            //
+            return "";
         }
+        return $result["access_token"];
     }
 
     /**
