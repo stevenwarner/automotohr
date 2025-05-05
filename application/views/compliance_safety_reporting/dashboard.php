@@ -62,6 +62,10 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                 </a>
             </div>
             <div class="col-md-6 text-right">
+                <a href="<?= base_url("compliance_safety_reporting/overview") ?>" class="btn btn-orange">
+                    <i class="fa fa-eye"></i>
+                    View Reports
+                </a>
                 <a href="<?= base_url("compliance_safety_reporting/add/1") ?>" class="btn btn-orange">
                     <i class="fa fa-plus-circle"></i>
                     Add New Report

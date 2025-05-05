@@ -2979,6 +2979,12 @@ class Compliance_report_model extends CI_Model
 		} else {
 			$this->db->where("csp_reports.created_by", $employeeId);
 		}
+
+		if ($status === "pending") {
+			$this->db->where_in("csp_reports.status", [$status, ""]);
+		} else {
+			$this->db->where_in("csp_reports.status", [$status]);
+		}
 		//
 		$records = $this
 			->db
@@ -2995,8 +3001,8 @@ class Compliance_report_model extends CI_Model
 			])
 			->where([
 				"csp_reports.company_sid" => $companyId,
-				"csp_reports.status" => $status
-			])->join(
+			])
+			->join(
 				"compliance_report_types",
 				"compliance_report_types.id = csp_reports.report_type_sid",
 				"left"
@@ -3005,13 +3011,6 @@ class Compliance_report_model extends CI_Model
 			->get("csp_reports")
 			->result_array();
 		//
-		if ($records) {
-			foreach ($records as $k0 => $v0) {
-				$records[$k0]["incidents"] = $this->getCSPReportIncidents($v0["sid"], [
-					"compliance_incident_types.compliance_incident_type_name",
-				]);
-			}
-		}
 
 		return $records;
 	}
