@@ -1,5 +1,9 @@
 $(function () {
     //
+    // Add type in issue to search by adding the select2.
+    // attach files when reporting an issue.
+    // Add notes to the issue as well.
+    // Replace the title with the description.
     let XHR = null;
     let selectedIssues = [];
     let cspReportId = 0;

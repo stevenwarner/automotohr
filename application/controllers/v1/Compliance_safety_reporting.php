@@ -335,6 +335,9 @@ class Compliance_safety_reporting extends Base_csp
         $this->data['title'] = 'Compliance Safety Reporting | Edit ' . $this->data["report"]["title"];
         $this->data['pageJs'][] = 'csp/edit_report';
         $this->data['pageJs'][] = 'csp/send_email';
+        $this->data['pageJs'][] = main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0");
+        // load CSS
+        $this->data['pageCSS'][] = main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0");
         // get the employees
         $this->data["employees"] = $this
             ->compliance_report_model
@@ -1936,30 +1939,56 @@ class Compliance_safety_reporting extends Base_csp
     {
         // get the post
         $post = $this->input->post(null, true);
-        // Check if the incident is already added
-        $cspIncidentId = $this->compliance_report_model->checkIfIncidentExists(
-            $post['reportId'],
-            $post['incidentId'],
-            $this->getLoggedInEmployee("sid")
-        );
+        $issueId =  0;
         //
-        $resp = $this
-            ->compliance_report_model
-            ->attachIssueWithReport(
-                $post["reportId"],
-                $cspIncidentId,
-                $post["issueId"],
-                $post["severityLevelId"],
-                $post["dynamicCheckbox"] ?? [],
-                $post["dynamicInputs"] ?? [],
-                $this->getLoggedInEmployee("sid"),
+        if ($post['type'] == 'default') {
+            // Check if the incident is already added
+            $cspIncidentId = $this->compliance_report_model->checkIfIncidentExists(
+                $post['reportId'],
+                $post['incidentId'],
+                $this->getLoggedInEmployee("sid")
             );
+            //
+            $issueId = $this
+                ->compliance_report_model
+                ->attachIssueWithReport(
+                    $post["reportId"],
+                    $cspIncidentId,
+                    $post["issueId"],
+                    $post["severityLevelId"],
+                    $post["dynamicCheckbox"] ?? [],
+                    $post["dynamicInputs"] ?? [],
+                    $this->getLoggedInEmployee("sid"),
+                );
+        } else if ($post['type'] == 'manual') {
+            $cspIncidentId = $this->compliance_report_model->checkIfManualIncidentExists(
+                $post['reportId'],
+                $this->getLoggedInEmployee("sid")
+            );
+            //
+            $incidentTypesId = $this->compliance_report_model->addComplianceReportType(
+                $post["title"],
+                $post["description"]
+            );
+            //
+            $issueId = $this
+                ->compliance_report_model
+                ->attachManualIssueWithReport(
+                    $cspIncidentId,
+                    $incidentTypesId,
+                    $this->getLoggedInEmployee("sid"),
+                );
+        }        
         //
         return SendResponse(
             200,
             [
                 "success" => true,
-                "message" => "You have successfully reported a new issue."
+                "message" => "You have successfully reported a new issue.",
+                "issueId" => $issueId,
+                "reportId" => $post["reportId"],
+                "incidentId" => $cspIncidentId,
+                "reloadURL" => base_url("compliance_safety_reporting/edit/").$post["reportId"]."#tab-issues"
             ]
         );
     }

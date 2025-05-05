@@ -6188,6 +6188,7 @@ class Compliance_report_model extends CI_Model
 		$records_obj = $this->db->get();
 		$records_arr = $records_obj->result_array();
 		$records_obj->free_result();
+
 		//
 		if ($records_arr) {
 			$issueObject = [];
@@ -6209,6 +6210,7 @@ class Compliance_report_model extends CI_Model
 					"incident_id" => $record["compliance_report_incident_sid"],
 				];
 			}
+			
 			return array_values($issueObject);
 		}
 		//
@@ -6234,6 +6236,49 @@ class Compliance_report_model extends CI_Model
 				'created_at' => date('Y-m-d H:i:s'),
 				'updated_at' => date('Y-m-d H:i:s'),
 			];
+			$this->db->insert('csp_reports_incidents', $data);
+			return $this->db->insert_id();
+		}
+	}
+
+	public function checkIfManualIncidentExists($reportId, $loggedInUserId)
+	{
+		//
+		$incidentTypeId = $this
+			->db
+			->select("id")
+			->where("compliance_incident_type_name", "manual")
+			->get("compliance_incident_types")
+			->row_array()['id'];
+		//
+		if (!$incidentTypeId) {	
+			$data = [
+				'compliance_incident_type_name' => "manual",
+				'status' => 1,
+				'description' => "",
+				'code' => ''
+			];
+			$this->db->insert('compliance_incident_types', $data);
+			$incidentTypeId = $this->db->insert_id();
+		}
+		//
+		$this->db->select('sid');
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('incident_type_sid', $incidentTypeId);
+		$record = $this->db->get('csp_reports_incidents')->row_array();
+
+		if ($record) {
+			return $record['sid'];
+		} else {
+			$data = [
+				'csp_reports_sid' => $reportId,
+				'incident_type_sid' => $incidentTypeId,
+				'created_by' => $loggedInUserId,
+				'last_modified_by' => $loggedInUserId,
+				'created_at' => date('Y-m-d H:i:s'),
+				'updated_at' => date('Y-m-d H:i:s'),
+			];
+			//
 			$this->db->insert('csp_reports_incidents', $data);
 			return $this->db->insert_id();
 		}
@@ -6309,6 +6354,59 @@ class Compliance_report_model extends CI_Model
 					"answers_json" => json_encode([
 						"dynamicInput" => $inputs,
 						"dynamicCheckbox" => $checkboxes,
+					]),
+					"last_modified_by" => $loggedInEmployeeId,
+					"created_by" => $loggedInEmployeeId,
+					"created_at" => getSystemDate(),
+					"updated_at" => getSystemDate(),
+				]
+			);
+		return $this->db->insert_id();
+	}
+
+	public function addComplianceReportType(
+		$title,
+		$description
+	) {
+		$incidentTypeId = $this
+			->db
+			->select("id")
+			->where("compliance_incident_type_name", "manual")
+			->get("compliance_incident_types")
+			->row_array()['id'];
+		//
+		$this
+			->db
+			->insert(
+				"compliance_report_incident_types",
+				[
+					"compliance_report_incident_sid" => $incidentTypeId,
+					"severity_level_sid" => 1,
+					"description" => $description,
+					"title" => $title,
+				]
+			);
+		//	
+		return $this->db->insert_id();
+	}		
+
+	public function attachManualIssueWithReport(
+		$cspIncidentId,
+		$issueTypeId,
+		$loggedInEmployeeId
+	) {
+		//
+		$this
+			->db
+			->insert(
+				"csp_reports_incidents_items",
+				[
+					"csp_reports_incidents_sid" => $cspIncidentId,
+					"compliance_report_incident_types_sid" => $issueTypeId,
+					"severity_level_sid" => 1,
+					"answers_json" => json_encode([
+						"dynamicInput" => [],
+						"description" => [],
 					]),
 					"last_modified_by" => $loggedInEmployeeId,
 					"created_by" => $loggedInEmployeeId,
