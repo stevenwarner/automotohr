@@ -688,9 +688,7 @@ $(function Overview() {
 			dynamicCheckbox: [],
 			type: $('.jsIssueType:checked').val(),
 			title: '',
-			description: '',
-			files: [],
-			notes: []
+			description: ''
 		};
 		//
 		if (!addIssueObject.reportId) {
@@ -748,7 +746,10 @@ $(function Overview() {
 	});
 
 	async function addIssueToIncident(issueObject) {
-		console.log(issueObject);
+		//
+		$("#jsAddIssueModal").modal('hide');
+		ml(true, "jsPageLoader");
+
 		const button = $(".jsAddIssueBtn");
 		button.prop("disabled", true).text("Adding...");
 	
@@ -770,6 +771,7 @@ $(function Overview() {
 			}
 	
 			_success(response.message, function () {
+				ml(false, "jsPageLoader");
 				window.location.href = response.reloadURL;
 				window.location.reload();
 			});
