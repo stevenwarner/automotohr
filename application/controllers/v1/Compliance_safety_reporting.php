@@ -306,7 +306,6 @@ class Compliance_safety_reporting extends Base_csp
                 ]
             );
         // //
-        // _e($this->data['report']['issuesWithIncident'],true,true);
         if ($this->data["report"]['issuesWithIncident']) {
             foreach ($this->data["report"]['issuesWithIncident'] as $key => $issue) {
                 $filesCount = $this
@@ -1939,7 +1938,7 @@ class Compliance_safety_reporting extends Base_csp
     {
         // get the post
         $post = $this->input->post(null, true);
-        $issueId =  0;
+        $issueId = 0;
         //
         if ($post['type'] == 'default') {
             // Check if the incident is already added
@@ -1978,7 +1977,7 @@ class Compliance_safety_reporting extends Base_csp
                     $incidentTypesId,
                     $this->getLoggedInEmployee("sid"),
                 );
-        }        
+        }
         //
         return SendResponse(
             200,
@@ -1988,7 +1987,7 @@ class Compliance_safety_reporting extends Base_csp
                 "issueId" => $issueId,
                 "reportId" => $post["reportId"],
                 "incidentId" => $cspIncidentId,
-                "reloadURL" => base_url("compliance_safety_reporting/edit/").$post["reportId"]."#tab-issues"
+                "reloadURL" => base_url("compliance_safety_reporting/edit/") . $post["reportId"] . "#tab-issues"
             ]
         );
     }

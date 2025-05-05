@@ -6150,6 +6150,16 @@ class Compliance_report_model extends CI_Model
 		$records_obj = $this->db->get('csp_reports_incidents_items');
 		$records_arr = $records_obj->result_array();
 		$records_obj->free_result();
+
+		if ($records_arr) {
+			foreach ($records_arr as $k0 => $v0) {
+				$records_arr[$k0]["files"] = $this->getAllItemsFiles(
+					$reportId,
+					$v0["csp_reports_incidents_sid"],
+					$v0["sid"]
+				);
+			}
+		}
 		//
 		return $records_arr;
 	}
@@ -6210,7 +6220,7 @@ class Compliance_report_model extends CI_Model
 					"incident_id" => $record["compliance_report_incident_sid"],
 				];
 			}
-			
+
 			return array_values($issueObject);
 		}
 		//
@@ -6251,7 +6261,7 @@ class Compliance_report_model extends CI_Model
 			->get("compliance_incident_types")
 			->row_array()['id'];
 		//
-		if (!$incidentTypeId) {	
+		if (!$incidentTypeId) {
 			$data = [
 				'compliance_incident_type_name' => "manual",
 				'status' => 1,
@@ -6388,7 +6398,7 @@ class Compliance_report_model extends CI_Model
 			);
 		//	
 		return $this->db->insert_id();
-	}		
+	}
 
 	public function attachManualIssueWithReport(
 		$cspIncidentId,
