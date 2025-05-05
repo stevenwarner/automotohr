@@ -323,3 +323,213 @@
         </div>
     </div>
 </div>
+
+<script>
+    const job_list_sid = `<?php echo $portal_job_list["sid"]; ?>`;
+    let deepgramSocket = null;
+    let sessionId = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const synth = window.speechSynthesis;
+        let recognition;
+        let interviewStarted = false;
+        
+        // Check if browser supports Web Speech API
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            console.log('Speech recognition not supported in this browser');
+            return;
+        }
+
+        // recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        // recognition.continuous = true;
+        // recognition.interimResults = true;
+        // recognition.lang = 'en-US';
+        // recognition.start();
+
+        function setupDeepgram() {
+            // Close existing connection if any
+            if (deepgramSocket && deepgramSocket.readyState === WebSocket.OPEN) {
+                deepgramSocket.close();
+            }
+            
+            // Replace YOUR_DEEPGRAM_API_KEY with your actual API key
+            const deepgramApiKey = 'YOUR_DEEPGRAM_API_KEY';
+            
+            // Create a new WebSocket connection to Deepgram
+            deepgramSocket = new WebSocket(`wss://api.deepgram.com/v1/listen?encoding=linear16&sample_rate=16000`, [
+                'token', deepgramApiKey
+            ]);
+            
+            deepgramSocket.onopen = () => {
+                console.log('Deepgram WebSocket connection established');
+            };
+            
+            deepgramSocket.onmessage = (event) => {
+                const response = JSON.parse(event.data);
+
+                console.log('deepgram socket response', response)
+                
+                if (response.type === 'Results') {
+                    const transcript = response.channel.alternatives[0].transcript;
+
+                    console.log('transcript', transcript)
+                    
+                    if (transcript && transcript.trim() !== '') {
+                        
+                        // Only send complete utterances to get the next question
+                        // if (response.is_final) {
+                        //     sendCandidateResponse(transcript);
+                        // }
+                    }
+                }
+            };
+            
+            deepgramSocket.onerror = (error) => {
+                console.error('Deepgram WebSocket error:', error);
+            };
+            
+            deepgramSocket.onclose = (event) => {
+                console.log('Deepgram WebSocket connection closed:', event.code, event.reason);
+                if (interviewStarted) {
+                    setupDeepgram(); // Try to reconnect if interview is still going
+                }
+            };
+        }
+
+        // Add audio recording function for Deepgram
+        function setupAudioRecording() {
+            // Request access to the microphone
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    // Create a MediaRecorder to capture audio
+                    const mediaRecorder = new MediaRecorder(stream);
+                    
+                    // When data is available, send it to Deepgram
+                    mediaRecorder.ondataavailable = (event) => {
+                        if (deepgramSocket && deepgramSocket.readyState === WebSocket.OPEN && event.data.size > 0) {
+                            deepgramSocket.send(event.data);
+                            // console.log('mediaRecorder to deepgramSocket sending data ....')
+                        }
+                    };
+                    
+                    // Start recording and get 250ms chunks of audio
+                    mediaRecorder.start(250);
+                    
+                    // Store the mediaRecorder to stop it when interview ends
+                    window.mediaRecorder = mediaRecorder;
+                })
+                .catch(error => {
+                    console.error('Error accessing microphone:', error);
+                });
+        }
+
+        function stopInterview() {
+            interviewStarted = false;
+            // recognition.stop();
+
+            // Stop the WebSocket connection to Deepgram
+            if (deepgramSocket) {
+                deepgramSocket.close();
+            }
+            
+            // Stop the MediaRecorder
+            if (window.mediaRecorder && window.mediaRecorder.state !== 'inactive') {
+                window.mediaRecorder.stop();
+            }
+        }
+
+        // recognition.onresult = function(event) {
+        //     let interimTranscript = '';
+        //     let finalTranscript = '';
+            
+        //     for (let i = event.resultIndex; i < event.results.length; i++) {
+        //         const transcript = event.results[i][0].transcript;
+        //         if (event.results[i].isFinal) {
+        //             finalTranscript += transcript;
+        //         } else {
+        //             interimTranscript += transcript;
+        //         }
+        //     }
+            
+        //     if (finalTranscript) {
+        //         // Send the candidate's response to get the next question
+        //         if (interviewStarted) {
+        //             sendCandidateResponse(finalTranscript);
+        //         }
+        //     }
+        // };
+
+        // recognition.onerror = function(e) {
+        //     console.log("Error: ", e.error);
+        // };
+
+        // recognition.onend = function() {
+        //     if (interviewStarted) {
+        //         // Restart recognition if interview is still going
+        //         recognition.start();
+        //     }
+        // };
+
+        // Function to get initial question from OpenAI
+        async function getInitialQuestion() {
+            let data = await fetch('http://127.0.0.1:3000/openai/interview/initial-question', {
+                method: 'POST',
+                body: JSON.stringify({
+                    applicant_job_sid: job_list_sid
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+            if (data.question) {
+                // Use Text-to-Speech to speak the question
+                speakText(data.question);
+            } else {
+                console.error('Error getting initial question:', data.error);
+            }
+
+        }
+
+        function startInterview() {
+            interviewStarted = true;
+            // startButton.textContent = 'End Interview';
+            // statusIndicator.textContent = 'Listening...';
+            // statusIndicator.className = 'active';
+            
+            try {
+                // recognition.start();
+                // Once recognition is active, get initial question from OpenAI
+                
+                // Setup Deepgram WebSocket
+                setupDeepgram();
+
+                // Setup audio recording for sending to Deepgram
+                setupAudioRecording();
+
+                // Get initial question from OpenAI
+                getInitialQuestion();
+            } catch (e) {
+                console.error('Error starting speech recognition:', e);
+            }
+        }
+
+        function speakText(text) {
+            const speech = new SpeechSynthesisUtterance();
+            speech.text = text;
+            speech.lang = 'en-US';
+            speech.volume = 1;
+            speech.rate = 1;
+            speech.pitch = 1;
+            
+            window.speechSynthesis.speak(speech);
+        }
+
+        startInterview();
+    });
+</script>
