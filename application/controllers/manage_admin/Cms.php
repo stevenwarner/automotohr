@@ -1542,6 +1542,7 @@ class Cms extends Admin_Controller
     {
         // get sanitized post
         $post = $this->input->post(null, true);
+
         //
         if ($post["section"] === "main") {
             // check if the page slug already exists

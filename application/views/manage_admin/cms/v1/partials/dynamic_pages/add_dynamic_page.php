@@ -46,6 +46,13 @@
                                                 <input type="text" class="form-control" name="slug" />
                                             </div>
 
+                                            <div class="form-group">
+                                                <label class="control control--checkbox">
+                                                    <input type="checkbox" name="is_footer_link" id="jsSection2Status" /> Is Footer Link?
+                                                    <div class="control__indicator"></div>
+                                                </label>
+                                            </div>
+
                                         </div>
                                         <div class="panel-footer text-center">
                                             <button class="btn btn-success jsCreatePageBtn">

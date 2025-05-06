@@ -76,6 +76,7 @@ $activePages = getAllActivePages();
                     </div>
                 </div>
             </div>
+
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 section-space-adj">
                 <p class="footer-text-three">
                     <a href="<?php echo base_url(); ?>"> Home</a>
@@ -205,7 +206,6 @@ $activePages = getAllActivePages();
                             </a>
                         </p>
                     <?php } ?>
-
                     <?php
                     if (in_array($pageFooter["section_2"]["menu7Link"], $activePages)) {
                     ?>
@@ -226,11 +226,25 @@ $activePages = getAllActivePages();
                             </p>
                         <?php } ?>
 
-                            <p class="footer-text-three">
-                                <a href="<?= main_url($pageFooter["section_2"]["menu9Link"]); ?>">
-                                    <?= ($pageFooter["section_2"]["menu9Text"]); ?>
-                                </a>
-                            </p>
+                        <?php
+                        $footerLinks = getPageFooterLinks();
+                        if (!empty($footerLinks)) {
+                            foreach ($footerLinks as $linkRow) {
+                        ?>
+                                <p class="footer-text-three">
+                                    <a href="<?= main_url($linkRow['slug']); ?>">
+                                        <?= $linkRow['title']; ?>
+                                    </a>
+                                </p>
+                        <?php }
+                        } ?>
+
+                        <p class="footer-text-three">
+                            <a href="<?= main_url($pageFooter["section_2"]["menu9Link"]); ?>">
+                                <?= ($pageFooter["section_2"]["menu9Text"]); ?>
+                            </a>
+                        </p>
+
                         <?php
                         if (in_array($pageFooter["section_2"]["menu10Link"], $activePages)) {
                         ?>

@@ -22,6 +22,13 @@ $collapseIn =  $this->input->get("page") == 'details' ? "in" : "";
                     <label>Page slug</label>
                     <input type="text" class="form-control" name="slug" value="<?= $page["slug"]; ?>" />
                 </div>
+
+                <div class="form-group">                
+                    <label class="control control--checkbox">
+                        <input type="checkbox" name="is_footer_link" id="jsSection2Status" <?= $page["is_footer_link"] ? "checked" :""; ?> /> Is Footer Link?
+                        <div class="control__indicator"></div>
+                    </label>
+                </div>
             </div>
             <div class="panel-footer text-center">
                 <button class="btn btn-success jsPageDetailsBtn">

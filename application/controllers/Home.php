@@ -93,6 +93,8 @@ class Home extends CI_Controller
 
         $data['pageContent'] = $homeContent;
 
+        //_e($this->footer,true,true);
+
         $this->load->view($this->header, $data)
             ->view('v1/app/homepage')
             ->view($this->footer);

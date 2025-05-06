@@ -41,7 +41,7 @@
                             <!-- Meta -->
                             <?php $this->load->view("manage_admin/cms/v1/partials/dynamic_pages/section0"); ?>
                             <?php $this->load->view("manage_admin/cms/v1/partials/dynamic_pages/meta"); ?>
-                            <?php $this->load->view("manage_admin/cms/v1/partials/dynamic_pages/section1"); ?>
+                            <?php $this->load->view("manage_admin/cms/v1/partials/dynamic_pages/section1"); ?>                        
                         </div>
                     </div>
                 </div>

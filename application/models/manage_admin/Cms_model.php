@@ -89,6 +89,11 @@ class cms_model extends CI_Model
      */
     public function createPage(array $data): int
     {
+        $isFooterLink = 0;
+        if ($data["is_footer_link"]) {
+            $isFooterLink = 1;
+        }
+
         $this->db
             ->insert(
                 "cms_pages_new",
@@ -101,6 +106,7 @@ class cms_model extends CI_Model
                     "page" => str_replace('-', '_', $data["slug"]),
                     "is_dynamic" => 1,
                     "status" => 0,
+                    "is_footer_link" => $isFooterLink,
                 ]
             );
         //
@@ -115,6 +121,12 @@ class cms_model extends CI_Model
      */
     public function updateDynamicPage(array $data, int $pageId)
     {
+
+        $isFooterLink = 0;
+        if ($data["is_footer_link"]) {
+            $isFooterLink = 1;
+        }
+
         $this->db
             ->where("sid", $pageId)
             ->update(
@@ -124,6 +136,7 @@ class cms_model extends CI_Model
                     "slug" => $data["slug"],
                     "updated_at" => getSystemDate(),
                     "page" => str_replace('-', '_', $data["slug"]),
+                    "is_footer_link" => $isFooterLink,
                 ]
             );
     }

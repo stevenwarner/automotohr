@@ -4915,3 +4915,18 @@ if (!function_exists("checkAndShowUser")) {
         }
     }
 }
+
+
+if (!function_exists('getPageFooterLinks')) {
+
+    function getPageFooterLinks()
+    {
+        //
+        $CI = &get_instance();
+        $CI->db
+            ->select('title,slug,content');
+            $CI->db->where('is_footer_link', 1);
+        $CI->db->where('status', 1);
+        return  $CI->db->get('cms_pages_new')->result_array();
+    }
+}
