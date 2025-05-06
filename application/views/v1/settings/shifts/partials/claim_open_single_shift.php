@@ -79,7 +79,7 @@
 
                             <div class="row jsBreakRow" data-key="<?php echo $key; ?>"> <br>
                                 <div class="col-sm-5"> <label class="text-medium"> Break <strong class="text-red">*</strong> </label>
-                                    <select name="breaks[<?php echo $key; ?>][break]" class="form-control jsBreakSelect">
+                                    <select name="breaks[<?php echo $key; ?>][break]" class="form-control jsBreakSelect" disabled>
 
                                         <option></option>
                                         <?php foreach ($breaks as $brak) { ?>
@@ -88,12 +88,11 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-3"> <label class="text-medium"> Duration <strong class="text-red">*</strong> </label>
-                                    <div class="input-group"> <input type="number" class="form-control jsDuration" name="breaks[<?php echo $key; ?>][duration]" value="<?php echo $breakRow['duration'] ?>">
+                                    <div class="input-group"> <input type="number" class="form-control jsDuration" name="breaks[<?php echo $key; ?>][duration]" value="<?php echo $breakRow['duration'] ?>" disabled>
                                         <div class="input-group-addon">mins</div>
                                     </div>
                                 </div>
-                                <div class="col-sm-3"> <label class="text-medium"> Start TIme </label> <input type="text" class="form-control jsTimeField jsStartTime" placeholder="HH:MM" name="breaks[<?php echo $key; ?>][start_time]" value="<?php echo formatDateToDB($breakRow['start_time'], "H:i", "h:i A"); ?>"> </div>
-                                <div class="col-sm-1"> <br> <button class="btn btn-red jsDeleteBreakRow" title="Delete this break" type="button"> <i class="fa fa-trash" style="margin-right: 0"></i> </button> </div>
+                                <div class="col-sm-3"> <label class="text-medium"> Start TIme </label> <input type="text" class="form-control jsTimeField jsStartTime" placeholder="HH:MM" name="breaks[<?php echo $key; ?>][start_time]" value="<?php echo formatDateToDB($breakRow['start_time'], "H:i", "h:i A"); ?>" disabled> </div>
                             </div>
                     <?php }
                     } ?>

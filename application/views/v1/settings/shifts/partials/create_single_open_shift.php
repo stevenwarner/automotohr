@@ -80,6 +80,14 @@
                     <textarea name="notes" rows="5" class="form-control"></textarea>
                 </div>
 
+                <div class="form-group">
+                    <br>
+                    <label class="text-medium">
+                        Number Of Employees Can Claim
+                    </label>
+                    <input type="text" class="form-control" name="claim_limit" placeholder="0" value="<?php echo $shift['claim_limit']; ?>" />
+                </div>
+                
                 <div class="col-sm-6">
                     <label class="control control--checkbox">
                         <input type="checkbox" name="employee_can_claim" value="1" />

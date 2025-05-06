@@ -99,12 +99,7 @@ foreach ($monthDates as $monthDate) {
                                     </a>
                                 <?php } ?>
 
-                                <?php if (isPayrollOrPlus()) { ?>
-                                    <a href="<?= base_url("settings/openshifts/approval"); ?>" class="btn btn-orange">
-                                        <i class="fa fa-exchange" aria-hidden="true"></i>
-                                        &nbsp;Open Shift Approvals
-                                    </a>
-                                <?php } ?>
+                           
                             <?php } ?>
                         </div>
                     </div>

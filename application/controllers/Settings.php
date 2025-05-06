@@ -6842,7 +6842,7 @@ class Settings extends Public_Controller
         //
         $data["openRequests"]  = $this->shift_model->getOpenShiftsRequestById($shiftId, $shiftstatus = 'pending');
 
-        //
+       //
         return SendResponse(200, [
             "view" => $this->load->view("v1/settings/shifts/partials/edit_open_single_shift", $data, true),
             "data" => $data["return"] ?? []
@@ -6865,7 +6865,6 @@ class Settings extends Public_Controller
         }
         // set the sanitized post
         $post = $this->input->post(null, true);
-
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
         // call the function
@@ -6963,6 +6962,7 @@ class Settings extends Public_Controller
                 "error" => "yes"
             ]);
         }
+
 
         $this->shift_model
             ->processClaimOpenSingleShift(
@@ -7141,16 +7141,25 @@ class Settings extends Public_Controller
                 "error" => "yes"
             ]);
         }
-
-
+ 
         //
         if ($toEmployeeid) {
             $requestNotExist = $this->shift_model->updateOpenShiftsRequest($post['shiftids'], $toEmployeeid, $data_update_request);
+                    
             if ($requestNotExist == 1) {
                 return SendResponse(200, [
                     "msg" => "The request does not exist."
                 ]);
             }
+
+
+            if ($requestNotExist == 2) {
+                return SendResponse(200, [
+                "msg" => "You cannot approve this shift claim request because the claim limit has been exceeded."
+                ]);
+            }
+
+
         }
 
         // send mail

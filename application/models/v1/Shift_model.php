@@ -60,6 +60,8 @@ class Shift_model extends CI_Model
             is_published,
             employee_can_claim,
             employee_need_approval_for_claim,
+            claim_limit,
+            claimed,
             ")
             ->where("company_sid", $companyId)
             ->where("sid", $shiftId)
@@ -2129,6 +2131,7 @@ class Shift_model extends CI_Model
                         "updated_at" => getSystemDate(),
                         "employee_can_claim" => $employee_can_claim,
                         "employee_need_approval_for_claim" => $employee_need_approval_for_claim,
+                        "claim_limit" => $post["claim_limit"],
                     ]);
 
                 $ins = [];
@@ -2182,6 +2185,7 @@ class Shift_model extends CI_Model
                         "updated_at" => getSystemDate(),
                         "employee_can_claim" => $employee_can_claim,
                         "employee_need_approval_for_claim" => $employee_need_approval_for_claim,
+                        "claim_limit" => $post["claim_limit"],
                     ]);
                 // check and insert log
                 if ($insertId = $this->db->insert_id()) {
@@ -2209,96 +2213,95 @@ class Shift_model extends CI_Model
         }
         //
         return SendResponse($status, $status === 400 ? ["errors" => [$response["msg"]]] : $response);
-   }
+    }
 
     //
     public function getOpenShifts(array $filter, $employee_can_claim = false): array
     {
 
-  //
-  if (empty($employeeIds)) {
-    $employeeIds = ['0'];
-}
-$this->db
-    ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites,is_published")
-    ->where("employee_sid", 0);
-
-if ($filter["mode"] === "month") {
-    //
-    $startDate = $filter["year"] . '-' . $filter["month"] . '-01';
-    //
-    $endDateObj = new DateTime($startDate);
-    $endDate = $endDateObj->format("Y-m-t");
-    //
-    $this->db
-        ->where("shift_date >= ", $startDate)
-        ->where("shift_date <= ", $endDate);
-} else {
-    //
-    $this->db
-        ->where("shift_date >= ", formatDateToDB($filter["start_date"], SITE_DATE, DB_DATE))
-        ->where("shift_date <= ", formatDateToDB($filter["end_date"], SITE_DATE, DB_DATE));
-}
-
-  //
-  if ($employee_can_claim == true) {
-    $this->db
-        ->where("employee_can_claim", 1);
-}
-
-
-$records = $this->db
-    ->get("cl_shifts")
-    ->result_array();
-//
-if ($records) {
-    // extract employee ids
-    $employeeIds = array_column($records, "employee_sid");
-    // get the job color codes by employees jobs
-    $employeesJobColorCodes = $this->getEmployeesJobColor($employeeIds);
-    //
-    $employees = [];
-    //
-    foreach ($records as $v0) {
         //
-        if (!$employees[$v0["employee_sid"]]) {
-            $employees[$v0["employee_sid"]] = [
-                "totalTimeText" => '0h',
-                "totalTime" => 0,
-                "dates" => [],
-                "jobColor" => $employeesJobColorCodes[$v0["employee_sid"]] ?? "#eeeeee"
-            ];
+        if (empty($employeeIds)) {
+            $employeeIds = ['0'];
         }
+        $this->db
+            ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites,is_published")
+            ->where("employee_sid", 0);
+
+        if ($filter["mode"] === "month") {
+            //
+            $startDate = $filter["year"] . '-' . $filter["month"] . '-01';
+            //
+            $endDateObj = new DateTime($startDate);
+            $endDate = $endDateObj->format("Y-m-t");
+            //
+            $this->db
+                ->where("shift_date >= ", $startDate)
+                ->where("shift_date <= ", $endDate);
+        } else {
+            //
+            $this->db
+                ->where("shift_date >= ", formatDateToDB($filter["start_date"], SITE_DATE, DB_DATE))
+                ->where("shift_date <= ", formatDateToDB($filter["end_date"], SITE_DATE, DB_DATE));
+        }
+
         //
-        $employees[$v0["employee_sid"]]["dates"][$v0["shift_date"]][] = [
-            "sid" => $v0["sid"],
-            "start_time" => $v0["start_time"],
-            "end_time" => $v0["end_time"],
-            "job_sites" => json_decode($v0["job_sites"], true),
-            "totalTime" => getTimeBetweenTwoDates(
-                $v0["shift_date"] . ' ' . $v0["start_time"],
-                $v0["shift_date"] . ' ' . $v0["end_time"],
-            ),
-            "is_published" => $v0["is_published"],
-            "shift_date" => $v0["shift_date"],
+        if ($employee_can_claim == true) {
+            $this->db
+                ->where("employee_can_claim", 1);
+        }
 
-        ];
 
+        $records = $this->db
+            ->get("cl_shifts")
+            ->result_array();
         //
-        $employees[$v0["employee_sid"]]["totalTime"] += getTimeBetweenTwoDates(
-            $v0["shift_date"] . ' ' . $v0["start_time"],
-            $v0["shift_date"] . ' ' . $v0["end_time"],
-        );
-        //
-        $employees[$v0["employee_sid"]]["totalTimeText"] = convertSecondsToTime(
-            $employees[$v0["employee_sid"]]["totalTime"]
-        );
-    }
-    $records = $employees;
-}
+        if ($records) {
+            // extract employee ids
+            $employeeIds = array_column($records, "employee_sid");
+            // get the job color codes by employees jobs
+            $employeesJobColorCodes = $this->getEmployeesJobColor($employeeIds);
+            //
+            $employees = [];
+            //
+            foreach ($records as $v0) {
+                //
+                if (!$employees[$v0["employee_sid"]]) {
+                    $employees[$v0["employee_sid"]] = [
+                        "totalTimeText" => '0h',
+                        "totalTime" => 0,
+                        "dates" => [],
+                        "jobColor" => $employeesJobColorCodes[$v0["employee_sid"]] ?? "#eeeeee"
+                    ];
+                }
+                //
+                $employees[$v0["employee_sid"]]["dates"][$v0["shift_date"]][] = [
+                    "sid" => $v0["sid"],
+                    "start_time" => $v0["start_time"],
+                    "end_time" => $v0["end_time"],
+                    "job_sites" => json_decode($v0["job_sites"], true),
+                    "totalTime" => getTimeBetweenTwoDates(
+                        $v0["shift_date"] . ' ' . $v0["start_time"],
+                        $v0["shift_date"] . ' ' . $v0["end_time"],
+                    ),
+                    "is_published" => $v0["is_published"],
+                    "shift_date" => $v0["shift_date"],
 
-return $records;
+                ];
 
+                //
+                $employees[$v0["employee_sid"]]["totalTime"] += getTimeBetweenTwoDates(
+                    $v0["shift_date"] . ' ' . $v0["start_time"],
+                    $v0["shift_date"] . ' ' . $v0["end_time"],
+                );
+                //
+                $employees[$v0["employee_sid"]]["totalTimeText"] = convertSecondsToTime(
+                    $employees[$v0["employee_sid"]]["totalTime"]
+                );
+            }
+            $records = $employees;
+        }
+
+        return $records;
     }
 
 
@@ -2373,26 +2376,59 @@ return $records;
 
             //
             if ($post["id"]) {
-                // check if entry already exists
 
-                /*
-                if ($this->db->where([
-                    "company_sid" => $companyId,
-                    "employee_sid" => checkAndGetSession("employee")["sid"],
-                    "shift_date" => $post["shift_date"],
-                ])->count_all_results("cl_shifts")) {
-                    $response["msg"] = "Shift already exists.";
-*/
-
-                // update
-                $this->db
+                //
+                $shiftData = $this->db
+                    ->select("*")
+                    ->where("company_sid", $companyId)
                     ->where("sid", $post["id"])
-                    ->update("cl_shifts", [
-                        "employee_sid" => checkAndGetSession("employee")["sid"],
-                        "updated_at" => getSystemDate(),
-                        "is_published" => 1,
-                        "employee_can_claim" => 0,
-                    ]);
+                    ->get("cl_shifts")
+                    ->row_array();
+                if ($shiftData['claim_limit'] == ($shiftData['claimed'] + 1)) {
+                    // update
+                    $this->db
+                        ->where("sid", $post["id"])
+                        ->update("cl_shifts", [
+                            "employee_sid" => checkAndGetSession("employee")["sid"],
+                            "updated_at" => getSystemDate(),
+                            "is_published" => 1,
+                            "employee_can_claim" => 0,
+                        ]);
+                } elseif ($shiftData['claim_limit'] > $shiftData['claimed']) {
+                    //
+                    $insShift = [];
+                    $insShift["company_sid"] = $shiftData["company_sid"];
+                    $insShift["employee_sid"] = checkAndGetSession("employee")["sid"];
+                    $insShift["shift_date"] = $shiftData["shift_date"];
+                    $insShift["start_time"] = $shiftData["start_time"];
+                    $insShift["end_time"] = $shiftData["end_time"];
+                    $insShift["breaks_count"] = $shiftData["breaks_count"];
+                    $insShift["breaks_json"] = $shiftData["breaks_json"];
+                    $insShift["job_sites"] = $shiftData["job_sites"];
+                    $insShift["notes"] = $shiftData["notes"];
+                    $insShift["is_published"] = 1;
+                    $insShift["created_at"] = getSystemDate();
+                    $insShift["updated_at"] = getSystemDate();
+                    $insShift["picked"] = $shiftData["picked"];
+                    $insShift["is_open_shift"] = 0;
+                    $insShift["employee_can_claim"] = 0;
+                    $insShift["employee_need_approval_for_claim"] = 0;
+                    $insShift["claim_limit"] = 0;
+                    $insShift["claimed"] = 0;
+                    $insShift["open_shift_sid"] = $shiftData["sid"];
+
+                    $this->db->insert("cl_shifts", $insShift);
+
+                    //
+                    $this->db
+                        ->where("sid", $shiftData["sid"])
+                        ->update("cl_shifts", [
+                            "claimed" => $insShift["claimed"] + 1,
+                        ]);
+                }
+
+
+
 
                 $ins = [];
                 $ins["cl_shift_sid"] = $post["id"];
@@ -2466,8 +2502,7 @@ return $records;
     public function updateOpenShiftsRequest($shiftId, $toEmployeeId, $data)
     {
         $shiftIds = explode(',', $shiftId);
-
-
+      
         if (!empty($toEmployeeId)) {
             //
             $shiftExist = $this->db
@@ -2481,35 +2516,84 @@ return $records;
                 return 1;
             }
             //
-            $this->db->where("employee_sid", $toEmployeeId);
         }
-        $this->db
-            ->where_in("shift_sid", $shiftIds);
-        $this->db->update("open_shifts_approval", $data);
 
-        //
-        if ($data['shift_status'] == 1) {
-            $data['shift_status'] = '2';
+
+        if ($data['shift_status'] == 2) {
             if (!empty($toEmployeeId)) {
-                $this->db->where("employee_sid!=", $toEmployeeId);
+                $this->db->where("employee_sid", $toEmployeeId);
             }
+
             $this->db
                 ->where_in("shift_sid", $shiftIds);
             $this->db->update("open_shifts_approval", $data);
+        }
 
-            //
-            $shiftUpdate = [];
-            $shiftUpdate['employee_sid'] = $toEmployeeId;
-            $shiftUpdate['is_published'] = 1;
-            $shiftUpdate['employee_can_claim'] = 0;
-            $shiftUpdate['employee_need_approval_for_claim'] = 0;
+        //////
+        if ($data['shift_status'] == 1) {
+            foreach ($shiftIds as $shiftId) {
+                $shiftData = $this->db
+                    ->select("*")
+                    ->where("sid", $shiftId)
+                    ->get("cl_shifts")
+                    ->row_array();                  
+                if ($shiftData['claim_limit'] == ($shiftData['claimed'] + 1)) {
+                    // update
+                    $this->db
+                        ->where("sid", $shiftId)
+                        ->update("cl_shifts", [
+                            "employee_sid" => $toEmployeeId,
+                            "updated_at" => getSystemDate(),
+                            "is_published" => 1,
+                            "employee_can_claim" => 0,
+                        ]);
+                    ///
+                    $this->db
+                        ->where("shift_sid", $shiftId);
+                    $this->db->update("open_shifts_approval", $data);
+                } elseif ($shiftData['claim_limit'] > $shiftData['claimed']) {
+                    //
+                    $insShift = [];
+                    $insShift["company_sid"] = $shiftData["company_sid"];
+                    $insShift["employee_sid"] = $toEmployeeId;
+                    $insShift["shift_date"] = $shiftData["shift_date"];
+                    $insShift["start_time"] = $shiftData["start_time"];
+                    $insShift["end_time"] = $shiftData["end_time"];
+                    $insShift["breaks_count"] = $shiftData["breaks_count"];
+                    $insShift["breaks_json"] = $shiftData["breaks_json"];
+                    $insShift["job_sites"] = $shiftData["job_sites"];
+                    $insShift["notes"] = $shiftData["notes"];
+                    $insShift["is_published"] = 1;
+                    $insShift["created_at"] = getSystemDate();
+                    $insShift["updated_at"] = getSystemDate();
+                    $insShift["picked"] = $shiftData["picked"];
+                    $insShift["is_open_shift"] = 0;
+                    $insShift["employee_can_claim"] = 0;
+                    $insShift["employee_need_approval_for_claim"] = 0;
+                    $insShift["claim_limit"] = 0;
+                    $insShift["claimed"] = 0;
+                    $insShift["open_shift_sid"] = $shiftData["sid"];
 
-            $this->db
-                ->where_in("sid", $shiftIds);
-            $this->db->update("cl_shifts", $shiftUpdate);
+                    $this->db->insert("cl_shifts", $insShift);
+                    //
+                    $this->db
+                        ->where("sid", $shiftData["sid"])
+                        ->update("cl_shifts", [
+                            "claimed" => $shiftData['claimed'] + 1,
+                        ]);
+
+                    //
+                    $this->db->where("employee_sid", $toEmployeeId);
+                    $this->db
+                        ->where("shift_sid", $shiftId);
+                    $this->db->update("open_shifts_approval", $data);
+                } elseif ($shiftData['claim_limit'] <= $shiftData['claimed']) {
+                    return 2;
+                }
+            }
+ 
         }
     }
-
 
     //
     public function getOpenShiftsRequestById($shiftIds, $shiftstatus = '')
@@ -2576,6 +2660,7 @@ return $records;
     public function isShiftExist($companyId, $shiftId, $employeeId)
     {
 
+
         $record = $this->db
             ->select(
                 "cl_shifts.employee_sid,
@@ -2592,6 +2677,7 @@ return $records;
             ->row_array();
 
         $this->db->where('employee_sid', $employeeId);
+        $this->db->where('shift_date', $record['shift_date']);
         $this->db->where('start_time <', $record['end_time']);
         $this->db->where('end_time >', $record['start_time']);
 

@@ -119,7 +119,19 @@
                     </label>
                     <textarea name="notes" rows="5" class="form-control"><?php echo $shift['notes']; ?></textarea>
                 </div>
+                <div class="form-group">
+                    <br>
+                    <label class="text-medium">
+                        Number Of Employees Can Claim
+                    </label>
+                    <input type="text" class="form-control" name="claim_limit" placeholder="0" value="<?php echo $shift['claim_limit']; ?>" />
+                </div>
 
+                <div class="form-group">
+                    <label class="text-medium">
+                        Number Of Employees Already Claimed [<?php echo $shift['claimed']; ?>]
+                    </label>
+                </div>
 
                 <div class="form-group">
                     <label class="control control--checkbox">
