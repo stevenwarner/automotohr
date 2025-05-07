@@ -221,10 +221,6 @@ class Cron_email_model extends CI_Model
             $this->generateAndSendReport($companyId);
         }
 
-
-        _e($this->executiveAdminsList);
-        die("SADas");
-
         if (!empty($this->executiveAdminsList)) {
 
             foreach ($this->executiveAdminsList as $exRow) {
@@ -338,6 +334,11 @@ class Cron_email_model extends CI_Model
             // as we don't have team members
             if ($v0["employer_sid"] === 0) {
                 echo "Employer Id 0 \n";
+                continue;
+            }
+
+            if (!$v0["employer_sid"]) {
+                echo "External employees not allowed \n";
                 continue;
             }
 
