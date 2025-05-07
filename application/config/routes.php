@@ -70,6 +70,7 @@ $route['schedule-your-no-obligation-consultation']['get'] = 'v1/App/getYourAccou
 $route['affiliate-program']['get'] = 'v1/App/affiliateProgram';
 $route['affiliate_program/process']['post'] = 'v1/App/processAffiliateProgram';
 $route['legal']['get'] = 'v1/App/legalHub';
+$route['market-place-and-integrations']['get'] = 'v1/App/marketPlaceAndIntegrations';
 //
 $route['employee_login']['get'] = 'users/login';
 $route['services/career-website']['get'] = 'Home/index';
@@ -2858,5 +2859,3 @@ $route["compliance_safety_reporting/issues/(:num)/(:num)/(:num)/employees/extern
 
 $route["csp/delete_file/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting_public/deleteFileById/$1";
-
-  $route['legalcp']['get'] = 'v1/App/legalHubCP';

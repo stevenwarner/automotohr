@@ -26,7 +26,7 @@ class App extends CI_Controller
         $this->header = "v1/app/header";
         $this->footer = "v1/app/footer";
         $this->commonFiles = [
-            "css"  => [],
+            "css" => [],
             "js" => []
         ];
         $this->disableMinifiedFiles = true;
@@ -50,13 +50,13 @@ class App extends CI_Controller
         $this->getCommon($data, "why-us");
         $data['whyUsContent'] = $whyUsContent;
         $data['pageContent'] = $pageContent;
-        if(empty($whyUsContent)){
+        if (empty($whyUsContent)) {
             $this->load->view('errors/html/error_404');
 
-        }else{
-        $this->load->view($this->header, $data);
-        $this->load->view('v1/app/why_us');
-        $this->load->view($this->footer);
+        } else {
+            $this->load->view($this->header, $data);
+            $this->load->view('v1/app/why_us');
+            $this->load->view($this->footer);
         }
     }
 
@@ -122,13 +122,13 @@ class App extends CI_Controller
         $this->getCommon($data, "privacy-policy");
         //
         $data['pageContent'] = $pageContent;
-        if(empty($pageContent)){
+        if (empty($pageContent)) {
             $this->load->view('errors/html/error_404');
 
-        }else{
-        $this->load->view($this->header, $data);
-        $this->load->view('v1/app/privacy_policy');
-        $this->load->view($this->footer);
+        } else {
+            $this->load->view($this->header, $data);
+            $this->load->view('v1/app/privacy_policy');
+            $this->load->view($this->footer);
         }
     }
 
@@ -220,14 +220,14 @@ class App extends CI_Controller
         //
         $data["pageContent"] = $pageContent["sections"];
         //        
-        if(empty($pageContent)){
+        if (empty($pageContent)) {
             $this->load->view('errors/html/error_404');
 
-        }else{
-        $this->load->view($this->header, $data);
-        $this->load->view('v1/app/products/main');
-        $this->load->view($this->footer);
-    }
+        } else {
+            $this->load->view($this->header, $data);
+            $this->load->view('v1/app/products/main');
+            $this->load->view($this->footer);
+        }
 
 
 
@@ -282,13 +282,13 @@ class App extends CI_Controller
         //
         $data["countries"] = $this->affiliation_model->get_all_countries();
         //
-        if(empty($pageContent)){
+        if (empty($pageContent)) {
             $this->load->view('errors/html/error_404');
 
-        }else{
-        $this->load->view($this->header, $data);
-        $this->load->view('v1/app/affiliate');
-        $this->load->view($this->footer);
+        } else {
+            $this->load->view($this->header, $data);
+            $this->load->view('v1/app/affiliate');
+            $this->load->view($this->footer);
         }
     }
 
@@ -840,11 +840,11 @@ class App extends CI_Controller
 
     //
 
-    public function legalHubCP()
+    public function marketPlaceAndIntegrations()
     {
-        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
+        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
-        $pageContent = getPageContent('legalcp', true);
+        $pageContent = getPageContent('market-place-and-integrations', true);
         // meta titles
         $data['meta'] = [];
         $data['meta']['title'] = $pageContent['page']['meta']['title'];

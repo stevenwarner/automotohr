@@ -1,19 +1,32 @@
 <main>
     <div class="row">
-        <div class="col-xs-12 column-flex-center background-border-radius top-background-div-service" style="background-image: url('<?= AWS_S3_BUCKET_URL . $pageContent['page']['sections']['section0']["sourceFile"] ?>');">
+        <div class="col-xs-12 column-flex-center">
+            <br>
+            <img src="<?= getImageURL($pageContent['page']['sections']['section0']["sourceFile"]); ?>"
+                class="img-responsive">
+            <br>
             <div class="background-image-div-contact-us  ">
-                <h1 class="text-white contact-us-text">
+                <h1 class=" contact-us-text">
                     <?= convertToStrip($pageContent['page']['sections']['section0']["title"]); ?>
                 </h1>
             </div>
+            <?php if ($pageContent['page']['sections']['section0']["details"]): ?>
+                <br>
+                <div class="background-image-div-contact-us  ">
+                    <h1 class=" contact-us-text">
+                        <?= convertToStrip($pageContent['page']['sections']['section0']["details"]); ?>
+                    </h1>
+                </div>
+            <?php endif; ?>
         </div>
+
     </div>
 
     <!--  -->
     <div class="px-5 py-5">
         <?php if ($pageContent["page"]["sections"]["section0"]["tags"]) {
             foreach ($pageContent["page"]["sections"]["section0"]["tags"] as $tag) {
-        ?>
+                ?>
                 <div class="row">
                     <div class="col-sm-12">
                         <h3 class="csHeading">
@@ -24,7 +37,7 @@
                 <div class="row">
                     <?php if ($tag["cards"]) {
                         foreach ($tag["cards"] as $key => $card) {
-                    ?>
+                            ?>
                             <div class="col-sm-6 col-md-6 col-lg-4 col-xs-12">
                                 <div class="csCard">
                                     <h4>
@@ -39,12 +52,12 @@
                                     </a>
                                 </div>
                             </div>
-                    <?php
+                            <?php
                         }
                     }
                     ?>
                 </div>
-        <?php
+                <?php
             }
         }
         ?>
