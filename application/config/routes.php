@@ -2858,3 +2858,5 @@ $route["compliance_safety_reporting/issues/(:num)/(:num)/(:num)/employees/extern
 
 $route["csp/delete_file/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting_public/deleteFileById/$1";
+
+  $route['legalcp']['get'] = 'v1/App/legalHubCP';

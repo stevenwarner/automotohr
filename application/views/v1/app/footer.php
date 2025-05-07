@@ -228,6 +228,8 @@ $activePages = getAllActivePages();
 
                         <?php
                         $footerLinks = getPageFooterLinks();
+
+                       // _e($footerLinks,true,true);
                         if (!empty($footerLinks)) {
                             foreach ($footerLinks as $linkRow) {
                         ?>
