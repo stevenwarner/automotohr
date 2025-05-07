@@ -2546,8 +2546,8 @@ class Compliance_report_model extends CI_Model
 	public function getCSPReportFilesByType(int $reportId, array $columns, array $type)
 	{
 		$this->db->select($columns, false);
-		// $this->db->where("csp_reports_sid", $reportId);
-		// $this->db->where("csp_incident_type_sid", 0);
+		$this->db->where("csp_reports_sid", $reportId);
+		$this->db->where("csp_incident_type_sid", 0);
 		$this->db->where_in("file_type", $type);
 		$this->db->join(
 			"users",
