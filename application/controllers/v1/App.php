@@ -837,4 +837,28 @@ class App extends CI_Controller
             "message" => "You have successfully Opt-out of the EEOC."
         ]);
     }
+
+    //
+
+    public function legalHubCP()
+    {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
+        //
+        $pageContent = getPageContent('legalcp', true);
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $pageContent['page']['meta']['title'];
+        $data['meta']['description'] = $pageContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $pageContent['page']['meta']['keywords'];
+
+        $this->setCommon("v1/app/css/legal", "css");
+        //
+        $this->getCommon($data, "sitemap");
+        // 
+        $data['pageContent'] = $pageContent;
+        //
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/legal_cp');
+        $this->load->view($this->footer);
+    }
 }

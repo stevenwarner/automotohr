@@ -159,4 +159,19 @@ class cms_model extends CI_Model
                 ]
             );
     }
+
+    //
+
+    public function updatePageIsFooterLink(string $status, int $pageId)
+    {
+        $this->db
+            ->where("sid", $pageId)
+            ->update(
+                "cms_pages_new",
+                [
+                    "is_footer_link" => $status,
+                    "updated_at" => getSystemDate(),
+                ]
+            );
+    }
 }
