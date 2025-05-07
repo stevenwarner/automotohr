@@ -3,9 +3,9 @@ $(function Overview() {
 	let XHR = null;
 	let issue = 0;
 	let cspReportId = 0;
-    let cspIncidentId = 0;
-    let cspIssueId = 0;
-    let fileUploaderReference = {};
+	let cspIncidentId = 0;
+	let cspIssueId = 0;
+	let fileUploaderReference = {};
 	let fileCount = 1;
 	let noteCount = 1;
 	let issueFilesArray = [];
@@ -333,7 +333,8 @@ $(function Overview() {
 					ml(false, "jsPageLoader");
 				})
 				.fail(handleErrorResponse)
-				.done(function (resp) {mn
+				.done(function (resp) {
+					mn
 					_success(resp.message, function () {
 						window.location.refresh();
 					});
@@ -376,8 +377,8 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/report/" +
-						getSegment(2) +
-						"/incident"
+					getSegment(2) +
+					"/incident"
 				),
 				method: "POST",
 				data: {
@@ -448,9 +449,9 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/" +
-						getSegment(2) +
-						"/" +
-						external.data("id")
+					getSegment(2) +
+					"/" +
+					external.data("id")
 				),
 				method: "DELETE",
 			})
@@ -503,9 +504,9 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/file/" +
-						getSegment(2) +
-						"/0/" +
-						type
+					getSegment(2) +
+					"/0/" +
+					type
 				),
 				method: "POST",
 				async: true,
@@ -581,7 +582,7 @@ $(function Overview() {
 				fileType === "application/pdf" ||
 				fileType.startsWith("application/msword") ||
 				fileType ===
-					"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+				"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 			) {
 				fileCategory = "document";
 			}
@@ -617,8 +618,8 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/" +
-						getSegment(2) +
-						"/emails/send"
+					getSegment(2) +
+					"/emails/send"
 				),
 				method: "POST",
 			})
@@ -653,13 +654,13 @@ $(function Overview() {
 				.done(function (resp) {
 					$("#jsAddIssueModal .modal-body").html(resp.view);
 					//
-					$.fn.modal.Constructor.prototype.enforceFocus = function() {};
+					$.fn.modal.Constructor.prototype.enforceFocus = function () { };
 					$("#jsNewItemSelect").select2();
 					$("#jsAddIssueNoteType").select2();
 					CKEDITOR.replace("jsManualIssueDescription", {
 						toolbar: [
-							[ 'Bold', 'Italic', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink' ],
-							[ 'FontSize', 'TextColor', 'BGColor' ]
+							['Bold', 'Italic', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink'],
+							['FontSize', 'TextColor', 'BGColor']
 						]
 					});
 					CKEDITOR.replace("jsAddIssueNote");
@@ -678,7 +679,7 @@ $(function Overview() {
 
 	$(document).on("click", ".jsAddIssueBtn", function () {
 		// set the object
-       
+
 		const addIssueObject = {
 			reportId: getSegment(2),
 			incidentId: $("#jsNewItemIncidentId").val(),
@@ -706,21 +707,21 @@ $(function Overview() {
 		//
 		if (addIssueObject.type == "default") {
 			//
-			addIssueObject["dynamicInputs"] =  $("#jsAddIssuePanelRef")
-			.find('[name="dynamicInput[]"]').length > 0 ? $("#jsAddIssuePanelRef")
-			.find('[name="dynamicInput[]"]')
-			.map(function () {
-				return $(this).val();
-			})
-			.get() : [];
+			addIssueObject["dynamicInputs"] = $("#jsAddIssuePanelRef")
+				.find('[name="dynamicInput[]"]').length > 0 ? $("#jsAddIssuePanelRef")
+					.find('[name="dynamicInput[]"]')
+					.map(function () {
+						return $(this).val();
+					})
+					.get() : [];
 			//
-			addIssueObject["dynamicCheckbox"] =  $("#jsAddIssuePanelRef")
+			addIssueObject["dynamicCheckbox"] = $("#jsAddIssuePanelRef")
 				.find('[name="dynamicCheckbox[]"]') > 0 ? $("#jsAddIssuePanelRef")
-				.find('[name="dynamicCheckbox[]"]')
-				.map(function () {
-					return $(this).val();
-				})
-				.get() : [];
+					.find('[name="dynamicCheckbox[]"]')
+					.map(function () {
+						return $(this).val();
+					})
+					.get() : [];
 			if (!addIssueObject.severityLevelId) {
 				_error("Please select a severity level.")
 				return;
@@ -742,7 +743,7 @@ $(function Overview() {
 			}
 		}
 		addIssueToIncident(addIssueObject);
-		
+
 	});
 
 	async function addIssueToIncident(issueObject) {
@@ -752,28 +753,27 @@ $(function Overview() {
 
 		const button = $(".jsAddIssueBtn");
 		button.prop("disabled", true).text("Adding...");
-	
+
 		try {
 			const response = await $.ajax({
 				url: baseUrl(`compliance_safety_reporting/issue/add`),
 				method: "POST",
 				data: issueObject,
 			});
-	
+
 			const { reportId, incidentId, issueId } = response;
-	
+
 			if ($('#jsAttachedFileListing > .jsUploadIssueFile').length > 0) {
 				await insertFilesSequentially(reportId, incidentId, issueId);
 			}
-	
+
 			if ($('#jsAttachedNoteListing > .jsUploadIssueNote').length > 0) {
 				await insertNotesSequentially(reportId, incidentId, issueId);
 			}
-	
+
 			_success(response.message, function () {
 				ml(false, "jsPageLoader");
-				window.location.href = response.reloadURL;
-				window.location.reload();
+				window.location.href = `${window.location.origin}/compliance_safety_reporting/edit/${reportId}?tab=issues`;
 			});
 		} catch (err) {
 			handleErrorResponse(err);
@@ -812,7 +812,7 @@ $(function Overview() {
 				handleErrorResponse(err);
 			}
 		}
-	
+
 		console.log("✅ All files processed.");
 	}
 
@@ -828,12 +828,11 @@ $(function Overview() {
 				handleErrorResponse(err);
 			}
 		}
-	
+
 		console.log("✅ All notes processed.");
 	}
 
-	function loadViewOfIssueToProcess(issueId)
-	{
+	function loadViewOfIssueToProcess(issueId) {
 		if (XHR !== null) {
 			XHR.abort();
 		}
@@ -847,7 +846,7 @@ $(function Overview() {
 				XHR = null;
 			})
 			.fail(handleErrorResponse)
-			.done(function (resp) {				
+			.done(function (resp) {
 				$("#jsAddIssueBox").html(resp.view)
 				$("#jsAddIssueModal .jsAddIssueBtn").removeClass("hidden");
 			});
@@ -890,7 +889,7 @@ $(function Overview() {
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/issues/edit/"+issueId
+					"compliance_safety_reporting/issues/edit/" + issueId
 				),
 				method: "GET",
 			})
@@ -915,21 +914,21 @@ $(function Overview() {
 			dynamicCheckbox: [],
 		};
 		//
-		editIssueObject["dynamicInputs"] =  $("#jsAddIssuePanelRef")
+		editIssueObject["dynamicInputs"] = $("#jsAddIssuePanelRef")
 			.find('[name="dynamicInput[]"]').length > 0 ? $("#jsAddIssuePanelRef")
-			.find('[name="dynamicInput[]"]')
-			.map(function () {
-				return $(this).val();
-			})
-			.get() : [];
+				.find('[name="dynamicInput[]"]')
+				.map(function () {
+					return $(this).val();
+				})
+				.get() : [];
 		//
-		editIssueObject["dynamicCheckbox"] =  $("#jsAddIssuePanelRef")
+		editIssueObject["dynamicCheckbox"] = $("#jsAddIssuePanelRef")
 			.find('[name="dynamicCheckbox[]"]') > 0 ? $("#jsAddIssuePanelRef")
-			.find('[name="dynamicCheckbox[]"]')
-			.map(function () {
-				return $(this).val();
-			})
-			.get() : [];
+				.find('[name="dynamicCheckbox[]"]')
+				.map(function () {
+					return $(this).val();
+				})
+				.get() : [];
 
 		if (!editIssueObject.issueId) {
 			_error("Please provide a issue id.")
@@ -941,7 +940,7 @@ $(function Overview() {
 		}
 		//
 		editIssueToIncident(editIssueObject);
-		
+
 	});
 
 
@@ -957,8 +956,8 @@ $(function Overview() {
 			<div id="jsNewItemSelectedSeverity" data-id="${id}" class="csLabelPill jsSelectedLabelPill text-center" 
 			style="
 			background-color: ${$(this).css(
-				"background-color"
-			)}; color: ${$(this).css("color")} ;">${$(this).text()}</div>
+			"background-color"
+		)}; color: ${$(this).css("color")} ;">${$(this).text()}</div>
 		`);
 
 		$("#jsNewItemSeverityLevel").val(id);
@@ -970,7 +969,7 @@ $(function Overview() {
 
 	$(document).on("change", ".jsIssueType", function () {
 		const issueType = $(this).val();
-  		//
+		//
 		if (issueType == 'manual') {
 			$("#jsDefaultIssue").addClass("hidden");
 			$("#jsManualIssue").removeClass("hidden");
@@ -984,7 +983,7 @@ $(function Overview() {
 		const sectionType = $(this).data("section");
 		$(".jsIssueSection").removeClass("active");
 		$(this).addClass("active");
-  		//
+		//
 		if (sectionType == 'detail') {
 			$("#jsDetailSection").removeClass("hidden");
 			$("#jsFileSection").addClass("hidden");
@@ -1001,8 +1000,7 @@ $(function Overview() {
 
 	});
 
-	function generateAndAddModalToBody()
-	{
+	function generateAndAddModalToBody() {
 		if ($("#jsAddIssueModal").length <= 0) {
 			const modal = `
 			<div class="modal fade" id="jsAddIssueModal" role="dialog" style="overflow-y:auto;" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1031,8 +1029,7 @@ $(function Overview() {
 		$("#jsAddIssueModal").modal("show");
 	}
 
-	function generateAndEditModalToBody()
-	{
+	function generateAndEditModalToBody() {
 		if ($("#jsEditIssueModal").length <= 0) {
 			const modal = `
 			<div class=modal fade" id="jsEditIssueModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1082,12 +1079,12 @@ $(function Overview() {
 			_error("Please add a report date.");
 			return;
 		}
-		
+
 		if (reportObject.status == "completed" && !reportObject.date) {
 			_error("Please add a report completion date.");
 			return;
 		}
-		
+
 		//
 		updateReportBasicInfo(reportObject);
 	});
@@ -1100,7 +1097,7 @@ $(function Overview() {
 		if (XHR === null) {
 			XHR = $.ajax({
 				url: baseUrl(
-					`compliance_safety_reporting/report/update/`+reportObject.report_id
+					`compliance_safety_reporting/report/update/` + reportObject.report_id
 				),
 				method: "POST",
 				data: reportObject,
@@ -1120,24 +1117,24 @@ $(function Overview() {
 	$(".jsDeleteIssue").click(function (event) {
 		event.preventDefault();
 		issueId = $(this).data('issue_id');
-        //
+		//
 		_confirm(
 			"Are you sure you want to delete this issue?",
 			deleteIssueFromReport
 		);
-		
+
 	});
 
 	function deleteIssueFromReport() {
-        //
-        //
+		//
+		//
 		if (XHR === null) {
 			//
 			ml(true, "jsPageLoader");
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/delete_issue_from_report/"+ issueId
+					"compliance_safety_reporting/delete_issue_from_report/" + issueId
 				),
 				method: "Delete"
 			})
@@ -1148,30 +1145,29 @@ $(function Overview() {
 				.fail(handleErrorResponse)
 				.done(function (resp) {
 					_success(resp.message, function () {
-                        window.location.reload();
-                    });
+						window.location.reload();
+					});
 				});
 		}
 	}
 
 	// viewIssues Files
-    $(".jsViewIssuesFiles").click(
-        function (event) {
-            event.preventDefault();
+	$(".jsViewIssuesFiles").click(
+		function (event) {
+			event.preventDefault();
 
-            loadViewModal({
-                title: "View File(s)",
-                reportId: $(this).data("report_id"),
-                incidentId: $(this).data("incident_id"),
-                issueId: $(this).data("issue_id"),
-                count: $(this).data("files_count")
-            });
-        }
-    );   
-    
-    function loadViewModal(options)
-    {
-        if ($("#jsIssueModalCommon").length <= 0) {
+			loadViewModal({
+				title: "View File(s)",
+				reportId: $(this).data("report_id"),
+				incidentId: $(this).data("incident_id"),
+				issueId: $(this).data("issue_id"),
+				count: $(this).data("files_count")
+			});
+		}
+	);
+
+	function loadViewModal(options) {
+		if ($("#jsIssueModalCommon").length <= 0) {
 			const modal = `
 			<div class=modal fade" id="jsIssueModalCommon" tabindex="-1" role="dialog" aria-hidden="true">
 				<div class="modal-dialog modal-lg" role="document">
@@ -1190,46 +1186,46 @@ $(function Overview() {
 			</div>
 			`;
 			$("body").append(modal);
-        }
-        // let's add options
-        $("#jsIssueModalCommon").find(".modal-title").html(options.title);
-        if (options.count == 0) {
-            $("#jsIssueModalCommon").find(".modal-body").html('<div class="alert alert-info text-center">No file has been attached to this issue.</div>');
-        } else {
-            $("#jsIssueModalCommon").find(".modal-body").html('<div class="alert alert-info text-center">Generating a view please wait.</div>');
-            //
-            if (XHR === null) {
-                //
-                ml(true, "jsPageLoader");
-                //
-                XHR = $.ajax({
-                    url: baseUrl(
-                        "compliance_safety_reporting/get_attached_files/"+options.reportId+"/"+options.incidentId+"/"+options.issueId
-                    ),
-                    method: "GET"
-                })
-                    .always(function () {
-                        XHR = null;
-                        ml(false, "jsPageLoader");
-                    })
-                    .fail(handleErrorResponse)
-                    .done(function (resp) {
-                        $("#jsIssueModalCommon").find(".modal-body").html(resp.view);
-                        _success(resp.message);
-                    });
-            }
-        }
-        
-        //
+		}
+		// let's add options
+		$("#jsIssueModalCommon").find(".modal-title").html(options.title);
+		if (options.count == 0) {
+			$("#jsIssueModalCommon").find(".modal-body").html('<div class="alert alert-info text-center">No file has been attached to this issue.</div>');
+		} else {
+			$("#jsIssueModalCommon").find(".modal-body").html('<div class="alert alert-info text-center">Generating a view please wait.</div>');
+			//
+			if (XHR === null) {
+				//
+				ml(true, "jsPageLoader");
+				//
+				XHR = $.ajax({
+					url: baseUrl(
+						"compliance_safety_reporting/get_attached_files/" + options.reportId + "/" + options.incidentId + "/" + options.issueId
+					),
+					method: "GET"
+				})
+					.always(function () {
+						XHR = null;
+						ml(false, "jsPageLoader");
+					})
+					.fail(handleErrorResponse)
+					.done(function (resp) {
+						$("#jsIssueModalCommon").find(".modal-body").html(resp.view);
+						_success(resp.message);
+					});
+			}
+		}
+
+		//
 		$("#jsIssueModalCommon").modal({
 			backdrop: "static",
 			keyboard: false,
-        });
-        //
+		});
+		//
 		$("#jsIssueModalCommon").modal("show");
-    }
+	}
 
-    $(document).on("click", ".jsViewFile", function (event) {
+	$(document).on("click", ".jsViewFile", function (event) {
 		event.preventDefault();
 		const fileId = $(this).closest(".jsFileBox").data("id");
 		Modal(
@@ -1240,13 +1236,13 @@ $(function Overview() {
 				Body: '<div id="jsFileViewModalBody"></body>',
 			},
 			function () {
-                $("#jsIssueModalCommon").modal("hide");
+				$("#jsIssueModalCommon").modal("hide");
 				loadView(fileId);
 			}
 		);
 	});
 
-    function loadView(fileId) {
+	function loadView(fileId) {
 		$.ajax({
 			url: baseUrl("compliance_safety_reporting/file/view/" + fileId),
 			method: "GET",
@@ -1268,14 +1264,14 @@ $(function Overview() {
 		const fileId = $(this).data("file_id");
 		const fileType = $(this).data("file_type");
 		_confirm(
-			"Are you sure you want to remove this "+fileType+"? It will be removed from this issue permanently as well.",
+			"Are you sure you want to remove this " + fileType + "? It will be removed from this issue permanently as well.",
 			function () {
 				deleteFileFromIssue(fileId, fileType);
 			}
 		);
 	});
 
-	function deleteFileFromIssue (fileId, fileType) {
+	function deleteFileFromIssue(fileId, fileType) {
 		//
 		if (XHR === null) {
 			//
@@ -1284,7 +1280,7 @@ $(function Overview() {
 			XHR = $.ajax({
 				url: baseUrl(
 					"compliance_safety_reporting/delete_file/" +
-						fileId 
+					fileId
 				),
 				method: "DELETE",
 			})
@@ -1302,23 +1298,23 @@ $(function Overview() {
 	}
 
 	// Upload file
-    $(".jsIssueUploadFileBtn").click(
-        function (event) {
-            event.preventDefault();
+	$(".jsIssueUploadFileBtn").click(
+		function (event) {
+			event.preventDefault();
 
-            cspReportId = $(this).data("report_id");
-            cspIncidentId = $(this).data("incident_id");
-            cspIssueId = $(this).data("issue_id");
+			cspReportId = $(this).data("report_id");
+			cspIncidentId = $(this).data("incident_id");
+			cspIssueId = $(this).data("issue_id");
 
-            loadModal({
-                title: "Attach file",
-                save: {
-                    text: "Upload file",
-                    cl: "jsIssueSaveFileBtn"
-                }
-            });
-            //
-            const uploadFileHtml = `
+			loadModal({
+				title: "Attach file",
+				save: {
+					text: "Upload file",
+					cl: "jsIssueSaveFileBtn"
+				}
+			});
+			//
+			const uploadFileHtml = `
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="form-group">
@@ -1336,96 +1332,95 @@ $(function Overview() {
                     </div>
                 </div>
             `;
-            //
-            $("#jsIssueModalCommon").find(".modal-body").html(uploadFileHtml);
-            //
-            fileUploaderReference = $("#jsIssueFileUploadFile").msFileUploader(config.document);
-            //
-            $("#jsIssueModalCommon").find(".jsIssueSaveFileBtn").removeClass("hidden");
-        }
-    );
+			//
+			$("#jsIssueModalCommon").find(".modal-body").html(uploadFileHtml);
+			//
+			fileUploaderReference = $("#jsIssueFileUploadFile").msFileUploader(config.document);
+			//
+			$("#jsIssueModalCommon").find(".jsIssueSaveFileBtn").removeClass("hidden");
+		}
+	);
 
 	$(document).on("click", ".jsIssueSaveFileBtn", function (event) {
-        event.preventDefault();
-        if (XHR !== null) {
-            return;
-        }
-        //
-        const issueUploadObject = {
-            title: $("#jsIssueFileUploadTitle").val().trim(),
-            file: $("#jsIssueFileUploadFile").msFileUploader("get"),
-        };
-        //
-        if (!issueUploadObject.title) {
-            _error("Please add a title of the file.")
-            return;
-        }
-        if (Object.keys(issueUploadObject.file).length === 0) {
-            _error("Please select a valid file.")
-            return;
-        }
-        if (issueUploadObject.hasError && issueUploadObject.type === "vimeo") {
+		event.preventDefault();
+		if (XHR !== null) {
+			return;
+		}
+		//
+		const issueUploadObject = {
+			title: $("#jsIssueFileUploadTitle").val().trim(),
+			file: $("#jsIssueFileUploadFile").msFileUploader("get"),
+		};
+		//
+		if (!issueUploadObject.title) {
+			_error("Please add a title of the file.")
+			return;
+		}
+		if (Object.keys(issueUploadObject.file).length === 0) {
+			_error("Please select a valid file.")
+			return;
+		}
+		if (issueUploadObject.hasError && issueUploadObject.type === "vimeo") {
 			_error("Vimeo link is invalid.");
 			return;
 		}
 		if (issueUploadObject.hasError && issueUploadObject.type === "youtube") {
 			_error("YouTube link is invalid.");
 			return;
-        }
-        if (issueUploadObject.file.hasError) {
-            _error("Please select a valid file.")
-            return;
-        }
-        issueUploadObject.fileType = 
-            issueUploadObject.file.type === "vimeo" || issueUploadObject.file.type === "youtube"
-            ? "link"
-            : getFileType(issueUploadObject.file).toLowerCase()
-        //
-        attachFileToIssue(issueUploadObject);
-    });
+		}
+		if (issueUploadObject.file.hasError) {
+			_error("Please select a valid file.")
+			return;
+		}
+		issueUploadObject.fileType =
+			issueUploadObject.file.type === "vimeo" || issueUploadObject.file.type === "youtube"
+				? "link"
+				: getFileType(issueUploadObject.file).toLowerCase()
+		//
+		attachFileToIssue(issueUploadObject);
+	});
 
-    function attachFileToIssue(issueUploadObject) {
-        // Toggle button state
-        const toggleButton = $(".jsIssueSaveFileBtn");
-        toggleButton.prop("disabled", true);
-        //
-        const formData = new FormData();
-        //
-        formData.append("reportId", cspReportId);
-        formData.append("incidentId", cspIncidentId);
-        formData.append("itemId", cspIssueId);
-        formData.append("title", issueUploadObject.title);
-        formData.append("type", issueUploadObject.fileType);
-        //
-        if (issueUploadObject.file.type === "youtube" || issueUploadObject.file.type === "vimeo") {
-            formData.append("link", issueUploadObject.file.link);
-        } else {
-            formData.append("file", issueUploadObject.file);
-        }
-        //
-        XHR = $
-            .ajax({
-                url: baseUrl(`compliance_safety_reporting/add_file_to_incident_item`),
-                method: "POST",
-                data: formData,
-                processData: false,
-                contentType: false
-            })
-            .always(function () {
-                XHR = null;
-                toggleButton.prop("disabled", false);
-            })
-            .fail(handleErrorResponse)
-            .done(function (resp) {
-                _success("File attached successfully.");
-                $("#jsIssueModalCommon").modal("hide");
-            });
-    }
+	function attachFileToIssue(issueUploadObject) {
+		// Toggle button state
+		const toggleButton = $(".jsIssueSaveFileBtn");
+		toggleButton.prop("disabled", true);
+		//
+		const formData = new FormData();
+		//
+		formData.append("reportId", cspReportId);
+		formData.append("incidentId", cspIncidentId);
+		formData.append("itemId", cspIssueId);
+		formData.append("title", issueUploadObject.title);
+		formData.append("type", issueUploadObject.fileType);
+		//
+		if (issueUploadObject.file.type === "youtube" || issueUploadObject.file.type === "vimeo") {
+			formData.append("link", issueUploadObject.file.link);
+		} else {
+			formData.append("file", issueUploadObject.file);
+		}
+		//
+		XHR = $
+			.ajax({
+				url: baseUrl(`compliance_safety_reporting/add_file_to_incident_item`),
+				method: "POST",
+				data: formData,
+				processData: false,
+				contentType: false
+			})
+			.always(function () {
+				XHR = null;
+				toggleButton.prop("disabled", false);
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success("File attached successfully.");
+				$("#jsIssueModalCommon").modal("hide");
+			});
+	}
 
 
-    function loadModal(options)
-    {
-        if ($("#jsIssueModalCommon").length <= 0) {
+	function loadModal(options) {
+		if ($("#jsIssueModalCommon").length <= 0) {
 			const modal = `
 			<div class=modal fade" id="jsIssueModalCommon" tabindex="-1" role="dialog" aria-hidden="true">
 				<div class="modal-dialog modal-lg" role="document">
@@ -1445,22 +1440,22 @@ $(function Overview() {
 			</div>
 			`;
 			$("body").append(modal);
-        }
-        // let's add options
-        $("#jsIssueModalCommon").find(".modal-title").html(options.title);
-        $("#jsIssueModalCommon").find(".btn-orange").html(options.save.text);
-        $("#jsIssueModalCommon").find(".btn-orange").addClass(options.save.cl);
-        $("#jsIssueModalCommon").find(".btn-orange").addClass("hidden");
-        //
+		}
+		// let's add options
+		$("#jsIssueModalCommon").find(".modal-title").html(options.title);
+		$("#jsIssueModalCommon").find(".btn-orange").html(options.save.text);
+		$("#jsIssueModalCommon").find(".btn-orange").addClass(options.save.cl);
+		$("#jsIssueModalCommon").find(".btn-orange").addClass("hidden");
+		//
 		$("#jsIssueModalCommon").modal({
 			backdrop: "static",
 			keyboard: false,
-        });
-        //
+		});
+		//
 		$("#jsIssueModalCommon").modal("show");
-    }
+	}
 
-    function getFileType(file) {
+	function getFileType(file) {
 		if (!file) return "Unknown"; // If no file is provided
 
 		const fileName = file.name.toLowerCase();
@@ -1481,7 +1476,7 @@ $(function Overview() {
 				fileType === "application/pdf" ||
 				fileType.startsWith("application/msword") ||
 				fileType ===
-					"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+				"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 			) {
 				fileCategory = "document";
 			}
@@ -1503,41 +1498,41 @@ $(function Overview() {
 
 	$(document).on("click", "#jsAddIssueFileBtn", function (event) {
 		//
-        event.preventDefault();
-        //
-        const issueUploadObject = {
-            title: $("#jsAddIssueFileUploadTitle").val().trim(),
-            file: $("#jsAddIssueFileUploadFile").msFileUploader("get"),
-        };
-        //
-        if (!issueUploadObject.title) {
-            _error("Please add a title of the file.")
-            return;
-        }
-        if (Object.keys(issueUploadObject.file).length === 0) {
-            _error("Please select a valid file.")
-            return;
-        }
-        if (issueUploadObject.hasError && issueUploadObject.type === "vimeo") {
+		event.preventDefault();
+		//
+		const issueUploadObject = {
+			title: $("#jsAddIssueFileUploadTitle").val().trim(),
+			file: $("#jsAddIssueFileUploadFile").msFileUploader("get"),
+		};
+		//
+		if (!issueUploadObject.title) {
+			_error("Please add a title of the file.")
+			return;
+		}
+		if (Object.keys(issueUploadObject.file).length === 0) {
+			_error("Please select a valid file.")
+			return;
+		}
+		if (issueUploadObject.hasError && issueUploadObject.type === "vimeo") {
 			_error("Vimeo link is invalid.");
 			return;
 		}
 		if (issueUploadObject.hasError && issueUploadObject.type === "youtube") {
 			_error("YouTube link is invalid.");
 			return;
-        }
-        if (issueUploadObject.file.hasError) {
-            _error("Please select a valid file.")
-            return;
-        }
-        issueUploadObject.fileType = 
-            issueUploadObject.file.type === "vimeo" || issueUploadObject.file.type === "youtube"
-            ? "link"
-            : getFileType(issueUploadObject.file).toLowerCase();
+		}
+		if (issueUploadObject.file.hasError) {
+			_error("Please select a valid file.")
+			return;
+		}
+		issueUploadObject.fileType =
+			issueUploadObject.file.type === "vimeo" || issueUploadObject.file.type === "youtube"
+				? "link"
+				: getFileType(issueUploadObject.file).toLowerCase();
 		//
-		
+
 		//
-        //
+		//
 		$('#jsAttachedFileListingSection').removeClass("hidden");
 		$('#jsAttachedFileListing').prepend('<tr id="jsIssueFile_' + fileCount + '" class="jsUploadIssueFile" row-id="jsIssueFile_' + fileCount + '" file-title="' + issueUploadObject.title + '"  file-data="' + issueUploadObject + '"><td class="text-center">' + issueUploadObject.title + '</td><td class="text-center">' + issueUploadObject.fileType + '</td><td><a href="javascript:;" item-sid="' + fileCount + '" attachment-type="manual" class="btn btn-block btn-info jsRemoveAttachedIssueFile">Remove</a></td></tr>');
 		//
@@ -1559,20 +1554,20 @@ $(function Overview() {
 		$("#jsAddIssueFileUploadTitle").val("");
 		$("#jsAddIssueFileUploadFile").msFileUploader("clear");
 		$('input[type="radio"][value="upload"]:checked')
-    });
+	});
 
 	$(document).on('click', '.jsRemoveAttachedIssueFile', function () {
-        var remove_file_sid = $(this).attr('item-sid');
-        $('#jsIssueFile_' + remove_file_sid).remove();
+		var remove_file_sid = $(this).attr('item-sid');
+		$('#jsIssueFile_' + remove_file_sid).remove();
 		//
-		issueFilesArray = issueFilesArray.filter(function(file) {
+		issueFilesArray = issueFilesArray.filter(function (file) {
 			return file.id !== remove_file_sid;
 		});
-    });
+	});
 
 	$(document).on("click", "#jsAddIssueNoteBtn", function (event) {
 		//
-        event.preventDefault();
+		event.preventDefault();
 		//
 		const noteObj = {
 			type: $("#jsAddIssueNoteType").val(),
@@ -1601,13 +1596,13 @@ $(function Overview() {
 	});
 
 	$(document).on('click', '.jsRemoveAttachedIssueNote', function () {
-        var remove_note_sid = $(this).attr('note-sid');
+		var remove_note_sid = $(this).attr('note-sid');
 		$('#jsIssueNote_' + remove_note_sid).remove();
 		//
-		issueNotesArray = issueNotesArray.filter(function(note) {
+		issueNotesArray = issueNotesArray.filter(function (note) {
 			return note.id !== remove_note_sid;
 		});
-    });
+	});
 
 	ml(false, "jsPageLoader");
 });
