@@ -207,6 +207,12 @@ class Department_management extends Public_Controller
                             $data_to_update["lms_managers_ids"] = null;
                         }
 
+                        if($this->input->post("csp_managers", true)) {
+                            $data_to_update["csp_managers_ids"] = implode(",", $this->input->post("csp_managers", true));
+                        } else {
+                            $data_to_update["csp_managers_ids"] = null;
+                        }
+
                         $this->department_management_model->update_department($department_sid, $data_to_update);
 
                         //
@@ -393,6 +399,13 @@ class Department_management extends Public_Controller
                         } else {
                             $data_to_update["lms_managers_ids"] = null;
                         }
+                        //
+                        if($this->input->post("csp_managers", true)) {
+                            $data_to_update["csp_managers_ids"] = implode(",", $this->input->post("csp_managers", true));
+                        } else {
+                            $data_to_update["csp_managers_ids"] = null;
+                        }
+                        //
                         $this->department_management_model->update_team($team_sid, $data_to_update);
                         //
                         if ($this->input->post('approvers', true)) {

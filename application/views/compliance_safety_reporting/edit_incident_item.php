@@ -437,8 +437,57 @@
                         </div>
                     </div>
                 </div>
-                <?php if (isMainAllowedForCSP()): ?>
 
+                <?php if (isMainAllowedForCSP()): ?>
+                    <!-- Add Notes -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h1 class="panel-heading-text text-medium">
+                                <strong>Add Department</strong>
+                            </h1>
+                        </div>
+                        <div class="panel-body">
+                            <label>Departments</label>
+                            <select name="departments[]" id="jsDepartments" multiple>
+                            <?php 
+                                //
+                                $allowedOnes = empty($report['allowed_departments']) ? [] : $report['allowed_departments'];
+                                //
+                                if(!empty($departments)){
+                                    foreach($departments as $v){
+                                        ?>
+                                        <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                        <?php
+                                    }
+                                }
+                            ?>
+                            </select>
+                            <br />
+                            <br />
+                            <!-- Teams -->
+                            <label>Teams</label>
+                            <select name="teams[]" id="jsTeams" multiple>
+                            <?php 
+                                //
+                                $allowedOnes = empty($report['allowed_teams']) ? [] : $report['allowed_teams'];
+                                //
+                                if(!empty($teams)){
+                                    foreach($teams as $v){
+                                        ?>
+                                        <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                        <?php
+                                    }
+                                }
+                            ?>
+                            </select>
+                        </div>
+                        <div class="panel-footer text-right">
+                            <button class="btn btn-orange jsAddDepartmentsAndTeams">
+                                <i class="fa fa-plus-circle"></i>
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
 
                     <div class="">
                         <!-- Employees -->

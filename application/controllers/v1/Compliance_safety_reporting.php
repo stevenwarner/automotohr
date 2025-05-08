@@ -41,7 +41,9 @@ class Compliance_safety_reporting extends Base_csp
             "incident" => $this->input->get("incidentType", true) ?? "-1",
             "status" => $this->input->get("status", true) ?? "-1",
             "title" => $this->input->get("title") ?? "",
-            "date_range" => $this->input->get("date_range", true) ?? ""
+            "date_range" => $this->input->get("date_range", true) ?? "",
+            "departments" => $this->input->get("departments", true) ?? "",
+            "teams" => $this->input->get("teams", true) ?? ""
         ];
         //
         $queryString = $_SERVER['QUERY_STRING'];
@@ -73,6 +75,9 @@ class Compliance_safety_reporting extends Base_csp
         $this->data["severity_status"] = $this
             ->compliance_report_model
             ->getSeverityLevels();
+        //
+        $this->data['departments'] = $this->compliance_report_model->getDepartments($this->getLoggedInCompany("sid"));
+        $this->data['teams'] = $this->compliance_report_model->getTeams($this->getLoggedInCompany("sid"), $this->data['departments']);
         //
         $this->renderView('compliance_safety_reporting/dashboard');
     }
@@ -1662,7 +1667,7 @@ class Compliance_safety_reporting extends Base_csp
 
     public function manageIncidentItem($reportId, $incidentId, $itemId)
     {
-        // get types
+        // get types 
         $this->data["report"] = $this
             ->compliance_report_model
             ->getCSPIncidentItemInfo(
@@ -1695,6 +1700,8 @@ class Compliance_safety_reporting extends Base_csp
                 $this->getLoggedInCompany("sid"),
                 0
             );
+        $this->data['departments'] = $this->compliance_report_model->getDepartments($this->getLoggedInCompany("sid"));
+        $this->data['teams'] = $this->compliance_report_model->getTeams($this->getLoggedInCompany("sid"), $this->data['departments']);
         //
         $this->data["reportId"] = $reportId;
         $this->data["incidentId"] = $incidentId;
@@ -1702,6 +1709,32 @@ class Compliance_safety_reporting extends Base_csp
         $this->data['pageType'] = 'not_public';
         //
         $this->renderView('compliance_safety_reporting/edit_incident_item');
+    }
+    
+    /**
+     * process departments and teams
+     * 
+     * @param int $reportId
+     * @param int $incidentId
+     * @param int $itemId
+     */
+    public function addDepartmentsAndTeams(int $reportId, int $incidentId, int $itemId)
+    {
+        // get the post
+        $post = $this->input->post(null, true);
+        //
+        $this->compliance_report_model->addDepartmentsAndTeams(
+            $reportId,
+            $incidentId,
+            $itemId,
+            $this->getLoggedInEmployee("sid"),
+            $post
+        );
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Data added successfully."]
+        );
     }
 
     /**
@@ -1987,7 +2020,7 @@ class Compliance_safety_reporting extends Base_csp
                 "issueId" => $issueId,
                 "reportId" => $post["reportId"],
                 "incidentId" => $cspIncidentId,
-                "reloadURL" => base_url("compliance_safety_reporting/edit/") . $post["reportId"] . "#tab-issues"
+                "reloadURL" => base_url("compliance_safety_reporting/edit/").$post["reportId"]."?tab=issues"
             ]
         );
     }

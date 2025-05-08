@@ -2630,6 +2630,8 @@ $route["compliance_safety_reporting/employee/overview/reports"]["get"] =
 $route["compliance_safety_reporting/employee/overview/incidents"]["get"] =
   "v1/Compliance_safety_reporting_employee/overviewIncidents";
 
+
+
 // public view
 $route["csp/single/(:any)"]["get"] =
   "v1/Compliance_safety_reporting_public/view/$1";
@@ -2858,3 +2860,9 @@ $route["compliance_safety_reporting/issues/(:num)/(:num)/(:num)/employees/extern
 
 $route["csp/delete_file/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting_public/deleteFileById/$1";
+
+$route["compliance_safety_reporting/employee_dashboard/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_employer/dashboard/$1";
+
+$route["compliance_safety_reporting/add_department_and_team/(:num)/(:num)/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/addDepartmentsAndTeams/$1/$2/$3";

@@ -65,6 +65,13 @@ $(function Overview() {
 	//
 	CKEDITOR.replace("report_note");
 	//
+	$('#jsDepartments').select2({
+		closeOnSelect: false
+	});
+	$('#jsTeams').select2({
+		closeOnSelect: false
+	});
+	//
 	$("#item_completion_date").datetimepicker({
 		format: "m/d/Y",
 		datepicker: true,
@@ -116,6 +123,46 @@ $(function Overview() {
 				}
 			}
 		);
+	});
+
+	$(document).on("click", ".jsAddDepartmentsAndTeams", function () {
+		//
+		var obj = {};
+		obj.departments = $('#jsDepartments').val() || '';
+		obj.teams = $('#jsTeams').val() || '';
+		//
+		if (obj.departments == "" && obj.teams == "") {
+			_error("Selection required: Choose at least a department or a team.");
+			return;
+		}
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/add_department_and_team/" +
+					reportId +
+					"/" +
+					incidentId +
+					"/" +
+					itemId
+				),
+				method: "POST",
+				data: $.param(obj),
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message, function () {
+						window.location.refresh();
+					});
+				});
+		}
 	});
 
 	$(".jsAddNote").click(function (event) {

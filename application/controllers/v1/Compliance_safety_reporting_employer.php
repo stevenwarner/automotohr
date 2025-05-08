@@ -8,22 +8,23 @@ require_once APPPATH . 'controllers/csp/Base_csp.php';
  * @author  AutomotoHR Dev Team
  * @version 1.0
  */
-class Compliance_safety_reporting_employee extends Base_csp
+class Compliance_safety_reporting_employer extends Base_csp
 {
     public function __construct()
     {
         parent::__construct(true);
         //
-        if (!isAllowedForCSP()) {
+        
+    }
+
+    public function dashboard($employeeId)
+    {
+        if (!isAllowedForCSP($employeeId)) {
             $this->session->set_flashdata('message', '<strong>Error:</strong> Hr Access Denied!');
             return redirect(
                 "dashboard"
             );
         }
-    }
-
-    public function dashboard()
-    {_e('I am here',true,true);
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Dashboard';
         // load JS
@@ -60,7 +61,7 @@ class Compliance_safety_reporting_employee extends Base_csp
             ->compliance_report_model
             ->getAllEmployeeIncidentsWithReports(
                 $this->getLoggedInCompany("sid"),
-                $this->getLoggedInEmployee("sid")
+                $employeeId
             );
 
         // get the reports
@@ -68,7 +69,7 @@ class Compliance_safety_reporting_employee extends Base_csp
             ->compliance_report_model
             ->getAllEmployeeItemsWithIncidentsCPA(
                 $this->getLoggedInCompany("sid"),
-                $this->getLoggedInEmployee("sid"),
+                $employeeId,
                 $this->data["filter"]
             );
         //

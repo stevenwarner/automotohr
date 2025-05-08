@@ -13973,6 +13973,7 @@ if (!function_exists('getUserHint')) {
         $hints['authorized_managers_hint'] = 'The selected manager will sign this document.';
         $hints['assigner_hint'] = 'Choose employees to approve document assign.';
         $hints['lms_manager_hint'] = 'Select the employees who have access to this department to view the employees in the LMS.';
+        $hints['csp_manager_hint'] = 'Select the employees who have access to this department to view the employees in the Compliance Safety Reporting.';
 
         return isset($hints[$slug]) ? $hints[$slug] : '';
     }
@@ -17393,5 +17394,103 @@ if (!function_exists('getManualUserNameByEmailId')) {
 
         //
         return $employeeName;
+    }
+}
+
+if (!function_exists('checkIfAnyIncidentIssueAssigned')) {
+    function checkIfAnyIncidentIssueAssigned(
+        $employeeId
+    ) {
+        
+        $CI = &get_instance();
+        $CI->db->select('sid');
+        $CI->db->from('csp_reports_employees');
+        $CI->db->where('employee_sid', $employeeId);
+        $CI->db->where('status', 1);
+        $rows = $CI->db->count_all_results();
+
+        if ($rows > 0) {
+            return true;
+        } else {
+            //
+            $companyId = getEmployeeUserParent_sid($employeeId);
+            //
+            $CI->db->select("
+                departments_team_management.sid as team_sid, 
+                departments_team_management.name as team_name,
+                departments_management.sid,
+                departments_management.name,
+                departments_management.lms_managers_ids
+            ")
+                ->join(
+                    "departments_management",
+                    "departments_management.sid = departments_team_management.department_sid",
+                    "inner"
+                )
+                ->where("departments_management.company_sid", $companyId)
+                ->where("departments_management.is_deleted", 0)
+                ->where("departments_team_management.is_deleted", 0);
+            // if not plus then check for LMS manager role
+            $CI->db->group_start()
+                ->where("FIND_IN_SET({$employeeId}, departments_management.csp_managers_ids) > 0", null, null)
+                ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.csp_managers_ids) > 0", null, null)
+                ->group_end();
+        
+            //
+            $records_obj = $CI->db->get("departments_team_management");
+            $departmentAndTeams = $records_obj->result_array();
+            $records_obj->free_result();
+            // _e($CI->db->last_query(),true);
+            // _e($departmentAndTeams, true);
+            //
+            if ($departmentAndTeams) {
+                $departments = [];
+                $teams = [];
+                //
+                foreach ($departmentAndTeams as $row) {
+                    if(!in_array($row['sid'], $departments)){
+                        $departments[] = $row['sid'];
+                    }
+                    //
+                    if(!in_array($row['team_sid'], $teams)){
+                        $teams[] = $row['team_sid'];
+                    }
+                }
+                //
+                if (!empty($departments) || !empty($teams)) {
+                    //
+                    $CI->db->select('csp_reports_employees.csp_reports_sid');
+                    $CI->db->join(
+                        "csp_reports",
+                        "csp_reports.sid = csp_reports_employees.csp_reports_sid",
+                        "inner"
+                    );
+                    $CI->db->where('csp_reports.company_sid', $companyId);
+                    $CI->db->where('csp_reports_employees.status', 1);
+                    $CI->db->group_start();
+                        if ($departments) {
+                            foreach ($departments as $department) {
+                                $CI->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
+                            }
+                        }
+                        // For teams
+                        if ($teams) {
+                            foreach ($teams as $team) {
+                                $CI->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
+                            }
+                        }
+                    $CI->db->group_end();
+                    $records_obj = $CI->db->get('csp_reports_employees');
+                    $records_arr = $records_obj->result_array();
+                    $records_obj->free_result();
+                    //
+                    if ($records_arr) {
+                        return true;
+                    }
+                }
+            }
+            //
+            return false;
+        }
     }
 }

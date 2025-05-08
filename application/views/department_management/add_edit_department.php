@@ -148,6 +148,32 @@
                                                     </div>
                                                 </div>
                                             <?php } ?>
+
+                                            <?php if (checkIfAppIsEnabled(MODULE_COMPLIANCE_SAFETY)) { ?>
+                                                <?php
+                                                $departmentCSPManagersIds = explode(',', $department['csp_managers_ids']);
+                                                ?>
+                                                <div class="form-group autoheight">
+                                                    <label for="name">Compliance Safety Reporting Manager(s) <i
+                                                            class="fa fa-question-circle-o help"
+                                                            src="lms_manager_hint" action="show"></i></label>
+                                                    <p class="input_hint" id="lms_manager_hint"><?php echo getUserHint('csp_manager_hint'); ?></p>
+                                                    <div class="">
+                                                        <select name="csp_managers[]" class="invoice-fields" id="csp_managers" multiple="true">
+                                                            <?php foreach ($employees as $key => $employee): ?>
+                                                                <?php if (strtolower($employee["access_level"]) == "employee") {
+                                                                    continue;
+                                                                } ?>
+                                                                <option value="<?php echo $employee['sid'] ?>" <?php echo isset($department['csp_managers_ids']) && in_array($employee['sid'], $departmentCSPManagersIds)  ? 'selected="selected"' : ''; ?>>
+                                                                    <?php echo remakeEmployeeName($employee); ?>
+                                                                </option>
+                                                            <?php endforeach ?>
+                                                        </select>
+                                                        <span id="add_csp_managers_error" class="text-danger person_error"></span>
+                                                    </div>
+                                                </div>
+                                            <?php } ?>    
+
                                             <div class="form-group autoheight">
                                                 <label>Sort Order</label>
                                                 <input type="number" name="sort_order" class="form-control" value="<?php echo isset($department['sort_order']) ? $department['sort_order'] : ''; ?>">
@@ -184,6 +210,9 @@
             closeOnSelect: false
         });
         $('#lms_managers').select2({
+            closeOnSelect: false
+        });
+        $('#csp_managers').select2({
             closeOnSelect: false
         });
         $('#approvers_ids').trigger('change');

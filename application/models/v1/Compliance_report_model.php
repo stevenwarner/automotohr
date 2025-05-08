@@ -1980,6 +1980,28 @@ class Compliance_report_model extends CI_Model
 	 * @param int $itemId
 	 * @return array
 	 */
+	public function getCSPIncidentDepartmentsAndTeamsById(int $reportId, int $incidentId, int $itemId, array $columns)
+	{
+		return $this->db
+			->select($columns)
+			->where("csp_reports_sid", $reportId)
+			->where("is_external_employee", 0)
+			->where("csp_report_incident_sid", $incidentId)
+			->where("csp_reports_incidents_items_sid", $itemId)
+			->where("status", 1)
+			->where('employee_sid', null)
+			->get("csp_reports_employees")
+			->row_array();
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @param int $incidentId
+	 * @param int $itemId
+	 * @return array
+	 */
 	public function getCSPIncidentExternalEmployeesById(int $reportId, int $incidentId, int $itemId, array $columns)
 	{
 		return $this->db
@@ -3024,14 +3046,26 @@ class Compliance_report_model extends CI_Model
 	public function hasAccess(int $employeeId): int
 	{
 		//
-		return $this
+		$issueAssignCount = $this
 			->db
 			->where(
 				"csp_reports_employees.employee_sid",
 				$employeeId
 			)
 			->count_all_results("csp_reports_employees");
+		//
+		if ($issueAssignCount == 0) {
+			$isAssigned = checkIfAnyIncidentIssueAssigned($employeeId);
+			
+			//
+			if ($isAssigned) {
+				$issueAssignCount = 1;
+			}
+		}
+		//
+		return $issueAssignCount;
 	}
+
 
 	/**
 	 * check the access of employee
@@ -3114,6 +3148,83 @@ class Compliance_report_model extends CI_Model
 					$tasks[] = $item["csp_reports_incidents_items_sid"];
 				}
 			}
+		}
+		//
+		if (empty($tasks)) {
+			$companyId = getEmployeeUserParent_sid($employeeId);
+            //
+            $this->db->select("
+                departments_team_management.sid as team_sid, 
+                departments_team_management.name as team_name,
+                departments_management.sid,
+                departments_management.name,
+                departments_management.lms_managers_ids
+            ")
+                ->join(
+                    "departments_management",
+                    "departments_management.sid = departments_team_management.department_sid",
+                    "inner"
+                )
+                ->where("departments_management.company_sid", $companyId)
+                ->where("departments_management.is_deleted", 0)
+                ->where("departments_team_management.is_deleted", 0);
+            // if not plus then check for LMS manager role
+            $this->db->group_start()
+                ->where("FIND_IN_SET({$employeeId}, departments_management.csp_managers_ids) > 0", null, null)
+                ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.csp_managers_ids) > 0", null, null)
+                ->group_end();
+        
+            //
+            $records_obj = $this->db->get("departments_team_management");
+            $departmentAndTeams = $records_obj->result_array();
+            $records_obj->free_result();
+            //
+            if ($departmentAndTeams) {
+                $departments = [];
+                $teams = [];
+                //
+                foreach ($departmentAndTeams as $row) {
+                    if(!in_array($row['sid'], $departments)){
+                        $departments[] = $row['sid'];
+                    }
+                    //
+                    if(!in_array($row['team_sid'], $teams)){
+                        $teams[] = $row['team_sid'];
+                    }
+                }
+                //
+                if (!empty($departments) || !empty($teams)) {
+                    //
+                    $this->db->select('csp_reports_employees.sid');
+                    $this->db->join(
+                        "csp_reports",
+                        "csp_reports.sid = csp_reports_employees.csp_reports_sid",
+                        "inner"
+                    );
+                    $this->db->where('csp_reports.company_sid', $companyId);
+                    $this->db->where('csp_reports_employees.status', 1);
+                    $this->db->group_start();
+                        if ($departments) {
+                            foreach ($departments as $department) {
+                                $this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
+                            }
+                        }
+                        // For teams
+                        if ($teams) {
+                            foreach ($teams as $team) {
+                                $this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
+                            }
+                        }
+                    $this->db->group_end();
+                    $records_obj = $this->db->get('csp_reports_employees');
+                    $records_arr = $records_obj->result_array();
+                    $records_obj->free_result();
+                    //
+                    if ($records_arr) {
+						$tasks = array_column($records_arr, 'sid');
+                    }
+                }
+            }	
 		}
 		//
 		$this->allowedCSP["implements"] = true;
@@ -3576,6 +3687,83 @@ class Compliance_report_model extends CI_Model
 					$tasks[] = $item["csp_reports_incidents_items_sid"];
 				}
 			}
+		}
+		//
+		if (empty($tasks) && !filter_var($employeeIdOrEmail, FILTER_VALIDATE_EMAIL)) {
+			$companyId = getEmployeeUserParent_sid($employeeIdOrEmail);
+            //
+            $this->db->select("
+                departments_team_management.sid as team_sid, 
+                departments_team_management.name as team_name,
+                departments_management.sid,
+                departments_management.name,
+                departments_management.lms_managers_ids
+            ")
+                ->join(
+                    "departments_management",
+                    "departments_management.sid = departments_team_management.department_sid",
+                    "inner"
+                )
+                ->where("departments_management.company_sid", $companyId)
+                ->where("departments_management.is_deleted", 0)
+                ->where("departments_team_management.is_deleted", 0);
+            // if not plus then check for LMS manager role
+            $this->db->group_start()
+                ->where("FIND_IN_SET({$employeeIdOrEmail}, departments_management.csp_managers_ids) > 0", null, null)
+                ->or_where("FIND_IN_SET({$employeeIdOrEmail}, departments_team_management.csp_managers_ids) > 0", null, null)
+                ->group_end();
+        
+            //
+            $records_obj = $this->db->get("departments_team_management");
+            $departmentAndTeams = $records_obj->result_array();
+            $records_obj->free_result();
+            //
+            if ($departmentAndTeams) {
+                $departments = [];
+                $teams = [];
+                //
+                foreach ($departmentAndTeams as $row) {
+                    if(!in_array($row['sid'], $departments)){
+                        $departments[] = $row['sid'];
+                    }
+                    //
+                    if(!in_array($row['team_sid'], $teams)){
+                        $teams[] = $row['team_sid'];
+                    }
+                }
+                //
+                if (!empty($departments) || !empty($teams)) {
+                    //
+                    $this->db->select('csp_reports_employees.sid');
+                    $this->db->join(
+                        "csp_reports",
+                        "csp_reports.sid = csp_reports_employees.csp_reports_sid",
+                        "inner"
+                    );
+                    $this->db->where('csp_reports.company_sid', $companyId);
+                    $this->db->where('csp_reports_employees.status', 1);
+                    $this->db->group_start();
+                        if ($departments) {
+                            foreach ($departments as $department) {
+                                $this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
+                            }
+                        }
+                        // For teams
+                        if ($teams) {
+                            foreach ($teams as $team) {
+                                $this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
+                            }
+                        }
+                    $this->db->group_end();
+                    $records_obj = $this->db->get('csp_reports_employees');
+                    $records_arr = $records_obj->result_array();
+                    $records_obj->free_result();
+                    //
+                    if ($records_arr) {
+						$tasks = array_column($records_arr, 'sid');
+                    }
+                }
+            }	
 		}
 		//
 		$this->allowedCSP["implements"] = true;
@@ -4998,6 +5186,14 @@ class Compliance_report_model extends CI_Model
 				"external_name",
 				"external_email",
 			]);
+		//	
+		$departmentsTeams = $this->getCSPIncidentDepartmentsAndTeamsById($reportId, $incidentId, $itemId, [
+				"allowed_departments",
+				"allowed_teams",
+			]);
+		//
+		$itemData["allowed_departments"] = isset($departmentsTeams['allowed_departments']) && !empty($departmentsTeams['allowed_departments']) ? explode(',', $departmentsTeams['allowed_departments']) : [];
+    	$itemData["allowed_teams"] = isset($departmentsTeams['allowed_teams']) && !empty($departmentsTeams['allowed_teams']) ? explode(',', $departmentsTeams['allowed_teams']) : [];
 		//
 		$itemData["notes"] = $this->getCSPIncidentNotesById($reportId, $incidentId, $itemId, [
 			$this->userFields,
@@ -5466,6 +5662,37 @@ class Compliance_report_model extends CI_Model
 
 	public function getAllItemsWithIncidentsCPA(int $companyId, array $filter, bool $isMainCPA = true): array
 	{
+		$reportIds = [];
+		//
+		if ((array_key_exists("departments", $filter) && $filter["departments"] != "") || (array_key_exists("teams", $filter) && $filter["teams"] != "")) {
+			$this->db->select('csp_reports_employees.csp_reports_sid');
+			$this->db->join(
+				"csp_reports",
+				"csp_reports.sid = csp_reports_employees.csp_reports_sid",
+				"inner"
+			);
+			$this->db->where('csp_reports.company_sid', $companyId);
+			$this->db->where('csp_reports_employees.status', 1);
+			$this->db->group_start();
+				if (array_key_exists("departments", $filter) && $filter["departments"] != "") {
+					foreach ($filter["departments"] as $department) {
+						$this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
+					}
+				}
+				// For teams
+				if (array_key_exists("teams", $filter) && $filter["teams"] != "") {
+					foreach ($filter["teams"] as $team) {
+						$this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
+					}
+				}
+			$this->db->group_end();
+			$records_obj = $this->db->get('csp_reports_employees');
+			$records_arr = $records_obj->result_array();
+			$records_obj->free_result();
+			//
+			$reportIds = array_column($records_arr, 'csp_reports_sid');
+		}	
+
 		$this->db->select([
 			// Item columns
 			"csp_reports_incidents_items.sid",
@@ -5528,6 +5755,10 @@ class Compliance_report_model extends CI_Model
 		);
 		$this->db->where('csp_reports_incidents_items.status', 1);
 		$this->db->where('csp_reports.company_sid', $companyId);
+		//
+		if ($reportIds) {
+			$this->db->where_in("csp_reports.sid", $reportIds);
+		}
 		// check report date range
 		if (array_key_exists("date_range", $filter) && $filter["date_range"] != "") {
 			list($start_date, $end_date) = explode(" - ", $_GET['date_range']);
@@ -5572,6 +5803,7 @@ class Compliance_report_model extends CI_Model
 		$records_obj = $this->db->get('csp_reports_incidents_items');
 		$records_arr = $records_obj->result_array();
 		$records_obj->free_result();
+		// _e($this->db->last_query(),true,true);
 
 		//
 		if ($records_arr) {
@@ -6649,5 +6881,82 @@ class Compliance_report_model extends CI_Model
 		$this->db->insert("csp_reports_employees", $externalEmployees);
 
 		return $this->db->insert_id();
+	}
+
+	function getDepartments($companySid)
+    {
+        $a = $this->db
+            ->select('sid, name')
+            ->where('company_sid', $companySid)
+            ->where('status', 1)
+            ->where('is_deleted', 0)
+            ->order_by('sort_order', 'ASC')
+            ->get('departments_management');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+    function getTeams($companySid, $departments)
+    {
+        //
+        if (!$departments || !count($departments)) return [];
+        //
+        $a = $this->db
+            ->select('sid, name')
+            ->where('company_sid', $companySid)
+            ->where('status', 1)
+            ->where('is_deleted', 0)
+            ->where_in('department_sid', array_column($departments, 'sid'))
+            ->order_by('sort_order', 'ASC')
+            ->get('departments_team_management');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @param int $incidentId
+	 * @param int $itemId
+	 * @param int $loggedInEmployeeId
+	 * @param array $post
+	 * @return array
+	 */
+	public function addDepartmentsAndTeams(
+		int $reportId,
+		int $incidentId,
+		int $itemId,
+		int $loggedInEmployeeId,
+		array $post
+	) {
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_report_incident_sid', $incidentId);
+		$this->db->where('csp_reports_incidents_items_sid', $itemId);
+		$this->db->where('is_external_employee', 0);
+		$this->db->where('employee_sid', null);
+		$this->db->delete('csp_reports_employees');
+		//
+		$todayDateTime = getSystemDate();
+		//
+		$dataToInsert = [];
+		$dataToInsert['csp_reports_sid'] = $reportId;
+		$dataToInsert['csp_report_incident_sid'] = $incidentId;
+		$dataToInsert['csp_reports_incidents_items_sid'] = $itemId;
+		$dataToInsert['created_by'] = $loggedInEmployeeId;
+		$dataToInsert['created_at'] = $todayDateTime;
+		$dataToInsert['updated_at'] = $todayDateTime;
+		$dataToInsert['allowed_departments'] = isset($post['departments']) ? implode(',', $post['departments']) : NULL;
+        $dataToInsert['allowed_teams'] = isset($post['teams']) ? implode(',', $post['teams']) : NULL;
+		//
+		$this->db->insert('csp_reports_employees', $dataToInsert);
+		//
+		return true;
 	}
 }

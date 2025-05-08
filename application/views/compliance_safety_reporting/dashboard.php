@@ -164,8 +164,40 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                     value="<?php echo $filter["date_range"]; ?>">
                             </div>
                         </div>
-                        <div class="col-md-4">
-                        </div>
+                        <?php if (!empty($departments)) { ?>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status">Departments</label>
+                                    <select name="departments[]" id="jsDepartments" multiple>
+                                        <?php 
+                                            $allowedOnes = empty($filter['departments']) ? [] : $filter['departments'];
+                                        ?>
+                                        <?php foreach ($departments as $v) { ?>
+                                            <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
+
+                    <!--  -->
+                    <div class="row">
+                        <?php if (!empty($teams)) { ?>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status">Teams</label>
+                                    <select name="teams[]" id="jsTeams" multiple>
+                                        <?php 
+                                            $allowedOnes = empty($filter['teams']) ? [] : $filter['teams'];
+                                        ?>
+                                        <?php foreach ($teams as $v) { ?>
+                                            <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                        <?php } ?>
                     </div>
 
                     <div class="row">

@@ -260,6 +260,17 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                     <?php } ?>
                                 <?php } ?>
 
+                                <?php if (checkIfAnyIncidentIssueAssigned($employer["sid"])) { ?>
+                                    <li>
+                                        <span class="left-addon">
+                                            <i aria-hidden="true" class="fa fa-file"></i>
+                                        </span>
+                                        <h4>Compliance Safety Reporting</h4>
+                                        <!-- <a href="<?php echo base_url('compliance_safety_reporting/employee_dashboard/'.$employer["sid"]); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a> -->
+                                        <a href="<?php echo base_url('compliance_safety_reporting/employee_dashboard/'.$employer["sid"]); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                    </li>
+                                <?php } ?>
+
                             </ul>
                         </div>
                     </div>

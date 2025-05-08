@@ -56,6 +56,7 @@
                             (<?= count($report["issuesWithIncident"]); ?>)
                         </a>
                     </li>
+                    <?php //_e($report,true,true); ?>
                     <li class="nav-item <?= $this->input->get("tab", true) == "questions" ? "active" : ""; ?>">
                         <a class="nav-link" data-toggle="tab" href="#tab-questions" role="tab">
                             <i class="fa fa-question-circle"></i> Questions
@@ -64,16 +65,19 @@
                     <li class="nav-item <?= $this->input->get("tab", true) == "files" ? "active" : ""; ?>">
                         <a class="nav-link" data-toggle="tab" href="#tab-files" role="tab">
                             <i class="fa fa-file"></i> Files
+                            (<?= count($report["documents"]) + count($report["audios"]); ?>)
                         </a>
                     </li>
                     <li class="nav-item <?= $this->input->get("tab", true) == "emails" ? "active" : ""; ?>">
                         <a class="nav-link" data-toggle="tab" href="#tab-emails" role="tab">
                             <i class="fa fa-envelope"></i> Emails
+                            (<?= count($report["emails"]); ?>)
                         </a>
                     </li>
                     <li class="nav-item <?= $this->input->get("tab", true) == "notes" ? "active" : ""; ?>">
                         <a class="nav-link" data-toggle="tab" href="#tab-notes" role="tab">
                             <i class="fa fa-sticky-note"></i> Notes
+                            (<?= count($report["notes"]); ?>)
                         </a>
                     </li>
                 </ul>

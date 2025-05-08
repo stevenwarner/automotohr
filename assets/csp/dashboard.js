@@ -12,6 +12,14 @@ $(function () {
     let fileUploaderReference = {};
     let cspPublic = 0;
     //
+    $('#jsDepartments').select2({
+		closeOnSelect: false
+	});
+    //
+	$('#jsTeams').select2({
+		closeOnSelect: false
+	});
+    //
     const config = {
         document: {
             allowedTypes: [
