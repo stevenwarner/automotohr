@@ -15,6 +15,11 @@ $collapseIn =  $this->input->get("page") == 'sectionTag' . $tagIndex ? "in" : ""
                     <i class="fa fa-trash" aria-hidden="true"></i>
                     &nbsp;Delete Section
                 </button>
+
+                <button class="btn btn-success jsEditSection" data-index="<?= $tagIndex; ?>" data-title="<?= $tagData["title"]; ?>">
+                    <i class="fa fa-edit" aria-hidden="true"></i>
+                    &nbsp;Edit Section
+                </button>
             </span>
         </h4>
     </div>

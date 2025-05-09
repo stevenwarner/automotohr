@@ -1333,6 +1333,7 @@ class Cms extends Admin_Controller
      */
     public function updatePageSections(int $pageId)
     {
+
         // get the page record
         $pageContent = $this->cms_model
             ->get_page_data(
@@ -1343,7 +1344,13 @@ class Cms extends Admin_Controller
         //
         $pageContent = json_decode($pageContent, true);
 
-        $pageContent["page"]["sections"][$post["section"]][$post["index"]][] = $post;
+        if ($post['sectionindex']!='') {
+            $sectionIndex = $post['sectionindex'];
+            unset($post['sectionindex']);
+            $pageContent["page"]["sections"][$post["section"]][$post["index"]][$sectionIndex]['title'] = $post['title'];
+        } else {
+            $pageContent["page"]["sections"][$post["section"]][$post["index"]][] = $post;
+        }
 
         $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
@@ -1500,6 +1507,8 @@ class Cms extends Admin_Controller
      */
     public function addDynamicPageProcess()
     {
+
+
         $this->form_validation->set_rules("title", "Page name", "xss_clean|required|trim");
         $this->form_validation->set_rules("slug", "Page slug", "xss_clean|required|trim");
         //
@@ -1519,6 +1528,22 @@ class Cms extends Admin_Controller
             );
         }
         // create the page
+
+        $pageContent["meta"]["title"] = "AutomotoHR Helps you differentiate your business and Brand from everyone else.";
+        $pageContent["meta"]["description"] = "AutomotoHR Helps you differentiate your business and Brand from everyone else, with our People Operations platform Everything is in one place on one system Hire to Retire. So HOW DOES YOUR COMPANY STAND OUT?";
+        $pageContent["meta"]["keywords"] = "AutomotoHR, People Operations platform, Business Differentiation, Brand Identity, One System Solution, Hire to Retire, Company Distinctiveness, HR Innovation, Unified HR Management, Branding Strategy, Employee Lifecycle, Streamlined Operations, Personnel Management, HR Efficiency, Competitive Advantage, Employee Experience, Seamless Integration, Organizational Uniqueness, HR Transformation, Comprehensive HR Solution, HRIS, HCM, Human Resources Software, Employee Management, Payroll Integration, Benefits Administration, Time and Attendance, Applicant Tracking System (ATS), Onboarding, Performance Management, Employee Self-Service, Compliance Management, HR Analytics, HR Automation, HR Reporting, Talent Management, Workforce Planning, HR Compliance, Employee Records Management, HR Cloud Software, HR Solutions, HR Technology, Employee Benefits, Leave Management, HRIS Integration, HR Software Solutions, HR Administration, HR Dashboard, HR Tools, HR Platform";
+        $pageContent["pageDetails"]["heading"] = "";
+        $pageContent["pageDetails"]["details"] = "";
+        $pageContent["pageDetails"]["section"] = "pageDetails";
+        $pageContent["pageDetails"]["source_type"] = "upload";
+        $pageContent["pageDetails"]["source_link"] = "";
+        $pageContent["pageDetails"]["sourceFile"] = "";
+        $pageContent["pageDetails"]["sourceType"] = "upload";
+
+
+        $post['content'] = json_encode($pageContent);
+
+
         $pageId = $this->cms_model->createPage($post);
         //
         if (!$pageId) {
@@ -1545,7 +1570,6 @@ class Cms extends Admin_Controller
     {
         // get sanitized post
         $post = $this->input->post(null, true);
-
         //
         if ($post["section"] === "main") {
             // check if the page slug already exists
@@ -1618,7 +1642,6 @@ class Cms extends Admin_Controller
                 // update the section
                 $pageContent[$post["section"]] = $post;
             }
-
 
             //
             $this->cms_model->updatePage(

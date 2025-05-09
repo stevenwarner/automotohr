@@ -100,7 +100,7 @@ class cms_model extends CI_Model
                 [
                     "title" => $data["title"],
                     "slug" => $data["slug"],
-                    "content" => "{}",
+                    "content" => $data["content"],
                     "created_at" => getSystemDate(),
                     "updated_at" => getSystemDate(),
                     "page" => str_replace('-', '_', $data["slug"]),
