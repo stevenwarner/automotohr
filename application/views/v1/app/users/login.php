@@ -1,6 +1,7 @@
 <main>
     <div class="row">
-        <div class="col-xs-12 background-image-css" style="background-image: url('<?= AWS_S3_BUCKET_URL . $loginContent['page']['sections']['section_0']['sourceFile']; ?>');">
+        <div class="col-xs-12 background-image-css"
+            style="background-image: url('<?= AWS_S3_BUCKET_URL . $loginContent['page']['sections']['section_0']['sourceFile']; ?>');">
             <div class="top-div">
                 <div class="parent-div">
                     <div class="first-div">
@@ -17,18 +18,22 @@
                                         <?= convertToStrip($loginContent['page']['sections']['section_0']['subHeading']); ?>
                                     </h1>
                                     <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
-                                    <input class="d-block login-inputs" placeholder="Username" name="username" id="email" value="<?php echo set_value('username'); ?>" />
+                                    <input class="d-block login-inputs" placeholder="Username" name="username"
+                                        id="email" value="<?php echo set_value('username'); ?>" />
                                     <?php echo form_error('username'); ?>
 
-                                    <input class="d-block login-inputs" placeholder="Password" type="password" id="password" name="password" />
+                                    <input class="d-block login-inputs" placeholder="Password" type="password"
+                                        id="password" name="password" />
                                     <?php echo form_error('password'); ?>
 
                                     <div class="w-full forgot-password-text">
-                                        <span><a href="<?php echo site_url('forgot-password'); ?>">Forgot your Username / Password? Click Here</a></span>
+                                        <span><a href="<?php echo site_url('forgot-password'); ?>">Forgot your Username
+                                                / Password? Click Here</a></span>
                                     </div>
 
                                     <div class="margin-top-30">
-                                        <button class="d-block login-screen-btns jsButtonAnimationSecond" type="submit" value="Login">
+                                        <button class="d-block login-screen-btns jsButtonAnimationSecond" type="submit"
+                                            value="Login">
                                             <p>
                                                 <?= convertToStrip($loginContent['page']['sections']['section_0']['buttonText']); ?>
                                             </p>
@@ -50,7 +55,8 @@
                             <h2>
                                 <?= convertToStrip($loginContent['page']['sections']['section_0']['mainHeadingExecutiveAdmin']); ?>
                             </h2>
-                            <a class="login-screen-btns  jsButtonAnimationSecond margin-top-30" href="<?= base_url($loginContent['page']['sections']['section_0']['buttonLinkExecutiveAdmin']); ?>">
+                            <a class="login-screen-btns  jsButtonAnimationSecond margin-top-30"
+                                href="<?= base_url($loginContent['page']['sections']['section_0']['buttonLinkExecutiveAdmin']); ?>">
                                 <?= convertToStrip($loginContent['page']['sections']['section_0']['buttonTextExecutiveAdmin']); ?>
                             </a>
                         </div>
@@ -63,7 +69,8 @@
                             <h2>
                                 <?= convertToStrip($loginContent['page']['sections']['section_0']['mainHeadingContact']); ?>
                             </h2>
-                            <a href="<?= base_url($loginContent['page']['sections']['section_0']['buttonLinkContact']); ?>" class=" login-screen-btns jsButtonAnimationSecond margin-top-30">
+                            <a href="<?= base_url($loginContent['page']['sections']['section_0']['buttonLinkContact']); ?>"
+                                class=" login-screen-btns jsButtonAnimationSecond margin-top-30">
                                 <p class="btn-text">
                                     <?= convertToStrip($loginContent['page']['sections']['section_0']['buttonTextContact']); ?>
                                 </p>
@@ -75,3 +82,5 @@
         </div>
     </div>
 </main>
+
+<?php $this->load->view("v1/app/cookie"); ?>
