@@ -24,8 +24,10 @@
         </div>
         <div class="col-xs-12 background-image-css light-blue-background not-show-on-mob">
             <div class="first column-flex-center ">
-                <img src="<?= getImageURL($forgotPasswordContent['page']['sections']['section_0']['sourceFile']); ?>" alt="peoplewithkey" />
+                <img src="<?= getImageURL($forgotPasswordContent['page']['sections']['section_0']['sourceFile']); ?>"
+                    alt="peoplewithkey" />
             </div>
         </div>
     </div>
 </main>
+<?php $this->load->view("v1/app/cookie"); ?>

@@ -23,8 +23,9 @@ $activePages = getAllActivePages();
                             <?php
                             $y_url = get_slug_data('youtube_url', 'settings');
                             if (!empty($y_url)) {
-                            ?>
-                                <a href="<?php echo $y_url; ?>" class="simple-anchor-icons"><i class="fa-brands fa-youtube"></i></a>
+                                ?>
+                                <a href="<?php echo $y_url; ?>" class="simple-anchor-icons"><i
+                                        class="fa-brands fa-youtube"></i></a>
                             <?php } ?>
                         </div>
 
@@ -34,40 +35,41 @@ $activePages = getAllActivePages();
                             <?php
                             $i_url = get_slug_data('instagram_url', 'settings');
                             if (!empty($i_url)) {
-                            ?>
+                                ?>
                                 <div class="anchor-span">
-                                    <a href="<?php echo $i_url; ?>" class="simple-anchor-icons"><i class="fa-brands fa-instagram"></i></a>
+                                    <a href="<?php echo $i_url; ?>" class="simple-anchor-icons"><i
+                                            class="fa-brands fa-instagram"></i></a>
                                 </div>
                             <?php } ?>
                             <div class="anchor-span">
                                 <a href="<?php
-                                            $t_url = get_slug_data('twitter_url', 'settings');
-                                            if (!empty($t_url)) {
-                                                echo $t_url;
-                                            } else {
-                                                echo "https://twitter.com/AutomotoSocial";
-                                            }
-                                            ?>" class="simple-anchor-icons"><i class="fa-brands ">X</i></a>
+                                $t_url = get_slug_data('twitter_url', 'settings');
+                                if (!empty($t_url)) {
+                                    echo $t_url;
+                                } else {
+                                    echo "https://twitter.com/AutomotoSocial";
+                                }
+                                ?>" class="simple-anchor-icons"><i class="fa-brands ">X</i></a>
                             </div>
                             <div class="anchor-span">
                                 <a href="<?php
-                                            $f_url = get_slug_data('facebook_url', 'settings');
-                                            if (!empty($f_url)) {
-                                                echo $f_url;
-                                            } else {
-                                                echo "https://www.facebook.com/automotosocialjobs";
-                                            }
-                                            ?>" class="simple-anchor-icons"><i class="fa-brands fa-facebook"></i></a>
+                                $f_url = get_slug_data('facebook_url', 'settings');
+                                if (!empty($f_url)) {
+                                    echo $f_url;
+                                } else {
+                                    echo "https://www.facebook.com/automotosocialjobs";
+                                }
+                                ?>" class="simple-anchor-icons"><i class="fa-brands fa-facebook"></i></a>
                             </div>
                             <div class="anchor-span">
                                 <a href="<?php
-                                            $l_url = get_slug_data('linkedin_url', 'settings');
-                                            if (!empty($l_url)) {
-                                                echo $l_url;
-                                            } else {
-                                                echo "https://www.linkedin.com/grp/home?gid=6735083&goback=%2Egna_6735083";
-                                            }
-                                            ?>" class="simple-anchor-icons"><i class="fa-brands fa-linkedin-in"></i></a>
+                                $l_url = get_slug_data('linkedin_url', 'settings');
+                                if (!empty($l_url)) {
+                                    echo $l_url;
+                                } else {
+                                    echo "https://www.linkedin.com/grp/home?gid=6735083&goback=%2Egna_6735083";
+                                }
+                                ?>" class="simple-anchor-icons"><i class="fa-brands fa-linkedin-in"></i></a>
                             </div>
 
                         <?php } ?>
@@ -88,7 +90,7 @@ $activePages = getAllActivePages();
                 <?php
                 $subMenu1LinkArray = explode("/", $pageHeader["subMenu1Link"]);
                 if (in_array($subMenu1LinkArray[1], $activePages)) {
-                ?>
+                    ?>
 
                     <p class="p-bottom-adj second-text-adj f-w-500">
                         <a href="<?= main_url($pageHeader["subMenu1Link"]); ?>">
@@ -100,7 +102,7 @@ $activePages = getAllActivePages();
                 <?php
                 $subMenu2LinkArray = explode("/", $pageHeader["subMenu2Link"]);
                 if (in_array($subMenu2LinkArray[1], $activePages)) {
-                ?>
+                    ?>
                     <p class="p-bottom-adj second-text-adj f-w-500">
                         <a href="<?= main_url($pageHeader["subMenu2Link"]); ?>">
                             <?= ($pageHeader["subMenu2Text"]); ?>
@@ -110,7 +112,7 @@ $activePages = getAllActivePages();
                 <?php
                 $subMenu3LinkArray = explode("/", $pageHeader["subMenu3Link"]);
                 if (in_array($subMenu3LinkArray[1], $activePages)) {
-                ?>
+                    ?>
                     <p class="p-bottom-adj second-text-adj f-w-500">
                         <a href="<?= main_url($pageHeader["subMenu3Link"]); ?>">
                             <?= ($pageHeader["subMenu3Text"]); ?>
@@ -120,7 +122,7 @@ $activePages = getAllActivePages();
                 <?php
                 $subMenu4LinkArray = explode("/", $pageHeader["subMenu4Link"]);
                 if (in_array($subMenu4LinkArray[1], $activePages)) {
-                ?>
+                    ?>
                     <p class="p-bottom-adj second-text-adj f-w-500">
                         <a href="<?= main_url($pageHeader["subMenu4Link"]); ?>">
                             <?= ($pageHeader["subMenu4Text"]); ?>
@@ -130,7 +132,7 @@ $activePages = getAllActivePages();
                 <?php
                 $subMenu5LinkArray = explode("/", $pageHeader["subMenu5Link"]);
                 if (in_array($subMenu5LinkArray[1], $activePages)) {
-                ?>
+                    ?>
                     <p class="p-bottom-adj second-text-adj f-w-500">
                         <a href="<?= main_url($pageHeader["subMenu5Link"]); ?>">
                             <?= ($pageHeader["subMenu5Text"]); ?>
@@ -141,7 +143,7 @@ $activePages = getAllActivePages();
                 <?php
                 $subMenu6LinkArray = explode("/", $pageHeader["subMenu6Link"]);
                 if (in_array($subMenu6LinkArray[1], $activePages)) {
-                ?>
+                    ?>
                     <p class=" second-text-adj f-w-500">
                         <a href="<?= main_url($pageHeader["subMenu6Link"]); ?>">
                             <?= ($pageHeader["subMenu6Text"]); ?>
@@ -152,7 +154,7 @@ $activePages = getAllActivePages();
                 <div class="margin-top-40 margin-bottom-30">
                     <?php
                     if (in_array($pageFooter["section_2"]["menu1Link"], $activePages)) {
-                    ?>
+                        ?>
                         <p class="footer-text-three p-bottom-adj">
                             <a href="<?= main_url($pageFooter["section_2"]["menu1Link"]); ?>">
                                 <?= ($pageFooter["section_2"]["menu1Text"]); ?>
@@ -162,7 +164,7 @@ $activePages = getAllActivePages();
 
                     <?php
                     if (in_array($pageFooter["section_2"]["menu2Link"], $activePages)) {
-                    ?>
+                        ?>
                         <p class="footer-text-three p-bottom-adj">
                             <a href="<?= main_url($pageFooter["section_2"]["menu2Link"]); ?>">
                                 <?= ($pageFooter["section_2"]["menu2Text"]); ?>
@@ -182,7 +184,7 @@ $activePages = getAllActivePages();
                     <p class="footer-text-three p-bottom-adj">
                         <?php
                         if (in_array($pageFooter["section_2"]["menu4Link"], $activePages)) {
-                        ?>
+                            ?>
                             <a href="<?= main_url($pageFooter["section_2"]["menu4Link"]); ?>">
                                 <?= ($pageFooter["section_2"]["menu4Text"]); ?>
                             </a>
@@ -190,7 +192,7 @@ $activePages = getAllActivePages();
                     </p>
                     <?php
                     if (in_array($pageFooter["section_2"]["menu5Link"], $activePages)) {
-                    ?>
+                        ?>
                         <p class="footer-text-three p-bottom-adj">
                             <a href="<?= main_url($pageFooter["section_2"]["menu5Link"]); ?>">
                                 <?= ($pageFooter["section_2"]["menu5Text"]); ?>
@@ -199,7 +201,7 @@ $activePages = getAllActivePages();
                     <?php } ?>
                     <?php
                     if (in_array($pageFooter["section_2"]["menu6Link"], $activePages)) {
-                    ?>
+                        ?>
                         <p class="footer-text-three p-bottom-adj">
                             <a href="<?= main_url($pageFooter["section_2"]["menu6Link"]); ?>">
                                 <?= ($pageFooter["section_2"]["menu6Text"]); ?>
@@ -208,7 +210,7 @@ $activePages = getAllActivePages();
                     <?php } ?>
                     <?php
                     if (in_array($pageFooter["section_2"]["menu7Link"], $activePages)) {
-                    ?>
+                        ?>
                         <p class="footer-text-three p-bottom-adj">
                             <a href="<?= main_url($pageFooter["section_2"]["menu7Link"]); ?>">
                                 <?= ($pageFooter["section_2"]["menu7Text"]); ?>
@@ -218,7 +220,7 @@ $activePages = getAllActivePages();
                     <div class="margin-top-40">
                         <?php
                         if (in_array($pageFooter["section_2"]["menu8Link"], $activePages)) {
-                        ?>
+                            ?>
                             <p class="footer-text-three p-bottom-adj">
                                 <a href="<?= main_url($pageFooter["section_2"]["menu8Link"]); ?>">
                                     <?= ($pageFooter["section_2"]["menu8Text"]); ?>
@@ -229,16 +231,16 @@ $activePages = getAllActivePages();
                         <?php
                         $footerLinks = getPageFooterLinks();
 
-                       // _e($footerLinks,true,true);
+                        // _e($footerLinks,true,true);
                         if (!empty($footerLinks)) {
                             foreach ($footerLinks as $linkRow) {
-                        ?>
+                                ?>
                                 <p class="footer-text-three">
                                     <a href="<?= main_url($linkRow['slug']); ?>">
                                         <?= $linkRow['title']; ?>
                                     </a>
                                 </p>
-                        <?php }
+                            <?php }
                         } ?>
 
                         <p class="footer-text-three">
@@ -249,7 +251,7 @@ $activePages = getAllActivePages();
 
                         <?php
                         if (in_array($pageFooter["section_2"]["menu10Link"], $activePages)) {
-                        ?>
+                            ?>
                             <p class="footer-text-three">
                                 <a href="<?= main_url($pageFooter["section_2"]["menu10Link"]); ?>">
                                     <?= ($pageFooter["section_2"]["menu10Text"]); ?>
@@ -274,7 +276,9 @@ $activePages = getAllActivePages();
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="mailto:<?= $salesSupportDetail["emailAddressSales"]; ?>"><?= $salesSupportDetail["emailAddressSales"]; ?> </a>
+                        <a class="icon-text-adj"
+                            href="mailto:<?= $salesSupportDetail["emailAddressSales"]; ?>"><?= $salesSupportDetail["emailAddressSales"]; ?>
+                        </a>
                     </div>
                 </div>
                 <div class="margin-top-40">
@@ -283,13 +287,15 @@ $activePages = getAllActivePages();
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-phone"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="tel:<?= $salesSupportDetail["phoneNumberTechnical"]; ?>"><?= $salesSupportDetail["phoneNumberTechnical"]; ?></a>
+                        <a class="icon-text-adj"
+                            href="tel:<?= $salesSupportDetail["phoneNumberTechnical"]; ?>"><?= $salesSupportDetail["phoneNumberTechnical"]; ?></a>
                     </div>
                     <div class="flex-center margin-bottom-20">
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="mailto:<?= $salesSupportDetail["emailAddressTechnical"]; ?>"><?= $salesSupportDetail["emailAddressTechnical"]; ?></a>
+                        <a class="icon-text-adj"
+                            href="mailto:<?= $salesSupportDetail["emailAddressTechnical"]; ?>"><?= $salesSupportDetail["emailAddressTechnical"]; ?></a>
                     </div>
                 </div>
             </div>
@@ -309,6 +315,7 @@ $activePages = getAllActivePages();
     </div>
 </footer>
 <?php $this->load->view("v1/app/partials/schedule_demo_form_popup"); ?>
+<?php $this->load->view("v1/app/cookie"); ?>
 </body>
 
 <?= $pageJs ? GetScripts($pageJs) : ''; ?>
