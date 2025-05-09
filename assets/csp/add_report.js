@@ -30,6 +30,10 @@ $(function Overview() {
 		changeMonth: true,
 	});
 
+	$('#jsDepartments').select2({
+		closeOnSelect: false
+	});
+
 	//
 	$("#jsAddReportForm").validate({
 		rules: {

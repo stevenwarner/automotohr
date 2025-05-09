@@ -76,7 +76,7 @@ if (!function_exists('getEmployeeBasicInfo')) {
             $basicInfo["email"] = $userInfo['email'];
             $basicInfo["job_title"] = $userInfo['job_title'];
             $basicInfo['AHREmployeeID'] = 'AHR-' . $sid;
-        }    
+        }
 
         //
         return $basicInfo;
@@ -410,7 +410,8 @@ if (!function_exists('sendMail')) {
 
     function sendMail($from, $to, $subject, $body, $fromName = NULL, $replyTo = NULL)
     {
-        if (is_staging_server()) return true;
+        if (is_staging_server())
+            return true;
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
         $mail->From = $from;
@@ -440,7 +441,8 @@ if (!function_exists('sendMailMultipleRecipients')) {
 
     function sendMailMultipleRecipients($from, $to = array(), $subject, $body, $fromName = NULL, $replyTo = NULL)
     {
-        if (is_staging_server()) return true;
+        if (is_staging_server())
+            return true;
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
 
         $mail = new PHPMailer;
@@ -473,7 +475,8 @@ if (!function_exists('sendMailWithCC')) {
 
     function sendMailWithCC($from, $to, $cc, $subject, $body, $fromName = NULL, $replyTo = NULL)
     {
-        if (is_staging_server()) return true;
+        if (is_staging_server())
+            return true;
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
         $mail->From = $from;
@@ -502,7 +505,8 @@ if (!function_exists('sendMailWithAttachment')) {
 
     function sendMailWithAttachment($from, $to, $subject, $body, $fromName = NULL, $file, $replyTo = NULL, $multiple = false)
     {
-        if (is_staging_server()) return true;
+        if (is_staging_server())
+            return true;
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
         $mail->From = $from;
@@ -523,7 +527,8 @@ if (!function_exists('sendMailWithAttachment')) {
         $mail->isHTML(true);
         //
         if (is_array($file) && sizeof($file) && isset($file[0]['file']) && $multiple == false) {
-            foreach ($file as $k => $v) $mail->addStringAttachment(getFileData($v['file']), $v['name']);
+            foreach ($file as $k => $v)
+                $mail->addStringAttachment(getFileData($v['file']), $v['name']);
         } else {
             if ($multiple) {
                 foreach ($file['tmp_name'] as $key => $fileName) {
@@ -625,7 +630,8 @@ if (!function_exists('sendMailWithStringAttachment')) {
 
     function sendMailWithStringAttachment($from, $to, $subject, $body, $fromName = NULL, $files, $replyTo = NULL)
     {
-        if (is_staging_server()) return true;
+        if (is_staging_server())
+            return true;
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
         $mail->From = $from;
@@ -725,14 +731,15 @@ if (!function_exists('db_get_country_name')) {
 
     function db_get_country_name($sid, $_this = false, $column = '*')
     {
-        if (!$_this) $_this = &get_instance();
+        if (!$_this)
+            $_this = &get_instance();
         $result = $_this->db
             ->select($column)
             ->where('sid', $sid)
             ->from('countries')
             ->get();
         $result_arr = $result->row_array();
-        $result     = $result->free_result();
+        $result = $result->free_result();
         return sizeof($result_arr) && isset($result_arr) && $column != '*' ? $result_arr[$column] : $result_arr;
     }
 }
@@ -778,7 +785,8 @@ if (!function_exists('db_get_state_name')) {
 
     function db_get_state_name($sid, $_this = false, $column = 'country_sid, state_code, state_name, country_code, country_name')
     {
-        if (!$_this) $_this = &get_instance();
+        if (!$_this)
+            $_this = &get_instance();
         $result = $_this->db
             ->select($column)
             ->join('countries', 'countries.sid = states.country_sid')
@@ -788,7 +796,7 @@ if (!function_exists('db_get_state_name')) {
             ->get();
         //
         $result_arr = $result->row_array();
-        $result     = $result->free_result();
+        $result = $result->free_result();
         return sizeof($result_arr) && isset($result_arr[$column]) ? $result_arr[$column] : $result_arr;
     }
 }
@@ -1070,9 +1078,12 @@ if (!function_exists('db_get_job_title')) {
     {
         if (!$city == false) {
             $jobTitle = $title;
-            if ($city != '') $jobTitle .= ' - ' . ucfirst($city);
-            if ($state != '') $jobTitle .= ', ' . $state;
-            if ($country != '') $jobTitle .= ', ' . $country;
+            if ($city != '')
+                $jobTitle .= ' - ' . ucfirst($city);
+            if ($state != '')
+                $jobTitle .= ', ' . $state;
+            if ($country != '')
+                $jobTitle .= ', ' . $country;
             return trim($jobTitle);
         }
         $CI = &get_instance();
@@ -1084,9 +1095,12 @@ if (!function_exists('db_get_job_title')) {
         if (!empty($result)) {
             if ($result['job_title_location']) {
                 $jobTitle = $title;
-                if ($city != '') $jobTitle .= ' - ' . ucfirst($city);
-                if ($state != '') $jobTitle .= ', ' . $state;
-                if ($country != '') $jobTitle .= ', ' . $country;
+                if ($city != '')
+                    $jobTitle .= ' - ' . ucfirst($city);
+                if ($state != '')
+                    $jobTitle .= ', ' . $state;
+                if ($country != '')
+                    $jobTitle .= ', ' . $country;
                 $jobTitle = trim($jobTitle);
             } else {
                 $jobTitle = $title;
@@ -1563,9 +1577,12 @@ if (!function_exists('formatDateForDb')) {
             $yearIndex = 2;
         }
         //
-        if (count($date_parts) == 3) $month = $date_parts[$monthIndex];
-        if (count($date_parts) == 3) $day = $date_parts[$dayIndex];
-        if (count($date_parts) == 3) $year = $date_parts[$yearIndex];
+        if (count($date_parts) == 3)
+            $month = $date_parts[$monthIndex];
+        if (count($date_parts) == 3)
+            $day = $date_parts[$dayIndex];
+        if (count($date_parts) == 3)
+            $year = $date_parts[$yearIndex];
         //
         return strtotime($year . '-' . $month . '-' . $day . '00:00:00');
     }
@@ -2101,7 +2118,8 @@ if (!function_exists('put_file_on_aws')) {
 
     function put_file_on_aws($file_input_id)
     {
-        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($file_input_id, true);
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')
+            return getS3DummyFileName($file_input_id, true);
         //
         require_once(APPPATH . 'libraries/aws/aws.php');
         if (isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'] != '') {
@@ -2122,7 +2140,8 @@ if (!function_exists('upload_file_to_aws')) {
     function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME, $key = NULL)
     {
 
-        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($file_input_id, true);
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')
+            return getS3DummyFileName($file_input_id, true);
 
         $CI = &get_instance();
         if ($key !== NULL && isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'][$key] != '') {
@@ -2183,7 +2202,7 @@ if (!function_exists('modify_document_name')) {
         $last_index_of_dot = strrpos($document_name, '.') + 1;
         $file_ext = substr($document_name, $last_index_of_dot, strlen($document_name) - $last_index_of_dot);
         //
-        $modify_file_name = $company_sid . '_' . $suffix . '_' . generateRandomString(3) . '_' . $file_name  . '.' . $file_ext;
+        $modify_file_name = $company_sid . '_' . $suffix . '_' . generateRandomString(3) . '_' . $file_name . '.' . $file_ext;
         //
         return $modify_file_name;
     }
@@ -2904,7 +2923,7 @@ if (!function_exists('db_get_all_active_companies')) {
 
 if (!function_exists('generate_ics_file_for_event')) {
 
-    function generate_ics_file_for_event($destination, $event_sid, $is_update = false, $user_id = 0, $user_type = 'extrainterviewer', $user_name  = '', $user_email = '')
+    function generate_ics_file_for_event($destination, $event_sid, $is_update = false, $user_id = 0, $user_type = 'extrainterviewer', $user_name = '', $user_email = '')
     {
         try {
             $CI = &get_instance();
@@ -3179,7 +3198,8 @@ if (!function_exists('log_and_sendEmail')) {
     function log_and_sendEmail($from, $to, $subject, $body, $senderName, $temp_id = "nil")
     {
         $CI = &get_instance();
-        if (empty($to) || $to == NULL) return 0;
+        if (empty($to) || $to == NULL)
+            return 0;
         //
         $emailData = array(
             'date' => date('Y-m-d H:i:s'),
@@ -4501,7 +4521,7 @@ if (!function_exists('log_and_send_templated_email')) {
             return 0;
         }
 
-        $emailTemplateData = is_array($template_id) ? $template_id :  get_email_template($template_id);
+        $emailTemplateData = is_array($template_id) ? $template_id : get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
         $emailTemplateSubject = $emailTemplateData['subject'];
         $emailTemplateFromName = $emailTemplateData['from_name'];
@@ -4581,7 +4601,7 @@ if (!function_exists('replace_sms_template')) {
 
     function replace_sms_template($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1)
     {
-        $emailTemplateData = is_array($template_id) ? $template_id :  get_sms_template($template_id);
+        $emailTemplateData = is_array($template_id) ? $template_id : get_sms_template($template_id);
         $emailTemplateBody = $emailTemplateData['sms_body'];
 
         if (!empty($replacement_array)) {
@@ -4845,8 +4865,8 @@ if (!function_exists('common_indeed_acknowledgement_email')) {
             $email_log_autoresponder['job_or_employee_id'] = $applicationData['sid'];
             $save_email_log = save_email_log_autoresponder($email_log_autoresponder);
         } /* else {
-          mail('mubashir.saleemi123@gmail.com', 'Indeed acknowledgement - opt out', print_r($applicationData, true));
-          } */
+        mail('mubashir.saleemi123@gmail.com', 'Indeed acknowledgement - opt out', print_r($applicationData, true));
+        } */
     }
 }
 
@@ -5272,16 +5292,17 @@ if (!function_exists('trainingSessionCount')) {
         //
         if (sizeof($result_arr)) {
             foreach ($result_arr as $k0 => $v0) {
-                if ($v0['session_status'] != 'pending' && $v0['session_status'] != 'scheduled') continue;
+                if ($v0['session_status'] != 'pending' && $v0['session_status'] != 'scheduled')
+                    continue;
                 //
                 if ($v0['employees_assigned_to'] == 'specific') {
                     // Check if it is assigned to login employee
                     if (
                         $CI->db
-                        ->where('training_session_sid', $v0['id'])
-                        ->where('user_sid', $user_sid)
-                        ->where('user_type', $user_type)
-                        ->count_all_results('learning_center_training_sessions_assignments') == 0
+                            ->where('training_session_sid', $v0['id'])
+                            ->where('user_sid', $user_sid)
+                            ->where('user_type', $user_type)
+                            ->count_all_results('learning_center_training_sessions_assignments') == 0
                     ) {
                         continue;
                     }
@@ -5542,6 +5563,7 @@ if (!function_exists('get_notification_email_contacts')) {
             $CI->db->select('users.active as userActive');
             $CI->db->select('users.terminated_status');
             $CI->db->select('users.access_level');
+            $CI->db->select('users.is_executive_admin');
             $CI->db->select('users.email as userEmail');
             $CI->db->select('portal_job_listings_visibility.employer_sid');
             $CI->db->select('notifications_emails_management.employer_sid as nem_employer_sid');
@@ -5560,6 +5582,7 @@ if (!function_exists('get_notification_email_contacts')) {
                 users.active as userActive,
                 users.terminated_status,
                 users.access_level,
+                users.is_executive_admin,
                 users.email as userEmail
             ');
             $CI->db->where('notifications_emails_management.company_sid', $company_sid);
@@ -5570,7 +5593,7 @@ if (!function_exists('get_notification_email_contacts')) {
         }
 
         $all_none_employee_contacts = array();
-        $CI->db->select('*, "tmp" as access_level');
+        $CI->db->select('*, "tmp" as access_level, "0" as is_executive_admin');
         $CI->db->where('company_sid', $company_sid);
         $CI->db->where('employer_sid', 0);
         $CI->db->where('notifications_type', $notification_type);
@@ -5581,7 +5604,8 @@ if (!function_exists('get_notification_email_contacts')) {
         if (count($contacts)) {
             foreach ($contacts as $key => $contact) {
                 if ($contact['employer_sid'] != 0 && $contact['employer_sid'] != null) {
-                    if ($contact['userActive'] == 0 || $contact['terminated_status'] == 1) unset($contacts[$key]);
+                    if ($contact['userActive'] == 0 || $contact['terminated_status'] == 1)
+                        unset($contacts[$key]);
                     $contacts[$key]["email"] = $contact["userEmail"];
                 }
             }
@@ -5882,7 +5906,8 @@ if (!function_exists('log_and_send_templated_notification_email')) {
 
     function log_and_send_templated_notification_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $company_sid, $job_sid, $notification_type)
     {
-        if (empty($to) || $to == NULL) return 0;
+        if (empty($to) || $to == NULL)
+            return 0;
         $CI = &get_instance();
         $emailTemplateData = get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
@@ -6049,7 +6074,8 @@ if (!function_exists('get_calendar_event_color')) {
             'call' => '#4B0082'
         );
         //
-        if ($interview_type === FALSE) return $event_color_array;
+        if ($interview_type === FALSE)
+            return $event_color_array;
         return isset($event_color_array[$interview_type]) ? $event_color_array[$interview_type] : $event_color_array['notconfirmed'];
     }
 }
@@ -6069,7 +6095,8 @@ if (!function_exists('replace_magic_quotes')) {
         } else {
             $CI = get_instance();
             $ses = $CI->session->userdata('logged_in');
-            if (!$ses) return false;
+            if (!$ses)
+                return false;
             //
             $ses = $ses['company_detail'];
             $dataStr = str_replace(
@@ -6096,16 +6123,24 @@ if (!function_exists('replace_magic_quotes')) {
 if (!function_exists('_e')) {
     function _e($e, $print = FALSE, $die = FAlSE, $isHidden = FALSE)
     {
-        if ($isHidden) echo '<!-- ';
+        if ($isHidden)
+            echo '<!-- ';
         echo '<pre>';
-        if ($print) echo '<br />*****************************<br />';
-        if (is_array($e)) print_r($e);
-        else if (is_object($e)) var_dump($e);
-        else echo ($e);
-        if ($print) echo '<br />*****************************<br />';
+        if ($print)
+            echo '<br />*****************************<br />';
+        if (is_array($e))
+            print_r($e);
+        else if (is_object($e))
+            var_dump($e);
+        else
+            echo ($e);
+        if ($print)
+            echo '<br />*****************************<br />';
         echo '</pre>';
-        if ($isHidden) echo ' -->';
-        if ($die) exit(0);
+        if ($isHidden)
+            echo ' -->';
+        if ($die)
+            exit(0);
     }
 }
 
@@ -6116,13 +6151,16 @@ if (!function_exists('is_staging_server')) {
     {
         return false;
         //
-        if (!preg_match('/applybuz/', base_url())) return false;
+        if (!preg_match('/applybuz/', base_url()))
+            return false;
 
         $_this = &get_instance();
-        if (in_array(
-            $_this->input->ip_address(),
-            array('127.0.0.1', '::1', '72.255.38.246')
-        )) {
+        if (
+            in_array(
+                $_this->input->ip_address(),
+                array('127.0.0.1', '::1', '72.255.38.246')
+            )
+        ) {
             return true;
         }
 
@@ -6146,7 +6184,8 @@ if (!function_exists('is_staging_server')) {
 if (!function_exists('ics_files')) {
     function ics_files($event_sid, $company_id, $company_info, $action, $email_list = array(), $is_return = FALSE, $difference_array = array())
     {
-        if ($action == 'delete_event') return false;
+        if ($action == 'delete_event')
+            return false;
         // $_this =& get_instance();
         // $_this->load->model('calendar_model');
         // $_this->load->library('session');
@@ -6181,7 +6220,7 @@ if (!function_exists('ics_files')) {
         $user_info['first_name'] = $employer_info['first_name'];
         $user_info['last_name'] = $employer_info['last_name'];
         $user_info['email'] = $employer_info['email'];
-        $user_info['sid']   = $employer_info['sid'];
+        $user_info['sid'] = $employer_info['sid'];
         //
         $employers = array();
         // Applicant Tile
@@ -6441,7 +6480,8 @@ if (!function_exists('ics_files')) {
             $email_message .= '<hr />';
         }
 
-        if ($event_details['users_type'] != 'personal') $email_message .= $interviewers_rows;
+        if ($event_details['users_type'] != 'personal')
+            $email_message .= $interviewers_rows;
 
         if (!empty($event_details['address'])) {
             // if (!empty($event_details['address']) && $event_details['category'] != 'interview-phone' && $event_details['category'] != 'interview-voip' && $event_details['category'] != 'call' && $event_details['category'] != 'email') {
@@ -6476,12 +6516,12 @@ if (!function_exists('ics_files')) {
                 if ($action != 'send_cron_reminder_emails') {
                     // Set data array
                     $data_array = array();
-                    $data_array['event_sid']     = $event_sid;
+                    $data_array['event_sid'] = $event_sid;
                     $data_array['email_address'] = $v0['email_address'];
-                    $data_array['user_id']       = $v0['id'];
-                    $data_array['user_name']     = $v0['value'];
-                    $data_array['user_type']     = $v0['type'] != '' ? $v0['type'] : 'employee';
-                    $data_array['created_at']    = $date;
+                    $data_array['user_id'] = $v0['id'];
+                    $data_array['user_name'] = $v0['value'];
+                    $data_array['user_type'] = $v0['type'] != '' ? $v0['type'] : 'employee';
+                    $data_array['created_at'] = $date;
                     // Create record in db
                     $_this->calendar_model->save_event_sent_email_reminder_history($data_array);
                 }
@@ -6508,13 +6548,15 @@ if (!function_exists('ics_files')) {
             } else {
                 // $_this->_e($user_message, true, true);
                 exit(0);
-            };
+            }
+            ;
         }
 
         // Don't send email to interviewers
         // and to non-employee interviewers in case of
         // type 'Personal'
-        if ($event_details['users_type'] == 'personal') $send_to_extraparticipants = $send_to_interviewers = false;
+        if ($event_details['users_type'] == 'personal')
+            $send_to_extraparticipants = $send_to_interviewers = false;
         // Send email to applicant/employee/person
         if ($send_to_ae) {
             $user_message = str_replace('{{user_name}}', $applicant_name, $user_message);
@@ -6539,7 +6581,8 @@ if (!function_exists('ics_files')) {
             } else
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', '', $user_message);
 
-            if ($is_return) return array('Subject' => $email_subject, 'Body' => $user_message, 'FromEmail' => FROM_EMAIL_NOTIFICATIONS);
+            if ($is_return)
+                return array('Subject' => $email_subject, 'Body' => $user_message, 'FromEmail' => FROM_EMAIL_NOTIFICATIONS);
             log_and_send_email_with_attachment(FROM_EMAIL_NOTIFICATIONS, $user_info['email'], $email_subject, $user_message, $from_name, $ics_file);
 
             // $_this->_e($email_subject, true);
@@ -6582,10 +6625,10 @@ if (!function_exists('ics_files')) {
                     // $_this->_e($event_external_participant, true, true);
                     $user_message = $email_message;
                     $employer_name = ucwords($event_external_participant['name']);
-                    $user_message  = str_replace('{{user_name}}', $employer_name, $user_message);
-                    $user_message  = str_replace('{{user_tile}}', $user_tile, $user_message);
-                    $user_message  = str_replace('{{comment_tile}}', $comment_tile, $user_message);
-                    $user_message  = str_replace('{{target_user}}', $applicant_name, $user_message);
+                    $user_message = str_replace('{{user_name}}', $employer_name, $user_message);
+                    $user_message = str_replace('{{user_tile}}', $user_tile, $user_message);
+                    $user_message = str_replace('{{comment_tile}}', $comment_tile, $user_message);
+                    $user_message = str_replace('{{target_user}}', $applicant_name, $user_message);
                     // Add event status buttons
                     $extrainterviewer_email_status_button_rows =
                         generate_event_status_rows(
@@ -6627,7 +6670,8 @@ if (!function_exists('ics_files')) {
 if (!function_exists('generate_interviewers_rows')) {
     function generate_interviewers_rows($employers, $event_details, $event_category, $event_sid, $user_info, $_this, $difference_array)
     {
-        if (!sizeof($employers)) return '';
+        if (!sizeof($employers))
+            return '';
         // Set defaults
         $show_emails = array();
         $interviewers_rows = '';
@@ -6635,7 +6679,8 @@ if (!function_exists('generate_interviewers_rows')) {
         $interviewers_rows .= '     <td style="font-size: 20px;"><br /><strong>' . (strtolower($event_details['users_type']) == 'applicant' ? 'Interviewer(s)' : 'Participant(s)') . '</strong><br /><br /></td>';
         $interviewers_rows .= '</tr>';
         //
-        if ($event_category == '') $event_details['category'];
+        if ($event_category == '')
+            $event_details['category'];
         //
         if (!empty($event_details['interviewer_show_email']) && !is_null($event_details['interviewer_show_email']))
             $show_emails = explode(',', $event_details['interviewer_show_email']);
@@ -6759,7 +6804,7 @@ if (!function_exists('generate_event_status_rows')) {
             $short_url['att'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_attended));
             $enc_string_attended = $short_url['att'];
         }
-        $enc_string_notconf  = $short_url['not-conf'];
+        $enc_string_notconf = $short_url['not-conf'];
         $enc_string_reschedule = $short_url['res'];
         // Set button rows
         $button_rows = '<tr><td>';
@@ -6826,7 +6871,8 @@ if (!function_exists('generate_event_status_rows')) {
 if (!function_exists('log_and_send_email_with_attachment')) {
     function log_and_send_email_with_attachment($from, $to, $subject, $body, $sender_name, $file_path, $method = "sendMailWithAttachmentRealPath")
     {
-        if (empty($to) || $to == NULL) return 0;
+        if (empty($to) || $to == NULL)
+            return 0;
         $email_data = array(
             'date' => date('Y-m-d H:i:s'),
             'subject' => $subject,
@@ -6879,7 +6925,8 @@ if (!function_exists('send_calendar_email')) {
         $duration = get_date_difference_duration($date);
         // $event_details = $_this->calendar_model->get_event_details($event_sid);
         //
-        if (!sizeof($event_details)) return false;
+        if (!sizeof($event_details))
+            return false;
         $event_details['sid'] = $event_sid;
         $event_details['category'] = strtolower($event_details['category_uc']);
         // Set defaults
@@ -6890,9 +6937,9 @@ if (!function_exists('send_calendar_email')) {
         $employer_info = $_this->session->userdata('logged_in')['employer_detail'];
         // Set default user info array
         $user_info['first_name'] = $employer_info['first_name'];
-        $user_info['last_name']  = $employer_info['last_name'];
-        $user_info['email']      = $employer_info['email'];
-        $user_info['sid']        = $employer_info['sid'];
+        $user_info['last_name'] = $employer_info['last_name'];
+        $user_info['email'] = $employer_info['email'];
+        $user_info['sid'] = $employer_info['sid'];
         // Set event category
         $event_category = reset_category($event_details['category']);
         // Reset categories
@@ -7029,7 +7076,7 @@ if (!function_exists('send_calendar_email')) {
             $event_update_message_subject_row = '<td><strong>Previous</strong><p style="color: #d9534f;">' . ($difference_array['old_subject']) . '</p></td><td><strong>New</strong><p style="color: #81b431;">' . ($difference_array['new_subject']) . '</p><br /></td>';
         }
         // Message body
-        if ($action == 'update_event' && isset($difference_array['old_message'], $difference_array['new_message']) && $difference_array['old_message'] != $difference_array['new_message']  && $difference_array['old_message'] != '') {
+        if ($action == 'update_event' && isset($difference_array['old_message'], $difference_array['new_message']) && $difference_array['old_message'] != $difference_array['new_message'] && $difference_array['old_message'] != '') {
             $event_update_message_body_row = '<td><strong>Previous</strong><p style="color: #d9534f;">' . ($difference_array['old_message']) . '</p></td><td><strong>New</strong><p style="color: #81b431;">' . ($difference_array['new_message']) . '</p><br /></td>';
         }
         // Message file
@@ -7060,11 +7107,11 @@ if (!function_exists('send_calendar_email')) {
             $event_update_meeting_id_row = '<td><strong>Previous</strong><p style="color: #d9534f;">' . ($difference_array['old_meeting_id']) . '</p></td><td><strong>New</strong><p style="color: #81b431;">' . ($difference_array['new_meeting_id']) . '</p><br /></td>';
         }
         // Meeting URL
-        if ($action == 'update_event' && isset($difference_array['old_meeting_url'], $difference_array['new_meeting_url']) && $difference_array['old_meeting_url'] != $difference_array['new_meeting_url']  && $difference_array['old_meeting_url'] != '') {
+        if ($action == 'update_event' && isset($difference_array['old_meeting_url'], $difference_array['new_meeting_url']) && $difference_array['old_meeting_url'] != $difference_array['new_meeting_url'] && $difference_array['old_meeting_url'] != '') {
             $event_update_meeting_url_row = '<td><strong>Previous</strong><p style="color: #d9534f;">' . ($difference_array['old_meeting_url']) . '</p></td><td><strong>New</strong><p style="color: #81b431;">' . ($difference_array['new_meeting_url']) . '</p><br /></td>';
         }
         // Meeting Phone
-        if ($action == 'update_event' && isset($difference_array['old_meeting_call_number'], $difference_array['new_meeting_call_number']) && $difference_array['old_meeting_call_number'] != $difference_array['new_meeting_call_number']  && $difference_array['old_meeting_call_number'] != '') {
+        if ($action == 'update_event' && isset($difference_array['old_meeting_call_number'], $difference_array['new_meeting_call_number']) && $difference_array['old_meeting_call_number'] != $difference_array['new_meeting_call_number'] && $difference_array['old_meeting_call_number'] != '') {
             $event_update_meeting_call_number_row = '<td><strong>Previous</strong><p style="color: #d9534f;">' . ($difference_array['old_meeting_call_number']) . '</p></td><td><strong>New</strong><p style="color: #81b431;">' . ($difference_array['new_meeting_call_number']) . '</p><br /></td>';
         }
 
@@ -7073,14 +7120,21 @@ if (!function_exists('send_calendar_email')) {
             $removed_interviewers = $added_interviewers = 0;
             $type = 'Interviewer(s)';
 
-            if ($event_details['users_type'] == 'employee') $type = 'Participant(s)';
-            if ($event_details['category'] == 'training-session') $type = 'Attendee(s)';
+            if ($event_details['users_type'] == 'employee')
+                $type = 'Participant(s)';
+            if ($event_details['category'] == 'training-session')
+                $type = 'Attendee(s)';
 
-            if (isset($difference_array['added_interviewers']) && sizeof($difference_array['added_interviewers']))  $added_interviewers += count($difference_array['added_interviewers']);
-            if (isset($difference_array['added_external_interviewers']) && sizeof($difference_array['added_external_interviewers']))  $added_interviewers += count($difference_array['added_external_interviewers']);
-            if (isset($difference_array['removed_interviewers']) && sizeof($difference_array['removed_interviewers']))  $removed_interviewers += count($difference_array['removed_interviewers']);
-            if (isset($difference_array['removed_external_interviewers']) && sizeof($difference_array['removed_external_interviewers']))  $removed_interviewers += count($difference_array['removed_external_interviewers']);
-            if ($removed_interviewers != 0 || $added_interviewers != 0) $event_block_changed++;
+            if (isset($difference_array['added_interviewers']) && sizeof($difference_array['added_interviewers']))
+                $added_interviewers += count($difference_array['added_interviewers']);
+            if (isset($difference_array['added_external_interviewers']) && sizeof($difference_array['added_external_interviewers']))
+                $added_interviewers += count($difference_array['added_external_interviewers']);
+            if (isset($difference_array['removed_interviewers']) && sizeof($difference_array['removed_interviewers']))
+                $removed_interviewers += count($difference_array['removed_interviewers']);
+            if (isset($difference_array['removed_external_interviewers']) && sizeof($difference_array['removed_external_interviewers']))
+                $removed_interviewers += count($difference_array['removed_external_interviewers']);
+            if ($removed_interviewers != 0 || $added_interviewers != 0)
+                $event_block_changed++;
             if ($removed_interviewers != 0 && $added_interviewers != 0)
                 $event_subject_row = " - ($added_interviewers) $type added and ($removed_interviewers) removed.";
             else if ($added_interviewers != 0)
@@ -7119,7 +7173,7 @@ if (!function_exists('send_calendar_email')) {
         $message_hf = message_header_footer($company_id, ucwords($company_info["CompanyName"]));
         // Template start
         // Seperator
-        $seperator  = '<tr><td style="width: 100%;"><hr /></td></tr>';
+        $seperator = '<tr><td style="width: 100%;"><hr /></td></tr>';
         //
         $from = FROM_EMAIL_EVENTS;
         $from_name = ucwords($company_info["CompanyName"]);
@@ -7134,16 +7188,19 @@ if (!function_exists('send_calendar_email')) {
             $email_subject = ucwords($event_category) . ' - ' . ucwords(isset($company_info['requested_event_status']) ? $company_info['requested_event_status'] : $event_details['event_status']) . ' ' . ucwords($company_info['CompanyName']);
 
         // Update email subject with the change
-        if ($action == 'update_event') $email_subject .= $event_block_changed > 1 ? ' - Event details have been changed.' : $event_subject_row;
+        if ($action == 'update_event')
+            $email_subject .= $event_block_changed > 1 ? ' - Event details have been changed.' : $event_subject_row;
         //
-        $heading_top  = $duration == -1 ? '' : '<tr><td><br /><h3 style="text-align: center;">Your upcoming appointment is starting in ' . (ucwords($duration)) . '</h3><br /></td></tr>';
+        $heading_top = $duration == -1 ? '' : '<tr><td><br /><h3 style="text-align: center;">Your upcoming appointment is starting in ' . (ucwords($duration)) . '</h3><br /></td></tr>';
         if ($action == 'confirm')
             $heading_top = '<tr><td><br /><h3 style="text-align: center;">{{EVENT_HEADING}}</h3><br /></td></tr>';
 
         // Set greet heading
         $heading_greet = '<tr><td>';
-        if ($action == 'confirm') $heading_greet .= '<p style="font-size: 20px;">Dear <b>{{first_name}} {{last_name}},</b></p>';
-        else $heading_greet .= '<p style="font-size: 20px;">Dear <b>{{user_name}},</b></p>';
+        if ($action == 'confirm')
+            $heading_greet .= '<p style="font-size: 20px;">Dear <b>{{first_name}} {{last_name}},</b></p>';
+        else
+            $heading_greet .= '<p style="font-size: 20px;">Dear <b>{{user_name}},</b></p>';
         $heading_greet .= '</td></tr>';
 
         // Set content
@@ -7220,59 +7277,60 @@ if (!function_exists('send_calendar_email')) {
 
         //
         // Set booking heading
-        $heading_booking  = '<tr><td style="font-size: 20px;"><strong>Event details</strong><br /><br /></td></tr>';
+        $heading_booking = '<tr><td style="font-size: 20px;"><strong>Event details</strong><br /><br /></td></tr>';
         // Set event type
-        $event_type_row  = '<tr><td style="font-size: 20px;"><strong>Type</strong></td></tr>';
+        $event_type_row = '<tr><td style="font-size: 20px;"><strong>Type</strong></td></tr>';
         $event_type_row .= '<tr><td style="font-size: 20px;"><p>' . ($event_update_category_row ? $event_update_category_row : $event_category) . '</p></td></tr>';
 
-        $event_date_time_row  = '';
-        $event_date_time_row  .= '<tr>';
-        $event_date_time_row  .= '<td>';
-        $event_date_time_row  .= '    <table style="width: 100%; border: 0 !important;">';
-        $event_date_time_row  .=      '<tr>';
-        $event_date_time_row  .=          '<td style="font-size: 20px;"><br /><strong>Event Date</strong></td>';
+        $event_date_time_row = '';
+        $event_date_time_row .= '<tr>';
+        $event_date_time_row .= '<td>';
+        $event_date_time_row .= '    <table style="width: 100%; border: 0 !important;">';
+        $event_date_time_row .= '<tr>';
+        $event_date_time_row .= '<td style="font-size: 20px;"><br /><strong>Event Date</strong></td>';
         if ($action == 'confirm')
-            $event_date_time_row  .=       '{{NEW_DATE_HEADING}}';
-        $event_date_time_row  .=      '</tr>';
-        $event_date_time_row  .=      '<tr>';
+            $event_date_time_row .= '{{NEW_DATE_HEADING}}';
+        $event_date_time_row .= '</tr>';
+        $event_date_time_row .= '<tr>';
 
-        $event_date_time_row  .=          '<td style="font-size: 20px;"><p>' . ($event_update_date_row != '' ? $event_update_date_row : '{{EVENT_DATE}}') . ' <b>({{EVENT_TIMEZONE}})</b></p></td>';
+        $event_date_time_row .= '<td style="font-size: 20px;"><p>' . ($event_update_date_row != '' ? $event_update_date_row : '{{EVENT_DATE}}') . ' <b>({{EVENT_TIMEZONE}})</b></p></td>';
         if ($action == 'confirm')
-            $event_date_time_row  .=      '{{NEW_EVENT_DATE}}';
-        $event_date_time_row  .=      '</tr>';
+            $event_date_time_row .= '{{NEW_EVENT_DATE}}';
+        $event_date_time_row .= '</tr>';
 
-        $event_date_time_row  .=      '<tr><td style="width: 100%;"><hr /></td></tr>';
+        $event_date_time_row .= '<tr><td style="width: 100%;"><hr /></td></tr>';
 
-        $event_date_time_row  .=      '<tr>';
-        $event_date_time_row  .=          '<td style="font-size: 20px;"><br /><strong>Event Time</strong></td>';
+        $event_date_time_row .= '<tr>';
+        $event_date_time_row .= '<td style="font-size: 20px;"><br /><strong>Event Time</strong></td>';
         if ($action == 'confirm')
-            $event_date_time_row  .=       '{{NEW_TIME_HEADING}}';
-        $event_date_time_row  .=      '</tr>';
-        $event_date_time_row  .=      '<tr>';
+            $event_date_time_row .= '{{NEW_TIME_HEADING}}';
+        $event_date_time_row .= '</tr>';
+        $event_date_time_row .= '<tr>';
 
-        $event_date_time_row  .=          '<td style="font-size: 20px;"><p>' . ($event_update_start_time_row != '' ? $event_update_start_time_row : '{{EVENT_START_TIME}} - {{EVENT_END_TIME}}') . ($event_update_end_time_row != '' ? '<br />' . $event_update_end_time_row : '') . ' <b>({{EVENT_TIMEZONE}})</b></p></td>';
+        $event_date_time_row .= '<td style="font-size: 20px;"><p>' . ($event_update_start_time_row != '' ? $event_update_start_time_row : '{{EVENT_START_TIME}} - {{EVENT_END_TIME}}') . ($event_update_end_time_row != '' ? '<br />' . $event_update_end_time_row : '') . ' <b>({{EVENT_TIMEZONE}})</b></p></td>';
 
         if ($action == 'confirm')
-            $event_date_time_row  .=      '{{NEW_EVENT_TIME}}';
-        $event_date_time_row  .=      '</tr>';
+            $event_date_time_row .= '{{NEW_EVENT_TIME}}';
+        $event_date_time_row .= '</tr>';
         if ($action == 'confirm') {
-            $event_date_time_row  .=      '<tr><td><hr /></td></tr>';
+            $event_date_time_row .= '<tr><td><hr /></td></tr>';
             // $event_date_time_row  .=      '<tr><td>Click on the below button to visit the event.</td></tr>';
-            $event_date_time_row  .=      '<tr style="font-size: 20px;"><td>{{EVENT_LINK}}</td></tr>';
+            $event_date_time_row .= '<tr style="font-size: 20px;"><td>{{EVENT_LINK}}</td></tr>';
         }
-        $event_date_time_row  .=      '</table>';
-        $event_date_time_row  .= '</td>';
-        $event_date_time_row  .= '</tr>';
+        $event_date_time_row .= '</table>';
+        $event_date_time_row .= '</td>';
+        $event_date_time_row .= '</tr>';
 
-        if ($action == 'confirm') $event_date_time_row .= '{{NEW_EVENT_DETAILS}}';
+        if ($action == 'confirm')
+            $event_date_time_row .= '{{NEW_EVENT_DETAILS}}';
 
         // Set comment
-        $event_comment_row  = '<tr><td style="font-size: 20px;"><br /><strong>Comment</strong></td></tr>';
+        $event_comment_row = '<tr><td style="font-size: 20px;"><br /><strong>Comment</strong></td></tr>';
         $event_comment_row .= $event_update_comment_row != '' ? '<tr><td style="font-size: 20px;">' . $event_update_comment_row . '</td></tr>' : '';
         $event_comment_row .= '<tr>' . ($event_update_comment_change_row != '' ? $event_update_comment_change_row : '<td style="font-size: 20px;"><p>' . ($event_details['comment']) . '</p></td>') . '</tr>';
 
         // Set message to applicant
-        $event_message_row  = '<tr><td style="font-size: 20px;"><br /><strong>Message Details</strong><br /><br /></td></tr>';
+        $event_message_row = '<tr><td style="font-size: 20px;"><br /><strong>Message Details</strong><br /><br /></td></tr>';
         $event_message_row .= $event_update_message_row != '' ? '<tr><td style="font-size: 20px;"><p>' . $event_update_message_row . '</p><br /></td></tr>' : '';
         $event_message_row .= '<tr><td style="font-size: 20px;"><strong>Subject</strong></td></tr>';
         $event_message_row .= '<tr>' . ($event_update_message_subject_row != '' ? $event_update_message_subject_row : '<td style="font-size: 20px;"><p>' . ($event_details['subject']) . '</p><br /></td>') . '</tr>';
@@ -7285,7 +7343,7 @@ if (!function_exists('send_calendar_email')) {
         }
 
         // Set meeting details
-        $event_meeting_row  = '<tr><td style="font-size: 20px;"><br /><strong>Meeting Details</strong><br /><br /></td></tr>';
+        $event_meeting_row = '<tr><td style="font-size: 20px;"><br /><strong>Meeting Details</strong><br /><br /></td></tr>';
         $event_meeting_row .= $event_update_meeting_row != '' ? '<tr><td><p>' . $event_update_meeting_row . '</p><br /></td></tr>' : '';
         $event_meeting_row .= '<tr><td style="font-size: 20px;"><strong>ID</strong></td></tr>';
         $event_meeting_row .= '<tr>' . ($event_update_meeting_id_row != '' ? $event_update_meeting_id_row : '<td style="font-size: 20px;"><p>' . ($event_details['meeting_id']) . '</p><br /></td>') . '</tr>';
@@ -7295,7 +7353,7 @@ if (!function_exists('send_calendar_email')) {
         $event_meeting_row .= '<tr>' . ($event_update_meeting_url_row ? $event_update_meeting_url_row : '<td style="font-size: 20px;"><p>' . ($event_details['meeting_url']) . '</p><br /><br /></td>') . '</tr>';
 
         // Set address
-        $event_address_row  = '<tr><td style="font-size: 20px;"><br /><strong>Address</strong><br /><br /></td></tr>';
+        $event_address_row = '<tr><td style="font-size: 20px;"><br /><strong>Address</strong><br /><br /></td></tr>';
         $event_address_row .= '<tr><td style="font-size: 20px;"><p>' . ($event_update_address_row != '' ? $event_update_address_row : $event_details['address']) . '</p></td></tr>';
         $event_address_row .= '<tr>';
         $event_address_row .= '     <td>';
@@ -7365,7 +7423,8 @@ if (!function_exists('send_calendar_email')) {
                         $applicant_sid = $job_application['sid'];
 
                         $job_title = $job_application['job_title'] != '' ? $job_application['job_title'] : $job_application['desired_job_title'];
-                        if ($job_title == '') continue;
+                        if ($job_title == '')
+                            continue;
                         if (in_array($applicant_sid, $applicant_jobs_array)) {
 
 
@@ -7391,7 +7450,8 @@ if (!function_exists('send_calendar_email')) {
                         $applicant_sid = $job_application[$i]['sid'];
                         $job_title = $job_application[$i]['job_title'] != '' ? $job_application[$i]['job_title'] : $job_application[$i]['desired_job_title'];
 
-                        if ($job_title == '') continue;
+                        if ($job_title == '')
+                            continue;
 
                         $with_info_box .= '<tr><td><p>' . $job_title . '</p></td></tr>';
                         $applicant_job_list_sid = $job_application[$job_application_last_index]['sid'];
@@ -7423,7 +7483,7 @@ if (!function_exists('send_calendar_email')) {
         $table_start = '<table style="width: 100%;"><tr><td style="width: 100%; height: 10px; background-color: #cccccc;"></td></tr>';
         $table_end = '</table>';
 
-        $email_message  = $message_hf['header'];
+        $email_message = $message_hf['header'];
         $email_message .= $table_start;
         $email_message .= $heading_top;
         $email_message .= $heading_greet;
@@ -7499,7 +7559,8 @@ if (!function_exists('send_calendar_email')) {
                 }
 
                 $user_message = $email_message; //Send Email to Applicant
-                if ($event_link_check) $user_message = str_replace('{{EVENT_LINK}}', $event_link_btn, $user_message);
+                if ($event_link_check)
+                    $user_message = str_replace('{{EVENT_LINK}}', $event_link_btn, $user_message);
                 $user_message = str_replace('{{user_name}}', $v0['value'], $user_message);
                 $user_message = str_replace(
                     '{{WITH_INFO_BOX}}',
@@ -7531,7 +7592,7 @@ if (!function_exists('send_calendar_email')) {
 
                 )), $user_message);
                 $user_message = str_replace('{{EVENT_END_TIME}}', reset_datetime(array(
-                    'datetime' =>  $event_details['date'] . $event_details['event_end_time'],
+                    'datetime' => $event_details['date'] . $event_details['event_end_time'],
                     'from_format' => 'Y-m-dh:iA',
                     'format' => 'h:i A',
                     'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
@@ -7545,12 +7606,12 @@ if (!function_exists('send_calendar_email')) {
                 if ($action != 'send_cron_reminder_emails') {
                     // Set data array
                     $data_array = array();
-                    $data_array['event_sid']     = $event_sid;
+                    $data_array['event_sid'] = $event_sid;
                     $data_array['email_address'] = $v0['email_address'];
-                    $data_array['user_id']       = $v0['id'];
-                    $data_array['user_name']     = $v0['value'];
-                    $data_array['user_type']     = $v0['type'] != '' ? $v0['type'] : 'employee';
-                    $data_array['created_at']    = $date;
+                    $data_array['user_id'] = $v0['id'];
+                    $data_array['user_name'] = $v0['value'];
+                    $data_array['user_type'] = $v0['type'] != '' ? $v0['type'] : 'employee';
+                    $data_array['created_at'] = $date;
                     // Create record in db
                     $_this->calendar_model->save_event_sent_email_reminder_history($data_array);
                 }
@@ -7576,8 +7637,8 @@ if (!function_exists('send_calendar_email')) {
                 // Set calendar
                 $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
                 $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
-                $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
-                $calendar_rows  = '<tr>';
+                $download_url_gc = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
+                $calendar_rows = '<tr>';
                 $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
@@ -7602,7 +7663,8 @@ if (!function_exists('send_calendar_email')) {
                 header('content-type: application/json');
                 echo json_encode(array('Response' => 'Reminder emails are sent to the selected emails.', 'Redirect' => FALSE, 'Status' => TRUE));
                 exit(0);
-            } else exit(0);
+            } else
+                exit(0);
         }
 
         // _e($email_message, true, true);
@@ -7612,7 +7674,8 @@ if (!function_exists('send_calendar_email')) {
         // Don't send email to interviewers
         // and to non-employee interviewers in case of
         // type 'Personal'
-        if ($event_details['users_type'] == 'personal' && !in_array(strtolower($event_category), array('email', 'call'))) $send_to_extraparticipants = $send_to_interviewers = false;
+        if ($event_details['users_type'] == 'personal' && !in_array(strtolower($event_category), array('email', 'call')))
+            $send_to_extraparticipants = $send_to_interviewers = false;
 
         // Don't send an email to applicant/employee
         // in case when only comment field is changed
@@ -7632,10 +7695,12 @@ if (!function_exists('send_calendar_email')) {
         if ($action == 'update_event' && sizeof($difference_array)) {
             $is_exist = 0;
             foreach ($difference_array as $k0 => $v0) {
-                if (in_array($k0, $message_index_array)) $is_exist = $is_exist + 2;
+                if (in_array($k0, $message_index_array))
+                    $is_exist = $is_exist + 2;
             }
 
-            if ($is_exist != 0 && $is_exist == sizeof($difference_array)) $send_to_interviewers = $send_to_extraparticipants = false;
+            if ($is_exist != 0 && $is_exist == sizeof($difference_array))
+                $send_to_interviewers = $send_to_extraparticipants = false;
         }
 
         // Don't send email when only
@@ -7673,7 +7738,8 @@ if (!function_exists('send_calendar_email')) {
             $user_message = str_replace('{{target_user}}', ucwords($company_info['CompanyName']), $user_message);
 
 
-            if (($event_link_check && $event_details['users_type'] == 'employee') || ($is_return)) $user_message = str_replace('{{EVENT_LINK}}', $event_link_btn, $user_message);
+            if (($event_link_check && $event_details['users_type'] == 'employee') || ($is_return))
+                $user_message = str_replace('{{EVENT_LINK}}', $event_link_btn, $user_message);
 
             // For difference
             if (isset($difference_array) && sizeof($difference_array)) {
@@ -7746,7 +7812,7 @@ if (!function_exists('send_calendar_email')) {
             $utype = $event_details['users_type'];
             $uid = $user_info['sid'];
             $uemail = $user_info['email'];
-            $uname  = $user_info['first_name'] . ' ' . $user_info['last_name'];
+            $uname = $user_info['first_name'] . ' ' . $user_info['last_name'];
             $p_name = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
             //
             if ($action != 'confirm') {
@@ -7767,7 +7833,8 @@ if (!function_exists('send_calendar_email')) {
                             $_this
                         );
                 }
-            } else $user_email_status_button_rows = '';
+            } else
+                $user_email_status_button_rows = '';
             //
             $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message);
             $user_message = str_replace('{{PERSON_NAME}}', ucwords($p_name), $user_message);
@@ -7775,8 +7842,8 @@ if (!function_exists('send_calendar_email')) {
             if ($action != 'confirm') {
                 $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
                 $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
-                $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
-                $calendar_rows  = '<tr>';
+                $download_url_gc = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                $calendar_rows = '<tr>';
                 $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
@@ -7796,7 +7863,8 @@ if (!function_exists('send_calendar_email')) {
                 $user_message = str_replace('{{CALENDAR_ROWS}}', $calendar_rows, $user_message);
             }
 
-            if ($is_return) return array('Subject' => $email_subject, 'Body' => $user_message, 'FromEmail' => FROM_EMAIL_NOTIFICATIONS, 'with_info_box' => $with_info_box);
+            if ($is_return)
+                return array('Subject' => $email_subject, 'Body' => $user_message, 'FromEmail' => FROM_EMAIL_NOTIFICATIONS, 'with_info_box' => $with_info_box);
             log_and_send_email_with_attachment(FROM_EMAIL_NOTIFICATIONS, $user_info['email'], $email_subject, $user_message, $from_name, $ics_file);
 
             // $_this->_e($email_subject, true);
@@ -7816,7 +7884,8 @@ if (!function_exists('send_calendar_email')) {
             $user_message = str_replace('{{target_user}}', ucwords($company_info['CompanyName']), $user_message);
 
 
-            if (($event_link_check && $event_details['users_type'] == 'employee') || ($is_return)) $user_message = str_replace('{{EVENT_LINK}}', $event_link_btn, $user_message);
+            if (($event_link_check && $event_details['users_type'] == 'employee') || ($is_return))
+                $user_message = str_replace('{{EVENT_LINK}}', $event_link_btn, $user_message);
 
             if (!empty($event_details['event_timezone']))
                 $user_info['timezone'] = $event_details['event_timezone'];
@@ -7891,7 +7960,7 @@ if (!function_exists('send_calendar_email')) {
             $uid = 0;
             $utype = 'person';
             $uemail = $event_details['users_email'];
-            $uname  = $event_details['users_name'];
+            $uname = $event_details['users_name'];
             //
             $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message);
             $user_message = str_replace('{{PERSON_NAME}}', ucwords($user_info['first_name'] . ' ' . $user_info['first_name']), $user_message);
@@ -7900,8 +7969,8 @@ if (!function_exists('send_calendar_email')) {
             // Set calendar
             $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
             $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
-            $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
-            $calendar_rows  = '<tr>';
+            $download_url_gc = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+            $calendar_rows = '<tr>';
             $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
             $calendar_rows .= '</tr>';
             $calendar_rows .= '<tr>';
@@ -7920,7 +7989,8 @@ if (!function_exists('send_calendar_email')) {
             // Replace calendar rows
             $user_message = str_replace('{{CALENDAR_ROWS}}', $calendar_rows, $user_message);
 
-            if ($is_return) return array('Subject' => $email_subject, 'Body' => $user_message, 'FromEmail' => FROM_EMAIL_NOTIFICATIONS, 'with_info_box' => $with_info_box);
+            if ($is_return)
+                return array('Subject' => $email_subject, 'Body' => $user_message, 'FromEmail' => FROM_EMAIL_NOTIFICATIONS, 'with_info_box' => $with_info_box);
             log_and_send_email_with_attachment(FROM_EMAIL_NOTIFICATIONS, $uemail, $email_subject, $user_message, $from_name, $ics_file);
 
             // $_this->_e($email_subject, true);
@@ -7936,7 +8006,8 @@ if (!function_exists('send_calendar_email')) {
                 $employer['timezone'] = $_this->calendar_model->get_timezone('reset', $event_details['company_id'], $employer['timezone']);
                 $user_message = $email_message;
                 $links_url = '';
-                if ($event_link_check) $user_message = str_replace('{{EVENT_LINK}}', $event_link_btn, $user_message);
+                if ($event_link_check)
+                    $user_message = str_replace('{{EVENT_LINK}}', $event_link_btn, $user_message);
                 $employer_name = ucwords($employer['first_name'] . ' ' . $employer['last_name']);
                 $phone_number = $employer['PhoneNumber'];
                 $user_message = str_replace('{{user_name}}', $employer_name, $user_message);
@@ -8033,8 +8104,8 @@ if (!function_exists('send_calendar_email')) {
                 // Set calendar
                 $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
                 $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
-                $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
-                $calendar_rows  = '<tr>';
+                $download_url_gc = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
+                $calendar_rows = '<tr>';
                 $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
                 $calendar_rows .= '</tr>';
                 $calendar_rows .= '<tr>';
@@ -8057,10 +8128,10 @@ if (!function_exists('send_calendar_email')) {
 
                 //SMS replace array
                 $sms_replace_array['category_name'] = $event_category;
-                $sms_replace_array['action']        = $action;
-                $sms_replace_array['applicant_name']  = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
-                $sms_replace_array['contact_name']  = $employer_name;
-                $sms_replace_array['event_button']  = $links_url;
+                $sms_replace_array['action'] = $action;
+                $sms_replace_array['applicant_name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
+                $sms_replace_array['contact_name'] = $employer_name;
+                $sms_replace_array['event_button'] = $links_url;
                 $sms_replace_array['event_url'] = base_url('calendar/my_events');
                 //  replace_sms_send_email($sms_replace_array,$phone_number,$employer_name,$employer['email'],$_this,$company_id,$employer['sid']);
             }
@@ -8076,12 +8147,12 @@ if (!function_exists('send_calendar_email')) {
                     }
                     $user_message = $email_message;
                     $employer_name = ucwords($event_external_participant['name']);
-                    $user_message  = str_replace('{{user_name}}', $employer_name, $user_message);
+                    $user_message = str_replace('{{user_name}}', $employer_name, $user_message);
                     // $user_message  = str_replace('{{WITH_INFO_BOX}}', '', $user_message);
                     $user_message = str_replace('{{MESSAGE_BOX}}', '', $user_message);
-                    $user_message  = str_replace('{{WITH_INFO_BOX}}', $with_info_box, $user_message);
-                    $user_message  = str_replace('{{COMMENT_BOX}}', $event_comment_row . $seperator, $user_message);
-                    $user_message  = str_replace('{{target_user}}', $applicant_name, $user_message);
+                    $user_message = str_replace('{{WITH_INFO_BOX}}', $with_info_box, $user_message);
+                    $user_message = str_replace('{{COMMENT_BOX}}', $event_comment_row . $seperator, $user_message);
+                    $user_message = str_replace('{{target_user}}', $applicant_name, $user_message);
                     $user_message = str_replace('{{EVENT_TIMEZONE}}', $event_external_participant['timezone'], $user_message);
                     // For difference
 
@@ -8167,8 +8238,8 @@ if (!function_exists('send_calendar_email')) {
                     // Set calendar
                     $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
                     $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
-                    $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
-                    $calendar_rows  = '<tr>';
+                    $download_url_gc = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
+                    $calendar_rows = '<tr>';
                     $calendar_rows .= '     <td style="font-size: 20px;"><br /><strong>Calendar event</strong><br /><br /></td>';
                     $calendar_rows .= '</tr>';
                     $calendar_rows .= '<tr>';
@@ -8238,7 +8309,7 @@ if (!function_exists('replace_sms_send_email')) {
                 if ($employee_sms_status == 1) {
                     $template = get_company_sms_template($_this, $company_sid, $code);
                     $message = replace_sms_body($template['sms_body'], $body_array);
-                    sendSMS($receiverPhoneNumber, $message, $userName,  $userEmailAddress, $_this);
+                    sendSMS($receiverPhoneNumber, $message, $userName, $userEmailAddress, $_this);
                 }
             } else if ($body_array['action'] == 'save_event') {
                 $code = 'new_calendar_event_template';
@@ -8252,7 +8323,7 @@ if (!function_exists('replace_sms_send_email')) {
                 if ($employee_sms_status == 1) {
                     $template = get_company_sms_template($_this, $company_sid, $code);
                     $message = replace_sms_body($template['sms_body'], $body_array);
-                    sendSMS($receiverPhoneNumber, $message, $userName,  $userEmailAddress, $_this);
+                    sendSMS($receiverPhoneNumber, $message, $userName, $userEmailAddress, $_this);
                 }
             }
         }
@@ -8272,15 +8343,23 @@ if (!function_exists('replace_sms_send_email')) {
 if (!function_exists('get_date_difference_duration')) {
     function get_date_difference_duration($datetime, $datetime2 = FALSE)
     {
-        if (!$datetime2) $datetime2 = new DateTime('now');
+        if (!$datetime2)
+            $datetime2 = new DateTime('now');
         $interval = $datetime2->diff($datetime);
-        if ($interval->invert == 1) return -1;
-        if ($v = $interval->y >= 1) return pluralize($interval->y, 'year');
-        if ($v = $interval->m >= 1) return pluralize($interval->m, 'month');
-        if ($v = $interval->d >= 1) return pluralize($interval->d, 'day');
-        if ($v = $interval->h >= 1) return pluralize($interval->h, 'hour');
-        if ($v = $interval->i >= 1) return pluralize($interval->i, 'minute');
-        if ($v = $interval->s >= 1) return pluralize($interval->s, 'seconds');
+        if ($interval->invert == 1)
+            return -1;
+        if ($v = $interval->y >= 1)
+            return pluralize($interval->y, 'year');
+        if ($v = $interval->m >= 1)
+            return pluralize($interval->m, 'month');
+        if ($v = $interval->d >= 1)
+            return pluralize($interval->d, 'day');
+        if ($v = $interval->h >= 1)
+            return pluralize($interval->h, 'hour');
+        if ($v = $interval->i >= 1)
+            return pluralize($interval->i, 'minute');
+        if ($v = $interval->s >= 1)
+            return pluralize($interval->s, 'seconds');
         return -1;
     }
 }
@@ -8322,7 +8401,8 @@ if (!function_exists('generate_vcs_file_for_event')) {
 
         if ($user_details['timezone'] == '') {
             $user_details['timezone'] = $_this->cm->get_employee_detail($event_details['companys_sid'])['timezone'];
-            if ($user_details['timezone'] == '') $user_details['timezone'] = STORE_DEFAULT_TIMEZONE_ABBR;
+            if ($user_details['timezone'] == '')
+                $user_details['timezone'] = STORE_DEFAULT_TIMEZONE_ABBR;
         }
 
         // if ($event_details['users_type'] != 'personal'){
@@ -8383,8 +8463,8 @@ if (!function_exists('generate_vcs_file_for_event')) {
 
         $user_sid = $event_details['applicant_job_sid'];
         $event_type = $event_details['users_type'];
-        $event_sid  = $event_sid;
-        $user_name  = ucwords($user_name);
+        $event_sid = $event_sid;
+        $user_name = ucwords($user_name);
         // $user_name  = $user_info['first_name']." ".$user_info['last_name'];
         // $user_email = $user_info['email'];
         //
@@ -8402,7 +8482,7 @@ if (!function_exists('generate_vcs_file_for_event')) {
         if (strtolower($event_details['category_uc']) == 'training-session')
             $enc_string_attended = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_attended));
         //
-        $enc_string_notconf  = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_notconf));
+        $enc_string_notconf = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_notconf));
         $enc_string_reschedule = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_reschedule));
 
         $details .= "Event Links:{$ss}";
@@ -8455,7 +8535,8 @@ EOD;
         //
         $destination = APPPATH . '../assets/vcs_files/' . $event_details['companys_sid'] . '-' . $event_details['company_name'] . '/';
 
-        if (!is_dir($destination)) mkdir($destination, 0777, true);
+        if (!is_dir($destination))
+            mkdir($destination, 0777, true);
         $uniqueName = STORE_NAME . '-event-' . $event_sid;
         $targetFileName = $uniqueName . '.vcs';
 
@@ -8488,7 +8569,8 @@ if (!function_exists('generate_csv')) {
         if (!sizeof($headers))
             $headers = array('Date', 'Ordered By', 'Candidate', 'Type', 'Product Name', 'Company Name', 'Status');
         $file_path = APPPATH . '../assets/csv/';
-        if (!file_exists($file_path)) mkdir($file_path, 0777, true);
+        if (!file_exists($file_path))
+            mkdir($file_path, 0777, true);
 
         $file_name = ($file_name ? $file_name : '') . generateRandomString(4) . '.csv';
 
@@ -8497,8 +8579,8 @@ if (!function_exists('generate_csv')) {
 
         if ($type == "invoice_orders") {
             $ci = &get_instance();
-            $companyName=$ci->session->userdata('logged_in')['company_detail']['CompanyName'];
-            fputcsv($file, array("Company Name: ",$companyName));
+            $companyName = $ci->session->userdata('logged_in')['company_detail']['CompanyName'];
+            fputcsv($file, array("Company Name: ", $companyName));
         }
 
         fputcsv($file, $headers);
@@ -8594,11 +8676,13 @@ if (!function_exists('generate_admin_ics_file')) {
     function generate_admin_ics_file($event, $is_update = false)
     {
         // Return false when data array is empty
-        if (!sizeof($event)) return false;
+        if (!sizeof($event))
+            return false;
         // Set path
         $file_path = APPPATH . '../assets/admin/ics/';
         // Create path if not exists
-        if (!is_dir($file_path)) mkdir($file_path, 0777, true);
+        if (!is_dir($file_path))
+            mkdir($file_path, 0777, true);
         // Set UID
         $uid = STORE_NAME . '-event-' . clean($event['event_sid']);
         // Set file name
@@ -8651,7 +8735,8 @@ if (!function_exists('generate_admin_ics_file')) {
             }
         }
 
-        if ($event['meeting_url'] != '') $ics_body .= 'URL:' . $event['meeting_url'] . PHP_EOL;
+        if ($event['meeting_url'] != '')
+            $ics_body .= 'URL:' . $event['meeting_url'] . PHP_EOL;
 
         $ics_body .= 'UID:' . $uid . PHP_EOL;
         $ics_body .= 'STATUS:' . strtoupper($event['event_status']) . PHP_EOL; // Can be CONFIRMED CANCELED TENTATIVE
@@ -8730,7 +8815,7 @@ if (!function_exists('send_admin_calendar_email_template')) {
         //
         $_this = &get_instance();
         $subject = '';
-        $body    = '';
+        $body = '';
         //
         extract($event);
         //
@@ -8760,8 +8845,10 @@ if (!function_exists('send_admin_calendar_email_template')) {
             if (isset($diff_array['old_date'], $diff_array['new_date']) && $diff_array['old_date'] != '' && $diff_array['new_date'] != '') {
                 $new_from_syntax = $old_from_syntax = 'm-d-Y';
                 // Reset dates
-                if (!preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $diff_array['old_date'])) $old_from_syntax = 'Y-m-d';
-                if (!preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $diff_array['new_date'])) $new_from_syntax = 'Y-m-d';
+                if (!preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $diff_array['old_date']))
+                    $old_from_syntax = 'Y-m-d';
+                if (!preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $diff_array['new_date']))
+                    $new_from_syntax = 'Y-m-d';
                 // _e($diff_array, true);
                 $event_update_date_row = 'Event date changed from "<b style="color: #d9534f; font-weight: bold; font-size: 15px;">' . (date_with_time(DateTime::createFromFormat($old_from_syntax, $diff_array['old_date'])->format('Y-m-d'))) . '</b>" to "<b style="color: #81b431; font-weight: bold; font-size: 15px;">' . (date_with_time(DateTime::createFromFormat($new_from_syntax, $diff_array['new_date'])->format('Y-m-d'))) . '</b>"';
                 $event_subject_row = " - Event date has been changed.";
@@ -8821,11 +8908,11 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 $event_update_meeting_id_row = '<td><strong>Previous</strong><p style="color: #d9534f;">' . ($diff_array['old_meeting_id']) . '</p></td><td><strong>New</strong><p style="color: #81b431;">' . ($diff_array['new_meeting_id']) . '</p><br /></td>';
             }
             // Meeting URL
-            if (isset($diff_array['old_meeting_url'], $diff_array['new_meeting_url']) && $diff_array['old_meeting_url'] != $diff_array['new_meeting_url']  && $diff_array['old_meeting_url'] != '') {
+            if (isset($diff_array['old_meeting_url'], $diff_array['new_meeting_url']) && $diff_array['old_meeting_url'] != $diff_array['new_meeting_url'] && $diff_array['old_meeting_url'] != '') {
                 $event_update_meeting_url_row = '<td><strong>Previous</strong><p style="color: #d9534f;">' . ($diff_array['old_meeting_url']) . '</p></td><td><strong>New</strong><p style="color: #81b431;">' . ($diff_array['new_meeting_url']) . '</p><br /></td>';
             }
             // Meeting Phone
-            if (isset($diff_array['old_meeting_call_number'], $diff_array['new_meeting_call_number']) && $diff_array['old_meeting_call_number'] != $diff_array['new_meeting_call_number']  && $diff_array['old_meeting_call_number'] != '') {
+            if (isset($diff_array['old_meeting_call_number'], $diff_array['new_meeting_call_number']) && $diff_array['old_meeting_call_number'] != $diff_array['new_meeting_call_number'] && $diff_array['old_meeting_call_number'] != '') {
                 $event_update_meeting_call_number_row = '<td><strong>Previous</strong><p style="color: #d9534f;">' . ($diff_array['old_meeting_call_number']) . '</p></td><td><strong>New</strong><p style="color: #81b431;">' . ($diff_array['new_meeting_call_number']) . '</p><br /></td>';
             }
 
@@ -8833,14 +8920,21 @@ if (!function_exists('send_admin_calendar_email_template')) {
             $removed_interviewers = $added_interviewers = 0;
             $itype = 'Participant(s)';
 
-            if ($event_type == 'employee') $itype = 'Participant(s)';
-            if ($event_category == 'training-session') $itype = 'Attendee(s)';
+            if ($event_type == 'employee')
+                $itype = 'Participant(s)';
+            if ($event_category == 'training-session')
+                $itype = 'Attendee(s)';
 
-            if (isset($diff_array['added_interviewers']) && sizeof($diff_array['added_interviewers']))  $added_interviewers += count($diff_array['added_interviewers']);
-            if (isset($diff_array['added_external_interviewers']) && sizeof($diff_array['added_external_interviewers']))  $added_interviewers += count($diff_array['added_external_interviewers']);
-            if (isset($diff_array['removed_interviewers']) && sizeof($diff_array['removed_interviewers']))  $removed_interviewers += count($diff_array['removed_interviewers']);
-            if (isset($diff_array['removed_external_interviewers']) && sizeof($diff_array['removed_external_interviewers']))  $removed_interviewers += count($diff_array['removed_external_interviewers']);
-            if ($removed_interviewers != 0 || $added_interviewers != 0) $event_block_changed++;
+            if (isset($diff_array['added_interviewers']) && sizeof($diff_array['added_interviewers']))
+                $added_interviewers += count($diff_array['added_interviewers']);
+            if (isset($diff_array['added_external_interviewers']) && sizeof($diff_array['added_external_interviewers']))
+                $added_interviewers += count($diff_array['added_external_interviewers']);
+            if (isset($diff_array['removed_interviewers']) && sizeof($diff_array['removed_interviewers']))
+                $removed_interviewers += count($diff_array['removed_interviewers']);
+            if (isset($diff_array['removed_external_interviewers']) && sizeof($diff_array['removed_external_interviewers']))
+                $removed_interviewers += count($diff_array['removed_external_interviewers']);
+            if ($removed_interviewers != 0 || $added_interviewers != 0)
+                $event_block_changed++;
             if ($removed_interviewers != 0 && $added_interviewers != 0)
                 $event_subject_row = " - ($added_interviewers) $itype added and ($removed_interviewers) removed.";
             else if ($added_interviewers != 0)
@@ -8852,11 +8946,16 @@ if (!function_exists('send_admin_calendar_email_template')) {
             $removed_user_ids = $added_user_ids = 0;
 
             // Difference of system/external users
-            if (isset($diff_array['added_user_ids']) && sizeof($diff_array['added_user_ids']))  $added_user_ids += count($diff_array['added_user_ids']);
-            if (isset($diff_array['added_external_users']) && sizeof($diff_array['added_external_users']))  $added_user_ids += count($diff_array['added_external_users']);
-            if (isset($diff_array['removed_user_ids']) && sizeof($diff_array['removed_user_ids']))  $removed_user_ids += count($diff_array['removed_user_ids']);
-            if (isset($diff_array['removed_external_users']) && sizeof($diff_array['removed_external_users']))  $removed_user_ids += count($diff_array['removed_external_users']);
-            if ($removed_user_ids != 0 || $added_user_ids != 0) $event_block_changed++;
+            if (isset($diff_array['added_user_ids']) && sizeof($diff_array['added_user_ids']))
+                $added_user_ids += count($diff_array['added_user_ids']);
+            if (isset($diff_array['added_external_users']) && sizeof($diff_array['added_external_users']))
+                $added_user_ids += count($diff_array['added_external_users']);
+            if (isset($diff_array['removed_user_ids']) && sizeof($diff_array['removed_user_ids']))
+                $removed_user_ids += count($diff_array['removed_user_ids']);
+            if (isset($diff_array['removed_external_users']) && sizeof($diff_array['removed_external_users']))
+                $removed_user_ids += count($diff_array['removed_external_users']);
+            if ($removed_user_ids != 0 || $added_user_ids != 0)
+                $event_block_changed++;
             if ($removed_user_ids != 0 && $added_user_ids != 0)
                 $event_subject_row = " - ($added_user_ids) Users added and ($removed_user_ids) removed.";
             else if ($added_user_ids != 0)
@@ -8869,7 +8968,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
         $users_row = $users_rows = '';
         $include_participants = true;
         //
-        if (!in_array($event_category, array('training-session', 'meeting', 'other')) && $event_type == 'personal') $include_participants = false;
+        if (!in_array($event_category, array('training-session', 'meeting', 'other')) && $event_type == 'personal')
+            $include_participants = false;
         //
         if ($include_participants) {
             if (sizeof($participants) || sizeof($external_participants))
@@ -8947,16 +9047,21 @@ if (!function_exists('send_admin_calendar_email_template')) {
             $subject = $event_category_new . ' - ' . (isset($requested_status) ? $requested_status : $event_status);
 
         // Update subject on change
-        if ($event_subject_row != '') $subject .= $event_block_changed > 1 ? ' - Event details have been changed.' : $event_subject_row;
+        if ($event_subject_row != '')
+            $subject .= $event_block_changed > 1 ? ' - Event details have been changed.' : $event_subject_row;
 
         // Set user info
         if ($type != 'reminder_email' || $type != 'send_cron_reminder_emails') {
-            if ($event_type == 'personal') $to_user_name = '{{TO_USER_NAME}}';
+            if ($event_type == 'personal')
+                $to_user_name = '{{TO_USER_NAME}}';
             // if($event_type == 'personal') $to_user_name = ucwords($creator_first_name.' '.$creator_last_name);
             // else if($event_type == 'super admin' && in_array($event_category, array('call', 'email', 'gotomeeting'))) $to_user_name = ucwords($first_name.' '.$last_name);
-            else if ($event_type == 'demo' && (int)$event['user_id'] !== 0) $to_user_name = ucwords($first_name . ' ' . $last_name);
-            else $to_user_name = '{{TO_USER_NAME}}';
-        } else $to_user_name = '{{TO_USER_NAME}}';
+            else if ($event_type == 'demo' && (int) $event['user_id'] !== 0)
+                $to_user_name = ucwords($first_name . ' ' . $last_name);
+            else
+                $to_user_name = '{{TO_USER_NAME}}';
+        } else
+            $to_user_name = '{{TO_USER_NAME}}';
 
         $to_content = '';
         if ($type == 'update')
@@ -8997,7 +9102,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
             $top_heading_row .= '<h3 style="text-align: center;">Your appointment has been cancelled </h3>';
         else
             $top_heading_row .= $duration[0] == -1 ? '' : '<h3 style="text-align: center;">Your appointment is starting in <b>' . ($duration[0]) . '</b> ' . ($duration[1]) . '</h3>';
-        if ($type == 'confirm') $top_heading_row = '{{EVENT_HEADING}}';
+        if ($type == 'confirm')
+            $top_heading_row = '{{EVENT_HEADING}}';
 
         // Set greeting
         $greet_row = '';
@@ -9005,38 +9111,38 @@ if (!function_exists('send_admin_calendar_email_template')) {
 
         // Set event category
         $category_heading_row = '<strong>Event category:</strong>';
-        $category_para_row    = "<p>{$event_category_new}</p>";
+        $category_para_row = "<p>{$event_category_new}</p>";
 
         // Set event date
         $date_heading_row = '<strong>Event date:</strong>';
-        $date_para_row    = "<p>" . (date_with_time($event_date)) . "</p>";
+        $date_para_row = "<p>" . (date_with_time($event_date)) . "</p>";
 
         // Set event time
         $time_heading_row = '<strong>Event time:</strong>';
-        $time_para_row    = "<p>{$event_start_time} - {$event_end_time}</p>";
+        $time_para_row = "<p>{$event_start_time} - {$event_end_time}</p>";
 
         // Set comment section
         $comment_heading_row = '<strong>' . ($event_type == 'personal' ? 'Personal comment' : 'Comment') . '</strong>';
-        $comment_para_row    = "<p>{$comment}</p>";
+        $comment_para_row = "<p>{$comment}</p>";
 
         // Set meeting id
         $meeting_id_heading_row = '<strong>Meeting ID</strong>';
-        $meeting_id_para_row    = "<p>{$meeting_id}</p>";
+        $meeting_id_para_row = "<p>{$meeting_id}</p>";
 
         // Set meeting url
         $meeting_url_heading_row = '<strong>Meeting URL</strong>';
-        $meeting_url_para_row    = "<p>{$meeting_url}</p>";
+        $meeting_url_para_row = "<p>{$meeting_url}</p>";
 
         // Set meeting phone
         $meeting_phone_heading_row = '<strong>Meeting Phone</strong>';
-        $meeting_phone_para_row    = "<p>{$meeting_phone}</p>";
+        $meeting_phone_para_row = "<p>{$meeting_phone}</p>";
 
         // Set address
         $address_heading_row = '<strong>Address</strong>';
-        $address_para_row    = "<p>{$event_address}</p>";
-        $address_map_row     = '<a href="https://maps.google.com/maps?z=12&t=m&q=' . (urlencode($event_address)) . '">';
-        $address_map_row    .= '    <img src="https://maps.googleapis.com/maps/api/staticmap?center=' . (urlencode($event_address)) . '&zoom=13&size=400x400&key=' . GOOGLE_MAP_API_KEY . '&markers=color:blue|label:|' . (urlencode($event_address)) . '" alt="No Map Found!" >';
-        $address_map_row    .= '</a>';
+        $address_para_row = "<p>{$event_address}</p>";
+        $address_map_row = '<a href="https://maps.google.com/maps?z=12&t=m&q=' . (urlencode($event_address)) . '">';
+        $address_map_row .= '    <img src="https://maps.googleapis.com/maps/api/staticmap?center=' . (urlencode($event_address)) . '&zoom=13&size=400x400&key=' . GOOGLE_MAP_API_KEY . '&markers=color:blue|label:|' . (urlencode($event_address)) . '" alt="No Map Found!" >';
+        $address_map_row .= '</a>';
 
         // Generate calendar download links
         // Set calendar download links
@@ -9050,7 +9156,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
         $body .= sft($to_content);
         $body .= $sep;
         //
-        if ($type != 'confirm') $body .= sft('{{EVENT_STATUS_BUTTONS}}');
+        if ($type != 'confirm')
+            $body .= sft('{{EVENT_STATUS_BUTTONS}}');
 
         $body .= sft("<strong>Event details</strong> <br /><br />");
         $body .= sft($category_heading_row);
@@ -9083,7 +9190,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
         }
 
         // Comment check
-        if ($comment != '' && $comment != null) $body .= '{{COMMENT_BOX}}';
+        if ($comment != '' && $comment != null)
+            $body .= '{{COMMENT_BOX}}';
 
         // GoToMeeting check
         if ($event_category == 'gotomeeting') {
@@ -9093,18 +9201,24 @@ if (!function_exists('send_admin_calendar_email_template')) {
             }
             $body .= sft($meeting_id_heading_row);
             //
-            if ($event_update_meeting_id_row != '') $body .= $event_update_meeting_id_row;
-            else $body .= sft($meeting_id_para_row);
+            if ($event_update_meeting_id_row != '')
+                $body .= $event_update_meeting_id_row;
+            else
+                $body .= sft($meeting_id_para_row);
 
             $body .= sft($meeting_phone_heading_row);
             //
-            if ($event_update_meeting_call_number_row != '') $body .= $event_update_meeting_call_number_row;
-            else $body .= sft($meeting_phone_para_row);
+            if ($event_update_meeting_call_number_row != '')
+                $body .= $event_update_meeting_call_number_row;
+            else
+                $body .= sft($meeting_phone_para_row);
 
             $body .= sft($meeting_url_heading_row);
             //
-            if ($event_update_meeting_url_row != '') $body .= $event_update_meeting_url_row;
-            else $body .= sft($meeting_url_para_row);
+            if ($event_update_meeting_url_row != '')
+                $body .= $event_update_meeting_url_row;
+            else
+                $body .= sft($meeting_url_para_row);
 
             $body .= $sep;
         }
@@ -9128,30 +9242,37 @@ if (!function_exists('send_admin_calendar_email_template')) {
         $footer = EMAIL_FOOTER;
         $body = $header . '</div><table border="0">' . ($body) . '</table><br />' . $footer;
 
-        if ($type == 'confirm') return $body;
+        if ($type == 'confirm')
+            return $body;
 
         $send_to_user = $send_to_users = $send_to_non_users = true;
         //
         $creator_name = ucwords($creator_first_name . ' ' . $creator_last_name);
 
-        if (in_array($event_category, array('training-session', 'meeting', 'other'))) $send_to_user = false;
+        if (in_array($event_category, array('training-session', 'meeting', 'other')))
+            $send_to_user = false;
 
         //
         // if($event_type == 'personal') $send_to_users = $send_to_non_users = false;
-        if ($event_type == 'personal' && in_array($event_category, array('call', 'email', 'gotomeeting'))) $send_to_users = $send_to_non_users = false;
-        if ($event_type == 'personal' && $event_category == 'gotomeeting') $send_to_user = false;
+        if ($event_type == 'personal' && in_array($event_category, array('call', 'email', 'gotomeeting')))
+            $send_to_users = $send_to_non_users = false;
+        if ($event_type == 'personal' && $event_category == 'gotomeeting')
+            $send_to_user = false;
 
         // Set only comment check
-        if ($event_block_changed == 1 && isset($diff_array['old_comment'])) $send_to_user = false;
+        if ($event_block_changed == 1 && isset($diff_array['old_comment']))
+            $send_to_user = false;
 
         // _e($send_to_user, true, true);
         // _e($body, true, true);
 
-        if (is_array($users_array) && ($event_type == 'demo' || $event_type == 'super admin')) $send_to_user = false;
+        if (is_array($users_array) && ($event_type == 'demo' || $event_type == 'super admin'))
+            $send_to_user = false;
 
         //
         if ($type == 'reminder_email' || $type == 'send_cron_reminder_emails') {
-            if (!sizeof($reminder_email_list)) return false;
+            if (!sizeof($reminder_email_list))
+                return false;
             $current_datetime = date('Y-m-d H:i:s');
             foreach ($reminder_email_list as $k0 => $v0) {
                 $comment_text = '';
@@ -9160,10 +9281,12 @@ if (!function_exists('send_admin_calendar_email_template')) {
                     if ($event_update_comment_change_row != '') {
                         $comment_text .= sft($event_update_comment_row);
                         $comment_text .= $event_update_comment_change_row;
-                    } else $comment_text .= sft($comment);
+                    } else
+                        $comment_text .= sft($comment);
                 }
 
-                if ($comment_text != '') $comment_text .= sft('<hr />');
+                if ($comment_text != '')
+                    $comment_text .= sft('<hr />');
                 $user_message = $body;
                 $user_message = str_replace('{{COMMENT_BOX}}', $comment_text, $user_message);
                 $user_message = str_replace('{{COMPANY_NAME}}', $creator_name, $user_message);
@@ -9180,8 +9303,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 // Create calendar links
                 $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
                 $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
+                $download_url_gc = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $calendar_rows = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td></tr>';
@@ -9194,11 +9317,11 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 if ($type != 'send_cron_reminder_emails') {
                     // Set data array
                     $data_array = array();
-                    $data_array['event_sid']     = $event_sid;
-                    $data_array['user_id']       = $v0['id'];
-                    $data_array['user_name']     = $v0['value'];
+                    $data_array['event_sid'] = $event_sid;
+                    $data_array['user_id'] = $v0['id'];
+                    $data_array['user_name'] = $v0['value'];
                     $data_array['email_address'] = $v0['email_address'];
-                    $data_array['user_type']     = $e_type;
+                    $data_array['user_type'] = $e_type;
                     // Create record in db
                     $_this->dashboard_model->_q('admin_event_reminder_email_history', $data_array);
                 }
@@ -9215,7 +9338,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
                     $_this
                 );
 
-                if ($e_type == 'person') $status_rows = '';
+                if ($e_type == 'person')
+                    $status_rows = '';
                 // Generate button links
                 $user_message = str_replace('{{EVENT_STATUS_BUTTONS}}', $status_rows, $user_message);
 
@@ -9272,7 +9396,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 );
             }
             //
-            if ($event_type == 'personal' && in_array($event_category, array('call', 'email', 'gotomeeting'))) $status_rows = '';
+            if ($event_type == 'personal' && in_array($event_category, array('call', 'email', 'gotomeeting')))
+                $status_rows = '';
             // Generate button links
             $user_message = str_replace('{{EVENT_STATUS_BUTTONS}}', $status_rows, $user_message);
             $user_message = str_replace('{{TO_USER_NAME}}', ucwords($cmpl), $user_message);
@@ -9280,8 +9405,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
             // Create calendar links
             $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
             $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
-            $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
-            $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
+            $download_url_gc = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
+            $calendar_rows = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
             $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
             $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
             $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td></tr>';
@@ -9293,7 +9418,7 @@ if (!function_exists('send_admin_calendar_email_template')) {
             // Send and log email
             log_and_send_email_with_attachment(
                 FROM_EMAIL_NOTIFICATIONS,
-                $event_type == 'personal' ?  $creator_email_address : $email_address,
+                $event_type == 'personal' ? $creator_email_address : $email_address,
                 $subject,
                 $user_message,
                 $creator_name,
@@ -9323,8 +9448,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
             // Create calendar links
             $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
             $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
-            $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
-            $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
+            $download_url_gc = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+            $calendar_rows = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
             $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
             $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
             $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td></tr>';
@@ -9355,10 +9480,12 @@ if (!function_exists('send_admin_calendar_email_template')) {
                     if ($event_update_comment_change_row != '') {
                         $comment_text .= sft($event_update_comment_row);
                         $comment_text .= $event_update_comment_change_row;
-                    } else $comment_text .= sft($comment);
+                    } else
+                        $comment_text .= sft($comment);
                 }
 
-                if ($comment_text != '') $comment_text .= sft('<hr />');
+                if ($comment_text != '')
+                    $comment_text .= sft('<hr />');
 
                 $user_message = $body;
                 $user_message = str_replace('{{COMMENT_BOX}}', $comment_text, $user_message);
@@ -9388,8 +9515,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 // Create calendar links
                 $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
                 $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
+                $download_url_gc = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $calendar_rows = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td></tr>';
@@ -9423,10 +9550,12 @@ if (!function_exists('send_admin_calendar_email_template')) {
                     if ($event_update_comment_change_row != '') {
                         $comment_text .= sft($event_update_comment_row);
                         $comment_text .= $event_update_comment_change_row;
-                    } else $comment_text .= sft($comment);
+                    } else
+                        $comment_text .= sft($comment);
                 }
 
-                if ($comment_text != '') $comment_text .= sft('<hr />');
+                if ($comment_text != '')
+                    $comment_text .= sft('<hr />');
 
                 $user_message = $body;
                 $user_message = str_replace('{{COMMENT_BOX}}', $comment_text, $user_message);
@@ -9456,8 +9585,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 // Create calendar links
                 $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
                 $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
+                $download_url_gc = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $calendar_rows = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td></tr>';
@@ -9513,8 +9642,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 // Create calendar links
                 $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
                 $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
+                $download_url_gc = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $calendar_rows = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td></tr>';
@@ -9571,8 +9700,8 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 // Create calendar links
                 $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
                 $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
+                $download_url_gc = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $calendar_rows = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/apple.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_ics) . '">Add to Apple Calendar</a></td></tr>';
@@ -9622,7 +9751,7 @@ if (!function_exists('generate_admin_status_rows')) {
 
         // Set encoded string
         $enc_string_conf = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_conf));
-        $enc_string_notconf  = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_notconf));
+        $enc_string_notconf = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_notconf));
         $enc_string_reschedule = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_reschedule));
 
         // Set button rows
@@ -9652,7 +9781,7 @@ if (!function_exists('generate_admin_status_rows')) {
 if (!function_exists('sft')) {
     function sft($a, $b = '')
     {
-        $row  = '<tr>';
+        $row = '<tr>';
         if ($b != '')
             $row .= "   <td><span style='float:left;width:50%'>${a}</span><span style='float:right;width:50%'>${b}</span> </td>";
         else
@@ -9774,7 +9903,8 @@ EOD;
         $destination = APPPATH . '../assets/admin/vcs/';
         $uid = STORE_NAME . '-event-' . clean($event['event_sid']);
         //
-        if (!is_dir($destination)) mkdir($destination, 0777, true);
+        if (!is_dir($destination))
+            mkdir($destination, 0777, true);
         $targetFileName = $uid . '.vcs';
 
         $file_name = $destination . $targetFileName;
@@ -9808,10 +9938,10 @@ if (!function_exists('get_timezones')) {
         $timezones = [];
         // $timezones[] = ['value' => '-11:00|US|01|SST', 'name' => 'Samoa Time',    'key' => 'SST'];
         // $timezones[] = ['value' => '-08:00|US|05|AKST', 'name' => 'Alaska Time',   'key' => 'AKST'];
-        $timezones[] = ['value' => '-07:00|US|07|PST', 'name' => 'Pacific Time',  'key' => 'PST', 'type' => 'north_america'];
+        $timezones[] = ['value' => '-07:00|US|07|PST', 'name' => 'Pacific Time', 'key' => 'PST', 'type' => 'north_america'];
         $timezones[] = ['value' => '-06:00|US|09|MST', 'name' => 'Mountain Time', 'key' => 'MST', 'type' => 'north_america'];
-        $timezones[] = ['value' => '-05:00|US|11|CST', 'name' => 'Central Time',  'key' => 'CST', 'type' => 'north_america'];
-        $timezones[] = ['value' => '-04:00|US|13|EST', 'name' => 'Eastern Time',  'key' => 'EST', 'type' => 'north_america'];
+        $timezones[] = ['value' => '-05:00|US|11|CST', 'name' => 'Central Time', 'key' => 'CST', 'type' => 'north_america'];
+        $timezones[] = ['value' => '-04:00|US|13|EST', 'name' => 'Eastern Time', 'key' => 'EST', 'type' => 'north_america'];
         //$timezones[] = ['value' => '-04:00|US|14|AST', 'name' => 'Atlantic Time', 'key' => 'AST'];
         // $timezones[] = ['value' => '+10:00|US|15|CHST', 'name' => 'Chamorro Time', 'key' => 'CHST'];
         $timezones[] = ['value' => '-09:00|US|03|HST', 'name' => 'Hawaii-Aleutian Time', 'key' => 'HST'];
@@ -9835,7 +9965,8 @@ if (!function_exists('get_timezones')) {
         // Merge arrays
         $zones = $timezones;
         // Check and return
-        if ($type == 'all') return $zones; // return all zones
+        if ($type == 'all')
+            return $zones; // return all zones
         else if ($type == 'north_america') {
             $selected_zones = [];
             foreach ($zones as $k0 => $v0) {
@@ -9844,7 +9975,10 @@ if (!function_exists('get_timezones')) {
                 }
             }
             return $selected_zones;
-        } else foreach ($zones as $k0 => $v0) if ($type == $v0['key']) return $index == '' ? $v0 : ($index == 'name' ? $v0['name'] . ' (' . ($v0['key']) . ')' : $v0[$index]); // return specific zone
+        } else
+            foreach ($zones as $k0 => $v0)
+                if ($type == $v0['key'])
+                    return $index == '' ? $v0 : ($index == 'name' ? $v0['name'] . ' (' . ($v0['key']) . ')' : $v0[$index]); // return specific zone
     }
 }
 
@@ -9867,10 +10001,15 @@ if (!function_exists('timezone_dropdown')) {
         $timezone_rows = '';
         $timezone_rows .= '<select';
         // Set Attrs
-        if (sizeof($attrs)) foreach ($attrs as $k0 => $v0) $timezone_rows .= ' ' . $k0 . ' = "' . $v0 . '"';
+        if (sizeof($attrs))
+            foreach ($attrs as $k0 => $v0)
+                $timezone_rows .= ' ' . $k0 . ' = "' . $v0 . '"';
         $timezone_rows .= '>';
-        if ($selected == '') $timezone_rows .= '<option value="">Please Select</option>';
-        if (sizeof($timezones)) foreach ($timezones as $k0 => $v0) $timezone_rows .= '<option ' . ($selected == $v0['key'] ? 'selected="true"' : '') . ' value="' . ($v0['key']) . '">' . ($v0['name']) . ' (' . ($v0['key']) . ')</option>';
+        if ($selected == '')
+            $timezone_rows .= '<option value="">Please Select</option>';
+        if (sizeof($timezones))
+            foreach ($timezones as $k0 => $v0)
+                $timezone_rows .= '<option ' . ($selected == $v0['key'] ? 'selected="true"' : '') . ' value="' . ($v0['key']) . '">' . ($v0['name']) . ' (' . ($v0['key']) . ')</option>';
         $timezone_rows .= '</select>';
         return $timezone_rows;
     }
@@ -9895,21 +10034,29 @@ if (!function_exists('timezone_dropdown')) {
 if (!function_exists('parse_timezone')) {
     function parse_timezone($timezone, $find = 'all', $delimiter = '|')
     {
-        if (!is_array($timezone)) $timezone = explode($delimiter, $timezone);
+        if (!is_array($timezone))
+            $timezone = explode($delimiter, $timezone);
         //
-        if (!sizeof($timezone)) return false;
+        if (!sizeof($timezone))
+            return false;
         // Reset timezone
         $find = strtolower(trim($find));
         // Check index and return result
-        if ($find == 'all') return $timezone;
-        else if ($find == 'time') return $timezone[0];
-        else if ($find == 'continent') return $timezone[1];
-        else if ($find == 'abbr') return $timezone[3];
-        else if ($find == 'name') return getTimeZoneFromAbbr($timezone[3]);
+        if ($find == 'all')
+            return $timezone;
+        else if ($find == 'time')
+            return $timezone[0];
+        else if ($find == 'continent')
+            return $timezone[1];
+        else if ($find == 'abbr')
+            return $timezone[3];
+        else if ($find == 'name')
+            return getTimeZoneFromAbbr($timezone[3]);
         else if ($find == 'time_in_seconds') {
             $tmp = new DateTime('now', new DateTimeZone(getTimeZoneFromAbbr($timezone[3])));
             return $tmp->getOffset();
-        } else return $timezone[2];
+        } else
+            return $timezone[2];
         //
         return false;
     }
@@ -9932,20 +10079,26 @@ if (!function_exists('reset_timezone')) {
     function reset_timezone($data)
     {
         // Check for array set and size
-        if (!is_array($data) || !sizeof($data)) return false;
+        if (!is_array($data) || !sizeof($data))
+            return false;
         // Reset formats
-        if (!isset($data['from_format'])) $from_format = 'Y-m-d';
-        if (!isset($data['format'])) $format = 'Y-m-d\TH:i:s\ZO';
+        if (!isset($data['from_format']))
+            $from_format = 'Y-m-d';
+        if (!isset($data['format']))
+            $format = 'Y-m-d\TH:i:s\ZO';
         $to_format = 'Y-m-d H:i:s O P e I';
         $from_zone = STORE_DEFAULT_TIMEZONE_ABBR;
         // Convert array indexes to variables
         extract($data);
         // Check for date string
-        if (!isset($datetime)) return false;
+        if (!isset($datetime))
+            return false;
         // Check for new zone
-        if (!isset($new_zone)) return false;
+        if (!isset($new_zone))
+            return false;
         // For debugging
-        if (isset($debug) && $debug) _e($from_zone . ' - ' . $new_zone, true);
+        if (isset($debug) && $debug)
+            _e($from_zone . ' - ' . $new_zone, true);
         // Set return array
         $return_array = array();
         // _e($from_zone, true);
@@ -9965,8 +10118,10 @@ if (!function_exists('reset_timezone')) {
                 $return_array[$from_zone] = parse_datetime($fromzone->format($to_format));
             }
             //
-            if ($from_zone != 'UTC') $tozone = $utc->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($new_zone)));
-            else $tozone = $date_obj->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($new_zone)));
+            if ($from_zone != 'UTC')
+                $tozone = $utc->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($new_zone)));
+            else
+                $tozone = $date_obj->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($new_zone)));
             $return_array[$new_zone] = parse_datetime($tozone->format($to_format));
             $return_array['date_time_string'] = $tozone->format($format);
         } else {
@@ -10022,15 +10177,17 @@ if (!function_exists('reset_datetime')) {
     {
         // Defaults
         $from_format = 'Y-m-d H:i:s';
-        $format      = 'M d Y, D H:i:s';
-        $type        = 'user';
+        $format = 'M d Y, D H:i:s';
+        $type = 'user';
         $from_timezone = STORE_DEFAULT_TIMEZONE_ABBR;
-        $timezone      = false;
+        $timezone = false;
         $with_timezone = 0;
         // Check array size
-        if (!is_array($data) || !sizeof($data) || !isset($data['datetime']) || !isset($data['_this'])) return false;
+        if (!is_array($data) || !sizeof($data) || !isset($data['datetime']) || !isset($data['_this']))
+            return false;
         $data['datetime'] = trim($data['datetime']);
-        if ($data['datetime'] == NULL || $data['datetime'] == '' || $data['datetime'] == 'null') return null;
+        if ($data['datetime'] == NULL || $data['datetime'] == '' || $data['datetime'] == 'null')
+            return null;
         // Check if only date is sent
         // then reset formats to date
         if (!preg_match('/\s[0-9]{2}:[0-9]{2}:[0-9]{2}/', $data['datetime'])) {
@@ -10047,32 +10204,43 @@ if (!function_exists('reset_datetime')) {
         extract($data);
         // Reset type
         $type = strtolower(trim($type));
-        $with_timezone = (int)$with_timezone;
-        if ($with_timezone === 1) $format .= ', T \(P\)';
+        $with_timezone = (int) $with_timezone;
+        if ($with_timezone === 1)
+            $format .= ', T \(P\)';
         // Check for login session
         if ($_this->session->userdata('logged_in')) {
             // If the type is user
             if ($type == 'user') {
                 if (clean_string($_this->session->userdata('logged_in')['employer_detail'], 'timezone') == '') {
                     // Check for companys timezone
-                    if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '') $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
-                    else $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
-                } else $timezone = $_this->session->userdata('logged_in')['employer_detail']['timezone'];
+                    if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '')
+                        $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+                    else
+                        $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
+                } else
+                    $timezone = $_this->session->userdata('logged_in')['employer_detail']['timezone'];
             } else if ($type == 'company') { // For company
-                if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '') $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
-                else $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
-            } else $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+                if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '')
+                    $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+                else
+                    $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
+            } else
+                $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
         }
 
-        if (isset($revert)) $from_timezone = $timezone;
+        if (isset($revert))
+            $from_timezone = $timezone;
         // Set user given timezone
         $timezone = isset($new_zone) ? $new_zone : $timezone;
-        if (!$timezone) return $datetime;
+        if (!$timezone)
+            return $datetime;
 
         // $timezone = 'CHST';
         // Reset timezone
-        if (!preg_match('/^[A-Z]/', $timezone)) $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
-        if (!preg_match('/^[A-Z]/', $from_timezone)) $from_timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+        if (!preg_match('/^[A-Z]/', $timezone))
+            $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+        if (!preg_match('/^[A-Z]/', $from_timezone))
+            $from_timezone = STORE_DEFAULT_TIMEZONE_ABBR;
         // _e($timezone);
         //
         reset_format($from_format);
@@ -10089,7 +10257,8 @@ if (!function_exists('reset_datetime')) {
             'from_zone' => $from_timezone
         );
         //
-        if (isset($debug) && $debug) $a['debug'] = $debug;
+        if (isset($debug) && $debug)
+            $a['debug'] = $debug;
         //
         $n = reset_timezone($a);
         return isset($n['date_time_string']) ? $n['date_time_string'] : $datetime;
@@ -10139,16 +10308,20 @@ if (!function_exists('get_current_timezone')) {
     {
         //
         $timezone = false;
-        if ($_this === false) $_this = &get_instance();
+        if ($_this === false)
+            $_this = &get_instance();
         // Check if user time zone is not set
         if (
             $_this->session->userdata('logged_in') &&
             clean_string($_this->session->userdata('logged_in')['employer_detail'], 'timezone') == ''
         ) {
             // Check for companys timezone
-            if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '') $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
-            else $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
-        } else $timezone = $_this->session->userdata('logged_in')['employer_detail']['timezone'];
+            if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '')
+                $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+            else
+                $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
+        } else
+            $timezone = $_this->session->userdata('logged_in')['employer_detail']['timezone'];
 
         // Get the current selected timezone
         $zone = get_timezones($timezone);
@@ -10176,26 +10349,35 @@ if (!function_exists('get_current_timezone')) {
 if (!function_exists('get_current_datetime')) {
     function get_current_datetime($array)
     {
-        if (!isset($array['to_format'], $array['_this'])) return false;
-        if ($array['to_format'] == '') return false;
+        if (!isset($array['to_format'], $array['_this']))
+            return false;
+        if ($array['to_format'] == '')
+            return false;
         $type = 'user';
         extract($array);
         //
         $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
-        if ($_this === false) $_this = &get_instance();
+        if ($_this === false)
+            $_this = &get_instance();
         // Check if user time zone is not set
         if ($_this->session->userdata('logged_in')) {
             // If the type is user
             if ($type == 'user') {
                 if (clean_string($_this->session->userdata('logged_in')['employer_detail'], 'timezone') == '') {
                     // Check for companys timezone
-                    if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '') $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
-                    else $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
-                } else $timezone = $_this->session->userdata('logged_in')['employer_detail']['timezone'];
+                    if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '')
+                        $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+                    else
+                        $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
+                } else
+                    $timezone = $_this->session->userdata('logged_in')['employer_detail']['timezone'];
             } else if ($type == 'company') { // For company
-                if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '') $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
-                else $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
-            } else $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+                if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '')
+                    $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+                else
+                    $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
+            } else
+                $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
         }
 
         // Get the current selected timezone
@@ -10220,7 +10402,8 @@ if (!function_exists('reset_event_datetime')) {
         // Reset date/time
         $from_format = 'Y-m-d';
         if (isset($event['date'])) {
-            if (!preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $event['date'])) $from_format = 'm-d-Y';
+            if (!preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $event['date']))
+                $from_format = 'm-d-Y';
         }
         // Reset calendar start datetime
         if (isset($event['start'])) {
@@ -10393,13 +10576,16 @@ if (!function_exists('clean_string')) {
     {
         if (is_array($data)) {
             $cur_data = '';
-            if (!isset($data[$index])) return '';
+            if (!isset($data[$index]))
+                return '';
             $cur_data = trim($data[$index]);
-            if ($index == 'timezone') if (!preg_match('/^[A-Z]/', $cur_data)) return '';
+            if ($index == 'timezone') if (!preg_match('/^[A-Z]/', $cur_data))
+                return '';
             return clean_string($cur_data);
         }
         // For string
-        if ($data == '' || $data == NULL) return '';
+        if ($data == '' || $data == NULL)
+            return '';
         return $data;
     }
 }
@@ -10419,9 +10605,12 @@ if (!function_exists('clean_string')) {
 if (!function_exists('phonenumber_format')) {
     function phonenumber_format($phone_number, $strip_country_code = FALSE, $country_code = '+1')
     {
-        if (strlen($phone_number) === 0) return $phone_number;
-        if ($phone_number == $country_code) return '';
-        if ($phone_number == '') return '';
+        if (strlen($phone_number) === 0)
+            return $phone_number;
+        if ($phone_number == $country_code)
+            return '';
+        if ($phone_number == '')
+            return '';
         //
         if (substr($phone_number, 0, 1) == 1) {
             $phone_number = substr($phone_number, 1, strlen($phone_number));
@@ -10503,8 +10692,10 @@ if (!function_exists('company_sms_phonenumber')) {
         else {
             // Fetch the assigned phone number
             $details = get_company_sms_phonenumber($company_sid, $_this);
-            if (!sizeof($details)) $to['phone_sid'] = '';
-            else $to['phone_sid'] = $details['phone_sid'];
+            if (!sizeof($details))
+                $to['phone_sid'] = '';
+            else
+                $to['phone_sid'] = $details['phone_sid'];
         }
 
         company_phone_regex_module_check($company_sid, $to, $_this);
@@ -10526,24 +10717,25 @@ if (!function_exists('get_company_sms_phonenumber')) {
     {
         $result =
             $_this
-            ->db
-            ->select('
+                ->db
+                ->select('
             portal_company_sms_module.phone_sid,
             portal_company_sms_module.phone_number,
             portal_company_sms_module.message_service_sid
         ')
-            ->from('portal_company_sms_module')
-            ->join('users', 'users.sid = portal_company_sms_module.company_sid', 'inner')
-            ->where('portal_company_sms_module.company_sid', $company_sid)
-            ->where('users.sms_module_status != 0', null)
-            ->order_by('portal_company_sms_module.sid', 'DESC')
-            ->limit(1)
-            ->get();
+                ->from('portal_company_sms_module')
+                ->join('users', 'users.sid = portal_company_sms_module.company_sid', 'inner')
+                ->where('portal_company_sms_module.company_sid', $company_sid)
+                ->where('users.sms_module_status != 0', null)
+                ->order_by('portal_company_sms_module.sid', 'DESC')
+                ->limit(1)
+                ->get();
         //
         $result_arr = $result->row_array();
-        $result     = $result->free_result();
+        $result = $result->free_result();
 
-        if (!sizeof($result_arr)) return array();
+        if (!sizeof($result_arr))
+            return array();
         // if($result_arr['sms_module_status'] == 0) return array();
         return $result_arr;
     }
@@ -10566,19 +10758,21 @@ if (!function_exists('company_phone_regex_module_check')) {
     {
         $result =
             $_this
-            ->db
-            ->select('phone_pattern_module')
-            ->from('users')
-            ->where('sid', $company_sid)
-            ->order_by('sid', 'DESC')
-            ->limit(1)
-            ->get();
+                ->db
+                ->select('phone_pattern_module')
+                ->from('users')
+                ->where('sid', $company_sid)
+                ->order_by('sid', 'DESC')
+                ->limit(1)
+                ->get();
         //
         $result_arr = $result->row_array();
-        $result     = $result->free_result();
+        $result = $result->free_result();
 
-        if (!sizeof($result_arr)) $to['phone_pattern_enable'] = 0;
-        else $to['phone_pattern_enable'] = $result_arr['phone_pattern_module'];
+        if (!sizeof($result_arr))
+            $to['phone_pattern_enable'] = 0;
+        else
+            $to['phone_pattern_enable'] = $result_arr['phone_pattern_module'];
     }
 }
 
@@ -10628,7 +10822,8 @@ if (!function_exists('sendEmailToUpdatePhoneNumber')) {
     function sendEmailToUpdatePhoneNumber($dataArray, $_this)
     {
         // Check if array is set or not
-        if (!is_array($dataArray) || !sizeof($dataArray)) return false;
+        if (!is_array($dataArray) || !sizeof($dataArray))
+            return false;
         // Get template header and footer
         $hf = message_header_footer($dataArray['companyId'], ucwords($dataArray["companyName"]));
         //
@@ -10649,7 +10844,8 @@ if (!function_exists('sendEmailToUpdatePhoneNumber')) {
         $replaceArray['{{URI_PUBLIC}}'] = $uri_public_string_enc;
         $replaceArray['{{URI_PUBLIC_TEXT}}'] = 'Update Phone Number';
         //
-        foreach ($replaceArray as $k0 => $v0) $body = str_replace($k0, $v0, $body);
+        foreach ($replaceArray as $k0 => $v0)
+            $body = str_replace($k0, $v0, $body);
         //
         $body = $hf['header'] . $body . $hf['footer'];
         //
@@ -10720,17 +10916,22 @@ if (!function_exists('xml_create_job')) {
             $jobDesc = strip_tags($formpost['JobDescription'], '<br>') . '<br><br>Job Requirements:<br>' . strip_tags($formpost['JobRequirements'], '<br>');
         //
         if (isset($formpost['SalaryType']) && $formpost['SalaryType'] != NULL) {
-            if ($formpost['SalaryType'] == 'per_hour') $jobType = "Per Hour";
-            elseif ($formpost['SalaryType'] == 'per_week') $jobType = "Per Week";
-            elseif ($formpost['SalaryType'] == 'per_month') $jobType = "Per Month";
-            elseif ($formpost['SalaryType'] == 'per_year') $jobType = "Per Year";
+            if ($formpost['SalaryType'] == 'per_hour')
+                $jobType = "Per Hour";
+            elseif ($formpost['SalaryType'] == 'per_week')
+                $jobType = "Per Week";
+            elseif ($formpost['SalaryType'] == 'per_month')
+                $jobType = "Per Month";
+            elseif ($formpost['SalaryType'] == 'per_year')
+                $jobType = "Per Year";
         }
         //
         if ($formpost['JobCategory'] != null && $formpost['JobCategory'] != '')
             $jobCategory = $_this->job_listings_visibility_model->getJobCategoryNameById($formpost['JobCategory']);
 
         $title = $formpost['Title'];
-        if ($jobTitleLocation == 1) $title = $title . '  - ' . ucfirst($city) . ', ' . $stateName . ', ' . $countryCode;
+        if ($jobTitleLocation == 1)
+            $title = $title . '  - ' . ucfirst($city) . ', ' . $stateName . ', ' . $countryCode;
 
         $indeedURI = 'indeed-apply-joburl='
             . urlencode(STORE_PROTOCOL_SSL .
@@ -10745,7 +10946,7 @@ if (!function_exists('xml_create_job')) {
         $date = date_with_time($formpost['publish_date']) . ' PST';
         $url = STORE_PROTOCOL_SSL . $subDomain . "/job_details/" . $uid;
         //
-        $XML  = "";
+        $XML = "";
         $XML .= "<job>";
         $XML .= "   <title><![CDATA[$title]]></title>";
         $XML .= "   <date><![CDATA[$date]]></date>";
@@ -10788,7 +10989,8 @@ if (!function_exists('onboardingHelpWidget')) {
         $_this->load->model('Onboarding_block_model');
         $record = $_this->Onboarding_block_model->check_companySid($companySid);
         // $record = $_this->Onboarding_block_model->check_companySid($_this->session->userdata('logged_in')['company_detail']['sid']);
-        if (!sizeof($record) || $record['is_active'] == 0) return '';
+        if (!sizeof($record) || $record['is_active'] == 0)
+            return '';
         $rows = '';
         // $rows .= '<div class="col-lg-3 col-sm-12 col-xs-12 col-sm-pull-9">';
 
@@ -10963,7 +11165,8 @@ if (!function_exists('loadIndeedPackage')) {
     function loadIndeedPackage($indeedBudget, $session)
     {
         //
-        if (sizeof($indeedBudget) && $indeedBudget['expire_date'] < date('Y-m-d')) $indeedBudget = array();
+        if (sizeof($indeedBudget) && $indeedBudget['expire_date'] < date('Y-m-d'))
+            $indeedBudget = array();
 
         $step1 = '';
         $step1 .= '<p>Sponsor this job on Indeed for prominent placement on the world’s #1 job site1.</p>';
@@ -10971,23 +11174,23 @@ if (!function_exists('loadIndeedPackage')) {
         $step1 .= '<p>Select a fixed budget per job for 30 days to get started:</p>';
         $step1 .= '<div class="checkbox-inline">';
         $step1 .= '    <label>';
-        $step1 .= '        <input type="radio" name="indeedPackage" ' . (sizeof($indeedBudget) && (int)$indeedBudget['budget_days'] != 0 && (int)$indeedBudget['budget'] == 450 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="15" value="450" />';
+        $step1 .= '        <input type="radio" name="indeedPackage" ' . (sizeof($indeedBudget) && (int) $indeedBudget['budget_days'] != 0 && (int) $indeedBudget['budget'] == 450 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="15" value="450" />';
         $step1 .= '        <span>$450 (~$15 per day)</span>';
         $step1 .= '    </label>';
         $step1 .= '</div>';
         $step1 .= '<div class="checkbox-inline">';
         $step1 .= '    <label>';
-        $step1 .= '        <input type="radio" name="indeedPackage" ' . (sizeof($indeedBudget) && (int)$indeedBudget['budget_days'] != 0 && (int)$indeedBudget['budget'] == 900 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="30" value="900" />';
+        $step1 .= '        <input type="radio" name="indeedPackage" ' . (sizeof($indeedBudget) && (int) $indeedBudget['budget_days'] != 0 && (int) $indeedBudget['budget'] == 900 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="30" value="900" />';
         $step1 .= '        <span>$900 (~$30 per day)</span>';
         $step1 .= '    </label>';
         $step1 .= '</div>';
         $step1 .= '<div class="checkbox-inline">';
         $step1 .= '    <label>';
-        $step1 .= '        <input type="radio" name="indeedPackage" ' . (sizeof($indeedBudget) && (int)$indeedBudget['budget_days'] != 0 && (int)$indeedBudget['budget'] == 1500 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="50" value="1500" />';
+        $step1 .= '        <input type="radio" name="indeedPackage" ' . (sizeof($indeedBudget) && (int) $indeedBudget['budget_days'] != 0 && (int) $indeedBudget['budget'] == 1500 ? 'checked="checked"' : '') . ' class="js-indeed-package" data-per-day="50" value="1500" />';
         $step1 .= '        <span>$1,500 (~$50 per day)</span>';
         $step1 .= '    </label>';
         $step1 .= '</div>';
-        $step1 .= '<p><br />Or Enter Custom Budget: <input type="number" name="indeedPackageCustom" class="form-control js-custom-indeed-package" style="max-width: 200px; display: inline-block;" placeholder="e.g. 300 (min. 200)" value="' . (sizeof($indeedBudget) && (int)$indeedBudget['budget_days'] == 0 ? $indeedBudget['budget'] : '') . '"/></p>';
+        $step1 .= '<p><br />Or Enter Custom Budget: <input type="number" name="indeedPackageCustom" class="form-control js-custom-indeed-package" style="max-width: 200px; display: inline-block;" placeholder="e.g. 300 (min. 200)" value="' . (sizeof($indeedBudget) && (int) $indeedBudget['budget_days'] == 0 ? $indeedBudget['budget'] : '') . '"/></p>';
         $step1 .= '<p>You will only be billed for the unique clicks on your job, and if you remove the job from your ATS, the sponsored campaign will stop.</p>';
         $step1 .= '<p><a href="javascript:void(0)" class="btn btn-success btn-lg js-indeed-package-btn" id="js-indeed-next">Sponsor Job on Indeed now</a></p>';
         $step1 .= '<p>Note: Sponsored Job campaigns will not go live without an active Indeed account. If you do not have an Indeed account one will be created for you using the email address connected to your ATS. You’ll receive an account activation email from Indeed to finish a one time setup of your Indeed account at the address connected to your ATS account within a few hours. Please review that email to ensure Indeed has the information they need to start your first campaign.</p>';
@@ -11024,8 +11227,10 @@ if (!function_exists('check_for_feature')) {
     function checkForNewModuleAccess($companySid, $feature, $stop = TRUE)
     {
         //
-        if ($stop && !in_array($companySid, explode(',', DISALLOWEDCOMPANIES))) return false;
-        if ($stop && !in_array(strtolower(trim($feature)), explode(',', DISALLOWEDMODULES))) return false;
+        if ($stop && !in_array($companySid, explode(',', DISALLOWEDCOMPANIES)))
+            return false;
+        if ($stop && !in_array(strtolower(trim($feature)), explode(',', DISALLOWEDMODULES)))
+            return false;
         //
         return true;
     }
@@ -11055,7 +11260,8 @@ if (!function_exists('downloadFileFromDropbox')) {
         // Set path
         $path = APPPATH . '../assets/tmp/' . date('YmdHis') . '/';
         // Create path if not exists
-        if (!file_exists($path)) mkdir($path, 0777, true);
+        if (!file_exists($path))
+            mkdir($path, 0777, true);
         // Get file extension
         $dataArray = explode('.', $url);
         $fileEXT = $dataArray[1] = str_replace('?dl=1', '', $dataArray[1]);
@@ -11081,13 +11287,17 @@ if (!function_exists('downloadFileFromDropbox')) {
 if (!function_exists('resetResumeName')) {
     function resetResumeName(&$in)
     {
-        if (is_array($in)) $ext = $in[1];
-        else $ext = $in;
+        if (is_array($in))
+            $ext = $in[1];
+        else
+            $ext = $in;
         $match = array();
         preg_match('/(pdf|docx|doc|jpg|png|gif|jpe)/', strtolower($ext), $match);
         if (!sizeof($match)) {
-            if (is_array($in)) $in[1] = 'pdf';
-            else $in = 'pdf';
+            if (is_array($in))
+                $in[1] = 'pdf';
+            else
+                $in = 'pdf';
         }
     }
 }
@@ -11152,13 +11362,13 @@ if (!function_exists('get_array_from_minutes')) {
         $returnArray['originalMinutes'] = $minutes;
         $returnArray['D:H:M'] = array();
         //
-        $returnArray['D:H:M']['days'] = (int)(($minutes) / ($defaultTimeFrame * 60));
-        $returnArray['D:H:M']['hours'] = (int)((($minutes) % ($defaultTimeFrame * 60)) / 60);
-        $returnArray['D:H:M']['minutes'] = (int)((($minutes) % ($defaultTimeFrame * 60)) % 60);
+        $returnArray['D:H:M']['days'] = (int) (($minutes) / ($defaultTimeFrame * 60));
+        $returnArray['D:H:M']['hours'] = (int) ((($minutes) % ($defaultTimeFrame * 60)) / 60);
+        $returnArray['D:H:M']['minutes'] = (int) ((($minutes) % ($defaultTimeFrame * 60)) % 60);
 
         $returnArray['H:M'] = array();
-        $returnArray['H:M']['hours'] = (int)($minutes / 60);
-        $returnArray['H:M']['minutes'] = (int)($minutes % 60);
+        $returnArray['H:M']['hours'] = (int) ($minutes / 60);
+        $returnArray['H:M']['minutes'] = (int) ($minutes % 60);
 
         $returnArray['D'] = array();
         $returnArray['D']['days'] = number_Format($minutes / ($defaultTimeFrame * 60), 2);
@@ -11172,9 +11382,12 @@ if (!function_exists('get_array_from_minutes')) {
         $returnArray['active'] = $returnArray[$slug];
         $returnArray['text'] = '';
 
-        if (isset($returnArray[$slug]['days'])) $returnArray['text'] .= $returnArray[$slug]['days'] . ' day' . ($returnArray[$slug]['days'] > 1 || $returnArray[$slug]['days'] == 0 ? 's' : '') . ' & ';
-        if (isset($returnArray[$slug]['hours'])) $returnArray['text'] .= $returnArray[$slug]['hours'] . ' hour' . ($returnArray[$slug]['hours'] > 1 || $returnArray[$slug]['hours'] == 0 ? 's' : '') . ' & ';
-        if (isset($returnArray[$slug]['minutes'])) $returnArray['text'] .= $returnArray[$slug]['minutes'] . ' minute' . ($returnArray[$slug]['minutes'] > 1 || $returnArray[$slug]['minutes'] == 0 ? 's' : '') . ' & ';
+        if (isset($returnArray[$slug]['days']))
+            $returnArray['text'] .= $returnArray[$slug]['days'] . ' day' . ($returnArray[$slug]['days'] > 1 || $returnArray[$slug]['days'] == 0 ? 's' : '') . ' & ';
+        if (isset($returnArray[$slug]['hours']))
+            $returnArray['text'] .= $returnArray[$slug]['hours'] . ' hour' . ($returnArray[$slug]['hours'] > 1 || $returnArray[$slug]['hours'] == 0 ? 's' : '') . ' & ';
+        if (isset($returnArray[$slug]['minutes']))
+            $returnArray['text'] .= $returnArray[$slug]['minutes'] . ' minute' . ($returnArray[$slug]['minutes'] > 1 || $returnArray[$slug]['minutes'] == 0 ? 's' : '') . ' & ';
         $returnArray['text'] = rtrim($returnArray['text'], '& ');
 
         return $returnArray;
@@ -11185,7 +11398,7 @@ if (!function_exists('getTimeOffEmailTemplate')) {
     function getTimeOffEmailTemplate($in, $companyId, $companyName, $change = FALSE)
     {
         $CHF = message_header_footer($companyId, $companyName);
-        $body  = '<p>Dear <b>{{TO_FULLNAME}}</b>,</p>';
+        $body = '<p>Dear <b>{{TO_FULLNAME}}</b>,</p>';
         if ($change) {
             $body .= '<p>{{EXP}} changed the Time Off details with the below details.</p>';
         } else {
@@ -11207,13 +11420,13 @@ if (!function_exists('getTimeOffEmailTemplate')) {
         $body .= '{{CANCEL_BUTTON}}';
         $body .= '{{MAIN_BUTTONS}}';
         // Check if cancel
-        $cancelURIToken =  $in['type'] == 'requester' ? $in['cancelBtnToken'] : '';
+        $cancelURIToken = $in['type'] == 'requester' ? $in['cancelBtnToken'] : '';
         $cancelURI = base_url('timeoff/action') . '/' . $cancelURIToken;
         $cancelBN = '<p>If you want to cancel this Time Off click on the below button.</p><br />';
         $cancelBN .= '<a href="' . ($cancelURI) . '" style="background: #cc0000; color: #ffffff; padding: 10px; border-radius: 3px;">Cancel Time Off</a>';
         // Approve, Reject
         $mainBtn = '<p>Please, use the below buttons to either approve ore reject the Time Off.</p><br />';
-        $approveURIToken =  $in['type'] != 'requester' ? $in['approveBtnToken'] : '';
+        $approveURIToken = $in['type'] != 'requester' ? $in['approveBtnToken'] : '';
         $approveURI = base_url('timeoff/action') . '/' . $approveURIToken;
         $approveBtn = '<a href="' . ($approveURI) . '" style="background: #81b431; color: #ffffff; padding: 10px; margin: 10px; border-radius: 3px;">Approve Time Off</a>';
         //
@@ -11264,7 +11477,8 @@ if (!function_exists('paramsToArray')) {
     function paramsToArray($p)
     {
         $p = explode('&', $p);
-        if (!sizeof($p)) return $p;
+        if (!sizeof($p))
+            return $p;
         //
         $r = array();
         foreach ($p as $k => $v) {
@@ -11300,27 +11514,33 @@ if (!function_exists('checkIfAppIsEnabled')) {
         $ses = $ci->session->userdata('logged_in');
         // 
         // Check if use is logged in
-        if (!$ses || !sizeof($ses) || !isset($ses['company_detail'])) return true;
+        if (!$ses || !sizeof($ses) || !isset($ses['company_detail']))
+            return true;
         // Get the called controller name
         $ctl = trim(strtolower(preg_replace('/[^a-zA-Z]/', '', $ctl ? $ctl : $ci->router->fetch_class())));
         // If not a controller then pass
-        if ($ctl == '') return;
+        if ($ctl == '')
+            return;
         // Check session for value
         if (!$forceGet && $ci->session->userdata('moduleSES') && isset($ci->session->userdata('moduleSES')['hybrid_document'])) {
             //
             $b = $ci->session->get('moduleSES')['hybrid_document'];
             //
-            if ($b['stage'] != 'production') return true;
+            if ($b['stage'] != 'production')
+                return true;
             //
-            if ($b['isAllowed']) return true;
+            if ($b['isAllowed'])
+                return true;
             //
             if ($doRedirect == TRUE) {
                 $ci->session->set_flashdata('message', 'You don\'t have access to this module.');
                 redirect('my_settings', 'refresh');
-            } else return false;
+            } else
+                return false;
         } else {
             //
-            if (!$ci->session->userdata('moduleSES')) $ci->session->set_userdata('moduleSES', array());
+            if (!$ci->session->userdata('moduleSES'))
+                $ci->session->set_userdata('moduleSES', array());
             // Let's check if controller exists in module
             $a = $ci
                 ->db
@@ -11332,7 +11552,8 @@ if (!function_exists('checkIfAppIsEnabled')) {
             $b = $a->row_array();
             $a->free_result();
             // If module doesn't exists then no need to continue
-            if (!sizeof($b)) return true;
+            if (!sizeof($b))
+                return true;
             //
             $b['isAllowed'] = 0;
             //
@@ -11345,21 +11566,24 @@ if (!function_exists('checkIfAppIsEnabled')) {
                 if ($doRedirect == TRUE) {
                     $ci->session->set_flashdata('message', 'You don\'t have access to this module.');
                     redirect('my_settings', 'refresh');
-                } else return false;
+                } else
+                    return false;
             }
             // Make sure module is only available on Development
             if ($b['stage'] == 'development' && !in_array($ses['company_detail']['sid'], $devIds)) {
                 if ($doRedirect == TRUE) {
                     $ci->session->set_flashdata('message', 'You don\'t have access to this module.');
                     redirect('my_settings', 'refresh');
-                } else return false;
+                } else
+                    return false;
             }
             // Make sure module is only available on Staging
             else if ($b['stage'] == 'staging' && !in_array($ses['company_detail']['sid'], $stagingIds)) {
                 if ($doRedirect == TRUE) {
                     $ci->session->set_flashdata('message', 'You don\'t have access to this module.');
                     redirect('my_settings', 'refresh');
-                } else return false;
+                } else
+                    return false;
             }
             // Make sure module is only available on Production
             else if ($b['stage'] == 'production' && !in_array($ses['company_detail']['sid'], $stagingIds)) {
@@ -11378,7 +11602,8 @@ if (!function_exists('checkIfAppIsEnabled')) {
                     if ($doRedirect == TRUE) {
                         $ci->session->set_flashdata('message', 'You don\'t have access to this module.');
                         redirect('my_settings', 'refresh');
-                    } else return false;
+                    } else
+                        return false;
                 }
                 //
                 $s[$ctl]['isAllowed'] = 1;
@@ -11403,9 +11628,12 @@ if (!function_exists('remakeAccessLevel')) {
         if (isset($obj['is_executive_admin']) && $obj['is_executive_admin'] != 0) {
             $obj['access_level'] = 'Executive ' . $obj['access_level'];
         }
-        if ($obj['access_level_plus'] == 1 && $obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' Plus / Payroll';
-        if ($obj['access_level_plus'] == 1) return $obj['access_level'] . ' Plus';
-        if ($obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' Payroll';
+        if ($obj['access_level_plus'] == 1 && $obj['pay_plan_flag'] == 1)
+            return $obj['access_level'] . ' Plus / Payroll';
+        if ($obj['access_level_plus'] == 1)
+            return $obj['access_level'] . ' Plus';
+        if ($obj['pay_plan_flag'] == 1)
+            return $obj['access_level'] . ' Payroll';
         return $obj['access_level'];
     }
 }
@@ -11442,7 +11670,8 @@ if (!function_exists('remakeEmployeeName')) {
             return $r;
         }
         //
-        if (isset($o['job_title']) && $o['job_title'] != '' && $o['job_title'] != null) $r .= ' (' . ($o['job_title']) . ')';
+        if (isset($o['job_title']) && $o['job_title'] != '' && $o['job_title'] != null)
+            $r .= ' (' . ($o['job_title']) . ')';
         //
         $r .= ' [' . remakeAccessLevel($o) . ']';
         //
@@ -11504,7 +11733,8 @@ if (!function_exists('getTimeOffCompaniesForyearly')) {
         //
         $d = defined('TIMEOFFYEARLYCOMPANY') ? explode(',', TIMEOFFYEARLYCOMPANY) : [];
         //
-        if ($id == null) return $d;
+        if ($id == null)
+            return $d;
         //
         return in_array($id, $d);
     }
@@ -11515,13 +11745,15 @@ if (!function_exists('putFileOnAWSBase64')) {
         $fileName
     ) {
         //
-        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($fileName, false);
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')
+            return getS3DummyFileName($fileName, false);
         //
         $CI = &get_instance();
         // Set local path
         $path = APPPATH . '../assets/tmp/';
         //
-        if (!is_dir($path)) mkdir($path, 0777, true);
+        if (!is_dir($path))
+            mkdir($path, 0777, true);
         $path .= $fileName;
         //
         downloadFileFromAWS($path, AWS_S3_BUCKET_URL . $fileName);
@@ -11578,7 +11810,8 @@ if (!function_exists('getSSV')) {
         // $d['access_level_plus'] = 0;
         // $d['pay_plan_flag'] = 0;
         //
-        if ($d['access_level_plus'] == 1 || $d['pay_plan_flag'] == 1) return false;
+        if ($d['access_level_plus'] == 1 || $d['pay_plan_flag'] == 1)
+            return false;
         return true;
     }
 }
@@ -11591,7 +11824,7 @@ if (!function_exists('ssvReplace')) {
         if ($isDob) {
             return substr($str, 0, -4) . XSYM . XSYM . XSYM . XSYM;
         }
-        return  preg_replace('/[a-zA-Z0-9]/', XSYM, $str);
+        return preg_replace('/[a-zA-Z0-9]/', XSYM, $str);
     }
 }
 
@@ -11610,7 +11843,8 @@ if (!function_exists('isDocumentCompleted')) {
             // Column to check
             $is_magic_tag_exist = preg_match('/{{(.*?)}}/', $document['document_description']) ? true : false;
             //
-            if (!$is_magic_tag_exist) $is_magic_tag_exist = preg_match('/<select(.*?)>/', $document['document_description']);
+            if (!$is_magic_tag_exist)
+                $is_magic_tag_exist = preg_match('/<select(.*?)>/', $document['document_description']);
             //
             $is_document_completed = 0;
             //
@@ -11731,7 +11965,8 @@ if (!function_exists('getFileName')) {
         $ue = '.' . $t[count($t) - 1];
         $ue = $a == '' ? $ue : $a . $ue;
         //
-        if (strpos($o, '.') === false) return $o . $ue;
+        if (strpos($o, '.') === false)
+            return $o . $ue;
         return $o;
     }
 }
@@ -11741,7 +11976,8 @@ if (!function_exists('getFileName')) {
 if (!function_exists('getSendDocumentEmailButton')) {
     function getSendDocumentEmailButton($assignedDocument, $employee, $userType)
     {
-        if ($userType == 'employee') return '';
+        if ($userType == 'employee')
+            return '';
         //
         $content = 'Send <strong>' . ($assignedDocument['document_title']) . '</strong> to <strong>' . ($employee['first_name'] . ' ' . $employee['last_name']) . '</strong> by email';
         $content = 'Send document by email to complete without going through OnBoarding process.';
@@ -11799,9 +12035,11 @@ if (!function_exists('getFilePathForIframe')) {
         //
         $dn = isset($document['document_s3_name']) ? $document['document_s3_name'] : $document;
         //
-        if (empty($dn)) return '';
+        if (empty($dn))
+            return '';
         //
-        if (!$withIframe) return AWS_S3_BUCKET_URL . $dn;
+        if (!$withIframe)
+            return AWS_S3_BUCKET_URL . $dn;
         //
         $iframe = '<iframe src="{{iframe_url}}" class="js-document-loader-iframe frameborder="0" width="100%" height="600" ></iframe>';
         //
@@ -11809,9 +12047,12 @@ if (!function_exists('getFilePathForIframe')) {
         //
         $ext = $t[count($t) - 1];
         //
-        if (in_array($ext, ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'])) $nn = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $dn);
-        else if (in_array($ext, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) return '<img class="img-responsive" src="' . (AWS_S3_BUCKET_URL . $dn) . '" ' . (implode(',', $props)) . '/>';
-        else $nn = 'https://docs.google.com/gview?url=' . (AWS_S3_BUCKET_URL . $dn) . '&embedded=true';
+        if (in_array($ext, ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx']))
+            $nn = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $dn);
+        else if (in_array($ext, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg']))
+            return '<img class="img-responsive" src="' . (AWS_S3_BUCKET_URL . $dn) . '" ' . (implode(',', $props)) . '/>';
+        else
+            $nn = 'https://docs.google.com/gview?url=' . (AWS_S3_BUCKET_URL . $dn) . '&embedded=true';
         //
         replace(['{{iframe_url}}' => $nn], $iframe);
         return $iframe;
@@ -11823,7 +12064,8 @@ if (!function_exists('getFilePathForIframe')) {
 if (!function_exists('getInstructions')) {
     function getInstructions($document)
     {
-        if (strip_tags($document['document_description']) == '') return '';
+        if (strip_tags($document['document_description']) == '')
+            return '';
         //
         return ' 
         <div class="panel panel-primary" style="margin-top: 10px;">
@@ -11845,13 +12087,17 @@ if (!function_exists('getReviewType')) {
             '4' => 'custom'
         ];
         //
-        if ($type == 'text') return $a[$code];
+        if ($type == 'text')
+            return $a[$code];
         //
         $code = preg_replace('/[^a-zA-Z]/', '_', strtolower($code));
         //
-        if ($code === 'specific_people') $code = 'specific_employees';
+        if ($code === 'specific_people')
+            $code = 'specific_employees';
         //
-        foreach ($a as $k => $v) if ($v == $code) return $k;
+        foreach ($a as $k => $v)
+            if ($v == $code)
+                return $k;
         return 1;
     }
 }
@@ -11910,7 +12156,8 @@ if (!function_exists('cleanDocumentsByPermission')) {
         $dt = []
     ) {
         //
-        if (!count($data)) return;
+        if (!count($data))
+            return;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
@@ -11919,23 +12166,26 @@ if (!function_exists('cleanDocumentsByPermission')) {
             if (isset($data['categories_no_action_documents'])) {
                 foreach ($data['categories_no_action_documents'] as $k0 => $v1) {
                     //
-                    if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
+                    if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents']))
+                        continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        if (!hasPermissionToDocument(
-                            $document['allowed_employees'],
-                            $document['allowed_departments'],
-                            $document['allowed_teams'],
-                            $document['is_available_for_na'],
-                            $document['is_confidential'],
-                            $document['confidential_employees'],
-                            $employerDetails['access_level_plus'],
-                            $employerDetails['pay_plan_flag'],
-                            $role,
-                            $dt['Departments'],
-                            $dt['Teams'],
-                            $employerDetails['sid']
-                        )) {
+                        if (
+                            !hasPermissionToDocument(
+                                $document['allowed_employees'],
+                                $document['allowed_departments'],
+                                $document['allowed_teams'],
+                                $document['is_available_for_na'],
+                                $document['is_confidential'],
+                                $document['confidential_employees'],
+                                $employerDetails['access_level_plus'],
+                                $employerDetails['pay_plan_flag'],
+                                $role,
+                                $dt['Departments'],
+                                $dt['Teams'],
+                                $employerDetails['sid']
+                            )
+                        ) {
                             //
                             unset($data['categories_no_action_documents'][$k0]['documents'][$k2]);
                         }
@@ -11949,23 +12199,26 @@ if (!function_exists('cleanDocumentsByPermission')) {
             else if (isset($data['categories_documents_completed'])) {
                 foreach ($data['categories_documents_completed'] as $k0 => $v1) {
                     //
-                    if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
+                    if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents']))
+                        continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        if (!hasPermissionToDocument(
-                            $document['allowed_employees'],
-                            $document['allowed_departments'],
-                            $document['allowed_teams'],
-                            $document['is_available_for_na'],
-                            $document['is_confidential'],
-                            $document['confidential_employees'],
-                            $employerDetails['access_level_plus'],
-                            $employerDetails['pay_plan_flag'],
-                            $role,
-                            $dt['Departments'],
-                            $dt['Teams'],
-                            $employerDetails['sid']
-                        )) {
+                        if (
+                            !hasPermissionToDocument(
+                                $document['allowed_employees'],
+                                $document['allowed_departments'],
+                                $document['allowed_teams'],
+                                $document['is_available_for_na'],
+                                $document['is_confidential'],
+                                $document['confidential_employees'],
+                                $employerDetails['access_level_plus'],
+                                $employerDetails['pay_plan_flag'],
+                                $role,
+                                $dt['Departments'],
+                                $dt['Teams'],
+                                $employerDetails['sid']
+                            )
+                        ) {
                             //
                             unset($v1['documents'][$k2]);
                         }
@@ -11979,23 +12232,26 @@ if (!function_exists('cleanDocumentsByPermission')) {
             else if (isset($data['no_action_document_categories'])) {
                 foreach ($data['no_action_document_categories'] as $k0 => $v1) {
                     //
-                    if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
+                    if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents']))
+                        continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        if (!hasPermissionToDocument(
-                            $document['allowed_employees'],
-                            $document['allowed_departments'],
-                            $document['allowed_teams'],
-                            $document['is_available_for_na'],
-                            $document['is_confidential'],
-                            $document['confidential_employees'],
-                            $employerDetails['access_level_plus'],
-                            $employerDetails['pay_plan_flag'],
-                            $role,
-                            $dt['Departments'],
-                            $dt['Teams'],
-                            $employerDetails['sid']
-                        )) {
+                        if (
+                            !hasPermissionToDocument(
+                                $document['allowed_employees'],
+                                $document['allowed_departments'],
+                                $document['allowed_teams'],
+                                $document['is_available_for_na'],
+                                $document['is_confidential'],
+                                $document['confidential_employees'],
+                                $employerDetails['access_level_plus'],
+                                $employerDetails['pay_plan_flag'],
+                                $role,
+                                $dt['Departments'],
+                                $dt['Teams'],
+                                $employerDetails['sid']
+                            )
+                        ) {
                             //
                             unset($v1['documents'][$k2]);
                         }
@@ -12010,20 +12266,22 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data['completed_documents'] as $k0 => $documents) {
                     //
                     foreach ($documents as $k2 => $document) {
-                        if (!hasPermissionToDocument(
-                            $document['allowed_employees'],
-                            $document['allowed_departments'],
-                            $document['allowed_teams'],
-                            $document['is_available_for_na'],
-                            $document['is_confidential'],
-                            $document['confidential_employees'],
-                            $employerDetails['access_level_plus'],
-                            $employerDetails['pay_plan_flag'],
-                            $role,
-                            $dt['Departments'],
-                            $dt['Teams'],
-                            $employerDetails['sid']
-                        )) {
+                        if (
+                            !hasPermissionToDocument(
+                                $document['allowed_employees'],
+                                $document['allowed_departments'],
+                                $document['allowed_teams'],
+                                $document['is_available_for_na'],
+                                $document['is_confidential'],
+                                $document['confidential_employees'],
+                                $employerDetails['access_level_plus'],
+                                $employerDetails['pay_plan_flag'],
+                                $role,
+                                $dt['Departments'],
+                                $dt['Teams'],
+                                $employerDetails['sid']
+                            )
+                        ) {
                             unset($documents[$k2]);
                         }
                     }
@@ -12037,20 +12295,22 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data['no_action_documents'] as $k0 => $documents) {
                     //
                     foreach ($documents as $k2 => $document) {
-                        if (!hasPermissionToDocument(
-                            $document['allowed_employees'],
-                            $document['allowed_departments'],
-                            $document['allowed_teams'],
-                            $document['is_available_for_na'],
-                            $document['is_confidential'],
-                            $document['confidential_employees'],
-                            $employerDetails['access_level_plus'],
-                            $employerDetails['pay_plan_flag'],
-                            $role,
-                            $dt['Departments'],
-                            $dt['Teams'],
-                            $employerDetails['sid']
-                        )) {
+                        if (
+                            !hasPermissionToDocument(
+                                $document['allowed_employees'],
+                                $document['allowed_departments'],
+                                $document['allowed_teams'],
+                                $document['is_available_for_na'],
+                                $document['is_confidential'],
+                                $document['confidential_employees'],
+                                $employerDetails['access_level_plus'],
+                                $employerDetails['pay_plan_flag'],
+                                $role,
+                                $dt['Departments'],
+                                $dt['Teams'],
+                                $employerDetails['sid']
+                            )
+                        ) {
                             unset($documents[$k2]);
                         }
                     }
@@ -12064,20 +12324,22 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data as $k0 => $documents) {
                     //
                     foreach ($documents['documents'] as $k2 => $document) {
-                        if (!hasPermissionToDocument(
-                            $document['allowed_employees'],
-                            $document['allowed_departments'],
-                            $document['allowed_teams'],
-                            $document['is_available_for_na'],
-                            $document['is_confidential'],
-                            $document['confidential_employees'],
-                            $employerDetails['access_level_plus'],
-                            $employerDetails['pay_plan_flag'],
-                            $role,
-                            $dt['Departments'],
-                            $dt['Teams'],
-                            $employerDetails['sid']
-                        )) {
+                        if (
+                            !hasPermissionToDocument(
+                                $document['allowed_employees'],
+                                $document['allowed_departments'],
+                                $document['allowed_teams'],
+                                $document['is_available_for_na'],
+                                $document['is_confidential'],
+                                $document['confidential_employees'],
+                                $employerDetails['access_level_plus'],
+                                $employerDetails['pay_plan_flag'],
+                                $role,
+                                $dt['Departments'],
+                                $dt['Teams'],
+                                $employerDetails['sid']
+                            )
+                        ) {
                             $documents['documents_count']--;
                             unset($documents['documents'][$k2]);
                         }
@@ -12092,23 +12354,26 @@ if (!function_exists('cleanDocumentsByPermission')) {
             // _e($data,true,true);
             foreach ($data as $k0 => $documents) {
                 //
-                if (!is_array($documents) || !isset($documents[0]) || !isset($documents[0]['document_title'])) continue;
+                if (!is_array($documents) || !isset($documents[0]) || !isset($documents[0]['document_title']))
+                    continue;
                 //
                 foreach ($documents as $k1 => $document) {
-                    if (!hasPermissionToDocument(
-                        $document['allowed_employees'],
-                        $document['allowed_departments'],
-                        $document['allowed_teams'],
-                        $document['is_available_for_na'],
-                        $document['is_confidential'],
-                        $document['confidential_employees'],
-                        $employerDetails['access_level_plus'],
-                        $employerDetails['pay_plan_flag'],
-                        $role,
-                        $dt['Departments'],
-                        $dt['Teams'],
-                        $employerDetails['sid']
-                    )) {
+                    if (
+                        !hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )
+                    ) {
                         unset($documents[$k1]);
                     }
                 }
@@ -12127,25 +12392,28 @@ if (!function_exists('cleanAssignedDocumentsByPermission')) {
         $dt = []
     ) {
         //
-        if (!count($documents)) return $documents;
+        if (!count($documents))
+            return $documents;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
         foreach ($documents as $k0 => $document) {
-            if (!hasPermissionToDocument(
-                $document['allowed_employees'],
-                $document['allowed_departments'],
-                $document['allowed_teams'],
-                $document['is_available_for_na'],
-                $document['is_confidential'],
-                $document['confidential_employees'],
-                $employerDetails['access_level_plus'],
-                $employerDetails['pay_plan_flag'],
-                $role,
-                $dt['Departments'],
-                $dt['Teams'],
-                $employerDetails['sid']
-            )) {
+            if (
+                !hasPermissionToDocument(
+                    $document['allowed_employees'],
+                    $document['allowed_departments'],
+                    $document['allowed_teams'],
+                    $document['is_available_for_na'],
+                    $document['is_confidential'],
+                    $document['confidential_employees'],
+                    $employerDetails['access_level_plus'],
+                    $employerDetails['pay_plan_flag'],
+                    $role,
+                    $dt['Departments'],
+                    $dt['Teams'],
+                    $employerDetails['sid']
+                )
+            ) {
                 //
                 unset($documents[$k0]);
             }
@@ -12162,7 +12430,8 @@ if (!function_exists('hasAnswer')) {
     function hasAnswer($question, $type, $index = 0, &$a)
     {
         //
-        if (!isset($question['answer']) || !count($question['answer'])) return '';
+        if (!isset($question['answer']) || !count($question['answer']))
+            return '';
         //
         if ($type == 'rating' && $index == $question['answer']['rating_answer']) {
             $a[$question['sid']]['rating'] = $question['answer']['rating_answer'];
@@ -12175,7 +12444,7 @@ if (!function_exists('hasAnswer')) {
             $a[$question['sid']]['text'] = $question['answer']['text_answer'];
             $a[$question['sid']]['edit'] = 1;
             $a[$question['sid']]['sid'] = $question['answer']['sid'];
-            return  $question['answer']['text_answer'] == '-1' ? '' : $question['answer']['text_answer'];
+            return $question['answer']['text_answer'] == '-1' ? '' : $question['answer']['text_answer'];
         }
     }
 }
@@ -12188,18 +12457,20 @@ if (!function_exists('getReviewName')) {
         foreach ($a as $v) {
             switch ($t) {
                 case 'reviewer':
-                    if ($v['conductor_sid'] == $id) return remakeEmployeeName($v);
+                    if ($v['conductor_sid'] == $id)
+                        return remakeEmployeeName($v);
                     break;
                 default:
-                    if ($v['employee_sid'] == $id) return remakeEmployeeName([
-                        'first_name' => $v['efirst_name'],
-                        'last_name' => $v['elast_name'],
-                        'access_level' => $v['eaccess_level'],
-                        'access_level_plus' => $v['eaccess_level_plus'],
-                        'is_executive_admin' => $v['eis_executive_admin'],
-                        'pay_plan_flag' => $v['epay_plan_flag'],
-                        'job_title' => $v['ejob_title'],
-                    ]);
+                    if ($v['employee_sid'] == $id)
+                        return remakeEmployeeName([
+                            'first_name' => $v['efirst_name'],
+                            'last_name' => $v['elast_name'],
+                            'access_level' => $v['eaccess_level'],
+                            'access_level_plus' => $v['eaccess_level_plus'],
+                            'is_executive_admin' => $v['eis_executive_admin'],
+                            'pay_plan_flag' => $v['epay_plan_flag'],
+                            'job_title' => $v['ejob_title'],
+                        ]);
             }
         }
     }
@@ -12209,7 +12480,7 @@ if (!function_exists('getReviewName')) {
 if (!function_exists('getUserFields')) {
     function getUserFields()
     {
-        $fields  = 'users.sid as userId,';
+        $fields = 'users.sid as userId,';
         $fields .= 'users.first_name,';
         $fields .= 'users.last_name,';
         $fields .= 'users.email,';
@@ -12363,7 +12634,7 @@ if (!function_exists('separateDocuments')) {
         $documents
     ) {
         //
-        $r  = [
+        $r = [
             'Completed' => [],
             'NotCompleted' => [],
             'NoActionRequired' => [],
@@ -12374,14 +12645,18 @@ if (!function_exists('separateDocuments')) {
             'AllCount' => 0
         ];
         //
-        if (!$documents || !count($documents)) return $r;
+        if (!$documents || !count($documents))
+            return $r;
         //
         foreach ($documents as $document) {
             $d = isDocumentCompletedCheck($document);
             //
-            if ($d['isNoAction']) $r['NoActionRequired'][] = $document;
-            else if ($d['isCompleted']) $r['Completed'][] = $document;
-            else if (!$d['isCompleted']) $r['NotCompleted'][] = $document;
+            if ($d['isNoAction'])
+                $r['NoActionRequired'][] = $document;
+            else if ($d['isCompleted'])
+                $r['Completed'][] = $document;
+            else if (!$d['isCompleted'])
+                $r['NotCompleted'][] = $document;
             $r['All'][] = $document;
         }
         //
@@ -12414,13 +12689,15 @@ if (!function_exists('loadCachedFile')) {
         $make = false,
         $options = []
     ) {
-        if ($session['company_detail']['sid'] != 57) return;
+        if ($session['company_detail']['sid'] != 57)
+            return;
         //
         $cacheTime = isset($options['time']) ? $options['time'] : strtotime('+1 day');
         //
         $cacheDir = ROOTPATH . 'cache/' . $session['company_detail']['sid'] . '/' . $session['employer_detail']['sid'] . '/' . $file . '/';
         //
-        if (!is_dir($cacheDir)) mkdir($cacheDir, DIR_WRITE_MODE, true);
+        if (!is_dir($cacheDir))
+            mkdir($cacheDir, DIR_WRITE_MODE, true);
         //
         if ($make) {
             //
@@ -12537,8 +12814,10 @@ if (!function_exists('generateThumb')) {
         //
         $t = explode('.', $file);
         //
-        if (strtolower(end($t)) == 'png') $prefix = "data:image/png;base64,";
-        else $prefix = "data:image/jpeg;base64,";
+        if (strtolower(end($t)) == 'png')
+            $prefix = "data:image/png;base64,";
+        else
+            $prefix = "data:image/jpeg;base64,";
         //
         // $img = trim(strtolower(end($t))) == 'png' ? imagecreatefrompng($file) : imagecreatefromjpeg($file);
         //
@@ -12557,8 +12836,10 @@ if (!function_exists('generateThumb')) {
         //
         ob_start();
         //
-        if (strtolower(end($t)) == 'png') imagepng($thumb);
-        else imagejpeg($thumb);
+        if (strtolower(end($t)) == 'png')
+            imagepng($thumb);
+        else
+            imagejpeg($thumb);
         //
         $data = ob_get_contents();
         //
@@ -12614,11 +12895,13 @@ if (!function_exists('getS3DummyFileName')) {
             $files['png'] = 'test_file_01.png';
         //
         if ($isFile) {
-            if (!isset($_FILES[$filename])) return $files['pdf'];
+            if (!isset($_FILES[$filename]))
+                return $files['pdf'];
             $filename = $_FILES[$filename]['name'];
         }
         //
-        if (empty($filename)) return $files['pdf'];
+        if (empty($filename))
+            return $files['pdf'];
         //
         $ext = strtolower(trim(@end(explode('.', $filename))));
         //
@@ -12644,11 +12927,13 @@ if (!function_exists('formatDate')) {
         $fromFormat = 'Y-m-d',
         $toFormat = 'm/d/Y'
     ) {
-        if (empty($date) || preg_match('/0000/', $date)) return $date;
+        if (empty($date) || preg_match('/0000/', $date))
+            return $date;
         //
         $t = explode(' ', $date);
         //
-        if (count(explode(' ', $fromFormat)) == 1) $date = $t[0];
+        if (count(explode(' ', $fromFormat)) == 1)
+            $date = $t[0];
         //
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
@@ -12862,12 +13147,15 @@ function getAccrualText($accrualOBJ, $isNewHire = false)
     if ($isNewHire !== false) {
         $rate = $accrualOBJ['newHireRate'];
         //
-        if ($rate == null || $rate == 0) $rate = $accrualOBJ['rate'];
+        if ($rate == null || $rate == 0)
+            $rate = $accrualOBJ['rate'];
     }
 
     //
-    if ($frequency == 'none') $time = $o['days'][$time];
-    else $time = $o['time'][$time];
+    if ($frequency == 'none')
+        $time = $o['days'][$time];
+    else
+        $time = $o['time'][$time];
 
 
     // Case 1
@@ -12982,27 +13270,27 @@ if (!function_exists('sendResumeEmailToApplicant')) {
         $_this->load->model('resume_model');
         $_this->load->library('encryption');
         //
-        $user_info           = array();
-        $emailTemplate       = '';
-        $default_subject     = '';
-        $default_template    = '';
-        $user_sid            = $post['user_sid'];
-        $user_type           = $post['user_type'];
-        $job_list_sid        = $post['job_list_sid'];
-        $requested_job_sid   = $post['requested_job_sid'];
-        $requested_job_type  = $post['requested_job_type'];
-        $company_sid         = $post['company_sid'];
-        $company_name        = $post['company_name'];
+        $user_info = array();
+        $emailTemplate = '';
+        $default_subject = '';
+        $default_template = '';
+        $user_sid = $post['user_sid'];
+        $user_type = $post['user_type'];
+        $job_list_sid = $post['job_list_sid'];
+        $requested_job_sid = $post['requested_job_sid'];
+        $requested_job_type = $post['requested_job_type'];
+        $company_sid = $post['company_sid'];
+        $company_name = $post['company_name'];
 
         $emailTemplate = $_this->resume_model->get_send_resume_template($company_sid);
 
         if (!empty($emailTemplate)) {
             $default_subject = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['subject']);
-            $default_template  = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['message_body']);
+            $default_template = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['message_body']);
         } else {
             $emailTemplate = get_email_template(SEND_RESUME_REQUEST);
             $default_subject = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['subject']);
-            $default_template  = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['text']);
+            $default_template = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['text']);
         }
 
         $user_info = $_this->resume_model->get_applicant_information($user_sid);
@@ -13015,7 +13303,8 @@ if (!function_exists('sendResumeEmailToApplicant')) {
                 header('Content-Type: application/json');
                 echo @json_encode($resp);
                 exit(0);
-            } else return;
+            } else
+                return;
         }
 
         $verification_key = '';
@@ -13030,20 +13319,20 @@ if (!function_exists('sendResumeEmailToApplicant')) {
         }
 
         $data_to_insert = array();
-        $data_to_insert['company_sid']              = $company_sid;
-        $data_to_insert['user_type']                = $user_type;
-        $data_to_insert['user_sid']                 = $user_sid;
-        $data_to_insert['user_email']               = $applicant_email;
-        $data_to_insert['requested_by']             = 0;
-        $data_to_insert['requested_subject']        = $default_subject;
-        $data_to_insert['requested_message']        = $default_template;
-        $data_to_insert['requested_ip_address']     =  getUserIP();
-        $data_to_insert['requested_user_agent']     = $_SERVER['HTTP_USER_AGENT'];
-        $data_to_insert['request_status']           = 1;
-        $data_to_insert['requested_date']           = date('Y-m-d H:i:s', strtotime('now'));
-        $data_to_insert['job_sid']                  = $requested_job_sid;
-        $data_to_insert['job_type']                 = $requested_job_type;
-        $data_to_insert['is_manual']                = 0;
+        $data_to_insert['company_sid'] = $company_sid;
+        $data_to_insert['user_type'] = $user_type;
+        $data_to_insert['user_sid'] = $user_sid;
+        $data_to_insert['user_email'] = $applicant_email;
+        $data_to_insert['requested_by'] = 0;
+        $data_to_insert['requested_subject'] = $default_subject;
+        $data_to_insert['requested_message'] = $default_template;
+        $data_to_insert['requested_ip_address'] = getUserIP();
+        $data_to_insert['requested_user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+        $data_to_insert['request_status'] = 1;
+        $data_to_insert['requested_date'] = date('Y-m-d H:i:s', strtotime('now'));
+        $data_to_insert['job_sid'] = $requested_job_sid;
+        $data_to_insert['job_type'] = $requested_job_type;
+        $data_to_insert['is_manual'] = 0;
 
         $_this->resume_model->deactivate_old_resume_request($company_sid, $user_type, $user_sid, $requested_job_sid, $requested_job_type);
         $_this->resume_model->insert_resume_request($data_to_insert);
@@ -13104,11 +13393,13 @@ if (!function_exists('downloadAWSFileToBrowser')) {
         // Temporary store path
         $tp = FCPATH . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'temp_files' . DIRECTORY_SEPARATOR;
         //
-        if (!is_dir($tp)) mkdir($tp, 0777, true);
+        if (!is_dir($tp))
+            mkdir($tp, 0777, true);
         // Create full path
         $tfp = $tp . $awsFileName;
         // Delete if file already exists
-        if (file_exists($tfp)) unlink($tfp);
+        if (file_exists($tfp))
+            unlink($tfp);
         // Load AWS library
         $_this->load->library('aws_lib');
         $_this->aws_lib->get_object($bucket, $awsFileName, $tfp);
@@ -13231,7 +13522,8 @@ if (!function_exists('getDueText')) {
             }
         }
 
-        if (!$full) $string = array_slice($string, 0, 1);
+        if (!$full)
+            $string = array_slice($string, 0, 1);
         return $string ? 'Due in ' . implode(', ', $string) . '' : 'Expired';
     }
 }
@@ -13242,7 +13534,8 @@ if (!function_exists('concertBase64ToPDF')) {
         $file_name
     ) {
         //
-        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($fileName, false);
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')
+            return getS3DummyFileName($fileName, false);
         //
         $CI = &get_instance();
         // Set local path
@@ -13346,7 +13639,8 @@ if (!function_exists('isDocumentCompletedCheck')) {
             $isDocument = true;
             $body = $document['document_description'];
             //
-            if (!empty($document['manual_document_type'])) $type = $document['manual_document_type'];
+            if (!empty($document['manual_document_type']))
+                $type = $document['manual_document_type'];
             if (!empty($document['offer_letter_type'])) {
                 $isDocument = false;
                 $type = $document['offer_letter_type'];
@@ -13364,8 +13658,10 @@ if (!function_exists('isDocumentCompletedCheck')) {
                 $withoutSignMC = str_replace($magicSignatureCodes, '', $body);
                 $withoutMC = str_replace($magicCodes, '', $body);
                 //
-                if ($withoutSignMC != $body) $ra['buttonType'] = 'consent_only';
-                else if ($withoutMC != $body) $ra['buttonType'] = 'save_only';
+                if ($withoutSignMC != $body)
+                    $ra['buttonType'] = 'consent_only';
+                else if ($withoutMC != $body)
+                    $ra['buttonType'] = 'save_only';
                 //
                 $ra['isAuthorized'] = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $body);
                 //
@@ -13385,7 +13681,8 @@ if (!function_exists('isDocumentCompletedCheck')) {
                     $hasAnyMC                                   // When signature is required or any magic code is found
                 ) {
                     // Check if it's signed
-                    if ($document['user_consent'] == 1) $ra['isCompleted'] = true;
+                    if ($document['user_consent'] == 1)
+                        $ra['isCompleted'] = true;
                 } else if (
                     $document['download_required'] == 1 &&
                     $document['acknowledgment_required'] == 1    // When download & acknowledged is required
@@ -13394,17 +13691,20 @@ if (!function_exists('isDocumentCompletedCheck')) {
                     if (
                         $document['acknowledged'] == 1 &&
                         $document['downloaded'] == 1
-                    ) $ra['isCompleted'] = true;
+                    )
+                        $ra['isCompleted'] = true;
                 } else if (
                     $document['acknowledgment_required'] == 1    // When acknowledged is required
                 ) {
                     // 
-                    if ($document['acknowledged'] == 1) $ra['isCompleted'] = true;
+                    if ($document['acknowledged'] == 1)
+                        $ra['isCompleted'] = true;
                 } else if (
                     $document['download_required'] == 1          // When download is required
                 ) {
                     // 
-                    if ($document['downloaded'] == 1) $ra['isCompleted'] = true;
+                    if ($document['downloaded'] == 1)
+                        $ra['isCompleted'] = true;
                 }
 
                 if ($ra['isCompleted'] == true) {
@@ -13446,7 +13746,8 @@ if (!function_exists('isDocumentCompletedCheck')) {
                     $document['signature_required'] == 1         // When signature (Reupload) is required or any magic code is found
                 ) {
                     // Check if it's signed
-                    if ($document['user_consent'] == 1 || $document['uploaded'] == 1) $ra['isCompleted'] = true;
+                    if ($document['user_consent'] == 1 || $document['uploaded'] == 1)
+                        $ra['isCompleted'] = true;
                 } else if (
                     $document['download_required'] == 1 &&
                     $document['acknowledgment_required'] == 1    // When download & acknowledged is required
@@ -13455,17 +13756,20 @@ if (!function_exists('isDocumentCompletedCheck')) {
                     if (
                         $document['acknowledged'] == 1 &&
                         $document['downloaded'] == 1
-                    ) $ra['isCompleted'] = true;
+                    )
+                        $ra['isCompleted'] = true;
                 } else if (
                     $document['acknowledgment_required'] == 1    // When acknowledged is required
                 ) {
                     // 
-                    if ($document['acknowledged'] == 1) $ra['isCompleted'] = true;
+                    if ($document['acknowledged'] == 1)
+                        $ra['isCompleted'] = true;
                 } else if (
                     $document['download_required'] == 1          // When download is required
                 ) {
                     // 
-                    if ($document['downloaded'] == 1) $ra['isCompleted'] = true;
+                    if ($document['downloaded'] == 1)
+                        $ra['isCompleted'] = true;
                 }
 
                 if ($ra['isCompleted'] == true) {
@@ -13496,7 +13800,8 @@ if (!function_exists('isDocumentCompletedCheck')) {
         //
         $document['ra'] = $ra;
         //
-        if ($check) return $ra['isCompleted'];
+        if ($check)
+            return $ra['isCompleted'];
         //
         return $ra;
     }
@@ -13505,7 +13810,7 @@ if (!function_exists('isDocumentCompletedCheck')) {
 if (!function_exists('getUploadedDocumentURL')) {
     function getUploadedDocumentURL($document_path)
     {
-        $extension  = strtolower(pathinfo($document_path)['extension']);
+        $extension = strtolower(pathinfo($document_path)['extension']);
 
         $ra = [
             'print_url' => '',
@@ -13541,15 +13846,15 @@ if (!function_exists('getGeneratedDocumentURL')) {
         ];
 
         if ($type == 'company') {
-            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/company/company_document/print';
+            $ra['print_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/company/company_document/print';
             $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/company/company_document/download';
             $ra['html_body'] = getDocumentBody($document, $type, $isAuthorized);
         } else if ($type == 'uncompleted') {
-            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/print';
+            $ra['print_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/print';
             $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/download';
             $ra['html_body'] = getDocumentBody($document, $type, $isAuthorized);
         } else {
-            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/print';
+            $ra['print_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/print';
             $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/download';
             $ra['html_body'] = getDocumentBody($document, $type, $isAuthorized);
         }
@@ -13919,10 +14224,10 @@ if (!function_exists('getUserInfo')) {
             if (!empty($record_arr)) {
                 $user_info = $record_arr[0];
 
-                $ra['first_name']   = $user_info['first_name'];
-                $ra['last_name']    = $user_info['last_name'];
-                $ra['email']        = $user_info['email'];
-                $ra['job_title']    = $user_info['job_title'];
+                $ra['first_name'] = $user_info['first_name'];
+                $ra['last_name'] = $user_info['last_name'];
+                $ra['email'] = $user_info['email'];
+                $ra['job_title'] = $user_info['job_title'];
             }
         } else if ($user_type == 'employee') {
             $CI->db->select('username');
@@ -13942,10 +14247,10 @@ if (!function_exists('getUserInfo')) {
             if (!empty($record_arr)) {
                 $user_info = $record_arr[0];
 
-                $ra['first_name']   = $user_info['first_name'];
-                $ra['last_name']    = $user_info['last_name'];
-                $ra['email']        = $user_info['email'];
-                $ra['job_title']    = $user_info['job_title'];
+                $ra['first_name'] = $user_info['first_name'];
+                $ra['last_name'] = $user_info['last_name'];
+                $ra['email'] = $user_info['email'];
+                $ra['job_title'] = $user_info['job_title'];
             }
         }
         //
@@ -14027,11 +14332,11 @@ if (!function_exists('getUploadFileLinks')) {
         //
         $tmp = explode('.', $file_s3_name);
         //
-        $file_extension          = $tmp[count($tmp) - 1];
+        $file_extension = $tmp[count($tmp) - 1];
         //
         unset($tmp[count($tmp) - 1]);
-        $document_file_name      = implode('.', $tmp);
-        $document_extension      = strtolower($file_extension);
+        $document_file_name = implode('.', $tmp);
+        $document_extension = strtolower($file_extension);
 
 
 
@@ -14115,12 +14420,12 @@ if (!function_exists('has_approval')) {
         if (!empty($departments)) {
             if (
                 $CI->db
-                ->from('departments_management')
-                ->where('FIND_IN_SET("' . ($loggedin_user['user_id']) . '", supervisor) > 0', NULL, NULL)
-                ->where_in('sid', explode(',', $departments))
-                ->where('status', 1)
-                ->where('is_deleted', 0)
-                ->count_all_results()
+                    ->from('departments_management')
+                    ->where('FIND_IN_SET("' . ($loggedin_user['user_id']) . '", supervisor) > 0', NULL, NULL)
+                    ->where_in('sid', explode(',', $departments))
+                    ->where('status', 1)
+                    ->where('is_deleted', 0)
+                    ->count_all_results()
             ) {
                 return true;
             }
@@ -14130,12 +14435,12 @@ if (!function_exists('has_approval')) {
         if (!empty($teams)) {
             if (
                 $CI->db
-                ->from('departments_team_management')
-                ->where('FIND_IN_SET("' . ($loggedin_user['user_id']) . '", team_lead) > 0', NULL, NULL)
-                ->where_in('sid', explode(',', $teams))
-                ->where('status', 1)
-                ->where('is_deleted', 0)
-                ->count_all_results()
+                    ->from('departments_team_management')
+                    ->where('FIND_IN_SET("' . ($loggedin_user['user_id']) . '", team_lead) > 0', NULL, NULL)
+                    ->where_in('sid', explode(',', $teams))
+                    ->where('status', 1)
+                    ->where('is_deleted', 0)
+                    ->count_all_results()
             ) {
                 return true;
             }
@@ -14356,16 +14661,16 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
             //
             $default_categories2 =
                 $CI->db
-                ->select('
+                    ->select('
                 default_categories.category_name as name,
                 default_categories.description,
                 "1" as status,
                 "1" as sort_order,
                 categories_document_industry.category_sid as sid
             ')
-                ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
-                ->where('categories_document_industry.industry_sid', $industryId)
-                ->get('categories_document_industry')->result_array();
+                    ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
+                    ->where('categories_document_industry.industry_sid', $industryId)
+                    ->get('categories_document_industry')->result_array();
 
             //
             $default_categories = array_merge($default_categories, $default_categories2);
@@ -14386,12 +14691,12 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
             foreach ($default_categories as $category) {
                 if ($category['status'] == 1) {
                     $data_to_insert = array();
-                    $data_to_insert['company_sid']  = $company_sid;
+                    $data_to_insert['company_sid'] = $company_sid;
                     $data_to_insert['name'] = $category['name'];
-                    $data_to_insert['status']  = $category['status'];
-                    $data_to_insert['description']  = $category['description'];
-                    $data_to_insert['sort_order']  = $category['sort_order'];
-                    $data_to_insert['created_by_sid']  = 0;
+                    $data_to_insert['status'] = $category['status'];
+                    $data_to_insert['description'] = $category['description'];
+                    $data_to_insert['sort_order'] = $category['sort_order'];
+                    $data_to_insert['created_by_sid'] = 0;
                     $data_to_insert['created_date'] = date('Y-m-d H:i:s');
                     $data_to_insert['default_category_sid'] = $category['sid'];
                     //
@@ -14410,12 +14715,12 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
             // Check if not already added
             if (!in_array($default_category['name'], $already_exist) && $default_category['status'] == 1) {
                 $data_to_insert = array();
-                $data_to_insert['company_sid']  = $company_sid;
+                $data_to_insert['company_sid'] = $company_sid;
                 $data_to_insert['name'] = $default_category['name'];
-                $data_to_insert['status']  = $default_category['status'];
-                $data_to_insert['description']  = $default_category['description'];
-                $data_to_insert['sort_order']  = $default_category['sort_order'];
-                $data_to_insert['created_by_sid']  = 0;
+                $data_to_insert['status'] = $default_category['status'];
+                $data_to_insert['description'] = $default_category['description'];
+                $data_to_insert['sort_order'] = $default_category['sort_order'];
+                $data_to_insert['created_by_sid'] = 0;
                 $data_to_insert['created_date'] = date('Y-m-d H:i:s', strtotime('now'));
                 $data_to_insert['default_category_sid'] = $default_category['sid'];
                 //
@@ -14429,8 +14734,8 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
                     if ($DCName == $CCName && $company_category['created_by_sid'] == 0 && $company_category['updated_by_sid'] == 0) {
                         if ($default_category['status'] != $company_category['status']) {
                             $data_to_update = array();
-                            $data_to_update['updated_by_sid']  = 0;
-                            $data_to_update['updated_date']  = date('Y-m-d', strtotime('now'));
+                            $data_to_update['updated_by_sid'] = 0;
+                            $data_to_update['updated_date'] = date('Y-m-d', strtotime('now'));
                             //
                             $CI->db->where('sid', $company_category['sid']);
                             $CI->db->update('documents_category_management', $data_to_update);
@@ -14651,11 +14956,11 @@ if (!function_exists('CheckUserEEOCStatus')) {
         //
         if (
             $CI->db
-            ->where('users_type', $type)
-            ->where('application_sid ', $sid)
-            ->where('status', 1)
-            ->where('is_expired', 1)
-            ->count_all_results('portal_eeo_form')
+                ->where('users_type', $type)
+                ->where('application_sid ', $sid)
+                ->where('status', 1)
+                ->where('is_expired', 1)
+                ->count_all_results('portal_eeo_form')
         ) {
             return true;
         }
@@ -14739,9 +15044,9 @@ if (!function_exists('getAPIUrl')) {
         $urls['job_compensation'] = 'job/compensation';
         //
         if ($index == "employees" || $index == "job_compensation") {
-            return  getCreds('AHR')->API_BROWSER_URL . (isset($urls[$index]) ? $urls[$index] : '');
+            return getCreds('AHR')->API_BROWSER_URL . (isset($urls[$index]) ? $urls[$index] : '');
         } else {
-            return  getCreds('AHR')->API_SERVER_URL . (isset($urls[$index]) ? $urls[$index] : '');
+            return getCreds('AHR')->API_SERVER_URL . (isset($urls[$index]) ? $urls[$index] : '');
         }
         // 
     }
@@ -15279,8 +15584,8 @@ if (!function_exists('CalculateTime')) {
         if ($lastAction == 'clock_in' || $lastAction == 'break_in') {
             $ra[$lastAction == 'clock_in' ? 'total_minutes' : 'total_break_minutes'] += GetTimeDifferenceInSeconds(
                 strpos($lastActionDT, $cd) !== FALSE
-                    ? $cdt
-                    : formatDateToDB($lastActionDT, DB_DATE_WITH_TIME, DB_DATE) . ' 23:59:59',
+                ? $cdt
+                : formatDateToDB($lastActionDT, DB_DATE_WITH_TIME, DB_DATE) . ' 23:59:59',
                 $lastActionDT
             );
         }
@@ -15911,7 +16216,7 @@ if (!function_exists('check_document_completed_date')) {
                 $completed_date = $assigned_document['assigned_date'];
             }
         }
-        return  $completed_date;
+        return $completed_date;
     }
 }
 
@@ -15934,7 +16239,7 @@ if (!function_exists('get_document_action_date')) {
             $return_date = reset_datetime(array('datetime' => $return_date, '_this' => $CI));
         }
         //
-        return  $return_date;
+        return $return_date;
     }
 }
 
@@ -16170,18 +16475,18 @@ if (!function_exists('checkDontHireText')) {
         //
         $records =
             $CI->db
-            ->select('
+                ->select('
             terminated_employees.employee_sid,
             terminated_employees.termination_date,
             terminated_employees.employee_status,
             terminated_employees.do_not_hire,
             ' . (getUserFields()) . '
         ')
-            ->join('users', 'users.sid = terminated_employees.employee_sid')
-            ->where_in('terminated_employees.employee_sid', $empIds)
-            ->order_by('terminated_employees.sid', 'DESC')
-            ->get('terminated_employees')
-            ->result_array();
+                ->join('users', 'users.sid = terminated_employees.employee_sid')
+                ->where_in('terminated_employees.employee_sid', $empIds)
+                ->order_by('terminated_employees.sid', 'DESC')
+                ->get('terminated_employees')
+                ->result_array();
         //
         if (empty($records)) {
             return [];
@@ -16392,10 +16697,12 @@ if (!function_exists('getCurrentYearHolidaysFromGoogle')) {
             //
             $ra[] = $ia;
             //
-            if (!$CI->db->where([
-                'holiday_title' => $ia['holiday_title'],
-                'holiday_year' => $year
-            ])->count_all_results('timeoff_holiday_list')) {
+            if (
+                !$CI->db->where([
+                    'holiday_title' => $ia['holiday_title'],
+                    'holiday_year' => $year
+                ])->count_all_results('timeoff_holiday_list')
+            ) {
                 //
                 $CI->db->insert(
                     'timeoff_holiday_list',
@@ -16843,7 +17150,7 @@ if (!function_exists('get_user_anniversary_date')) {
                 //
                 $timeSpentString2 = $months . ' ' . ($months > 1 ? 'months' : 'month') . ' ago';
             }
-            $timeSpentString .= ($timeSpentString == '' ? '' : ', ') .  $months . ' ' . ($months > 1 ? 'months' : 'month');
+            $timeSpentString .= ($timeSpentString == '' ? '' : ', ') . $months . ' ' . ($months > 1 ? 'months' : 'month');
         }
         if ($days > 0) {
             if ($timeSpentString2 == '') {
@@ -16917,7 +17224,7 @@ if (!function_exists('getActiveEmployees')) {
         $where = array(
             'parent_sid' => $company_sid,
             'active' => 1,
-            'is_executive_admin'  => 0,
+            'is_executive_admin' => 0,
             'terminated_status' => 0
         );
         return $CI->db->get_where('users', $where)->result_array();
@@ -17114,8 +17421,8 @@ if (!function_exists('changeComplynetEmployeeStatus')) {
             $CI->db->select('complynet_location_sid, email, complynet_json')->where([
                 'employee_sid' => $employeeId
             ])
-            ->get('complynet_employees')
-            ->row_array();
+                ->get('complynet_employees')
+                ->row_array();
         // check if something happens in between
         if (empty($record)) {
             $res['errors'][] = 'The employee has not yet been synchronized with ComplyNet.';
@@ -17141,7 +17448,7 @@ if (!function_exists('changeComplynetEmployeeStatus')) {
         // get the employee agianst right location0
         foreach ($response as $key => $value) {
             if ($value['LocationId'] == $record['complynet_location_sid']) {
-                $oldStatus =  $value['Status'] == 1 ? "active" : "deactive";
+                $oldStatus = $value['Status'] == 1 ? "active" : "deactive";
             }
         }
         // if the employee is not found
@@ -17306,7 +17613,7 @@ if (!function_exists('getActiveAdmin')) {
         $where = array(
             'parent_sid' => $company_sid,
             'active' => 1,
-            'is_executive_admin'  => 0,
+            'is_executive_admin' => 0,
             'terminated_status' => 0,
             'access_level' => 'Admin'
         );
@@ -17376,7 +17683,7 @@ if (!function_exists('getManualUserNameByEmailId')) {
         //
         if ($reportUser) {
             //
-            $employeeName = $reportUser['external_name'].' [External User]';
+            $employeeName = $reportUser['external_name'] . ' [External User]';
         } else {
             $CI = &get_instance();
             $CI->db->select('external_name');
@@ -17386,11 +17693,11 @@ if (!function_exists('getManualUserNameByEmailId')) {
             $incidentUser = $CI->db->get('csp_reports_employees')->row_array();
             //
             if ($incidentUser) {
-                $employeeName = $incidentUser['external_name'].' [External User]';
+                $employeeName = $incidentUser['external_name'] . ' [External User]';
             } else {
                 $employeeName = $emailId;
             }
-        }  
+        }
 
         //
         return $employeeName;
@@ -17401,96 +17708,82 @@ if (!function_exists('checkIfAnyIncidentIssueAssigned')) {
     function checkIfAnyIncidentIssueAssigned(
         $employeeId
     ) {
-        
+        //
+        $companyId = getEmployeeUserParent_sid($employeeId);
+        //
         $CI = &get_instance();
-        $CI->db->select('sid');
-        $CI->db->from('csp_reports_employees');
-        $CI->db->where('employee_sid', $employeeId);
-        $CI->db->where('status', 1);
-        $rows = $CI->db->count_all_results();
-
-        if ($rows > 0) {
-            return true;
-        } else {
+        $CI->db->select("
+            departments_team_management.sid as team_sid, 
+            departments_team_management.name as team_name,
+            departments_management.sid,
+            departments_management.name,
+            departments_management.lms_managers_ids
+        ")
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_team_management.department_sid",
+                "inner"
+            )
+            ->where("departments_management.company_sid", $companyId)
+            ->where("departments_management.is_deleted", 0)
+            ->where("departments_team_management.is_deleted", 0);
+        // if not plus then check for LMS manager role
+        $CI->db->group_start()
+            ->where("FIND_IN_SET({$employeeId}, departments_management.csp_managers_ids) > 0", null, null)
+            ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.csp_managers_ids) > 0", null, null)
+            ->group_end();
+    
+        //
+        $records_obj = $CI->db->get("departments_team_management");
+        $departmentAndTeams = $records_obj->result_array();
+        $records_obj->free_result();
+        //
+        if ($departmentAndTeams) {
+            $departments = [];
+            $teams = [];
             //
-            $companyId = getEmployeeUserParent_sid($employeeId);
-            //
-            $CI->db->select("
-                departments_team_management.sid as team_sid, 
-                departments_team_management.name as team_name,
-                departments_management.sid,
-                departments_management.name,
-                departments_management.lms_managers_ids
-            ")
-                ->join(
-                    "departments_management",
-                    "departments_management.sid = departments_team_management.department_sid",
-                    "inner"
-                )
-                ->where("departments_management.company_sid", $companyId)
-                ->where("departments_management.is_deleted", 0)
-                ->where("departments_team_management.is_deleted", 0);
-            // if not plus then check for LMS manager role
-            $CI->db->group_start()
-                ->where("FIND_IN_SET({$employeeId}, departments_management.csp_managers_ids) > 0", null, null)
-                ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.csp_managers_ids) > 0", null, null)
-                ->group_end();
-        
-            //
-            $records_obj = $CI->db->get("departments_team_management");
-            $departmentAndTeams = $records_obj->result_array();
-            $records_obj->free_result();
-            // _e($CI->db->last_query(),true);
-            // _e($departmentAndTeams, true);
-            //
-            if ($departmentAndTeams) {
-                $departments = [];
-                $teams = [];
-                //
-                foreach ($departmentAndTeams as $row) {
-                    if(!in_array($row['sid'], $departments)){
-                        $departments[] = $row['sid'];
-                    }
-                    //
-                    if(!in_array($row['team_sid'], $teams)){
-                        $teams[] = $row['team_sid'];
-                    }
+            foreach ($departmentAndTeams as $row) {
+                if(!in_array($row['sid'], $departments)){
+                    $departments[] = $row['sid'];
                 }
                 //
-                if (!empty($departments) || !empty($teams)) {
-                    //
-                    $CI->db->select('csp_reports_employees.csp_reports_sid');
-                    $CI->db->join(
-                        "csp_reports",
-                        "csp_reports.sid = csp_reports_employees.csp_reports_sid",
-                        "inner"
-                    );
-                    $CI->db->where('csp_reports.company_sid', $companyId);
-                    $CI->db->where('csp_reports_employees.status', 1);
-                    $CI->db->group_start();
-                        if ($departments) {
-                            foreach ($departments as $department) {
-                                $CI->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
-                            }
-                        }
-                        // For teams
-                        if ($teams) {
-                            foreach ($teams as $team) {
-                                $CI->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
-                            }
-                        }
-                    $CI->db->group_end();
-                    $records_obj = $CI->db->get('csp_reports_employees');
-                    $records_arr = $records_obj->result_array();
-                    $records_obj->free_result();
-                    //
-                    if ($records_arr) {
-                        return true;
-                    }
+                if(!in_array($row['team_sid'], $teams)){
+                    $teams[] = $row['team_sid'];
                 }
             }
             //
-            return false;
+            if (!empty($departments) || !empty($teams)) {
+                //
+                $CI->db->select('csp_reports_employees.csp_reports_sid');
+                $CI->db->join(
+                    "csp_reports",
+                    "csp_reports.sid = csp_reports_employees.csp_reports_sid",
+                    "inner"
+                );
+                $CI->db->where('csp_reports.company_sid', $companyId);
+                $CI->db->where('csp_reports_employees.status', 1);
+                $CI->db->group_start();
+                    if ($departments) {
+                        foreach ($departments as $department) {
+                            $CI->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
+                        }
+                    }
+                    // For teams
+                    if ($teams) {
+                        foreach ($teams as $team) {
+                            $CI->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
+                        }
+                    }
+                $CI->db->group_end();
+                $CI->db->from('csp_reports_employees');
+                $assignCount = $CI->db->count_all_results();
+                //
+                if ($assignCount > 0) {
+                    return true;
+                }
+            }
         }
+        //
+        return false;
     }
 }

@@ -169,13 +169,13 @@ class Cron_email_model extends CI_Model
         // get the company id from queue
         $record =
             $this
-            ->db
-            ->select("distinct(company_sid)")
-            ->where("is_processing", 0)
-            ->limit(1)
-            // ->where_in('company_sid', $this->testingCompanyIds)
-            ->get("lms_course_email_queue")
-            ->row_array();
+                ->db
+                ->select("distinct(company_sid)")
+                ->where("is_processing", 0)
+                ->limit(1)
+                // ->where_in('company_sid', $this->testingCompanyIds)
+                ->get("lms_course_email_queue")
+                ->row_array();
         //
         if (!$record) {
             exit("Queue is empty.");
@@ -185,12 +185,12 @@ class Cron_email_model extends CI_Model
         // get the company courses
         $records =
             $this
-            ->db
-            ->select("course_sid, sid")
-            ->where("company_sid", $this->companyId)
-            ->where("is_processing", 0)
-            ->get("lms_course_email_queue")
-            ->result_array();
+                ->db
+                ->select("course_sid, sid")
+                ->where("company_sid", $this->companyId)
+                ->where("is_processing", 0)
+                ->get("lms_course_email_queue")
+                ->result_array();
         // update the processing flag
         $this
             ->db
@@ -214,6 +214,7 @@ class Cron_email_model extends CI_Model
             exit("No companies found!");
         }
         // iterate
+        $this->executiveAdminsList = [];
 
         foreach ($companyIds as $companyId) {
             // send emails
@@ -306,7 +307,7 @@ class Cron_email_model extends CI_Model
         ],
         array $courseIds = []
     ) {
-        echo "Company Id: {$companyId} \n";
+        echo "\nCompany Id: {$companyId} \n";
         // set the company Id
         $this->companyId = $companyId;
         // get notifiers
@@ -336,10 +337,24 @@ class Cron_email_model extends CI_Model
                 continue;
             }
 
+            if (!$v0["employer_sid"]) {
+                echo "External employees not allowed \n";
+                continue;
+            }
 
             // check is executive admin
-            if ($this->checkExecutiveAdmin($v0["employer_sid"]) == 1) {
-
+            if ($v0["is_executive_admin"] == 1) {
+                echo "Entered in executive admin {$v0["email"]}'\n";
+                //
+                if (!array_key_exists($v0["email"], $this->executiveAdminsList)) {
+                    $this->executiveAdminsList[$v0['email']] = [
+                        "data" => [
+                            "buttons" => [],
+                            "contact_name" => $v0["name"],
+                            "email" => $v0["email"],
+                        ]
+                    ];
+                }
                 //
                 $viewCode = str_replace(
                     ['/', '+'],
@@ -360,7 +375,7 @@ class Cron_email_model extends CI_Model
                 $companyDetails = getCompanyInfo($v0["company_sid"]);
 
                 $buttons = '';
-                $forCompany = "From: " . $companyDetails["company_name"] . "<br>";
+                $forCompany = "Company: " . $companyDetails["company_name"] . "<br>";
                 $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
                 $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
                 $buttons .= $forCompany . $viewReport . '&nbsp;&nbsp;&nbsp;' . $downloadReport;
@@ -369,6 +384,8 @@ class Cron_email_model extends CI_Model
                 $this->executiveAdminsList[$v0['email']]['data']['contact_name'] = $v0['contact_name'];
                 $this->executiveAdminsList[$v0['email']]['data']['email'] = $v0['email'];
             } else {
+                echo "Entered in employee {$v0["email"]}'\n";
+
 
                 // get the ream member ids
                 $response = getMyDepartmentAndTeams($v0["employer_sid"], "courses", "get", $this->companyId);
@@ -595,7 +612,7 @@ class Cron_email_model extends CI_Model
     private function getCompanyActiveCourses(): array
     {
         // get company active courses
-        $records =  $this
+        $records = $this
             ->db
             ->select([
                 "lms_default_courses.sid",
@@ -634,7 +651,7 @@ class Cron_email_model extends CI_Model
     private function getCourseJobTitles(int $courseId): array
     {
         // get company active courses
-        $records =  $this
+        $records = $this
             ->db
             ->select([
                 "job_title_id"
@@ -988,8 +1005,8 @@ class Cron_email_model extends CI_Model
     private function generateCoursesTable(array $courses): string
     {
         $html = "";
-        $html  .= '<table border="1">';
-        $html  .= '<tbody>';
+        $html .= '<table border="1">';
+        $html .= '<tbody>';
         // inprogress
         if ($courses["inprogress"]) {
             $html .= '<tr>';
@@ -1184,7 +1201,7 @@ class Cron_email_model extends CI_Model
                     foreach ($managersList as $key => $empRow) {
                         //
 
-                        if ($this->checkExecutiveAdmin($empRow['employer_sid']) == 1) {
+                        if ($empRow['is_executive_admin'] == 1) {
 
                             //
                             $viewCode = str_replace(
@@ -1448,7 +1465,7 @@ class Cron_email_model extends CI_Model
                     }
 
                     if ($assigned_row['completedStatus'] == 'No Action Required') {
-                        $totalDocsNoAction = $totalDocsNoAction  + 1;
+                        $totalDocsNoAction = $totalDocsNoAction + 1;
                     }
 
                     if ($assigned_row['confidential_employees'] != null) {

@@ -56,7 +56,7 @@
                             (<?= count($report["issuesWithIncident"]); ?>)
                         </a>
                     </li>
-                    <?php //_e($report,true,true); ?>
+                   
                     <li class="nav-item <?= $this->input->get("tab", true) == "questions" ? "active" : ""; ?>">
                         <a class="nav-link" data-toggle="tab" href="#tab-questions" role="tab">
                             <i class="fa fa-question-circle"></i> Questions

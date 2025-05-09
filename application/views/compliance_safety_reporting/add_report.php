@@ -65,6 +65,7 @@
 
 
                     <?php $this->load->view("compliance_safety_reporting/partials/incidents/questions"); ?>
+                    <?php $this->load->view("compliance_safety_reporting/partials/incidents/report_question"); ?>
 
                     <!-- Employees -->
                     <div class="panel panel-default hidden">

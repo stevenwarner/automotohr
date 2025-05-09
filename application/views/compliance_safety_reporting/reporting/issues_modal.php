@@ -65,6 +65,7 @@
             </div>
 
             <div id="jsManualIssue" class="hidden">
+
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                     <div class="form-group">
                         <label>Issue Title </label>
@@ -79,6 +80,41 @@
                     <div class="form-group autoheight">
                         <label>Issue Description </label>
                         <textarea class="ckeditor" name="manual_issue_description" id="jsManualIssueDescription" cols="60" rows="10"></textarea>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                    <div class="form-group autoheight">
+                        <label>Severity Level </label>
+                        <div class="row">
+                            <div class="col-xs-11 jsSelectedPill">
+                                <div data-id="<?= $severity_status[1]["sid"]; ?>"
+                                    class="csLabelPill jsSelectedLabelPill text-center jsManualSeverityLevel"
+                                    style="background-color: <?= $severity_status[1]["bg_color"]; ?>; color: <?= $severity_status[1]["txt_color"]; ?>;">
+                                    Severity Level <?= $severity_status[1]["level"]; ?></div>
+                            </div>
+                            <div class="col-xs-1 text-left">
+                                <div class="btn btn-orange show-status-box">
+                                    <i class="fa fa-pencil"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Selected one -->
+                        <div class="lable-wrapper">
+                            <div style="height:20px;">
+                                <i class="fa fa-times cross"></i>
+                            </div>
+
+                            <?php if ($severity_status): ?>
+                                <?php foreach ($severity_status as $v1): ?>
+                                    <div class="row">
+                                        <div data-id="<?= $v1["sid"]; ?>" class="col-sm-12 label jsSelectManualSeverityLevel csLabelPill"
+                                            style="background-color:<?= $v1["bg_color"]; ?>; color:<?= $v1["txt_color"]; ?>;">
+                                            <div class="jsSeverityLevelText">Severity Level <?= $v1["level"]; ?></div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>

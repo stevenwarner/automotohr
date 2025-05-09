@@ -260,7 +260,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                     <?php } ?>
                                 <?php } ?>
 
-                                <?php if (checkIfAnyIncidentIssueAssigned($employer["sid"])) { ?>
+                                <?php if (isAllowedForCSP($employer["sid"])) { ?>
                                     <li>
                                         <span class="left-addon">
                                             <i aria-hidden="true" class="fa fa-file"></i>

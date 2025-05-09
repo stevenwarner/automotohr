@@ -162,6 +162,110 @@
             </div>
         </div>
         <!--  -->
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-heading-text text-medium">
+                            <strong>Questions</strong>
+                        </h1>
+                    </div>
+                    <div class="panel-body">
+                        <?php 
+                            $decodedJSON = json_decode(
+                                $report["question_answer_json"],
+                                true
+                            );
+                            //
+                            $report_to_dashboard = empty($decodedJSON['report_to_dashboard']) ? 'no' : $decodedJSON['report_to_dashboard'];
+                            $ongoing_issue = empty($decodedJSON['ongoing_issue']) ? 'no' : $decodedJSON['ongoing_issue'];
+                            $reported_by = empty($decodedJSON['reported_by']) ? 'no' : $decodedJSON['reported_by'];
+                            $category_of_issue = empty($decodedJSON['category_of_issue']) ? '' : $decodedJSON['category_of_issue'];
+                        ?> 
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label>Report to Dashboard : <span class="required" aria-required="true"></span></label>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                            <label class="control control--radio">
+                                                Yes<input type="radio" class="jsReportToDashboard" name="report_to_dashboard" value="yes" style="position: relative;" <?php echo  $report_to_dashboard == 'yes' ? 'checked="checked"' : ''; ?>>
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                            <label class="control control--radio">
+                                                No<input type="radio" class="jsReportToDashboard" name="report_to_dashboard" value="no" style="position: relative;" <?php echo  $report_to_dashboard == 'no' ? 'checked="checked"' : ''; ?>>
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>  
+                            </div>
+                        </div>    
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label>Is this a Repeat or Ongoing Issue? <span class="required" aria-required="true"></span></label>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                            <label class="control control--radio">
+                                                Yes<input type="radio" class="jsOngoingIssue" name="ongoing_issue" value="yes" style="position: relative;" <?php echo  $ongoing_issue == 'yes' ? 'checked="checked"' : ''; ?>>
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                            <label class="control control--radio">
+                                                No<input type="radio" class="jsOngoingIssue" name="ongoing_issue" value="no" style="position: relative;" <?php echo  $ongoing_issue == 'no' ? 'checked="checked"' : ''; ?>>
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label>Was this reported by an employee?: <span class="required" aria-required="true"></span></label>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                            <label class="control control--radio">
+                                                Yes<input type="radio" class="jsReportedBy" name="reported_by" value="yes" style="position: relative;" <?php echo  $reported_by == 'yes' ? 'checked="checked"' : ''; ?>>
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                            <label class="control control--radio">
+                                                No<input type="radio" class="jsReportedBy" name="reported_by" value="no" style="position: relative;" <?php echo  $reported_by == 'no' ? 'checked="checked"' : ''; ?>>
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label>Category of issue: <span class="required" aria-required="true"></span></label>
+                                    <input id="jsCategoryOfIssue" type="text" name="category_of_issue" value="<?=$category_of_issue?>"  class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer text-right">
+                        <button class="btn btn-orange jsIssueProgressQuestionBtn">
+                            <i class="fa fa-save"></i>
+                            Save Questions
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--  -->
         <div class="row">
 
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -447,39 +551,57 @@
                             </h1>
                         </div>
                         <div class="panel-body">
-                            <label>Departments</label>
-                            <select name="departments[]" id="jsDepartments" multiple>
-                            <?php 
-                                //
-                                $allowedOnes = empty($report['allowed_departments']) ? [] : $report['allowed_departments'];
-                                //
-                                if(!empty($departments)){
-                                    foreach($departments as $v){
+                            <?php if (empty($departments)) { ?>
+                                <div class="row" style="margin: 5px 5px;">
+                                    <div class="col-lg-12" style="font-weight: 700; color: red;">Kindly ensure the department is added to the report before proceeding.</div>
+                                </div>
+                            <?php } ?>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <div class="form-group autoheight">
+                                        <label>Departments</label>
+                                        <select name="departments[]" id="jsDepartments" multiple>
+                                        <?php 
+                                            //
+                                            $allowedOnes = empty($report['allowed_departments']) ? [] : $report['allowed_departments'];
+                                            //
+                                            if(!empty($departments)){
+                                                foreach($departments as $v){
+                                                    ?>
+                                                    <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                                    <?php
+                                                }
+                                            }
                                         ?>
-                                        <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
-                                        <?php
-                                    }
-                                }
-                            ?>
-                            </select>
+                                        </select>
+                                    </div>
+                                </div> 
+                            </div>
+                                   
                             <br />
-                            <br />
+
                             <!-- Teams -->
-                            <label>Teams</label>
-                            <select name="teams[]" id="jsTeams" multiple>
-                            <?php 
-                                //
-                                $allowedOnes = empty($report['allowed_teams']) ? [] : $report['allowed_teams'];
-                                //
-                                if(!empty($teams)){
-                                    foreach($teams as $v){
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                    <div class="form-group autoheight">
+                                        <label>Teams</label>
+                                        <select name="teams[]" id="jsTeams" multiple>
+                                        <?php 
+                                            //
+                                            $allowedOnes = empty($report['allowed_teams']) ? [] : $report['allowed_teams'];
+                                            //
+                                            if(!empty($teams)){
+                                                foreach($teams as $v){
+                                                    ?>
+                                                    <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                                    <?php
+                                                }
+                                            }
                                         ?>
-                                        <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
-                                        <?php
-                                    }
-                                }
-                            ?>
-                            </select>
+                                        </select>
+                                    </div>
+                                </div>     
+                            </div>       
                         </div>
                         <div class="panel-footer text-right">
                             <button class="btn btn-orange jsAddDepartmentsAndTeams">

@@ -170,10 +170,13 @@ class Cms extends Admin_Controller
         $this->data['page_title'] = 'Page';
         $this->data['groups'] = $this->ion_auth->groups()->result();
         $page_data = $this->cms_model->get_page_data($sid);
+
         $this->data['page_data'] = $page_data;
         $this->data['page_title'] = "Modify " . ucwords($page_data["page"]) . " :: " . STORE_NAME;
         //
         $this->data['pageContent'] = json_decode($page_data["content"], true);
+
+
         $this->data['page'] = $page_data;
 
         $this->data["appCSS"] = bundleCSS([
@@ -1557,6 +1560,9 @@ class Cms extends Admin_Controller
         } elseif ($post["section"] === "status") {
             // update the page
             $this->cms_model->updatePageStatus($post["status"], $pageId);
+        } elseif ($post["section"] === "footerlink") {
+            // update the page
+            $this->cms_model->updatePageIsFooterLink($post["is_footer_link"], $pageId);
         } else {
             $pageContent = [];
             // get the page record

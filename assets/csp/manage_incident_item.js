@@ -249,6 +249,35 @@ $(function Overview() {
 		);
 	});
 
+	$(document).on("click", ".jsIssueProgressQuestionBtn", function (event) {
+		var obj = {};
+		obj.report_to_dashboard = $('.jsReportToDashboard:checked').val();
+		obj.ongoing_issue = $('.jsOngoingIssue:checked').val();
+		obj.reported_by = $('.jsReportedBy:checked').val();
+		obj.category_of_issue = $('#jsCategoryOfIssue').val();
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl("compliance_safety_reporting/issue_questions/" + itemId),
+				method: "POST",
+				data: obj,
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message, function () {
+						window.location.refresh();
+					});
+				});
+		}
+	});
+
 	function generateExternalEmployees() {
 		let html = `
         <div class="row" data-external="${externalPointer}">
