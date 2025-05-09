@@ -1344,7 +1344,7 @@ class Cms extends Admin_Controller
         //
         $pageContent = json_decode($pageContent, true);
 
-        if ($post['sectionindex']) {
+        if ($post['sectionindex']!='') {
             $sectionIndex = $post['sectionindex'];
             unset($post['sectionindex']);
             $pageContent["page"]["sections"][$post["section"]][$post["index"]][$sectionIndex]['title'] = $post['title'];
