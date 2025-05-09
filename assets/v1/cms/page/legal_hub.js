@@ -395,4 +395,56 @@ $(function () {
 			.toLowerCase()
 		);
 	});
+
+//
+	$(".jsEditSection").click(function (event) {
+		//
+		event.preventDefault();
+		event.stopPropagation();
+		//
+		const index = $(this).data("index");
+		const title = $(this).data("title");
+
+		event.preventDefault();
+		//
+		Modal(
+			{
+				Id: "jsEditModal",
+				Loader: "jsEditModalLoader",
+				Body: '<div id="jsEditModalBody"></div>',
+				Title: "Edit Section",
+			},
+			function () {
+				getPageUI("Edit", "edit", function () {
+
+					$("#jsSectionTitle").val(title);
+					$("#jsSectionIndex").val(index);
+
+					//
+					$("#jsEditForm").validate({
+						rules: {
+							title: { required: true },
+						},
+						submitHandler: function (form) {
+							// get the form object
+							let formDataObj = formArrayToObj(
+								$(form).serializeArray()
+							);
+							// attach the section id
+							formDataObj.append("section", "section0");
+							formDataObj.append("index", "tags");
+							//
+							return processPageSection(
+								formDataObj,
+								$(".jsAddBtn"),
+								"section0"
+							);
+						},
+					});
+				});
+			}
+		);
+
+	});
+
 });

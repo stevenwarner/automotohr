@@ -1333,6 +1333,7 @@ class Cms extends Admin_Controller
      */
     public function updatePageSections(int $pageId)
     {
+
         // get the page record
         $pageContent = $this->cms_model
             ->get_page_data(
@@ -1343,7 +1344,13 @@ class Cms extends Admin_Controller
         //
         $pageContent = json_decode($pageContent, true);
 
-        $pageContent["page"]["sections"][$post["section"]][$post["index"]][] = $post;
+        if ($post['sectionindex']) {
+            $sectionIndex = $post['sectionindex'];
+            unset($post['sectionindex']);
+            $pageContent["page"]["sections"][$post["section"]][$post["index"]][$sectionIndex]['title'] = $post['title'];
+        } else {
+            $pageContent["page"]["sections"][$post["section"]][$post["index"]][] = $post;
+        }
 
         $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
@@ -1533,7 +1540,7 @@ class Cms extends Admin_Controller
         $pageContent["pageDetails"]["sourceFile"] = "";
         $pageContent["pageDetails"]["sourceType"] = "upload";
 
-                
+
         $post['content'] = json_encode($pageContent);
 
 
