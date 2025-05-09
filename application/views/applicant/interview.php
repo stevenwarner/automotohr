@@ -344,27 +344,26 @@ $creds = getCreds('AHR');
     let lastSpeechTimestamp = 0;
     let silenceDetectionInterval = null;
     let isSpeaking = false;
-    const SILENCE_THRESHOLD = 1000; // 3 second of silence to consider speech ended
+    const SILENCE_THRESHOLD = 4000; // 2.5 second of silence to consider speech ended
 
     document.addEventListener('DOMContentLoaded', function() {
         
         function setupSocketConnection() {
             // Connect to your Node.js server with Socket.IO
             socket = io('http://localhost:3000');
-
             console.log('Connecting to Socket.IO server...');
-
+            
             // Handle connection events
             socket.on('connect', () => {
                 console.log('Connected to Socket.IO server');
+                startInterview();
             });
 
             // Handle status updates
             socket.on('status', (data) => {
-                console.log(`Status: ${data.status} - ${data.message}`);
-                
                 if (data.status === 'ready') {
                     // Deepgram connection is ready, setup audio recording
+                    console.log(`Status: ${data.status} - ${data.message}`);
                     setupAudioRecording();
                 }
             });
@@ -379,7 +378,10 @@ $creds = getCreds('AHR');
                     const transcript = data.channel.alternatives[0].transcript;
                     
                     if (transcript && transcript.trim() !== '') {
-                        console.log('Transcript:', transcript);
+                        // Store coming transcript
+                        window.lastTranscript += ' ' + transcript;
+
+                        console.log('Transcript:', window.lastTranscript);
                         
                         // Update the last speech timestamp
                         lastSpeechTimestamp = Date.now();
@@ -388,17 +390,31 @@ $creds = getCreds('AHR');
                         if (!isSpeaking) {
                             isSpeaking = true;
                             console.log('User started speaking');
-                            
+                        }
+
+                        if(window.currentAudio)
+                        {
+                            window.currentAudio.pause();
+                            window.currentAudio = null;
+                        }
+
+                        if(isSpeaking)
+                        {
                             // Start silence detection if not already running
                             if (!silenceDetectionInterval) {
                                 silenceDetectionInterval = setInterval(checkForSilence, 300);
                             }
                         }
-                        
-                        // Store the latest transcript
-                        window.lastTranscript = transcript;
                     }
                 }
+            });
+
+            // Handle bot responses
+            socket.on('botResponse', (data) => {
+                console.log('Received bot response:', data.question);
+                
+                // Use Text-to-Speech to speak the response
+                speakText(data.question);
             });
 
             // Handle errors
@@ -441,8 +457,11 @@ $creds = getCreds('AHR');
                     // Process the final transcript
                     if (window.lastTranscript) {
                         console.log('FINAL TRANSCRIPT:', window.lastTranscript);
-                        // Process the transcript here
-                        // sendCandidateResponse(window.lastTranscript);
+
+                        // Send final transcript to server
+                        // socket.emit('finalTranscript', {
+                        //     transcript: window.lastTranscript,
+                        // });
                         
                         // Clear the last transcript
                         window.lastTranscript = null;
@@ -596,32 +615,6 @@ $creds = getCreds('AHR');
             }
         }
 
-        // Function to get initial question from OpenAI
-        async function getInitialQuestion() {
-            let data = await fetch('http://192.168.68.65:3000/openai/interview/initial-question', {
-                method: 'POST',
-                body: JSON.stringify({
-                    applicant_job_sid: job_list_sid
-                }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error:', error);
-            });
-
-            if (data.question) {
-                // Use Text-to-Speech to speak the question
-                speakText(data.question);
-            } else {
-                console.error('Error getting initial question:', data.error);
-            }
-
-        }
-
         function stopInterview() {
             interviewStarted = false;
             // recognition.stop();
@@ -647,17 +640,12 @@ $creds = getCreds('AHR');
             interviewStarted = true;
             try {
                 // Tell the server to start speech recognition with Deepgram
-                socket.emit('startSpeechRecognition');
+                socket.emit('startSpeechRecognition', {job_list_sid});
                 
-                // Get initial question after a delay to ensure everything is set up
-                setTimeout(() => {
-                    getInitialQuestion();
-                }, 1000);
+                // speakText(data.question);
             } catch (e) {
                 console.error('Error starting interview:', e);
             }
         }
-
-        startInterview();
     });
 </script>
