@@ -309,9 +309,81 @@ $activePages = getAllActivePages();
     </div>
 </footer>
 <?php $this->load->view("v1/app/partials/schedule_demo_form_popup"); ?>
+
+<div id="cookie-banner" style="display: none; position: fixed; bottom: 0; width: 100%; background: #eee; padding: 15px; text-align: center; z-index: 1000;">
+    This website uses cookies to ensure you get the best experience.
+    <button onclick="acceptCookies()">Customise</button>
+    <button onclick="acceptCookies()">Accept</button>
+    <button onclick="toggleCustomize()" style="background-color: #d9534f;">Reject</button>
+</div>
+
 </body>
 
 <?= $pageJs ? GetScripts($pageJs) : ''; ?>
 <?= $appJs ?? ''; ?>
+
+
+<script>
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            let date = new Date();
+            date.setTime(date.getTime() + (days*24*60*60*1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        let nameEQ = name + "=";
+        let ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i].trim();
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    function acceptCookies() {
+        let preferences = {
+            essential: true,
+            analytics: true,
+            marketing: true
+        };
+        setCookie('cookie_consent', JSON.stringify(preferences), 365);
+        document.getElementById('cookie-banner').style.display = 'none';
+    }
+
+    function rejectCookies() {
+        let preferences = {
+            essential: true,
+            analytics: false,
+            marketing: false
+        };
+        setCookie('cookie_consent', JSON.stringify(preferences), 365);
+        document.getElementById('cookie-banner').style.display = 'none';
+    }
+
+    function toggleCustomize() {
+        let options = document.getElementById('cookie-options');
+        options.style.display = options.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function saveCustomizedPreferences() {
+        let preferences = {
+            essential: true,
+            analytics: document.getElementById('analytics').checked,
+            marketing: document.getElementById('marketing').checked
+        };
+        setCookie('cookie_consent', JSON.stringify(preferences), 365);
+        document.getElementById('cookie-banner').style.display = 'none';
+    }
+
+    window.onload = function() {
+        if (!getCookie('cookie_consent')) {
+            document.getElementById('cookie-banner').style.display = 'block';
+        }
+    }
+</script>
 
 </html>

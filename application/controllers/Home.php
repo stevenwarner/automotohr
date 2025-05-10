@@ -95,6 +95,14 @@ class Home extends CI_Controller
 
         //_e($this->footer,true,true);
 
+        $cookieConsent = $this->input->cookie('cookie_consent', TRUE);
+        if ($cookieConsent === 'accepted') {
+            // Set tracking or analytics cookies
+
+        }
+
+
+
         $this->load->view($this->header, $data)
             ->view('v1/app/homepage')
             ->view($this->footer);
