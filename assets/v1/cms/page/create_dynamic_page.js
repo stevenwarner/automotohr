@@ -41,6 +41,9 @@ $(function () {
 			return false;
 		}
 		const btnHook = callButtonHook(buttonRef, true);
+
+
+		var isDefault = $('#is_defaultpage').is(':checked');
 		//
 		XHR = $.ajax({
 			url: baseUrl("manage_admin/cms/page/add"),
@@ -56,11 +59,19 @@ $(function () {
 			.fail(handleErrorResponse)
 			.done(function (resp) {
 				return _success(resp.msg, function () {
-					window.location.href = baseUrl(
-						"manage_admin/cms/page/edit/" +
+					if (isDefault == true) {
+						window.location.href = baseUrl(
+							"manage_admin/cms/page/commonedit/" +
 							resp.pageId +
 							"/?page=meta"
-					);
+						);
+					} else {
+						window.location.href = baseUrl(
+							"manage_admin/cms/page/edit/" +
+							resp.pageId +
+							"/?page=meta"
+						);
+					}
 				});
 			});
 	}

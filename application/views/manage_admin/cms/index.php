@@ -69,9 +69,21 @@
                                                                                 DATE_WITH_TIME
                                                                             ); ?>
                                                                         </td>
-                                                                    
+
                                                                         <td style="vertical-align: middle;">
-                                                                            <?php if ($page['is_dynamic']) { ?>
+
+
+                                                                            <?php if ($page['is_default'] && $page['is_dynamic']==1 ) { ?>
+                                                                                <a href="<?php echo base_url('manage_admin/cms/page/commonedit/' . $page['sid']) ?>" class="btn btn-warning">
+                                                                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                                                                    &nbsp;Edit Page
+                                                                                </a>
+                                                                                <button class="btn btn-danger hidden">
+                                                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                                                    &nbsp;Delete Page
+                                                                                </button>
+
+                                                                            <?php } elseif ($page['is_dynamic'] && $page['is_default']==0) { ?>
                                                                                 <a href="<?php echo base_url('manage_admin/cms/page/edit/' . $page['sid']) ?>" class="btn btn-warning">
                                                                                     <i class="fa fa-edit" aria-hidden="true"></i>
                                                                                     &nbsp;Edit Page

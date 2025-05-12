@@ -99,7 +99,7 @@ class Cms extends Admin_Controller
             ],
             "public/v1/app/",
             "app_page",
-            true
+            false
         );
         $this->data["appJs"] = combineBundle([
             $commonFileBundle,
@@ -225,6 +225,10 @@ class Cms extends Admin_Controller
         ], $files), "public/v1/app/", "app_" . $page_data["page"], false);
 
         $this->render('manage_admin/cms/v1/' . $page_data['page']);
+
+
+        //commonpage
+
     }
 
     //
@@ -1344,7 +1348,7 @@ class Cms extends Admin_Controller
         //
         $pageContent = json_decode($pageContent, true);
 
-        if ($post['sectionindex']!='') {
+        if ($post['sectionindex'] != '') {
             $sectionIndex = $post['sectionindex'];
             unset($post['sectionindex']);
             $pageContent["page"]["sections"][$post["section"]][$post["index"]][$sectionIndex]['title'] = $post['title'];
@@ -1507,7 +1511,6 @@ class Cms extends Admin_Controller
      */
     public function addDynamicPageProcess()
     {
-
 
         $this->form_validation->set_rules("title", "Page name", "xss_clean|required|trim");
         $this->form_validation->set_rules("slug", "Page slug", "xss_clean|required|trim");
@@ -1691,5 +1694,59 @@ class Cms extends Admin_Controller
         return SendResponse(200, [
             "msg" => $msg
         ]);
+    }
+
+    //
+    public function editCommonPage(int $pageId)
+    {
+        //
+        $this->load->helper('url');
+        $this->data['groups'] = $this->ion_auth->groups()->result();
+        $page_data = $this->cms_model->get_page_data($pageId);
+        $this->data['page_data'] = $page_data;
+        //
+        $this->data['pageContent'] = json_decode($page_data["content"], true);
+        $this->data['page'] = $page_data;
+        $this->data["page_title"] = "Edit  page :: AutomotoHR.com";
+
+
+        // get the page
+        $this->data["pageContent"] = json_decode($this->data["page"]["content"], true);
+        $this->data["PageScripts"] = [
+            "ckeditor/ckeditor"
+        ];
+        //
+
+
+
+
+        $this->data["appCSS"] = bundleCSS([
+            "v1/plugins/ms_modal/main",
+            "v1/plugins/ms_uploader/main",
+        ], "public/v1/app/", "app_commom_page", false);
+        //
+        $files = [];
+        // for home page
+
+        $files = [
+            "v1/cms/page/common_page"
+        ];
+
+
+        $this->data["PageScripts"] = [
+            "ckeditor/ckeditor"
+        ];
+
+        //
+        $this->data["appJs"] = bundleJs(array_merge([
+            "v1/plugins/ms_modal/main",
+            "v1/plugins/ms_uploader/main",
+            "js/app_helper",
+            "v1/cms/meta",
+            "v1/cms/page",
+        ], $files), "public/v1/app/", "app_common_page", false);
+
+        //
+        $this->render('manage_admin/cms/v1/common_page');
     }
 }

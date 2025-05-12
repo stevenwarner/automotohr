@@ -34,9 +34,17 @@ $(function () {
 			return false;
 		}
 		//
+
 		const formObj = formArrayToObj($(form).serializeArray());
-		const pageId = getSegment(2);
 		const btnHook = callButtonHook($("#jsMetaBtn"), true);
+		//
+		var pageId = getSegment(2);
+
+		if (getSegment(3) == 'commonedit') {
+			pageId = getSegment(4);
+
+		}
+
 		//
 		XHR = $.ajax({
 			url: baseUrl("cms/" + pageId + "/meta"),
@@ -52,11 +60,21 @@ $(function () {
 			.fail(handleErrorResponse)
 			.done(function (resp) {
 				return _success(resp.msg, function () {
-					window.location.href = baseUrl(
-						"manage_admin/edit_page/" +
+
+					if (getSegment(3) == 'commonedit') {
+						window.location.href = baseUrl(
+							"manage_admin/cms/page/commonedit/" +
+							getSegment(4)+"/?page=meta");
+							} else {
+
+						window.location.href = baseUrl(
+							"manage_admin/edit_page/" +
 							getSegment(2) +
 							"/?page=meta"
-					);
+						);
+					}
+
+
 				});
 			});
 	}

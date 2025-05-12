@@ -2859,3 +2859,7 @@ $route["compliance_safety_reporting/issues/(:num)/(:num)/(:num)/employees/extern
 
 $route["csp/delete_file/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting_public/deleteFileById/$1";
+
+
+  $route["manage_admin/cms/page/commonedit/(:num)"]["get"] =
+  "manage_admin/Cms/editCommonPage/$1";

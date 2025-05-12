@@ -94,6 +94,11 @@ class cms_model extends CI_Model
             $isFooterLink = 1;
         }
 
+        $isDefault = 0;
+        if ($data["is_default"]) {
+            $isDefault = 1;
+        }
+
         $this->db
             ->insert(
                 "cms_pages_new",
@@ -107,6 +112,7 @@ class cms_model extends CI_Model
                     "is_dynamic" => 1,
                     "status" => 0,
                     "is_footer_link" => $isFooterLink,
+                    "is_default" => $isDefault,
                 ]
             );
         //

@@ -53,6 +53,13 @@
                                                 </label>
                                             </div>
 
+                                              <div class="form-group">
+                                                <label class="control control--checkbox">
+                                                    <input type="checkbox" name="is_default" id="is_defaultpage" /> Is Default?
+                                                    <div class="control__indicator"></div>
+                                                </label>
+                                            </div>
+
                                         </div>
                                         <div class="panel-footer text-center">
                                             <button class="btn btn-success jsCreatePageBtn">
