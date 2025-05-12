@@ -5,13 +5,13 @@ $(function () {
 	let XHR = null;
 	//
 	$(".jsDraggable").sortable({
-		update: function(event, ui) {
+		update: function (event, ui) {
 			//
 			var tagIndex = 0;
 			var orderList = [];
 			var indecators = ui.item.context.className.split(" ");
 			//
-			$("."+indecators[0]).map(function (i) {
+			$("." + indecators[0]).map(function (i) {
 				tagIndex = $(this).data("index");
 				orderList.push($(this).data("key"));
 			});
@@ -40,7 +40,7 @@ $(function () {
 			})
 			.fail(handleErrorResponse)
 			.done(function (resp) {
-				
+
 			});
 	}
 	//
@@ -135,7 +135,7 @@ $(function () {
 		const index = $(this).data("index");
 		//
 		return _confirm(
-			"Do you really wan tto delete this section?",
+			"Do you really wan to delete this section?",
 			function () {
 				deleteTag(index);
 			}
@@ -349,8 +349,8 @@ $(function () {
 				_success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=section_0"
+						getSegment(2) +
+						"/?page=section_0"
 					);
 				});
 			});
@@ -375,9 +375,9 @@ $(function () {
 				_success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=sectionTag" +
-							tagIndex
+						getSegment(2) +
+						"/?page=sectionTag" +
+						tagIndex
 					);
 				});
 			});
@@ -389,14 +389,14 @@ $(function () {
 
 		$('[name="' + to + '"]').val(
 			$(this)
-			.val()
-			.replace(/[^a-z0-9]/ig, "-")
-			.replace(/-+/g, "-")
-			.toLowerCase()
+				.val()
+				.replace(/[^a-z0-9]/ig, "-")
+				.replace(/-+/g, "-")
+				.toLowerCase()
 		);
 	});
 
-//
+	//
 	$(".jsEditSection").click(function (event) {
 		//
 		event.preventDefault();
@@ -446,5 +446,79 @@ $(function () {
 		);
 
 	});
+
+
+	//	
+	$(".jsDeactivateSection").click(function (event) {
+		//
+		event.preventDefault();
+		event.stopPropagation();
+		//
+		const index = $(this).data("index");
+		//
+		return _confirm(
+			"Do you really wan deactivate this section?",
+			function () {
+				deactivateTag(index);
+			}
+		);
+	});
+
+
+	$(".jsActivateSection").click(function (event) {
+		//
+		event.preventDefault();
+		event.stopPropagation();
+		//
+		const index = $(this).data("index");
+		//
+		return _confirm(
+			"Do you really wan activate this section?",
+			function () {
+				activateTag(index);
+			}
+		);
+	});
+
+
+
+	function deactivateTag(index) {
+		//
+		$.ajax({
+			url: baseUrl("cms/" + getSegment(2) + "/deactivatetag/" + index),
+			//	method: "delete",
+		})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"manage_admin/edit_page/" +
+						getSegment(2) +
+						"/?page=section_0"
+					);
+				});
+			});
+	}
+
+
+	function activateTag(index) {
+		//
+		$.ajax({
+			url: baseUrl("cms/" + getSegment(2) + "/activatetag/" + index),
+			method: "delete",
+		})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"manage_admin/edit_page/" +
+						getSegment(2) +
+						"/?page=section_0"
+					);
+				});
+			});
+	}
+
+
 
 });

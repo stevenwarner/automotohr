@@ -13,12 +13,27 @@ $collapseIn =  $this->input->get("page") == 'sectionTag' . $tagIndex ? "in" : ""
             <span class="pull-right">
                 <button class="btn btn-danger jsDeleteSection" data-index="<?= $tagIndex; ?>">
                     <i class="fa fa-trash" aria-hidden="true"></i>
-                    &nbsp;Delete Section
+                    &nbsp;Delete
                 </button>
+
+                <?php if ($tagData["status"] == '0') { ?>
+
+                     <button class="btn btn-success jsActivateSection" data-index="<?= $tagIndex; ?>">
+                        &nbsp;Activate
+                    </button>
+
+                <?php } else { ?>
+                   
+                    <button class="btn btn-danger jsDeactivateSection" data-index="<?= $tagIndex; ?>">
+                        &nbsp;De-Activate
+                    </button>
+
+                <?php } ?>
+
 
                 <button class="btn btn-success jsEditSection" data-index="<?= $tagIndex; ?>" data-title="<?= $tagData["title"]; ?>">
                     <i class="fa fa-edit" aria-hidden="true"></i>
-                    &nbsp;Edit Section
+                    &nbsp;Edit
                 </button>
             </span>
         </h4>
@@ -29,29 +44,29 @@ $collapseIn =  $this->input->get("page") == 'sectionTag' . $tagIndex ? "in" : ""
             if ($tagData["cards"]) {
                 foreach ($tagData["cards"] as $index => $card) {
             ?>
-                <div class="jsCardsSortOrder_<?= $tagIndex; ?>" data-key="<?= $index; ?>" data-index="<?= $tagIndex; ?>">
-                    <div class="row" data-key="<?= $index; ?>" data-index="<?= $tagIndex; ?>">
-                        <div class="col-sm-10">
-                            <h3><?= convertToStrip($card["title"]); ?></h3>
-                            <p><?= convertToStrip($card["details"]); ?></p>
-                            <br />
-                            <a href="<?= generateLink($card["buttonLink"]); ?>" class="btn btn-default">
-                                <?= convertToStrip($card["buttonText"]); ?>
-                            </a>
+                    <div class="jsCardsSortOrder_<?= $tagIndex; ?>" data-key="<?= $index; ?>" data-index="<?= $tagIndex; ?>">
+                        <div class="row" data-key="<?= $index; ?>" data-index="<?= $tagIndex; ?>">
+                            <div class="col-sm-10">
+                                <h3><?= convertToStrip($card["title"]); ?></h3>
+                                <p><?= convertToStrip($card["details"]); ?></p>
+                                <br />
+                                <a href="<?= generateLink($card["buttonLink"]); ?>" class="btn btn-default">
+                                    <?= convertToStrip($card["buttonText"]); ?>
+                                </a>
+                            </div>
+                            <div class="col-sm-2 text-center" style="margin-top: 50px">
+                                <button class="btn btn-warning jsEditTagCard" type="button">
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                    &nbsp;Edit
+                                </button>
+                                <button class="btn btn-danger jsDeleteTagCard" type="button">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                    &nbsp;Delete
+                                </button>
+                            </div>
                         </div>
-                        <div class="col-sm-2 text-center" style="margin-top: 50px">
-                            <button class="btn btn-warning jsEditTagCard" type="button">
-                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                &nbsp;Edit
-                            </button>
-                            <button class="btn btn-danger jsDeleteTagCard" type="button">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                &nbsp;Delete
-                            </button>
-                        </div>
+                        <hr />
                     </div>
-                    <hr />
-                </div>    
             <?php
                 }
             }

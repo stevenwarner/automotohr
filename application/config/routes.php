@@ -2873,3 +2873,10 @@ $route["compliance_safety_reporting/issue_questions/(:num)"]["post"] =
 
   $route["compliance_safety_reporting/report_questions/(:num)"]["post"] =
   "v1/Compliance_safety_reporting/processReportQuestion/$1";  
+
+  $route["cms/(:num)/deactivatetag/(:num)"] =
+  "manage_admin/Cms/deactivatePageTag/$1/$2";
+
+    $route["cms/(:num)/activatetag/(:num)"] =
+  "manage_admin/Cms/activatePageTag/$1/$2";
+ 
