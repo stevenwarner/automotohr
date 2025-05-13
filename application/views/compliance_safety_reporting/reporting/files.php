@@ -92,6 +92,13 @@
                                                         class="btn btn-info btn-info">
                                                         <i class="fa fa-download"></i>
                                                     </a>
+                                                    <?php if ($document["file_type"] != "link"): ?>
+                                                        <button class="btn btn-danger jsDeleteFile"
+                                                            data-file_id="<?= $document["sid"]; ?>"
+                                                            data-file_type="<?= $document["file_type"]; ?>">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    <?php endif; ?>
                                                 </div>
                                             </div>
                                         </div>

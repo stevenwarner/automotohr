@@ -2032,6 +2032,7 @@ class Compliance_safety_reporting extends Base_csp
             $issueId = $this
                 ->compliance_report_model
                 ->attachManualIssueWithReport(
+                    $post["reportId"],
                     $cspIncidentId,
                     $incidentTypesId,
                     $post["severityLevelId"],

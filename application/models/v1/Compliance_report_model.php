@@ -3051,15 +3051,23 @@ class Compliance_report_model extends CI_Model
 	public function hasAccess(int $employeeId): int
 	{
 		//
-		return $this
+		$isListedAsEmployee = $this
 			->db
 			->where(
 				"csp_reports_employees.employee_sid",
 				$employeeId
 			)
 			->count_all_results("csp_reports_employees");
-	}
 
+		if ($isListedAsEmployee) {
+			return 1;
+		}
+		// let's check it in CSP managers
+		return $this
+			->db
+			->where("FIND_IN_SET($employeeId, csp_managers_ids)")
+			->count_all_results("departments_management");
+	}
 
 	/**
 	 * check the access of employee
@@ -3098,9 +3106,103 @@ class Compliance_report_model extends CI_Model
 				"inner"
 			)
 			->count_all_results("csp_reports_employees");
-
 		//
-		return $record;
+		if ($record) {
+			return $record;
+		}
+		// check the department
+		if (!$hasMainAccess) {
+			// get the logged in employee CSP manager for teams and departments
+			$departmentTeamIds = $this->getEmployeeDepartmentAndTeamIds(
+				$employeeId
+			);
+			//
+			if ($departmentTeamIds["departmentIds"]) {
+				$record = 0;
+				//
+				foreach ($departmentTeamIds["departmentIds"] as $v0) {
+					$allowed = $this
+						->db
+						->where("FIND_IN_SET({$v0}, allowed_departments) > ", 0)
+						->count_all_results("csp_reports_incidents_items");
+
+					if ($allowed) {
+						$record = 1;
+						break;
+					}
+				}
+
+				if ($record) {
+					return $record;
+				}
+			}
+			//
+			if ($departmentTeamIds["teamIds"]) {
+
+				$record = 0;
+				//
+				foreach ($departmentTeamIds["teamIds"] as $v0) {
+					$allowed = $this
+						->db
+						->where("FIND_IN_SET({$v0}, allowed_teams) > ", 0)
+						->count_all_results("csp_reports_incidents_items");
+
+					if ($allowed) {
+						$record = 1;
+						break;
+					}
+				}
+			}
+		}
+		//
+		return 0;
+	}
+
+
+	public function getEmployeeDepartmentAndTeamIds($employeeId)
+	{
+		$ra = [
+			"departmentIds" => [],
+			"teamIds" => [],
+		];
+		// get department ids
+		$records = $this
+			->db
+			->select("sid")
+			->where("is_deleted", 0)
+			->where("FIND_IN_SET($employeeId, csp_managers_ids) > ", 0)
+			->get("departments_management")
+			->result_array();
+		//
+		if ($records) {
+			$ra["departmentIds"] = array_column(
+				$records,
+				"sid"
+			);
+		}
+		// get team ids
+		$records = $this
+			->db
+			->select("departments_team_management.sid")
+			->where("departments_team_management.is_deleted", 0)
+			->where("departments_management.is_deleted", 0)
+			->where("FIND_IN_SET($employeeId, departments_team_management.csp_managers_ids) > ", 0)
+			->join(
+				"departments_management",
+				"departments_management.sid = departments_team_management.department_sid",
+				"inner"
+			)
+			->get("departments_team_management")
+			->result_array();
+		//
+		if ($records) {
+			$ra["teamIds"] = array_column(
+				$records,
+				"sid"
+			);
+		}
+		//
+		return $ra;
 	}
 
 	/**
@@ -6434,6 +6536,9 @@ class Compliance_report_model extends CI_Model
 		$inputs,
 		$loggedInEmployeeId
 	) {
+		// get the department ids from report if attached
+		$departmentIds = $this->getReportDepartments($reportId);
+		//
 		$this
 			->db
 			->insert(
@@ -6446,6 +6551,7 @@ class Compliance_report_model extends CI_Model
 						"dynamicInput" => $inputs,
 						"dynamicCheckbox" => $checkboxes,
 					]),
+					"allowed_departments" => $departmentIds ? implode(",", $departmentIds) : null,
 					"last_modified_by" => $loggedInEmployeeId,
 					"created_by" => $loggedInEmployeeId,
 					"created_at" => getSystemDate(),
@@ -6483,11 +6589,14 @@ class Compliance_report_model extends CI_Model
 	}
 
 	public function attachManualIssueWithReport(
+		$reportId,
 		$cspIncidentId,
 		$issueTypeId,
 		$severityLevelId,
 		$loggedInEmployeeId
 	) {
+		// get the department ids from report if attached
+		$departmentIds = $this->getReportDepartments($reportId);
 		//
 		$this
 			->db
@@ -6501,6 +6610,7 @@ class Compliance_report_model extends CI_Model
 						"dynamicInput" => [],
 						"description" => [],
 					]),
+					"allowed_departments" => $departmentIds ? implode(",", $departmentIds) : null,
 					"last_modified_by" => $loggedInEmployeeId,
 					"created_by" => $loggedInEmployeeId,
 					"created_at" => getSystemDate(),
