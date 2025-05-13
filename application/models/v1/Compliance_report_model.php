@@ -5042,7 +5042,7 @@ class Compliance_report_model extends CI_Model
 		$departmentsTeams = $this->getCSPIncidentDepartmentsAndTeamsById($itemId);
 		//
 		$itemData["allowed_departments"] = isset($departmentsTeams['allowed_departments']) && !empty($departmentsTeams['allowed_departments']) ? explode(',', $departmentsTeams['allowed_departments']) : [];
-    	$itemData["allowed_teams"] = isset($departmentsTeams['allowed_teams']) && !empty($departmentsTeams['allowed_teams']) ? explode(',', $departmentsTeams['allowed_teams']) : [];
+		$itemData["allowed_teams"] = isset($departmentsTeams['allowed_teams']) && !empty($departmentsTeams['allowed_teams']) ? explode(',', $departmentsTeams['allowed_teams']) : [];
 		//
 		$itemData["notes"] = $this->getCSPIncidentNotesById($reportId, $incidentId, $itemId, [
 			$this->userFields,
@@ -5523,24 +5523,24 @@ class Compliance_report_model extends CI_Model
 			$this->db->where('csp_reports.company_sid', $companyId);
 			$this->db->where('csp_reports_employees.status', 1);
 			$this->db->group_start();
-				if (array_key_exists("departments", $filter) && $filter["departments"] != "") {
-					foreach ($filter["departments"] as $department) {
-						$this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
-					}
+			if (array_key_exists("departments", $filter) && $filter["departments"] != "") {
+				foreach ($filter["departments"] as $department) {
+					$this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
 				}
-				// For teams
-				if (array_key_exists("teams", $filter) && $filter["teams"] != "") {
-					foreach ($filter["teams"] as $team) {
-						$this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
-					}
+			}
+			// For teams
+			if (array_key_exists("teams", $filter) && $filter["teams"] != "") {
+				foreach ($filter["teams"] as $team) {
+					$this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
 				}
+			}
 			$this->db->group_end();
 			$records_obj = $this->db->get('csp_reports_employees');
 			$records_arr = $records_obj->result_array();
 			$records_obj->free_result();
 			//
 			$reportIds = array_column($records_arr, 'csp_reports_sid');
-		}	
+		}
 
 		$this->db->select([
 			// Item columns
@@ -6736,56 +6736,57 @@ class Compliance_report_model extends CI_Model
 	}
 
 	function getDepartments($companySid)
-    {
-        $a = $this->db
-            ->select('sid, name')
-            ->where('company_sid', $companySid)
-            ->where('status', 1)
-            ->where('is_deleted', 0)
-            ->order_by('sort_order', 'ASC')
-            ->get('departments_management');
-        //
-        $b = $a->result_array();
-        $a = $a->free_result();
-        //
-        return $b;
-    }
+	{
+		$a = $this->db
+			->select('sid, name')
+			->where('company_sid', $companySid)
+			->where('status', 1)
+			->where('is_deleted', 0)
+			->order_by('sort_order', 'ASC')
+			->get('departments_management');
+		//
+		$b = $a->result_array();
+		$a = $a->free_result();
+		//
+		return $b;
+	}
 
 	function getSelectedDepartments($departmentIds)
-    {
-        $a = $this->db
-            ->select('sid, name')
-            ->where_in('sid', $departmentIds)
-            ->where('status', 1)
-            ->where('is_deleted', 0)
-            ->order_by('sort_order', 'ASC')
-            ->get('departments_management');
-        //
-        $b = $a->result_array();
-        $a = $a->free_result();
-        //
-        return $b;
-    }
+	{
+		$a = $this->db
+			->select('sid, name')
+			->where_in('sid', $departmentIds)
+			->where('status', 1)
+			->where('is_deleted', 0)
+			->order_by('sort_order', 'ASC')
+			->get('departments_management');
+		//
+		$b = $a->result_array();
+		$a = $a->free_result();
+		//
+		return $b;
+	}
 
-    function getTeams($companySid, $departments)
-    {
-        //
-        if (!$departments || !count($departments)) return [];
-        //
-        $a = $this->db
-            ->select('sid, name')
-            ->where('company_sid', $companySid)
-            ->where('status', 1)
-            ->where('is_deleted', 0)
-            ->where_in('department_sid', array_column($departments, 'sid'))
-            ->order_by('sort_order', 'ASC')
-            ->get('departments_team_management');
-        //
-        $b = $a->result_array();
-        $a = $a->free_result();
-        //
-        return $b;
-    }
+	function getTeams($companySid, $departments)
+	{
+		//
+		if (!$departments || !count($departments))
+			return [];
+		//
+		$a = $this->db
+			->select('sid, name')
+			->where('company_sid', $companySid)
+			->where('status', 1)
+			->where('is_deleted', 0)
+			->where_in('department_sid', array_column($departments, 'sid'))
+			->order_by('sort_order', 'ASC')
+			->get('departments_team_management');
+		//
+		$b = $a->result_array();
+		$a = $a->free_result();
+		//
+		return $b;
+	}
 
 	/**
 	 * Get all compliance reports
@@ -6849,14 +6850,15 @@ class Compliance_report_model extends CI_Model
 		return true;
 	}
 
-	public Function getDepartmentAndTeamManagers ($departments, $teams) {
+	public function getDepartmentAndTeamManagers($departments, $teams)
+	{
 		$managerIdsList = [];
 		//
 		if ($departments) {
 			foreach ($departments as $departmentId) {
 				$this->db->select("csp_managers_ids");
-                $this->db->where("sid", $departmentId);
-                $this->db->where("is_deleted", 0);
+				$this->db->where("sid", $departmentId);
+				$this->db->where("is_deleted", 0);
 				//
 				$records_obj = $this->db->get("departments_management");
 				$cspDepartmentManagerIds = $records_obj->row_array();
@@ -6866,7 +6868,7 @@ class Compliance_report_model extends CI_Model
 					//
 					$departmentManagerIds = explode(',', $cspDepartmentManagerIds['csp_managers_ids']);
 					//
-					foreach ($departmentManagerIds as  $managerId) {
+					foreach ($departmentManagerIds as $managerId) {
 						if (!in_array($managerId, $managerIdsList)) {
 							$managerIdsList[] = $managerId;
 						}
@@ -6878,8 +6880,8 @@ class Compliance_report_model extends CI_Model
 		if ($teams) {
 			foreach ($teams as $teamId) {
 				$this->db->select("csp_managers_ids");
-                $this->db->where("sid", $teamId);
-                $this->db->where("is_deleted", 0);
+				$this->db->where("sid", $teamId);
+				$this->db->where("is_deleted", 0);
 				//
 				$records_obj = $this->db->get("departments_team_management");
 				$cspTeamManagerIds = $records_obj->row_array();
@@ -6889,7 +6891,7 @@ class Compliance_report_model extends CI_Model
 					//
 					$teamManagerIds = explode(',', $cspTeamManagerIds['csp_managers_ids']);
 					//
-					foreach ($teamManagerIds as  $managerId) {
+					foreach ($teamManagerIds as $managerId) {
 						if (!in_array($managerId, $managerIdsList)) {
 							$managerIdsList[] = $managerId;
 						}
@@ -6979,7 +6981,7 @@ class Compliance_report_model extends CI_Model
 				$answers['answers_json'],
 				true
 			);
-		
+
 			$departments = empty($decodedJSON['departments']) ? [] : $decodedJSON['departments'];
 		}
 		//
@@ -6990,7 +6992,8 @@ class Compliance_report_model extends CI_Model
 	 * manage departments and teams
 	 *
 	 */
-	public function manageAllowedDepartmentsAndTeamsManagers () {
+	public function manageAllowedDepartmentsAndTeamsManagers()
+	{
 		$allowedDepartmentsAndTeams = $this->db
 			->select("sid, csp_reports_incidents_sid, allowed_departments, allowed_teams")
 			->get("csp_reports_incidents_items")
@@ -7021,7 +7024,7 @@ class Compliance_report_model extends CI_Model
 							//
 							$departmentManagerIds = explode(',', $cspDepartmentManagerIds['csp_managers_ids']);
 							//
-							foreach ($departmentManagerIds as  $managerId) {
+							foreach ($departmentManagerIds as $managerId) {
 								if (!in_array($managerId, $managerIdsList)) {
 									$managerIdsList[] = $managerId;
 								}
@@ -7047,7 +7050,7 @@ class Compliance_report_model extends CI_Model
 							//
 							$teamManagerIds = explode(',', $cspTeamManagerIds['csp_managers_ids']);
 							//
-							foreach ($teamManagerIds as  $managerId) {
+							foreach ($teamManagerIds as $managerId) {
 								if (!in_array($managerId, $managerIdsList)) {
 									$managerIdsList[] = $managerId;
 								}
@@ -7060,8 +7063,8 @@ class Compliance_report_model extends CI_Model
 				$issueId = $issueRow['sid'];
 				$incidentId = $issueRow['csp_reports_incidents_sid'];
 				$reportId = $this->getReportIdByIncidentID($incidentId);
-				
-				
+
+
 				//
 				$this->db->where('csp_reports_sid', $reportId);
 				$this->db->where('csp_report_incident_sid', $incidentId);
@@ -7093,12 +7096,58 @@ class Compliance_report_model extends CI_Model
 		}
 	}
 
-	public function getReportIdByIncidentID ($incidentId) {
+	public function getReportIdByIncidentID($incidentId)
+	{
 		$this->db->select('csp_reports_sid');
 		$this->db->where('sid', $incidentId);
 		$record = $this->db->get('csp_reports_incidents')->row_array();
 		//
 		return $record['csp_reports_sid'];
 	}
-	
+
+	/**
+	 * Summary of deleteReportById
+	 * @param int $reportId
+	 * @param int $companyId
+	 * @return bool
+	 */
+	public function deleteReportById(int $reportId, int $companyId): bool
+	{
+		// Check if the report exists for the given company
+		$this->db->where('sid', $reportId);
+		$this->db->where('company_sid', $companyId);
+		$reportExists = $this->db->count_all_results("csp_reports");
+
+		if (!$reportExists) {
+			return false; // Report does not exist for the company
+		}
+
+		$this->db->trans_start();
+
+		// Delete related data from csp_reports_incidents
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->delete('csp_reports_incidents');
+
+		// Delete related data from csp_reports_employees
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->delete('csp_reports_employees');
+
+		// Delete related data from csp_reports_files
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->delete('csp_reports_files');
+
+		// Delete related data from csp_reports_notes
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->delete('csp_reports_notes');
+
+		// Delete the report itself
+		$this->db->where('sid', $reportId);
+		$this->db->where('company_sid', $companyId);
+		$this->db->delete('csp_reports');
+
+		$this->db->trans_complete();
+
+		return $this->db->trans_status();
+	}
+
 }

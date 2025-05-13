@@ -2,6 +2,48 @@ $(function Overview() {
 	//
 	ml(false, "jsPageLoader");
 
+	$(".jsDeleteReportBtn").click(
+		function (event) {
+			event.preventDefault();
+			const ref = $(this)
+			const id = ref.closest(".jsReportBox").data("id");
+
+			_confirm(
+				"Are you sure you want to delete this report? This action is not revertible.",
+				function () {
+					deleteReport(
+						id, ref
+					);
+				}
+			);
+		}
+	);
+
+
+	function deleteReport(id, ref) {
+		//
+		const _html = callButtonHook(
+			ref,
+			true
+		);
+		//
+		$
+			.ajax({
+				url: baseUrl(`compliance_safety_reporting/report/${id}`),
+				method: "DELETE",
+
+			})
+			.always(function () {
+				callButtonHook(_html, false);
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.message, function () {
+					ref.closest(".jsReportBox").remove();
+				})
+			});
+	}
+
 	loadMyAssignedCoursesBarChart(reportGraphData);
 
 	//

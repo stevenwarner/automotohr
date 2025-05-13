@@ -2869,7 +2869,11 @@ $route["compliance_safety_reporting/add_department_and_team/(:num)/(:num)/(:num)
   "v1/Compliance_safety_reporting/addDepartmentsAndTeams/$1/$2/$3";
 
 $route["compliance_safety_reporting/issue_questions/(:num)"]["post"] =
-  "v1/Compliance_safety_reporting/processIssueQuestion/$1";  
+  "v1/Compliance_safety_reporting/processIssueQuestion/$1";
 
-  $route["compliance_safety_reporting/report_questions/(:num)"]["post"] =
-  "v1/Compliance_safety_reporting/processReportQuestion/$1";  
+$route["compliance_safety_reporting/report_questions/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/processReportQuestion/$1";
+
+// delete CSP report by Id
+$route["compliance_safety_reporting/report/(:num)"]["delete"]
+  = "v1/Compliance_safety_reporting/deleteReportById/$1";
