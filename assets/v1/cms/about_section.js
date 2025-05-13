@@ -6,7 +6,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: aboutObj.sourceType,
 		placeholderImage: aboutObj.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsAboutSectionForm").validate({
@@ -43,7 +43,7 @@ $(function () {
 			},
 		},
 		submitHandler: function (form) {
-			
+
 			const fileObject = $("#jsAboutSectionFile").msFileUploader("get");
 			//
 			if (!isValidFile(fileObject)) {
@@ -88,8 +88,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=about_section"
+						getSegment(2) +
+						"/?page=about_section"
 					);
 				});
 			});

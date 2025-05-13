@@ -91,7 +91,7 @@ $(function () {
 					allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
 					allowLinks: true,
 					activeLink: "upload",
-					fileLimit: "20mb",
+					fileLimit: "200mb",
 				});
 				//
 				$("#jsAddHomeProduct").validate({
@@ -167,7 +167,7 @@ $(function () {
 					allowLinks: true,
 					activeLink: resp.sourceType,
 					placeholderImage: resp.sourceFile,
-					fileLimit: "20mb",
+					fileLimit: "200mb",
 				});
 				//
 				$("#jsEditHomeProduct").validate({
@@ -243,8 +243,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=home_section_2"
+						getSegment(2) +
+						"/?page=home_section_2"
 					);
 				});
 			});
@@ -275,8 +275,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=home_section_2"
+						getSegment(2) +
+						"/?page=home_section_2"
 					);
 				});
 			});
@@ -307,8 +307,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=home_section_2"
+						getSegment(2) +
+						"/?page=home_section_2"
 					);
 				});
 			});
@@ -336,8 +336,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=home_section_2"
+						getSegment(2) +
+						"/?page=home_section_2"
 					);
 				});
 			});

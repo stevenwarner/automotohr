@@ -6,7 +6,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: homeSection1FileObj.sourceType,
 		placeholderImage: homeSection1FileObj.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsHomeSection1Form").validate({
@@ -94,8 +94,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=home_section_1"
+						getSegment(2) +
+						"/?page=home_section_1"
 					);
 				});
 			});
