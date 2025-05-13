@@ -48,6 +48,28 @@ $(function () {
 			required: "Please provide employee count.",
 		},
 	};
+
+
+
+	//
+	const highlightsrules = {
+		name: {
+			required: true,
+		},
+		email: {
+			required: true,
+		},
+	};
+	const highlightsmessages = {
+		name: {
+			required: "Please provide  name.",
+		},
+		email: {
+			required: "Please provide valid email.",
+		},
+	};
+
+
 	/**
 	 *
 	 */
@@ -85,6 +107,14 @@ $(function () {
 
 	$(".jsCountrySelect").change(function () {
 		loadCountryStates($(this).val(), $(this).closest("form").prop("id"));
+	});
+
+
+	//
+	$("#jsHighlightsForm").validate({
+		highlightsrules,
+		highlightsmessages,
+		submitHandler: submithighlightFormHandler,
 	});
 
 	/**
@@ -177,5 +207,40 @@ $(function () {
 		});
 		//
 		return dataObj;
+	}
+
+
+	//
+	function submithighlightFormHandler(form) {
+		const dataObj = convertFormToObject(form);
+		// check the captcha		
+		if (!dataObj["g-recaptcha-response"]) {
+			//
+			_error("Name is required.");
+			return;
+		}
+	
+		if (XHR !== null) {
+			return;
+		}
+
+		//
+		const ref = callButtonHook($(".jsScheduleHighlightsBtn"), true, true);
+		//
+		XHR = $.ajax({
+			url: baseUrl("schedule_highlights"),
+			type: "POST",
+			data: dataObj,
+		})
+			.always(function () {
+				XHR = null;
+				callButtonHook(ref, false);
+			})
+			.done(function (resp) {
+				return _success(resp.msg, function () {
+					window.location.href = baseUrl(window.location.pathname);
+				});
+			})
+			.fail(handleErrorResponse);
 	}
 });

@@ -29,6 +29,10 @@
                             <?php $this->load->view("manage_admin/cms/v1/partials/meta"); ?>
                             <!-- Slider -->
                             <?php $this->load->view("manage_admin/cms/v1/partials/slider"); ?>
+
+                            <!-- highlighting Special -->
+                            <?php $this->load->view("manage_admin/cms/v1/partials/highlighting_special"); ?>
+
                             <!-- What we offer -->
                             <?php $this->load->view("manage_admin/cms/v1/partials/home_section_1"); ?>
                             <!-- Products -->

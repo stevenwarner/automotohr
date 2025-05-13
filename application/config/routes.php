@@ -2869,14 +2869,15 @@ $route["compliance_safety_reporting/add_department_and_team/(:num)/(:num)/(:num)
   "v1/Compliance_safety_reporting/addDepartmentsAndTeams/$1/$2/$3";
 
 $route["compliance_safety_reporting/issue_questions/(:num)"]["post"] =
-  "v1/Compliance_safety_reporting/processIssueQuestion/$1";  
+  "v1/Compliance_safety_reporting/processIssueQuestion/$1";
 
-  $route["compliance_safety_reporting/report_questions/(:num)"]["post"] =
-  "v1/Compliance_safety_reporting/processReportQuestion/$1";  
+$route["compliance_safety_reporting/report_questions/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/processReportQuestion/$1";
 
-  $route["cms/(:num)/deactivatetag/(:num)"] =
+$route["cms/(:num)/deactivatetag/(:num)"] =
   "manage_admin/Cms/deactivatePageTag/$1/$2";
 
-    $route["cms/(:num)/activatetag/(:num)"] =
+$route["cms/(:num)/activatetag/(:num)"] =
   "manage_admin/Cms/activatePageTag/$1/$2";
- 
+
+$route['schedule_highlights']['post'] = 'v1/App/scheduleHighlights';
