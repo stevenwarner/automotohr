@@ -23,7 +23,7 @@ class Compliance_safety_reporting_employee extends Base_csp
     }
 
     public function dashboard()
-    {_e('I am here',true,true);
+    {
         // set the title
         $this->data['title'] = 'Compliance Safety Reporting | Dashboard';
         // load JS
