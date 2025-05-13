@@ -5,13 +5,13 @@ $(function () {
 	let XHR = null;
 	//
 	$(".jsDraggable").sortable({
-		update: function(event, ui) {
+		update: function (event, ui) {
 			//
 			var tagIndex = 0;
 			var orderList = [];
 			var indecators = ui.item.context.className.split(" ");
 			//
-			$("."+indecators[0]).map(function (i) {
+			$("." + indecators[0]).map(function (i) {
 				tagIndex = $(this).data("index");
 				orderList.push($(this).data("key"));
 			});
@@ -40,7 +40,7 @@ $(function () {
 			})
 			.fail(handleErrorResponse)
 			.done(function (resp) {
-				
+
 			});
 	}
 	//
@@ -50,7 +50,7 @@ $(function () {
 		allowLinks: false,
 		activeLink: section0.sourceType,
 		placeholderImage: section0.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	// validate the form
 	$("#jsSection0Form").validate({
@@ -349,8 +349,8 @@ $(function () {
 				_success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=section_0"
+						getSegment(2) +
+						"/?page=section_0"
 					);
 				});
 			});
@@ -375,9 +375,9 @@ $(function () {
 				_success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=sectionTag" +
-							tagIndex
+						getSegment(2) +
+						"/?page=sectionTag" +
+						tagIndex
 					);
 				});
 			});
@@ -389,14 +389,14 @@ $(function () {
 
 		$('[name="' + to + '"]').val(
 			$(this)
-			.val()
-			.replace(/[^a-z0-9]/ig, "-")
-			.replace(/-+/g, "-")
-			.toLowerCase()
+				.val()
+				.replace(/[^a-z0-9]/ig, "-")
+				.replace(/-+/g, "-")
+				.toLowerCase()
 		);
 	});
 
-//
+	//
 	$(".jsEditSection").click(function (event) {
 		//
 		event.preventDefault();

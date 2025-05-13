@@ -6,7 +6,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section1.sourceType,
 		placeholderImage: section1.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsSection1Form").validate({
@@ -69,7 +69,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section2.sourceType,
 		placeholderImage: section2.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsSection2Form").validate({
@@ -130,14 +130,14 @@ $(function () {
 		allowLinks: false,
 		activeLink: section3.file.sourceType,
 		placeholderImage: section3.file.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection3FileLogo").msFileUploader({
 		allowedTypes: ["jpg", "jpeg", "png", "webp"],
 		allowLinks: false,
 		activeLink: section3.logo.sourceType,
 		placeholderImage: section3.logo.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection3Form").validate({
 		rules: {
@@ -197,14 +197,14 @@ $(function () {
 		allowLinks: false,
 		activeLink: section4.file.sourceType,
 		placeholderImage: section4.file.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection4FileLogo").msFileUploader({
 		allowedTypes: ["jpg", "jpeg", "png", "webp"],
 		allowLinks: false,
 		activeLink: section4.logo.sourceType,
 		placeholderImage: section4.logo.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection4Form").validate({
 		rules: {
@@ -264,14 +264,14 @@ $(function () {
 		allowLinks: true,
 		activeLink: section5.file.sourceType,
 		placeholderImage: section5.file.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection5FileLogo").msFileUploader({
 		allowedTypes: ["jpg", "jpeg", "png", "webp"],
 		allowLinks: false,
 		activeLink: section5.logo.sourceType,
 		placeholderImage: section5.logo.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection5Form").validate({
 		rules: {
@@ -331,7 +331,7 @@ $(function () {
 		allowLinks: false,
 		activeLink: section6.sourceType,
 		placeholderImage: section6.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsSection6Form").validate({
@@ -381,7 +381,7 @@ $(function () {
 		allowLinks: false,
 		activeLink: section0.sourceType,
 		placeholderImage: section0.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsSection0Form").validate({
@@ -453,9 +453,9 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=" +
-							redirectTo
+						getSegment(2) +
+						"/?page=" +
+						redirectTo
 					);
 				});
 			});

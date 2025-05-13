@@ -8,7 +8,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section1.sourceType,
 		placeholderImage: section1.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsSection1Form").validate({
@@ -59,7 +59,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section8.sourceType,
 		placeholderImage: section8.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsSection8Form").validate({
@@ -131,7 +131,7 @@ $(function () {
 			allowLinks: true,
 			activeLink: sectionFile.sourceType,
 			placeholderImage: sectionFile.sourceFile,
-			fileLimit: "20mb",
+			fileLimit: "200mb",
 		});
 
 		$.each(sectionPoints, function (i, v) {
@@ -141,7 +141,7 @@ $(function () {
 				allowLinks: false,
 				activeLink: v.sourceType,
 				placeholderImage: v.sourceFile,
-				fileLimit: "20mb",
+				fileLimit: "200mb",
 			});
 		});
 
@@ -305,9 +305,9 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=" +
-							redirectTo
+						getSegment(2) +
+						"/?page=" +
+						redirectTo
 					);
 				});
 			});
@@ -349,7 +349,7 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							pageId 
+						pageId
 					);
 				});
 			});

@@ -8,7 +8,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section1.sourceType,
 		placeholderImage: section1.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection1Form").validate({
 		rules: {
@@ -82,7 +82,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section3.sourceType,
 		placeholderImage: section3.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection3Form").validate({
 		rules: {
@@ -123,7 +123,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section4.sourceType,
 		placeholderImage: section4.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection4Form").validate({
 		rules: {
@@ -163,7 +163,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section5.sourceType,
 		placeholderImage: section5.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection5Form").validate({
 		rules: {
@@ -200,7 +200,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section6.sourceType,
 		placeholderImage: section6.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection6Form").validate({
 		rules: {
@@ -241,7 +241,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section7.sourceType,
 		placeholderImage: section7.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection7Form").validate({
 		rules: {
@@ -323,9 +323,9 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=" +
-							redirectTo
+						getSegment(2) +
+						"/?page=" +
+						redirectTo
 					);
 				});
 			});
@@ -369,7 +369,7 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							pageId 
+						pageId
 					);
 				});
 			});

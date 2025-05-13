@@ -53,7 +53,7 @@ $(function () {
 		allowLinks: false,
 		activeLink: section1.sourceType,
 		placeholderImage: section1.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsSection1Form").validate({
@@ -144,9 +144,9 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/cms/page/edit/" +
-							pageId +
-							"/?page=" +
-							redirectTo
+						pageId +
+						"/?page=" +
+						redirectTo
 					);
 				});
 			});

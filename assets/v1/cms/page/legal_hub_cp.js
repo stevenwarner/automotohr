@@ -3,16 +3,16 @@ $(function () {
 	 * holds the XHR call reference
 	 */
 	let XHR = null;
-    let pageId = getSegment(2);
+	let pageId = getSegment(2);
 	//
 	$(".jsDraggable").sortable({
-		update: function(event, ui) {
+		update: function (event, ui) {
 			//
 			var tagIndex = 0;
 			var orderList = [];
 			var indecators = ui.item.context.className.split(" ");
 			//
-			$("."+indecators[0]).map(function (i) {
+			$("." + indecators[0]).map(function (i) {
 				tagIndex = $(this).data("index");
 				orderList.push($(this).data("key"));
 			});
@@ -41,7 +41,7 @@ $(function () {
 			})
 			.fail(handleErrorResponse)
 			.done(function (resp) {
-				
+
 			});
 	}
 	//
@@ -51,7 +51,7 @@ $(function () {
 		allowLinks: false,
 		activeLink: section0.sourceType,
 		placeholderImage: section0.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	// validate the form
 	$("#jsSection0Form").validate({
@@ -350,8 +350,8 @@ $(function () {
 				_success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=section_0"
+						getSegment(2) +
+						"/?page=section_0"
 					);
 				});
 			});
@@ -376,9 +376,9 @@ $(function () {
 				_success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=sectionTag" +
-							tagIndex
+						getSegment(2) +
+						"/?page=sectionTag" +
+						tagIndex
 					);
 				});
 			});
@@ -390,119 +390,119 @@ $(function () {
 
 		$('[name="' + to + '"]').val(
 			$(this)
-			.val()
-			.replace(/[^a-z0-9]/ig, "-")
-			.replace(/-+/g, "-")
-			.toLowerCase()
+				.val()
+				.replace(/[^a-z0-9]/ig, "-")
+				.replace(/-+/g, "-")
+				.toLowerCase()
 		);
 	});
 
 
 
-//
-$(".jsPageStatus").click(function (event) {
-    //  
-    event.preventDefault();
-    //
-    const formDataObj = new FormData();
-    formDataObj.append("section", "status");
-    formDataObj.append("status", $(this).data("key"));
-    //
-    processPageSectionStatus(formDataObj, $(".jsPageStatus"), "pageDetails");
-});
-
-//
-$(".jsPageFooterLink").click(function (event) {
-    //  
-    event.preventDefault();
-    //
-    const formDataObj = new FormData();
-    formDataObj.append("section", "footerlink");
-    formDataObj.append("is_footer_link", $(this).data("key"));
-    //
-    processPageSectionStatus(formDataObj, $(".jsPageStatus"), "pageDetails");
-});
-
-//
-function processPageSectionStatus(formDataObj, buttonRef, redirectTo) {
-    //
-    if (XHR !== null) {
-        return false;
-    }
-    const btnHook = callButtonHook(buttonRef, true);
-    //
-    XHR = $.ajax({
-        url: baseUrl("manage_admin/cms/page/edit/" + pageId),
-        method: "POST",
-        data: formDataObj,
-        processData: false,
-        contentType: false,
-    })
-        .always(function () {
-            XHR = null;
-            callButtonHook(btnHook, false);
-        })
-        .fail(handleErrorResponse)
-        .done(function (resp) {
-            return _success(resp.msg, function () {
-                window.location.href = baseUrl(
-                    "manage_admin/edit_page/" +
-                        pageId 
-                );
-            });
-        });
-}
-
-//
-$(".jsEditSection").click(function (event) {
 	//
-	event.preventDefault();
-	event.stopPropagation();
-	//
-	const index = $(this).data("index");
-	const title = $(this).data("title");
-	
-	event.preventDefault();
-	//
-	Modal(
-		{
-			Id: "jsEditModal",
-			Loader: "jsEditModalLoader",
-			Body: '<div id="jsEditModalBody"></div>',
-			Title: "Edit Section",
-		},
-		function () {
-			getPageUI("Edit", "edit", function () {
+	$(".jsPageStatus").click(function (event) {
+		//  
+		event.preventDefault();
+		//
+		const formDataObj = new FormData();
+		formDataObj.append("section", "status");
+		formDataObj.append("status", $(this).data("key"));
+		//
+		processPageSectionStatus(formDataObj, $(".jsPageStatus"), "pageDetails");
+	});
 
-				$("#jsSectionTitle").val(title);
-				$("#jsSectionIndex").val(index);
+	//
+	$(".jsPageFooterLink").click(function (event) {
+		//  
+		event.preventDefault();
+		//
+		const formDataObj = new FormData();
+		formDataObj.append("section", "footerlink");
+		formDataObj.append("is_footer_link", $(this).data("key"));
+		//
+		processPageSectionStatus(formDataObj, $(".jsPageStatus"), "pageDetails");
+	});
 
-				//
-				$("#jsEditForm").validate({
-					rules: {
-						title: { required: true },
-					},
-					submitHandler: function (form) {
-						// get the form object
-						let formDataObj = formArrayToObj(
-							$(form).serializeArray()
-						);
-						// attach the section id
-						formDataObj.append("section", "section0");
-						formDataObj.append("index", "tags");
-						//
-						return processPageSection(
-							formDataObj,
-							$(".jsAddBtn"),
-							"section0"
-						);
-					},
+	//
+	function processPageSectionStatus(formDataObj, buttonRef, redirectTo) {
+		//
+		if (XHR !== null) {
+			return false;
+		}
+		const btnHook = callButtonHook(buttonRef, true);
+		//
+		XHR = $.ajax({
+			url: baseUrl("manage_admin/cms/page/edit/" + pageId),
+			method: "POST",
+			data: formDataObj,
+			processData: false,
+			contentType: false,
+		})
+			.always(function () {
+				XHR = null;
+				callButtonHook(btnHook, false);
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"manage_admin/edit_page/" +
+						pageId
+					);
 				});
 			});
-		}
-	);
+	}
 
-});
+	//
+	$(".jsEditSection").click(function (event) {
+		//
+		event.preventDefault();
+		event.stopPropagation();
+		//
+		const index = $(this).data("index");
+		const title = $(this).data("title");
+
+		event.preventDefault();
+		//
+		Modal(
+			{
+				Id: "jsEditModal",
+				Loader: "jsEditModalLoader",
+				Body: '<div id="jsEditModalBody"></div>',
+				Title: "Edit Section",
+			},
+			function () {
+				getPageUI("Edit", "edit", function () {
+
+					$("#jsSectionTitle").val(title);
+					$("#jsSectionIndex").val(index);
+
+					//
+					$("#jsEditForm").validate({
+						rules: {
+							title: { required: true },
+						},
+						submitHandler: function (form) {
+							// get the form object
+							let formDataObj = formArrayToObj(
+								$(form).serializeArray()
+							);
+							// attach the section id
+							formDataObj.append("section", "section0");
+							formDataObj.append("index", "tags");
+							//
+							return processPageSection(
+								formDataObj,
+								$(".jsAddBtn"),
+								"section0"
+							);
+						},
+					});
+				});
+			}
+		);
+
+	});
 
 
 
