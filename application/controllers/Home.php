@@ -19,13 +19,13 @@ class Home extends CI_Controller
         $this->css = "public/v1/css/app/";
         $this->js = "public/v1/js/app/";
         //
-        $this->disableMinifiedFiles = false;
+        $this->disableMinifiedFiles = true;
     }
 
     public function index()
     {
         //
-        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
+        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         ///
         if ($this->session->userdata('logged_in')) {
             $session_details = $this->session->userdata('logged_in');
@@ -93,11 +93,9 @@ class Home extends CI_Controller
 
         $data['pageContent'] = $homeContent;
 
-        //_e($this->footer,true,true);
-
         $this->load->view($this->header, $data)
-            ->view('v1/app/homepage')
-            ->view($this->footer);
+            ->view('v1/app/homepage', $data)
+            ->view($this->footer, $data);
     }
 
     public function decryptCookie($value)
@@ -262,45 +260,45 @@ class Home extends CI_Controller
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
-            $main_menu_cat_tree                                                 = $this->generate_menu_tree();
-            $data['cat_tree']                                                   = $main_menu_cat_tree;
-            $data['main_menu']                                                  = $main_menu_cat_tree['main'];
-            $data['sub_menu']                                                   = $main_menu_cat_tree['sub'];
-            $main_menu_url                                                      = $main_menu_cat_tree['main_menu_url'];
-            $sub_menu_url                                                       = $main_menu_cat_tree['sub_menu_url'];
-            $data['main_menu_url']                                              = $main_menu_url;
-            $data['sub_menu_url']                                               = $sub_menu_url;
-            $sub_menu_chain                                                     = $main_menu_cat_tree['sub_menu_chain'];
-            $main_menu_segment                                                  = '';
-            $sub_menu_segment                                                   = '';
-            $generated_doc_segment                                              = '';
-            $segment1                                                           = $this->uri->segment(2);
-            $segment2                                                           = $this->uri->segment(3);
-            $segment3                                                           = $this->uri->segment(4);
-            $left_navigation                                                    = 'parent';
-            $left_menu                                                          = array();
-            $left_menu_parent                                                   = '';
-            $active_link                                                        = 'resource_page';
-            $intro_main_fa_icon                                                 = 'fa-align-left';
-            $main_menu_id                                                       = 0;
-            $sub_menu_id                                                        = 0;
-            $gen_menu_id                                                        = 0;
-            $page_type                                                          = '';
-            $page_content                                                       = array();
-            $page_sub_menus                                                     = array();
+            $main_menu_cat_tree = $this->generate_menu_tree();
+            $data['cat_tree'] = $main_menu_cat_tree;
+            $data['main_menu'] = $main_menu_cat_tree['main'];
+            $data['sub_menu'] = $main_menu_cat_tree['sub'];
+            $main_menu_url = $main_menu_cat_tree['main_menu_url'];
+            $sub_menu_url = $main_menu_cat_tree['sub_menu_url'];
+            $data['main_menu_url'] = $main_menu_url;
+            $data['sub_menu_url'] = $sub_menu_url;
+            $sub_menu_chain = $main_menu_cat_tree['sub_menu_chain'];
+            $main_menu_segment = '';
+            $sub_menu_segment = '';
+            $generated_doc_segment = '';
+            $segment1 = $this->uri->segment(2);
+            $segment2 = $this->uri->segment(3);
+            $segment3 = $this->uri->segment(4);
+            $left_navigation = 'parent';
+            $left_menu = array();
+            $left_menu_parent = '';
+            $active_link = 'resource_page';
+            $intro_main_fa_icon = 'fa-align-left';
+            $main_menu_id = 0;
+            $sub_menu_id = 0;
+            $gen_menu_id = 0;
+            $page_type = '';
+            $page_content = array();
+            $page_sub_menus = array();
             $data['security_details'] = $security_details;
-            $data['left_navigation']                                            = $left_navigation;
-            $data['left_menu']                                                  = $left_menu;
-            $data['left_menu_parent']                                           = $left_menu_parent;
-            $data['active_link']                                                = $active_link;
-            $data['segment1']                                                   = $segment1;
-            $data['page_content']                                               = $page_content;
-            $data['page_sub_menus']                                             = $page_sub_menus;
-            $data['intro_main_fa_icon']                                         = $intro_main_fa_icon;
-            $data['main_menu_segment']                                          = $main_menu_segment;
-            $data['sub_menu_segment']                                           = $sub_menu_segment;
-            $data['generated_doc_segment']                                      = $generated_doc_segment;
-            $data['page_type']                                                  = $page_type;
+            $data['left_navigation'] = $left_navigation;
+            $data['left_menu'] = $left_menu;
+            $data['left_menu_parent'] = $left_menu_parent;
+            $data['active_link'] = $active_link;
+            $data['segment1'] = $segment1;
+            $data['page_content'] = $page_content;
+            $data['page_sub_menus'] = $page_sub_menus;
+            $data['intro_main_fa_icon'] = $intro_main_fa_icon;
+            $data['main_menu_segment'] = $main_menu_segment;
+            $data['sub_menu_segment'] = $sub_menu_segment;
+            $data['generated_doc_segment'] = $generated_doc_segment;
+            $data['page_type'] = $page_type;
 
             if ($this->form_validation->run() == false) {
                 $data['title'] = 'Resources Page';
@@ -324,106 +322,106 @@ class Home extends CI_Controller
 
     function generate_menu_tree()
     {
-        $parent_menu                                                            = $this->resource_center_model->get_parent_menu_tree();
-        $main_menu                                                              = array();
-        $sub_menu                                                               = array();
-        $main_menu_url                                                          = array();
-        $sub_menu_url                                                           = array();
-        $sub_menu_chain                                                         = array();
+        $parent_menu = $this->resource_center_model->get_parent_menu_tree();
+        $main_menu = array();
+        $sub_menu = array();
+        $main_menu_url = array();
+        $sub_menu_url = array();
+        $sub_menu_chain = array();
 
         for ($i = 0; $i < count($parent_menu); $i++) {
-            $main_sid                                                           = $parent_menu[$i]['main_sid'];
-            $url_code                                                           = $parent_menu[$i]['url_code'];
-            $fa_icon                                                            = $parent_menu[$i]['fa_icon'];
+            $main_sid = $parent_menu[$i]['main_sid'];
+            $url_code = $parent_menu[$i]['url_code'];
+            $fa_icon = $parent_menu[$i]['fa_icon'];
 
             $main_menu[$main_sid] = array(
-                'main_sid'                          => $parent_menu[$i]['main_sid'],
-                'name'                              => $parent_menu[$i]['name'],
-                'code'                              => $url_code,
-                'fa_icon'                           => $fa_icon,
-                'parent_sort_order'                 => $parent_menu[$i]['parent_sort_order'],
-                'description'                       => $parent_menu[$i]['parent_description']
+                'main_sid' => $parent_menu[$i]['main_sid'],
+                'name' => $parent_menu[$i]['name'],
+                'code' => $url_code,
+                'fa_icon' => $fa_icon,
+                'parent_sort_order' => $parent_menu[$i]['parent_sort_order'],
+                'description' => $parent_menu[$i]['parent_description']
             );
             //            }
             $main_menu_url[$url_code] = array(
-                'sid'                             => $parent_menu[$i]['main_sid'],
-                'name'                            => $parent_menu[$i]['name'],
-                'code'                            => $url_code,
-                'fa_icon'                         => $fa_icon,
-                'link'                            => base_url('resource_center') . '/' . $url_code
+                'sid' => $parent_menu[$i]['main_sid'],
+                'name' => $parent_menu[$i]['name'],
+                'code' => $url_code,
+                'fa_icon' => $fa_icon,
+                'link' => base_url('resource_center') . '/' . $url_code
             );
 
-            $sid                                                                = $parent_menu[$i]['sid'];
-            $status                                                             = $parent_menu[$i]['status'];
+            $sid = $parent_menu[$i]['sid'];
+            $status = $parent_menu[$i]['status'];
 
             if ($sid > 0) {
                 if ($status > 0) {
-                    $sub_url_code                                               = $parent_menu[$i]['sub_url_code'];
-                    $title                                                      = $parent_menu[$i]['title'];
-                    $anchor_type                                                = $parent_menu[$i]['type'];
-                    $anchor_href                                                = $parent_menu[$i]['anchor_href'];
+                    $sub_url_code = $parent_menu[$i]['sub_url_code'];
+                    $title = $parent_menu[$i]['title'];
+                    $anchor_type = $parent_menu[$i]['type'];
+                    $anchor_href = $parent_menu[$i]['anchor_href'];
 
                     if ($anchor_type == 'content') {
-                        $link                                                   = base_url('resource_center') . '/' . $url_code . '/' . $sub_url_code;
+                        $link = base_url('resource_center') . '/' . $url_code . '/' . $sub_url_code;
                     } else {
-                        $parsed                                                 = parse_url($anchor_href);
+                        $parsed = parse_url($anchor_href);
 
                         if (empty($parsed['scheme'])) {
-                            $anchor_href                                        = 'http://' . ltrim($anchor_href, '/');
+                            $anchor_href = 'http://' . ltrim($anchor_href, '/');
                         }
 
-                        $link                                                   = $anchor_href;
+                        $link = $anchor_href;
                     }
 
                     if ($sub_url_code == NULL) {
-                        $sub_url_code                                           = strtolower(clean($title));
+                        $sub_url_code = strtolower(clean($title));
                         $this->resource_center_model->update_url_code($sub_url_code, $sid, 'document_library_sub_menu');
                     }
 
                     $sub_menu[$main_sid][] = array(
-                        'sid'                       => $sid,
-                        'name'                      => $parent_menu[$i]['title'],
-                        'url_code'                  => $sub_url_code,
-                        'description'               => $parent_menu[$i]['description'],
-                        'type'                      => $parent_menu[$i]['type'],
-                        'parent_type'               => $parent_menu[$i]['parent_type'],
-                        'video'                     => $parent_menu[$i]['video'],
-                        'video_status'              => $parent_menu[$i]['video_status'],
-                        'video_type'                => $parent_menu[$i]['video_type'],
-                        'banner_status'             => $parent_menu[$i]['banner_status'],
-                        'banner_url'                => $parent_menu[$i]['banner_url'],
-                        'anchor_href'               => $parent_menu[$i]['anchor_href'],
-                        'link'                      => $link
+                        'sid' => $sid,
+                        'name' => $parent_menu[$i]['title'],
+                        'url_code' => $sub_url_code,
+                        'description' => $parent_menu[$i]['description'],
+                        'type' => $parent_menu[$i]['type'],
+                        'parent_type' => $parent_menu[$i]['parent_type'],
+                        'video' => $parent_menu[$i]['video'],
+                        'video_status' => $parent_menu[$i]['video_status'],
+                        'video_type' => $parent_menu[$i]['video_type'],
+                        'banner_status' => $parent_menu[$i]['banner_status'],
+                        'banner_url' => $parent_menu[$i]['banner_url'],
+                        'anchor_href' => $parent_menu[$i]['anchor_href'],
+                        'link' => $link
                     );
 
                     $sub_menu_chain[$url_code][] = array(
-                        'name'              => $parent_menu[$i]['title'],
-                        'url_code'          => $sub_url_code,
-                        'link'              => $link
+                        'name' => $parent_menu[$i]['title'],
+                        'url_code' => $sub_url_code,
+                        'link' => $link
                     );
 
                     $sub_menu_url[$sub_url_code] = array(
-                        'sid'                  => $sid,
-                        'name'                 => $parent_menu[$i]['title'],
-                        'type'                 => $parent_menu[$i]['type'],
-                        'parent_sid'           => $parent_menu[$i]['main_sid'],
-                        'parent_name'          => $parent_menu[$i]['name'],
-                        'parent_code'          => $url_code,
-                        'link'                 => $link
+                        'sid' => $sid,
+                        'name' => $parent_menu[$i]['title'],
+                        'type' => $parent_menu[$i]['type'],
+                        'parent_sid' => $parent_menu[$i]['main_sid'],
+                        'parent_name' => $parent_menu[$i]['name'],
+                        'parent_code' => $url_code,
+                        'link' => $link
                     );
                 }
             } else {
-                $sub_menu[$main_sid]                                            = array();
-                $sub_menu_chain[$url_code]                                      = array();
+                $sub_menu[$main_sid] = array();
+                $sub_menu_chain[$url_code] = array();
             }
         }
 
         $return_array = array(
-            'main'                                            => $main_menu,
-            'sub'                                             => $sub_menu,
-            'main_menu_url'                                   => $main_menu_url,
-            'sub_menu_url'                                    => $sub_menu_url,
-            'sub_menu_chain'                                  => $sub_menu_chain
+            'main' => $main_menu,
+            'sub' => $sub_menu,
+            'main_menu_url' => $main_menu_url,
+            'sub_menu_url' => $sub_menu_url,
+            'sub_menu_chain' => $sub_menu_chain
         );
         //        echo '<pre>'; print_r($return_array); exit;
         return $return_array;
@@ -438,18 +436,21 @@ class Home extends CI_Controller
      */
     function event($token = null)
     {
-        if ($token == null) redirect('login', "refresh");
+        if ($token == null)
+            redirect('login', "refresh");
         // Clean $token
         $token = str_replace('$eb$eb$1', '/', trim(strip_tags(str_replace('%24', '$', $token))));
         // Load encryption library
         $this->load->library('encrypt');
         // Decode token
         $dec_token = $this->encrypt->decode($token);
-        if (empty($dec_token)) show_404();
+        if (empty($dec_token))
+            show_404();
         // Parse decoded string
         $detail_array = explode(':', $dec_token);
         // 
-        if (!sizeof($detail_array)) show_404();
+        if (!sizeof($detail_array))
+            show_404();
         //
         $event_array = array();
         foreach ($detail_array as $k0 => $v0) {
@@ -457,14 +458,16 @@ class Home extends CI_Controller
             $event_array[$tmp[0]] = $tmp[1];
         }
         // Double check indexes
-        if (!isset(
+        if (
+            !isset(
             $event_array['id'],
             $event_array['eid'],
             $event_array['etype'],
             $event_array['name'],
             $event_array['email'],
             $event_array['type']
-        )) {
+        )
+        ) {
             show_404();
         }
         //
@@ -477,7 +480,8 @@ class Home extends CI_Controller
                 $event_array['eid'],
                 $event_array['id']
             );
-            if ($entries >= MAX_EVENT_HISTORY_ENTRIES) $data['error_msg'] = 'Error! You have reached maximum entries for this event.';
+            if ($entries >= MAX_EVENT_HISTORY_ENTRIES)
+                $data['error_msg'] = 'Error! You have reached maximum entries for this event.';
         }
         // Check for event expire
         $event_date = $this->cm->get_event_column_by_event_id($event_array['eid'], 'date', true);
@@ -501,7 +505,7 @@ class Home extends CI_Controller
                 $event_array['type'] = 'attended';
 
             if (!isset($data['error_msg']) && in_array($event_array['type'], array('attended', 'confirmed'))) {
-                $data_array =  array(
+                $data_array = array(
                     'attended' => 1,
                     'attend_status' => $event_array['type'],
                     'attend_status_date' => date('Y-m-d H:i:s'),
@@ -527,7 +531,7 @@ class Home extends CI_Controller
             $this->cm->add_event_history(
                 array(
                     'event_sid' => $event_array['eid'],
-                    'user_sid'  => $event_array['id'],
+                    'user_sid' => $event_array['id'],
                     'user_name' => $event_array['name'],
                     'user_email' => $event_array['email'],
                     'user_type' => strtolower($event_array['etype']),
@@ -541,7 +545,8 @@ class Home extends CI_Controller
         $event_array['event_type'] = $event_type;
         // Added on: 02-05-2019
         // Updated on: 09-05-2019
-        if (!isset($data['error_msg']) && ($event_array['type'] == 'confirmed' || $event_array['type'] == 'attended')) $this->send_email_to_event_creator($event_array);
+        if (!isset($data['error_msg']) && ($event_array['type'] == 'confirmed' || $event_array['type'] == 'attended'))
+            $this->send_email_to_event_creator($event_array);
         // Old session checking
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
@@ -593,7 +598,8 @@ class Home extends CI_Controller
     function event_handler()
     {
         // Check if direct access made
-        if ($this->input->server('REQUEST_METHOD') == 'GET') redirect('calendar/my_events', 'refresh');
+        if ($this->input->server('REQUEST_METHOD') == 'GET')
+            redirect('calendar/my_events', 'refresh');
         // Load calendar modal
         $this->load->model('calendar_model', 'cm');
         $type = $this->input->post('type');
@@ -604,7 +610,8 @@ class Home extends CI_Controller
                 $this->input->post('event_id'),
                 $this->input->post('user_id')
             );
-            if ($entries >= MAX_EVENT_HISTORY_ENTRIES) $this->response(array('Status' => FALSE, 'Erase' => TRUE, 'Response' => 'You have reaached maximum entries for this event.'));
+            if ($entries >= MAX_EVENT_HISTORY_ENTRIES)
+                $this->response(array('Status' => FALSE, 'Erase' => TRUE, 'Response' => 'You have reaached maximum entries for this event.'));
         }
         // Check for event expire
         $event_date = $this->cm->get_event_column_by_event_id($this->input->post('event_id'), 'date', true);
@@ -615,7 +622,7 @@ class Home extends CI_Controller
         $insert_array =
             array(
                 'event_sid' => $this->input->post('event_id'),
-                'user_sid'  => $this->input->post('user_id'),
+                'user_sid' => $this->input->post('user_id'),
                 'user_name' => $this->input->post('user_name'),
                 'user_email' => $this->input->post('user_email'),
                 'user_type' => $this->input->post('user_type'),
@@ -646,7 +653,8 @@ class Home extends CI_Controller
             $resp = true;
         } else {
             //
-            if ($this->input->post('event_reason')) $event_data['reason'] = $insert_array['reason'] = $this->input->post('event_reason');
+            if ($this->input->post('event_reason'))
+                $event_data['reason'] = $insert_array['reason'] = $this->input->post('event_reason');
             $message = 'Your Interview cancellation request has been received.';
             //
             if ($type == 'reschedule') {
@@ -654,9 +662,12 @@ class Home extends CI_Controller
                 $insert_array['event_type'] = 'reschedule';
                 $event_data['type'] = 'Reschedule';
                 //
-                if ($this->input->post('event_date')) $event_data['event_new_date'] = $insert_array['event_date'] = DateTime::createFromFormat('m-d-Y', $this->input->post('event_date'))->format('Y-m-d');
-                if ($this->input->post('event_start_time')) $event_data['event_new_start_time'] = $insert_array['event_start_time'] = $this->input->post('event_start_time');
-                if ($this->input->post('event_end_time')) $event_data['event_new_end_time'] = $insert_array['event_end_time'] = $this->input->post('event_end_time');
+                if ($this->input->post('event_date'))
+                    $event_data['event_new_date'] = $insert_array['event_date'] = DateTime::createFromFormat('m-d-Y', $this->input->post('event_date'))->format('Y-m-d');
+                if ($this->input->post('event_start_time'))
+                    $event_data['event_new_start_time'] = $insert_array['event_start_time'] = $this->input->post('event_start_time');
+                if ($this->input->post('event_end_time'))
+                    $event_data['event_new_end_time'] = $insert_array['event_end_time'] = $this->input->post('event_end_time');
 
                 // Reset 
                 if (isset($insert_array['event_date'])) {
@@ -708,7 +719,7 @@ class Home extends CI_Controller
             $event_sid = $this->input->post('event_id');
             $old_event_details = $this->cm->get_event_details($event_sid);
             if (sizeof($old_event_details)) {
-                $old_event_status =  $old_event_details['event_status'];
+                $old_event_status = $old_event_details['event_status'];
             }
             $creator_sid = $this->cm->get_event_creator($event_sid, $old_event_details['employers_sid']);
             if ($this->input->post('user_type') == 'interviewer' && $creator_sid == $this->input->post('user_id')) {
@@ -732,13 +743,15 @@ class Home extends CI_Controller
                     $diff_array_json['old_event_status'] = $old_event_status;
                     $diff_array_json['new_event_status'] = 'rescheduled';
                     $action = 'reschedule_event';
-                    if ($this->calendar_model->update_event($event_sid, [
-                        'date' => $event_data['event_new_date'],
-                        'eventstarttime' => $event_data['event_new_start_time'],
-                        'eventendtime' => $event_data['event_new_end_time'],
-                        'event_status' => 'pending',
-                        'employers_sid' => $creator_sid
-                    ])) {
+                    if (
+                        $this->calendar_model->update_event($event_sid, [
+                            'date' => $event_data['event_new_date'],
+                            'eventstarttime' => $event_data['event_new_start_time'],
+                            'eventendtime' => $event_data['event_new_end_time'],
+                            'event_status' => 'pending',
+                            'employers_sid' => $creator_sid
+                        ])
+                    ) {
                         $event_date = DateTime::createFromFormat('Y-m-d', $event_data['event_new_date'])->format('F j, Y');
                         $resp_array['Response'] = 'Event updated successfully, it is scheduled on ' . $event_date;
                     }
@@ -760,7 +773,8 @@ class Home extends CI_Controller
 
 
         $resp_array = array('Status' => FALSE, 'Erase' => FALSE, 'Response' => $message);
-        if ($resp) $resp_array['Status'] = TRUE;
+        if ($resp)
+            $resp_array['Status'] = TRUE;
         $this->response($resp_array);
     }
 
@@ -919,9 +933,9 @@ class Home extends CI_Controller
                 'new_zone' => $to_timezone,
                 '_this' => $this
             ));
-            $new_event_details  = '';
+            $new_event_details = '';
             $new_event_details .= '<tr><td><p><strong>Reschedule Reason: </strong><br />' . $event_array['reason'] . '</p></td></tr>';
-            $replace_array['{{NEW_EVENT_DETAILS}}']  = $new_event_details;
+            $replace_array['{{NEW_EVENT_DETAILS}}'] = $new_event_details;
             $replace_array['{{NEW_DATE_HEADING}}'] = '<td><strong>Reschedule Request Date</strong></td>';
             $replace_array['{{NEW_TIME_HEADING}}'] = '<td><strong>Reschedule Request Time</strong></td>';
             $replace_array['{{NEW_EVENT_DATE}}'] = '<td><p>' . (date_with_time($event_new_date)) . '</p></td>';
@@ -932,7 +946,7 @@ class Home extends CI_Controller
 
         if ($event_array['type'] == 'Can Not Attend' && isset($event_array['reason'])) {
             $new_event_details = '<tr><td><p><strong>Cancellation Reason: </strong><br />' . $event_array['reason'] . '</p></td></tr>';
-            $replace_array['{{NEW_EVENT_DETAILS}}']  = $new_event_details;
+            $replace_array['{{NEW_EVENT_DETAILS}}'] = $new_event_details;
             $replace_array['{{EVENT_HEADING}}'] = 'Cancellation Request!';
         }
 
@@ -951,13 +965,13 @@ class Home extends CI_Controller
 
         $from_name = $template['FromEmail'];
         $subject = $template['Subject'];
-        $body    = $template['Body'];
+        $body = $template['Body'];
 
         //
         foreach ($replace_array as $k0 => $v0) {
             $from_name = str_replace($k0, $v0, $from_name);
             $subject = str_replace($k0, $v0, $subject);
-            $body    = str_replace($k0, $v0, $body);
+            $body = str_replace($k0, $v0, $body);
         }
 
         $uname = $event_data['creator_employee']['first_name'];
@@ -965,8 +979,8 @@ class Home extends CI_Controller
         $uid = $event_data['creator_employee']['sid'];
         $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $this->encrypt->encode('type=vcs&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=employee&uid=' . ($uid) . '&eid=' . $event_array['eid'])));
         $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $this->encrypt->encode('type=ics&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=employee&uid=' . ($uid) . '&eid=' . $event_array['eid'])));
-        $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=employee&uid=' . ($uid) . '&eid=' . $event_array['eid'])));
-        $calendar_rows  = '<tr>';
+        $download_url_gc = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=employee&uid=' . ($uid) . '&eid=' . $event_array['eid'])));
+        $calendar_rows = '<tr>';
         $calendar_rows .= '     <td><br /><strong>Calendar event</strong><br /><br /></td>';
         $calendar_rows .= '</tr>';
         $calendar_rows .= '<tr>';
@@ -1020,7 +1034,8 @@ class Home extends CI_Controller
         //
         save_email_log_common($emailData);
         //
-        if (base_url() != STAGING_SERVER_URL) sendMail($from, $to, $subject, $body, $senderName);
+        if (base_url() != STAGING_SERVER_URL)
+            sendMail($from, $to, $subject, $body, $senderName);
     }
 
     /**
@@ -1034,19 +1049,22 @@ class Home extends CI_Controller
      */
     function download_event($token = null)
     {
-        if ($token == null) show_404();
+        if ($token == null)
+            show_404();
         // Clean $token
         $token = str_replace('$eb$eb$1', '/', trim(strip_tags(str_replace('%24', '$', $token))));
         // Load encryption library
         $this->load->library('encrypt');
         // Decode token
         $dec_token = $this->encrypt->decode($token);
-        if (empty($dec_token)) show_404();
+        if (empty($dec_token))
+            show_404();
 
         // Parse decoded string
         $detail_array = explode('&', $dec_token);
         // 
-        if (!sizeof($detail_array)) show_404();
+        if (!sizeof($detail_array))
+            show_404();
         //
         $event_array = array();
         foreach ($detail_array as $k0 => $v0) {
@@ -1054,10 +1072,12 @@ class Home extends CI_Controller
             $event_array[$tmp[0]] = $tmp[1];
         }
         // Double check indexes
-        if (!isset(
+        if (
+            !isset(
             $event_array['eid'],
             $event_array['type']
-        )) {
+        )
+        ) {
             show_404();
         }
         // Loads calendar modal
@@ -1075,7 +1095,8 @@ class Home extends CI_Controller
 
         if (empty($user_details['timezone'])) {
             $user_details['timezone'] = $this->cm->get_employee_detail($this->cm->get_event_column_by_event_id($event_array['eid'], 'companys_sid'))['timezone'];
-            if (empty($user_details['timezone'])) $user_details['timezone'] = STORE_DEFAULT_TIMEZONE_ABBR;
+            if (empty($user_details['timezone']))
+                $user_details['timezone'] = STORE_DEFAULT_TIMEZONE_ABBR;
         }
 
         $data['utype'] = $event_array['utype'];
@@ -1150,8 +1171,8 @@ class Home extends CI_Controller
 
                 $user_sid = $event_details['applicant_job_sid'];
                 $event_type = $event_details['users_type'];
-                $event_sid  = $event_array['eid'];
-                $user_name  = $user_details['first_name'] . " " . $user_details['last_name'];
+                $event_sid = $event_array['eid'];
+                $user_name = $user_details['first_name'] . " " . $user_details['last_name'];
                 $user_email = $user_details['email'];
                 //
                 $base_url = base_url() . 'event/';
@@ -1168,7 +1189,7 @@ class Home extends CI_Controller
                 if (strtolower($event_details['category_uc']) == 'training-session')
                     $enc_string_attended = $base_url . str_replace('/', '$eb$eb$1', $this->encrypt->encode($string_attended));
                 //
-                $enc_string_notconf  = $base_url . str_replace('/', '$eb$eb$1', $this->encrypt->encode($string_notconf));
+                $enc_string_notconf = $base_url . str_replace('/', '$eb$eb$1', $this->encrypt->encode($string_notconf));
                 $enc_string_reschedule = $base_url . str_replace('/', '$eb$eb$1', $this->encrypt->encode($string_reschedule));
 
                 $details .= "Event Links:{$ss}";
@@ -1266,18 +1287,21 @@ class Home extends CI_Controller
      */
     function event_detail($token = null)
     {
-        if ($token == null) redirect('login', "refresh");
+        if ($token == null)
+            redirect('login', "refresh");
         // Clean $token
         $token = str_replace('$eb$eb$1', '/', trim(strip_tags(str_replace('%24', '$', $token))));
         // Load encryption library
         $this->load->library('encrypt');
         // Decode token
         $dec_token = $this->encrypt->decode($token);
-        if (empty($dec_token)) show_404();
+        if (empty($dec_token))
+            show_404();
         // Parse decoded string
         $detail_array = explode(':', $dec_token);
         // 
-        if (!sizeof($detail_array)) show_404();
+        if (!sizeof($detail_array))
+            show_404();
         //
         $event_array = array();
         foreach ($detail_array as $k0 => $v0) {
@@ -1286,14 +1310,16 @@ class Home extends CI_Controller
         }
 
         // Double check indexes
-        if (!isset(
+        if (
+            !isset(
             $event_array['id'],
             $event_array['eid'],
             $event_array['etype'],
             $event_array['name'],
             $event_array['email'],
             $event_array['type']
-        )) {
+        )
+        ) {
             show_404();
         }
         // Tmp check
@@ -1312,7 +1338,8 @@ class Home extends CI_Controller
                 $event_array['eid'],
                 $event_array['id']
             );
-            if ($entries >= MAX_EVENT_HISTORY_ENTRIES) $data['error_msg'] = 'Error! You have reached maximum entries for this event.';
+            if ($entries >= MAX_EVENT_HISTORY_ENTRIES)
+                $data['error_msg'] = 'Error! You have reached maximum entries for this event.';
         }
         // Check for event expire
         $event_date = $this->cm->get_event_column_by_event_id($event_array['eid'], 'event_date', true);
@@ -1331,7 +1358,7 @@ class Home extends CI_Controller
                 'admin_event_history',
                 array(
                     'event_sid' => $event_array['eid'],
-                    'user_sid'  => $event_array['id'],
+                    'user_sid' => $event_array['id'],
                     'user_name' => $event_array['name'],
                     'user_email' => $event_array['email'],
                     'user_type' => strtolower($event_array['type']),
@@ -1345,7 +1372,8 @@ class Home extends CI_Controller
         $event_array['event_type'] = $event_type;
         // Added on: 02-05-2019
         // Updated on: 09-05-2019
-        if (!isset($data['error_msg']) && $event_array['status'] == 'confirmed') $this->send_email_to_admin_event_creator($event_array, true);
+        if (!isset($data['error_msg']) && $event_array['status'] == 'confirmed')
+            $this->send_email_to_admin_event_creator($event_array, true);
 
         // get event details
         $data['event_details'] = $this->cm->event_detail($event_array['eid']);
@@ -1374,7 +1402,8 @@ class Home extends CI_Controller
     function admin_event_handler()
     {
         // Check if direct access made
-        if ($this->input->server('REQUEST_METHOD') == 'GET') redirect('calendar/my_events', 'refresh');
+        if ($this->input->server('REQUEST_METHOD') == 'GET')
+            redirect('calendar/my_events', 'refresh');
         // Load calendar modal
         $this->load->model('manage_admin/dashboard_model', 'cm');
         $type = $this->input->post('type');
@@ -1385,7 +1414,8 @@ class Home extends CI_Controller
                 $this->input->post('event_id'),
                 $this->input->post('user_id')
             );
-            if ($entries >= MAX_EVENT_HISTORY_ENTRIES) $this->response(array('Status' => FALSE, 'Erase' => TRUE, 'Response' => 'You have reaached maximum entries for this event.'));
+            if ($entries >= MAX_EVENT_HISTORY_ENTRIES)
+                $this->response(array('Status' => FALSE, 'Erase' => TRUE, 'Response' => 'You have reaached maximum entries for this event.'));
         }
         // Check for event expire
         $event_date = $this->cm->get_event_column_by_event_id($this->input->post('event_id'), 'event_date', true);
@@ -1396,7 +1426,7 @@ class Home extends CI_Controller
         $insert_array =
             array(
                 'event_sid' => $this->input->post('event_id'),
-                'user_sid'  => $this->input->post('user_id'),
+                'user_sid' => $this->input->post('user_id'),
                 'user_name' => $this->input->post('user_name'),
                 'user_email' => $this->input->post('user_email'),
                 'user_type' => $this->input->post('user_type'),
@@ -1428,7 +1458,8 @@ class Home extends CI_Controller
             $this->cm->_q('admin_event_history', $insert_array);
         } else {
             //
-            if ($this->input->post('event_reason')) $event_data['reason'] = $insert_array['reason'] = $this->input->post('event_reason');
+            if ($this->input->post('event_reason'))
+                $event_data['reason'] = $insert_array['reason'] = $this->input->post('event_reason');
             $message = 'Your Interview cancellation request has been received.';
             //
             if ($type == 'reschedule') {
@@ -1436,9 +1467,12 @@ class Home extends CI_Controller
                 $insert_array['event_status'] = 'reschedule';
                 $event_data['type'] = 'Reschedule';
                 //
-                if ($this->input->post('event_date')) $event_data['event_new_date'] = $insert_array['event_date'] = DateTime::createFromFormat('m-d-Y', $this->input->post('event_date'))->format('Y-m-d');
-                if ($this->input->post('event_start_time')) $event_data['event_new_start_time'] = $insert_array['event_start_time'] = DateTime::createFromFormat('h:iA', $this->input->post('event_start_time'))->format('h:i A');
-                if ($this->input->post('event_end_time')) $event_data['event_new_end_time'] = $insert_array['event_end_time'] = DateTime::createFromFormat('h:iA', $this->input->post('event_end_time'))->format('h:i A');
+                if ($this->input->post('event_date'))
+                    $event_data['event_new_date'] = $insert_array['event_date'] = DateTime::createFromFormat('m-d-Y', $this->input->post('event_date'))->format('Y-m-d');
+                if ($this->input->post('event_start_time'))
+                    $event_data['event_new_start_time'] = $insert_array['event_start_time'] = DateTime::createFromFormat('h:iA', $this->input->post('event_start_time'))->format('h:i A');
+                if ($this->input->post('event_end_time'))
+                    $event_data['event_new_end_time'] = $insert_array['event_end_time'] = DateTime::createFromFormat('h:iA', $this->input->post('event_end_time'))->format('h:i A');
             }
             // Added on: 02-05-2019
             // $this->send_email_to_event_creator($event_data);
@@ -1490,9 +1524,9 @@ class Home extends CI_Controller
         $replace_array['{{REQUESTOR_SEPARATOR}}'] = 'has ';
 
         if ($event_array['type'] == 'Reschedule') {
-            $new_event_details  = '';
+            $new_event_details = '';
             $new_event_details .= '<tr><td><p><strong>Reschedule Reason: </strong><br />' . $event_array['reason'] . '</p></td></tr>';
-            $replace_array['{{NEW_EVENT_DETAILS}}']  = $new_event_details;
+            $replace_array['{{NEW_EVENT_DETAILS}}'] = $new_event_details;
             $replace_array['{{NEW_DATE_HEADING}}'] = '<strong>Reschedule Request Date</strong>';
             $replace_array['{{NEW_TIME_HEADING}}'] = '<strong>Reschedule Request Time</strong>';
             $replace_array['{{REQUESTED_EVENT_DATE}}'] = '<p>' . (date_with_time($event_array['event_new_date'])) . '</p>';
@@ -1504,7 +1538,7 @@ class Home extends CI_Controller
         }
         if ($event_array['type'] == 'Can Not Attend' && isset($event_array['reason'])) {
             $new_event_details = '<tr><td><p><strong>Cancellation Reason: </strong><br />' . $event_array['reason'] . '</p></td></tr>';
-            $replace_array['{{NEW_EVENT_DETAILS}}']  = $new_event_details;
+            $replace_array['{{NEW_EVENT_DETAILS}}'] = $new_event_details;
             $replace_array['{{EVENT_HEADING}}'] = sft('<h3 style="text-align: center;">Cancellation Request!</h3>');
             $replace_array['{{REQUEST_REASON}}'] = sft('<strong>Cancellation Reason.</strong>') . sft($event_array['reason']);
             $replace_array['{{REQUESTOR_SEPARATOR}}'] = ', ';
@@ -1540,19 +1574,22 @@ class Home extends CI_Controller
      */
     function download_event_file($token = null)
     {
-        if ($token == null) show_404();
+        if ($token == null)
+            show_404();
         // Clean $token
         $token = str_replace('$eb$eb$1', '/', trim(strip_tags(str_replace('%24', '$', $token))));
         // Load encryption library
         $this->load->library('encrypt');
         // Decode token
         $dec_token = $this->encrypt->decode($token);
-        if (empty($dec_token)) show_404();
+        if (empty($dec_token))
+            show_404();
 
         // Parse decoded string
         $detail_array = explode('&', $dec_token);
         // 
-        if (!sizeof($detail_array)) show_404();
+        if (!sizeof($detail_array))
+            show_404();
         //
         $event_array = array();
         foreach ($detail_array as $k0 => $v0) {
@@ -1560,10 +1597,12 @@ class Home extends CI_Controller
             $event_array[$tmp[0]] = $tmp[1];
         }
         // Double check indexes
-        if (!isset(
+        if (
+            !isset(
             $event_array['eid'],
             $event_array['type']
-        )) {
+        )
+        ) {
             show_404();
         }
 
@@ -1721,11 +1760,13 @@ class Home extends CI_Controller
      */
     public function event_reminder_cron($vf_key = null)
     {
-        if ($vf_key != 'dwwbtQzuoHI9d5TEIKBKDGWwgoGEUlRuSidW8wQ4zSUHIl9gBxRx18Z3Dqk5HV7ZNCbu2ZfkjFVLHWINnM5uzMkUfIiINdZ19NJj') return false;
+        if ($vf_key != 'dwwbtQzuoHI9d5TEIKBKDGWwgoGEUlRuSidW8wQ4zSUHIl9gBxRx18Z3Dqk5HV7ZNCbu2ZfkjFVLHWINnM5uzMkUfIiINdZ19NJj')
+            return false;
 
         $this->load->model('manage_admin/dashboard_model');
         $today_events = $this->dashboard_model->fetch_all_today_events();
-        if (!$today_events) return false;
+        if (!$today_events)
+            return false;
 
         foreach ($today_events as $event) {
             //
@@ -1790,7 +1831,8 @@ class Home extends CI_Controller
                 }
 
                 //
-                if (!sizeof($email_list)) continue;
+                if (!sizeof($email_list))
+                    continue;
 
                 // Generate ICS file
                 $event['ics_file'] = generate_admin_ics_file($event, false);
@@ -1829,7 +1871,8 @@ class Home extends CI_Controller
      */
     function receive_request()
     {
-        if (!sizeof($this->input->post())) exit(0);
+        if (!sizeof($this->input->post()))
+            exit(0);
         // Load twilio
         $this->load->library('twilio/twilioApp', null, 'twilio');
         $this->load->model('manage_admin/sms_model');
@@ -1851,7 +1894,8 @@ class Home extends CI_Controller
             'MG359e34ef1e42c763d3afc96c5ff28eaf'
         );
         //
-        if (!$result_arr || !sizeof($result_arr)) exit(0);
+        if (!$result_arr || !sizeof($result_arr))
+            exit(0);
 
         // Set insert array
         $insert_array = $resp['DataArray'];
@@ -1865,9 +1909,9 @@ class Home extends CI_Controller
             $insert_array['sender_user_type'] = NULL;
         }
         $insert_array['message_body'] = $resp['DataArray']['message_body'];
-        $insert_array['module_slug']  = $resp['URL']['module'];
-        $insert_array['message_mode']  = $result_arr['message_mode'];
-        $insert_array['message_sid']  = $resp['DataArray']['message_sid'];
+        $insert_array['module_slug'] = $resp['URL']['module'];
+        $insert_array['message_mode'] = $result_arr['message_mode'];
+        $insert_array['message_sid'] = $resp['DataArray']['message_sid'];
         $insert_array['receiver_user_id'] = $result_arr['sender_user_id'];
         $insert_array['receiver_user_type'] = $result_arr['sender_user_type'];
         // Insert data into database
@@ -1890,7 +1934,8 @@ class Home extends CI_Controller
 
         // _e($sms, true, true);
         //
-        if (!$sms && !sizeof($sms)) exit(0);
+        if (!$sms && !sizeof($sms))
+            exit(0);
         $this
             ->twilio
             ->setMode('production');
@@ -1907,13 +1952,15 @@ class Home extends CI_Controller
                     40
                 );
 
-            if (isset($resp['Error'])) continue;
+            if (isset($resp['Error']))
+                continue;
             // Loop through data
             foreach ($resp as $k1 => $v1) {
                 _e($resp, true);
                 continue;
                 // Check in db
-                if ($this->sms_model->check_message_sid($v1['Sid']) != 0) continue;
+                if ($this->sms_model->check_message_sid($v1['Sid']) != 0)
+                    continue;
                 $insert_array = array();
                 $insert_array['replied_at'] = $v1['SentAt'];
                 $insert_array['message_sid'] = $v1['Sid'];
@@ -1927,7 +1974,8 @@ class Home extends CI_Controller
                 $insert_array['receiver_user_id'] = $v0['sender_user_id'];
                 $insert_array['receiver_user_type'] = $v0['sender_user_type'];
                 //
-                if ($module == 'admin') $insert_array['sender_user_type'] = 'admin';
+                if ($module == 'admin')
+                    $insert_array['sender_user_type'] = 'admin';
                 else {
                     $insert_array['sender_user_ide'] = $v0['receiver_user_id'];
                     $insert_array['sender_user_type'] = $v0['receiver_user_type'];
@@ -1951,18 +1999,21 @@ class Home extends CI_Controller
      */
     function update_phonenumber($token = null)
     {
-        if ($token == null) show_404();
+        if ($token == null)
+            show_404();
         // Clean $token
         $token = str_replace('$eb$eb$1', '/', trim(strip_tags(str_replace('%24', '$', $token))));
         // Load encryption library
         $this->load->library('encrypt');
         // Decode token
         $dec_token = $this->encrypt->decode($token);
-        if (empty($dec_token)) show_404();
+        if (empty($dec_token))
+            show_404();
         // Parse decoded string
         $detail_array = explode(':', $dec_token);
         // 
-        if (!sizeof($detail_array)) show_404();
+        if (!sizeof($detail_array))
+            show_404();
         //
         $event_array = array();
         foreach ($detail_array as $k0 => $v0) {
@@ -1970,16 +2021,19 @@ class Home extends CI_Controller
             $event_array[$tmp[0]] = $tmp[1];
         }
         // Double check indexes
-        if (!isset(
+        if (
+            !isset(
             $event_array['id'],
             $event_array['type'],
             $event_array['cid'],
             $event_array['cname']
-        )) {
+        )
+        ) {
             show_404();
         }
 
-        if (!$this->home_model->verify($event_array['id'], $event_array['type'])) show_404();
+        if (!$this->home_model->verify($event_array['id'], $event_array['type']))
+            show_404();
         //
         $hf = message_header_footer($event_array['cid'], ucwords($event_array["cname"]));
         //
@@ -2007,7 +2061,8 @@ class Home extends CI_Controller
     function update_phonenumber_handler()
     {
         // Check if direct access made
-        if ($this->input->server('REQUEST_METHOD') == 'GET') show_404();
+        if ($this->input->server('REQUEST_METHOD') == 'GET')
+            show_404();
         //
         $resp = array();
         $resp['Status'] = FALSE;
@@ -2015,7 +2070,8 @@ class Home extends CI_Controller
         //
         $form_data = $this->input->post(NULL, TRUE);
         //
-        if (!sizeof($form_data)) $this->response($resp);
+        if (!sizeof($form_data))
+            $this->response($resp);
         //
         switch ($form_data['action']) {
             case 'update_phonenumber':
@@ -2028,8 +2084,10 @@ class Home extends CI_Controller
                     $verification_code
                 );
                 // Fetch copany message id
-                if (IS_SANDBOX) $messageId = SANDBOX_SERVICE;
-                else $messageId = $this->home_model->getCompanyMessageId($form_data['companyId']);
+                if (IS_SANDBOX)
+                    $messageId = SANDBOX_SERVICE;
+                else
+                    $messageId = $this->home_model->getCompanyMessageId($form_data['companyId']);
                 // TODO
                 // Send the verification code
                 // Load twilio library
@@ -2111,17 +2169,17 @@ class Home extends CI_Controller
         $f1 = $this->hr_documents_management_model->hasEEOCPermission($company_sid, 'eeo_on_applicant_document_center');
         $data['eeo_form_status'] = $f1;
         //
-        $data['company_sid']        = $data['session']['company_detail']['sid'];
-        $data['company_name']       = $data['session']['company_detail']['CompanyName'];
-        $data['id']                 = $id;
-        $data['user_sid']           = $user_sid;
-        $data['user_type']          = $user_type;
-        $data['first_name']         = $document['user']['first_name'];
-        $data['last_name']          = $document['user']['last_name'];
-        $data['email']              = $document['user']['email'];
-        $data['eeo_form_info']      = $document;
-        $data['location']           = "Public Link";
-        $data['dl_citizen']         = getEEOCCitizenShipFlag($data['company_sid']);
+        $data['company_sid'] = $data['session']['company_detail']['sid'];
+        $data['company_name'] = $data['session']['company_detail']['CompanyName'];
+        $data['id'] = $id;
+        $data['user_sid'] = $user_sid;
+        $data['user_type'] = $user_type;
+        $data['first_name'] = $document['user']['first_name'];
+        $data['last_name'] = $document['user']['last_name'];
+        $data['email'] = $document['user']['email'];
+        $data['eeo_form_info'] = $document;
+        $data['location'] = "Public Link";
+        $data['dl_citizen'] = getEEOCCitizenShipFlag($data['company_sid']);
         //
         $this->load->view('onboarding/applicant_boarding_header_public', $data);
         $this->load->view('eeo/eeoc_view_public');

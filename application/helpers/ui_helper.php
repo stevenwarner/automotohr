@@ -232,7 +232,7 @@ if (!function_exists('bundleCSS')) {
             //
             return '<link rel="stylesheet" href="' . (base_url(
                 $destination .
-                    $file . '.min.css?v=' . (getStaticFileVersion($fileName, 'css'))
+                $file . '.min.css?v=' . (getStaticFileVersion($fileName, 'css'))
             )) . '" />';
         }
         //

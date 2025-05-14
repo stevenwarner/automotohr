@@ -316,9 +316,9 @@ $activePages = getAllActivePages();
 </footer>
 <?php $this->load->view("v1/app/partials/schedule_demo_form_popup"); ?>
 <?php $this->load->view("v1/app/cookie"); ?>
-</body>
-
 <?= $pageJs ? GetScripts($pageJs) : ''; ?>
 <?= $appJs ?? ''; ?>
+</body>
+
 
 </html>
