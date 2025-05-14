@@ -135,7 +135,7 @@ $(function () {
 		const index = $(this).data("index");
 		//
 		return _confirm(
-			"Do you really wan tto delete this section?",
+			"Do you really wan to delete this section?",
 			function () {
 				deleteTag(index);
 			}
@@ -446,5 +446,79 @@ $(function () {
 		);
 
 	});
+
+
+	//	
+	$(".jsDeactivateSection").click(function (event) {
+		//
+		event.preventDefault();
+		event.stopPropagation();
+		//
+		const index = $(this).data("index");
+		//
+		return _confirm(
+			"Do you really wan deactivate this section?",
+			function () {
+				deactivateTag(index);
+			}
+		);
+	});
+
+
+	$(".jsActivateSection").click(function (event) {
+		//
+		event.preventDefault();
+		event.stopPropagation();
+		//
+		const index = $(this).data("index");
+		//
+		return _confirm(
+			"Do you really wan activate this section?",
+			function () {
+				activateTag(index);
+			}
+		);
+	});
+
+
+
+	function deactivateTag(index) {
+		//
+		$.ajax({
+			url: baseUrl("cms/" + getSegment(2) + "/deactivatetag/" + index),
+			//	method: "delete",
+		})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"manage_admin/edit_page/" +
+						getSegment(2) +
+						"/?page=section_0"
+					);
+				});
+			});
+	}
+
+
+	function activateTag(index) {
+		//
+		$.ajax({
+			url: baseUrl("cms/" + getSegment(2) + "/activatetag/" + index),
+			method: "delete",
+		})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"manage_admin/edit_page/" +
+						getSegment(2) +
+						"/?page=section_0"
+					);
+				});
+			});
+	}
+
+
 
 });

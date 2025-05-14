@@ -179,6 +179,23 @@ class Cms extends Admin_Controller
 
         $this->data['page'] = $page_data;
 
+
+        /*
+        $this->data['pageContent']['page']['sections']['specialhighlights'] = [
+            'mainheading' => 'special Highlights',
+            'heading' => '',
+            'details' => '',
+            'headingSub1' => '',
+            'btnText' => '',
+            'btnSlug' => '#',
+            'section' => 'specialhighlights',
+            'status'=>'1',
+        ];
+*/
+
+
+        //  _e($this->data['pageContent'], true, true);
+
         $this->data["appCSS"] = bundleCSS([
             "v1/plugins/ms_modal/main",
             "v1/plugins/ms_uploader/main",
@@ -194,6 +211,8 @@ class Cms extends Admin_Controller
                 "v1/cms/home_section_2",
                 "v1/cms/process",
                 "v1/cms/about_section",
+                "v1/cms/highlights",
+
             ];
         }
         // for products
@@ -289,7 +308,7 @@ class Cms extends Admin_Controller
             );
         }
         // check and run for image
-        $errors = hasFileErrors($_FILES, "banner_image", 'imag2');
+        $errors = hasFileErrors($_FILES, "banner_image", 'imag2', 200);
         //
         if ($errors) {
             return SendResponse(
@@ -449,7 +468,7 @@ class Cms extends Admin_Controller
             );
         }
         // check and run for image
-        $errors = hasFileErrors($_FILES, "banner_image", 'imag2');
+        $errors = hasFileErrors($_FILES, "banner_image", 'imag2', 200);
         //
         if ($errors) {
             return SendResponse(
@@ -732,10 +751,23 @@ class Cms extends Admin_Controller
     public function updatePageSection(int $pageId)
     {
         $post = $this->input->post(null, true);
+
         // get the page record
         $pageContent = $this->cms_model->get_page_data($pageId)["content"];
-        // //
+        // 
         $pageContent = json_decode($pageContent, true);
+
+        //
+        if (empty($pageContent["page"]["sections"][$post["section"]]) && $post["section"] == "specialhighlights") {
+            [$post["section"]];
+            $pageContent["page"]["sections"] = [
+                'section1' => $pageContent["page"]["sections"]["section1"],
+                'section2' => $pageContent["page"]["sections"]["section2"],
+                'section9' => $pageContent["page"]["sections"]["section9"],
+                'about' => $pageContent["page"]["sections"]["about"],
+                'specialhighlights' => '',
+            ];
+        }
 
         if ($post["source_type"]) {
             //
@@ -770,6 +802,7 @@ class Cms extends Admin_Controller
 
         // for extra points
         if ($post["source_type_point_1"]) {
+
             //
             $fileLink = $post["source_link_point_1"];
             //
@@ -1691,5 +1724,57 @@ class Cms extends Admin_Controller
         return SendResponse(200, [
             "msg" => $msg
         ]);
+    }
+
+    //
+    public function deactivatePageTag(int $pageId, int $index)
+    {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+
+        $pageContent = json_decode($pageContent, true);
+
+        $pageContent["page"]["sections"]["section0"]["tags"][$index] = [
+            'title' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['title'],
+            'section' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['section'],
+            'index' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['index'],
+            'status' => 0
+        ];
+
+
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "Selected section deactivated successfully."]);
+    }
+
+    //
+    public function activatePageTag(int $pageId, int $index)
+    {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+
+        $pageContent = json_decode($pageContent, true);
+
+
+        $pageContent["page"]["sections"]["section0"]["tags"][$index] = [
+            'title' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['title'],
+            'section' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['section'],
+            'index' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['index'],
+            'status' => 1
+        ];
+
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "Selected section activated successfully."]);
     }
 }
