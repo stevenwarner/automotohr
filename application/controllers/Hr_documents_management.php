@@ -3979,6 +3979,9 @@ class Hr_documents_management extends Public_Controller
                                             $signed_document_sids[] = $assigned_document['document_sid'];
                                             $completed_payroll_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
+                                        } else {
+                                            unset($assigned_documents[$key]);
+                                            continue;
                                         }
                                     } elseif ($assigned_document["company_archive"] == 1) {
                                         unset($assigned_documents[$key]);
