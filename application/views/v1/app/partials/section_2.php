@@ -84,6 +84,8 @@ $productBg = [
 
 <?php if ($products) { ?>
     <?php foreach ($products as $key => $product) {
+
+
         //
         $layout = $productBg[$product["layout"]];
         // direction
@@ -96,6 +98,8 @@ $productBg = [
         }
 
     ?>
+
+    <?php if($product['status']!='0'){?>
         <div class="<?= $productBg[$product["layout"]]["bg"]; ?> csSection">
             <div class="container-fluid">
                 <div class="row d-flex align-items-center justify-content-center">
@@ -164,5 +168,8 @@ $productBg = [
                 }
             } ?>
         </div>
+<?php }?>
+
+
     <?php } ?>
 <?php } ?>
