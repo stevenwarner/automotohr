@@ -354,6 +354,9 @@ class Department_management extends Public_Controller
                         if ($this->input->post("lms_managers", true)) {
                             $data_to_insert["lms_managers_ids"] = implode(",", $this->input->post("lms_managers", true));
                         }
+                        if ($this->input->post("csp_managers", true)) {
+                            $data_to_insert["csp_managers_ids"] = implode(",", $this->input->post("csp_managers", true));
+                        }
                         $teamId = $this->department_management_model->insert_team($data_to_insert);
                         //
                         if ($this->input->post('approvers', true)) {
