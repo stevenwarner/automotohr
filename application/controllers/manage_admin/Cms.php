@@ -29,7 +29,7 @@ class Cms extends Admin_Controller
         $admin_id = $this->ion_auth->user()->row()->id;
         $this->data['page_title'] = 'CMS';
         $page_number = ($this->uri->segment(7)) ? $this->uri->segment(7) : 1;
-        $offset           = 0;
+        $offset = 0;
         $records_per_page = 50;
         if ($page_number > 1) {
             $offset = ($page_number - 1) * $records_per_page;
@@ -514,7 +514,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -578,7 +578,7 @@ class Cms extends Admin_Controller
         $pageContent["page"]["sections"]["section2"] = [
             "mainheading" => $post["jsMainHeading"],
             "heading" => $post["jsSubHeading"],
-            "products" =>  $pageContent["page"]["sections"]["section2"]["products"],
+            "products" => $pageContent["page"]["sections"]["section2"]["products"],
         ];
         $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
@@ -610,7 +610,7 @@ class Cms extends Admin_Controller
         if ($post["source_type"] === "upload") {
             //
             // check and run for image
-            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+            $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
             //
             if ($errors) {
                 return SendResponse(
@@ -673,7 +673,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -747,7 +747,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                    $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -779,7 +779,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_point_1"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_point_1", 'image|video', 20);
+                    $errors = hasFileErrors($_FILES, "file_point_1", 'image|video', 200);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -810,7 +810,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_point_2"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_point_2", 'image|video', 20);
+                    $errors = hasFileErrors($_FILES, "file_point_2", 'image|video', 200);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -841,7 +841,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_point_3"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_point_3", 'image|video', 20);
+                    $errors = hasFileErrors($_FILES, "file_point_3", 'image|video', 200);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -872,7 +872,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_logo"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_logo", 'image|video', 20);
+                    $errors = hasFileErrors($_FILES, "file_logo", 'image|video', 200);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -983,7 +983,7 @@ class Cms extends Admin_Controller
         if ($post["source_type"] === "upload") {
             //
             // check and run for image
-            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+            $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
             //
             if ($errors) {
                 return SendResponse(
@@ -1063,7 +1063,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -1162,7 +1162,7 @@ class Cms extends Admin_Controller
         if ($post["source_type"] === "upload") {
             //
             // check and run for image
-            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+            $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
             //
             if ($errors) {
                 return SendResponse(
@@ -1241,7 +1241,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -1344,7 +1344,7 @@ class Cms extends Admin_Controller
         //
         $pageContent = json_decode($pageContent, true);
 
-        if ($post['sectionindex']!='') {
+        if ($post['sectionindex'] != '') {
             $sectionIndex = $post['sectionindex'];
             unset($post['sectionindex']);
             $pageContent["page"]["sections"][$post["section"]][$post["index"]][$sectionIndex]['title'] = $post['title'];
@@ -1617,7 +1617,7 @@ class Cms extends Admin_Controller
                             $fileLink = $post["source_link"];
                         } else {
                             // check and run for image
-                            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                            $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                             //
                             if ($errors) {
                                 return SendResponse(
