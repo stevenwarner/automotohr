@@ -183,23 +183,6 @@ class Cms extends Admin_Controller
 
         $this->data['page'] = $page_data;
 
-
-        /*
-        $this->data['pageContent']['page']['sections']['specialhighlights'] = [
-            'mainheading' => 'special Highlights',
-            'heading' => '',
-            'details' => '',
-            'headingSub1' => '',
-            'btnText' => '',
-            'btnSlug' => '#',
-            'section' => 'specialhighlights',
-            'status'=>'1',
-        ];
-*/
-
-
-        //  _e($this->data['pageContent'], true, true);
-
         $this->data["appCSS"] = bundleCSS([
             "v1/plugins/ms_modal/main",
             "v1/plugins/ms_uploader/main",
@@ -216,7 +199,6 @@ class Cms extends Admin_Controller
                 "v1/cms/process",
                 "v1/cms/about_section",
                 "v1/cms/highlights",
-
             ];
         }
         // for products
@@ -237,7 +219,6 @@ class Cms extends Admin_Controller
         $this->data["PageScripts"] = [
             "ckeditor/ckeditor"
         ];
-
         //
         $this->data["appJs"] = bundleJs(array_merge([
             "v1/plugins/ms_modal/main",

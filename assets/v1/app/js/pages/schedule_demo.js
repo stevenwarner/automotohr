@@ -219,7 +219,7 @@ $(function () {
 			_error("Name is required.");
 			return;
 		}
-	
+
 		if (XHR !== null) {
 			return;
 		}
