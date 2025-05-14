@@ -22,7 +22,7 @@ class Cms extends Admin_Controller
             'Response' => 'Request Not Authorized'
         ];
 
-        $this->lockFile = true;
+        $this->lockFile = false;
     }
 
 
@@ -1761,5 +1761,34 @@ class Cms extends Admin_Controller
         $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "Selected section activated successfully."]);
+    }
+
+
+
+    //
+    public function ProductToHomePageStatus(int $pageId, int $index, string $status)
+    {
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        $pageContent = json_decode($pageContent, true);
+
+        $pageContent["page"]["sections"]["section2"]["products"][$index] = [
+            'mainHeading' => $pageContent["page"]["sections"]["section2"]["products"][$index]['mainHeading'],
+            'subHeading' => $pageContent["page"]["sections"]["section2"]["products"][$index]['subHeading'],
+            'details' => $pageContent["page"]["sections"]["section2"]["products"][$index]['details'],
+            'buttonText' => $pageContent["page"]["sections"]["section2"]["products"][$index]['buttonText'],
+            'buttonLink' => $pageContent["page"]["sections"]["section2"]["products"][$index]['buttonLink'],
+            'layout' => $pageContent["page"]["sections"]["section2"]["products"][$index]['layout'],
+            'direction' => $pageContent["page"]["sections"]["section2"]["products"][$index]['direction'],
+            'sourceType' => $pageContent["page"]["sections"]["section2"]["products"][$index]['sourceType'],
+            'sourceFile' => $pageContent["page"]["sections"]["section2"]["products"][$index]['sourceFile'],
+            'status' => $status == 'deactivate' ? '0' : '1'
+        ];
+
+        $statusmsg = $status == 'activate' ? 'activated' : 'deactivated';
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "Selected product section " . $statusmsg . " successfully."]);
     }
 }
