@@ -22,7 +22,7 @@ class Cms extends Admin_Controller
             'Response' => 'Request Not Authorized'
         ];
 
-        $this->lockFile = false;
+        $this->lockFile = true;
     }
 
 
