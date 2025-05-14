@@ -68,15 +68,21 @@ $directionP2 = "order-lg-2 order-1";
             <div class="col-lg-6 col-12 ps-md-3 ps-md-3 ps-lg-5 <?= $directionP1; ?>">
                 <div
                     class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
-                    <p class="lightgrey heading-h4-grey opacity-ninety heading">
-                        <?= $pageContent['sections']['specialhighlights']['mainheading']; ?>
-                    </p>
-                    <p class="darkgrey mt-3 title text-lg-start text-center">
-                        <?= $pageContent['sections']['specialhighlights']['heading']; ?>
-                    </p>
-                    <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
-                        <?= $pageContent['sections']['specialhighlights']['details']; ?>
-                    </p>
+                    <?php if ($pageContent['sections']['specialhighlights']['mainheading']): ?>
+                        <p class="lightgrey heading-h4-grey opacity-ninety heading">
+                            <?= $pageContent['sections']['specialhighlights']['mainheading']; ?>
+                        </p>
+                    <?php endif; ?>
+                    <?php if ($pageContent['sections']['specialhighlights']['heading']): ?>
+                        <p class="darkgrey mt-3 title text-lg-start text-center">
+                            <?= $pageContent['sections']['specialhighlights']['heading']; ?>
+                        </p>
+                    <?php endif; ?>
+                    <?php if ($pageContent['sections']['specialhighlights']['details']): ?>
+                        <p class="lightgrey mt-3 text-lg-start detail text-center opacity-ninety">
+                            <?= $pageContent['sections']['specialhighlights']['details']; ?>
+                        </p>
+                    <?php endif; ?>
 
                     <?php if ($pageContent['sections']['specialhighlights']['btnText'] != '') { ?>
                         <a href="<?= base_url($pageContent['sections']['specialhighlights']['btnSlug']) ?>"
@@ -88,9 +94,9 @@ $directionP2 = "order-lg-2 order-1";
                         </a>
                     <?php } ?>
 
+                    <img src="<?= base_url("assets/v1/app/images/ai_recruiter.png"); ?>" alt=""
+                        class="img-responsive" />
                 </div>
-                <!-- <img src="<?= base_url("assets/v1/app/images/ai_recruiter.png"); ?>" alt="" class="img-responsive"
-                    style="width:" /> -->
             </div>
 
         </div>
