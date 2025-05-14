@@ -330,28 +330,22 @@ $creds = getCreds('AHR');
 
 <script>
     const job_list_sid = `<?php echo $portal_job_list["sid"]; ?>`;
-    let deepgramSocket = null;
-    let sessionId = null;
+    const ServerPath = '<?php echo $creds->API_BROWSER_URL; ?>';
     let interviewStarted = false;
-    // const synth = window.speechSynthesis;
-    let recognition;
-    let voices = window.speechSynthesis.getVoices();
     let speech = new SpeechSynthesisUtterance();
     let mediaRecorder = null;
-    let audioContext = null;
     let audioStream = null;
-    let candidateText = '';
     let lastSpeechTimestamp = 0;
     let silenceDetectionInterval = null;
     let isSpeaking = false;
-    const SILENCE_THRESHOLD = 4000; // 2.5 second of silence to consider speech ended
+    const SILENCE_THRESHOLD = 6000; // 6 second of silence to consider speech ended
+    let chatId = '';
 
     document.addEventListener('DOMContentLoaded', function() {
         
         function setupSocketConnection() {
             // Connect to your Node.js server with Socket.IO
-            socket = io('http://localhost:3000');
-            console.log('Connecting to Socket.IO server...');
+            socket = io(ServerPath);
             
             // Handle connection events
             socket.on('connect', () => {
@@ -364,57 +358,24 @@ $creds = getCreds('AHR');
                 if (data.status === 'ready') {
                     // Deepgram connection is ready, setup audio recording
                     console.log(`Status: ${data.status} - ${data.message}`);
-                    setupAudioRecording();
-                }
-            });
-
-            // Handle transcript data
-            socket.on('transcript', (data) => {
-                if (data.type === 'Results' && 
-                    data.channel && 
-                    data.channel.alternatives && 
-                    data.channel.alternatives.length > 0) {
-                    
-                    const transcript = data.channel.alternatives[0].transcript;
-                    
-                    if (transcript && transcript.trim() !== '') {
-                        // Store coming transcript
-                        window.lastTranscript += ' ' + transcript;
-
-                        console.log('Transcript:', window.lastTranscript);
-                        
-                        // Update the last speech timestamp
-                        lastSpeechTimestamp = Date.now();
-                        
-                        // Mark as speaking
-                        if (!isSpeaking) {
-                            isSpeaking = true;
-                            console.log('User started speaking');
-                        }
-
-                        if(window.currentAudio)
-                        {
-                            window.currentAudio.pause();
-                            window.currentAudio = null;
-                        }
-
-                        if(isSpeaking)
-                        {
-                            // Start silence detection if not already running
-                            if (!silenceDetectionInterval) {
-                                silenceDetectionInterval = setInterval(checkForSilence, 300);
-                            }
-                        }
-                    }
+                    setupAudioRecording(data.chatId);
                 }
             });
 
             // Handle bot responses
             socket.on('botResponse', (data) => {
-                console.log('Received bot response:', data.question);
-                
-                // Use Text-to-Speech to speak the response
-                speakText(data.question);
+                console.log('Received bot response, audio data length:', data.audio ? data.audio.length : 0);
+                if (data.chatId) {
+                    chatId = data.chatId;
+                }
+
+                // Check if we have audio data
+                if (data.audio && data.audio.length > 0) {
+                    // Play the audio
+                    playDeepgramAudio(data.audio, data.format || 'mp3');
+                } else {
+                    console.error('No audio data received in botResponse');
+                }
             });
 
             // Handle errors
@@ -443,47 +404,10 @@ $creds = getCreds('AHR');
                     setTimeout(setupSocketConnection, 2000);
                 }
             });
-
-            // Function to check for silence and process final transcript
-            function checkForSilence() {
-                const currentTime = Date.now();
-                const silenceDuration = currentTime - lastSpeechTimestamp;
-                
-                // If silence has been detected for the threshold period
-                if (isSpeaking && silenceDuration > SILENCE_THRESHOLD) {
-                    isSpeaking = false;
-                    console.log('User stopped speaking - silence detected for', silenceDuration, 'ms');
-                    
-                    // Process the final transcript
-                    if (window.lastTranscript) {
-                        console.log('FINAL TRANSCRIPT:', window.lastTranscript);
-
-                        // Send final transcript to server
-                        // socket.emit('finalTranscript', {
-                        //     transcript: window.lastTranscript,
-                        // });
-                        
-                        // Clear the last transcript
-                        window.lastTranscript = null;
-                    }
-                }
-            }
-        }
-
-        // Add a function to check the audio context
-        function checkAudioStatus() {
-            console.log('Audio Stream:', audioStream ? 'Available' : 'Not available');
-            console.log('MediaRecorder:', mediaRecorder ? 'Created' : 'Not created');
-            if (mediaRecorder) {
-                console.log('MediaRecorder state:', mediaRecorder.state);
-            }
-            console.log('Deepgram WebSocket:', deepgramSocket ? 
-                `Connected (State: ${['Connecting', 'Open', 'Closing', 'Closed'][deepgramSocket.readyState]})` : 
-                'Not connected');
         }
 
         // Add audio recording function for Deepgram
-        function setupAudioRecording() {
+        function setupAudioRecording(chatId) {
             console.log('Setting up audio recording...');
 
             // Request access to the microphone
@@ -550,68 +474,76 @@ $creds = getCreds('AHR');
 
         setupSocketConnection();
 
-        async function speakText(text) {
-            console.log('Speaking with Deepgram TTS:', text);
-
-            // Cancel any ongoing speech
-            if (window.speechSynthesis && window.speechSynthesis.speaking) {
-                window.speechSynthesis.cancel();
-            }
-
-            // Stop any playing audio
+        // Function to play Deepgram audio from base64 data
+        function playDeepgramAudio(base64AudioData, format = 'mp3') {
+            // Stop any playing audio first
             if (window.currentAudio) {
                 window.currentAudio.pause();
+                window.currentAudio.currentTime = 0;
                 window.currentAudio = null;
             }
-
-            speech = new SpeechSynthesisUtterance(text);
-
+            
             try {
-                // Call your server endpoint that will proxy to Deepgram TTS API
-                const response = await fetch('http://192.168.68.65:3000/deepgram/get-text-voice', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({
-                        text: text,
-                        voice: "aura-asteria-en", // You can choose different voices
-                        model: "nova-2"
-                    })
-                });
+                // Convert base64 to Blob
+                console.log('base64AudioData', base64AudioData);
+                const byteCharacters = atob(base64AudioData);
+                const byteArrays = [];
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+                    const slice = byteCharacters.slice(offset, offset + 512);
+                    
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+                    
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
                 }
-
-                // Get the audio as blob
-                const audioBlob = await response.blob();
                 
-                // Create an audio element to play the speech
+                const audioBlob = new Blob(byteArrays, { type: 'audio/wav' });
+                
+                console.log('audioBlob', audioBlob)
+                // Create audio URL and audio element
                 const audioUrl = URL.createObjectURL(audioBlob);
+                console.log('audioUrl', audioUrl)
                 const audio = new Audio(audioUrl);
+                // const audio = new Audio(`data:audio/${format};base64,${base64AudioData}`);
                 
                 // Store reference to current audio
                 window.currentAudio = audio;
                 
-                // Add event listeners for debugging
-                audio.addEventListener('play', () => console.log('Deepgram audio started playing'));
-                audio.addEventListener('ended', () => {
-                    console.log('Deepgram audio finished playing');
-                    window.currentAudio = null;
+                // Add event listeners
+                audio.addEventListener('play', () => {
+                    console.log('Bot audio started playing');
+                    // You can add UI indicator here that bot is speaking
+                    // document.querySelector('.bot .icon-wrapper').classList.add('speaking');
                 });
-                audio.addEventListener('error', (e) => console.error('Deepgram audio error:', e));
+                
+                audio.addEventListener('ended', () => {
+                    console.log('Bot audio finished playing');
+                    window.currentAudio = null;
+                    
+                    // Remove speaking indicator
+                    // document.querySelector('.bot .icon-wrapper').classList.remove('speaking');
+                    
+                    // Clean up the blob URL
+                    URL.revokeObjectURL(audioUrl);
+                });
+                
+                audio.addEventListener('error', (e) => {
+                    console.error('Audio playback error:', e);
+                    // document.querySelector('.bot .icon-wrapper').classList.remove('speaking');
+                    URL.revokeObjectURL(audioUrl);
+                });
                 
                 // Play the audio
-                audio.play();
-
+                audio.play().catch(err => {
+                    console.error('Error playing audio:', err);
+                    // document.querySelector('.bot .icon-wrapper').classList.remove('speaking');
+                });
             } catch (error) {
-                console.error('Error with Deepgram TTS:', error);
-                // Fallback to browser's speech synthesis in case of error
-                const fallbackSpeech = new SpeechSynthesisUtterance(text);
-                fallbackSpeech.lang = 'en-US';
-                window.speechSynthesis.speak(fallbackSpeech);
+                console.error('Error processing or playing audio:', error);
             }
         }
 
@@ -641,8 +573,6 @@ $creds = getCreds('AHR');
             try {
                 // Tell the server to start speech recognition with Deepgram
                 socket.emit('startSpeechRecognition', {job_list_sid});
-                
-                // speakText(data.question);
             } catch (e) {
                 console.error('Error starting interview:', e);
             }
