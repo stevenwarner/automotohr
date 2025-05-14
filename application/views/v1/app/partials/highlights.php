@@ -22,6 +22,11 @@ $directionP2 = "order-lg-2 order-1";
         <div class="row d-flex align-items-center justify-content-center">
             <div class="col-lg-6 col-12  <?= $directionP2; ?>">
                 <div class=" position-relative ">
+                    <?php if ($pageContent['sections']['specialhighlights']['mainheading']): ?>
+                        <p class="darkgrey mt-3 title text-lg-start text-center">
+                            <?= $pageContent['sections']['specialhighlights']['mainheading']; ?>
+                        </p>
+                    <?php endif; ?>
                     <form method="post" action="javascript:void(0)" class="form" id="<?= $id ?? "jsHighlightsForm"; ?>">
                         <div class="form-group">
                             <input type="text" class="form-control" id="wname" placeholder="Name*" name="wname" />
@@ -68,11 +73,6 @@ $directionP2 = "order-lg-2 order-1";
             <div class="col-lg-6 col-12 ps-md-3 ps-md-3 ps-lg-5 <?= $directionP1; ?>">
                 <div
                     class="switch_automoto position-relative ps-0 ps-lg-3 width_90 d-flex flex-column align-items-lg-start align-items-center justify-content-center">
-                    <?php if ($pageContent['sections']['specialhighlights']['mainheading']): ?>
-                        <p class="lightgrey heading-h4-grey opacity-ninety heading">
-                            <?= $pageContent['sections']['specialhighlights']['mainheading']; ?>
-                        </p>
-                    <?php endif; ?>
                     <?php if ($pageContent['sections']['specialhighlights']['heading']): ?>
                         <p class="darkgrey mt-3 title text-lg-start text-center">
                             <?= $pageContent['sections']['specialhighlights']['heading']; ?>

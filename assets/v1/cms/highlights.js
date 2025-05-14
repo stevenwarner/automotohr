@@ -6,12 +6,12 @@ $(function () {
 			mainheading: {
 				required: true,
 			},
-			heading: {
-				required: true,
-			},
-			details: {
-				required: true,
-			},	
+			// heading: {
+			// 	required: true,
+			// },
+			// details: {
+			// 	required: true,
+			// },	
 		},
 		submitHandler: function (form) {
 			//
@@ -46,8 +46,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=highlights"
+						getSegment(2) +
+						"/?page=highlights"
 					);
 				});
 			});
