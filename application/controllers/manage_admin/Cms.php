@@ -400,7 +400,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image', 20);
+                $errors = hasFileErrors($_FILES, "file", 'image', 200);
                 //
                 if ($errors) {
                     return SendResponse(
