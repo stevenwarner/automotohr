@@ -2884,3 +2884,6 @@ $route["cms/(:num)/activatetag/(:num)"] =
   "manage_admin/Cms/activatePageTag/$1/$2";
 
 $route['schedule_highlights']['post'] = 'v1/App/scheduleHighlights';
+
+$route['ai_whishlist_data_report'] = 'manage_admin/reports/Main/aiWhishlistDataReport';
+

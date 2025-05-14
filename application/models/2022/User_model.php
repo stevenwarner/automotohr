@@ -783,7 +783,7 @@ class User_model extends CI_Model
                         ->where('sid', $val['parent_sid'])
                         ->get('users')
                         ->row_array();
-                    $changedData[$key]['CompanyName'] = $companyName['CompanyName'] ;
+                    $changedData[$key]['CompanyName'] = $companyName['CompanyName'];
                 }
             }
         }
@@ -826,5 +826,33 @@ class User_model extends CI_Model
         unset($record);
         //
         return $tmp;
+    }
+
+    //
+    public function getAiWhishlistData($get)
+    {
+        //
+        $whereArray = [];
+        if ($get && $get['start_date'] && $get['end_date']) {
+            //
+            if ($get['start_date'] != '') {
+                $whereArray['created_at >='] = (formatDateToDB($get['start_date'], SITE_DATE, DB_DATE)) . ' 00:00:00';
+            }
+            //
+            if ($get['end_date']) {
+                $whereArray['created_at <='] = (formatDateToDB($get['end_date'], SITE_DATE, DB_DATE)) . ' 23:59:59';
+            }
+        } else {
+            $whereArray['created_at >='] = getSystemDate(DB_DATE) . ' 00:00:00';
+            $whereArray['created_at <='] = getSystemDate(DB_DATE) . ' 23:59:59';
+        }
+        //
+        $resultData =
+            $this->db->where($whereArray)
+            ->order_by('sid', 'DESC')
+            ->get('cms_highlights')
+            ->result_array();
+
+        return  $resultData;
     }
 }
