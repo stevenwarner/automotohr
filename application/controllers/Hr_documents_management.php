@@ -3761,7 +3761,10 @@ class Hr_documents_management extends Public_Controller
                     }
                 } else {
                     //
-                    $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
+                    $assigned_document['archive'] = $assigned_document['archive'] == 1  ? 1 : 0;
+                    // deprecated the company archive
+                    // from now on company archived document will have no effect on employee/applicant documents
+                    // $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
                     //
                     if ($assigned_document['user_consent'] == 1) {
                         $assigned_document['archive'] = 0;
