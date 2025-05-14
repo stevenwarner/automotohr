@@ -132,6 +132,10 @@ class Department_management extends Public_Controller
                         if ($this->input->post("lms_managers", true)) {
                             $data_to_insert["lms_managers_ids"] = implode(",", $this->input->post("lms_managers", true));
                         }
+                        //
+                        if ($this->input->post("csp_managers", true)) {
+                            $data_to_insert["csp_managers_ids"] = implode(",", $this->input->post("csp_managers", true));
+                        }
 
                         $new_department_sid = $this->department_management_model->insert_department($data_to_insert);
 
@@ -201,13 +205,13 @@ class Department_management extends Public_Controller
                         $data_to_update['modified_date'] = date('Y-m-d H:i:s');
 
                         //
-                        if($this->input->post("lms_managers", true)) {
+                        if ($this->input->post("lms_managers", true)) {
                             $data_to_update["lms_managers_ids"] = implode(",", $this->input->post("lms_managers", true));
                         } else {
                             $data_to_update["lms_managers_ids"] = null;
                         }
 
-                        if($this->input->post("csp_managers", true)) {
+                        if ($this->input->post("csp_managers", true)) {
                             $data_to_update["csp_managers_ids"] = implode(",", $this->input->post("csp_managers", true));
                         } else {
                             $data_to_update["csp_managers_ids"] = null;
@@ -400,7 +404,7 @@ class Department_management extends Public_Controller
                             $data_to_update["lms_managers_ids"] = null;
                         }
                         //
-                        if($this->input->post("csp_managers", true)) {
+                        if ($this->input->post("csp_managers", true)) {
                             $data_to_update["csp_managers_ids"] = implode(",", $this->input->post("csp_managers", true));
                         } else {
                             $data_to_update["csp_managers_ids"] = null;
@@ -646,7 +650,7 @@ class Department_management extends Public_Controller
                         $department_sid = $provided_sids[1];
 
                         if (isset($_POST['add_employee'])) {
-                            foreach (explode(',', $_POST['add_employee']) as  $add_employee_sid) {
+                            foreach (explode(',', $_POST['add_employee']) as $add_employee_sid) {
                                 $data_to_insert = array();
                                 $data_to_insert['department_sid'] = $department_sid;
                                 $data_to_insert['team_sid'] = $team_sid;
@@ -656,7 +660,7 @@ class Department_management extends Public_Controller
                         }
 
                         if (isset($_POST['remove_employee'])) {
-                            foreach (explode(',', $_POST['remove_employee']) as  $remove_employee_sid) {
+                            foreach (explode(',', $_POST['remove_employee']) as $remove_employee_sid) {
                                 $this->department_management_model->remove_employee_from_team($department_sid, $team_sid, $remove_employee_sid);
                             }
                         }
@@ -691,15 +695,15 @@ class Department_management extends Public_Controller
             //
             $record =
                 $this->db
-                ->select('sid, department_sid')
-                ->where([
-                    'employee_sid' => $approver,
-                    'status' => 1,
-                    'is_archived' => 0,
-                    'is_department' => (int)$isDepartment,
-                ])
-                ->get('timeoff_approvers')
-                ->row_array();
+                    ->select('sid, department_sid')
+                    ->where([
+                        'employee_sid' => $approver,
+                        'status' => 1,
+                        'is_archived' => 0,
+                        'is_department' => (int) $isDepartment,
+                    ])
+                    ->get('timeoff_approvers')
+                    ->row_array();
             //
             if (!$record) {
                 // Lets add it
@@ -713,7 +717,7 @@ class Department_management extends Public_Controller
                         'creator_sid' => $employerId,
                         'approver_percentage' => 0,
                         'is_archived' => 0,
-                        'is_department' => (int)$isDepartment,
+                        'is_department' => (int) $isDepartment,
                         'created_at' => getSystemDate(),
                         'updated_at' => getSystemDate()
                     ]
@@ -737,16 +741,16 @@ class Department_management extends Public_Controller
         // Remove other approvers
         $records =
             $this->db
-            ->select('sid, department_sid')
-            ->where([
-                'status' => 1,
-                'is_archived' => 0,
-                'is_department' => (int)$isDepartment
-            ])
-            ->where_not_in('employee_sid', $approvers)
-            ->where('FIND_IN_SET(' . ($actionId) . ', department_sid)', NULL, NULL)
-            ->get('timeoff_approvers')
-            ->result_array();
+                ->select('sid, department_sid')
+                ->where([
+                    'status' => 1,
+                    'is_archived' => 0,
+                    'is_department' => (int) $isDepartment
+                ])
+                ->where_not_in('employee_sid', $approvers)
+                ->where('FIND_IN_SET(' . ($actionId) . ', department_sid)', NULL, NULL)
+                ->get('timeoff_approvers')
+                ->result_array();
         //
         if (!$records) {
             return true;
@@ -797,9 +801,9 @@ class Department_management extends Public_Controller
             // Lets fetch all teams
             $records =
                 $this->db->select('sid')
-                ->where('department_sid', $actionId)
-                ->get('departments_team_management')
-                ->result_array();
+                    ->where('department_sid', $actionId)
+                    ->get('departments_team_management')
+                    ->result_array();
             //
             if ($records) {
                 foreach ($records as $record) {
@@ -815,15 +819,15 @@ class Department_management extends Public_Controller
             // Remove other approvers
             $records =
                 $this->db
-                ->select('sid, department_sid')
-                ->where([
-                    'status' => 1,
-                    'is_archived' => 0,
-                    'is_department' => $dep['type']
-                ])
-                ->where('FIND_IN_SET(' . ($dep['id']) . ', department_sid)', NULL, NULL)
-                ->get('timeoff_approvers')
-                ->result_array();
+                    ->select('sid, department_sid')
+                    ->where([
+                        'status' => 1,
+                        'is_archived' => 0,
+                        'is_department' => $dep['type']
+                    ])
+                    ->where('FIND_IN_SET(' . ($dep['id']) . ', department_sid)', NULL, NULL)
+                    ->get('timeoff_approvers')
+                    ->result_array();
             //
             if (!$records) {
                 continue;
