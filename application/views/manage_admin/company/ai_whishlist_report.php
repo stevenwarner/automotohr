@@ -11,7 +11,7 @@
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                         <div class="heading-title page-title">
-                                            <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?></h1>
+                                            <h1 class="page-title"><i class="fa fa-users"></i>AI Recruiter Wait-list Report</h1>
                                         </div>
                                         <div class="hr-search-criteria <?= $flag ? 'opened' : "" ?>">
                                             <strong>Click to modify search criteria</strong>

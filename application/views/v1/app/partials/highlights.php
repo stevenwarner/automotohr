@@ -3,7 +3,7 @@
 $products = $pageContent['sections']['section2']["products"];
 $productBg = [
     "1" => [
-        "bg" => "career_section_main py-5 width_100 d-flex justify-content-center career_section_bg_color",
+        "bg" => "career_section_main py-5 width_100 d-flex justify-content-center ",
         "image_bg" => "career_section_inner",
         "images" => ["hiring_section_bg"]
     ]
@@ -14,23 +14,33 @@ $productBg = [
 //
 $layout = $productBg[1];
 // direction
-$directionP1 = "order-lg-1 order-2";
+$directionP1 = "order-lg-1 order-1";
 $directionP2 = "order-lg-2 order-1";
 ?>
-<div class="<?= $productBg[1]["bg"]; ?> csSection" style="margin-bottom: -55px;margin-top: 50px;">
+<div class="<?= $productBg[1]["bg"]; ?> csSection">
     <div class="container-fluid">
         <div class="row d-flex align-items-center justify-content-center">
             <div class="col-lg-6 col-12  <?= $directionP2; ?>">
                 <div class=" position-relative ">
-
                     <form method="post" action="javascript:void(0)" class="form" id="<?= $id ?? "jsHighlightsForm"; ?>">
                         <div class="form-group">
-                            <input type="text" class="form-control" id="wname" placeholder="Name*" name="name" />
-                            <?php echo form_error('name'); ?>
+                            <input type="text" class="form-control" id="wname" placeholder="Name*" name="wname" />
+                            <?php echo form_error('wname'); ?>
                         </div>
                         <div class="form-group mt-4">
-                            <input type="email" class="form-control" id="wemail_id" placeholder="Email*" name="email" />
-                            <?php echo form_error('email'); ?>
+                            <input type="email" class="form-control" id="wemail_id" placeholder="Email*"
+                                name="wemail" />
+                            <?php echo form_error('wemail'); ?>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="wcname" placeholder="Company name"
+                                name="wcompany_name" />
+                            <?php echo form_error('wcompany_name'); ?>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="wctel" placeholder="Phone number"
+                                name="wphone_number" />
+                            <?php echo form_error('wphone_number'); ?>
                         </div>
 
                         <div class="form-group mt-4">
@@ -77,7 +87,10 @@ $directionP2 = "order-lg-2 order-1";
                             <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                         </a>
                     <?php } ?>
+
                 </div>
+                <!-- <img src="<?= base_url("assets/v1/app/images/ai_recruiter.png"); ?>" alt="" class="img-responsive"
+                    style="width:" /> -->
             </div>
 
         </div>

@@ -93,8 +93,22 @@ $(function () {
 
 	//
 	$("#jsHighlightsForm").validate({
-		rules,
-		messages,
+		rules: {
+			wname: {
+				required: true,
+			},
+			wemail: {
+				required: true,
+			},
+		},
+		messages: {
+			wname: {
+				required: "Name is required.",
+			},
+			wemail: {
+				required: "Email is required.",
+			},
+		},
 		submitHandler: submithighlightFormHandler,
 	});
 
@@ -197,7 +211,7 @@ $(function () {
 		// check the captcha		
 		if (!dataObj["g-recaptcha-response"]) {
 			//
-			_error("Name is required.");
+			_error("Google captcha is required.");
 			return;
 		}
 

@@ -92,10 +92,10 @@ class Main extends Admin_Controller
     }
 
     //
-      public function aiWhishlistDataReport()
+    public function aiWhishlistDataReport()
     {
         //
-        $this->data['page_title'] = 'AI Whishlist - Report';
+        $this->data['page_title'] = 'AI Recruiter Wait-list Report';
         // load user model
         $this->load->model('2022/User_model', 'user_model');
         // get filter records

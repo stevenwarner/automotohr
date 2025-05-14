@@ -859,8 +859,8 @@ class App extends CI_Controller
     public function scheduleHighlights()
     {
         // set rules
-        $this->form_validation->set_rules('name', 'Please provide name', 'trim|required|xss_clean');
-        $this->form_validation->set_rules('email', 'Please provide valid email address ', 'trim|required|valid_email|xss_clean');
+        $this->form_validation->set_rules('wname', 'Please provide name', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('wemail', 'Please provide valid email address ', 'trim|required|valid_email|xss_clean');
         $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha');
         // run validation
         if (!$this->form_validation->run()) {
@@ -871,8 +871,10 @@ class App extends CI_Controller
         }
         //
         $formData = [];
-        $formData['name'] = $this->input->post('name', true);
-        $formData['email'] = $this->input->post('email', true);
+        $formData['name'] = $this->input->post('wname', true);
+        $formData['email'] = $this->input->post('wemail', true);
+        $formData['company_name'] = $this->input->post('wcompany_name', true) ?? null;
+        $formData['phone_number'] = $this->input->post('wphone_number', true) ?? null;
         $formData['created_at'] = getSystemDate();
         //     
         $this->db->insert('cms_highlights', $formData);
