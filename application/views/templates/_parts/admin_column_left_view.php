@@ -227,7 +227,8 @@ if (
     $this->uri->segment(3) == 'accurate_background' ||
     $this->uri->segment(3) == 'invoice_item_usage' ||
     $this->uri->segment(3) == 'complynet_report' ||
-    $this->uri->segment(3) == 'employees_termination_report'
+    $this->uri->segment(3) == 'employees_termination_report' ||
+    $this->uri->segment(1) == 'ai_whishlist_data_report'
 ) {
     $reports_menu = true;
 } else if (
@@ -1260,6 +1261,12 @@ if (
                             </div>
                         <?php } ?>
 
+                        <div class="menu-item">
+                            <a <?php if (strpos(base_url(uri_string()), site_url('ai_whishlist_data_report')) !== false || ($this->uri->segment(3) == 'ai_whishlist_data_report')) {
+                                    echo 'class="active"';
+                                } ?> href="<?php echo site_url('ai_whishlist_data_report'); ?>">AI Whishlist Report</a>
+                        </div>
+
                     </div>
                 </li>
             <?php } ?>
@@ -1391,11 +1398,11 @@ if (
                                                 echo 'style="display:block;"';
                                             } ?>>
 
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/compliance_safety')) !== false) {
-                                        echo 'class="active"';
-                                    } ?> href="<?php echo site_url('manage_admin/compliance_safety/dashboard'); ?>">Overview</a>
-                            </div>
+                        <div class="menu-item">
+                            <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/compliance_safety')) !== false) {
+                                    echo 'class="active"';
+                                } ?> href="<?php echo site_url('manage_admin/compliance_safety/dashboard'); ?>">Overview</a>
+                        </div>
 
                     </div>
                 </li>

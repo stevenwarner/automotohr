@@ -51,25 +51,6 @@ $(function () {
 
 
 
-	//
-	const highlightsrules = {
-		name: {
-			required: true,
-		},
-		email: {
-			required: true,
-		},
-	};
-	const highlightsmessages = {
-		name: {
-			required: "Please provide  name.",
-		},
-		email: {
-			required: "Please provide valid email.",
-		},
-	};
-
-
 	/**
 	 *
 	 */
@@ -112,8 +93,8 @@ $(function () {
 
 	//
 	$("#jsHighlightsForm").validate({
-		highlightsrules,
-		highlightsmessages,
+		rules,
+		messages,
 		submitHandler: submithighlightFormHandler,
 	});
 
