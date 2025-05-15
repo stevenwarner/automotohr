@@ -1727,7 +1727,8 @@ class Cms extends Admin_Controller
             'title' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['title'],
             'section' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['section'],
             'index' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['index'],
-            'status' => 0
+            'status' => 0,
+            'cards' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['cards']
         ];
 
 
@@ -1754,7 +1755,8 @@ class Cms extends Admin_Controller
             'title' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['title'],
             'section' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['section'],
             'index' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['index'],
-            'status' => 1
+            'status' => 1,
+            'cards' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['cards']
         ];
 
 
@@ -1786,6 +1788,38 @@ class Cms extends Admin_Controller
         ];
 
         $statusmsg = $status == 'activate' ? 'activated' : 'deactivated';
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "Selected product section " . $statusmsg . " successfully."]);
+    }
+
+
+
+    public function PageSubTagStatus(int $pageId, int $index, int $tagIndex, string $status)
+    {
+
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+        $pageContent = json_decode($pageContent, true);
+
+        $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index] = [
+            'title' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['title'],
+            'details' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['details'],
+            'buttonText' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['buttonText'],
+            'buttonLink' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['buttonLink'],
+            'sortOrder' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['sortOrder'],
+            'section' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['section'],
+            'tagIndex' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['tagIndex'],
+            'index' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['index'],
+            'status' => $status == 'active' ? '1' : '0'
+        ];
+        //
+        $statusmsg = $status == 'active' ? 'activated' : 'deactivated';
 
         $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //

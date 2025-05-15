@@ -519,6 +519,60 @@ $(function () {
 			});
 	}
 
+	//	
+	$(".jsDeactivateSectionSub").click(function (event) {
+		//
+		event.preventDefault();
+		event.stopPropagation();
+		//
+		const index = $(this).closest(".row").data("key");
+		const tagIndex = $(this).closest(".row").data("index");
+	
+		//
+		return _confirm(
+			"Do you really wan deactivate this section?",
+			function () {
+				subTagStatus(index, tagIndex, 'deactive');
+			}
+		);
+	});
+
+	//
+	$(".jsActivateSectionSub").click(function (event) {
+		//
+		event.preventDefault();
+		event.stopPropagation();
+
+		const index = $(this).closest(".row").data("key");
+		const tagIndex = $(this).closest(".row").data("index");
+			//
+		return _confirm(
+			"Do you really wan activate this section?",
+			function () {
+				subTagStatus(index, tagIndex, 'active');
+			}
+		);
+	});
+
+
+	function subTagStatus(index, tagIndex, tagStatus) {
+		//
+		$.ajax({
+			url: baseUrl("cms/" + getSegment(2) + "/subtagstatus/" + index + "/" + tagIndex + "/" + tagStatus
+			),	
+		})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"manage_admin/edit_page/" +
+						getSegment(2) +
+						"/?page=sectionTag" +
+						tagIndex
+					);
+				});
+			});
+	}
 
 
 });

@@ -56,9 +56,9 @@ $directionP2 = "order-lg-2 order-1";
 
                         <button
                             class="button p-3 explore_btn schedule-btn schedule-btn-demo d-flex text-white mt-4 width_100 mb-lg-0 mb-5 auto-schedule-btn jsButtonAnimate jsScheduleHighlightsBtn "
-                            id="schedule-free-demo-form-submit" type="submit">
+                            id="schedule-free-demo-form-submit" type="submit" style="background-color: #fd7e14;">
                             <p class="mb-0 btn-text">
-                                Join Wait-list
+                                Join Our Waiting List. Be the First to try it!
                             </p>
                             <i class="fa-solid fa-arrow-right schedule-btn-adj ps-3"></i>
                         </button>
@@ -94,7 +94,7 @@ $directionP2 = "order-lg-2 order-1";
                         </a>
                     <?php } ?>
 
-                    <img src="<?= base_url("assets/v1/app/images/ai_recruiter.png"); ?>" alt=""
+                    <img src="<?= base_url("assets/v1/app/images/ai_recruiter_new.png"); ?>" alt=""
                         class="img-responsive" />
                 </div>
             </div>

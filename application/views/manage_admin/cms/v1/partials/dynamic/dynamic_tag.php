@@ -18,12 +18,12 @@ $collapseIn =  $this->input->get("page") == 'sectionTag' . $tagIndex ? "in" : ""
 
                 <?php if ($tagData["status"] == '0') { ?>
 
-                     <button class="btn btn-success jsActivateSection" data-index="<?= $tagIndex; ?>">
+                    <button class="btn btn-success jsActivateSection" data-index="<?= $tagIndex; ?>">
                         &nbsp;Activate
                     </button>
 
                 <?php } else { ?>
-                   
+
                     <button class="btn btn-danger jsDeactivateSection" data-index="<?= $tagIndex; ?>">
                         &nbsp;De-Activate
                     </button>
@@ -55,14 +55,26 @@ $collapseIn =  $this->input->get("page") == 'sectionTag' . $tagIndex ? "in" : ""
                                 </a>
                             </div>
                             <div class="col-sm-2 text-center" style="margin-top: 50px">
-                                <button class="btn btn-warning jsEditTagCard" type="button">
-                                    <i class="fa fa-edit" aria-hidden="true"></i>
-                                    &nbsp;Edit
-                                </button>
+
                                 <button class="btn btn-danger jsDeleteTagCard" type="button">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                     &nbsp;Delete
                                 </button>
+                                <?php if ($card["status"] == '0') { ?>
+                                    <button class="btn btn-success jsActivateSectionSub" style="margin-top: 5px">
+                                        &nbsp;Activate
+                                    </button>
+                                <?php } else { ?>
+                                    <button class="btn btn-danger jsDeactivateSectionSub" style="margin-top: 5px">
+                                        &nbsp;De-Activate
+                                    </button>
+                                <?php } ?>
+
+                                <button class="btn btn-warning jsEditTagCard" type="button" style="margin-top: 5px">
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                    &nbsp;Edit
+                                </button>
+
                             </div>
                         </div>
                         <hr />

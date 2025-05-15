@@ -38,22 +38,23 @@
                     <div class="row">
                         <?php if ($tag["cards"]) {
                             foreach ($tag["cards"] as $key => $card) {
+                                if ($card["status"] != '0') {
                         ?>
-                                <div class="col-sm-6 col-md-6 col-lg-4 col-xs-12">
-                                    <div class="csCard">
-                                        <h4>
-                                            <?= convertToStrip($card["title"]); ?>
-                                        </h4>
-                                        <p>
-                                            <?= convertToStrip($card["details"]); ?>
-                                        </p>
-                                        <a href="<?= generateLink($card["buttonLink"]) ?>">
-                                            <?= convertToStrip($card["buttonText"]); ?>
-                                            <i class="fa fa-chevron-right"></i>
-                                        </a>
+                                    <div class="col-sm-6 col-md-6 col-lg-4 col-xs-12">
+                                        <div class="csCard">
+                                            <h4>
+                                                <?= convertToStrip($card["title"]); ?>
+                                            </h4>
+                                            <p>
+                                                <?= convertToStrip($card["details"]); ?>
+                                            </p>
+                                            <a href="<?= generateLink($card["buttonLink"]) ?>">
+                                                <?= convertToStrip($card["buttonText"]); ?>
+                                                <i class="fa fa-chevron-right"></i>
+                                            </a>
+                                        </div>
                                     </div>
-                                </div>
-                        <?php
+                        <?php }
                             }
                         }
                         ?>
