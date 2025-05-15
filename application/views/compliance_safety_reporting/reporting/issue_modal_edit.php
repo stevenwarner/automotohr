@@ -8,13 +8,38 @@
         </h1>
     </div>
     <div class="panel-body">
-        <div class="row">
-            <div class="col-sm-12">
-                <label></label>
-                <!-- content -->
-                <?= convertCSPTags($records["description"], json_decode($records["answers_json"], true)); ?>
+        <input type="hidden" id="jsEditManualIssueType" value="<?= $issue_type == 'manual' ? "manual" : "default" ?>"/>
+        <?php if ($issue_type == 'manual') { ?>
+            <input type="hidden" id="jsEditManualIssueTypeId" value="<?= $records['incident_type_sid']; ?>"/>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                    <div class="form-group">
+                        <label>Issue Title </label>
+                        <input class="form-control"
+                            type="text"
+                            name="manual_issue_title"
+                            id="jsEditManualIssueTitle"
+                            value="<?= $records["title"]; ?>"/>
+                    </div>
+                </div>
+            </div>  
+            <div class="row">  
+                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                    <div class="form-group autoheight">
+                        <label>Issue Description </label>
+                        <textarea class="ckeditor" name="manual_issue_description" id="jsEditManualIssueDescription" cols="60" rows="10"><?= convertCSPTags($records["description"], json_decode($records["answers_json"], true)); ?></textarea>
+                    </div>
+                </div>
+            </div>    
+        <?php } else { ?>
+            <div class="row">
+                <div class="col-sm-12">
+                    <label></label>
+                    <!-- content -->
+                    <?= convertCSPTags($records["description"], json_decode($records["answers_json"], true)); ?>
+                </div>
             </div>
-        </div>
+        <?php } ?>
         <div class="row">
             <div class="col-sm-12">
                 <div class="label-wrapper-outer">
@@ -51,6 +76,96 @@
                 </div>
             </div>
         </div>
+        <!-- Questions Start -->
+        <?php 
+            $decodedJSON = json_decode(
+                $records["question_answer_json"],
+                true
+            );
+            //
+            $report_to_dashboard = empty($decodedJSON['report_to_dashboard']) ? 'no' : $decodedJSON['report_to_dashboard'];
+            $ongoing_issue = empty($decodedJSON['ongoing_issue']) ? 'no' : $decodedJSON['ongoing_issue'];
+            $reported_by = empty($decodedJSON['reported_by']) ? 'no' : $decodedJSON['reported_by'];
+            $category_of_issue = empty($decodedJSON['category_of_issue']) ? '' : $decodedJSON['category_of_issue'];
+        ?> 
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                <h1>Questions</h1>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                <div class="form-group autoheight">
+                    <label>Report to Dashboard : <span class="required" aria-required="true"></span></label>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                            <label class="control control--radio">
+                                Yes<input type="radio" class="jsReportToDashboard" name="report_to_dashboard" value="yes" style="position: relative;" <?php echo  $report_to_dashboard == 'yes' ? 'checked="checked"' : ''; ?>>
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                            <label class="control control--radio">
+                                No<input type="radio" class="jsReportToDashboard" name="report_to_dashboard" value="no" style="position: relative;" <?php echo  $report_to_dashboard == 'no' ? 'checked="checked"' : ''; ?>>
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </div>    
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                <div class="form-group autoheight">
+                    <label>Is this a Repeat or Ongoing Issue? <span class="required" aria-required="true"></span></label>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                            <label class="control control--radio">
+                                Yes<input type="radio" class="jsOngoingIssue" name="ongoing_issue" value="yes" style="position: relative;" <?php echo  $ongoing_issue == 'yes' ? 'checked="checked"' : ''; ?>>
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                            <label class="control control--radio">
+                                No<input type="radio" class="jsOngoingIssue" name="ongoing_issue" value="no" style="position: relative;" <?php echo  $ongoing_issue == 'no' ? 'checked="checked"' : ''; ?>>
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                <div class="form-group autoheight">
+                    <label>Was this reported by an employee?: <span class="required" aria-required="true"></span></label>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                            <label class="control control--radio">
+                                Yes<input type="radio" class="jsReportedBy" name="reported_by" value="yes" style="position: relative;" <?php echo  $reported_by == 'yes' ? 'checked="checked"' : ''; ?>>
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                            <label class="control control--radio">
+                                No<input type="radio" class="jsReportedBy" name="reported_by" value="no" style="position: relative;" <?php echo  $reported_by == 'no' ? 'checked="checked"' : ''; ?>>
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                <div class="form-group autoheight">
+                    <label>Category of issue: <span class="required" aria-required="true"></span></label>
+                    <input id="jsCategoryOfIssue" type="text" name="category_of_issue" value="<?=$category_of_issue?>"  class="form-control">
+                </div>
+            </div>
+        </div>
+        <!-- Questions End -->
     </div>
 </div>
 

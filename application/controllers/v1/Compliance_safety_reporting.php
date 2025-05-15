@@ -1972,6 +1972,9 @@ class Compliance_safety_reporting extends Base_csp
         $issues = $this
             ->compliance_report_model
             ->getIssueByRecordId($issueId);
+        //
+        $issueType = $this->compliance_report_model
+        ->getIssueTypeByRecordId($issues['compliance_report_incident_sid']);
         // also get the severity level
         $severityLevels = $this->compliance_report_model->getSeverityLevels();
         // return the success
@@ -1984,7 +1987,8 @@ class Compliance_safety_reporting extends Base_csp
                     'compliance_safety_reporting/reporting/issue_modal_edit',
                     [
                         "records" => $issues,
-                        "severity_status" => $severityLevels
+                        "severity_status" => $severityLevels,
+                        "issue_type" => $issueType 
                     ],
                     true
                 )
@@ -2039,6 +2043,17 @@ class Compliance_safety_reporting extends Base_csp
                 );
         }
         //
+        $this->compliance_report_model->processIssueQuestion(
+            $issueId,
+            $this->getLoggedInEmployee("sid"),
+            [
+                'report_to_dashboard' => $post["report_to_dashboard"],
+                'ongoing_issue' => $post["ongoing_issue"],
+                'reported_by' => $post["reported_by"],
+                'category_of_issue' => $post["category_of_issue"]
+            ]
+        );
+        //
         return SendResponse(
             200,
             [
@@ -2056,16 +2071,46 @@ class Compliance_safety_reporting extends Base_csp
     {
         // get the post
         $post = $this->input->post(null, true);
-
-        $this
-            ->compliance_report_model
-            ->editIssueWithReport(
-                $post["issueId"],
+        //
+        if ($post['type'] == "default") {
+            $this
+                ->compliance_report_model
+                ->editIssueWithReport(
+                    $post["issueId"],
+                    $post["severityLevelId"],
+                    $post["dynamicCheckbox"] ?? [],
+                    $post["dynamicInputs"] ?? [],
+                    $this->getLoggedInEmployee("sid"),
+                );
+        } else if ($post['type'] == "manual") {
+            //
+            $this->compliance_report_model->editComplianceReportType(
+                $post["issueTypeId"],
+                $post["title"],
+                $post["description"],
                 $post["severityLevelId"],
-                $post["dynamicCheckbox"] ?? [],
-                $post["dynamicInputs"] ?? [],
                 $this->getLoggedInEmployee("sid"),
             );
+            //
+            $this->compliance_report_model
+                ->updateManualIssueSeverityLevel(
+                    $post["issueId"],
+                    $post["severityLevelId"],
+                    $this->getLoggedInEmployee("sid"),
+                );
+        }
+        
+        //
+        $this->compliance_report_model->processIssueQuestion(
+            $post["issueId"],
+            $this->getLoggedInEmployee("sid"),
+            [
+                'report_to_dashboard' => $post["report_to_dashboard"],
+                'ongoing_issue' => $post["ongoing_issue"],
+                'reported_by' => $post["reported_by"],
+                'category_of_issue' => $post["category_of_issue"]
+            ]
+        );
         //
         return SendResponse(
             200,

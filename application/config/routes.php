@@ -2821,23 +2821,6 @@ $route["compliance_safety_reporting/delete_issue_from_report/(:num)"]["delete"] 
 $route["compliance_safety_reporting/export_csv"]["get"] =
   "v1/Compliance_safety_reporting/exportCSVReport";
 
-$route["compliance_safety_reporting/issues/all"]["get"] =
-  "v1/Compliance_safety_reporting/getAllIssues";
-$route["compliance_safety_reporting/issue/add"]["post"] =
-  "v1/Compliance_safety_reporting/addIssueToReport";
-$route["compliance_safety_reporting/issues/(:num)"]["get"] =
-  "v1/Compliance_safety_reporting/getSingleIssueView/$1";
-
-
-$route["compliance_safety_reporting/issues/edit/(:num)"]["get"] =
-  "v1/Compliance_safety_reporting/getEditIssueViewByRecordId/$1";
-$route["compliance_safety_reporting/issue/edit"]["post"] =
-  "v1/Compliance_safety_reporting/editIssueToReport";
-
-
-$route["compliance_safety_reporting/report/update/(:num)"]["post"] =
-  "v1/Compliance_safety_reporting/updateReportBasicInformation";
-
 $route["compliance_safety_reporting/get_attached_files/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting/getIssueAttachedFilesViewById/$1/$2/$3";
 
@@ -2854,7 +2837,6 @@ $route["csp/add_file_to_incident_item"]["post"] =
 
 $route["compliance_safety_reporting/issues/(:num)/(:num)/(:num)/employees/internal"]["post"] =
   "v1/Compliance_safety_reporting/updateItemEmployees/$1/$2/$3";
-
 
 $route["compliance_safety_reporting/issues/(:num)/(:num)/(:num)/employees/external"]["post"] =
   "v1/Compliance_safety_reporting/updateItemExternalEmployee/$1/$2/$3";

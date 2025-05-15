@@ -1,5 +1,6 @@
 <ul class="nav nav-tabs nav-justified">
     <li role="presentation" class="jsIssueSection active" data-section="detail"><a href="javascript:;">Issue Detail</a></li>
+    <li role="presentation" class="jsIssueSection" data-section="question"><a href="javascript:;">Add Question</a></li>
     <li role="presentation" class="jsIssueSection" data-section="file"><a href="javascript:;">Add Files</a></li>
     <li role="presentation" class="jsIssueSection" data-section="note"><a href="javascript:;">Add Notes</a></li>
 </ul>
@@ -115,6 +116,89 @@
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="jsQuestionSection" class="hidden wrapper-outer">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1 class="panel-heading-text text-medium">
+                <strong>Add Question</strong>
+            </h1>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group autoheight">
+                        <label>Report to Dashboard : <span class="required" aria-required="true"></span></label>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                <label class="control control--radio">
+                                    Yes<input type="radio" class="jsReportToDashboard" name="report_to_dashboard" value="yes" style="position: relative;" >
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                <label class="control control--radio">
+                                    No<input type="radio" class="jsReportToDashboard" name="report_to_dashboard" value="no" style="position: relative;" checked="checked">
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group autoheight">
+                        <label>Is this a Repeat or Ongoing Issue? <span class="required" aria-required="true"></span></label>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                <label class="control control--radio">
+                                    Yes<input type="radio" class="jsOngoingIssue" name="ongoing_issue" value="yes" style="position: relative;">
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                <label class="control control--radio">
+                                    No<input type="radio" class="jsOngoingIssue" name="ongoing_issue" value="no" style="position: relative;" checked="checked">
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group autoheight">
+                        <label>Was this reported by an employee?: <span class="required" aria-required="true"></span></label>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                <label class="control control--radio">
+                                    Yes<input type="radio" class="jsReportedBy" name="reported_by" value="yes" style="position: relative;">
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                <label class="control control--radio">
+                                    No<input type="radio" class="jsReportedBy" name="reported_by" value="no" style="position: relative;" checked="checked">
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group autoheight">
+                        <label>Category of issue: <span class="required" aria-required="true"></span></label>
+                        <input id="jsCategoryOfIssue" type="text" name="category_of_issue" value=""  class="form-control">
                     </div>
                 </div>
             </div>

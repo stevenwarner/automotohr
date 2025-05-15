@@ -716,7 +716,11 @@ $(function Overview() {
 			dynamicCheckbox: [],
 			type: $('.jsIssueType:checked').val(),
 			title: '',
-			description: ''
+			description: '',
+			report_to_dashboard: $('.jsReportToDashboard:checked').val(),
+			ongoing_issue: $('.jsOngoingIssue:checked').val(),
+			reported_by: $('.jsReportedBy:checked').val(),
+			category_of_issue: $('#jsCategoryOfIssue').val()
 		};
 		//
 		if (!addIssueObject.reportId) {
@@ -930,6 +934,13 @@ $(function Overview() {
 				.done(function (resp) {
 					$("#jsEditIssueModal .modal-body").html(resp.view);
 					$(".jsEditModalIssue").removeClass("hidden");
+					//
+					CKEDITOR.replace("jsEditManualIssueDescription", {
+						toolbar: [
+							['Bold', 'Italic', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink'],
+							['FontSize', 'TextColor', 'BGColor']
+						]
+					});
 				});
 		}
 	);
@@ -937,39 +948,63 @@ $(function Overview() {
 	$(document).on("click", ".jsEditModalIssue", function () {
 		// set the object
 		const editIssueObject = {
+			type: $("#jsEditManualIssueType").val(),
 			issueId: $("#jsNewItemId").val(),
 			severityLevelId: $("#jsNewItemSeverityLevel").val(),
 			dynamicInputs: [],
 			dynamicCheckbox: [],
+			report_to_dashboard: $('.jsReportToDashboard:checked').val(),
+			ongoing_issue: $('.jsOngoingIssue:checked').val(),
+			reported_by: $('.jsReportedBy:checked').val(),
+			category_of_issue: $('#jsCategoryOfIssue').val()
 		};
 		//
-		editIssueObject["dynamicInputs"] = $("#jsAddIssuePanelRef")
-			.find('[name="dynamicInput[]"]').length > 0 ? $("#jsAddIssuePanelRef")
-				.find('[name="dynamicInput[]"]')
-				.map(function () {
-					return $(this).val();
-				})
-				.get() : [];
-		//
-		editIssueObject["dynamicCheckbox"] = $("#jsAddIssuePanelRef")
-			.find('[name="dynamicCheckbox[]"]') > 0 ? $("#jsAddIssuePanelRef")
-				.find('[name="dynamicCheckbox[]"]')
-				.map(function () {
-					return $(this).val();
-				})
-				.get() : [];
+		if (editIssueObject.type == "default") {
+			//
+			editIssueObject["dynamicInputs"] = $("#jsAddIssuePanelRef")
+				.find('[name="dynamicInput[]"]').length > 0 ? $("#jsAddIssuePanelRef")
+					.find('[name="dynamicInput[]"]')
+					.map(function () {
+						return $(this).val();
+					})
+					.get() : [];
+			//
+			editIssueObject["dynamicCheckbox"] = $("#jsAddIssuePanelRef")
+				.find('[name="dynamicCheckbox[]"]') > 0 ? $("#jsAddIssuePanelRef")
+					.find('[name="dynamicCheckbox[]"]')
+					.map(function () {
+						return $(this).val();
+					})
+					.get() : [];
 
-		if (!editIssueObject.issueId) {
-			_error("Please provide a issue id.")
-			return;
-		}
-		if (!editIssueObject.severityLevelId) {
-			_error("Please select a severity level.")
-			return;
+			if (!editIssueObject.issueId) {
+				_error("Please provide a issue id.")
+				return;
+			}
+			if (!editIssueObject.severityLevelId) {
+				_error("Please select a severity level.")
+				return;
+			}
+			//
+		} else if (editIssueObject.type == "manual") {
+			//
+			editIssueObject.issueTypeId = $("#jsEditManualIssueTypeId").val();
+			editIssueObject.title = $("#jsEditManualIssueTitle").val();
+			editIssueObject.description = CKEDITOR.instances["jsEditManualIssueDescription"].getData();
+			//
+			if (!editIssueObject.title) {
+				_error("Please add a manual issue title.");
+				return;
+			}
+			//
+			if (!editIssueObject.description) {
+				_error("Please add a manual issue description.");
+				return;
+			}
 		}
 		//
 		editIssueToIncident(editIssueObject);
-
+		//
 	});
 
 
@@ -1028,14 +1063,22 @@ $(function Overview() {
 		//
 		if (sectionType == 'detail') {
 			$("#jsDetailSection").removeClass("hidden");
+			$("#jsQuestionSection").addClass("hidden");
+			$("#jsFileSection").addClass("hidden");
+			$("#jsNoteSection").addClass("hidden");
+		} else if (sectionType == 'question') {
+			$("#jsDetailSection").addClass("hidden");
+			$("#jsQuestionSection").removeClass("hidden");
 			$("#jsFileSection").addClass("hidden");
 			$("#jsNoteSection").addClass("hidden");
 		} else if (sectionType == 'file') {
 			$("#jsDetailSection").addClass("hidden");
+			$("#jsQuestionSection").addClass("hidden");
 			$("#jsFileSection").removeClass("hidden");
 			$("#jsNoteSection").addClass("hidden");
 		} else if (sectionType == 'note') {
 			$("#jsDetailSection").addClass("hidden");
+			$("#jsQuestionSection").addClass("hidden");
 			$("#jsFileSection").addClass("hidden");
 			$("#jsNoteSection").removeClass("hidden");
 		}

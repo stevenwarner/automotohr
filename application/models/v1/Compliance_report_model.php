@@ -6405,9 +6405,12 @@ class Compliance_report_model extends CI_Model
 			"csp_reports_incidents_items.sid",
 			"csp_reports_incidents_items.severity_level_sid",
 			"csp_reports_incidents_items.answers_json",
+			"csp_reports_incidents_items.question_answer_json",
 			//
+			"compliance_report_incident_types.sid as incident_type_sid",
 			"compliance_report_incident_types.title",
 			"compliance_report_incident_types.description",
+			"compliance_report_incident_types.compliance_report_incident_sid",
 		]);
 		$this->db->join(
 			"compliance_report_incident_types",
@@ -6454,6 +6457,17 @@ class Compliance_report_model extends CI_Model
 			);
 		return $this->db->insert_id();
 	}
+
+	public function getIssueTypeByRecordId(
+		$incidentTypeId
+	) {
+		return $this
+			->db
+			->select("compliance_incident_type_name")
+			->where("id", $incidentTypeId)
+			->get("compliance_incident_types")
+			->row_array()['compliance_incident_type_name'];
+	}		
 
 	public function addComplianceReportType(
 		$title,
@@ -6508,6 +6522,46 @@ class Compliance_report_model extends CI_Model
 				]
 			);
 		return $this->db->insert_id();
+	}
+
+	public function editComplianceReportType (
+		$incidentTypeId,
+		$title,
+		$description,
+		$severityLevelId
+	) {
+		//
+		$this
+			->db
+			->where("sid", $incidentTypeId)
+			->update(
+				"compliance_report_incident_types",
+				[
+					"severity_level_sid" => $severityLevelId,
+					"description" => $description,
+					"title" => $title,
+					"updated_at" => getSystemDate(),
+				]
+			);
+		//	
+	}
+
+	public function updateManualIssueSeverityLevel(
+		$issueId,
+		$severityLevelId,
+		$loggedInEmployeeId
+	) {
+		$this
+			->db
+			->where("sid", $issueId)
+			->update(
+				"csp_reports_incidents_items",
+				[
+					"severity_level_sid" => $severityLevelId,
+					"last_modified_by" => $loggedInEmployeeId,
+					"updated_at" => getSystemDate(),
+				]
+			);
 	}
 
 	public function editIssueWithReport(
