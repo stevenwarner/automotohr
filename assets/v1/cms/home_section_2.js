@@ -1,6 +1,50 @@
 $(function () {
 	let XHR = null;
 
+	let loaderRef = "#jsMainLoader";
+	$(".jsDraggable").sortable({
+		update: function (event, ui) {
+			//
+			var tagIndex = 0;
+			var orderList = [];
+			var indecators = ui.item.context.className.split(" ");
+			//
+			$("." + indecators[0]).map(function (i) {
+				tagIndex = $(this).data("index");
+				orderList.push($(this).data("key"));
+			});
+			// 
+			var obj = {};
+			obj.tagIndex = tagIndex;
+			obj.sortOrders = orderList;
+			//
+			updateHomePageProductSortOrder(obj);
+		}
+	});
+
+	//
+	function updateHomePageProductSortOrder(data) {
+		// check if XHR already in progress
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		//
+		loader(true);
+		XHR = $.ajax({
+			url: baseUrl("cms/update_product_sort_order/" + getSegment(2)),
+			method: "post",
+			data,
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				loader(false);
+			});
+	}
+
+
 	$("#jsHomeSection2Form").validate({
 		rules: {
 			jsMainHeading: {
@@ -16,6 +60,23 @@ $(function () {
 			return processData(formDataObj);
 		},
 	});
+
+
+	function loader(cond, msg = "") {
+
+		if (cond) {
+			$(loaderRef).show();
+			$(loaderRef + " .jsLoaderText").html(
+				msg || "Please wait, while we process your request."
+			);
+		} else {
+			$(loaderRef).hide();
+			$(loaderRef + " .jsLoaderText").html(
+				"Please wait, while we process your request."
+			);
+		}
+	}
+
 
 	//
 	$(".jsHomeSection2AddProductBtn").click(function (event) {
@@ -350,7 +411,7 @@ $(function () {
 		//
 		event.preventDefault();
 		event.stopPropagation();
-		
+
 		//
 		const bannerRef = $(this).closest(".row").data("key");
 		const buttonRef = $(this);
@@ -367,7 +428,7 @@ $(function () {
 	$(".jsActivateHomeProductSection").click(function (event) {
 		//
 		event.preventDefault();
-		event.stopPropagation();	
+		event.stopPropagation();
 		//
 		const bannerRef = $(this).closest(".row").data("key");
 		const buttonRef = $(this);
