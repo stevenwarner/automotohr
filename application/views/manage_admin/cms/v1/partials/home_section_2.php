@@ -32,53 +32,62 @@ $products = $pageContent["page"]["sections"]["section2"]["products"];
                 </div>
                 <br />
                 <!--  -->
-                <?php if ($products) { ?>
-                    <?php foreach ($products as $key => $value) { ?>
-                        <div class="row" data-key="<?= $key; ?>">
-                            <div class="col-sm-3 <?= $value["direction"] == "left_to_right" ? "col-sm-push-7" : ""; ?>">
-                                <?= getSourceByType(
-                                    $value["sourceType"],
-                                    $value["sourceFile"]
-                                ); ?>
+                <div class="panel-body jsDraggable">
+                    <?php if ($products) { ?>
+                        <?php foreach ($products as $key => $value) { ?>
+
+                            <div class="jsCardsSortOrder_<?= $tagIndex; ?>" data-key="<?= $key; ?>" data-index="<?= $tagIndex; ?>">
+                                <div class="row" data-key="<?= $key; ?>">
+                                    <div class="col-sm-3 <?= $value["direction"] == "left_to_right" ? "col-sm-push-7" : ""; ?>">
+                                        <?= getSourceByType(
+                                            $value["sourceType"],
+                                            $value["sourceFile"]
+                                        ); ?>
+                                    </div>
+                                    <div class="col-sm-7 <?= $value["direction"] == "left_to_right" ? "col-sm-pull-3" : ""; ?>">
+                                        <h3><?= convertToStrip($value["mainHeading"]); ?></h3>
+                                        <h4><?= convertToStrip($value["subHeading"]); ?></h4>
+                                        <p><?= convertToStrip($value["details"]); ?></p>
+                                        <a href="<?= main_url($value["buttonLink"]); ?>" target="_blank" class="btn btn-success">
+                                            <?= $value["buttonText"]; ?>
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-2 text-center" style="margin-top: 50px">
+
+                                        <button class="btn btn-danger jsDeleteHomeProduct">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                            &nbsp;Delete
+                                        </button>
+                                        <?php if ($value["status"] == '0') { ?>
+
+                                            <button class="btn btn-success jsActivateHomeProductSection" style="margin-top: 5px">
+                                                &nbsp;Activate
+                                            </button>
+
+                                        <?php } else { ?>
+                                            <button class="btn btn-danger jsDeactivateHomeProduct" style="margin-top: 5px">
+                                                &nbsp;De-Activate
+                                            </button>
+
+                                        <?php } ?>
+
+                                        <button class="btn btn-warning jsEditHomeProduct" style="margin-top: 5px">
+                                            <i class="fa fa-edit" aria-hidden="true"></i>
+                                            &nbsp;Edit
+                                        </button>
+
+                                    </div>
+                                </div>
+                                <hr />
                             </div>
-                            <div class="col-sm-7 <?= $value["direction"] == "left_to_right" ? "col-sm-pull-3" : ""; ?>">
-                                <h3><?= convertToStrip($value["mainHeading"]); ?></h3>
-                                <h4><?= convertToStrip($value["subHeading"]); ?></h4>
-                                <p><?= convertToStrip($value["details"]); ?></p>
-                                <a href="<?= main_url($value["buttonLink"]); ?>" target="_blank" class="btn btn-success">
-                                    <?= $value["buttonText"]; ?>
-                                </a>
-                            </div>
-                            <div class="col-sm-2 text-center" style="margin-top: 50px">
 
-                                <button class="btn btn-danger jsDeleteHomeProduct">
-                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                    &nbsp;Delete
-                                </button>
-                                <?php if ($value["status"] == '0') { ?>
-
-                                    <button class="btn btn-success jsActivateHomeProductSection" style="margin-top: 5px">
-                                        &nbsp;Activate
-                                    </button> 
-
-                                <?php } else { ?>
-                                    <button class="btn btn-danger jsDeactivateHomeProduct"  style="margin-top: 5px">
-                                        &nbsp;De-Activate
-                                    </button>
-
-                                <?php } ?>
-
-                                <button class="btn btn-warning jsEditHomeProduct" style="margin-top: 5px">
-                                    <i class="fa fa-edit" aria-hidden="true"></i>
-                                    &nbsp;Edit
-                                </button>
-
-                            </div>
-                        </div>
-                        <hr />
+                        <?php } ?>
                     <?php } ?>
-                <?php } ?>
+                </div>
 
+                  <?php $this->load->view('loader', [
+                                "props" => 'id="jsMainLoader"'
+                            ]); ?>
 
             </div>
             <div class="panel-footer text-center">
