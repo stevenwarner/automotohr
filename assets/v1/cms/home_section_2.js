@@ -91,7 +91,7 @@ $(function () {
 					allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
 					allowLinks: true,
 					activeLink: "upload",
-					fileLimit: "20mb",
+					fileLimit: "200mb",
 				});
 				//
 				$("#jsAddHomeProduct").validate({
@@ -167,7 +167,7 @@ $(function () {
 					allowLinks: true,
 					activeLink: resp.sourceType,
 					placeholderImage: resp.sourceFile,
-					fileLimit: "20mb",
+					fileLimit: "200mb",
 				});
 				//
 				$("#jsEditHomeProduct").validate({
@@ -243,8 +243,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=home_section_2"
+						getSegment(2) +
+						"/?page=home_section_2"
 					);
 				});
 			});
@@ -275,8 +275,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=home_section_2"
+						getSegment(2) +
+						"/?page=home_section_2"
 					);
 				});
 			});
@@ -307,8 +307,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=home_section_2"
+						getSegment(2) +
+						"/?page=home_section_2"
 					);
 				});
 			});
@@ -336,10 +336,69 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=home_section_2"
+						getSegment(2) +
+						"/?page=home_section_2"
 					);
 				});
 			});
 	}
+
+
+
+	//	
+	$(".jsDeactivateHomeProduct").click(function (event) {
+		//
+		event.preventDefault();
+		event.stopPropagation();
+		
+		//
+		const bannerRef = $(this).closest(".row").data("key");
+		const buttonRef = $(this);
+		//
+		return _confirm(
+			"Do you really want deactivate this section?",
+			function () {
+				changeHomeProductStatus(bannerRef, buttonRef, 'deactivate');
+			}
+		);
+	});
+
+	//	
+	$(".jsActivateHomeProductSection").click(function (event) {
+		//
+		event.preventDefault();
+		event.stopPropagation();	
+		//
+		const bannerRef = $(this).closest(".row").data("key");
+		const buttonRef = $(this);
+		//
+		return _confirm(
+			"Do you really want activate this section?",
+			function () {
+				changeHomeProductStatus(bannerRef, buttonRef, 'activate');
+			}
+		);
+	});
+
+
+	//
+	function changeHomeProductStatus(bannerRef, buttonRef, statusAction) {
+		//
+		const pageId = getSegment(2);
+		const btnHook = callButtonHook(buttonRef, true);
+		$.ajax({
+			url: baseUrl("cms/" + pageId + "/home/product/status/" + bannerRef + "/" + statusAction),
+		})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"manage_admin/edit_page/" +
+						getSegment(2) +
+						"/?page=home_section_2"
+					);
+				});
+			});
+	}
+
 });

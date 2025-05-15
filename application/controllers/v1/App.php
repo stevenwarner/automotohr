@@ -52,7 +52,6 @@ class App extends CI_Controller
         $data['pageContent'] = $pageContent;
         if (empty($whyUsContent)) {
             $this->load->view('errors/html/error_404');
-
         } else {
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/why_us');
@@ -124,7 +123,6 @@ class App extends CI_Controller
         $data['pageContent'] = $pageContent;
         if (empty($pageContent)) {
             $this->load->view('errors/html/error_404');
-
         } else {
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/privacy_policy');
@@ -222,15 +220,11 @@ class App extends CI_Controller
         //        
         if (empty($pageContent)) {
             $this->load->view('errors/html/error_404');
-
         } else {
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/products/main');
             $this->load->view($this->footer);
         }
-
-
-
     }
 
     /**
@@ -284,7 +278,6 @@ class App extends CI_Controller
         //
         if (empty($pageContent)) {
             $this->load->view('errors/html/error_404');
-
         } else {
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/affiliate');
@@ -860,5 +853,31 @@ class App extends CI_Controller
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/legal_cp');
         $this->load->view($this->footer);
+    }
+
+    //
+    public function scheduleHighlights()
+    {
+        // set rules
+        $this->form_validation->set_rules('wname', 'Please provide name', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('wemail', 'Please provide valid email address ', 'trim|required|valid_email|xss_clean');
+        $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha');
+        // run validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
+        //
+        $formData = [];
+        $formData['name'] = $this->input->post('wname', true);
+        $formData['email'] = $this->input->post('wemail', true);
+        $formData['company_name'] = $this->input->post('wcompany_name', true) ?? null;
+        $formData['phone_number'] = $this->input->post('wphone_number', true) ?? null;
+        $formData['created_at'] = getSystemDate();
+        //     
+        $this->db->insert('cms_highlights', $formData);
+        return SendResponse(200, ["msg" => "Thank you for your request, we will contact you soon."]);
     }
 }

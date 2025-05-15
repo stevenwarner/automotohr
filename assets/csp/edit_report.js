@@ -44,6 +44,48 @@ $(function Overview() {
 		},
 	};
 
+
+	$(".jsDeleteReportBtn").click(
+		function (event) {
+			event.preventDefault();
+			const id = $(this).data("id");
+
+			_confirm(
+				"Are you sure you want to delete this report? This action is not revertible.",
+				function () {
+					deleteReport(
+						id
+					);
+				}
+			);
+		}
+	);
+
+
+	function deleteReport(id) {
+		//
+		const _html = callButtonHook(
+			$(".jsDeleteReportBtn"),
+			true
+		);
+		//
+		$
+			.ajax({
+				url: baseUrl(`compliance_safety_reporting/report/${id}`),
+				method: "DELETE",
+
+			})
+			.always(function () {
+				callButtonHook(_html, false);
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.message, function () {
+					window.location.href = baseUrl("compliance_safety_reporting/overview")
+				})
+			});
+	}
+
 	$("#report_documents").msFileUploader(config.document);
 
 	if (externalPointer != 0) {

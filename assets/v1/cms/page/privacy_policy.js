@@ -9,7 +9,7 @@ $(function () {
 		allowLinks: false,
 		activeLink: section0.sourceType,
 		placeholderImage: section0.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsSection0Form").validate({
@@ -84,9 +84,9 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=" +
-							redirectTo
+						getSegment(2) +
+						"/?page=" +
+						redirectTo
 					);
 				});
 			});
@@ -128,7 +128,7 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							pageId 
+						pageId
 					);
 				});
 			});

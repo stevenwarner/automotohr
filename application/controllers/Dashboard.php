@@ -41,23 +41,23 @@ class Dashboard extends Public_Controller
     public function index()
     {
         if ($this->session->userdata('logged_in')) {
-            $data['session']                                                    = $this->session->userdata('logged_in');
-            $employer_detail                                                    = $data['session']['employer_detail'];
-            $company_detail                                                     = $data['session']['company_detail'];
-            $data['access_level_plus']                                          = $data["session"]["employer_detail"]["access_level_plus"];
-            $data['pay_plan_flag']                                              = $data["session"]["employer_detail"]["pay_plan_flag"];
-            $security_sid                                                       = $employer_detail['sid'];
-            $security_details                                                   = db_get_access_level_details($security_sid);
-            $data['security_details']                                           = $security_details;
+            $data['session'] = $this->session->userdata('logged_in');
+            $employer_detail = $data['session']['employer_detail'];
+            $company_detail = $data['session']['company_detail'];
+            $data['access_level_plus'] = $data["session"]["employer_detail"]["access_level_plus"];
+            $data['pay_plan_flag'] = $data["session"]["employer_detail"]["pay_plan_flag"];
+            $security_sid = $employer_detail['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
             //check_access_permissions($security_details, 'appearance', 'customize_appearance'); // no need to check in this Module as Dashboard will be available to all
-            $employer_id                                                        = $employer_detail['sid'];
-            $company_id                                                         = $company_detail['sid'];
-            $data['employerData']                                               = $employer_detail;
-            $loggedin_access_level                                              = $employer_detail['access_level'];
-            $data['companyData']                                                = $company_detail;
-            $data['companyData']['locationDetail']                              = db_get_state_name($data['companyData']['Location_State']);
-            $jobs_approval_module_status                                        = $company_detail['has_job_approval_rights']; //get_job_approval_module_status($company_id);
-            $applicant_approval_module_status                                   = $company_detail['has_applicant_approval_rights']; //get_applicant_approval_module_status($company_id);
+            $employer_id = $employer_detail['sid'];
+            $company_id = $company_detail['sid'];
+            $data['employerData'] = $employer_detail;
+            $loggedin_access_level = $employer_detail['access_level'];
+            $data['companyData'] = $company_detail;
+            $data['companyData']['locationDetail'] = db_get_state_name($data['companyData']['Location_State']);
+            $jobs_approval_module_status = $company_detail['has_job_approval_rights']; //get_job_approval_module_status($company_id);
+            $applicant_approval_module_status = $company_detail['has_applicant_approval_rights']; //get_applicant_approval_module_status($company_id);
 
             $data['EmsStatus'] = getCompanyEmsStatusBySid($company_id, false);
             if (check_blue_panel_status() && strtolower($loggedin_access_level) == 'employee') { //New Panel configuration
@@ -92,40 +92,40 @@ class Dashboard extends Public_Controller
                 ////////-----------------------------------------------------------------------------------------\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
-                $configuration                                                  = $this->onboarding_model->get_onboarding_configuration('employee', $employer_id);
-                $sections_data                                                  = $this->get_single_record_from_array($configuration, 'section', 'sections');
-                $locations_data                                                 = $this->get_single_record_from_array($configuration, 'section', 'locations');
+                $configuration = $this->onboarding_model->get_onboarding_configuration('employee', $employer_id);
+                $sections_data = $this->get_single_record_from_array($configuration, 'section', 'sections');
+                $locations_data = $this->get_single_record_from_array($configuration, 'section', 'locations');
                 // Custom Location
-                $custom_office_locations                                        = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'location', 1);
-                $data['custom_office_locations']                                = $custom_office_locations;
-                $timings_data                                                   = $this->get_single_record_from_array($configuration, 'section', 'timings');
+                $custom_office_locations = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'location', 1);
+                $data['custom_office_locations'] = $custom_office_locations;
+                $timings_data = $this->get_single_record_from_array($configuration, 'section', 'timings');
                 // Custom Timing
-                $custom_office_timings                                          = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'timing');
-                $data['custom_office_timings']                                  = $custom_office_timings;
+                $custom_office_timings = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'timing');
+                $data['custom_office_timings'] = $custom_office_timings;
                 // Custom Useful Links
-                $custom_useful_link                                             = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'useful_link');
-                $data['custom_useful_link']                                     = $custom_useful_link;
+                $custom_useful_link = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'useful_link');
+                $data['custom_useful_link'] = $custom_useful_link;
                 //
-                $people_data                                                    = $this->get_single_record_from_array($configuration, 'section', 'people');
-                $items_data                                                     = $this->onboarding_model->get_assigned_custom_office_record_sids($company_id, $employer_id, 'employee', 'item', 2); // fetch items from new table
-                $ems_notification                                               = $this->onboarding_model->get_ems_notifications($company_id, $employer_id);
-                $sections                                                       = empty($sections_data) ? array() : $sections_data['items_details'];
-                $locations                                                      = empty($locations_data) ? array() : $locations_data['items_details'];
-                $timings                                                        = empty($timings_data) ? array() : $timings_data['items_details'];
-                $people                                                         = empty($people_data) ? array() : $people_data['items_details'];
-                $assign_links                                                   = $this->onboarding_model->onboarding_assign_useful_links($employer_id, $company_id, 'employee');
-                $welcome_video                                                      = $this->onboarding_model->get_onboarding_setup_welcome_video($company_id, $employer_id, 'employee'); // Welcome Videos
-                $data['welcome_video']                                              = $welcome_video;
-                $data['sections']                                               = $sections;
-                $data['ems_notification']                                       = $ems_notification;
-                $data['locations']                                              = $locations;
-                $data['timings']                                                = $timings;
-                $data['people']                                                 = $people;
-                $data['items']                                                  = $items_data;
-                $data['links']                                                  = $assign_links;
-                $data['complete_steps']                                         = $this->onboarding_model->check_updated_sections($company_id, 'employee', $employer_id);
-                $data['safety_sheet_flag']                                      = $this->dashboard_model->check_safety_data($company_id);
-                $data['session']['safety_sheet_flag']                           = $data['safety_sheet_flag'];
+                $people_data = $this->get_single_record_from_array($configuration, 'section', 'people');
+                $items_data = $this->onboarding_model->get_assigned_custom_office_record_sids($company_id, $employer_id, 'employee', 'item', 2); // fetch items from new table
+                $ems_notification = $this->onboarding_model->get_ems_notifications($company_id, $employer_id);
+                $sections = empty($sections_data) ? array() : $sections_data['items_details'];
+                $locations = empty($locations_data) ? array() : $locations_data['items_details'];
+                $timings = empty($timings_data) ? array() : $timings_data['items_details'];
+                $people = empty($people_data) ? array() : $people_data['items_details'];
+                $assign_links = $this->onboarding_model->onboarding_assign_useful_links($employer_id, $company_id, 'employee');
+                $welcome_video = $this->onboarding_model->get_onboarding_setup_welcome_video($company_id, $employer_id, 'employee'); // Welcome Videos
+                $data['welcome_video'] = $welcome_video;
+                $data['sections'] = $sections;
+                $data['ems_notification'] = $ems_notification;
+                $data['locations'] = $locations;
+                $data['timings'] = $timings;
+                $data['people'] = $people;
+                $data['items'] = $items_data;
+                $data['links'] = $assign_links;
+                $data['complete_steps'] = $this->onboarding_model->check_updated_sections($company_id, 'employee', $employer_id);
+                $data['safety_sheet_flag'] = $this->dashboard_model->check_safety_data($company_id);
+                $data['session']['safety_sheet_flag'] = $data['safety_sheet_flag'];
 
                 $data['holidayDates'] = $this->timeoff_model->getDistinctHolidayDates(array('companySid' => $company_id));
 
@@ -141,8 +141,8 @@ class Dashboard extends Public_Controller
                     $this->dashboard_model->check_employee_has_approval_rights($company_id, $employer_id) == 1
                 ) { // Jobs Count By Approval Status
                     $data['all_unapproved_jobs_count'] = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'pending');
-                    $data['all_approved_jobs_count']   = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'approved');
-                    $data['all_rejected_jobs_count']   = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'rejected');
+                    $data['all_approved_jobs_count'] = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'approved');
+                    $data['all_rejected_jobs_count'] = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'rejected');
                     $data['has_approval_access'] = true;
                 }
 
@@ -153,30 +153,30 @@ class Dashboard extends Public_Controller
 
             } else { /* It is for Main Dashboard --- Start ---*/
                 if (!isset($company_detail['has_task_management_rights'])) {
-                    $task_management_module_status                              = $this->job_approval_rights_model->GetModuleStatus($company_id, 'tasks_management');
+                    $task_management_module_status = $this->job_approval_rights_model->GetModuleStatus($company_id, 'tasks_management');
                 } else {
-                    $task_management_module_status                              = $company_detail['has_task_management_rights'];
+                    $task_management_module_status = $company_detail['has_task_management_rights'];
                 }
 
-                $data['job_approval_module_status']                             = $jobs_approval_module_status;
-                $data['applicant_approval_module_status']                       = $applicant_approval_module_status;
+                $data['job_approval_module_status'] = $jobs_approval_module_status;
+                $data['applicant_approval_module_status'] = $applicant_approval_module_status;
 
                 if ($task_management_module_status == 1 && ($loggedin_access_level == 'Admin' || $loggedin_access_level = 'Hiring Manager')) {
-                    $data['task_management_module_status']                      = 1;
+                    $data['task_management_module_status'] = 1;
                 } else {
-                    $data['task_management_module_status']                      = 0;
+                    $data['task_management_module_status'] = 0;
                 }
 
 
 
-                $by_date_today                                                  = true;
-                $today_start                                                    = date('Y-m-d 00:00:00');
+                $by_date_today = true;
+                $today_start = date('Y-m-d 00:00:00');
                 // $today_start                                                    = get_current_datetime(array( 'to_format' => 'Y-m-d', 'extra' => ' 00:00:00', '_this' => $this));
-                $today_end                                                      = date('Y-m-d 23:59:59');
+                $today_end = date('Y-m-d 23:59:59');
                 // $today_end                                                      = get_current_datetime(array( 'to_format' => 'Y-m-d', 'extra' => ' 23:59:59', '_this' => $this));
-                $this_month_start                                               = date('Y-m-01 00:00:00');
+                $this_month_start = date('Y-m-01 00:00:00');
                 // $this_month_start                                               = get_current_datetime(array( 'to_format' => 'Y-m-01', 'extra' => ' 00:00:00', '_this' => $this));
-                $this_month_end                                                 = date('Y-m-t 23:59:59');
+                $this_month_end = date('Y-m-t 23:59:59');
                 // $this_month_end                                                 = get_current_datetime(array( 'to_format' => 'Y-m-t', 'extra' => ' 23:59:59', '_this' => $this));
                 //
                 // _e($today_start, true);
@@ -184,103 +184,105 @@ class Dashboard extends Public_Controller
                 // _e($this_month_start, true);
                 // _e($this_month_end, true, true);
 
-                $eventCount                                                     = $this->dashboard_model->company_employee_events_count($company_id, $employer_id); //Events
-                $eventCountToday                                                = $this->dashboard_model->company_employee_events_count($company_id, $employer_id, $today_start, $today_end);
-                $data['eventCount']                                             = $eventCount;
-                $data['eventCountToday']                                        = $eventCountToday; //count($all_company_events_today);
-                $unreadMessageCount                                             = $this->dashboard_model->get_all_unread_messages_count($employer_id); //Messages
-                $data['unreadMessageCount']                                     = $unreadMessageCount;
-                $data['questionnairCount']                                      = $this->dashboard_model->companyQuestionnairCount($company_id); //getting total questionnaires
-                $all_company_background_checks_count                            = $this->dashboard_model->get_all_company_background_checks_count($company_id); //Background Checks
-                $all_company_background_checks_this_month_count                 = $this->dashboard_model->get_all_company_background_checks_count($company_id, $this_month_start, $this_month_end); //Background Checks
-                $data['checks_total_count']                                     = $all_company_background_checks_count;
-                $data['checks_monthly_count']                                   = $all_company_background_checks_this_month_count;
-                $mydata                                                         = $this->dashboard_model->GetAllJobsCompanySpecificCount($company_id, '', 'rejected');
+                $eventCount = $this->dashboard_model->company_employee_events_count($company_id, $employer_id); //Events
+                $eventCountToday = $this->dashboard_model->company_employee_events_count($company_id, $employer_id, $today_start, $today_end);
+                $data['eventCount'] = $eventCount;
+                $data['eventCountToday'] = $eventCountToday; //count($all_company_events_today);
+                $unreadMessageCount = $this->dashboard_model->get_all_unread_messages_count($employer_id); //Messages
+                $data['unreadMessageCount'] = $unreadMessageCount;
+                $data['questionnairCount'] = $this->dashboard_model->companyQuestionnairCount($company_id); //getting total questionnaires
+                $all_company_background_checks_count = $this->dashboard_model->get_all_company_background_checks_count($company_id); //Background Checks
+                $all_company_background_checks_this_month_count = $this->dashboard_model->get_all_company_background_checks_count($company_id, $this_month_start, $this_month_end); //Background Checks
+                $data['checks_total_count'] = $all_company_background_checks_count;
+                $data['checks_monthly_count'] = $all_company_background_checks_this_month_count;
+                $mydata = $this->dashboard_model->GetAllJobsCompanySpecificCount($company_id, '', 'rejected');
 
                 if ($loggedin_access_level != 'Admin' && $jobs_approval_module_status == 1) {
-                    $all_company_jobs                                           = $this->dashboard_model->get_all_company_jobs_count($company_id, $employer_id); //Jobs
-                    $all_company_jobs_active                                    = $this->dashboard_model->get_all_company_jobs_count($company_id, $employer_id, 1);
-                    $all_company_applications                                   = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_id); //Applications
-                    $all_act_inact_applications                                 = $this->dashboard_model->get_all_active_inactive_applicants_count($company_id, $employer_id); //Applications
-                    $all_company_applications_today                             = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_id, $today_start, $today_end);
+                    $all_company_jobs = $this->dashboard_model->get_all_company_jobs_count($company_id, $employer_id); //Jobs
+                    $all_company_jobs_active = $this->dashboard_model->get_all_company_jobs_count($company_id, $employer_id, 1);
+                    $all_company_applications = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_id); //Applications
+                    $all_act_inact_applications = $this->dashboard_model->get_all_active_inactive_applicants_count($company_id, $employer_id); //Applications
+                    $all_company_applications_today = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_id, $today_start, $today_end);
                     // $this->filter_out_array_based_on_date($all_company_applications, 'date_applied', $today_start, $today_end);
                 } else {
                     if ($loggedin_access_level != 'Admin') {
-                        $all_company_jobs                                           = $this->dashboard_model->get_all_company_jobs_count($company_id, $employer_id); //Jobs
-                        $all_company_jobs_active                                    = $this->dashboard_model->get_all_company_jobs_count($company_id, $employer_id, 1);
-                        $all_company_applications                                   = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_id); //Applications
-                        $all_act_inact_applications                                 = $this->dashboard_model->get_all_active_inactive_applicants_count($company_id, $employer_id); //Applications
-                        $all_company_applications_today                             = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_id, $today_start, $today_end);
+                        $all_company_jobs = $this->dashboard_model->get_all_company_jobs_count($company_id, $employer_id); //Jobs
+                        $all_company_jobs_active = $this->dashboard_model->get_all_company_jobs_count($company_id, $employer_id, 1);
+                        $all_company_applications = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_id); //Applications
+                        $all_act_inact_applications = $this->dashboard_model->get_all_active_inactive_applicants_count($company_id, $employer_id); //Applications
+                        $all_company_applications_today = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_id, $today_start, $today_end);
                     } else {
-                        $all_company_jobs                                           = $this->dashboard_model->get_all_company_jobs_count($company_id); //Jobs
-                        $all_company_jobs_active                                    = $this->dashboard_model->get_all_company_jobs_count($company_id, 0, 1);
-                        $all_company_applications                                   = $this->dashboard_model->get_all_company_applicants_count($company_id); //Applications
-                        $all_act_inact_applications                                 = $this->dashboard_model->get_all_active_inactive_applicants_count($company_id); //Applications
-                        $all_company_applications_today                             = $this->dashboard_model->get_all_company_applicants_count($company_id, 0, $today_start, $today_end);
+                        $all_company_jobs = $this->dashboard_model->get_all_company_jobs_count($company_id); //Jobs
+                        $all_company_jobs_active = $this->dashboard_model->get_all_company_jobs_count($company_id, 0, 1);
+                        $all_company_applications = $this->dashboard_model->get_all_company_applicants_count($company_id); //Applications
+                        $all_act_inact_applications = $this->dashboard_model->get_all_active_inactive_applicants_count($company_id); //Applications
+                        $all_company_applications_today = $this->dashboard_model->get_all_company_applicants_count($company_id, 0, $today_start, $today_end);
                     }
                 }
 
-                $data['jobCount']                                               = $all_company_jobs;
-                $data['jobCountActive']                                         = $all_company_jobs_active;
-                $data['applicants']                                             = $all_company_applications;
-                $data['all_active_inactive_applicants']                         = $all_act_inact_applications;
-                $data['applicants_today']                                       = $all_company_applications_today;
+                $data['jobCount'] = $all_company_jobs;
+                $data['jobCountActive'] = $all_company_jobs_active;
+                $data['applicants'] = $all_company_applications;
+                $data['all_active_inactive_applicants'] = $all_act_inact_applications;
+                $data['applicants_today'] = $all_company_applications_today;
 
-                $data['all_unapproved_jobs_count']                          = 0;
-                $data['all_approved_jobs_count']                            = 0;
-                $data['all_rejected_jobs_count']                            = 0;
+                $data['all_unapproved_jobs_count'] = 0;
+                $data['all_approved_jobs_count'] = 0;
+                $data['all_rejected_jobs_count'] = 0;
 
                 if ($jobs_approval_module_status == 1) { // Jobs Count By Approval Status
-                    if (!in_array(
-                        strtolower($data['session']['employer_detail']['access_level']),
-                        array('employee', 'hiring manager', 'manager')
-                    )) {
+                    if (
+                        !in_array(
+                            strtolower($data['session']['employer_detail']['access_level']),
+                            array('employee', 'hiring manager', 'manager')
+                        )
+                    ) {
                         $data['all_unapproved_jobs_count'] = $this->dashboard_model->GetAllJobsCompanySpecificCount($company_id, '', 'pending');
-                        $data['all_approved_jobs_count']   = $this->dashboard_model->GetAllJobsCompanySpecificCount($company_id, '', 'approved');
-                        $data['all_rejected_jobs_count']   = $this->dashboard_model->GetAllJobsCompanySpecificCount($company_id, '', 'rejected');
+                        $data['all_approved_jobs_count'] = $this->dashboard_model->GetAllJobsCompanySpecificCount($company_id, '', 'approved');
+                        $data['all_rejected_jobs_count'] = $this->dashboard_model->GetAllJobsCompanySpecificCount($company_id, '', 'rejected');
                     } else {
                         $data['all_unapproved_jobs_count'] = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'pending');
-                        $data['all_approved_jobs_count']   = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'approved');
-                        $data['all_rejected_jobs_count']   = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'rejected');
+                        $data['all_approved_jobs_count'] = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'approved');
+                        $data['all_rejected_jobs_count'] = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'rejected');
                     }
                 }
 
                 if ($applicant_approval_module_status == 1) {
                     if ($loggedin_access_level == 'Admin') {
-                        $employer_visibility_check                              = 0;
+                        $employer_visibility_check = 0;
                     } else {
-                        $employer_visibility_check                              = $employer_id;
+                        $employer_visibility_check = $employer_id;
                     }
 
-                    $pending_applicants_count                                   = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_visibility_check, NULL, NULL, 'pending'); //Applications
-                    $approved_applicants_count                                  = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_visibility_check, NULL, NULL, 'approved');
-                    $rejected_applicants_count                                  = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_visibility_check, NULL, NULL, 'rejected');
-                    $data['pending_applicants_count']                           = $pending_applicants_count;
-                    $data['approved_applicants_count']                          = $approved_applicants_count;
-                    $data['rejected_applicants_count']                          = $rejected_applicants_count;
+                    $pending_applicants_count = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_visibility_check, NULL, NULL, 'pending'); //Applications
+                    $approved_applicants_count = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_visibility_check, NULL, NULL, 'approved');
+                    $rejected_applicants_count = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_visibility_check, NULL, NULL, 'rejected');
+                    $data['pending_applicants_count'] = $pending_applicants_count;
+                    $data['approved_applicants_count'] = $approved_applicants_count;
+                    $data['rejected_applicants_count'] = $rejected_applicants_count;
                 } else {
-                    $data['pending_applicants_count']                           = 0;
-                    $data['approved_applicants_count']                          = 0;
-                    $data['rejected_applicants_count']                          = 0;
+                    $data['pending_applicants_count'] = 0;
+                    $data['approved_applicants_count'] = 0;
+                    $data['rejected_applicants_count'] = 0;
                 }
 
-                $users_with_applicants_approval_rights                          = $this->dashboard_model->GetUsersWithApprovalRights($company_id, 'applicants');
-                $applicants_approving_user_ids                                  = array_column($users_with_applicants_approval_rights, 'sid');
-                $users_with_jobs_approval_rights                                = $this->job_approval_rights_model->GetUsersWithApprovalRights($company_id, 'jobs');
-                $jobs_approving_user_ids                                        = array_column($users_with_jobs_approval_rights, 'sid');
-                $data['employer_sid']                                           = $employer_id;
-                $data['users_with_job_approval_rights']                         = $jobs_approving_user_ids;
-                $data['users_with_applicant_approval_rights']                   = $applicants_approving_user_ids;
-                $data['visitors']                                               = $this->dashboard_model->get_visitors($company_id); //getting total visitors
-                $data['unread_tickets_count']                                   = $this->tickets_model->get_unread_tickets_count($company_id);
+                $users_with_applicants_approval_rights = $this->dashboard_model->GetUsersWithApprovalRights($company_id, 'applicants');
+                $applicants_approving_user_ids = array_column($users_with_applicants_approval_rights, 'sid');
+                $users_with_jobs_approval_rights = $this->job_approval_rights_model->GetUsersWithApprovalRights($company_id, 'jobs');
+                $jobs_approving_user_ids = array_column($users_with_jobs_approval_rights, 'sid');
+                $data['employer_sid'] = $employer_id;
+                $data['users_with_job_approval_rights'] = $jobs_approving_user_ids;
+                $data['users_with_applicant_approval_rights'] = $applicants_approving_user_ids;
+                $data['visitors'] = $this->dashboard_model->get_visitors($company_id); //getting total visitors
+                $data['unread_tickets_count'] = $this->tickets_model->get_unread_tickets_count($company_id);
                 /* It is for Main Dashboard --- END ---*/
             }
 
-            $data['title']                                                      = 'Dashboard';
-            $data['employee']                                                   = $data['session']['employer_detail'];
-            $load_view                                                          = check_blue_panel_status(true, 'self');
-            $data['load_view']                                                  = $load_view;
-            $data['access_level']                                               = $loggedin_access_level;
+            $data['title'] = 'Dashboard';
+            $data['employee'] = $data['session']['employer_detail'];
+            $load_view = check_blue_panel_status(true, 'self');
+            $data['load_view'] = $load_view;
+            $data['access_level'] = $loggedin_access_level;
             $data['company_sid'] = $company_id;
             $data['employer_sid'] = $data['employee']['sid'];
             $data['employee_sid'] = $data['employee']['sid'];
@@ -507,16 +509,16 @@ class Dashboard extends Public_Controller
             $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($data['session']['company_detail']['sid']);
             $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($data['session']['company_detail']['sid']);
 
-            $today_start                = date('Y-m-d 00:00:00');
-            $today_end                  = date('Y-m-d 23:59:59');
-            $eventCount                 = $this->dashboard_model->company_employee_events_count($company_id, $employer_id); //Events
-            $eventCountToday            = $this->dashboard_model->company_employee_events_count($company_id, $employer_id, $today_start, $today_end);
-            $incident_count             = $this->dashboard_model->assigned_incidents_count($employer_id, $company_id);
-            $unreadMessageCount         = $this->dashboard_model->get_all_unread_messages_count($employer_id); //Messages
+            $today_start = date('Y-m-d 00:00:00');
+            $today_end = date('Y-m-d 23:59:59');
+            $eventCount = $this->dashboard_model->company_employee_events_count($company_id, $employer_id); //Events
+            $eventCountToday = $this->dashboard_model->company_employee_events_count($company_id, $employer_id, $today_start, $today_end);
+            $incident_count = $this->dashboard_model->assigned_incidents_count($employer_id, $company_id);
+            $unreadMessageCount = $this->dashboard_model->get_all_unread_messages_count($employer_id); //Messages
             //           
-            $total_assigned_today_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
-            $total_pending_auth_doc     = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
-            $total_assigned_auth_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_assigned_today_doc = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_pending_auth_doc = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_assigned_auth_doc = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
             //
             // Authorized Check
             $data['AuthorizedDocuments'] = [];
@@ -524,9 +526,9 @@ class Dashboard extends Public_Controller
             $data['AuthorizedDocuments']['Pending'] = $total_pending_auth_doc;
             $data['AuthorizedDocuments']['Total'] = $total_assigned_auth_doc;
             //    
-            $data['total_assigned_today_doc']   = $total_assigned_today_doc;
-            $data['total_pending_auth_doc']     = $total_pending_auth_doc;
-            $data['total_assigned_auth_doc']    = $total_assigned_auth_doc;
+            $data['total_assigned_today_doc'] = $total_assigned_today_doc;
+            $data['total_pending_auth_doc'] = $total_pending_auth_doc;
+            $data['total_assigned_auth_doc'] = $total_assigned_auth_doc;
             //
             // For verification documents
             //
@@ -548,18 +550,18 @@ class Dashboard extends Public_Controller
                 $data['PendingEmployerSection']['Applicant'] = 0;
             }
             // 
-            $total_assigned_today_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
-            $total_pending_auth_doc     = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
-            $total_assigned_auth_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_assigned_today_doc = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_pending_auth_doc = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_assigned_auth_doc = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
 
-            $data['messages']                   = $messages;
-            $data['eventCount']                 = $eventCount;
-            $data['has_announcements']          = $announcements;
-            $data['incidents_count']            = $incident_count;
-            $data['documents_count']            = $documents_count;
-            $data['eventCountToday']            = $eventCountToday; //count($all_company_events_today);
-            $data['unreadMessageCount']         = $unreadMessageCount;
-            $data['training_session_count']     = $training_session_count + $online_video_count;
+            $data['messages'] = $messages;
+            $data['eventCount'] = $eventCount;
+            $data['has_announcements'] = $announcements;
+            $data['incidents_count'] = $incident_count;
+            $data['documents_count'] = $documents_count;
+            $data['eventCountToday'] = $eventCountToday; //count($all_company_events_today);
+            $data['unreadMessageCount'] = $unreadMessageCount;
+            $data['training_session_count'] = $training_session_count + $online_video_count;
             //
             $this->load->model('timeoff_model');
             //
@@ -641,7 +643,7 @@ class Dashboard extends Public_Controller
                         $data['session']['employer_detail']['sid']
                     );
 
-                $data["lmsCompanyStats"] =  $this->course_model->getCompanyStats(
+                $data["lmsCompanyStats"] = $this->course_model->getCompanyStats(
                     $data['session']['company_detail']['sid']
                 );
             }
@@ -728,7 +730,7 @@ class Dashboard extends Public_Controller
             }
             //
             if ($this->compliance_report_model) {
-                $data["cspPendingCount"]  = $this
+                $data["cspPendingCount"] = $this
                     ->compliance_report_model
                     ->getPendingCountReportsByEmployeeId(
                         $employer_id,
@@ -753,88 +755,88 @@ class Dashboard extends Public_Controller
     {
 
         if ($this->session->userdata('logged_in')) {
-            $data['session']                                                    = $this->session->userdata('logged_in');
-            $employer_detail                                                    = $data['session']['employer_detail'];
-            $company_detail                                                     = $data['session']['company_detail'];
-            $security_sid                                                       = $employer_detail['sid'];
-            $ems_status                                                         = $company_detail['ems_status'];
+            $data['session'] = $this->session->userdata('logged_in');
+            $employer_detail = $data['session']['employer_detail'];
+            $company_detail = $data['session']['company_detail'];
+            $security_sid = $employer_detail['sid'];
+            $ems_status = $company_detail['ems_status'];
 
             if (!$ems_status) {
                 $this->session->set_flashdata('message', '<strong>Warning</strong> Not Allowed!');
                 redirect('dashboard', 'refresh');
             }
 
-            $security_details                                                   = db_get_access_level_details($security_sid);
-            $data['security_details']                                           = $security_details;
-            $employer_id                                                        = $employer_detail['sid'];
-            $company_id                                                         = $company_detail['sid'];
-            $data['employerData']                                               = $employer_detail;
-            $loggedin_access_level                                              = $employer_detail['access_level'];
-            $data['companyData']                                                = $company_detail;
-            $data['company_info']                                               = $company_detail;
-            $data['companyData']['locationDetail']                              = db_get_state_name($data['companyData']['Location_State']);
-            $welcome_video                                                      = $this->onboarding_model->get_onboarding_setup_welcome_video($company_detail['sid'], $employer_detail['sid'], 'employee'); // Welcome Videos
-            $data['welcome_video']                                              = $welcome_video;
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            $employer_id = $employer_detail['sid'];
+            $company_id = $company_detail['sid'];
+            $data['employerData'] = $employer_detail;
+            $loggedin_access_level = $employer_detail['access_level'];
+            $data['companyData'] = $company_detail;
+            $data['company_info'] = $company_detail;
+            $data['companyData']['locationDetail'] = db_get_state_name($data['companyData']['Location_State']);
+            $welcome_video = $this->onboarding_model->get_onboarding_setup_welcome_video($company_detail['sid'], $employer_detail['sid'], 'employee'); // Welcome Videos
+            $data['welcome_video'] = $welcome_video;
 
-            $configuration                                                  = $this->onboarding_model->get_onboarding_configuration('employee', $employer_id);
-            $sections_data                                                  = $this->get_single_record_from_array($configuration, 'section', 'sections');
-            $locations_data                                                 = $this->get_single_record_from_array($configuration, 'section', 'locations');
+            $configuration = $this->onboarding_model->get_onboarding_configuration('employee', $employer_id);
+            $sections_data = $this->get_single_record_from_array($configuration, 'section', 'sections');
+            $locations_data = $this->get_single_record_from_array($configuration, 'section', 'locations');
             // Custom Location
-            $custom_office_locations                                        = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'location', 1);
-            $data['custom_office_locations']                                = $custom_office_locations;
-            $timings_data                                                   = $this->get_single_record_from_array($configuration, 'section', 'timings');
+            $custom_office_locations = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'location', 1);
+            $data['custom_office_locations'] = $custom_office_locations;
+            $timings_data = $this->get_single_record_from_array($configuration, 'section', 'timings');
             // Custom Timing
-            $custom_office_timings                                          = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'timing');
-            $data['custom_office_timings']                                  = $custom_office_timings;
+            $custom_office_timings = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'timing');
+            $data['custom_office_timings'] = $custom_office_timings;
             // Custom Useful Links
-            $custom_useful_link                                             = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'useful_link');
-            $data['custom_useful_link']                                     = $custom_useful_link;
+            $custom_useful_link = $this->onboarding_model->get_custom_office_records($company_id, $employer_id, 'employee', 'useful_link');
+            $data['custom_useful_link'] = $custom_useful_link;
             //
-            $people_data                                                    = $this->get_single_record_from_array($configuration, 'section', 'people');
+            $people_data = $this->get_single_record_from_array($configuration, 'section', 'people');
             //  $items_data                                                     = $this->get_single_record_from_array($configuration, 'section', 'items');
-            $items_data                                                     = $this->onboarding_model->get_assigned_custom_office_record_sids($company_id, $employer_id, 'employee', 'item', 2); // fetch items from new table
+            $items_data = $this->onboarding_model->get_assigned_custom_office_record_sids($company_id, $employer_id, 'employee', 'item', 2); // fetch items from new table
             // $links_data                                                     = $this->get_single_record_from_array($configuration, 'section', 'links');
-            $ems_notification                                               = $this->onboarding_model->get_ems_notifications($company_id, $employer_id);
-            $sections                                                       = empty($sections_data) ? array() : $sections_data['items_details'];
-            $locations                                                      = empty($locations_data) ? array() : $locations_data['items_details'];
-            $timings                                                        = empty($timings_data) ? array() : $timings_data['items_details'];
-            $people                                                         = empty($people_data) ? array() : $people_data['items_details'];
-            $assign_links                                                   = $this->onboarding_model->onboarding_assign_useful_links($employer_id, $company_id, 'employee');
-            $data['sections']                                               = $sections;
-            $data['ems_notification']                                       = $ems_notification;
-            $data['locations']                                              = $locations;
-            $data['timings']                                                = $timings;
-            $data['people']                                                 = $people;
-            $data['items']                                                  = $items_data;
-            $data['links']                                                  = $assign_links;
-            $data['complete_steps']                                         = $this->onboarding_model->check_updated_sections($company_id, 'employee', $employer_id);
-            $data['safety_sheet_flag']                                      = $this->dashboard_model->check_safety_data($company_id);
-            $data['session']['safety_sheet_flag']                           = $data['safety_sheet_flag'];
+            $ems_notification = $this->onboarding_model->get_ems_notifications($company_id, $employer_id);
+            $sections = empty($sections_data) ? array() : $sections_data['items_details'];
+            $locations = empty($locations_data) ? array() : $locations_data['items_details'];
+            $timings = empty($timings_data) ? array() : $timings_data['items_details'];
+            $people = empty($people_data) ? array() : $people_data['items_details'];
+            $assign_links = $this->onboarding_model->onboarding_assign_useful_links($employer_id, $company_id, 'employee');
+            $data['sections'] = $sections;
+            $data['ems_notification'] = $ems_notification;
+            $data['locations'] = $locations;
+            $data['timings'] = $timings;
+            $data['people'] = $people;
+            $data['items'] = $items_data;
+            $data['links'] = $assign_links;
+            $data['complete_steps'] = $this->onboarding_model->check_updated_sections($company_id, 'employee', $employer_id);
+            $data['safety_sheet_flag'] = $this->dashboard_model->check_safety_data($company_id);
+            $data['session']['safety_sheet_flag'] = $data['safety_sheet_flag'];
             // echo '<pre>'; print_r($data['session']); exit;
 
-            $sess_array                                                     = array();
-            $sess_array['company_detail']                                   = $data['session']['company_detail'];
-            $sess_array['employer_detail']                                  = $data['session']['employer_detail'];
-            $sess_array['cart']                                             = $data['session']['cart'];
-            $sess_array['portal_detail']                                    = $data['session']['portal_detail'];
+            $sess_array = array();
+            $sess_array['company_detail'] = $data['session']['company_detail'];
+            $sess_array['employer_detail'] = $data['session']['employer_detail'];
+            $sess_array['cart'] = $data['session']['cart'];
+            $sess_array['portal_detail'] = $data['session']['portal_detail'];
 
             if (isset($data['session']['clocked_status'])) {
-                $sess_array['clocked_status']                               = $data['session']['clocked_status'];
+                $sess_array['clocked_status'] = $data['session']['clocked_status'];
             }
 
             if (isset($data['session']['incident_config'])) {
-                $sess_array['incident_config']                              = $data['session']['incident_config'];
+                $sess_array['incident_config'] = $data['session']['incident_config'];
             }
 
             if (isset($data['session']['resource_center'])) {
-                $sess_array['resource_center']                              = $data['session']['resource_center'];
+                $sess_array['resource_center'] = $data['session']['resource_center'];
             }
 
             if (isset($data['session']['is_super'])) {
-                $sess_array['is_super']                                     = $data['session']['is_super'];
+                $sess_array['is_super'] = $data['session']['is_super'];
             }
 
-            $sess_array['safety_sheet_flag']                                = $data['safety_sheet_flag'];
+            $sess_array['safety_sheet_flag'] = $data['safety_sheet_flag'];
             $this->session->set_userdata('logged_in', $sess_array);
 
             $this->load->model('timeoff_model');
@@ -866,8 +868,8 @@ class Dashboard extends Public_Controller
                 $this->dashboard_model->check_employee_has_approval_rights($company_id, $employer_id) == 1
             ) { // Jobs Count By Approval Status
                 $data['all_unapproved_jobs_count'] = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'pending');
-                $data['all_approved_jobs_count']   = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'approved');
-                $data['all_rejected_jobs_count']   = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'rejected');
+                $data['all_approved_jobs_count'] = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'approved');
+                $data['all_rejected_jobs_count'] = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'rejected');
                 $data['has_approval_access'] = true;
             }
             $announcements = $this->dashboard_model->get_all_events_count($company_id, $employer_id);
@@ -1043,14 +1045,14 @@ class Dashboard extends Public_Controller
                 $data['session']['company_detail']['sid']
             );
 
-            $today_start                                                    = date('Y-m-d 00:00:00');
-            $today_end                                                      = date('Y-m-d 23:59:59');
-            $eventCount                                                     = $this->dashboard_model->company_employee_events_count($company_id, $employer_id); //Events
-            $eventCountToday                                                = $this->dashboard_model->company_employee_events_count($company_id, $employer_id, $today_start, $today_end);
-            $data['eventCount']                                             = $eventCount;
-            $data['eventCountToday']                                        = $eventCountToday; //count($all_company_events_today);
-            $unreadMessageCount                                             = $this->dashboard_model->get_all_unread_messages_count($employer_id); //Messages
-            $data['unreadMessageCount']                                     = $unreadMessageCount;
+            $today_start = date('Y-m-d 00:00:00');
+            $today_end = date('Y-m-d 23:59:59');
+            $eventCount = $this->dashboard_model->company_employee_events_count($company_id, $employer_id); //Events
+            $eventCountToday = $this->dashboard_model->company_employee_events_count($company_id, $employer_id, $today_start, $today_end);
+            $data['eventCount'] = $eventCount;
+            $data['eventCountToday'] = $eventCountToday; //count($all_company_events_today);
+            $unreadMessageCount = $this->dashboard_model->get_all_unread_messages_count($employer_id); //Messages
+            $data['unreadMessageCount'] = $unreadMessageCount;
             $data['has_announcements'] = $announcements;
             // $data['incidents_count'] = $incidents_new;
             $data['incidents_count'] = $incident_count;
@@ -1059,9 +1061,9 @@ class Dashboard extends Public_Controller
             // $data['online_video_count'] = $online_video_count;
             $data['documents_count'] = $documents_count;
 
-            $data['title']                                                      = 'Dashboard';
-            $data['employee']                                                   = $data['session']['employer_detail'];
-            $data['load_view']                                                  = 'old';
+            $data['title'] = 'Dashboard';
+            $data['employee'] = $data['session']['employer_detail'];
+            $data['load_view'] = 'old';
             //
             $data['company_sid'] = $company_id;
             $data['employer_sid'] = $data['employee']['sid'];
@@ -1228,7 +1230,7 @@ class Dashboard extends Public_Controller
 
             //
             if ($this->compliance_report_model) {
-                $data["cspPendingCount"]  = $this
+                $data["cspPendingCount"] = $this
                     ->compliance_report_model
                     ->getPendingCountReportsByEmployeeId(
                         $employer_id,
@@ -1676,8 +1678,8 @@ class Dashboard extends Public_Controller
             foreach ($subordinateInfo['employees'] as $key => $subordinateEmployee) {
                 //
                 $teamId = $subordinateEmployee['team_sid'];
-                $subordinateInfo['employees'][$key]['department_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
-                $subordinateInfo['employees'][$key]['team_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
+                $subordinateInfo['employees'][$key]['department_name'] = isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
+                $subordinateInfo['employees'][$key]['team_name'] = isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
                 //
                 if (isset($subordinateEmployee['coursesInfo'])) {
                     //

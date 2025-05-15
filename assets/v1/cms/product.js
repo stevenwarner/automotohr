@@ -24,7 +24,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: aboutObj.sourceType,
 		placeholderImage: aboutObj.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsProductAboutForm").validate({
@@ -203,7 +203,7 @@ $(function () {
 					allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
 					allowLinks: true,
 					activeLink: "upload",
-					fileLimit: "20mb",
+					fileLimit: "200mb",
 				});
 				//
 				$("#jsAdd").validate({
@@ -308,7 +308,7 @@ $(function () {
 					allowLinks: true,
 					activeLink: resp.sourceType,
 					placeholderImage: resp.sourceFile,
-					fileLimit: "20mb",
+					fileLimit: "200mb",
 				});
 				//
 				$("#jsEditHomeProduct").validate({
@@ -455,7 +455,7 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							pageId 
+						pageId
 					);
 				});
 			});
@@ -463,13 +463,13 @@ $(function () {
 
 	//
 	$(".jsDraggable").sortable({
-		update: function(event, ui) {
+		update: function (event, ui) {
 			//
 			var tagIndex = 0;
 			var orderList = [];
 			var indecators = ui.item.context.className.split(" ");
 			//
-			$("."+indecators[0]).map(function (i) {
+			$("." + indecators[0]).map(function (i) {
 				tagIndex = $(this).data("index");
 				orderList.push($(this).data("key"));
 			});
@@ -499,7 +499,7 @@ $(function () {
 			})
 			.fail(handleErrorResponse)
 			.done(function (resp) {
-				
+
 			});
 	}
 

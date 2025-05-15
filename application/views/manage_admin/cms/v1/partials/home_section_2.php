@@ -50,14 +50,29 @@ $products = $pageContent["page"]["sections"]["section2"]["products"];
                                 </a>
                             </div>
                             <div class="col-sm-2 text-center" style="margin-top: 50px">
-                                <button class="btn btn-warning jsEditHomeProduct">
-                                    <i class="fa fa-edit" aria-hidden="true"></i>
-                                    &nbsp;Edit
-                                </button>
+
                                 <button class="btn btn-danger jsDeleteHomeProduct">
                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                     &nbsp;Delete
                                 </button>
+                                <?php if ($value["status"] == '0') { ?>
+
+                                    <button class="btn btn-success jsActivateHomeProductSection" style="margin-top: 5px">
+                                        &nbsp;Activate
+                                    </button> 
+
+                                <?php } else { ?>
+                                    <button class="btn btn-danger jsDeactivateHomeProduct"  style="margin-top: 5px">
+                                        &nbsp;De-Activate
+                                    </button>
+
+                                <?php } ?>
+
+                                <button class="btn btn-warning jsEditHomeProduct" style="margin-top: 5px">
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                    &nbsp;Edit
+                                </button>
+
                             </div>
                         </div>
                         <hr />

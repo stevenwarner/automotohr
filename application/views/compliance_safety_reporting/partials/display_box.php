@@ -1,6 +1,6 @@
 <?php $firstSegment = $this->uri->segment(1); ?>
 
-<div class="col-sm-4">
+<div class="col-sm-4 jsReportBox" data-id="<?= $display_box_data["sid"]; ?>">
     <article class="article-sec" style="padding: 0 10px 10px;overflow-x: hidden">
         <h1>
             <?= $display_box_data["title"]; ?>
@@ -36,12 +36,15 @@
             <div class="col-md-12 col-xs-12 text-center">
                 <a class="btn btn-orange" href="<?= base_url("{$firstSegment}/edit/" . $display_box_data["sid"]); ?>">
                     <i class="fa fa-pencil"></i>
-                    Edit
                 </a>
+                <?php if (isMainAllowedForCSP()): ?>
+                    <button class="btn btn-red jsDeleteReportBtn">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                <?php endif; ?>
                 <a class="btn btn-black" target="_blank"
                     href="<?= base_url("{$firstSegment}/download_report/" . $display_box_data["sid"]); ?>">
                     <i class="fa fa-download"></i>
-                    Download
                 </a>
             </div>
         </div>

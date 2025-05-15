@@ -71,7 +71,7 @@ $(function () {
 				$("#jsAddSliderModalBody").html(resp.view);
 				//
 				$("#bannerImage").msFileUploader({
-					fileLimit: "20MB",
+					fileLimit: "200mb",
 					allowedTypes: ["jpg", "jpeg", "png", "gif", "webp"],
 				});
 				//
@@ -128,7 +128,7 @@ $(function () {
 				$("#jsEditSliderModalBody").html(resp.view);
 				//
 				$("#bannerEditImage").msFileUploader({
-					fileLimit: "20MB",
+					fileLimit: "200mb",
 					allowedTypes: ["jpg", "jpeg", "png", "gif", "webp"],
 					placeholderImage: resp.data.image,
 				});
@@ -202,8 +202,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=slider"
+						getSegment(2) +
+						"/?page=slider"
 					);
 				});
 			});
@@ -238,8 +238,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=slider"
+						getSegment(2) +
+						"/?page=slider"
 					);
 				});
 			});
@@ -267,8 +267,8 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=slider"
+						getSegment(2) +
+						"/?page=slider"
 					);
 				});
 			});

@@ -7,6 +7,8 @@ class Cms extends Admin_Controller
     //
     private $resp = [];
 
+    private $lockFile;
+
     function __construct()
     {
         parent::__construct();
@@ -19,6 +21,8 @@ class Cms extends Admin_Controller
             'Status' => false,
             'Response' => 'Request Not Authorized'
         ];
+
+        $this->lockFile = true;
     }
 
 
@@ -29,7 +33,7 @@ class Cms extends Admin_Controller
         $admin_id = $this->ion_auth->user()->row()->id;
         $this->data['page_title'] = 'CMS';
         $page_number = ($this->uri->segment(7)) ? $this->uri->segment(7) : 1;
-        $offset           = 0;
+        $offset = 0;
         $records_per_page = 50;
         if ($page_number > 1) {
             $offset = ($page_number - 1) * $records_per_page;
@@ -90,7 +94,7 @@ class Cms extends Admin_Controller
             ],
             "public/v1/app/",
             "app_common",
-            true
+            $this->lockFile
         );
         //
         $pageBundle = bundleJs(
@@ -99,7 +103,7 @@ class Cms extends Admin_Controller
             ],
             "public/v1/app/",
             "app_page",
-            true
+            $this->lockFile
         );
         $this->data["appJs"] = combineBundle([
             $commonFileBundle,
@@ -130,7 +134,7 @@ class Cms extends Admin_Controller
             ],
             "public/v1/app/",
             "app_common_edit",
-            true
+            $this->lockFile
         );
         //
         $commonFileBundle = bundleJs(
@@ -141,7 +145,7 @@ class Cms extends Admin_Controller
             ],
             "public/v1/app/",
             "app_common_edit",
-            true
+            $this->lockFile
         );
         //
         $pageBundle = bundleJs(
@@ -150,7 +154,7 @@ class Cms extends Admin_Controller
             ],
             "public/v1/app/",
             "app_edit_page",
-            true
+            $this->lockFile
         );
         $this->data["appJs"] = combineBundle([
             $commonFileBundle,
@@ -182,7 +186,7 @@ class Cms extends Admin_Controller
         $this->data["appCSS"] = bundleCSS([
             "v1/plugins/ms_modal/main",
             "v1/plugins/ms_uploader/main",
-        ], "public/v1/app/", "app_" . $page_data["page"], false);
+        ], "public/v1/app/", "app_" . $page_data["page"], $this->lockFile);
         //
         $files = [];
         // for home page
@@ -194,6 +198,7 @@ class Cms extends Admin_Controller
                 "v1/cms/home_section_2",
                 "v1/cms/process",
                 "v1/cms/about_section",
+                "v1/cms/highlights",
             ];
         }
         // for products
@@ -214,7 +219,6 @@ class Cms extends Admin_Controller
         $this->data["PageScripts"] = [
             "ckeditor/ckeditor"
         ];
-
         //
         $this->data["appJs"] = bundleJs(array_merge([
             "v1/plugins/ms_modal/main",
@@ -222,7 +226,7 @@ class Cms extends Admin_Controller
             "js/app_helper",
             "v1/cms/meta",
             "v1/cms/page",
-        ], $files), "public/v1/app/", "app_" . $page_data["page"], false);
+        ], $files), "public/v1/app/", "app_" . $page_data["page"], $this->lockFile);
 
         $this->render('manage_admin/cms/v1/' . $page_data['page']);
     }
@@ -289,7 +293,7 @@ class Cms extends Admin_Controller
             );
         }
         // check and run for image
-        $errors = hasFileErrors($_FILES, "banner_image", 'imag2');
+        $errors = hasFileErrors($_FILES, "banner_image", 'imag2', 200);
         //
         if ($errors) {
             return SendResponse(
@@ -400,7 +404,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image', 20);
+                $errors = hasFileErrors($_FILES, "file", 'image', 200);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -449,7 +453,7 @@ class Cms extends Admin_Controller
             );
         }
         // check and run for image
-        $errors = hasFileErrors($_FILES, "banner_image", 'imag2');
+        $errors = hasFileErrors($_FILES, "banner_image", 'imag2', 200);
         //
         if ($errors) {
             return SendResponse(
@@ -514,7 +518,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -578,7 +582,7 @@ class Cms extends Admin_Controller
         $pageContent["page"]["sections"]["section2"] = [
             "mainheading" => $post["jsMainHeading"],
             "heading" => $post["jsSubHeading"],
-            "products" =>  $pageContent["page"]["sections"]["section2"]["products"],
+            "products" => $pageContent["page"]["sections"]["section2"]["products"],
         ];
         $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
@@ -610,7 +614,7 @@ class Cms extends Admin_Controller
         if ($post["source_type"] === "upload") {
             //
             // check and run for image
-            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+            $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
             //
             if ($errors) {
                 return SendResponse(
@@ -673,7 +677,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -732,10 +736,23 @@ class Cms extends Admin_Controller
     public function updatePageSection(int $pageId)
     {
         $post = $this->input->post(null, true);
+
         // get the page record
         $pageContent = $this->cms_model->get_page_data($pageId)["content"];
-        // //
+        // 
         $pageContent = json_decode($pageContent, true);
+
+        //
+        if (empty($pageContent["page"]["sections"][$post["section"]]) && $post["section"] == "specialhighlights") {
+            [$post["section"]];
+            $pageContent["page"]["sections"] = [
+                'section1' => $pageContent["page"]["sections"]["section1"],
+                'section2' => $pageContent["page"]["sections"]["section2"],
+                'section9' => $pageContent["page"]["sections"]["section9"],
+                'about' => $pageContent["page"]["sections"]["about"],
+                'specialhighlights' => '',
+            ];
+        }
 
         if ($post["source_type"]) {
             //
@@ -747,7 +764,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                    $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -770,6 +787,7 @@ class Cms extends Admin_Controller
 
         // for extra points
         if ($post["source_type_point_1"]) {
+
             //
             $fileLink = $post["source_link_point_1"];
             //
@@ -779,7 +797,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_point_1"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_point_1", 'image|video', 20);
+                    $errors = hasFileErrors($_FILES, "file_point_1", 'image|video', 200);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -810,7 +828,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_point_2"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_point_2", 'image|video', 20);
+                    $errors = hasFileErrors($_FILES, "file_point_2", 'image|video', 200);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -841,7 +859,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_point_3"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_point_3", 'image|video', 20);
+                    $errors = hasFileErrors($_FILES, "file_point_3", 'image|video', 200);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -872,7 +890,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_logo"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_logo", 'image|video', 20);
+                    $errors = hasFileErrors($_FILES, "file_logo", 'image|video', 200);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -983,7 +1001,7 @@ class Cms extends Admin_Controller
         if ($post["source_type"] === "upload") {
             //
             // check and run for image
-            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+            $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
             //
             if ($errors) {
                 return SendResponse(
@@ -1063,7 +1081,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -1162,7 +1180,7 @@ class Cms extends Admin_Controller
         if ($post["source_type"] === "upload") {
             //
             // check and run for image
-            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+            $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
             //
             if ($errors) {
                 return SendResponse(
@@ -1241,7 +1259,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -1344,7 +1362,7 @@ class Cms extends Admin_Controller
         //
         $pageContent = json_decode($pageContent, true);
 
-        if ($post['sectionindex']!='') {
+        if ($post['sectionindex'] != '') {
             $sectionIndex = $post['sectionindex'];
             unset($post['sectionindex']);
             $pageContent["page"]["sections"][$post["section"]][$post["index"]][$sectionIndex]['title'] = $post['title'];
@@ -1617,7 +1635,7 @@ class Cms extends Admin_Controller
                             $fileLink = $post["source_link"];
                         } else {
                             // check and run for image
-                            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                            $errors = hasFileErrors($_FILES, "file", 'image|video', 200);
                             //
                             if ($errors) {
                                 return SendResponse(
@@ -1691,5 +1709,120 @@ class Cms extends Admin_Controller
         return SendResponse(200, [
             "msg" => $msg
         ]);
+    }
+
+    //
+    public function deactivatePageTag(int $pageId, int $index)
+    {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+
+        $pageContent = json_decode($pageContent, true);
+
+        $pageContent["page"]["sections"]["section0"]["tags"][$index] = [
+            'title' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['title'],
+            'section' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['section'],
+            'index' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['index'],
+            'status' => 0,
+            'cards' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['cards']
+        ];
+
+
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "Selected section deactivated successfully."]);
+    }
+
+    //
+    public function activatePageTag(int $pageId, int $index)
+    {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+
+        $pageContent = json_decode($pageContent, true);
+
+
+        $pageContent["page"]["sections"]["section0"]["tags"][$index] = [
+            'title' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['title'],
+            'section' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['section'],
+            'index' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['index'],
+            'status' => 1,
+            'cards' => $pageContent["page"]["sections"]["section0"]["tags"][$index]['cards']
+        ];
+
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "Selected section activated successfully."]);
+    }
+
+
+
+    //
+    public function ProductToHomePageStatus(int $pageId, int $index, string $status)
+    {
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        $pageContent = json_decode($pageContent, true);
+
+        $pageContent["page"]["sections"]["section2"]["products"][$index] = [
+            'mainHeading' => $pageContent["page"]["sections"]["section2"]["products"][$index]['mainHeading'],
+            'subHeading' => $pageContent["page"]["sections"]["section2"]["products"][$index]['subHeading'],
+            'details' => $pageContent["page"]["sections"]["section2"]["products"][$index]['details'],
+            'buttonText' => $pageContent["page"]["sections"]["section2"]["products"][$index]['buttonText'],
+            'buttonLink' => $pageContent["page"]["sections"]["section2"]["products"][$index]['buttonLink'],
+            'layout' => $pageContent["page"]["sections"]["section2"]["products"][$index]['layout'],
+            'direction' => $pageContent["page"]["sections"]["section2"]["products"][$index]['direction'],
+            'sourceType' => $pageContent["page"]["sections"]["section2"]["products"][$index]['sourceType'],
+            'sourceFile' => $pageContent["page"]["sections"]["section2"]["products"][$index]['sourceFile'],
+            'status' => $status == 'deactivate' ? '0' : '1'
+        ];
+
+        $statusmsg = $status == 'activate' ? 'activated' : 'deactivated';
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "Selected product section " . $statusmsg . " successfully."]);
+    }
+
+
+
+    public function PageSubTagStatus(int $pageId, int $index, int $tagIndex, string $status)
+    {
+
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+        $pageContent = json_decode($pageContent, true);
+
+        $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index] = [
+            'title' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['title'],
+            'details' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['details'],
+            'buttonText' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['buttonText'],
+            'buttonLink' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['buttonLink'],
+            'sortOrder' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['sortOrder'],
+            'section' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['section'],
+            'tagIndex' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['tagIndex'],
+            'index' => $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]['index'],
+            'status' => $status == 'active' ? '1' : '0'
+        ];
+        //
+        $statusmsg = $status == 'active' ? 'activated' : 'deactivated';
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "Selected product section " . $statusmsg . " successfully."]);
     }
 }

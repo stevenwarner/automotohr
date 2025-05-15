@@ -27,6 +27,11 @@
                     <i class="fa fa-download"></i>
                     Download
                 </a>
+
+                <button class="btn btn-red jsDeleteReportBtn" data-id="<?= $report["sid"]; ?>">
+                    <i class="fa fa-trash"></i>
+                    Delete Report
+                </button>
             </div>
         </div>
         <!--  -->
@@ -56,7 +61,7 @@
                             (<?= count($report["issuesWithIncident"]); ?>)
                         </a>
                     </li>
-                   
+
                     <li class="nav-item <?= $this->input->get("tab", true) == "questions" ? "active" : ""; ?>">
                         <a class="nav-link" data-toggle="tab" href="#tab-questions" role="tab">
                             <i class="fa fa-question-circle"></i> Questions

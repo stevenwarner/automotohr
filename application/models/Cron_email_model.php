@@ -341,6 +341,20 @@ class Cron_email_model extends CI_Model
                 echo "External employees not allowed \n";
                 continue;
             }
+            // check the department first
+            $response = getMyDepartmentAndTeams($v0["employer_sid"], "courses", "get", $this->companyId);
+            //
+            $teamEmployeeIds = $response
+                ? array_column(
+                    $response["employees"],
+                    "employee_sid"
+                )
+                : [];
+            //
+            if (!$teamEmployeeIds) {
+                echo "No teams found \n";
+                continue;
+            }
 
             // check is executive admin
             if ($v0["is_executive_admin"] == 1) {
@@ -385,22 +399,6 @@ class Cron_email_model extends CI_Model
                 $this->executiveAdminsList[$v0['email']]['data']['email'] = $v0['email'];
             } else {
                 echo "Entered in employee {$v0["email"]}'\n";
-
-
-                // get the ream member ids
-                $response = getMyDepartmentAndTeams($v0["employer_sid"], "courses", "get", $this->companyId);
-                //
-                $teamEmployeeIds = $response
-                    ? array_column(
-                        $response["employees"],
-                        "employee_sid"
-                    )
-                    : [];
-                //
-                if (!$teamEmployeeIds) {
-                    echo "No teams found \n";
-                    continue;
-                }
                 // get the company employees by course
                 $employeesWithCourseList = $this
                     ->getCompanyEmployeesWithCourses(
@@ -1360,7 +1358,7 @@ class Cron_email_model extends CI_Model
 
                 log_and_send_email_with_attachment(
                     FROM_EMAIL_NOTIFICATIONS,
-                    $empRow['email'],
+                    $exRow["data"]['email'],
                     $subject,
                     $body,
                     $fromName,

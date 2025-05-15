@@ -8,7 +8,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: aboutObj.sourceType,
 		placeholderImage: aboutObj.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsSection1Form").validate({
@@ -53,7 +53,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section2.sourceType,
 		placeholderImage: section2.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsSection2Form").validate({
@@ -189,9 +189,9 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=" +
-							redirectTo
+						getSegment(2) +
+						"/?page=" +
+						redirectTo
 					);
 				});
 			});
@@ -221,7 +221,7 @@ $(function () {
 					allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
 					allowLinks: false,
 					activeLink: "upload",
-					fileLimit: "20mb",
+					fileLimit: "200mb",
 				});
 				//
 				CKEDITOR.replace("detailsAddTeam");
@@ -297,7 +297,7 @@ $(function () {
 					allowLinks: false,
 					activeLink: resp.sourceType,
 					placeholderImage: resp.sourceFile,
-					fileLimit: "20mb",
+					fileLimit: "200mb",
 				});
 				CKEDITOR.replace("detailsEditTeam");
 				//
@@ -377,9 +377,9 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=" +
-							redirectTo
+						getSegment(2) +
+						"/?page=" +
+						redirectTo
 					);
 				});
 			});
@@ -414,9 +414,9 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=" +
-							redirectTo
+						getSegment(2) +
+						"/?page=" +
+						redirectTo
 					);
 				});
 			});
@@ -445,9 +445,9 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=" +
-							redirectTo
+						getSegment(2) +
+						"/?page=" +
+						redirectTo
 					);
 				});
 			});
@@ -489,7 +489,7 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							pageId 
+						pageId
 					);
 				});
 			});

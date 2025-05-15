@@ -7,7 +7,7 @@ $(function () {
 		allowLinks: false,
 		activeLink: section0.sourceType,
 		placeholderImage: section0.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 	$("#jsSection0Form").validate({
 		rules: {
@@ -56,7 +56,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section1.sourceType,
 		placeholderImage: section1.sourceFile,
-		fileLimit: "20mb",
+		fileLimit: "200mb",
 	});
 
 	$("#jsSection1Form").validate({
@@ -129,9 +129,9 @@ $(function () {
 				return _success(resp.msg, function () {
 					window.location.href = baseUrl(
 						"manage_admin/edit_page/" +
-							getSegment(2) +
-							"/?page=" +
-							redirectTo
+						getSegment(2) +
+						"/?page=" +
+						redirectTo
 					);
 				});
 			});

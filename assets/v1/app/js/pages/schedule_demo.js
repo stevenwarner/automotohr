@@ -48,6 +48,9 @@ $(function () {
 			required: "Please provide employee count.",
 		},
 	};
+
+
+
 	/**
 	 *
 	 */
@@ -85,6 +88,28 @@ $(function () {
 
 	$(".jsCountrySelect").change(function () {
 		loadCountryStates($(this).val(), $(this).closest("form").prop("id"));
+	});
+
+
+	//
+	$("#jsHighlightsForm").validate({
+		rules: {
+			wname: {
+				required: true,
+			},
+			wemail: {
+				required: true,
+			},
+		},
+		messages: {
+			wname: {
+				required: "Name is required.",
+			},
+			wemail: {
+				required: "Email is required.",
+			},
+		},
+		submitHandler: submithighlightFormHandler,
 	});
 
 	/**
@@ -177,5 +202,40 @@ $(function () {
 		});
 		//
 		return dataObj;
+	}
+
+
+	//
+	function submithighlightFormHandler(form) {
+		const dataObj = convertFormToObject(form);
+		// check the captcha		
+		if (!dataObj["g-recaptcha-response"]) {
+			//
+			_error("Google captcha is required.");
+			return;
+		}
+
+		if (XHR !== null) {
+			return;
+		}
+
+		//
+		const ref = callButtonHook($(".jsScheduleHighlightsBtn"), true, true);
+		//
+		XHR = $.ajax({
+			url: baseUrl("schedule_highlights"),
+			type: "POST",
+			data: dataObj,
+		})
+			.always(function () {
+				XHR = null;
+				callButtonHook(ref, false);
+			})
+			.done(function (resp) {
+				return _success(resp.msg, function () {
+					window.location.href = baseUrl(window.location.pathname);
+				});
+			})
+			.fail(handleErrorResponse);
 	}
 });

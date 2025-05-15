@@ -90,4 +90,17 @@ class Main extends Admin_Controller
         //
         $this->render('manage_admin/company/employee_profile_change_report');
     }
+
+    //
+    public function aiWhishlistDataReport()
+    {
+        //
+        $this->data['page_title'] = 'AI Recruiter Wait-list Report';
+        // load user model
+        $this->load->model('2022/User_model', 'user_model');
+        // get filter records
+        $this->data['records'] = $this->user_model->getAiWhishlistData($this->input->get(null, false));
+        //
+        $this->render('manage_admin/company/ai_whishlist_report');
+    }
 }
