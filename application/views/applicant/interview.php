@@ -337,9 +337,10 @@ $creds = getCreds('AHR');
     let audioStream = null;
     let lastSpeechTimestamp = 0;
     let silenceDetectionInterval = null;
-    let isSpeaking = false;
     const SILENCE_THRESHOLD = 6000; // 6 second of silence to consider speech ended
     let chatId = '';
+    let audioQueue = [];
+    let isPlaying = false;
 
     document.addEventListener('DOMContentLoaded', function() {
         
@@ -371,12 +372,47 @@ $creds = getCreds('AHR');
 
                 // Check if we have audio data
                 if (data.audio && data.audio.length > 0) {
-                    // Play the audio
+                    audioQueue.push(data.audio);
+                    
+                    // If this is the first chunk, start playing
+                    // if(audioQueue.length === 1) {
+                    //     playFirstChunk();
+                    //     let chunk = audioQueue[0];
+                    //     console.log('First chunk received:');
+                    //     console.log('- Byte length:', chunk.byteLength);
+                    //     console.log('- First 50 bytes:', Array.from(chunk.slice(0, 50)));
+                        
+                    //     // Try to detect format based on common headers
+                    //     if (chunk.length > 4) {
+                    //         // Check for MP3 (starts with 0xFF, 0xFB or similar)
+                    //         if (chunk[0] === 0xFF && (chunk[1] === 0xFB || chunk[1] === 0xFA || chunk[1] === 0xF3 || chunk[1] === 0xF2)) {
+                    //             console.log('- Format appears to be standard MP3');
+                    //         } 
+                    //         // Check for WAV (starts with "RIFF")
+                    //         else if (chunk[0] === 82 && chunk[1] === 73 && chunk[2] === 70 && chunk[3] === 70) {
+                    //             console.log('- Format appears to be WAV (RIFF header)');
+                    //         }
+                    //         // Check for Ogg (starts with "OggS")
+                    //         else if (chunk[0] === 79 && chunk[1] === 103 && chunk[2] === 103 && chunk[3] === 83) {
+                    //             console.log('- Format appears to be Ogg');
+                    //         } else {
+                    //             console.log('- Format is not immediately recognizable');
+                    //         }
+                    //     }
+                    // }
                     playDeepgramAudio(data.audio, data.format || 'mp3');
                 } else {
                     console.error('No audio data received in botResponse');
                 }
             });
+
+            socket.on('speaking', (isSpeaking) => {
+                if(isSpeaking && window.currentAudio) {
+                    window.currentAudio.pause();
+                    window.currentAudio.currentTime = 0;
+                    window.currentAudio = null;
+                }
+            })
 
             // Handle errors
             socket.on('error', (error) => {
@@ -474,6 +510,102 @@ $creds = getCreds('AHR');
 
         setupSocketConnection();
 
+        // Function to play the first audio chunk
+        function playFirstChunk() {
+            if (audioQueue.length > 0) {
+                try {
+                    // Create a blob URL for the audio
+                    console.log('audioQueue[0]', audioQueue[0]);
+                    const blob = new Blob([audioQueue[0]], { type: 'audio/mp3' });
+                    const url = URL.createObjectURL(blob);
+                    const audioPlayer = new Audio(url);
+                    console.log('audioPlayer', audioPlayer);
+                    
+                    // Set up audio player
+                    audioPlayer.src = url;
+                    audioPlayer.play().catch(error => {
+                        console.error('Error playing audio:', error);
+                    });
+                    
+                    // Set up event to play subsequent chunks
+                    audioPlayer.onended = () => {
+                        if (audioQueue.length > 1) {
+                            // Combine all chunks into a single blob
+                            const fullBlob = new Blob(audioQueue, { type: 'audio/mp3' });
+                            const fullUrl = URL.createObjectURL(fullBlob);
+                            
+                            // Update player and start from beginning
+                            audioPlayer.src = fullUrl;
+                            audioPlayer.play().catch(error => {
+                                console.error('Error playing full audio:', error);
+                            });
+                        }
+                    };
+                } catch (error) {
+                    console.error('Error playing first chunk:', error);
+                }
+            }
+        }
+
+        // Play the next audio in the queue
+        function playNextAudio() {
+            if (audioQueue.length === 0) {
+                isPlaying = false;
+                return;
+            }
+            
+            isPlaying = true;
+            const base64Audio = audioQueue.shift();
+            
+            // Method 1: Using Audio element (more compatible)
+            playDeepgramAudio(base64Audio);
+        }
+
+        // Play audio using the Audio element
+        function playWithAudioElement(base64Audio) {
+            // Create audio element
+            const audio = new Audio();
+            
+            // Set source to data URL with base64 audio
+            audio.src = `data:audio/mp3;base64,${base64Audio}`;
+            
+            // Debug the audio element
+            console.log('Created audio element with length:', base64Audio.length);
+            console.log('audio base64', base64Audio);
+            
+            // Set up event handlers
+            audio.oncanplaythrough = () => {
+                console.log('Audio ready to play');
+            };
+            
+            audio.onplay = () => {
+                console.log('Audio started playing');
+            };
+            
+            audio.onended = () => {
+                console.log('Audio playback completed');
+                // Play next chunk when this one finishes
+                playNextAudio();
+            };
+            
+            audio.onerror = (err) => {
+                console.error('Audio playback error:', err);
+                console.error('Error code:', audio.error ? audio.error.code : 'unknown');
+                // Skip to next audio
+                playNextAudio();
+            };
+            
+            // Start playback
+            audio.play().then(() => {
+                console.log('Audio playback started successfully');
+            }).catch((err) => {
+                console.error('Failed to start audio playback:', err);
+                // Try next audio
+                playNextAudio();
+            });
+        }
+
+
         // Function to play Deepgram audio from base64 data
         function playDeepgramAudio(base64AudioData, format = 'mp3') {
             // Stop any playing audio first
@@ -484,8 +616,6 @@ $creds = getCreds('AHR');
             }
             
             try {
-                // Convert base64 to Blob
-                console.log('base64AudioData', base64AudioData);
                 const byteCharacters = atob(base64AudioData);
                 const byteArrays = [];
                 
@@ -503,10 +633,8 @@ $creds = getCreds('AHR');
                 
                 const audioBlob = new Blob(byteArrays, { type: 'audio/wav' });
                 
-                console.log('audioBlob', audioBlob)
                 // Create audio URL and audio element
                 const audioUrl = URL.createObjectURL(audioBlob);
-                console.log('audioUrl', audioUrl)
                 const audio = new Audio(audioUrl);
                 // const audio = new Audio(`data:audio/${format};base64,${base64AudioData}`);
                 
@@ -514,13 +642,13 @@ $creds = getCreds('AHR');
                 window.currentAudio = audio;
                 
                 // Add event listeners
-                audio.addEventListener('play', () => {
+                window.currentAudio.addEventListener('play', () => {
                     console.log('Bot audio started playing');
                     // You can add UI indicator here that bot is speaking
                     // document.querySelector('.bot .icon-wrapper').classList.add('speaking');
                 });
                 
-                audio.addEventListener('ended', () => {
+                window.currentAudio.addEventListener('ended', () => {
                     console.log('Bot audio finished playing');
                     window.currentAudio = null;
                     
@@ -531,14 +659,14 @@ $creds = getCreds('AHR');
                     URL.revokeObjectURL(audioUrl);
                 });
                 
-                audio.addEventListener('error', (e) => {
+                window.currentAudio.addEventListener('error', (e) => {
                     console.error('Audio playback error:', e);
                     // document.querySelector('.bot .icon-wrapper').classList.remove('speaking');
                     URL.revokeObjectURL(audioUrl);
                 });
                 
                 // Play the audio
-                audio.play().catch(err => {
+                window.currentAudio.play().catch(err => {
                     console.error('Error playing audio:', err);
                     // document.querySelector('.bot .icon-wrapper').classList.remove('speaking');
                 });
