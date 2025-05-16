@@ -2875,3 +2875,6 @@ $route["cms/(:num)/home/product/status/(:num)/(:any)"] = "manage_admin/Cms/Produ
 
 $route["cms/(:num)/subtagstatus/(:num)/(:num)/(:any)"] =
   "manage_admin/Cms/PageSubTagStatus/$1/$2/$3/$4";
+
+$route["compliance_safety_reporting/delete_department_and_team/(:num)"]["delete"] =
+  "v1/Compliance_safety_reporting/deleteIssueDepartmentsAndTeamsById/$1";

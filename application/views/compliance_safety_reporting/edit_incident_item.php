@@ -579,12 +579,12 @@
                                         <select name="departments[]" id="jsDepartments" multiple>
                                             <?php
                                             //
-                                            $allowedOnes = empty($report['allowed_departments']) ? [] : $report['allowed_departments'];
+                                            $allowedDepartments = empty($report['allowed_departments']) ? [] : $report['allowed_departments'];
                                             //
                                             if (!empty($departments)) {
                                                 foreach ($departments as $v) {
                                                     ?>
-                                                    <option value="<?= $v['sid']; ?>" <?= in_array($v['sid'], $allowedOnes) ? 'selected' : ''; ?>><?= $v['name']; ?></option>
+                                                    <option value="<?= $v['sid']; ?>" <?= in_array($v['sid'], $allowedDepartments) ? 'selected' : ''; ?>><?= $v['name']; ?></option>
                                                     <?php
                                                 }
                                             }
@@ -604,12 +604,12 @@
                                         <select name="teams[]" id="jsTeams" multiple>
                                             <?php
                                             //
-                                            $allowedOnes = empty($report['allowed_teams']) ? [] : $report['allowed_teams'];
+                                            $allowedTeams = empty($report['allowed_teams']) ? [] : $report['allowed_teams'];
                                             //
                                             if (!empty($teams)) {
                                                 foreach ($teams as $v) {
                                                     ?>
-                                                    <option value="<?= $v['sid']; ?>" <?= in_array($v['sid'], $allowedOnes) ? 'selected' : ''; ?>><?= $v['name']; ?></option>
+                                                    <option value="<?= $v['sid']; ?>" <?= in_array($v['sid'], $allowedTeams) ? 'selected' : ''; ?>><?= $v['name']; ?></option>
                                                     <?php
                                                 }
                                             }
@@ -624,6 +624,12 @@
                                 <i class="fa fa-plus-circle"></i>
                                 Save Changes
                             </button>
+                            <?php if (!empty($allowedDepartments) || !empty($allowedTeams)) { ?>
+                                <button class="btn btn-red jsRemoveDepartmentsAndTeams">
+                                    <i class="fa fa-refresh"></i>
+                                    Reset Department & Team
+                                </button>
+                            <?php } ?>
                         </div>
                     </div>
 

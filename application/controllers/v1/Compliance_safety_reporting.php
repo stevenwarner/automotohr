@@ -1352,7 +1352,7 @@ class Compliance_safety_reporting extends Base_csp
     {
         //allowed_internal_system_count
         $this->compliance_report_model
-            ->manageAllowedDepartmentsAndTeamsManagers();
+                ->manageAllowedDepartmentsAndTeamsManagers();
         //
         $this
             ->compliance_report_model
@@ -1728,7 +1728,7 @@ class Compliance_safety_reporting extends Base_csp
         //
         $this->renderView('compliance_safety_reporting/edit_incident_item');
     }
-
+    
     /**
      * process departments and teams
      * 
@@ -1896,7 +1896,7 @@ class Compliance_safety_reporting extends Base_csp
         $issuesIds = $_POST['issuesIds'];
         //
         $this->compliance_report_model
-            ->manageAllowedDepartmentsAndTeamsManagers();
+                ->manageAllowedDepartmentsAndTeamsManagers();
         //
         foreach ($issuesIds as $issueId) {
             $this
@@ -2036,7 +2036,6 @@ class Compliance_safety_reporting extends Base_csp
             $issueId = $this
                 ->compliance_report_model
                 ->attachManualIssueWithReport(
-                    $post["reportId"],
                     $cspIncidentId,
                     $incidentTypesId,
                     $post["severityLevelId"],
@@ -2063,7 +2062,7 @@ class Compliance_safety_reporting extends Base_csp
                 "issueId" => $issueId,
                 "reportId" => $post["reportId"],
                 "incidentId" => $cspIncidentId,
-                "reloadURL" => base_url("compliance_safety_reporting/edit/") . $post["reportId"] . "?tab=issues"
+                "reloadURL" => base_url("compliance_safety_reporting/edit/").$post["reportId"]."?tab=issues"
             ]
         );
     }
@@ -2089,8 +2088,7 @@ class Compliance_safety_reporting extends Base_csp
                 $post["issueTypeId"],
                 $post["title"],
                 $post["description"],
-                $post["severityLevelId"],
-                $this->getLoggedInEmployee("sid"),
+                $post["severityLevelId"]
             );
             //
             $this->compliance_report_model
@@ -2370,39 +2368,21 @@ class Compliance_safety_reporting extends Base_csp
             200,
             [
                 "message" => "You have successfully updated the issue questions.",
-                "reloadURL" => base_url("compliance_safety_reporting/edit/") . $reportId . "?tab=questions"
+                "reloadURL" => base_url("compliance_safety_reporting/edit/").$reportId."?tab=questions"
             ]
         );
     }
 
-    /**
-     * Summary of deleteReportById
-     * @param int $reportId
-     */
-    public function deleteReportById(int $reportId)
+    public function deleteIssueDepartmentsAndTeamsById($issueId)
     {
-        $response = $this
-            ->compliance_report_model
-            ->deleteReportById(
-                $reportId,
-                $this->getLoggedInCompany("sid")
-            );
-        //
-        if ($response) {
-            return SendResponse(
-                200,
-                [
-                    "message" => "You have successfully deleted the report."
-                ]
-            );
-        }
-        return SendResponse(
-            400,
-            [
-                "errors" => [
-                    "Something went wrong while deleting the report."
-                ]
-            ]
+        $this->compliance_report_model->deleteAttachedDepartmentsAndTeams(
+            $issueId,
+            $this->getLoggedInEmployee("sid")
+        );
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Departments and teams removed successfully."]
         );
     }
 

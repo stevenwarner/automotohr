@@ -165,6 +165,15 @@ $(function Overview() {
 		}
 	});
 
+	$(document).on("click", ".jsRemoveDepartmentsAndTeams", function () {
+		_confirm(
+			"Are you sure you want to remove department(s) and team(s).",
+			function () {
+				deleteDepartmentsAndTeams();
+			}
+		);
+	});
+
 	$(".jsAddNote").click(function (event) {
 		event.preventDefault();
 		const obj = {
@@ -277,6 +286,32 @@ $(function Overview() {
 				});
 		}
 	});
+
+	function deleteDepartmentsAndTeams () {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/delete_department_and_team/" +
+					itemId
+				),
+				method: "DELETE",
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success("Removed department and team successfully", function () {
+						window.location.reload();
+					});
+				});
+		}
+	}
 
 	function generateExternalEmployees() {
 		let html = `

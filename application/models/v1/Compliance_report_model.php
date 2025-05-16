@@ -7314,4 +7314,29 @@ class Compliance_report_model extends CI_Model
 		return $this->db->trans_status();
 	}
 
+	public function deleteAttachedDepartmentsAndTeams($issueId, $loggedInEmployeeId)
+	{
+		//
+		$this
+			->db
+			->where("sid", $issueId)
+			->update(
+				"csp_reports_incidents_items",
+				[
+					"allowed_departments" => NULL,
+					"allowed_teams" => NULL,
+					"last_modified_by" => $loggedInEmployeeId,
+					"updated_at" => getSystemDate(),
+				]
+			);
+		//
+		$this->deleteDepartmentManagers($issueId);
+	}
+
+	public function deleteDepartmentManagers ($issueId) {
+		$this->db->where('csp_reports_incidents_items_sid', $issueId);
+		$this->db->where('is_manager', 1);
+		$this->db->delete('csp_reports_employees');
+	}
+
 }
