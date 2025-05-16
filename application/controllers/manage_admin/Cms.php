@@ -22,7 +22,7 @@ class Cms extends Admin_Controller
             'Response' => 'Request Not Authorized'
         ];
 
-        $this->lockFile = false;
+        $this->lockFile = true;
     }
 
 
@@ -1859,6 +1859,44 @@ class Cms extends Admin_Controller
         //
         $msg = "You have successfully updated a product sort order.";
 
+        return SendResponse(200, [
+            "msg" => $msg
+        ]);
+    }
+
+    //
+    public function updateSectionsSortOrder(int $pageId)
+    {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+        $post = $this->input->post(null, true);
+        //
+        $pageContent = json_decode($pageContent, true);
+        //
+        if (isset($post["sortOrders"])) {
+            $sections = $pageContent["page"]["sections"]["section0"]["tags"];
+            //
+            $newSectionsOrder = [];
+            //
+            foreach ($post["sortOrders"] as $key => $index) {
+                //
+                $item = $sections[$index];
+                //
+                $item['index'] = $key;
+                $item['sortOrder'] = $key + 1;
+                $newSectionsOrder[] = $item;
+            }
+            //         
+            $pageContent["page"]["sections"]["section0"]["tags"] = $newSectionsOrder;
+            $msg = "You have successfully updated a Sections sort order.";
+        }
+        // //
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
         return SendResponse(200, [
             "msg" => $msg
         ]);

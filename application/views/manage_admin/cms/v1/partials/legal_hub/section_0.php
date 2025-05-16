@@ -47,21 +47,29 @@ $contentToShow = $pageContent["page"]["sections"]["section0"];
     </div>
 </div>
 
-<?php
-if ($contentToShow["tags"]) {
-   
-    foreach ($contentToShow["tags"] as $index => $tag) {
 
-        $this->load->view(
-            "manage_admin/cms/v1/partials/dynamic/dynamic_tag",
-            [
-                "tagData" => $tag,
-                "tagIndex" => $index
-            ]
-        );
+<div class="jsDraggableSection">
+    <?php
+    if ($contentToShow["tags"]) {
+        foreach ($contentToShow["tags"] as $index => $tag) {
+    ?>
+
+        <?php
+            $this->load->view(
+                "manage_admin/cms/v1/partials/dynamic/dynamic_tag",
+                [
+                    "tagData" => $tag,
+                    "tagIndex" => $index
+                ]
+            );
+        } ?>
+
+    <?php
     }
-}
-?>
+    ?>
+
+</div>
+
 
 <script>
     const section0 = {

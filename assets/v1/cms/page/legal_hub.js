@@ -19,10 +19,31 @@ $(function () {
 			var obj = {};
 			obj.tagIndex = tagIndex;
 			obj.sortOrders = orderList;
-			//
+			//			
 			updateCardsSortOrder(obj);
 		}
 	});
+
+	$(".jsDraggableSection").sortable({
+		update: function (event, ui) {
+			//
+			var tagIndex = 0;
+			var orderList = [];
+			var indecators = ui.item.context.className.split(" ");
+			//
+			$("." + indecators[0]).map(function (i) {
+				tagIndex = $(this).data("index");
+				orderList.push($(this).data("key"));
+			});
+			// 
+			var obj = {};
+			obj.tagIndex = tagIndex;
+			obj.sortOrders = orderList;
+
+			updateSectionsSortOrder(obj);
+		}
+	});
+
 	//
 	function updateCardsSortOrder(data) {
 		// check if XHR already in progress
@@ -43,7 +64,7 @@ $(function () {
 
 			});
 	}
-	//
+
 	// attach file uploader
 	$("#jsSection0File").msFileUploader({
 		allowedTypes: ["jpg", "jpeg", "png", "webp"],
@@ -527,7 +548,7 @@ $(function () {
 		//
 		const index = $(this).closest(".row").data("key");
 		const tagIndex = $(this).closest(".row").data("index");
-	
+
 		//
 		return _confirm(
 			"Do you really wan deactivate this section?",
@@ -545,7 +566,7 @@ $(function () {
 
 		const index = $(this).closest(".row").data("key");
 		const tagIndex = $(this).closest(".row").data("index");
-			//
+		//
 		return _confirm(
 			"Do you really wan activate this section?",
 			function () {
@@ -559,7 +580,7 @@ $(function () {
 		//
 		$.ajax({
 			url: baseUrl("cms/" + getSegment(2) + "/subtagstatus/" + index + "/" + tagIndex + "/" + tagStatus
-			),	
+			),
 		})
 			.fail(handleErrorResponse)
 			.done(function (resp) {
@@ -574,5 +595,25 @@ $(function () {
 			});
 	}
 
+	//
+	function updateSectionsSortOrder(data) {
+		// check if XHR already in progress
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		//
+		XHR = $.ajax({
+			url: baseUrl("cms/update_sections_sort_order/" + getSegment(2)),
+			method: "post",
+			data,
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+
+			});
+	}
 
 });

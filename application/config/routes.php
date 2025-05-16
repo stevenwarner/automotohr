@@ -2895,3 +2895,5 @@ $route["cms/(:num)/subtagstatus/(:num)/(:num)/(:any)"] =
   "manage_admin/Cms/PageSubTagStatus/$1/$2/$3/$4";
 
 $route["cms/update_product_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateHomeProductSortOrder/$1";
+
+$route["cms/update_sections_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateSectionsSortOrder/$1";
