@@ -4,6 +4,9 @@ $collapseIn =  $this->input->get("page") == 'sectionTag' . $tagIndex ? "in" : ""
 //
 ?>
 <!-- section  -->
+    
+<div class="jsSectionsSortOrder_tags" data-key="<?= $tagIndex; ?>" data-index="tags">
+
 <div class="panel panel-default">
     <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#jsSectionTag<?= $tagIndex; ?>" aria-expanded="<?= $ariaExpanded; ?>" aria-controls="collapseOne">
         <h4>
@@ -38,6 +41,7 @@ $collapseIn =  $this->input->get("page") == 'sectionTag' . $tagIndex ? "in" : ""
             </span>
         </h4>
     </div>
+
     <div id="jsSectionTag<?= $tagIndex; ?>" class="panel-collapse collapse <?= $collapseIn; ?>" role="tabpanel" aria-labelledby="headingOne">
         <div class="panel-body jsDraggable">
             <?php
@@ -91,4 +95,6 @@ $collapseIn =  $this->input->get("page") == 'sectionTag' . $tagIndex ? "in" : ""
             </button>
         </div>
     </div>
+</div>
+
 </div>

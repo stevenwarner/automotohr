@@ -2879,3 +2879,6 @@ $route["cms/(:num)/subtagstatus/(:num)/(:num)/(:any)"] =
 $route["compliance_safety_reporting/delete_department_and_team/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting/deleteIssueDepartmentsAndTeamsById/$1";
 $route["cms/update_product_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateHomeProductSortOrder/$1";
+$route["cms/update_product_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateHomeProductSortOrder/$1";
+
+$route["cms/update_sections_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateSectionsSortOrder/$1";

@@ -462,4 +462,35 @@ $(function () {
 			});
 	}
 
+
+	$(document).ready(function () {
+		var charLimit = 100;
+
+		$('.text').each(function () {
+			var fullText = $(this).text();
+
+			if (fullText.length > charLimit) {
+				var shortText = fullText.substring(0, charLimit);
+				var remainingText = fullText.substring(charLimit);
+
+				var html = `
+          ${shortText}<span class="dots">...</span><span class="more-text" style="display:none;">${remainingText}</span>
+          <a href="#" class="read-more" style="font-weight: bold;"> Read more</a>
+        `;
+
+				$(this).html(html);
+			}
+		});
+
+		$(document).on('click', '.read-more', function (e) {
+			e.preventDefault();
+			var $link = $(this);
+			var $text = $link.closest('.text');
+
+			$text.find('.dots, .more-text').toggle();
+			$link.text($link.text().includes("more") ? " Read less" : " Read more");
+		});
+	});
+
+
 });

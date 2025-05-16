@@ -46,7 +46,7 @@ $contentToShow = $pageContent["page"]["sections"]["section0"];
         </form>
     </div>
 </div>
-
+<div class="jsDraggableSection">
 <?php
 if ($contentToShow["tags"]) {
    
@@ -62,6 +62,7 @@ if ($contentToShow["tags"]) {
     }
 }
 ?>
+</div>
 
 <script>
     const section0 = {

@@ -46,8 +46,8 @@ $products = $pageContent["page"]["sections"]["section2"]["products"];
                                     </div>
                                     <div class="col-sm-7 <?= $value["direction"] == "left_to_right" ? "col-sm-pull-3" : ""; ?>">
                                         <h3><?= convertToStrip($value["mainHeading"]); ?></h3>
-                                        <h4><?= convertToStrip($value["subHeading"]); ?></h4>
-                                        <p><?= convertToStrip($value["details"]); ?></p>
+                                        <h4><?= convertToStrip($value["subHeading"]); ?></h4>                                        
+                                        <p class="text"><?= convertToStrip($value["details"]); ?></p>
                                         <a href="<?= main_url($value["buttonLink"]); ?>" target="_blank" class="btn btn-success">
                                             <?= $value["buttonText"]; ?>
                                         </a>
@@ -75,7 +75,7 @@ $products = $pageContent["page"]["sections"]["section2"]["products"];
                                             <i class="fa fa-edit" aria-hidden="true"></i>
                                             &nbsp;Edit
                                         </button>
-
+                                 
                                     </div>
                                 </div>
                                 <hr />
@@ -85,9 +85,9 @@ $products = $pageContent["page"]["sections"]["section2"]["products"];
                     <?php } ?>
                 </div>
 
-                  <?php $this->load->view('loader', [
-                                "props" => 'id="jsMainLoader"'
-                            ]); ?>
+                <?php $this->load->view('loader', [
+                    "props" => 'id="jsMainLoader"'
+                ]); ?>
 
             </div>
             <div class="panel-footer text-center">
