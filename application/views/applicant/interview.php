@@ -331,6 +331,7 @@ $creds = getCreds('AHR');
 <script>
     const job_list_sid = `<?php echo $portal_job_list["sid"]; ?>`;
     const ServerPath = '<?php echo $creds->API_BROWSER_URL; ?>';
+    let socket;
     let interviewStarted = false;
     let speech = new SpeechSynthesisUtterance();
     let mediaRecorder = null;
@@ -341,12 +342,66 @@ $creds = getCreds('AHR');
     let chatId = '';
     let audioQueue = [];
     let isPlaying = false;
+    let audioContext;
 
     document.addEventListener('DOMContentLoaded', function() {
+
+        // Initialize audio context (on user gesture)
+        function initAudioContext() {
+            if (!audioContext) {
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)({
+                        sampleRate: 24000
+                    });
+                    // Apply additional audio processing for cleaner output
+                    setupAudioGraph();
+                    console.log('Audio context initialized with sample rate:', audioContext.sampleRate);
+                } catch (error) {
+                    console.error('Failed to initialize audio context: ' + error.message);
+                }
+            }
+            return audioContext;
+        }
+
+        // 2. Set up a more sophisticated audio processing graph
+        let masterGainNode = null;
+        let compressorNode = null;
+        let lowpassFilter = null;
+
+        function setupAudioGraph() {
+            // Create a dynamic compressor to prevent distortion
+            compressorNode = audioContext.createDynamicsCompressor();
+            compressorNode.threshold.value = -24;    // Start compressing at -24dB
+            compressorNode.knee.value = 15;          // Smooth compression curve
+            compressorNode.ratio.value = 4;          // Moderate compression
+            compressorNode.attack.value = 0.005;     // Fast attack to catch transients
+            compressorNode.release.value = 0.050;    // Moderate release
+            
+            // Create a lowpass filter to remove high-frequency noise
+            lowpassFilter = audioContext.createBiquadFilter();
+            lowpassFilter.type = 'lowpass';
+            lowpassFilter.frequency.value = 10000;   // Cut frequencies above 10kHz
+            lowpassFilter.Q.value = 0.7;             // Moderate resonance
+            
+            // Create master gain for overall volume control
+            masterGainNode = audioContext.createGain();
+            masterGainNode.gain.value = 0.85;        // Slightly reduce volume to prevent clipping
+            
+            // Connect the audio graph: filter -> compressor -> gain -> output
+            lowpassFilter.connect(compressorNode);
+            compressorNode.connect(masterGainNode);
+            masterGainNode.connect(audioContext.destination);
+        }
+
+        initAudioContext();
+        // Clear previous audio queue
+        audioQueue = [];
+        isPlaying = false;
         
         function setupSocketConnection() {
             // Connect to your Node.js server with Socket.IO
             socket = io(ServerPath);
+            socket.binaryType = 'arraybuffer';
             
             // Handle connection events
             socket.on('connect', () => {
@@ -361,50 +416,233 @@ $creds = getCreds('AHR');
                     console.log(`Status: ${data.status} - ${data.message}`);
                     setupAudioRecording(data.chatId);
                 }
+                else {
+                    console.log(`Status: ${data.status} - ${data.message}`);
+                }
             });
 
             // Handle bot responses
             socket.on('botResponse', (data) => {
-                console.log('Received bot response, audio data length:', data.audio ? data.audio.length : 0);
-                if (data.chatId) {
-                    chatId = data.chatId;
+                playDeepgramAudio(data.audio, data.format || 'mp3');
+                return false;
+                try {
+                    const message = data;
+                
+                    switch (message.type) {
+                        case 'audio':
+                            // Process audio data
+                            audioQueue.push(data.data);
+                            if(audioQueue.length === 1) {
+                                console.log('audio data', data.data)
+                                playDeepgramAudio(data.data, 'mp3');
+                            }
+                        break;
+                        
+                        case 'info':
+                            console.log('Info: ' + message.message);
+                        break;
+                        
+                        case 'error':
+                            console.error('Error: ' + message.message);
+                        break;
+                        
+                        default:
+                        console.log('Received unknown message type: ' + message.type);
+                    }
+                } catch (error) {
+                    console.error('Error processing message: ' + error.message);
+                }
+                
+                return false;
+
+                // console.log('Received bot response, audio data length:', data.audio ? data.audio.length : 0);
+                // console.log('data.audio', data.audio);
+                // if (data.chatId) {
+                //     chatId = data.chatId;
+                // }
+
+                // // Check if we have audio data
+                // if (data.audio && data.audio.length > 0) {
+                //     audioQueue.push(data.audio);
+                    
+                //     // If this is the first chunk, start playing
+                //     // if(audioQueue.length === 1) {
+                //     //     playFirstChunk();
+                //     //     let chunk = audioQueue[0];
+                //     //     console.log('First chunk received:');
+                //     //     console.log('- Byte length:', chunk.byteLength);
+                //     //     console.log('- First 50 bytes:', Array.from(chunk.slice(0, 50)));
+                        
+                //     //     // Try to detect format based on common headers
+                //     //     if (chunk.length > 4) {
+                //     //         // Check for MP3 (starts with 0xFF, 0xFB or similar)
+                //     //         if (chunk[0] === 0xFF && (chunk[1] === 0xFB || chunk[1] === 0xFA || chunk[1] === 0xF3 || chunk[1] === 0xF2)) {
+                //     //             console.log('- Format appears to be standard MP3');
+                //     //         } 
+                //     //         // Check for WAV (starts with "RIFF")
+                //     //         else if (chunk[0] === 82 && chunk[1] === 73 && chunk[2] === 70 && chunk[3] === 70) {
+                //     //             console.log('- Format appears to be WAV (RIFF header)');
+                //     //         }
+                //     //         // Check for Ogg (starts with "OggS")
+                //     //         else if (chunk[0] === 79 && chunk[1] === 103 && chunk[2] === 103 && chunk[3] === 83) {
+                //     //             console.log('- Format appears to be Ogg');
+                //     //         } else {
+                //     //             console.log('- Format is not immediately recognizable');
+                //     //         }
+                //     //     }
+                //     // }
+                //     if(audioQueue.length === 1) {
+                //         playDeepgramAudio(data.audio, data.format || 'mp3');
+                //     }
+                // } else {
+                //     console.error('No audio data received in botResponse');
+                // }
+            });
+
+            // socket.on('message', (event) => {
+            //     event = JSON.parse(event)
+            //     // Add extensive logging
+            //     console.log("RAW WebSocket message received:", event);
+            //     console.log("Data type:", typeof event.data);
+            //     console.log("Data:", event.data);
+                
+            //     if (typeof event.data === 'string') {
+            //         console.log(`Received string data (${event.data.length} chars)`);
+            //     } else if (event.data instanceof ArrayBuffer) {
+            //         console.log(`Received ArrayBuffer (${event.data.byteLength} bytes)`);
+            //     } else if (event.data instanceof Blob) {
+            //         console.log(`Received Blob (${event.data.size} bytes)`);
+            //     } else {
+            //         console.log(`Received unknown data type: ${typeof event.data}`);
+            //     if (event.data) {
+            //         console.log(`Data has properties: ${Object.getOwnPropertyNames(event.data)}`);
+            //     }
+            //     }
+                
+            //     try {
+            //     // Now process based on type
+            //     if (event.data instanceof ArrayBuffer) {
+            //         // Process binary data received directly as ArrayBuffer
+            //         if (audioContext) {
+            //             processAudioData(event.data);
+            //         }
+            //     } else if (event.data instanceof Blob) {
+            //         // Process binary audio data received as Blob
+            //         if (audioContext) {
+            //         event.data.arrayBuffer().then(buffer => {
+            //             processAudioData(buffer);
+            //         }).catch(error => {
+            //             console.error('Error processing Blob: ' + error.message);
+            //         });
+            //         }
+            //     } else if (typeof event.data === 'string') {
+            //         try {
+            //         // Try to parse as JSON
+            //         const message = JSON.parse(event.data);
+            //         console.log('Parsed JSON message type: ' + message.type);
+                    
+            //         switch (message.type) {
+            //             case 'info':
+            //                 console.log('Info: ' + message.message);
+            //             break;
+                        
+            //             case 'error':
+            //                 console.error('Error: ' + message.message);
+            //             break;
+                        
+            //             default:
+            //             console.log('Received unknown message type: ' + message.type);
+            //         }
+            //         } catch (jsonError) {
+            //         // Not JSON, log as plain text
+            //         console.log('Non-JSON string received (first 100 chars): ' + 
+            //             event.data.substring(0, 100) + (event.data.length > 100 ? '...' : ''));
+            //         }
+            //     } else {
+            //         console.error(`Unable to process message of type: ${typeof event.data}`);
+            //     }
+            //     } catch (error) {
+            //         console.error('Error in onmessage handler: ' + error.message);
+            //         console.error('Full error:', error);
+            //     }
+            // });
+
+
+            // socket.on('message', async (data) => {
+            //     try {
+            //         console.log('data', data)
+            //         const buffer = await data.arrayBuffer();
+            //         const int16Array = new Int16Array(buffer);
+            //         const float32Array = convertInt16ToFloat32(int16Array);
+                    
+            //         // Add to queue instead of scheduling immediately
+            //         audioQueue.push(float32Array);
+                    
+            //         // Start processing if not already playing
+            //         if (!isPlaying) {
+            //             processAudioQueue();
+            //         }
+            //     } catch (error) {
+            //         console.error('Error processing message: ' + error.message);
+            //     }
+            // });
+
+            socket.on('message', async (data) => {
+                // try {
+                //     // Parse the message if it's a string
+                //     const message = typeof data === 'string' ? JSON.parse(data) : data;
+                    
+                //     if (message.type === 'audio' && Array.isArray(message.data)) {
+                //         // Convert the array back to Uint8Array
+                //         const audioData = new Uint8Array(message.data);
+                //         audioQueue.push(audioData);
+                //         // Play the audio using the Blob/Audio element approach
+                //         if(!isPlaying) {
+                //             playAudioWithBlob();
+                //         }
+                //     } else if (message.type === 'info') {
+                //         console.log('Info:', message.message);
+                //     } else if (message.type === 'error') {
+                //         console.error('Error:', message.message);
+                //     }
+                // } catch (error) {
+                //     console.error('Error processing message:', error.message);
+                // }
+
+
+                try {
+                    // Make sure we have a properly initialized audio context first
+                    initAudioContext();
+                    
+                    // Handle different message formats
+                    let message;
+                    if (typeof data === 'string') {
+                        try {
+                            message = JSON.parse(data);
+                        } catch (e) {
+                            console.error('Failed to parse message as JSON:', e);
+                            return;
+                        }
+                    } else {
+                        message = data;
+                    }
+                    
+                    // Process audio data if available
+                    if (message && message.type === 'audio' && Array.isArray(message.data)) {
+                        // Convert array back to Uint8Array
+                        const uint8Array = new Uint8Array(message.data);
+                        
+                        // Process the audio data
+                        processAudioData(uint8Array.buffer);
+                    } else {
+                        console.log('Received non-audio message:', message);
+                    }
+                } catch (error) {
+                    console.error('Error handling socket message:', error);
                 }
 
-                // Check if we have audio data
-                if (data.audio && data.audio.length > 0) {
-                    audioQueue.push(data.audio);
-                    
-                    // If this is the first chunk, start playing
-                    // if(audioQueue.length === 1) {
-                    //     playFirstChunk();
-                    //     let chunk = audioQueue[0];
-                    //     console.log('First chunk received:');
-                    //     console.log('- Byte length:', chunk.byteLength);
-                    //     console.log('- First 50 bytes:', Array.from(chunk.slice(0, 50)));
-                        
-                    //     // Try to detect format based on common headers
-                    //     if (chunk.length > 4) {
-                    //         // Check for MP3 (starts with 0xFF, 0xFB or similar)
-                    //         if (chunk[0] === 0xFF && (chunk[1] === 0xFB || chunk[1] === 0xFA || chunk[1] === 0xF3 || chunk[1] === 0xF2)) {
-                    //             console.log('- Format appears to be standard MP3');
-                    //         } 
-                    //         // Check for WAV (starts with "RIFF")
-                    //         else if (chunk[0] === 82 && chunk[1] === 73 && chunk[2] === 70 && chunk[3] === 70) {
-                    //             console.log('- Format appears to be WAV (RIFF header)');
-                    //         }
-                    //         // Check for Ogg (starts with "OggS")
-                    //         else if (chunk[0] === 79 && chunk[1] === 103 && chunk[2] === 103 && chunk[3] === 83) {
-                    //             console.log('- Format appears to be Ogg');
-                    //         } else {
-                    //             console.log('- Format is not immediately recognizable');
-                    //         }
-                    //     }
-                    // }
-                    playDeepgramAudio(data.audio, data.format || 'mp3');
-                } else {
-                    console.error('No audio data received in botResponse');
-                }
             });
+
 
             socket.on('speaking', (isSpeaking) => {
                 if(isSpeaking && window.currentAudio) {
@@ -510,55 +748,121 @@ $creds = getCreds('AHR');
 
         setupSocketConnection();
 
-        // Function to play the first audio chunk
-        function playFirstChunk() {
-            if (audioQueue.length > 0) {
-                try {
-                    // Create a blob URL for the audio
-                    console.log('audioQueue[0]', audioQueue[0]);
-                    const blob = new Blob([audioQueue[0]], { type: 'audio/mp3' });
-                    const url = URL.createObjectURL(blob);
-                    const audioPlayer = new Audio(url);
-                    console.log('audioPlayer', audioPlayer);
+        // Process incoming audio data from WebSocket
+        function processAudioData(audioData) {
+            try {
+                // Check if this is a complete WAV file with header
+                const isWav = 
+                    audioData.byteLength > 44 && 
+                    new Uint8Array(audioData, 0, 4).reduce((str, byte) => str + String.fromCharCode(byte), '') === 'RIFF';
+
+                let pcmData, sampleRate;
+
+                if (isWav) {
+                    // Extract PCM data from WAV file (skip 44-byte header)
+                    pcmData = new DataView(audioData, 44);
                     
-                    // Set up audio player
-                    audioPlayer.src = url;
-                    audioPlayer.play().catch(error => {
-                        console.error('Error playing audio:', error);
-                    });
-                    
-                    // Set up event to play subsequent chunks
-                    audioPlayer.onended = () => {
-                        if (audioQueue.length > 1) {
-                            // Combine all chunks into a single blob
-                            const fullBlob = new Blob(audioQueue, { type: 'audio/mp3' });
-                            const fullUrl = URL.createObjectURL(fullBlob);
-                            
-                            // Update player and start from beginning
-                            audioPlayer.src = fullUrl;
-                            audioPlayer.play().catch(error => {
-                                console.error('Error playing full audio:', error);
-                            });
-                        }
-                    };
-                } catch (error) {
-                    console.error('Error playing first chunk:', error);
+                    // Get sample rate from WAV header
+                    const wavView = new DataView(audioData);
+                    sampleRate = wavView.getUint32(24, true);
+                    console.log('Detected WAV with sample rate:', sampleRate);
+                } else {
+                    // Treat as raw PCM data
+                    pcmData = new DataView(audioData);
+                    sampleRate = 24000; // Assume Deepgram default
                 }
+
+                // Calculate number of samples (each sample is 2 bytes for 16-bit PCM)
+                const numSamples = Math.floor(pcmData.byteLength / 2);
+                
+                // Create Float32Array for Web Audio API
+                const float32Array = new Float32Array(numSamples);
+                
+                // Convert Int16 PCM to normalized Float32
+                for (let i = 0; i < numSamples; i++) {
+                    // Read 16-bit sample with correct endianness (little-endian for WAV/PCM)
+                    const int16Sample = pcmData.getInt16(i * 2, true);
+                    
+                    // Normalize to range [-1.0, 1.0] with slight scaling to prevent clipping
+                    float32Array[i] = (int16Sample / 32768.0) * 0.95;
+                }
+
+                // Create an audio buffer with the correct sample rate
+                const audioBuffer = audioContext.createBuffer(
+                    1,                      // Mono channel
+                    float32Array.length,    // Number of samples
+                    sampleRate              // Sample rate from WAV or default
+                );
+                
+                // Fill the audio buffer with our normalized float data
+                audioBuffer.getChannelData(0).set(float32Array);
+                
+                // Add to queue and start playback
+                audioQueue.push(audioBuffer);
+                
+                if (!isPlaying) {
+                    playNextInQueue();
+                }
+            } catch (error) {
+                console.error('Error processing audio data:', error);
             }
         }
 
-        // Play the next audio in the queue
-        function playNextAudio() {
+
+        // Play the next audio buffer in the queue
+        let nextPlayTime = 0;
+
+        function playNextInQueue() {
             if (audioQueue.length === 0) {
                 isPlaying = false;
+                nextPlayTime = 0;
                 return;
             }
             
             isPlaying = true;
-            const base64Audio = audioQueue.shift();
+            const buffer = audioQueue.shift();
             
-            // Method 1: Using Audio element (more compatible)
-            playDeepgramAudio(base64Audio);
+            // Create source node
+            const source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            
+            // Connect to our audio processing graph instead of directly to destination
+            source.connect(lowpassFilter);
+            
+            // Calculate precise playback timing
+            const currentTime = audioContext.currentTime;
+            
+            // If we have a scheduled time, use it, otherwise start immediately
+            const startTime = (nextPlayTime > currentTime) ? nextPlayTime : currentTime;
+            
+            // Schedule the next buffer to play immediately after this one
+            nextPlayTime = startTime + buffer.duration;
+            
+            // Schedule precise playback
+            source.start(startTime);
+            
+            // Schedule the next buffer when this one completes
+            source.onended = () => {
+                playNextInQueue();
+            };
+            
+            console.log(`Playing buffer: duration=${buffer.duration.toFixed(3)}s, samples=${buffer.length}, start=${startTime.toFixed(3)}`);
+        }
+
+
+        // 7. Clean up function to ensure proper resource handling
+        function cleanupAudio() {
+            // Stop any currently playing audio
+            if (isPlaying) {
+                // Cancel any scheduled audio
+                audioContext && audioContext.close().catch(err => console.error('Error closing audio context:', err));
+                audioContext = null;
+                
+                // Clear the queue
+                audioQueue = [];
+                isPlaying = false;
+                nextPlayTime = 0;
+            }
         }
 
         // Play audio using the Audio element
@@ -705,5 +1009,223 @@ $creds = getCreds('AHR');
                 console.error('Error starting interview:', e);
             }
         }
+
+
+        function convertInt16ToFloat32(int16Array) {
+            const float32Array = new Float32Array(int16Array.length);
+            for (let i = 0; i < int16Array.length; i++) {
+                float32Array[i] = int16Array[i] / 32768.0; // Normalize to [-1, 1]
+            }
+            return float32Array;
+        }
+
+        // 5. Method to play audio
+        function processAudioQueue() {
+            if (audioQueue.length === 0) {
+                isPlaying = false;
+                return;
+            }
+    
+            isPlaying = true;
+            const float32Array = audioQueue.shift();
+            const audioBuffer = audioContext.createBuffer(1, float32Array.length, 16000);
+            audioBuffer.getChannelData(0).set(float32Array);
+    
+            const source = audioContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+    
+            // Calculate precise timing
+            const now = audioContext.currentTime;
+            const startTime = Math.max(now, nextScheduledTime);
+            
+            source.start(startTime);
+            source.onended = () => {
+                // Schedule next chunk immediately after this one finishes
+                nextScheduledTime = startTime + audioBuffer.duration;
+                processAudioQueue();
+            };
+        }
+
+        // Play audio using Blob and Audio element
+        function playAudioWithBlob() {
+            if (audioQueue.length === 0) {
+                isPlaying = false;
+                return;
+            }
+
+            isPlaying = true;
+            let audioData = audioQueue.shift();
+            try {
+                // Create WAV header if dealing with raw PCM data
+                const withHeader = addWavHeader(audioData, 24000);
+                
+                // Create blob from the audio data
+                const blob = new Blob([withHeader], { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(blob);
+                
+                // Create and configure audio element
+                const audio = new Audio(audioUrl);
+                
+                // Stop any currently playing audio
+                if (window.currentAudio) {
+                    window.currentAudio.pause();
+                    window.currentAudio.currentTime = 0;
+                    URL.revokeObjectURL(window.currentAudio.src);
+                    window.currentAudio = null;
+                }
+                
+                // Store reference to current audio
+                window.currentAudio = audio;
+                
+                // Add event listeners
+                audio.addEventListener('play', () => {
+                    console.log('Audio started playing');
+                });
+                
+                audio.addEventListener('ended', () => {
+                    console.log('Audio playback completed');
+                    window.currentAudio = null;
+                    URL.revokeObjectURL(audioUrl);
+                    playAudioWithBlob();
+                });
+                
+                audio.addEventListener('error', (e) => {
+                    console.error('Audio playback error:', e);
+                    URL.revokeObjectURL(audioUrl);
+                    window.currentAudio = null;
+                });
+                
+                // Set audio element properties
+                audio.volume = 1.0;
+                
+                // Play the audio
+                audio.play().catch(error => {
+                    console.error('Failed to play audio:', error);
+                });
+            } catch (error) {
+                console.error('Error playing audio with blob:', error);
+            }
+        }
+
+        // Function to convert received audio data to Float32Array
+        function convertToFloat32(audioData) {
+            // Determine if there's a WAV header
+            const isWavHeader = 
+                audioData.length > 44 && 
+                audioData[0] === 82 && audioData[1] === 73 && // 'R', 'I'
+                audioData[2] === 70 && audioData[3] === 70;   // 'F', 'F'
+            
+            // If it has a WAV header, skip the first 44 bytes
+            const dataOffset = isWavHeader ? 44 : 0;
+            
+            // Calculate number of samples (each sample is 2 bytes for 16-bit audio)
+            const numSamples = Math.floor((audioData.length - dataOffset) / 2);
+            
+            // Create a Float32Array for the audio data
+            const float32Array = new Float32Array(numSamples);
+            
+            // Convert Int16 PCM to Float32
+            for (let i = 0; i < numSamples; i++) {
+                // Combine two bytes to form a 16-bit sample (little-endian)
+                const byte1 = audioData[dataOffset + i * 2];
+                const byte2 = audioData[dataOffset + i * 2 + 1];
+                
+                // Combine bytes to signed 16-bit integer
+                let int16Sample = byte1 | (byte2 << 8);
+                
+                // Convert to signed value if needed
+                if (int16Sample > 32767) {
+                    int16Sample -= 65536;
+                }
+                
+                // Normalize to range [-1.0, 1.0] with slight scaling to prevent clipping
+                float32Array[i] = (int16Sample / 32768.0) * 0.95;
+            }
+            
+            return float32Array;
+        }
+
+        // Add WAV header to raw PCM data
+        function addWavHeader(audioData, sampleRate) {
+            // Check if data already has a WAV header (starts with "RIFF")
+            if (audioData.length > 4 && 
+                audioData[0] === 82 && audioData[1] === 73 && 
+                audioData[2] === 70 && audioData[3] === 70) {
+                // Already has a WAV header
+                return audioData;
+            }
+            
+            // Create WAV header
+            const numChannels = 1;        // Mono
+            const bitsPerSample = 16;     // 16-bit PCM
+            const byteRate = sampleRate * numChannels * bitsPerSample / 8;
+            const blockAlign = numChannels * bitsPerSample / 8;
+            const subchunk2Size = audioData.length;
+            const chunkSize = 36 + subchunk2Size;
+            
+            // Create header array
+            const header = new Uint8Array(44);
+            
+            // RIFF chunk descriptor
+            writeString(header, 0, 'RIFF');
+            writeUint32(header, 4, chunkSize, true);
+            writeString(header, 8, 'WAVE');
+            
+            // "fmt " sub-chunk
+            writeString(header, 12, 'fmt ');
+            writeUint32(header, 16, 16, true);            // Subchunk1Size (16 for PCM)
+            writeUint16(header, 20, 1, true);             // AudioFormat (1 for PCM)
+            writeUint16(header, 22, numChannels, true);   // NumChannels
+            writeUint32(header, 24, sampleRate, true);    // SampleRate
+            writeUint32(header, 28, byteRate, true);      // ByteRate
+            writeUint16(header, 32, blockAlign, true);    // BlockAlign
+            writeUint16(header, 34, bitsPerSample, true); // BitsPerSample
+            
+            // "data" sub-chunk
+            writeString(header, 36, 'data');
+            writeUint32(header, 40, subchunk2Size, true); // Subchunk2Size
+            
+            // Combine header and audio data
+            const wavData = new Uint8Array(header.length + audioData.length);
+            wavData.set(header);
+            wavData.set(audioData, header.length);
+            
+            return wavData;
+        }
+
+        // Helper to write a string to a Uint8Array
+        function writeString(array, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                array[offset + i] = string.charCodeAt(i);
+            }
+        }
+
+        // Helper to write a 16-bit unsigned integer to a Uint8Array
+        function writeUint16(array, offset, value, littleEndian) {
+            if (littleEndian) {
+                array[offset] = value & 0xFF;
+                array[offset + 1] = (value >> 8) & 0xFF;
+            } else {
+                array[offset] = (value >> 8) & 0xFF;
+                array[offset + 1] = value & 0xFF;
+            }
+        }
+
+        // Helper to write a 32-bit unsigned integer to a Uint8Array
+        function writeUint32(array, offset, value, littleEndian) {
+            if (littleEndian) {
+                array[offset] = value & 0xFF;
+                array[offset + 1] = (value >> 8) & 0xFF;
+                array[offset + 2] = (value >> 16) & 0xFF;
+                array[offset + 3] = (value >> 24) & 0xFF;
+            } else {
+                array[offset] = (value >> 24) & 0xFF;
+                array[offset + 1] = (value >> 16) & 0xFF;
+                array[offset + 2] = (value >> 8) & 0xFF;
+                array[offset + 3] = value & 0xFF;
+            }
+        }
+        
     });
 </script>
