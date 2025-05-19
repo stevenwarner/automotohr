@@ -34,19 +34,23 @@ $products = $pageContent["page"]["sections"]["section2"]["products"];
                 <!--  -->
                 <div class="panel-body jsDraggable">
                     <?php if ($products) { ?>
-                        <?php foreach ($products as $key => $value) { ?>
+                        <?php foreach ($products as $key => $value) {
+                        ?>
 
                             <div class="jsCardsSortOrder_<?= $tagIndex; ?>" data-key="<?= $key; ?>" data-index="<?= $tagIndex; ?>">
                                 <div class="row" data-key="<?= $key; ?>">
                                     <div class="col-sm-3 <?= $value["direction"] == "left_to_right" ? "col-sm-push-7" : ""; ?>">
-                                        <?= getSourceByType(
-                                            $value["sourceType"],
-                                            $value["sourceFile"]
-                                        ); ?>
+                                        <?php if ($value["sourceFile"] != null || $value["sourceFile"] != '') { ?>
+                                            <?= getSourceByType(
+                                                $value["sourceType"],
+                                                $value["sourceFile"]
+                                            ); ?>
+                                        <?php } ?>
+
                                     </div>
                                     <div class="col-sm-7 <?= $value["direction"] == "left_to_right" ? "col-sm-pull-3" : ""; ?>">
                                         <h3><?= convertToStrip($value["mainHeading"]); ?></h3>
-                                        <h4><?= convertToStrip($value["subHeading"]); ?></h4>                                        
+                                        <h4><?= convertToStrip($value["subHeading"]); ?></h4>
                                         <p class="text"><?= convertToStrip($value["details"]); ?></p>
                                         <a href="<?= main_url($value["buttonLink"]); ?>" target="_blank" class="btn btn-success">
                                             <?= $value["buttonText"]; ?>
@@ -75,7 +79,7 @@ $products = $pageContent["page"]["sections"]["section2"]["products"];
                                             <i class="fa fa-edit" aria-hidden="true"></i>
                                             &nbsp;Edit
                                         </button>
-                                 
+
                                     </div>
                                 </div>
                                 <hr />
