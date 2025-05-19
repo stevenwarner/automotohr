@@ -2226,37 +2226,76 @@ class Home extends CI_Controller
         if (!$pageContent) {
             return show_404();
         }
+
+
         //
         $data['pageContent'] = $pageContent;
         // set meta
         $data["meta"] = $pageContent["meta"];
-        // css
-        $data['pageCSS'] = [
-            'v1/plugins/bootstrap5/css/bootstrap.min',
-            'v1/plugins/fontawesome/css/all',
-        ];
-        // js
-        $data['pageJs'] = [
-            "https://www.google.com/recaptcha/api.js",
-            "https://code.jquery.com/jquery-3.5.1.min.js",
-        ];
-        // css bundle
-        $data['appCSS'] = bundleCSS([
-            "v1/plugins/alertifyjs/css/alertify.min",
-            'v1/app/css/theme',
-            'v1/app/css/pages',
-        ], $this->css, 'd_page', true);
-        // js bundle
-        $data['appJs'] = bundleJs([
-            'v1/plugins/bootstrap5/js/bootstrap.bundle',
-            'v1/plugins/alertifyjs/alertify.min',
-            'js/jquery.validate.min',
-            'js/app_helper',
-            'v1/app/js/pages/schedule_demo',
-        ], $this->js, 'd_page', $this->disableMinifiedFiles);
+
+
+        if (isDefaultPage($slug, true)) {
+            $data['meta'] = [];
+            $data['meta']['title'] = $pageContent['page']['meta']['title'];
+            $data['meta']['description'] = $pageContent['page']['meta']['description'];
+            $data['meta']['keywords'] = $pageContent['page']['meta']['keywords'];
+
+            $data['pageCSS'] = [
+                'v1/plugins/bootstrap5/css/bootstrap.min',
+                'v1/plugins/fontawesome/css/all.min',
+                 "v1/plugins/alertifyjs/css/alertify.min",
+                'v1/app/css/theme',
+                'v1/app/css/pages',
+                'v1/app/css/legal', "css"
+            ];
+
+               $data['pageJs'] = [
+                "https://www.google.com/recaptcha/api.js",
+                 'v1/plugins/jquery/jquery-3.7.min',
+                'v1/plugins/bootstrap5/js/bootstrap.bundle',
+                'v1/plugins/alertifyjs/alertify.min',
+                'js/jquery.validate.min',
+                'js/app_helper',
+                'v1/app/js/pages/home',
+                'v1/app/js/pages/schedule_demo',
+            ];
+
+
+        } else {
+
+            // css
+            $data['pageCSS'] = [
+                'v1/plugins/bootstrap5/css/bootstrap.min',
+                'v1/plugins/fontawesome/css/all',
+            ];
+            // js
+            $data['pageJs'] = [
+                "https://www.google.com/recaptcha/api.js",
+                "https://code.jquery.com/jquery-3.5.1.min.js",
+            ];
+            // css bundle
+            $data['appCSS'] = bundleCSS([
+                "v1/plugins/alertifyjs/css/alertify.min",
+                'v1/app/css/theme',
+                'v1/app/css/pages',
+            ], $this->css, 'd_page', true);
+            // js bundle
+            $data['appJs'] = bundleJs([
+                'v1/plugins/bootstrap5/js/bootstrap.bundle',
+                'v1/plugins/alertifyjs/alertify.min',
+                'js/jquery.validate.min',
+                'js/app_helper',
+                'v1/app/js/pages/schedule_demo',
+            ], $this->js, 'd_page', $this->disableMinifiedFiles);
+        }
+
 
         $this->load->view($this->header, $data);
-        $this->load->view('v1/app/dynamic_pages');
+        if (isDefaultPage($slug, true)) {
+            $this->load->view('v1/app/default_dynamic_pages');
+        } else {
+            $this->load->view('v1/app/dynamic_pages');
+        }
         $this->load->view($this->footer);
     }
 }

@@ -4930,3 +4930,23 @@ if (!function_exists('getPageFooterLinks')) {
         return  $CI->db->get('cms_pages_new')->result_array();
     }
 }
+
+//
+if (!function_exists('isDefaultPage')) {
+
+    function isDefaultPage($page, $slug = false)
+    {
+        //
+        $CI = &get_instance();
+        $CI->db
+            ->select('is_default');
+        if ($slug == true) {
+            $CI->db->where('slug', $page);
+        } else {
+            $CI->db->where('page', $page);
+        }
+        $CI->db->where('status', 1);
+        $idefault = $CI->db->get('cms_pages_new')->row_array();
+        return  $idefault['is_default'];
+    }
+}

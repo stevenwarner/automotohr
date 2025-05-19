@@ -1709,17 +1709,12 @@ class Cms extends Admin_Controller
         $this->data['page'] = $page_data;
         $this->data["page_title"] = "Edit  page :: AutomotoHR.com";
 
-
         // get the page
         $this->data["pageContent"] = json_decode($this->data["page"]["content"], true);
         $this->data["PageScripts"] = [
             "ckeditor/ckeditor"
         ];
         //
-
-
-
-
         $this->data["appCSS"] = bundleCSS([
             "v1/plugins/ms_modal/main",
             "v1/plugins/ms_uploader/main",
@@ -1731,12 +1726,9 @@ class Cms extends Admin_Controller
         $files = [
             "v1/cms/page/common_page"
         ];
-
-
         $this->data["PageScripts"] = [
             "ckeditor/ckeditor"
         ];
-
         //
         $this->data["appJs"] = bundleJs(array_merge([
             "v1/plugins/ms_modal/main",

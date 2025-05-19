@@ -133,7 +133,7 @@ $(function () {
         event.stopPropagation();
         //
         const index = $(this).data("index");
-        
+
         //
         return _confirm(
             "Do you really wan tto delete this section?",
@@ -220,7 +220,7 @@ $(function () {
         const index = $(this).closest(".row").data("key");
         const tagIndex = $(this).closest(".row").data("index");
         //
-        
+
         Modal(
             {
                 Id: "jsEditModal",
@@ -313,7 +313,7 @@ $(function () {
         if (XHR !== null) {
             XHR.abort();
         }
-        
+
         //
         XHR = $.ajax({
             url: baseUrl("cms/ui/" + page),
@@ -491,44 +491,79 @@ $(function () {
 
 
     //
-    	/**
-	 * Updates the data on page
-	 * @param {*} formDataObj
-	 * @param {*} buttonRef
-	 * @param {string} redirectTo
-	 * @returns
-	 */
-	function processCommonCardSection(formDataObj, buttonRef, redirectTo) {
-		//
-		if (XHR !== null) {
-			return false;
-		}
-		const pageId = getSegment(4);
-		const btnHook = callButtonHook(buttonRef, true);
-		//
-		XHR = $.ajax({
-			url: baseUrl("cms/" + pageId + "/tag/card"),
-			method: "POST",
-			data: formDataObj,
-			processData: false,
-			contentType: false,
-		})
-			.always(function () {
-				XHR = null;
-				callButtonHook(btnHook, false);
-			})
-			.fail(handleErrorResponse)
-			.done(function (resp) {
-				return _success(resp.msg, function () {
-					window.location.href = baseUrl(
-						"manage_admin/cms/page/commonedit/" +
-							getSegment(4) +
-							"/?page=" +
-							redirectTo
-					);
-				});
-			});
-	}
+    /**
+ * Updates the data on page
+ * @param {*} formDataObj
+ * @param {*} buttonRef
+ * @param {string} redirectTo
+ * @returns
+ */
+    function processCommonCardSection(formDataObj, buttonRef, redirectTo) {
+        //
+        if (XHR !== null) {
+            return false;
+        }
+        const pageId = getSegment(4);
+        const btnHook = callButtonHook(buttonRef, true);
+        //
+        XHR = $.ajax({
+            url: baseUrl("cms/" + pageId + "/tag/card"),
+            method: "POST",
+            data: formDataObj,
+            processData: false,
+            contentType: false,
+        })
+            .always(function () {
+                XHR = null;
+                callButtonHook(btnHook, false);
+            })
+            .fail(handleErrorResponse)
+            .done(function (resp) {
+                return _success(resp.msg, function () {
+                    window.location.href = baseUrl(
+                        "manage_admin/cms/page/commonedit/" +
+                        getSegment(4) +
+                        "/?page=" +
+                        redirectTo
+                    );
+                });
+            });
+    }
 
+    //
+    function processData(formDataObj, buttonRef, redirectTo) {
+        //
+        if (XHR !== null) {
+            return false;
+        }
+
+        const pageId = getSegment(4);
+        const btnHook = callButtonHook(buttonRef, true);
+        //
+        XHR = $.ajax({
+            url: baseUrl("cms/" + pageId + "/section/"),
+            method: "POST",
+            data: formDataObj,
+            processData: false,
+            contentType: false,
+        })
+            .always(function () {
+                XHR = null;
+                callButtonHook(btnHook, false);
+            })
+            .fail(handleErrorResponse)
+            .done(function (resp) {
+                return _success(resp.msg, function () {
+                    window.location.href = baseUrl(
+                        "manage_admin/cms/page/commonedit/" +
+                        getSegment(4) +
+                        "/?page=" +
+                        redirectTo
+                    );
+                });
+            });
+    }
+
+    window.processOldData = processData;
 
 });
