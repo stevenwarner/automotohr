@@ -63,7 +63,7 @@ $creds = getCreds('AHR');
 
     /* Main Style Started */
     .main {
-        height: calc(100vh - 173px);
+        min-height: calc(100vh - 173px);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -342,6 +342,8 @@ $creds = getCreds('AHR');
     let audioContext;
     let nextScheduledTime = 0;
     let scriptProcessor;
+    const sampleRate = 24000;
+    let currentSource = null;
 
     document.addEventListener('DOMContentLoaded', function() {
 
@@ -372,77 +374,6 @@ $creds = getCreds('AHR');
                 }
             });
 
-            // Handle bot responses
-            socket.on('botResponse', (data) => {
-                playDeepgramAudio(data.audio, data.format || 'mp3');
-                return false;
-                try {
-                    const message = data;
-                
-                    switch (message.type) {
-                        case 'audio':
-                            // Process audio data
-                            audioQueue.push(data.data);
-                            if(audioQueue.length === 1) {
-                                console.log('audio data', data.data)
-                                playDeepgramAudio(data.data, 'mp3');
-                            }
-                        break;
-                        
-                        case 'info':
-                            console.log('Info: ' + message.message);
-                        break;
-                        
-                        case 'error':
-                            console.error('Error: ' + message.message);
-                        break;
-                        
-                        default:
-                        console.log('Received unknown message type: ' + message.type);
-                    }
-                } catch (error) {
-                    console.error('Error processing message: ' + error.message);
-                }
-                
-                return false;
-            });
-
-            // 4. Method
-            // socket.on('message', async (data) => {
-            //     try {
-            //         // Make sure we have a properly initialized audio context first
-            //         initAudioContext();
-                    
-            //         // Handle different message formats
-            //         let message;
-            //         if (typeof data === 'string') {
-            //             try {
-            //                 message = JSON.parse(data);
-            //             } catch (e) {
-            //                 console.error('Failed to parse message as JSON:', e);
-            //                 return;
-            //             }
-            //         } else {
-            //             message = data;
-            //         }
-                    
-            //         // Process audio data if available
-            //         if (message && message.type === 'audio' && Array.isArray(message.data)) {
-            //             // Convert array back to Uint8Array
-            //             const uint8Array = new Uint8Array(message.data);
-                        
-            //             // Process the audio data
-            //             processAudioData(uint8Array.buffer);
-            //         } else {
-            //             console.log('Received non-audio message:', message);
-            //         }
-            //     } catch (error) {
-            //         console.error('Error handling socket message:', error);
-            //     }
-
-            // });
-
-            // 5. Method
             socket.on('message', async (data) => {
                 try {
                     data = JSON.parse(data);
@@ -468,10 +399,8 @@ $creds = getCreds('AHR');
 
 
             socket.on('speaking', (isSpeaking) => {
-                if(isSpeaking && window.currentAudio) {
-                    window.currentAudio.pause();
-                    window.currentAudio.currentTime = 0;
-                    window.currentAudio = null;
+                if(isSpeaking) {
+                    stopPlayback();
                 }
             })
 
@@ -517,7 +446,7 @@ $creds = getCreds('AHR');
                 // Store the stream for later use
                 window.audioStream = audioStream;
 
-                audioContext = new AudioContext({ sampleRate: 16000 });
+                audioContext = new AudioContext({ sampleRate: sampleRate });
                 const source = audioContext.createMediaStreamSource(stream);
                 scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
 
@@ -582,76 +511,6 @@ $creds = getCreds('AHR');
         }
         setupSocketConnection();
 
-
-        // Function to play Deepgram audio from base64 data
-        function playDeepgramAudio(base64AudioData, format = 'mp3') {
-            // Stop any playing audio first
-            if (window.currentAudio) {
-                window.currentAudio.pause();
-                window.currentAudio.currentTime = 0;
-                window.currentAudio = null;
-            }
-            
-            try {
-                const byteCharacters = atob(base64AudioData);
-                const byteArrays = [];
-                
-                for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-                    const slice = byteCharacters.slice(offset, offset + 512);
-                    
-                    const byteNumbers = new Array(slice.length);
-                    for (let i = 0; i < slice.length; i++) {
-                        byteNumbers[i] = slice.charCodeAt(i);
-                    }
-                    
-                    const byteArray = new Uint8Array(byteNumbers);
-                    byteArrays.push(byteArray);
-                }
-                
-                const audioBlob = new Blob(byteArrays, { type: 'audio/wav' });
-                
-                // Create audio URL and audio element
-                const audioUrl = URL.createObjectURL(audioBlob);
-                const audio = new Audio(audioUrl);
-                // const audio = new Audio(`data:audio/${format};base64,${base64AudioData}`);
-                
-                // Store reference to current audio
-                window.currentAudio = audio;
-                
-                // Add event listeners
-                window.currentAudio.addEventListener('play', () => {
-                    console.log('Bot audio started playing');
-                    // You can add UI indicator here that bot is speaking
-                    // document.querySelector('.bot .icon-wrapper').classList.add('speaking');
-                });
-                
-                window.currentAudio.addEventListener('ended', () => {
-                    console.log('Bot audio finished playing');
-                    window.currentAudio = null;
-                    
-                    // Remove speaking indicator
-                    // document.querySelector('.bot .icon-wrapper').classList.remove('speaking');
-                    
-                    // Clean up the blob URL
-                    URL.revokeObjectURL(audioUrl);
-                });
-                
-                window.currentAudio.addEventListener('error', (e) => {
-                    console.error('Audio playback error:', e);
-                    // document.querySelector('.bot .icon-wrapper').classList.remove('speaking');
-                    URL.revokeObjectURL(audioUrl);
-                });
-                
-                // Play the audio
-                window.currentAudio.play().catch(err => {
-                    console.error('Error playing audio:', err);
-                    // document.querySelector('.bot .icon-wrapper').classList.remove('speaking');
-                });
-            } catch (error) {
-                console.error('Error processing or playing audio:', error);
-            }
-        }
-
         function stopInterview() {
             interviewStarted = false;
             // recognition.stop();
@@ -708,12 +567,13 @@ $creds = getCreds('AHR');
     
             isPlaying = true;
             const float32Array = audioQueue.shift();
-            const audioBuffer = audioContext.createBuffer(1, float32Array.length, 16000);
+            const audioBuffer = audioContext.createBuffer(1, float32Array.length, sampleRate);
             audioBuffer.getChannelData(0).set(float32Array);
     
             const source = audioContext.createBufferSource();
             source.buffer = audioBuffer;
             source.connect(audioContext.destination);
+            currentSource = source;
     
             // Calculate precise timing
             const now = audioContext.currentTime;
@@ -727,5 +587,17 @@ $creds = getCreds('AHR');
             };
         }
         
+        function stopPlayback() {
+            audioQueue.length = 0; // Clear the queue
+            if (currentSource) {
+                try {
+                    currentSource.stop();
+                } catch (e) {
+                    console.warn("Audio already stopped:", e.message);
+                }
+                currentSource = null;
+            }
+            isPlaying = false;
+        }
     });
 </script>
