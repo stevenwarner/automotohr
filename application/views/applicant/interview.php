@@ -44,6 +44,7 @@ $creds = getCreds('AHR');
         justify-content: center;
         width: max-content;
         border-radius: 100px;
+        overflow: hidden;
     }
     .timer-wrapper {
         margin-left: auto;
@@ -134,7 +135,7 @@ $creds = getCreds('AHR');
     }
 
     button.end-call {
-        margin-top: 70px;
+        margin: 70px 0;
         background-color: #FF4343;
         width: 87px;
         height: 46px;
@@ -143,7 +144,43 @@ $creds = getCreds('AHR');
         box-shadow: 0px 4px 4px 0px #00000040;
         cursor: pointer;
     }
+
+    @media screen and (max-width: 1025px) {
+        .header,
+        .conversation {
+            flex-direction: column;
+            align-items: center;
+        }
+        .header .logo-wrapper,
+        .header .title-wrapper,
+        .header .timer-wrapper {
+            margin: 0;
+            width: max-content;
+        }
+
+        .conversation {
+            margin-top: 70px;
+        }
+    }
+
+    @media screen and (max-width: 769px) {
+        .header {
+            max-width: calc(100vw - 50px);
+        }
+        .header .title-wrapper {
+            width: 100%;
+            overflow: hidden;
+            border-radius: 100px;
+        }
+
+        .header .title-wrapper span {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+    }
 </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet" />
@@ -168,12 +205,12 @@ $creds = getCreds('AHR');
         </div>
         <div class="title-wrapper">
             <div class="page-title">
-                <span>Interviewing for job "Software Engineer II"</span>
+                <span>Interviewing for job "<?php echo $portal_job_list['desired_job_title']; ?>"</span>
             </div>
         </div>
 
         <div class="timer-wrapper">
-            <span class="timer">Total Call Time: 02:10</span>
+            <span class="timer">Total Call Time: &nbsp; <span id="time">00:00</span> </span>
         </div>
     </div>
 
@@ -329,7 +366,7 @@ $creds = getCreds('AHR');
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <script>
-    const job_list_sid = `<?php echo $portal_job_list["sid"]; ?>`;
+    const job_list_sid = `<?php echo $portal_job_list["jobs_list_sid"]; ?>`;
     const ServerPath = '<?php echo $creds->API_BROWSER_URL; ?>';
     let socket;
     let interviewStarted = false;
@@ -345,7 +382,36 @@ $creds = getCreds('AHR');
     const sampleRate = 24000;
     let currentSource = null;
 
+    // timer variables
+    let timerInterval;
+
     document.addEventListener('DOMContentLoaded', function() {
+
+        function startCallTimer() {
+            const timeElement = document.querySelector('.timer #time');
+            let [minutes, seconds] = timeElement.textContent.split(':').map(Number);
+
+            timerInterval = setInterval(() => {
+            seconds++;
+            if (seconds === 60) {
+                seconds = 0;
+                minutes++;
+            }
+
+            // Format MM:SS
+            const formattedTime = 
+                String(minutes).padStart(2, '0') + ':' + 
+                String(seconds).padStart(2, '0');
+
+            timeElement.textContent = formattedTime;
+            }, 1000);
+        }
+
+        function stopCallTimer() {
+            clearInterval(timerInterval);
+        }
+
+        startCallTimer();
 
         // Clear previous audio queue
         audioQueue = [];
