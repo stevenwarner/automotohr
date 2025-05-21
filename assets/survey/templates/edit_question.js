@@ -10,6 +10,7 @@ $(function editQuestion() {
         choice_list: {},
         video_type: "upload",
         video_file_name: "",
+        tag: "",
     };
     //
     let callbackReference;
@@ -143,7 +144,6 @@ $(function editQuestion() {
     function loadEditQuestionView(question, callback) {
         // set the question
         questionObj = question;
-        console.log(question)
         // save callback reference
         callbackReference = callback;
         // initiate recorder

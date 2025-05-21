@@ -50,19 +50,19 @@ function getDescriptionPreview(obj) {
     rows += `<div class="panel panel-default jsQuestionDescription" data-id="desc_${obj.question_id}">`;
     rows += `<div class="panel-heading">`;
     rows += `   <div class="row">`;
-    rows += `       <div class="col-xs-8">`;
+    rows += `       <div class="col-xs-9">`;
     rows += `           <h1 class="panel-text-heading text-medium jsCollapseBtn" data-target="collapse${obj.question_id}">`;
     rows += `               <strong>`;
-    rows += `               <i class="fa fa-align-left"></i>`;
-    rows += obj.description;
+    rows += `               <i class="fa fa-align-left"></i>&nbsp;`;
+    rows += obj.plainDescription;
     rows += `               </strong>`;
     rows += `           </h1>`;
     rows += `       </div>`;
-    rows += `       <div class="col-xs-4 text-right panel-text-heading" style="margin-top: 5px;">`;
-    rows += `               <button type="button" class="btn btn-warning jsEditQuestion" title="Edit Question">`;
+    rows += `       <div class="col-xs-3 text-right panel-text-heading" style="margin-top: 5px;">`;
+    rows += `               <button type="button" class="btn btn-warning jsTemplateEditDescription" title="Edit Question">`;
     rows += `                   <i class="fa fa-edit"></i>`;
     rows += `               </button>`;
-    rows += `               <button type="button" class="btn btn-danger jsRemoveQuestion" title="Remove Question">`;
+    rows += `               <button type="button" class="btn btn-danger jsRemoveDescription" title="Remove Question">`;
     rows += `                   <i class="fa fa-trash"></i>`;
     rows += `               </button>`;
     rows += `       </div>`;
@@ -441,4 +441,25 @@ function vimeoLinkParser(link) {
         /^.*(vimeo\.com\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/;
     const match = link.match(regExp);
     return match && match[5].length == 9 ? match[5] : false;
+}
+
+function getSlug(description) {
+    return $("<div>").html(description).text().trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove invalid characters
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/-+/g, '-'); // Collapse multiple hyphens
+}
+
+function generateRandomAndUniqueId() {
+    // Generate a random number between 1 and 1000000
+    const randomNumber = Math.floor(Math.random() * 1000000) + 1;
+
+    // Get the current timestamp
+    const timestamp = Date.now();
+
+    // Combine the random number and timestamp to create a unique ID
+    const uniqueId = `${randomNumber}-${timestamp}`;
+
+    return uniqueId;
 }

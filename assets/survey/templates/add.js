@@ -61,9 +61,7 @@ $(function () {
             return;
         }
 
-        processQuestions();
         template.questions = questionsArray;
-
 
         saveTemplate();
     });
@@ -90,7 +88,7 @@ $(function () {
             siteModalRef.closeModal();
             _success(response.message, function () {
                 // later on refresh templates
-                generateView();
+                getTemplates();
             })
 
         } catch (error) {
@@ -101,7 +99,8 @@ $(function () {
 
     function startTemplateAddProcess() {
         // start the modal
-        siteModalRef = $("#jsSurveyTemplateAdd").msSiteModal();
+        siteModalRef = $.msSiteModal();
+        siteModalRef.loader(true).open();
         // generate view
         generateView();
     }
@@ -132,7 +131,15 @@ $(function () {
             loadQuestionsView();
             siteModalRef.loader(false);
             showView("basic");
-            $("#jsAddQuestionsArea").sortable()
+            $("#jsAddQuestionsArea").sortable({
+                stop: function (event) {
+                    console.log(event);
+                    processQuestions();
+                },
+                onchange: function (event) {
+                    console.log(event);
+                }
+            })
         } catch (error) {
             handleErrorResponse(error);
             siteModalRef.closeModal()
@@ -266,8 +273,8 @@ $(function () {
         function (event) {
             event.preventDefault();
             showView("add_question");
-
             loadAddQuestionView(function (obj) {
+                obj.tag = getTheLastDescription();
                 questionsArray.push(obj);
                 loadQuestionsView();
                 showView("basic");
@@ -281,34 +288,72 @@ $(function () {
         function (event) {
             event.preventDefault();
             showView("add_description");
-            // if (!CKEDITOR.instances["jsAddEditDescription"]) {
-            //     CKEDITOR.replace("jsAddEditDescription", {
-            //         toolbar: [
-            //             { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] }
-            //         ]
-            //     });
-            // }
-            // CKEDITOR.instances["jsAddEditDescription"].setData("");
+            if (!CKEDITOR.instances["jsAddEditDescription"]) {
+                CKEDITOR.replace("jsAddEditDescription", {
+                    toolbar: [
+                        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] }
+                    ]
+                });
+            }
+            CKEDITOR.instances["jsAddEditDescription"].setData("");
         }
     );
 
+    $(document).on(
+        "click",
+        ".jsTemplateEditDescription",
+        function (event) {
+            event.preventDefault();
+            const descriptionId = $(this).closest(".jsQuestionDescription").data("id").replace("desc_", "");
+            const descriptionObject = getTheQuestionObjById(descriptionId);
+
+            console.log(descriptionId)
+            console.log(descriptionObject)
+
+            showView("add_description");
+
+            if (!CKEDITOR.instances["jsAddEditDescription"]) {
+                CKEDITOR.replace("jsAddEditDescription", {
+                    toolbar: [
+                        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] }
+                    ]
+                });
+            }
+            CKEDITOR.instances["jsAddEditDescription"].setData(
+                descriptionObject.description
+            );
+
+            console.log(descriptionObject)
+        }
+    );
+
+
+    questionsArray.push({
+        question_id: generateRandomAndUniqueId(),
+        description: "Description 1",
+        plainDescription: "Descritpion 1",
+        slug: "description_1",
+        questions: [],
+    });
     $(document).on(
         "click",
         ".jsAddEditDescription",
         function (event) {
             event.preventDefault();
 
-            const description = $("#jsAddEditDescription").val().trim();
+            const description = CKEDITOR.instances["jsAddEditDescription"].getData();
 
             if (!description.trim() || $("<div>").html(description).text().trim() === "") {
                 _error("Description cannot be empty.");
                 return;
             }
-
-
+            //
             questionsArray.push({
-                question_id: 0,
-                description: description
+                question_id: generateRandomAndUniqueId(),
+                description: description,
+                plainDescription: $("<div>").html(description).text().trim(),
+                slug: getSlug(description),
+                questions: [],
             });
 
             showView("basic")
@@ -377,7 +422,9 @@ $(function () {
         //
         sortedIds.map(function (id) {
             if (id.substr(0, 5) === "desc_") {
-                currentDescription = getTheQuestionObjById(id.replace("desc_", "")).description;
+                question = getTheQuestionObjById(id.replace("desc_", ""));
+                newQuestionsArray.push(question);
+                currentDescription = question.plainDescription;
             } else {
                 let localQuestion = getTheQuestionObjById(id);
                 localQuestion.tag = currentDescription;
@@ -388,6 +435,17 @@ $(function () {
         questionsArray = newQuestionsArray;
     }
 
+    function getTheLastDescription() {
+        let lastDescription = "";
+        //
+        questionsArray.map(function (questionObj) {
+            if (questionObj.description !== undefined) {
+                lastDescription = questionObj.description;
+            }
+        });
+        //
+        return lastDescription;
+    }
     window.startTemplateAddProcess = startTemplateAddProcess;
 });
 

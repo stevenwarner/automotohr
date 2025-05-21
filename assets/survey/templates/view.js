@@ -114,7 +114,7 @@ $(function () {
             tr += `</tr>`
         });
 
-        $("#jsTemplatesArea").html(tr)
+        $("#jsTemplatesArea").html(tr);
     }
 
     $(document).on("click", ".jsPreviewSurveyTemplate", function () {
@@ -127,7 +127,7 @@ $(function () {
         if (previewModal !== undefined) {
             previewModal.closeModal()
         }
-        previewModal = $("#jsSurveyTemplatePreview").msSiteModal();
+        previewModal = $.msSiteModal();
         previewModal.setContent("");
         previewModal.loader(true);
         // Logic to preview the template

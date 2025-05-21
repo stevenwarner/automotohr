@@ -70,8 +70,8 @@ class Base_survey extends CI_Controller
             ],
         ];
         // set site modal plugin
-        $this->setPlugin("plugins/ms_site_modal/main", "css");
-        $this->setPlugin("plugins/ms_site_modal/main");
+        $this->setPlugin("v1/plugins/ms_site_modal/msSiteModal", "css");
+        $this->setPlugin("v1/plugins/ms_site_modal/jquery.msSiteModal", "js");
         //
         if ($this->isSecureUrl) {
             //
