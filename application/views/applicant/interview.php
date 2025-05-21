@@ -369,6 +369,7 @@ $creds = getCreds('AHR');
     const job_list_sid = `<?php echo $portal_job_list["jobs_list_sid"]; ?>`;
     const ServerPath = '<?php echo $creds->API_BROWSER_URL; ?>';
     let socket;
+    let currentAudio = null;
     let interviewStarted = false;
     let mediaRecorder = null;
     let audioStream = null;
@@ -381,11 +382,30 @@ $creds = getCreds('AHR');
     let scriptProcessor;
     const sampleRate = 24000;
     let currentSource = null;
+    let gainNode = null;
+    // Crossfade duration in seconds
+    const CROSSFADE_TIME = 0.008; // 8ms crossfade
 
     // timer variables
     let timerInterval;
 
     document.addEventListener('DOMContentLoaded', function() {
+
+        // Initialize AudioContext
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)({
+                    sampleRate: sampleRate
+                });
+                nextScheduledTime = audioContext.currentTime
+
+                // Create main gain node
+                gainNode = audioContext.createGain();
+                gainNode.gain.value = 1.0;
+                gainNode.connect(audioContext.destination);
+            }
+            return audioContext;
+        }
 
         function startCallTimer() {
             const timeElement = document.querySelector('.timer #time');
@@ -440,33 +460,56 @@ $creds = getCreds('AHR');
                 }
             });
 
+            /* -----------------------
+            3. Method (Play in audio wav format)
+            ----------------------- */
+
             socket.on('message', async (data) => {
                 try {
-                    data = JSON.parse(data);
-
-                    // Step 1: Convert to Uint8Array (byte array)
-                    const uint8 = new Uint8Array(data.data.data);
-
-                    // Step 2: Convert Uint8Array to Int16Array (little-endian assumed)
-                    const int16Array = new Int16Array(uint8.buffer);
-                    const float32Array = convertInt16ToFloat32(int16Array);
+                    const parsedData = JSON.parse(data);
                     
-                    // Add to queue instead of scheduling immediately
-                    audioQueue.push(float32Array);
-                    
-                    // Start processing if not already playing
-                    if (!isPlaying) {
-                        processAudioQueue();
+                    if (parsedData.type === 'audio') {
+                        initAudioContext();
+
+                        const binaryString = atob(parsedData.data);
+                        const len = binaryString.length;
+                        const bytes = new Uint8Array(len);
+                        
+                        for (let i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+                        
+                        // const blob = new Blob([bytes], { type: 'audio/wav' });
+                        // const audioUrl = URL.createObjectURL(blob);
+                        
+                        // // Add to queue
+                        // audioQueue.push(audioUrl);
+                        
+                        // // Start playing if not already playing
+                        // if (!isPlaying) {
+                        //     playNextInQueue();
+                        // }
+
+                        // Decode the audio data
+                        try {
+                            const audioBuffer = await audioContext.decodeAudioData(bytes.buffer);
+                            // Add to queue and process
+                            audioQueue.push(audioBuffer);
+                            scheduleAudioPlayback();
+
+                        } catch (decodeError) {
+                            console.error('Error decoding audio:', decodeError);
+                        }
                     }
                 } catch (error) {
-                    console.error('Error processing message: ' + error.message);
+                    console.error('Error processing message:', error);
                 }
             });
-
 
             socket.on('speaking', (isSpeaking) => {
                 if(isSpeaking) {
                     stopPlayback();
+                    resetAudio();
                 }
             })
 
@@ -512,7 +555,9 @@ $creds = getCreds('AHR');
                 // Store the stream for later use
                 window.audioStream = audioStream;
 
-                audioContext = new AudioContext({ sampleRate: sampleRate });
+                initAudioContext();
+
+                // audioContext = new AudioContext({ sampleRate: sampleRate });
                 const source = audioContext.createMediaStreamSource(stream);
                 scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
 
@@ -608,7 +653,6 @@ $creds = getCreds('AHR');
             }
         }
 
-        // 5. Method to play audio
         function floatToInt16(floatArray) {
             const int16Array = new Int16Array(floatArray.length);
             for (let i = 0; i < floatArray.length; i++) {
@@ -617,52 +661,146 @@ $creds = getCreds('AHR');
             return int16Array;
         }
 
-        function convertInt16ToFloat32(int16Array) {
-            const float32Array = new Float32Array(int16Array.length);
-            for (let i = 0; i < int16Array.length; i++) {
-                float32Array[i] = int16Array[i] / 32768.0; // Normalize to [-1, 1]
-            }
-            return float32Array;
-        }
+        /* -----------------------
+           3. Method to play audio wav
+        ------------------------- */
 
-        function processAudioQueue() {
+        function playNextInQueue() {
             if (audioQueue.length === 0) {
                 isPlaying = false;
                 return;
             }
-    
-            isPlaying = true;
-            const float32Array = audioQueue.shift();
-            const audioBuffer = audioContext.createBuffer(1, float32Array.length, sampleRate);
-            audioBuffer.getChannelData(0).set(float32Array);
-    
-            const source = audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioContext.destination);
-            currentSource = source;
-    
-            // Calculate precise timing
-            const now = audioContext.currentTime;
-            const startTime = Math.max(now, nextScheduledTime);
             
-            source.start(startTime);
-            source.onended = () => {
-                // Schedule next chunk immediately after this one finishes
-                nextScheduledTime = startTime + audioBuffer.duration;
-                processAudioQueue();
+            isPlaying = true;
+            const audioUrl = audioQueue.shift();
+            
+            // Create and play audio
+            const audio = new Audio();
+            // currentAudio = audio;
+            
+            audio.onended = () => {
+                URL.revokeObjectURL(audioUrl); // Clean up
+                playNextInQueue();
             };
+            
+            audio.onerror = (e) => {
+                console.error('Audio playback error:', e);
+                URL.revokeObjectURL(audioUrl);
+                playNextInQueue(); // Skip to next
+            };
+            
+            audio.src = audioUrl;
+            audio.play().catch(e => console.error('Failed to play audio:', e));
         }
-        
-        function stopPlayback() {
-            audioQueue.length = 0; // Clear the queue
-            if (currentSource) {
-                try {
-                    currentSource.stop();
-                } catch (e) {
-                    console.warn("Audio already stopped:", e.message);
+
+        function scheduleAudioPlayback() {
+            // If we're already playing or no audio to play, return
+            if (audioQueue.length === 0) {
+                return;
+            }
+            
+            // Get the next buffer to play
+            const nextBuffer = audioQueue.shift();
+
+            // Apply gentle smoothing to start and end of buffer to prevent clicks
+            smoothBufferEdges(nextBuffer);
+            
+            // Create a source node
+            const source = audioContext.createBufferSource();
+            source.buffer = nextBuffer;
+
+            // Create a dedicated gain node for this source (for crossfading)
+            const sourceGain = audioContext.createGain();
+            sourceGain.gain.value = 1.0;
+            
+            // Connect source → sourceGain → main gainNode → destination
+            source.connect(sourceGain);
+            sourceGain.connect(gainNode);
+            
+            // If we're already scheduled into the future, keep scheduling
+            // Otherwise, start playing immediately
+            const startTime = Math.max(nextScheduledTime, audioContext.currentTime);
+
+            // Fade in this source
+            sourceGain.gain.setValueAtTime(0, startTime);
+            sourceGain.gain.linearRampToValueAtTime(1, startTime + CROSSFADE_TIME);
+            
+            // Fade out at the end
+            sourceGain.gain.setValueAtTime(1, startTime + nextBuffer.duration - CROSSFADE_TIME);
+            sourceGain.gain.linearRampToValueAtTime(0, startTime + nextBuffer.duration);
+
+            source.start(startTime);
+            currentSource = source;
+            
+            // Update scheduled time for next audio chunk
+            nextScheduledTime = startTime + nextBuffer.duration - CROSSFADE_TIME;
+            
+            // Keep playing consecutive audio chunks
+            source.onended = () => {
+                if (audioQueue.length > 0) {
+                    scheduleAudioPlayback();
                 }
+            };
+            
+            // If this is the first audio starting to play
+            if (!isPlaying) {
+                isPlaying = true;
+                
+                // Reset if current time has moved past our scheduled time
+                // (This can happen if playback was paused for a while)
+                if (audioContext.currentTime > nextScheduledTime) {
+                    nextScheduledTime = audioContext.currentTime;
+                }
+            }
+        }
+
+        // Apply smoothing to buffer edges to prevent clicks/pops
+        function smoothBufferEdges(audioBuffer) {
+            // Number of samples to smooth at each end
+            const smoothSamples = Math.floor(audioContext.sampleRate * 0.005); // 5ms smoothing
+            
+            // Process each channel
+            for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
+                const data = audioBuffer.getChannelData(channel);
+                
+                // Apply fade-in (start of buffer)
+                for (let i = 0; i < smoothSamples; i++) {
+                    const factor = i / smoothSamples;
+                    data[i] *= factor;
+                }
+                
+                // Apply fade-out (end of buffer)
+                for (let i = 0; i < smoothSamples; i++) {
+                    const factor = i / smoothSamples;
+                    data[data.length - 1 - i] *= factor;
+                }
+            }
+        }
+
+        function stopPlayback() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+            
+            // Clear URL objects to prevent memory leaks
+            audioQueue.forEach(url => URL.revokeObjectURL(url));
+            audioQueue = [];
+            isPlaying = false;
+        }
+
+        // Reset function (useful if you need to clear the audio)
+        function resetAudio() {
+            // Clear any pending audio
+            audioQueue = [];
+            nextScheduledTime = audioContext.currentTime;
+            
+            // If you want to stop currently playing audio
+            if (currentSource) {
+                currentSource.stop();
                 currentSource = null;
             }
+            
             isPlaying = false;
         }
     });
