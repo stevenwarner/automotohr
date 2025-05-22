@@ -471,6 +471,11 @@ $creds = getCreds('AHR');
                     if (parsedData.type === 'audio') {
                         initAudioContext();
 
+                        // If user is speaking, don't add to queue
+                        // if (isSpeaking) {
+                        //     return;
+                        // }
+
                         const binaryString = atob(parsedData.data);
                         const len = binaryString.length;
                         const bytes = new Uint8Array(len);
@@ -479,35 +484,37 @@ $creds = getCreds('AHR');
                             bytes[i] = binaryString.charCodeAt(i);
                         }
                         
-                        // const blob = new Blob([bytes], { type: 'audio/wav' });
-                        // const audioUrl = URL.createObjectURL(blob);
+                        // In Audio play format
+                        const blob = new Blob([bytes], { type: 'audio/wav' });
+                        const audioUrl = URL.createObjectURL(blob);
                         
-                        // // Add to queue
-                        // audioQueue.push(audioUrl);
+                        // Add to queue
+                        audioQueue.push(audioUrl);
                         
-                        // // Start playing if not already playing
-                        // if (!isPlaying) {
-                        //     playNextInQueue();
-                        // }
+                        // Start playing if not already playing
+                        if (!isPlaying) {
+                            playNextInQueue();
+                        }
 
                         // Decode the audio data
-                        try {
-                            const audioBuffer = await audioContext.decodeAudioData(bytes.buffer);
-                            // Add to queue and process
-                            audioQueue.push(audioBuffer);
-                            scheduleAudioPlayback();
+                        // try {
+                        //     const audioBuffer = await audioContext.decodeAudioData(bytes.buffer);
+                        //     // Add to queue and process
+                        //     audioQueue.push(audioBuffer);
+                        //     scheduleAudioPlayback();
 
-                        } catch (decodeError) {
-                            console.error('Error decoding audio:', decodeError);
-                        }
+                        // } catch (decodeError) {
+                        //     console.error('Error decoding audio:', decodeError);
+                        // }
                     }
                 } catch (error) {
                     console.error('Error processing message:', error);
                 }
             });
 
-            socket.on('speaking', (isSpeaking) => {
-                if(isSpeaking) {
+            socket.on('speaking', (_isSpeaking) => {
+                if(_isSpeaking) {
+                    console.log('_isSpeaking', _isSpeaking);
                     stopPlayback();
                     resetAudio();
                 }
@@ -676,7 +683,7 @@ $creds = getCreds('AHR');
             
             // Create and play audio
             const audio = new Audio();
-            // currentAudio = audio;
+            currentAudio = audio;
             
             audio.onended = () => {
                 URL.revokeObjectURL(audioUrl); // Clean up
@@ -693,89 +700,89 @@ $creds = getCreds('AHR');
             audio.play().catch(e => console.error('Failed to play audio:', e));
         }
 
-        function scheduleAudioPlayback() {
-            // If we're already playing or no audio to play, return
-            if (audioQueue.length === 0) {
-                return;
-            }
+        // function scheduleAudioPlayback() {
+        //     // If we're already playing or no audio to play, return
+        //     if (audioQueue.length === 0) {
+        //         return;
+        //     }
             
-            // Get the next buffer to play
-            const nextBuffer = audioQueue.shift();
+        //     // Get the next buffer to play
+        //     const nextBuffer = audioQueue.shift();
 
-            // Apply gentle smoothing to start and end of buffer to prevent clicks
-            smoothBufferEdges(nextBuffer);
+        //     // Apply gentle smoothing to start and end of buffer to prevent clicks
+        //     smoothBufferEdges(nextBuffer);
             
-            // Create a source node
-            const source = audioContext.createBufferSource();
-            source.buffer = nextBuffer;
+        //     // Create a source node
+        //     const source = audioContext.createBufferSource();
+        //     source.buffer = nextBuffer;
 
-            // Create a dedicated gain node for this source (for crossfading)
-            const sourceGain = audioContext.createGain();
-            sourceGain.gain.value = 1.0;
+        //     // Create a dedicated gain node for this source (for crossfading)
+        //     const sourceGain = audioContext.createGain();
+        //     sourceGain.gain.value = 1.0;
             
-            // Connect source → sourceGain → main gainNode → destination
-            source.connect(sourceGain);
-            sourceGain.connect(gainNode);
+        //     // Connect source → sourceGain → main gainNode → destination
+        //     source.connect(sourceGain);
+        //     sourceGain.connect(gainNode);
             
-            // If we're already scheduled into the future, keep scheduling
-            // Otherwise, start playing immediately
-            const startTime = Math.max(nextScheduledTime, audioContext.currentTime);
+        //     // If we're already scheduled into the future, keep scheduling
+        //     // Otherwise, start playing immediately
+        //     const startTime = Math.max(nextScheduledTime, audioContext.currentTime);
 
-            // Fade in this source
-            sourceGain.gain.setValueAtTime(0, startTime);
-            sourceGain.gain.linearRampToValueAtTime(1, startTime + CROSSFADE_TIME);
+        //     // Fade in this source
+        //     sourceGain.gain.setValueAtTime(0, startTime);
+        //     sourceGain.gain.linearRampToValueAtTime(1, startTime + CROSSFADE_TIME);
             
-            // Fade out at the end
-            sourceGain.gain.setValueAtTime(1, startTime + nextBuffer.duration - CROSSFADE_TIME);
-            sourceGain.gain.linearRampToValueAtTime(0, startTime + nextBuffer.duration);
+        //     // Fade out at the end
+        //     sourceGain.gain.setValueAtTime(1, startTime + nextBuffer.duration - CROSSFADE_TIME);
+        //     sourceGain.gain.linearRampToValueAtTime(0, startTime + nextBuffer.duration);
 
-            source.start(startTime);
-            currentSource = source;
+        //     source.start(startTime);
+        //     currentSource = source;
             
-            // Update scheduled time for next audio chunk
-            nextScheduledTime = startTime + nextBuffer.duration - CROSSFADE_TIME;
+        //     // Update scheduled time for next audio chunk
+        //     nextScheduledTime = startTime + nextBuffer.duration - CROSSFADE_TIME;
             
-            // Keep playing consecutive audio chunks
-            source.onended = () => {
-                if (audioQueue.length > 0) {
-                    scheduleAudioPlayback();
-                }
-            };
+        //     // Keep playing consecutive audio chunks
+        //     source.onended = () => {
+        //         if (audioQueue.length > 0) {
+        //             scheduleAudioPlayback();
+        //         }
+        //     };
             
-            // If this is the first audio starting to play
-            if (!isPlaying) {
-                isPlaying = true;
+        //     // If this is the first audio starting to play
+        //     if (!isPlaying) {
+        //         isPlaying = true;
                 
-                // Reset if current time has moved past our scheduled time
-                // (This can happen if playback was paused for a while)
-                if (audioContext.currentTime > nextScheduledTime) {
-                    nextScheduledTime = audioContext.currentTime;
-                }
-            }
-        }
+        //         // Reset if current time has moved past our scheduled time
+        //         // (This can happen if playback was paused for a while)
+        //         if (audioContext.currentTime > nextScheduledTime) {
+        //             nextScheduledTime = audioContext.currentTime;
+        //         }
+        //     }
+        // }
 
         // Apply smoothing to buffer edges to prevent clicks/pops
-        function smoothBufferEdges(audioBuffer) {
-            // Number of samples to smooth at each end
-            const smoothSamples = Math.floor(audioContext.sampleRate * 0.005); // 5ms smoothing
+        // function smoothBufferEdges(audioBuffer) {
+        //     // Number of samples to smooth at each end
+        //     const smoothSamples = Math.floor(audioContext.sampleRate * 0.005); // 5ms smoothing
             
-            // Process each channel
-            for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
-                const data = audioBuffer.getChannelData(channel);
+        //     // Process each channel
+        //     for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
+        //         const data = audioBuffer.getChannelData(channel);
                 
-                // Apply fade-in (start of buffer)
-                for (let i = 0; i < smoothSamples; i++) {
-                    const factor = i / smoothSamples;
-                    data[i] *= factor;
-                }
+        //         // Apply fade-in (start of buffer)
+        //         for (let i = 0; i < smoothSamples; i++) {
+        //             const factor = i / smoothSamples;
+        //             data[i] *= factor;
+        //         }
                 
-                // Apply fade-out (end of buffer)
-                for (let i = 0; i < smoothSamples; i++) {
-                    const factor = i / smoothSamples;
-                    data[data.length - 1 - i] *= factor;
-                }
-            }
-        }
+        //         // Apply fade-out (end of buffer)
+        //         for (let i = 0; i < smoothSamples; i++) {
+        //             const factor = i / smoothSamples;
+        //             data[data.length - 1 - i] *= factor;
+        //         }
+        //     }
+        // }
 
         function stopPlayback() {
             if (currentAudio) {
