@@ -604,7 +604,7 @@ $creds = getCreds('AHR');
                     // Configure ondataavailable handler
                     mediaRecorder.ondataavailable = (event) => {
                         if (event.data.size > 0 && socket && socket.connected) {
-                            socket.emit('audioData', event.data);
+                            socket.emit('audioData', {clientId: socket.id, job_list_sid, data: event.data});
                         }
                     };
                     
@@ -653,7 +653,6 @@ $creds = getCreds('AHR');
         function startInterview() {
             interviewStarted = true;
             try {
-                // Tell the server to start speech recognition with Deepgram
                 socket.emit('startSpeechRecognition', {job_list_sid});
             } catch (e) {
                 console.error('Error starting interview:', e);
