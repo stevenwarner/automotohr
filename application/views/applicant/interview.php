@@ -453,7 +453,7 @@ $creds = getCreds('AHR');
                 if (data.status === 'ready') {
                     // Deepgram connection is ready, setup audio recording
                     console.log(`Status: ${data.status} - ${data.message}`);
-                    setupAudioRecording(data.chatId);
+                    setupAudioRecording();
                 }
                 else {
                     console.log(`Status: ${data.status} - ${data.message}`);
@@ -549,7 +549,7 @@ $creds = getCreds('AHR');
         }
 
         // Add audio recording function for Deepgram
-        function setupAudioRecording(chatId) {
+        function setupAudioRecording() {
             console.log('Setting up audio recording...');
 
             // Request access to the microphone
