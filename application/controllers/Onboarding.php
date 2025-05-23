@@ -184,7 +184,7 @@ class Onboarding extends CI_Controller
                             $data_to_insert['is_required'] = $document['is_required'];
                             $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                             $data_to_insert['assign_location'] = "assign_group_from_employee_hr_document";
-                            
+
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
@@ -356,7 +356,11 @@ class Onboarding extends CI_Controller
                                                 }
                                             } else {
                                                 unset($assigned_documents[$key]);
+                                                continue;
                                             }
+                                        } elseif ($assigned_document["company_archive"] == 1) {
+                                            unset($assigned_documents[$key]);
+                                            continue;
                                         } else {
                                             if ($assigned_document['pay_roll_catgory'] == 1) {
                                                 $uncompleted_payroll_documents[] = $assigned_document;
@@ -366,33 +370,18 @@ class Onboarding extends CI_Controller
                                             $assigned_sids[] = $assigned_document['document_sid'];
                                         }
                                     } else {
-                                        if (str_replace('{{authorized_signature}}', '', $document_body) != $document_body) {
-                                            //
-                                            if (!empty($assigned_document['authorized_signature'])) {
-                                                if ($assigned_document['pay_roll_catgory'] == 0) {
-                                                    $signed_document_sids[] = $assigned_document['document_sid'];
-                                                    $signed_documents[] = $assigned_document;
-                                                    unset($assigned_documents[$key]);
-                                                } else if ($assigned_document['pay_roll_catgory'] == 1) {
-                                                    $signed_document_sids[] = $assigned_document['document_sid'];
-                                                    $completed_payroll_documents[] = $assigned_document;
-                                                    unset($assigned_documents[$key]);
-                                                }
-                                            } else {
-                                                if ($assigned_document['pay_roll_catgory'] == 1) {
-                                                    $uncompleted_payroll_documents[] = $assigned_document;
-                                                    unset($assigned_documents[$key]);
-                                                }
+
+
+
+                                        if ($assigned_document['pay_roll_catgory'] == 0) {
+                                            if ($assigned_document['status'] == 1 && $assigned_document['archive'] == 0) {
+                                                $assigned_sids[] = $assigned_document['document_sid'];
+                                                $no_action_required_sids[] = $assigned_document['document_sid'];
+                                                $no_action_required_documents[] = $assigned_document;
+                                                unset($assigned_documents[$key]);
                                             }
-                                            //
-                                            $assigned_sids[] = $assigned_document['document_sid'];
-                                        } else if ($assigned_document['pay_roll_catgory'] == 0) {
-                                            $assigned_sids[] = $assigned_document['document_sid'];
-                                            $no_action_required_sids[] = $assigned_document['document_sid'];
-                                            $no_action_required_documents[] = $assigned_document;
-                                            unset($assigned_documents[$key]);
                                         } else if ($assigned_document['pay_roll_catgory'] == 1) {
-                                            if ($assigned_document['user_consent'] == 1 && $assigned_document['document_sid'] == 0) {
+                                            if ($assigned_document['status'] == 1 && $assigned_document['archive'] == 0) {
                                                 $no_action_required_payroll_documents[] = $assigned_document;
                                                 unset($assigned_documents[$key]);
                                             }
@@ -4343,12 +4332,12 @@ class Onboarding extends CI_Controller
 
                 $value = '<div style="border: 1px dotted #000; padding:5px;"  contenteditable="true"></div>';
                 $document_content = str_replace('{{text}}', $value, $document_content);
-                $document_content = str_replace('{{short_text_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
-                $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
+                $document_content = str_replace('{{short_text_required}}', ' (<b>Required Field</b>)' . $value, $document_content);
+                $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)' . $value, $document_content);
 
                 $value = '<div style="border: 1px dotted #000; padding:5px; min-height: 145px;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
                 $document_content = str_replace('{{text_area}}', $value, $document_content);
-                $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
+                $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)' . $value, $document_content);
                 //
                 $checkboxRequired = '<div class="row">';
                 $checkboxRequired .= '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
@@ -6618,7 +6607,7 @@ class Onboarding extends CI_Controller
                             if (!empty($document['authorized_editable_date'])) {
                                 $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                                 $offer_letter['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_signature_date, $offer_letter['document_description']);
-                            } 
+                            }
                         }
                         //
                         $document_content = replace_tags_for_document($company_info['sid'], $user_sid, $user_type, $offer_letter['document_description'], $offer_letter['document_sid']);
@@ -9180,13 +9169,13 @@ class Onboarding extends CI_Controller
                     $assign_on = date("Y-m-d", strtotime($previous_form['sent_date']));
                     $compare_date = date("Y-m-d", strtotime('2020-01-06'));
                     $compare_date_2025 = date("Y-m-d", strtotime('2025-01-02'));
-                  
+
                     if ($this->form_validation->run() == FALSE) {
                         $this->load->view('onboarding/applicant_boarding_header', $data);
 
                         if ($assign_on >= $compare_date_2025) {
                             $this->load->view('onboarding/2025_w4_form');
-                        }elseif ($assign_on >= $compare_date) {
+                        } elseif ($assign_on >= $compare_date) {
                             $this->load->view('onboarding/2020_w4_form');
                         } else {
                             $this->load->view('onboarding/form_w4');

@@ -88,7 +88,7 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                             </thead>
                             <tbody>
                                 <?php if (sizeof($assigned_documents) || sizeof($uncompleted_offer_letter) || sizeof($uncompleted_payroll_documents)) { ?>
-                                    <?php $assigned_documents = array_reverse($assigned_documents);  ?>
+                                    <?php $assigned_documents = array_reverse($assigned_documents);                                    ?>
                                     <?php foreach ($assigned_documents as $document) { ?>
                                         <?php if ($document['archive'] != 1) { ?>
                                             <?php if ($document['status'] != 0) { ?>
