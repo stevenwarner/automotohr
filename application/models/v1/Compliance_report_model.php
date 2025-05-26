@@ -7544,4 +7544,36 @@ class Compliance_report_model extends CI_Model
 		return array_unique($ids);
 	}
 
+	public function getTeamsCSPManagers($teamIds)
+	{
+		$records = $this
+			->db
+			->select("departments_team_management.csp_managers_ids")
+			->where_in("departments_team_management.sid", $teamIds)
+			->where("departments_team_management.status", 1)
+			->where("departments_team_management.is_deleted", 0)
+			->where("departments_management.status", 1)
+			->where("departments_management.is_deleted", 0)
+			->join(
+				"departments_management",
+				"departments_management.sid = departments_team_management.department_sid",
+				"inner"
+			)
+			->get("departments_team_management")
+			->result_array();
+		//
+		if (!$records) {
+			return [];
+		}
+		//
+		$ids = [];
+		//
+		foreach ($records as $v0) {
+			$tmp = explode(",", $v0["csp_managers_ids"]);
+			$ids = array_merge($ids, $tmp);
+		}
+		//
+		return array_unique($ids);
+	}
+
 }

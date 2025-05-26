@@ -1736,8 +1736,16 @@ class Compliance_safety_reporting extends Base_csp
                     $this->data["report"]["allowed_departments"]
                 );
         }
+        if ($this->data["report"]["allowed_teams"]) {
+            // get department CSP employees
+            $allDTEmployeeIds = array_merge($allDTEmployeeIds, $this
+                ->compliance_report_model
+                ->getTeamsCSPManagers(
+                    $this->data["report"]["allowed_teams"]
+                ));
+        }
         //
-        $this->data["allDTEmployeeIds"] = $allDTEmployeeIds;
+        $this->data["allDTEmployeeIds"] = array_unique($allDTEmployeeIds);
         $this->data["reportId"] = $reportId;
         $this->data["incidentId"] = $incidentId;
         $this->data["itemId"] = $itemId;
