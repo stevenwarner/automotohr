@@ -383,8 +383,20 @@ $creds = getCreds('AHR');
     const sampleRate = 24000;
     let currentSource = null;
     let gainNode = null;
+    let audioAnalyser;
     // Crossfade duration in seconds
     const CROSSFADE_TIME = 0.008; // 8ms crossfade
+    
+    // Speeking detection
+    let voiceDetectionAnalyser = null;
+    let voiceDetectionSource = null;
+    let voiceDetectionDataArray = null;
+    let voiceCheckInterval = null;
+    let isSpeaking = false;
+    let silenceTimer = null;
+    let wasAudioPlaying = false;
+    const VOLUME_THRESHOLD = 120;
+    const SILENCE_DELAY = 1500;
 
     // timer variables
     let timerInterval;
@@ -398,6 +410,10 @@ $creds = getCreds('AHR');
                     sampleRate: sampleRate
                 });
                 nextScheduledTime = audioContext.currentTime
+
+                audioAnalyser = audioContext.createAnalyser();
+                audioAnalyser.fftSize = 256;
+                audioAnalyser.smoothingTimeConstant = 0.8;
 
                 // Create main gain node
                 gainNode = audioContext.createGain();
@@ -564,70 +580,233 @@ $creds = getCreds('AHR');
 
                 initAudioContext();
 
-                // audioContext = new AudioContext({ sampleRate: sampleRate });
-                const source = audioContext.createMediaStreamSource(stream);
-                scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+                // Setup voice detection using Web Audio API
+                setupVoiceDetection(stream);
 
-                scriptProcessor.onaudioprocess = (event) => {
-                    const floatData = event.inputBuffer.getChannelData(0);
-                    const int16Data = floatToInt16(floatData);
-                };
-        
-                source.connect(scriptProcessor);
-                scriptProcessor.connect(audioContext.destination);
+                // Setup MediaRecorder for sending audio data
+                setupMediaRecorder(stream);
 
-                try {
-                    // Check supported MIME types
-                    const mimeTypes = [
-                        'audio/webm',
-                        'audio/webm;codecs=opus',
-                        'audio/ogg;codecs=opus',
-                        'audio/wav',
-                        ''  // Empty string means browser's default
-                    ];
-                    
-                    let selectedMimeType = '';
-                    for (let type of mimeTypes) {
-                        if (MediaRecorder.isTypeSupported(type)) {
-                            selectedMimeType = type;
-                            console.log('Using MIME type:', selectedMimeType);
-                            break;
-                        }
-                    }
-                    
-                    // Create the MediaRecorder with the selected MIME type
-                    mediaRecorder = new MediaRecorder(stream, {
-                        mimeType: selectedMimeType,
-                        audioBitsPerSecond: 16000
-                    });
-                    
-                    // Configure ondataavailable handler
-                    mediaRecorder.ondataavailable = (event) => {
-                        if (event.data.size > 0 && socket && socket.connected) {
-                            socket.emit('audioData', {clientId: socket.id, job_list_sid, data: event.data});
-                        }
-                    };
-                    
-                    mediaRecorder.onerror = (event) => {
-                        console.error('MediaRecorder error:', event.error);
-                    };
-                    
-                    // Start recording with shorter time slices (100ms) for more responsive transcription
-                    mediaRecorder.start(100);
-                    console.log('MediaRecorder started!', mediaRecorder.state);
-                    
-                    // Keep a reference to the MediaRecorder
-                    window.mediaRecorder = mediaRecorder;
-                } catch (err) {
-                    console.error('Failed to create MediaRecorder:', err);
-                    alert('Error creating audio recorder. Your browser may not support this feature.');
-                }
+                // Setup script processor for Deepgram (if needed)
+                setupScriptProcessor(stream);
             })
             .catch(error => {
                 console.error('Error accessing microphone:', error);
             });
         }
         setupSocketConnection();
+
+        // New function to setup voice detection
+        function setupVoiceDetection(stream) {
+            try {
+                // Create analyser for voice detection
+                voiceDetectionAnalyser = audioContext.createAnalyser();
+                voiceDetectionAnalyser.fftSize = 256;
+                voiceDetectionAnalyser.smoothingTimeConstant = 0.8;
+                
+                // Create source from microphone stream
+                voiceDetectionSource = audioContext.createMediaStreamSource(stream);
+                voiceDetectionSource.connect(voiceDetectionAnalyser);
+                
+                // Create data array for frequency data
+                const bufferLength = voiceDetectionAnalyser.frequencyBinCount;
+                voiceDetectionDataArray = new Uint8Array(bufferLength);
+                
+                // Start checking voice levels
+                startVoiceDetection();
+                
+                console.log('Voice detection setup complete');
+            } catch (error) {
+                console.error('Error setting up voice detection:', error);
+            }
+        }
+
+        // Function to start voice detection monitoring
+        function startVoiceDetection() {
+            if (voiceCheckInterval) {
+                clearInterval(voiceCheckInterval);
+            }
+            
+            voiceCheckInterval = setInterval(() => {
+                checkVoiceLevel();
+            }, 50); // Check every 50ms for responsiveness
+        }
+
+        // Function to check current voice level
+        function checkVoiceLevel() {
+            if (!voiceDetectionAnalyser || !voiceDetectionDataArray) return;
+            
+            // Get current frequency data
+            voiceDetectionAnalyser.getByteFrequencyData(voiceDetectionDataArray);
+            
+            // Calculate average volume
+            let sum = 0;
+            for (let i = 0; i < voiceDetectionDataArray.length; i++) {
+                sum += voiceDetectionDataArray[i];
+            }
+            const averageVolume = sum / voiceDetectionDataArray.length;
+            
+            // Check if user is speaking
+            if (averageVolume > VOLUME_THRESHOLD) {
+                onVoiceDetected(averageVolume);
+            } else {
+                onSilenceDetected(averageVolume);
+            }
+        }
+
+        // Updated voice detection handler
+        function onVoiceDetected(volume) {
+            if (!isSpeaking) {
+                isSpeaking = true;
+                console.log(`🎤 Voice detected (volume: ${volume.toFixed(1)}) - User is speaking`);
+                
+                // Notify server that user is speaking
+                if (socket && socket.connected) {
+                    socket.emit('userSpeaking', { speaking: true, job_list_sid });
+                }
+            }
+            
+            // Clear silence timer
+            if (silenceTimer) {
+                clearTimeout(silenceTimer);
+                silenceTimer = null;
+            }
+            
+            // Pause audio if playing
+            if (currentAudio && !currentAudio.paused) {
+                currentAudio.pause();
+                currentAudio = null;
+                wasAudioPlaying = true;
+                console.log('🔇 Audio paused - user speaking');
+            }
+        }
+
+        // Updated silence detection handler
+        function onSilenceDetected(volume) {
+            // Only process if user was speaking
+            if (isSpeaking && !silenceTimer) {
+                silenceTimer = setTimeout(() => {
+                    isSpeaking = false;
+                    console.log(`🔇 Silence detected (volume: ${volume.toFixed(1)}) - User stopped speaking`);
+                    
+                    // Notify server that user stopped speaking
+                    if (socket && socket.connected) {
+                        socket.emit('userSpeaking', { speaking: false, job_list_sid });
+                    }
+                    
+                    // Resume audio if it was playing
+                    // resumeAudio();
+                    silenceTimer = null;
+                }, SILENCE_DELAY);
+            }
+        }
+
+        // Function to resume audio playback
+        function resumeAudio() {
+            if (currentAudio && wasAudioPlaying) {
+                currentAudio.play().catch(e => {
+                    console.error('Error resuming audio:', e);
+                });
+                wasAudioPlaying = false;
+                console.log('🔊 Audio resumed');
+            }
+        }
+
+        // Separate MediaRecorder setup
+        function setupMediaRecorder(stream) {
+            try {
+                // Check supported MIME types
+                const mimeTypes = [
+                    'audio/webm',
+                    'audio/webm;codecs=opus',
+                    'audio/ogg;codecs=opus',
+                    'audio/wav',
+                    ''
+                ];
+                
+                let selectedMimeType = '';
+                for (let type of mimeTypes) {
+                    if (MediaRecorder.isTypeSupported(type)) {
+                        selectedMimeType = type;
+                        console.log('Using MIME type:', selectedMimeType);
+                        break;
+                    }
+                }
+                
+                // Create the MediaRecorder
+                mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: selectedMimeType,
+                    audioBitsPerSecond: 16000
+                });
+                
+                // Configure handlers
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0 && socket && socket.connected) {
+                        socket.emit('audioData', {
+                            clientId: socket.id, 
+                            job_list_sid, 
+                            data: event.data
+                        });
+                    }
+                };
+                
+                mediaRecorder.onerror = (event) => {
+                    console.error('MediaRecorder error:', event.error);
+                };
+                
+                // Start recording
+                mediaRecorder.start(100);
+                console.log('MediaRecorder started!', mediaRecorder.state);
+                
+                window.mediaRecorder = mediaRecorder;
+            } catch (err) {
+                console.error('Failed to create MediaRecorder:', err);
+            }
+        }
+
+        function setupScriptProcessor(stream) {
+            const source = audioContext.createMediaStreamSource(stream);
+            scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+
+            scriptProcessor.onaudioprocess = (event) => {
+                const floatData = event.inputBuffer.getChannelData(0);
+                const int16Data = floatToInt16(floatData);
+            };
+    
+            source.connect(scriptProcessor);
+            scriptProcessor.connect(audioContext.destination);
+        }
+
+        function calculateRMS(channelData) {
+            let sum = 0;
+            for (let i = 0; i < channelData.length; i++) {
+                sum += channelData[i] * channelData[i];
+            }
+            return sum / channelData.length;
+        }
+
+        async function analyzeRecordedAudio(audioBlob) {
+            try {
+                // Convert blob to array buffer for analysis
+                const arrayBuffer = await audioBlob.arrayBuffer();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                
+                // Analyze audio buffer for voice activity
+                const channelData = audioBuffer.getChannelData(0);
+                const rms = calculateRMS(channelData);
+                const volume = Math.sqrt(rms) * 100;
+                console.log('volume', volume);
+                // if (volume > 40) {
+                //     onVoiceDetected(volume);
+                // } else {
+                //     onSilenceDetected(volume);
+                // }
+                
+            } catch (error) {
+                // Fallback to real-time analysis if decoding fails
+                console.log('real time audio analysis', error);
+            }
+        }
+
 
         function stopInterview() {
             interviewStarted = false;
@@ -684,19 +863,19 @@ $creds = getCreds('AHR');
             const audio = new Audio();
             currentAudio = audio;
             
-            audio.onended = () => {
+            currentAudio.onended = () => {
                 URL.revokeObjectURL(audioUrl); // Clean up
                 playNextInQueue();
             };
             
-            audio.onerror = (e) => {
+            currentAudio.onerror = (e) => {
                 console.error('Audio playback error:', e);
                 URL.revokeObjectURL(audioUrl);
                 playNextInQueue(); // Skip to next
             };
             
-            audio.src = audioUrl;
-            audio.play().catch(e => console.error('Failed to play audio:', e));
+            currentAudio.src = audioUrl;
+            currentAudio.play().catch(e => console.error('Failed to play audio:', e));
         }
 
         // function scheduleAudioPlayback() {
