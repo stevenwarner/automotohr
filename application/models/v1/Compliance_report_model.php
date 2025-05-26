@@ -3234,22 +3234,61 @@ class Compliance_report_model extends CI_Model
 			//
 			foreach ($records as $item) {
 				// add report ids
-				if (!in_array($item["csp_reports_sid"], $reports)) {
-					$reports[] = $item["csp_reports_sid"];
-				}
-				if (!in_array($item["csp_report_incident_sid"], $incidents)) {
-					$incidents[] = $item["csp_report_incident_sid"];
-				}
+				// if (!in_array($item["csp_reports_sid"], $reports)) {
+				// 	$reports[] = $item["csp_reports_sid"];
+				// }
+				// if (!in_array($item["csp_report_incident_sid"], $incidents)) {
+				// 	$incidents[] = $item["csp_report_incident_sid"];
+				// }
 				if (!in_array($item["csp_reports_incidents_items_sid"], $tasks)) {
 					$tasks[] = $item["csp_reports_incidents_items_sid"];
 				}
 			}
+		}
+
+		// get the department ids
+		$departmentIds = $this
+			->db
+			->select("sid")
+			->where([
+				"FIND_IN_SET({$employeeId}, csp_managers_ids) > " => 0,
+				"status" => 1,
+				"is_deleted" => 0,
+			])
+			->get("departments_management")
+			->result_array();
+		//
+		if ($departmentIds) {
+			$this->allowedCSP["departmentIds"] = array_column($departmentIds, "sid");
+		}
+		// get the department ids
+		$teamIds = $this
+			->db
+			->select("departments_team_management.sid")
+			->where([
+				"FIND_IN_SET({$employeeId}, departments_team_management.csp_managers_ids) > " => 0,
+				"departments_team_management.status" => 1,
+				"departments_team_management.is_deleted" => 0,
+				"departments_management.status" => 1,
+				"departments_management.is_deleted" => 0,
+			])
+			->join(
+				"departments_management",
+				"departments_management.sid = departments_team_management.department_sid",
+				"inner"
+			)
+			->get("departments_team_management")
+			->result_array();
+		//
+		if ($teamIds) {
+			$this->allowedCSP["teamIds"] = array_column($teamIds, "sid");
 		}
 		//
 		$this->allowedCSP["implements"] = true;
 		$this->allowedCSP["reports"] = $reports;
 		$this->allowedCSP["incidents"] = $incidents;
 		$this->allowedCSP["tasks"] = $tasks;
+		$this->allowedCSP["employeeId"] = $employeeId;
 	}
 
 	/**
@@ -3696,12 +3735,12 @@ class Compliance_report_model extends CI_Model
 			$tasks = [];
 			//
 			foreach ($records as $item) {
-				if (!in_array($item["csp_reports_sid"], $reports) && $item["csp_report_incident_sid"] == 0) {
-					$reports[] = $item["csp_reports_sid"];
-				}
-				if (!in_array($item["csp_report_incident_sid"], $incidents) && $item["csp_report_incident_sid"] != 0) {
-					$incidents[] = $item["csp_report_incident_sid"];
-				}
+				// if (!in_array($item["csp_reports_sid"], $reports) && $item["csp_report_incident_sid"] == 0) {
+				// 	$reports[] = $item["csp_reports_sid"];
+				// }
+				// if (!in_array($item["csp_report_incident_sid"], $incidents) && $item["csp_report_incident_sid"] != 0) {
+				// 	$incidents[] = $item["csp_report_incident_sid"];
+				// }
 				if (!in_array($item["csp_reports_incidents_items_sid"], $tasks) && $item["csp_reports_incidents_items_sid"] != 0) {
 					$tasks[] = $item["csp_reports_incidents_items_sid"];
 				}
@@ -3712,6 +3751,7 @@ class Compliance_report_model extends CI_Model
 		$this->allowedCSP["reports"] = $reports;
 		$this->allowedCSP["incidents"] = $incidents;
 		$this->allowedCSP["tasks"] = $tasks;
+		$this->allowedCSP["employeeIdOrEmail"] = $employeeIdOrEmail;
 	}
 
 
@@ -5614,34 +5654,36 @@ class Compliance_report_model extends CI_Model
 	public function getAllItemsWithIncidentsCPA(int $companyId, array $filter, bool $isMainCPA = true): array
 	{
 		$reportIds = [];
-		//
-		if ((array_key_exists("departments", $filter) && $filter["departments"] != "") || (array_key_exists("teams", $filter) && $filter["teams"] != "")) {
-			$this->db->select('csp_reports_employees.csp_reports_sid');
-			$this->db->join(
-				"csp_reports",
-				"csp_reports.sid = csp_reports_employees.csp_reports_sid",
-				"inner"
-			);
-			$this->db->where('csp_reports.company_sid', $companyId);
-			$this->db->where('csp_reports_employees.status', 1);
-			$this->db->group_start();
-			if (array_key_exists("departments", $filter) && $filter["departments"] != "") {
-				foreach ($filter["departments"] as $department) {
-					$this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
-				}
-			}
-			// For teams
-			if (array_key_exists("teams", $filter) && $filter["teams"] != "") {
-				foreach ($filter["teams"] as $team) {
-					$this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
-				}
-			}
-			$this->db->group_end();
-			$records_obj = $this->db->get('csp_reports_employees');
-			$records_arr = $records_obj->result_array();
-			$records_obj->free_result();
+		if ($isMainCPA) {
 			//
-			$reportIds = array_column($records_arr, 'csp_reports_sid');
+			if ((array_key_exists("departments", $filter) && $filter["departments"] != "") || (array_key_exists("teams", $filter) && $filter["teams"] != "")) {
+				$this->db->select('csp_reports_employees.csp_reports_sid');
+				$this->db->join(
+					"csp_reports",
+					"csp_reports.sid = csp_reports_employees.csp_reports_sid",
+					"inner"
+				);
+				$this->db->where('csp_reports.company_sid', $companyId);
+				$this->db->where('csp_reports_employees.status', 1);
+				$this->db->group_start();
+				if (array_key_exists("departments", $filter) && $filter["departments"] != "") {
+					foreach ($filter["departments"] as $department) {
+						$this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
+					}
+				}
+				// For teams
+				if (array_key_exists("teams", $filter) && $filter["teams"] != "") {
+					foreach ($filter["teams"] as $team) {
+						$this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
+					}
+				}
+				$this->db->group_end();
+				$records_obj = $this->db->get('csp_reports_employees');
+				$records_arr = $records_obj->result_array();
+				$records_obj->free_result();
+				//
+				$reportIds = array_column($records_arr, 'csp_reports_sid');
+			}
 		}
 
 		$this->db->select([
@@ -5730,12 +5772,6 @@ class Compliance_report_model extends CI_Model
 				"csp_reports_incidents.sid",
 				$filter["incident"]
 			);
-		} else {
-			if (!$isMainCPA) {
-				if ($this->allowedCSP["tasks"]) {
-					$this->db->where_in("csp_reports_incidents_items.sid", $this->allowedCSP["tasks"]);
-				}
-			}
 		}
 		// check for status
 		if (array_key_exists("status", $filter) && $filter["status"] != "-1") {
@@ -5749,12 +5785,42 @@ class Compliance_report_model extends CI_Model
 			$like = " `csp_reports.title` LIKE '%" . $filter["title"] . "%' ";
 			$this->db->where($like);
 		}
+		// strictly check for the allowed issues
+		// if is not ain CPA
+		if (!$isMainCPA) {
+			if ($this->allowedCSP["tasks"]) {
+				$this->db->where_in("csp_reports_incidents_items.sid", $this->allowedCSP["tasks"]);
+			}
+			//
+			if (array_key_exists("departmentIds", $this->allowedCSP) || array_key_exists("teamIds", $this->allowedCSP)) {
+				// check for departments
+				$this->db->group_start();
+
+				if (array_key_exists("departmentIds", $this->allowedCSP)) {
+					$this->db->group_start();
+					foreach ($this->allowedCSP["departmentIds"] as $v0) {
+						$this->db->where("FIND_IN_SET({$v0}, csp_reports_incidents_items.allowed_departments) >", 0);
+					}
+					$this->db->group_end();
+				}
+				if (array_key_exists("teamIds", $this->allowedCSP)) {
+					$this->db->or_group_start();
+					foreach ($this->allowedCSP["teamIds"] as $v0) {
+						$this->db->where("FIND_IN_SET({$v0}, csp_reports_incidents_items.allowed_teams) >", 0);
+					}
+					$this->db->group_end();
+				}
+				$this->db->group_end();
+			}
+
+		}
+
 		//
 		$this->db->order_by("csp_reports_incidents_items.sid", "DESC");
 		$records_obj = $this->db->get('csp_reports_incidents_items');
 		$records_arr = $records_obj->result_array();
 		$records_obj->free_result();
-		// _e($this->db->last_query(),true,true);
+		// _e($this->db->last_query(), print: true, true);
 
 		//
 		if ($records_arr) {

@@ -166,197 +166,208 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-sm-4">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <div id="jsProgressGraph"></div>
+        <?php if ($reports): ?>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div id="jsProgressGraph"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-8">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div id="jsSeverityGraph"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-sm-8">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <div id="jsSeverityGraph"></div>
-                    </div>
+
+            <!-- Table -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-heading-text text-medium" style="padding: 14px 0px;">
+                        <i class="fa fa-table text-orange"></i> Compliance Safety Reporting
+                        <span class="pull-right">
+
+                        </span>
+                    </h3>
                 </div>
-            </div>
-        </div>
+                <div class="panel-body">
 
-
-        <!-- Table -->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-heading-text text-medium" style="padding: 14px 0px;">
-                    <i class="fa fa-table text-orange"></i> Compliance Safety Reporting
-                    <span class="pull-right">
-
-                    </span>
-                </h3>
-            </div>
-            <div class="panel-body">
-
-                <?php if ($reports): ?>
-                    <?php foreach ($reports as $v0): ?>
-                        <div class="panel panel-default">
-                            <div class="panel-heading jsToggle" data-target="jsChildRows<?= $v0["id"]; ?>"
-                                style="cursor: pointer;">
-                                <i class="fa fa-chevron-right jsToggleIcon"></i>
-                                <?= $v0["title"]; ?>
-                                (<?= count($v0["issues"]); ?> Issues)
-                                <span class="pull-right">
-                                    <?= formatDateToDB($v0["report_date"], DB_DATE, DATE); ?>
-                                </span>
-                            </div>
-                            <div class="jsChildRows hidden jsChildRows<?= $v0["id"]; ?>">
-                                <div class="panel-body js-tr">
-                                    <div class="row">
-                                        <?php foreach ($v0["issues"] as $record): ?>
-                                            <?php
-                                            $statusText = "Pending";
-                                            $statusClass = "warning";
-                                            //
-                                            if ($record["completion_status"] == "on_hold") {
-                                                $statusText = "On Hold";
-                                                $statusClass = "danger";
-                                                $progressGraphData["on_hold"]["y"]++;
-                                            } else if ($record["completion_status"] == "completed") {
-                                                $statusText = "Completed";
-                                                $statusClass = "success";
-                                                $progressGraphData["completed"]["y"]++;
-                                            } else {
-                                                $progressGraphData["pending"]["y"]++;
-                                            }
-                                            //
-                                            $severityLevelGraph["data"][$record["level"]]++;
-                                            $severityLevelGraph["colors"][$record["level"]] = $record["bg_color"];
-                                            ?>
-                                            <div class="col-md-12">
-                                                <div
-                                                    class="panel <?= $record["completion_status"] === "completed" ? "panel-success" : "panel-default " ?>">
-                                                    <div class="panel-heading jsToggle2" data-target="issue<?= $record["sid"] ?>"
-                                                        style="cursor: pointer;  <?= $record["completion_status"] === "completed" ? "background: rgba(92, 184, 92, .6);" : " " ?>">
-                                                        <div class="row">
-                                                            <div class="col-md-10 col-xs-12">
-                                                                <h3 class="panel-heading-text text-small">
-                                                                    <i class="fa fa-chevron-right jsToggleIcon"></i>
-                                                                    <?= strip_tags(substr($record["description"], 0, 70)); ?>...
-                                                                </h3>
-                                                            </div>
-                                                            <div class="col-md-2 col-xs-12 text-right">
-                                                                <label class="btn form-control"
-                                                                    style="background: <?= $record["bg_color"]; ?>; color: <?= $record["txt_color"]; ?>; border-radius: 5px;">
-                                                                    <?= is_numeric($record["level"]) ? " Severity Level " . $record["level"] : $record["level"] ?>
-                                                                </label>
-
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="panel-body hidden jsIssuesBody" id="issue<?= $record["sid"]; ?>">
-                                                        <div class="row">
-                                                            <div class="col-xs-12 text-right">
-                                                                <?php if ($record["completion_status"] != "completed"): ?>
-                                                                    <button class="btn btn-green jsMarkIssueDonePublic"
-                                                                        data-issue_id="<?= $record["sid"]; ?>"
-                                                                        style="border-radius: 5px;" title="Mark As Done">
-                                                                        <i class="fa fa-check-circle"></i>
-                                                                    </button>
-                                                                <?php endif; ?>
-                                                                <button class="btn btn-black jsIssueUploadFileBtn"
-                                                                    title="Upload files"
-                                                                    data-report_id="<?= $record["csp_reports_sid"]; ?>"
-                                                                    data-incident_id="<?= $record["csp_reports_incidents_sid"]; ?>"
-                                                                    data-issue_id="<?= $record["sid"]; ?>" data-public="true">
-                                                                    <i class="fa fa-upload"></i>
-                                                                </button>
-                                                                <a href="<?= base_url("csp/incident_item_management/" . $record["csp_reports_sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]); ?>"
-                                                                    class="btn btn-orange">
-                                                                    <i class="fa fa-eye"></i>
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                        <hr>
-                                                        <div class="row">
-                                                            <div class="col-md-3">
-                                                                <label>
-                                                                    <small>
-                                                                        Report
-                                                                    </small>
-                                                                </label>
-                                                                <br>
-
-                                                                <?= $record["title"]; ?>
-                                                                (<?= formatDateToDB($v0["report_date"], DB_DATE, DATE); ?>)
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <label>
-                                                                    <small>
-                                                                        Incident
-                                                                    </small>
-                                                                </label>
-                                                                <br>
-                                                                <?= $record["compliance_incident_type_name"]; ?>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <label>
-                                                                    <small>
-                                                                        Status
-                                                                    </small>
-                                                                </label>
-                                                                <br>
-                                                                <span class="jsStatusRow<?= $record["sid"]; ?>">
-                                                                    <label class="btn btn-<?= $statusClass ?>"
-                                                                        style="border-radius: 5px;">
-                                                                        <?= $statusText; ?>
+                    <?php if ($reports): ?>
+                        <?php foreach ($reports as $v0): ?>
+                            <div class="panel panel-default">
+                                <div class="panel-heading jsToggle" data-target="jsChildRows<?= $v0["id"]; ?>"
+                                    style="cursor: pointer;">
+                                    <i class="fa fa-chevron-right jsToggleIcon"></i>
+                                    <?= $v0["title"]; ?>
+                                    (<?= count($v0["issues"]); ?> Issues)
+                                    <span class="pull-right">
+                                        <?= formatDateToDB($v0["report_date"], DB_DATE, DATE); ?>
+                                    </span>
+                                </div>
+                                <div class="jsChildRows hidden jsChildRows<?= $v0["id"]; ?>">
+                                    <div class="panel-body js-tr">
+                                        <div class="row">
+                                            <?php foreach ($v0["issues"] as $record): ?>
+                                                <?php
+                                                $statusText = "Pending";
+                                                $statusClass = "warning";
+                                                //
+                                                if ($record["completion_status"] == "on_hold") {
+                                                    $statusText = "On Hold";
+                                                    $statusClass = "danger";
+                                                    $progressGraphData["on_hold"]["y"]++;
+                                                } else if ($record["completion_status"] == "completed") {
+                                                    $statusText = "Completed";
+                                                    $statusClass = "success";
+                                                    $progressGraphData["completed"]["y"]++;
+                                                } else {
+                                                    $progressGraphData["pending"]["y"]++;
+                                                }
+                                                //
+                                                $severityLevelGraph["data"][$record["level"]]++;
+                                                $severityLevelGraph["colors"][$record["level"]] = $record["bg_color"];
+                                                ?>
+                                                <div class="col-md-12">
+                                                    <div
+                                                        class="panel <?= $record["completion_status"] === "completed" ? "panel-success" : "panel-default " ?>">
+                                                        <div class="panel-heading jsToggle2" data-target="issue<?= $record["sid"] ?>"
+                                                            style="cursor: pointer;  <?= $record["completion_status"] === "completed" ? "background: rgba(92, 184, 92, .6);" : " " ?>">
+                                                            <div class="row">
+                                                                <div class="col-md-10 col-xs-12">
+                                                                    <h3 class="panel-heading-text text-small">
+                                                                        <i class="fa fa-chevron-right jsToggleIcon"></i>
+                                                                        <?= strip_tags(substr($record["description"], 0, 70)); ?>...
+                                                                    </h3>
+                                                                </div>
+                                                                <div class="col-md-2 col-xs-12 text-right">
+                                                                    <label class="btn form-control"
+                                                                        style="background: <?= $record["bg_color"]; ?>; color: <?= $record["txt_color"]; ?>; border-radius: 5px;">
+                                                                        <?= is_numeric($record["level"]) ? " Severity Level " . $record["level"] : $record["level"] ?>
                                                                     </label>
-                                                                    <?php if ($record["completion_status"] === "completed"): ?>
-                                                                        <?= checkAndShowUser($record["completed_by"], $record); ?>
-                                                                        <br>
-                                                                        <?= formatDateToDB($record["completion_date"], DB_DATE, DATE); ?>
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="panel-body hidden jsIssuesBody" id="issue<?= $record["sid"]; ?>">
+                                                            <div class="row">
+                                                                <div class="col-xs-12 text-right">
+                                                                    <?php if ($record["completion_status"] != "completed"): ?>
+                                                                        <button class="btn btn-green jsMarkIssueDonePublic"
+                                                                            data-issue_id="<?= $record["sid"]; ?>"
+                                                                            style="border-radius: 5px;" title="Mark As Done">
+                                                                            <i class="fa fa-check-circle"></i>
+                                                                        </button>
                                                                     <?php endif; ?>
-                                                                </span>
+                                                                    <button class="btn btn-black jsIssueUploadFileBtn"
+                                                                        title="Upload files"
+                                                                        data-report_id="<?= $record["csp_reports_sid"]; ?>"
+                                                                        data-incident_id="<?= $record["csp_reports_incidents_sid"]; ?>"
+                                                                        data-issue_id="<?= $record["sid"]; ?>" data-public="true">
+                                                                        <i class="fa fa-upload"></i>
+                                                                    </button>
+                                                                    <a href="<?= base_url("csp/incident_item_management/" . $record["csp_reports_sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]); ?>"
+                                                                        class="btn btn-orange">
+                                                                        <i class="fa fa-eye"></i>
+                                                                    </a>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <br>
+                                                            <hr>
+                                                            <div class="row">
+                                                                <div class="col-md-3">
+                                                                    <label>
+                                                                        <small>
+                                                                            Report
+                                                                        </small>
+                                                                    </label>
+                                                                    <br>
 
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <?= convertCSPTags(
-                                                                    $record["description"],
-                                                                    $record["answers_json"] ? json_decode($record["answers_json"], true) : [],
-                                                                    true
-                                                                ); ?>
+                                                                    <?= $record["title"]; ?>
+                                                                    (<?= formatDateToDB($v0["report_date"], DB_DATE, DATE); ?>)
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    <label>
+                                                                        <small>
+                                                                            Incident
+                                                                        </small>
+                                                                    </label>
+                                                                    <br>
+                                                                    <?= $record["compliance_incident_type_name"]; ?>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label>
+                                                                        <small>
+                                                                            Status
+                                                                        </small>
+                                                                    </label>
+                                                                    <br>
+                                                                    <span class="jsStatusRow<?= $record["sid"]; ?>">
+                                                                        <label class="btn btn-<?= $statusClass ?>"
+                                                                            style="border-radius: 5px;">
+                                                                            <?= $statusText; ?>
+                                                                        </label>
+                                                                        <?php if ($record["completion_status"] === "completed"): ?>
+                                                                            <?= checkAndShowUser($record["completed_by"], $record); ?>
+                                                                            <br>
+                                                                            <?= formatDateToDB($record["completion_date"], DB_DATE, DATE); ?>
+                                                                        <?php endif; ?>
+                                                                    </span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <?php if ($record["files"]): ?>
-
                                                             <br>
 
                                                             <div class="row">
                                                                 <div class="col-md-12">
-                                                                    <div class="jsFilesArea<?= $record["sid"]; ?>">
-
-                                                                        <?php $this->load->view("compliance_safety_reporting/files", $record); ?>
-                                                                    </div>
+                                                                    <?= convertCSPTags(
+                                                                        $record["description"],
+                                                                        $record["answers_json"] ? json_decode($record["answers_json"], true) : [],
+                                                                        true
+                                                                    ); ?>
                                                                 </div>
                                                             </div>
+                                                            <?php if ($record["files"]): ?>
 
-                                                        <?php endif; ?>
+                                                                <br>
+
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="jsFilesArea<?= $record["sid"]; ?>">
+
+                                                                            <?php $this->load->view("compliance_safety_reporting/files", $record); ?>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            <?php endif; ?>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        <?php endforeach; ?>
+                                            <?php endforeach; ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
 
+                </div>
             </div>
-        </div>
+
+        <?php else: ?>
+            <div class="row col-sm-12">
+                <p class="alert alert-info text-center"><strong>
+                        No compliance safety reports found. Please update filter.
+
+                    </strong></p>
+            </div>
+        <?php endif; ?>
 
     </div>
 </div>
