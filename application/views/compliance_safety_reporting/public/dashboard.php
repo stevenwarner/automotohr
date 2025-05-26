@@ -332,20 +332,18 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                                     ); ?>
                                                                 </div>
                                                             </div>
-                                                            <?php if ($record["files"]): ?>
 
-                                                                <br>
+                                                            <br>
 
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div class="jsFilesArea<?= $record["sid"]; ?>">
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="jsFilesArea<?= $record["sid"]; ?>">
 
-                                                                            <?php $this->load->view("compliance_safety_reporting/files", $record); ?>
-                                                                        </div>
+                                                                        <?php $this->load->view("compliance_safety_reporting/external_files", $record); ?>
                                                                     </div>
                                                                 </div>
+                                                            </div>
 
-                                                            <?php endif; ?>
                                                         </div>
                                                     </div>
                                                 </div>

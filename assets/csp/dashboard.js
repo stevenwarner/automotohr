@@ -13,12 +13,12 @@ $(function () {
     let cspPublic = 0;
     //
     $('#jsDepartments').select2({
-		closeOnSelect: false
-	});
+        closeOnSelect: false
+    });
     //
-	$('#jsTeams').select2({
-		closeOnSelect: false
-	});
+    $('#jsTeams').select2({
+        closeOnSelect: false
+    });
     //
     const config = {
         document: {
@@ -198,25 +198,28 @@ $(function () {
     //     $(this).find('input[name="issues_ids[]"]').prop('checked', !$(this).find('input[name="issues_ids[]"]').prop('checked'));
     // }
 
-    $(".jsSendReminderEmails").click(function (event) {
-        event.preventDefault();
-        //
-        $.each($('.jsIssueIds:checked'), function () {
-            selectedIssues.push(parseInt($(this).val()));
-        });
-        //
-        if (selectedIssues.length) {
-            _confirm(
-                "Are you sure you want to send emails to the selected employees and external recipients?",
-                sendEmailsForReport
-            );
-        } else {
-            alertify.alert("Please select an issue to send reminder email.");
-            return false;
-        }
-        //
+    if (!window.location.href.match(/edit/)) {
 
-    });
+        $(".jsSendReminderEmails").click(function (event) {
+            event.preventDefault();
+            //
+            $.each($('.jsIssueIds:checked'), function () {
+                selectedIssues.push(parseInt($(this).val()));
+            });
+            //
+            if (selectedIssues.length) {
+                _confirm(
+                    "Are you sure you want to send emails to the selected employees and external recipients?",
+                    sendEmailsForReport
+                );
+            } else {
+                alertify.alert("Please select an issue to send reminder email.");
+                return false;
+            }
+            //
+
+        });
+    }
 
     function sendEmailsForReport() {
         //
