@@ -164,7 +164,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                     </small>
                                 </label>
                                 <br>
-                                <a href="<?= base_url("compliance_safety_reporting/edit/" . $report["sid"]); ?>">
+                                <a href="<?= base_url("compliance_safety_reporting/edit/" . $report["sid"]); ?>?tab=issues">
                                     <?= $report["title"]; ?>
                                 </a>
                                 (<?= formatDateToDB($report["report_date"], DB_DATE, DATE); ?>)

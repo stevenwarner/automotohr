@@ -131,10 +131,10 @@ $(function Overview() {
 		obj.departments = $('#jsDepartments').val() || '';
 		obj.teams = $('#jsTeams').val() || '';
 		//
-		if (obj.departments == "" && obj.teams == "") {
-			_error("Selection required: Choose at least a department or a team.");
-			return;
-		}
+		// if (obj.departments == "" && obj.teams == "") {
+		// 	_error("Selection required: Choose at least a department or a team.");
+		// 	return;
+		// }
 		//
 		if (XHR === null) {
 			//
@@ -287,7 +287,7 @@ $(function Overview() {
 		}
 	});
 
-	function deleteDepartmentsAndTeams () {
+	function deleteDepartmentsAndTeams() {
 		//
 		if (XHR === null) {
 			//

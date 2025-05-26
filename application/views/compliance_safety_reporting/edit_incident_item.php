@@ -1,5 +1,6 @@
 <div class="main jsmaincontent" style="position:relative">
     <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
+    <?php $isMainAllowedForCSP = isMainAllowedForCSP(); ?>
 
     <div class="container-fluid">
         <div class="row">
@@ -11,13 +12,13 @@
                 </a>
             </div>
             <div class="col-sm-6 text-right">
-                <?php if (isMainAllowedForCSP()): ?>
-                    <a href="<?= base_url('compliance_safety_reporting/edit/' . $report_id) ?>" class="btn btn-black">
+                <?php if ($isMainAllowedForCSP): ?>
+                    <a href="<?= base_url('compliance_safety_reporting/edit/' . $report_id) ?>?tab=issues" class="btn btn-black">
                         <i class="fa fa-arrow-left"></i>
                         Back To Report
                     </a>
                 <?php endif; ?>
-                <a href="<?= base_url('compliance_safety_reporting' . (isMainAllowedForCSP() ? "" : "/employee") . '/dashboard') ?>"
+                <a href="<?= base_url('compliance_safety_reporting' . ($isMainAllowedForCSP ? "" : "/employee") . '/dashboard') ?>"
                     class="btn btn-blue">
                     <i class="fa fa-pie-chart"></i>
                     Compliance Safety Reporting
@@ -192,7 +193,7 @@
                                         <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
                                             <label class="control control--radio">
                                                 Yes<input type="radio" class="jsReportToDashboard"
-                                                    name="report_to_dashboard" value="yes" style="position: relative;"
+                                                    name="report_to_dashboard" value="yes" <?= $isMainAllowedForCSP ? "" : "disabled"; ?> aria-autocomplete="" style="position: relative;"
                                                     <?php echo $report_to_dashboard == 'yes' ? 'checked="checked"' : ''; ?>>
                                                 <div class="control__indicator"></div>
                                             </label>
@@ -200,7 +201,7 @@
                                         <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
                                             <label class="control control--radio">
                                                 No<input type="radio" class="jsReportToDashboard"
-                                                    name="report_to_dashboard" value="no" style="position: relative;"
+                                                    name="report_to_dashboard" value="no" <?= $isMainAllowedForCSP ? "" : "disabled"; ?>  style="position: relative;"
                                                     <?php echo $report_to_dashboard == 'no' ? 'checked="checked"' : ''; ?>>
                                                 <div class="control__indicator"></div>
                                             </label>
@@ -217,14 +218,14 @@
                                     <div class="row">
                                         <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
                                             <label class="control control--radio">
-                                                Yes<input type="radio" class="jsOngoingIssue" name="ongoing_issue"
+                                                Yes<input type="radio" class="jsOngoingIssue" <?= $isMainAllowedForCSP ? "" : "disabled"; ?>  name="ongoing_issue"
                                                     value="yes" style="position: relative;" <?php echo $ongoing_issue == 'yes' ? 'checked="checked"' : ''; ?>>
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>
                                         <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
                                             <label class="control control--radio">
-                                                No<input type="radio" class="jsOngoingIssue" name="ongoing_issue"
+                                                No<input type="radio" class="jsOngoingIssue" <?= $isMainAllowedForCSP ? "" : "disabled"; ?>  name="ongoing_issue"
                                                     value="no" style="position: relative;" <?php echo $ongoing_issue == 'no' ? 'checked="checked"' : ''; ?>>
                                                 <div class="control__indicator"></div>
                                             </label>
@@ -241,14 +242,14 @@
                                     <div class="row">
                                         <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
                                             <label class="control control--radio">
-                                                Yes<input type="radio" class="jsReportedBy" name="reported_by"
+                                                Yes<input type="radio" class="jsReportedBy" <?= $isMainAllowedForCSP ? "" : "disabled"; ?>  name="reported_by"
                                                     value="yes" style="position: relative;" <?php echo $reported_by == 'yes' ? 'checked="checked"' : ''; ?>>
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>
                                         <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
                                             <label class="control control--radio">
-                                                No<input type="radio" class="jsReportedBy" name="reported_by" value="no"
+                                                No<input type="radio" class="jsReportedBy" <?= $isMainAllowedForCSP ? "" : "disabled"; ?>  name="reported_by" value="no"
                                                     style="position: relative;" <?php echo $reported_by == 'no' ? 'checked="checked"' : ''; ?>>
                                                 <div class="control__indicator"></div>
                                             </label>
@@ -262,13 +263,13 @@
                                 <div class="form-group autoheight">
                                     <label>Category of issue: <span class="required"
                                             aria-required="true"></span></label>
-                                    <input id="jsCategoryOfIssue" type="text" name="category_of_issue"
+                                    <input id="jsCategoryOfIssue" type="text" <?= $isMainAllowedForCSP ? "" : "disabled"; ?>  name="category_of_issue"
                                         value="<?= $category_of_issue ?>" class="form-control">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <?php if (isMainAllowedForCSP()): ?>
+                    <?php if ($isMainAllowedForCSP): ?>
                         <div class="panel-footer text-right">
                             <button class="btn btn-orange jsIssueProgressQuestionBtn">
                                 <i class="fa fa-save"></i>
@@ -304,7 +305,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <?= $report["description"]
-                                    ? convertCSPTags($report["description"], $decodedJSON ?? [], false)
+                                    ? convertCSPTags($report["description"], $decodedJSON ?? [], !$isMainAllowedForCSP)
                                     : $report["description"];
                                 ?>
                             </div>
@@ -351,19 +352,21 @@
                                                             <div class="status-panel">
                                                                 <div class="row">
                                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                        <button class="btn btn-info jsViewFile">
+                                                                        <button class="btn btn-orange btn-site jsViewFile">
                                                                             <i class="fa fa-eye"></i>
                                                                         </button>
                                                                         <a target="_blank"
                                                                             href="<?= base_url("compliance_safety_reporting/file/download/" . $document["sid"]); ?>"
-                                                                            class="btn btn-info btn-info">
+                                                                            class="btn btn-black  btn-site">
                                                                             <i class="fa fa-download"></i>
                                                                         </a>
-                                                                        <button class="btn btn-info jsDeleteFile"
+                                                                        <?php if ($isMainAllowedForCSP) : ?>
+                                                                        <button class="btn btn-danger btn-site jsDeleteFile"
                                                                             data-file_id="<?php echo $document["sid"]; ?>"
                                                                             data-file_type="<?php echo $document['file_type']; ?>">
                                                                             <i class="fa fa-trash"></i>
                                                                         </button>
+                                                                        <?php endif; ?>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -557,7 +560,7 @@
                     </div>
                 </div>
 
-                <?php if (isMainAllowedForCSP()): ?>
+                <?php if ($isMainAllowedForCSP): ?>
                     <!-- Add Notes -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -649,7 +652,9 @@
                                             <div class="col-lg-4">
                                                 <label class="control control--checkbox">
                                                     <input type="checkbox" name="report_employees[]" class="jsInternalEmployees"
-                                                        value="<?= $employee["sid"]; ?>" <?= in_array($employee["sid"], $selectedEmployees) ? "checked" : ""; ?> />
+                                                        value="<?= $employee["sid"]; ?>" <?= in_array($employee["sid"], $selectedEmployees) ? "checked" : ""; ?>
+                                                        <?= $allDTEmployeeIds && in_array($employee["sid"], $allDTEmployeeIds) ? "checked disabled title='Coming from the selected department'" : "";?>
+                                                        />
                                                     <div class="control__indicator"></div>
                                                     <span><?= remakeEmployeeName($employee); ?></span>
                                                 </label>

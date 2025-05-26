@@ -31,12 +31,12 @@ if ($document['file_type'] == 'image') {
             <div class="status-panel">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                        <button class="btn btn-info jsViewFile" style="border-radius: 5px;">
+                        <button class="btn btn-orange jsViewFile" style="border-radius: 5px;">
                             <i class="fa fa-eye"></i>
                         </button>
                         <a target="_blank"
                             href="<?= base_url("compliance_safety_reporting/file/download/" . $document["sid"]); ?>"
-                            class="btn btn-info btn-info" style="border-radius: 5px;">
+                            class="btn btn-black" style="border-radius: 5px;">
                             <i class="fa fa-download"></i>
                         </a>
                         <button class="btn btn-danger jsDeleteFile" data-file_id="<?= $document["sid"]; ?>"

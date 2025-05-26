@@ -36,12 +36,12 @@
                             <div class="status-panel">
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                        <button class="btn btn-info btn-site jsViewFile">
+                                        <button class="btn btn-orange btn-site jsViewFile">
                                             <i class="fa fa-eye"></i>
                                         </button>
                                         <a target="_blank"
                                             href="<?= base_url("compliance_safety_reporting/file/download/" . $document["sid"]); ?>"
-                                            class="btn btn-info btn-info btn-site">
+                                            class="btn btn-black btn-site">
                                             <i class="fa fa-download"></i>
                                         </a>
                                         <?php if ($document["file_type"] != "link"): ?>

@@ -1679,6 +1679,10 @@ class Compliance_safety_reporting extends Base_csp
 
     public function manageIncidentItem($reportId, $incidentId, $itemId)
     {
+        // check if has access
+        if (!isMainAllowedForCSP() && !$this->compliance_report_model->isAllowedToAccessIssue($this->getLoggedInEmployee("sid"), $itemId)) {
+            return redirect("/dashboard");
+        }
         // get types 
         $this->data["report"] = $this
             ->compliance_report_model
@@ -1716,16 +1720,24 @@ class Compliance_safety_reporting extends Base_csp
         $departments = [];
         $teams = [];
         //
-        $reportDepartments = $this->compliance_report_model->getReportDepartments($reportId);
-        //
-        if ($reportDepartments) {
-            $departments = $this->compliance_report_model->getSelectedDepartments($reportDepartments);
+        $departments = $this->compliance_report_model->getActiveDepartments($this->getLoggedInCompany("sid"));
+        if ($departments) {
             $teams = $this->compliance_report_model->getTeams($this->getLoggedInCompany("sid"), $departments);
         }
         //
         $this->data['departments'] = $departments;
         $this->data['teams'] = $teams;
+        $allDTEmployeeIds = [];
+        if ($this->data["report"]["allowed_departments"]) {
+            // get department CSP employees
+            $allDTEmployeeIds = $this
+                ->compliance_report_model
+                ->getDepartmentsCSPManagers(
+                    $this->data["report"]["allowed_departments"]
+                );
+        }
         //
+        $this->data["allDTEmployeeIds"] = $allDTEmployeeIds;
         $this->data["reportId"] = $reportId;
         $this->data["incidentId"] = $incidentId;
         $this->data["itemId"] = $itemId;

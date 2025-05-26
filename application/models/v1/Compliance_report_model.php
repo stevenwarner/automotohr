@@ -7014,6 +7014,22 @@ class Compliance_report_model extends CI_Model
 		return $b;
 	}
 
+	public function getActiveDepartments($companyId)
+	{
+		$a = $this->db
+			->select('sid, name')
+			->where('company_sid', $companyId)
+			->where('status', 1)
+			->where('is_deleted', 0)
+			->order_by('sort_order', 'ASC')
+			->get('departments_management');
+		//
+		$b = $a->result_array();
+		$a = $a->free_result();
+		//
+		return $b;
+	}
+
 	function getTeams($companySid, $departments)
 	{
 		//
@@ -7421,6 +7437,45 @@ class Compliance_report_model extends CI_Model
 		$this->db->where('csp_reports_incidents_items_sid', $issueId);
 		$this->db->where('is_manager', 1);
 		$this->db->delete('csp_reports_employees');
+	}
+
+
+	public function isAllowedToAccessIssue(
+		int $employeeId,
+		int $issueId
+	): int {
+		return $this
+			->db
+			->where([
+				"employee_sid" => $employeeId,
+				"csp_reports_incidents_items_sid" => $issueId,
+			])
+			->count_all_results("csp_reports_employees");
+	}
+
+	public function getDepartmentsCSPManagers($departmentIds)
+	{
+		$records = $this
+			->db
+			->select("csp_managers_ids")
+			->where_in("sid", $departmentIds)
+			->where("status", 1)
+			->where("is_deleted", 0)
+			->get("departments_management")
+			->result_array();
+		//
+		if (!$records) {
+			return [];
+		}
+		//
+		$ids = [];
+		//
+		foreach ($records as $v0) {
+			$tmp = explode(",", $v0["csp_managers_ids"]);
+			$ids = array_merge($ids, $tmp);
+		}
+		//
+		return array_unique($ids);
 	}
 
 }
