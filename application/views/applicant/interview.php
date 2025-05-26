@@ -394,9 +394,8 @@ $creds = getCreds('AHR');
     let voiceCheckInterval = null;
     let isSpeaking = false;
     let silenceTimer = null;
-    let wasAudioPlaying = false;
-    const VOLUME_THRESHOLD = 120;
-    const SILENCE_DELAY = 1500;
+    const VOLUME_THRESHOLD = 110;
+    const SILENCE_DELAY = 2000;
 
     // timer variables
     let timerInterval;
@@ -564,6 +563,8 @@ $creds = getCreds('AHR');
             });
         }
 
+        setupSocketConnection();
+
         // Add audio recording function for Deepgram
         function setupAudioRecording() {
             console.log('Setting up audio recording...');
@@ -593,7 +594,6 @@ $creds = getCreds('AHR');
                 console.error('Error accessing microphone:', error);
             });
         }
-        setupSocketConnection();
 
         // New function to setup voice detection
         function setupVoiceDetection(stream) {
@@ -674,9 +674,19 @@ $creds = getCreds('AHR');
             // Pause audio if playing
             if (currentAudio && !currentAudio.paused) {
                 currentAudio.pause();
-                currentAudio = null;
-                wasAudioPlaying = true;
                 console.log('🔇 Audio paused - user speaking');
+
+                setTimeout(() => {
+                    if(isSpeaking) {
+                        currentAudio = null;
+                        console.log('🔇 Audio cleared - user speaking');
+                    } else {
+                        currentAudio.play().catch(e => {
+                            console.error('Error resuming audio:', e);
+                        });
+                        console.log('🔊 Audio resumed');
+                    }
+                }, SILENCE_DELAY + 3000);
             }
         }
 
@@ -702,11 +712,10 @@ $creds = getCreds('AHR');
 
         // Function to resume audio playback
         function resumeAudio() {
-            if (currentAudio && wasAudioPlaying) {
+            if (currentAudio) {
                 currentAudio.play().catch(e => {
                     console.error('Error resuming audio:', e);
                 });
-                wasAudioPlaying = false;
                 console.log('🔊 Audio resumed');
             }
         }
