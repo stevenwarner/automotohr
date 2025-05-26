@@ -230,6 +230,10 @@ class Compliance_safety_reporting extends Base_csp
                 ->getReportQuestionsById(
                     $reportTypeId
                 );
+        //
+        $this->data["report_types"] = $this
+            ->compliance_report_model
+            ->getAllReportTypes();
         // get the employees
         // $this->data["employees"] = $this
         //     ->compliance_report_model
@@ -247,6 +251,7 @@ class Compliance_safety_reporting extends Base_csp
     public function processAdd(int $reportTypeId)
     {
         $this->form_validation->set_rules('report_title', 'Report Title', 'required');
+        $this->form_validation->set_rules('report_type', 'Report Type', 'required');
         $this->form_validation->set_rules('report_date', 'Report Date', 'required');
 
         if (!$this->form_validation->run()) {
@@ -1352,7 +1357,7 @@ class Compliance_safety_reporting extends Base_csp
     {
         //allowed_internal_system_count
         $this->compliance_report_model
-                ->manageAllowedDepartmentsAndTeamsManagers();
+            ->manageAllowedDepartmentsAndTeamsManagers();
         //
         $this
             ->compliance_report_model
@@ -1639,7 +1644,7 @@ class Compliance_safety_reporting extends Base_csp
                 $file = [
                     "title" => $post["title"],
                     "file_type" => $post["type"],
-                    "s3_file_value" => $post["link"],
+                    "s3_file_value" => $fileName,
                     "created_at" => getSystemDate(),
                     "manual_email" => false,
                     "sid" => $id,
@@ -1728,7 +1733,7 @@ class Compliance_safety_reporting extends Base_csp
         //
         $this->renderView('compliance_safety_reporting/edit_incident_item');
     }
-    
+
     /**
      * process departments and teams
      * 
@@ -1896,7 +1901,7 @@ class Compliance_safety_reporting extends Base_csp
         $issuesIds = $_POST['issuesIds'];
         //
         $this->compliance_report_model
-                ->manageAllowedDepartmentsAndTeamsManagers();
+            ->manageAllowedDepartmentsAndTeamsManagers();
         //
         foreach ($issuesIds as $issueId) {
             $this
@@ -1918,6 +1923,33 @@ class Compliance_safety_reporting extends Base_csp
         $issues = $this
             ->compliance_report_model
             ->getAllIssues();
+        //
+        // also get the severity level
+        $severityLevels = $this->compliance_report_model->getSeverityLevels();
+        // _e($severityLevels,true,true);
+        // return the success
+        return SendResponse(
+            200,
+            [
+                "message" => "Issues fetched successfully.",
+                "view" => $this->load->view(
+                    'compliance_safety_reporting/reporting/issues_modal',
+                    [
+                        "records" => $issues,
+                        "severity_status" => $severityLevels
+                    ],
+                    true
+                )
+            ]
+        );
+    }
+
+    public function getAllIssuesByReportId(int $reportTypeId)
+    {
+        // get the issues
+        $issues = $this
+            ->compliance_report_model
+            ->getAllIssuesByReportId($reportTypeId);
         //
         // also get the severity level
         $severityLevels = $this->compliance_report_model->getSeverityLevels();
@@ -1974,7 +2006,7 @@ class Compliance_safety_reporting extends Base_csp
             ->getIssueByRecordId($issueId);
         //
         $issueType = $this->compliance_report_model
-        ->getIssueTypeByRecordId($issues['compliance_report_incident_sid']);
+            ->getIssueTypeByRecordId($issues['compliance_report_incident_sid']);
         // also get the severity level
         $severityLevels = $this->compliance_report_model->getSeverityLevels();
         // return the success
@@ -1988,7 +2020,7 @@ class Compliance_safety_reporting extends Base_csp
                     [
                         "records" => $issues,
                         "severity_status" => $severityLevels,
-                        "issue_type" => $issueType 
+                        "issue_type" => $issueType
                     ],
                     true
                 )
@@ -1996,7 +2028,7 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
-    public function addIssueToReport()
+    public function addIssueToReport(int $reportTypeId)
     {
         // get the post
         $post = $this->input->post(null, true);
@@ -2062,7 +2094,7 @@ class Compliance_safety_reporting extends Base_csp
                 "issueId" => $issueId,
                 "reportId" => $post["reportId"],
                 "incidentId" => $cspIncidentId,
-                "reloadURL" => base_url("compliance_safety_reporting/edit/").$post["reportId"]."?tab=issues"
+                "reloadURL" => base_url("compliance_safety_reporting/edit/") . $post["reportId"] . "?tab=issues"
             ]
         );
     }
@@ -2098,7 +2130,7 @@ class Compliance_safety_reporting extends Base_csp
                     $this->getLoggedInEmployee("sid"),
                 );
         }
-        
+
         //
         $this->compliance_report_model->processIssueQuestion(
             $post["issueId"],
@@ -2368,7 +2400,7 @@ class Compliance_safety_reporting extends Base_csp
             200,
             [
                 "message" => "You have successfully updated the issue questions.",
-                "reloadURL" => base_url("compliance_safety_reporting/edit/").$reportId."?tab=questions"
+                "reloadURL" => base_url("compliance_safety_reporting/edit/") . $reportId . "?tab=questions"
             ]
         );
     }

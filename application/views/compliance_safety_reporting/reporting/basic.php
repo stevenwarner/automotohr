@@ -28,6 +28,15 @@
                                     </tr>
                                     <tr>
                                         <th class="vam" scope="col">
+                                            Report Type
+                                        </th>
+                                        <td class="vam">
+                                            <input type="text" disabled class="form-control report_type"
+                                                name="report_type" value="<?= $report["compliance_report_name"]; ?>" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="vam" scope="col">
                                             Report Date
                                         </th>
                                         <td class="vam">
@@ -51,11 +60,12 @@
                                         </th>
                                         <td class="vam">
                                             <select name="report_status" id="" class="form-control report_status">
-                                                <option <?= $report["completion_status"] == "pending" ? "selected" : ""; ?>
+                                                <option <?= $report["status"] == "pending" ? "selected" : ""; ?>
                                                     value="pending">In Progress</option>
-                                                <option <?= $report["completion_status"] == "on_hold" ? "selected" : ""; ?>
+                                                <option <?= $report["status"] == "on_hold" ? "selected" : ""; ?>
                                                     value="on_hold">On Hold</option>
-                                                <option <?= $report["completion_status"] == "completed" ? "selected" : ""; ?> value="completed">Completed</option>
+                                                <option <?= $report["status"] == "completed" ? "selected" : ""; ?>
+                                                    value="completed">Completed</option>
                                             </select>
                                         </td>
                                     </tr>

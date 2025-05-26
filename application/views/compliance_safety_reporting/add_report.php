@@ -25,11 +25,25 @@
                 <!--  -->
                 <form method="post" enctype="multipart/form-data" autocomplete="off" id="jsAddReportForm">
                     <div class="row">
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                        <div class="col-lg-8 col-md-8 col-xs-12 col-sm-8">
                             <div class="form-group">
                                 <label for="report_title">Report Title <strong class="text-danger">*</strong></label>
                                 <input type="text" class="form-control" id="report_title" name="report_title"
                                     value="<?= $type['report_title'] ?>" />
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                            <div class="form-group">
+                                <label for="report_type">Report Type <strong class="text-danger">*</strong></label>
+                                <select name="report_type" id="report_type" class="form-control jsReportTypeSelect">
+                                    <?php if ($report_types): ?>
+                                        <?php foreach ($report_types as $report_type): ?>
+                                            <option value="<?= $report_type['id'] ?>">
+                                                <?= $report_type['compliance_report_name'] ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </select>
                             </div>
                         </div>
                     </div>

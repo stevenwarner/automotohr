@@ -40,6 +40,9 @@ $(function Overview() {
 			report_title: {
 				required: true,
 			},
+			report_type: {
+				required: true,
+			},
 			report_date: {
 				required: true,
 			},
@@ -160,7 +163,7 @@ $(function Overview() {
 				.done(function (resp) {
 					_success(resp.message, function () {
 						window.location.href = baseUrl(
-							"compliance_safety_reporting/edit/" + resp.id
+							"compliance_safety_reporting/edit/" + resp.id + "?tab=issues"
 						);
 					});
 				});

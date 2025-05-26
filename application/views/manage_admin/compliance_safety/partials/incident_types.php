@@ -45,7 +45,7 @@
                                             title="Enable Type" src="Enable"><i class="fa fa-toggle-on"></i></button>
                                     <?php } ?>
                                 </td>
-                                <td><a href="<?php echo base_url('manage_admin/compliance_safety/incident_types/view_incident_questions/' . $type['id']) ?>"
+                                <td class="hidden"><a href="<?php echo base_url('manage_admin/compliance_safety/incident_types/view_incident_questions/' . $type['id']) ?>"
                                         class="btn btn-warning btn-sm"
                                         title="Delete Employer">View Questions</a>
                                 </td>

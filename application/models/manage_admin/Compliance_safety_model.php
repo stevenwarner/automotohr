@@ -116,7 +116,7 @@ class Compliance_safety_model extends CI_Model
                 "code",
                 "status",
             ])
-            ->order_by("priority", "ASC")
+            ->order_by("id", "DESC")
             ->get("compliance_incident_types")
             ->result_array();
     }
@@ -131,7 +131,7 @@ class Compliance_safety_model extends CI_Model
                 "code",
             ])
             ->where("status", 1)
-            ->order_by("priority", "ASC")
+            ->order_by("id", "DESC")
             ->get("compliance_incident_types")
             ->result_array();
     }

@@ -711,7 +711,7 @@ $(function Overview() {
 			//
 			XHR = $.ajax({
 				url: baseUrl(
-					"compliance_safety_reporting/issues/all"
+					"compliance_safety_reporting/issues/report_type_id/" + reportTypeId
 				),
 				method: "GET",
 			})
@@ -831,7 +831,7 @@ $(function Overview() {
 
 		try {
 			const response = await $.ajax({
-				url: baseUrl(`compliance_safety_reporting/issue/add`),
+				url: baseUrl(`compliance_safety_reporting/issue/add/` + reportTypeId),
 				method: "POST",
 				data: issueObject,
 			});
@@ -1422,164 +1422,6 @@ $(function Overview() {
 					});
 				});
 		}
-	}
-
-	// Upload file
-	$(".jsIssueUploadFileBtn").click(
-		function (event) {
-			event.preventDefault();
-
-			cspReportId = $(this).data("report_id");
-			cspIncidentId = $(this).data("incident_id");
-			cspIssueId = $(this).data("issue_id");
-
-			loadModal({
-				title: "Attach file",
-				save: {
-					text: "Upload file",
-					cl: "jsIssueSaveFileBtn"
-				}
-			});
-			//
-			const uploadFileHtml = `
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <label for="jsIssueFileUploadTitle">Title <strong class="text-danger">*</strong></label>
-                                <input type="text" class="form-control" id="jsIssueFileUploadTitle" name="jsIssueFileUploadTitle" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <input type="file" class="hidden" id="jsIssueFileUploadFile" name="jsIssueFileUploadFile" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-			//
-			$("#jsIssueModalCommon").find(".modal-body").html(uploadFileHtml);
-			//
-			fileUploaderReference = $("#jsIssueFileUploadFile").msFileUploader(config.document);
-			//
-			$("#jsIssueModalCommon").find(".jsIssueSaveFileBtn").removeClass("hidden");
-		}
-	);
-
-	$(document).on("click", ".jsIssueSaveFileBtn", function (event) {
-		event.preventDefault();
-		if (XHR !== null) {
-			return;
-		}
-		//
-		const issueUploadObject = {
-			title: $("#jsIssueFileUploadTitle").val().trim(),
-			file: $("#jsIssueFileUploadFile").msFileUploader("get"),
-		};
-		//
-		if (!issueUploadObject.title) {
-			_error("Please add a title of the file.")
-			return;
-		}
-		if (Object.keys(issueUploadObject.file).length === 0) {
-			_error("Please select a valid file.")
-			return;
-		}
-		if (issueUploadObject.hasError && issueUploadObject.type === "vimeo") {
-			_error("Vimeo link is invalid.");
-			return;
-		}
-		if (issueUploadObject.hasError && issueUploadObject.type === "youtube") {
-			_error("YouTube link is invalid.");
-			return;
-		}
-		if (issueUploadObject.file.hasError) {
-			_error("Please select a valid file.")
-			return;
-		}
-		issueUploadObject.fileType =
-			issueUploadObject.file.type === "vimeo" || issueUploadObject.file.type === "youtube"
-				? "link"
-				: getFileType(issueUploadObject.file).toLowerCase()
-		//
-		attachFileToIssue(issueUploadObject);
-	});
-
-	function attachFileToIssue(issueUploadObject) {
-		// Toggle button state
-		const toggleButton = $(".jsIssueSaveFileBtn");
-		toggleButton.prop("disabled", true);
-		//
-		const formData = new FormData();
-		//
-		formData.append("reportId", cspReportId);
-		formData.append("incidentId", cspIncidentId);
-		formData.append("itemId", cspIssueId);
-		formData.append("title", issueUploadObject.title);
-		formData.append("type", issueUploadObject.fileType);
-		//
-		if (issueUploadObject.file.type === "youtube" || issueUploadObject.file.type === "vimeo") {
-			formData.append("link", issueUploadObject.file.link);
-		} else {
-			formData.append("file", issueUploadObject.file);
-		}
-		//
-		XHR = $
-			.ajax({
-				url: baseUrl(`compliance_safety_reporting/add_file_to_incident_item`),
-				method: "POST",
-				data: formData,
-				processData: false,
-				contentType: false
-			})
-			.always(function () {
-				XHR = null;
-				toggleButton.prop("disabled", false);
-			})
-			.fail(handleErrorResponse)
-			.done(function (resp) {
-				_success("File attached successfully.");
-				$("#jsIssueModalCommon").modal("hide");
-			});
-	}
-
-
-	function loadModal(options) {
-		if ($("#jsIssueModalCommon").length <= 0) {
-			const modal = `
-			<div class=modal fade" id="jsIssueModalCommon" tabindex="-1" role="dialog" aria-hidden="true">
-				<div class="modal-dialog modal-lg" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title"></h5>
-						</div>
-						<div class="modal-body">
-							<div class="alert alert-info text-center">Generating a view please wait.</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-orange hidden"></button>
-						</div>
-					</div>
-				</div>
-			</div>
-			`;
-			$("body").append(modal);
-		}
-		// let's add options
-		$("#jsIssueModalCommon").find(".modal-title").html(options.title);
-		$("#jsIssueModalCommon").find(".btn-orange").html(options.save.text);
-		$("#jsIssueModalCommon").find(".btn-orange").addClass(options.save.cl);
-		$("#jsIssueModalCommon").find(".btn-orange").addClass("hidden");
-		//
-		$("#jsIssueModalCommon").modal({
-			backdrop: "static",
-			keyboard: false,
-		});
-		//
-		$("#jsIssueModalCommon").modal("show");
 	}
 
 	function getFileType(file) {

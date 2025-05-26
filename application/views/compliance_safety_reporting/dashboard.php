@@ -169,11 +169,11 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                 <div class="form-group">
                                     <label for="status">Departments</label>
                                     <select name="departments[]" id="jsDepartments" multiple>
-                                        <?php 
-                                            $allowedOnes = empty($filter['departments']) ? [] : $filter['departments'];
+                                        <?php
+                                        $allowedOnes = empty($filter['departments']) ? [] : $filter['departments'];
                                         ?>
                                         <?php foreach ($departments as $v) { ?>
-                                            <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                            <option value="<?= $v['sid']; ?>" <?= in_array($v['sid'], $allowedOnes) ? 'selected' : ''; ?>><?= $v['name']; ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -188,11 +188,11 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                 <div class="form-group">
                                     <label for="status">Teams</label>
                                     <select name="teams[]" id="jsTeams" multiple>
-                                        <?php 
-                                            $allowedOnes = empty($filter['teams']) ? [] : $filter['teams'];
+                                        <?php
+                                        $allowedOnes = empty($filter['teams']) ? [] : $filter['teams'];
                                         ?>
                                         <?php foreach ($teams as $v) { ?>
-                                            <option value="<?=$v['sid'];?>" <?=in_array($v['sid'], $allowedOnes) ? 'selected' : '';?>><?=$v['name'];?></option>
+                                            <option value="<?= $v['sid']; ?>" <?= in_array($v['sid'], $allowedOnes) ? 'selected' : ''; ?>><?= $v['name']; ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -275,7 +275,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                 style="cursor: pointer;">
                                 <i class="fa fa-chevron-right jsToggleIcon"></i>
                                 <button type="button" class="btn btn-link jsReportEditBtn"
-                                    data-href="<?= base_url("compliance_safety_reporting/edit/" . $v0["id"]); ?>">
+                                    data-href="<?= base_url("compliance_safety_reporting/edit/" . $v0["id"]); ?>?tab=issues">
                                     <?= $v0["title"]; ?>
                                 </button>
                                 (<?= count($v0["issues"]); ?> Issues)
@@ -369,7 +369,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                                 </label>
                                                                 <br>
                                                                 <a
-                                                                    href="<?= base_url("compliance_safety_reporting/edit/" . $record["csp_reports_sid"]); ?>">
+                                                                    href="<?= base_url("compliance_safety_reporting/edit/" . $record["csp_reports_sid"]); ?>?tab=issues">
                                                                     <?= $record["title"]; ?>
                                                                 </a>
                                                                 (<?= formatDateToDB($v0["report_date"], DB_DATE, DATE); ?>)

@@ -1448,7 +1448,7 @@ class Compliance_report_model extends CI_Model
 		//
 		// lets first add the report
 		$reportData = [
-			"report_type_sid" => $reportTypeId,
+			"report_type_sid" => $post["report_type"],
 			"company_sid" => $companyId,
 			"created_by" => $loggedInEmployeeId,
 			"last_modified_by" => $loggedInEmployeeId,
@@ -6410,6 +6410,89 @@ class Compliance_report_model extends CI_Model
 		return $records_arr;
 	}
 
+	public function getAllIssuesByReportId(int $reportTypeId)
+	{
+		// get all issues of the report type
+		$records = $this
+			->db
+			->select("incident_sid")
+			->where("report_sid", $reportTypeId)
+			->get("compliance_report_incident_types_mapping")
+			->result_array();
+		//
+		if (!$records) {
+			return [];
+		}
+		//
+		$incidentIds = array_column($records, "incident_sid");
+		//
+		if (!$incidentIds) {
+			return [];
+		}
+
+		$this->db->select([
+			// Item columns
+			"compliance_report_incident_types.sid",
+			"compliance_report_incident_types.title",
+			"compliance_report_incident_types.description",
+			"compliance_report_incident_types.compliance_report_incident_sid",
+			// Add severity columns
+			"compliance_severity_levels.level",
+			"compliance_severity_levels.bg_color",
+			"compliance_severity_levels.txt_color",
+			//
+			"compliance_incident_types.compliance_incident_type_name",
+		]);
+		$this->db->from("compliance_report_incident_types");
+		$this->db->where("compliance_incident_types.status", 1);
+		$this->db->where("compliance_incident_types.status", 1);
+		$this->db->where_in("compliance_incident_types.id", $incidentIds);
+		$this->db->where("compliance_incident_types.compliance_incident_type_name <> ", "manual");
+		$this->db->order_by("compliance_report_incident_types.title", "ASC");
+		// make join with severity levels
+		$this->db->join(
+			"compliance_severity_levels",
+			"compliance_severity_levels.sid = compliance_report_incident_types.severity_level_sid",
+			"inner"
+		);
+		// now join with incident types
+		$this->db->join(
+			"compliance_incident_types",
+			"compliance_incident_types.id = compliance_report_incident_types.compliance_report_incident_sid",
+			"inner"
+		);
+		$records_obj = $this->db->get();
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+
+		//
+		if ($records_arr) {
+			$issueObject = [];
+			foreach ($records_arr as $record) {
+				if (!array_key_exists($record["compliance_report_incident_sid"], $issueObject)) {
+					$issueObject[$record["compliance_report_incident_sid"]] = [
+						"title" => $record["compliance_incident_type_name"],
+						"issues" => [],
+					];
+				}
+				//
+				$issueObject[$record["compliance_report_incident_sid"]]["issues"][] = [
+					"id" => $record["sid"],
+					"name" => $record["title"],
+					"description" => $record["description"],
+					"level" => $record["level"],
+					"bg_color" => $record["bg_color"],
+					"txt_color" => $record["txt_color"],
+					"incident_id" => $record["compliance_report_incident_sid"],
+				];
+			}
+
+			return array_values($issueObject);
+		}
+		//
+		return $records_arr;
+	}
+
 	public function checkIfIncidentExists($reportId, $incidentTypeId, $loggedInUserId)
 	{
 		//
@@ -6448,7 +6531,7 @@ class Compliance_report_model extends CI_Model
 			$data = [
 				'compliance_incident_type_name' => "manual",
 				'status' => 1,
-				'description' => "",
+				'description' => "Manual Incident. Please don't delete it.",
 				'code' => ''
 			];
 			$this->db->insert('compliance_incident_types', $data);
@@ -6573,7 +6656,7 @@ class Compliance_report_model extends CI_Model
 			->where("id", $incidentTypeId)
 			->get("compliance_incident_types")
 			->row_array()['compliance_incident_type_name'];
-	}		
+	}
 
 	public function addComplianceReportType(
 		$title,
@@ -6634,7 +6717,7 @@ class Compliance_report_model extends CI_Model
 		return $this->db->insert_id();
 	}
 
-	public function editComplianceReportType (
+	public function editComplianceReportType(
 		$incidentTypeId,
 		$title,
 		$description,
@@ -6710,7 +6793,7 @@ class Compliance_report_model extends CI_Model
 		$updateArray = [
 			"title" => $reportTitle,
 			"report_date" => $reportDate,
-			"status" => $reportTitle,
+			"status" => $reportStatus,
 			"last_modified_by" => $loggedInEmployeeId,
 			"updated_at" => getSystemDate(),
 		];
@@ -7333,7 +7416,8 @@ class Compliance_report_model extends CI_Model
 		$this->deleteDepartmentManagers($issueId);
 	}
 
-	public function deleteDepartmentManagers ($issueId) {
+	public function deleteDepartmentManagers($issueId)
+	{
 		$this->db->where('csp_reports_incidents_items_sid', $issueId);
 		$this->db->where('is_manager', 1);
 		$this->db->delete('csp_reports_employees');

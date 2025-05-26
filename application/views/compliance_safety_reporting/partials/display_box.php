@@ -34,7 +34,8 @@
         <div class="row">
             <hr>
             <div class="col-md-12 col-xs-12 text-center">
-                <a class="btn btn-orange" href="<?= base_url("{$firstSegment}/edit/" . $display_box_data["sid"]); ?>">
+                <a class="btn btn-orange"
+                    href="<?= base_url("{$firstSegment}/edit/" . $display_box_data["sid"]); ?>?tab=issues">
                     <i class="fa fa-pencil"></i>
                 </a>
                 <?php if (isMainAllowedForCSP()): ?>

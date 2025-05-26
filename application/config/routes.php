@@ -2800,8 +2800,14 @@ $route["compliance_safety_reporting/send_issue_reminder_email"]["post"] =
 $route["compliance_safety_reporting/issues/all"]["get"] =
   "v1/Compliance_safety_reporting/getAllIssues";
 
+$route["compliance_safety_reporting/issues/report_type_id/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/getAllIssuesByReportId/$1";
+
 $route["compliance_safety_reporting/issue/add"]["post"] =
   "v1/Compliance_safety_reporting/addIssueToReport";
+
+$route["compliance_safety_reporting/issue/add/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/addIssueToReport/$1";
 
 $route["compliance_safety_reporting/issues/(:num)"]["get"] =
   "v1/Compliance_safety_reporting/getSingleIssueView/$1";

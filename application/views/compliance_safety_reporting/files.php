@@ -11,7 +11,7 @@
                 }
 
                 ?>
-                <div class="col-sm-3 jsFileBox">
+                <div class="col-md-3 col-sm-4 col-xs-12 jsFileBox">
                     <div class="widget-box">
                         <div class="attachment-box full-width jsFileBox" style="<?= $style; ?>"
                             data-id="<?= $document["sid"]; ?>">
@@ -36,16 +36,17 @@
                             <div class="status-panel">
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                        <button class="btn btn-info jsViewFile">
+                                        <button class="btn btn-info btn-site jsViewFile">
                                             <i class="fa fa-eye"></i>
                                         </button>
                                         <a target="_blank"
                                             href="<?= base_url("compliance_safety_reporting/file/download/" . $document["sid"]); ?>"
-                                            class="btn btn-info btn-info">
+                                            class="btn btn-info btn-info btn-site">
                                             <i class="fa fa-download"></i>
                                         </a>
                                         <?php if ($document["file_type"] != "link"): ?>
-                                            <button class="btn btn-danger jsDeleteFile" data-file_id="<?= $document["sid"]; ?>"
+                                            <button class="btn btn-danger btn-site jsDeleteFile"
+                                                data-file_id="<?= $document["sid"]; ?>"
                                                 data-file_type="<?= $document["file_type"]; ?>">
                                                 <i class="fa fa-trash"></i>
                                             </button>

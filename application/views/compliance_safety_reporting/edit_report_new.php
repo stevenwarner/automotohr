@@ -90,7 +90,6 @@
         </div>
 
         <br />
-
         <div class="tab-content">
             <?php $this->load->view('compliance_safety_reporting/reporting/basic'); ?>
             <?php $this->load->view('compliance_safety_reporting/reporting/issues'); ?>
@@ -102,3 +101,7 @@
         </div>
     </div>
 </div>
+
+<script>
+    reportTypeId = "<?= $report['report_type_sid']; ?>";
+</script>

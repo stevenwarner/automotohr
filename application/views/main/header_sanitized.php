@@ -281,7 +281,8 @@
 
                                                                             <p style="display: none;"
                                                                                 id="product_total_<?php echo $value['sid']; ?>">
-                                                                                <?php echo $product_total; ?></p>
+                                                                                <?php echo $product_total; ?>
+                                                                            </p>
                                                                         </div>
                                                                         <a class="remove-item-btn" href="javascript:;"
                                                                             onclick="remove_cart_item(<?php echo $value['sid']; ?>)">X</a><!-- function defined at footer -->
@@ -292,7 +293,8 @@
                                                                 <div class="sub-total-count">
                                                                     <label>Sub-Total:</label>
                                                                     <p style="display: none;" id="cart_subtotal_value">
-                                                                        <?php echo $sub_total; ?></p>
+                                                                        <?php echo $sub_total; ?>
+                                                                    </p>
                                                                     <p id="cart_subtotal"><?php echo '$' . $sub_total; ?></p>
                                                                 </div>
                                                                 <div class="check-out-btn">
