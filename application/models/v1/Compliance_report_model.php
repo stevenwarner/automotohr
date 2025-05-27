@@ -6511,9 +6511,9 @@ class Compliance_report_model extends CI_Model
 		]);
 		$this->db->from("compliance_report_incident_types");
 		$this->db->where("compliance_incident_types.status", 1);
-		$this->db->where("compliance_incident_types.status", 1);
+		$this->db->where("compliance_report_incident_types.sid <>", 24);
 		$this->db->where_in("compliance_incident_types.id", $incidentIds);
-		$this->db->where("compliance_incident_types.compliance_incident_type_name <> ", "manual");
+		// $this->db->where("compliance_incident_types.compliance_incident_type_name <> ", "manual");
 		$this->db->order_by("compliance_report_incident_types.title", "ASC");
 		// make join with severity levels
 		$this->db->join(
@@ -6530,7 +6530,6 @@ class Compliance_report_model extends CI_Model
 		$records_obj = $this->db->get();
 		$records_arr = $records_obj->result_array();
 		$records_obj->free_result();
-		_e($this->db->last_query(),true);
 
 		//
 		if ($records_arr) {
@@ -6553,7 +6552,7 @@ class Compliance_report_model extends CI_Model
 					"incident_id" => $record["compliance_report_incident_sid"],
 				];
 			}
-			// _e($issueObject,true);
+			// 
 			return array_values($issueObject);
 		}
 		
