@@ -9263,9 +9263,6 @@ if (!function_exists('send_admin_calendar_email_template')) {
         if ($event_block_changed == 1 && isset($diff_array['old_comment']))
             $send_to_user = false;
 
-        // _e($send_to_user, true, true);
-        // _e($body, true, true);
-
         if (is_array($users_array) && ($event_type == 'demo' || $event_type == 'super admin'))
             $send_to_user = false;
 
@@ -17785,5 +17782,23 @@ if (!function_exists('checkIfAnyIncidentIssueAssigned')) {
         }
         //
         return false;
+    }
+}
+
+
+//
+if (!function_exists('get_email_template_byCode')) {
+
+    function get_email_template_byCode($code)
+    {
+        $CI = &get_instance();
+        $CI->db->where('template_code', $code);
+        $result = $CI->db->get('email_templates')->row_array();
+
+        if (count($result) > 0) {
+            return $result;
+        } else {
+            return 0;
+        }
     }
 }

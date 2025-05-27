@@ -460,13 +460,13 @@ class Home extends CI_Controller
         // Double check indexes
         if (
             !isset(
-            $event_array['id'],
-            $event_array['eid'],
-            $event_array['etype'],
-            $event_array['name'],
-            $event_array['email'],
-            $event_array['type']
-        )
+                $event_array['id'],
+                $event_array['eid'],
+                $event_array['etype'],
+                $event_array['name'],
+                $event_array['email'],
+                $event_array['type']
+            )
         ) {
             show_404();
         }
@@ -1074,9 +1074,9 @@ class Home extends CI_Controller
         // Double check indexes
         if (
             !isset(
-            $event_array['eid'],
-            $event_array['type']
-        )
+                $event_array['eid'],
+                $event_array['type']
+            )
         ) {
             show_404();
         }
@@ -1304,6 +1304,8 @@ class Home extends CI_Controller
             show_404();
         //
         $event_array = array();
+        //_e($detail_array,true,true);
+
         foreach ($detail_array as $k0 => $v0) {
             $tmp = explode('=', $v0);
             $event_array[$tmp[0]] = $tmp[1];
@@ -1312,19 +1314,18 @@ class Home extends CI_Controller
         // Double check indexes
         if (
             !isset(
-            $event_array['id'],
-            $event_array['eid'],
-            $event_array['etype'],
-            $event_array['name'],
-            $event_array['email'],
-            $event_array['type']
-        )
+                $event_array['id'],
+                $event_array['eid'],
+                $event_array['etype'],
+                $event_array['name'],
+                $event_array['email'],
+                $event_array['type']
+            )
         ) {
             show_404();
         }
         // Tmp check
         $event_array['type'] = $event_array['type'] == 'external_user' ? 'external user' : $event_array['type'];
-        //
         // Loads calendar modal
         $this->load->model('manage_admin/dashboard_model', 'cm');
         $event_exists = $this->cm->get_event_column_by_event_id($event_array['eid'], 'sid', false);
@@ -1433,13 +1434,17 @@ class Home extends CI_Controller
                 'event_status' => 'cannotattend',
                 'created_at' => date('Y-m-d H:i:s')
             );
+
+
         // _e($this->input->post('cat'), true, true);
         //
         $event_data = array(
             'eid' => $insert_array['event_sid'],
             'name' => $insert_array['user_name'],
             'type' => 'Can Not Attend',
-            'event_type' => $this->input->post('cat')
+            'event_type' => $this->input->post('cat'),
+            'cancel_user_email' => $this->input->post('user_email'),
+            'user_sid' => $this->input->post('user_id')
         );
 
         if ($this->input->post('cat') == 'training-session' && $this->input->post('type') == 'cannotattend') {
@@ -1544,8 +1549,33 @@ class Home extends CI_Controller
             $replace_array['{{REQUESTOR_SEPARATOR}}'] = ', ';
             //
             $subject = reset_category($event['event_category']) . ' - Cancellation Requested!';
-        }
 
+            //
+            $canceledTemplate = get_email_template_byCode('reschedule_admin_canceled_event');
+
+            $this->load->library('encrypt');
+            $base_url = base_url('event-detail') . '/';
+
+            $string_reschedule = 'id=' . $event_array['user_sid'] . ':eid=' . $event_array['eid'] . ':etype=' . (strtolower($event_array['event_type'])) . ':status=reschedule:type=' . ($event_array['type']) . ':name=' . $event_array['name'] . ':email=' . $event_array['cancel_user_email'];
+            $enc_string_reschedule = $base_url . str_replace('/', '$eb$eb$1', $this->encrypt->encode($string_reschedule));
+            $reschedule_button = '   <a href="' . $enc_string_reschedule . '" target="_blank" style="background-color: #006699; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin: 5px; ">Reschedule</a>';
+
+            $cancel_message = str_replace('{{RESCHEDULE_BUTTONS}}', $reschedule_button, $canceledTemplate['text']);
+
+            $header = EMAIL_HEADER;
+            $header = preg_replace('/<div class="body-content" (.*?)><\/div>/', '', $header);
+            $footer = EMAIL_FOOTER;
+            $cancel_message = $header . '</div><table border="0"><br>' . ($cancel_message) . '</table><br />' . $footer;
+
+            $this->log_and_send_email(
+                FROM_EMAIL_NOTIFICATIONS,
+                $event_array['cancel_user_email'],
+                $canceledTemplate['subject'],
+                $cancel_message,
+                FROM_EMAIL_NOTIFICATIONS
+            );
+        }
+        //
 
         $template = send_admin_calendar_email_template($event, 'confirm');
         //
@@ -1599,9 +1629,9 @@ class Home extends CI_Controller
         // Double check indexes
         if (
             !isset(
-            $event_array['eid'],
-            $event_array['type']
-        )
+                $event_array['eid'],
+                $event_array['type']
+            )
         ) {
             show_404();
         }
@@ -2023,11 +2053,11 @@ class Home extends CI_Controller
         // Double check indexes
         if (
             !isset(
-            $event_array['id'],
-            $event_array['type'],
-            $event_array['cid'],
-            $event_array['cname']
-        )
+                $event_array['id'],
+                $event_array['type'],
+                $event_array['cid'],
+                $event_array['cname']
+            )
         ) {
             show_404();
         }
