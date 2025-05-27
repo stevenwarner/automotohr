@@ -394,7 +394,7 @@ $creds = getCreds('AHR');
     let voiceCheckInterval = null;
     let isSpeaking = false;
     let silenceTimer = null;
-    const VOLUME_THRESHOLD = 110;
+    const VOLUME_THRESHOLD = 120;
     const SILENCE_DELAY = 2000;
 
     // timer variables
@@ -582,7 +582,8 @@ $creds = getCreds('AHR');
                 initAudioContext();
 
                 // Setup voice detection using Web Audio API
-                setupVoiceDetection(stream);
+                detectSpeaking(stream);
+                // setupVoiceDetection(stream);
 
                 // Setup MediaRecorder for sending audio data
                 setupMediaRecorder(stream);
@@ -593,6 +594,40 @@ $creds = getCreds('AHR');
             .catch(error => {
                 console.error('Error accessing microphone:', error);
             });
+        }
+
+        function detectSpeaking(stream) {
+        const source = audioContext.createMediaStreamSource(stream);
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 1024;
+        
+        const dataArray = new Uint8Array(analyser.fftSize);
+        source.connect(analyser);
+        
+            function analyze() {
+                analyser.getByteTimeDomainData(dataArray);
+            
+                // Compute average volume from waveform
+                let sum = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                let sample = dataArray[i] - 128; // Normalize to -128 to +127
+                sum += Math.abs(sample);
+                }
+                const avg = sum / dataArray.length;
+            
+                // Simple threshold: tune this value
+                const threshold = 10;
+            
+                if (avg > threshold) {
+                    onVoiceDetected(avg);
+                } else {
+                    onSilenceDetected(avg);
+                }
+            
+                requestAnimationFrame(analyze);
+            }
+            
+            analyze();
         }
 
         // New function to setup voice detection
