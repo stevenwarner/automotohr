@@ -233,12 +233,24 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                 //
                                                 $severityLevelGraph["data"][$record["level"]]++;
                                                 $severityLevelGraph["colors"][$record["level"]] = $record["bg_color"];
+                                                //
+                                                $panelClass = 'panel-default';
+                                                $panelBackground = '';
+                                                //
+                                                if ($record["completion_status"] === "completed") {
+                                                    $panelClass = 'panel-success';
+                                                    $panelBackground = 'background: rgba(92, 184, 92, .6);';
+                                                } else if ($record["completion_status"] === "on_hold") {
+                                                    $panelClass = 'panel-warning';
+                                                    $panelBackground = 'background: rgba(240, 173, 78, .6);';
+                                                }
+                                                // 
                                                 ?>
                                                 <div class="col-md-12">
                                                     <div
-                                                        class="panel <?= $record["completion_status"] === "completed" ? "panel-success" : "panel-default " ?>">
+                                                        class="panel <?= $panelClass ?>">
                                                         <div class="panel-heading jsToggle2" data-target="issue<?= $record["sid"] ?>"
-                                                            style="cursor: pointer;  <?= $record["completion_status"] === "completed" ? "background: rgba(92, 184, 92, .6);" : " " ?>">
+                                                            style="cursor: pointer;  <?= $panelBackground ?>">
                                                             <div class="row">
                                                                 <div class="col-md-10 col-xs-12">
                                                                     <h3 class="panel-heading-text text-small">
