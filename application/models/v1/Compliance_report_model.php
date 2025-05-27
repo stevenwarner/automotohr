@@ -6530,6 +6530,7 @@ class Compliance_report_model extends CI_Model
 		$records_obj = $this->db->get();
 		$records_arr = $records_obj->result_array();
 		$records_obj->free_result();
+		_e($this->db->last_query(),true);
 
 		//
 		if ($records_arr) {
@@ -6552,9 +6553,10 @@ class Compliance_report_model extends CI_Model
 					"incident_id" => $record["compliance_report_incident_sid"],
 				];
 			}
-
+			// _e($issueObject,true);
 			return array_values($issueObject);
 		}
+		
 		//
 		return $records_arr;
 	}
