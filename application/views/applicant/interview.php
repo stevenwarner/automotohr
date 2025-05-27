@@ -447,10 +447,6 @@ $creds = getCreds('AHR');
         }
 
         startCallTimer();
-
-        // Clear previous audio queue
-        audioQueue = [];
-        isPlaying = false;
         
         function setupSocketConnection() {
             // Connect to your Node.js server with Socket.IO
@@ -481,6 +477,10 @@ $creds = getCreds('AHR');
 
             socket.on('message', async (data) => {
                 try {
+                    console.log('isSpeaking', isSpeaking);
+                    if(isSpeaking) {
+                        return;
+                    }
                     const parsedData = JSON.parse(data);
                     
                     if (parsedData.type === 'audio') {
@@ -490,6 +490,10 @@ $creds = getCreds('AHR');
                         // if (isSpeaking) {
                         //     return;
                         // }
+
+                        console.log('data', parsedData.data);
+
+                        try {
 
                         const binaryString = atob(parsedData.data);
                         const len = binaryString.length;
@@ -511,6 +515,10 @@ $creds = getCreds('AHR');
                             playNextInQueue();
                         }
 
+                        } catch (decodeError) {
+                            console.error('Error decoding audio:', decodeError);
+                        }
+
                         // Decode the audio data
                         // try {
                         //     const audioBuffer = await audioContext.decodeAudioData(bytes.buffer);
@@ -527,13 +535,13 @@ $creds = getCreds('AHR');
                 }
             });
 
-            socket.on('speaking', (_isSpeaking) => {
-                if(_isSpeaking) {
-                    console.log('_isSpeaking', _isSpeaking);
-                    stopPlayback();
-                    resetAudio();
-                }
-            })
+            // socket.on('speaking', (_isSpeaking) => {
+            //     if(_isSpeaking) {
+            //         console.log('_isSpeaking', _isSpeaking);
+            //         stopPlayback();
+            //         resetAudio();
+            //     }
+            // })
 
             // Handle errors
             socket.on('error', (error) => {
@@ -589,7 +597,7 @@ $creds = getCreds('AHR');
                 setupMediaRecorder(stream);
 
                 // Setup script processor for Deepgram (if needed)
-                setupScriptProcessor(stream);
+                // setupScriptProcessor(stream);
             })
             .catch(error => {
                 console.error('Error accessing microphone:', error);
@@ -616,7 +624,7 @@ $creds = getCreds('AHR');
                 const avg = sum / dataArray.length;
             
                 // Simple threshold: tune this value
-                const threshold = 10;
+                const threshold = 8;
             
                 if (avg > threshold) {
                     onVoiceDetected(avg);
@@ -698,30 +706,31 @@ $creds = getCreds('AHR');
                 if (socket && socket.connected) {
                     socket.emit('userSpeaking', { speaking: true, job_list_sid });
                 }
+
+                // Pause audio if playing
+                if (currentAudio && !currentAudio.paused) {
+                    currentAudio.pause();
+                    console.log('🔇 Audio paused - user speaking');
+
+                    setTimeout(() => {
+                        if(isSpeaking) {
+                            currentAudio = null;
+                            isPlaying = false;
+                            console.log('🔇 Audio cleared - user speaking');
+                        } else {
+                            currentAudio.play().catch(e => {
+                                console.error('Error resuming audio:', e);
+                            });
+                            console.log('🔊 Audio resumed');
+                        }
+                    }, SILENCE_DELAY + 3000);
+                }
             }
             
             // Clear silence timer
             if (silenceTimer) {
                 clearTimeout(silenceTimer);
                 silenceTimer = null;
-            }
-            
-            // Pause audio if playing
-            if (currentAudio && !currentAudio.paused) {
-                currentAudio.pause();
-                console.log('🔇 Audio paused - user speaking');
-
-                setTimeout(() => {
-                    if(isSpeaking) {
-                        currentAudio = null;
-                        console.log('🔇 Audio cleared - user speaking');
-                    } else {
-                        currentAudio.play().catch(e => {
-                            console.error('Error resuming audio:', e);
-                        });
-                        console.log('🔊 Audio resumed');
-                    }
-                }, SILENCE_DELAY + 3000);
             }
         }
 
