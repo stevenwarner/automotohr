@@ -8,7 +8,7 @@ $creds = getCreds('AHR');
     .interview-container {
         font-family: "Open Sans", sans-serif;
         min-height: 100vh;
-        background-color: #3554DC;
+        background-color: #0DCAF0;
         color: #fff;
     }
     .header {
@@ -16,27 +16,24 @@ $creds = getCreds('AHR');
         flex-wrap: wrap;
         gap: 20px;
         justify-content: space-between;
+        align-items: center;
         max-width: calc(100vw - 200px);
         margin: auto;
         padding: 60px 0;
         font-size: 20px;
     }
     .logo-wrapper,
-    .timer-wrapper {
+    .right-section{
         width: 240px;
-    }
-    .logo-wrapper {
-        margin-right: auto;
     }
     .header .title-wrapper {
         max-width: 774px;
         width: max-content;
-        margin: auto;
         display: flex;
         justify-content: center;
     }
     .header .page-title {
-        background-color: #FFFFFF1A;
+        background-color: #FFFFFF4D;
         height: 50px;
         padding: 0 80px;
         display: flex;
@@ -46,10 +43,7 @@ $creds = getCreds('AHR');
         border-radius: 100px;
         overflow: hidden;
     }
-    .timer-wrapper {
-        margin-left: auto;
-    }
-    .header .timer {
+    .header .right-section > span {
         display: block;
         background-color: #FFFFFF4D;
         height: 50px;
@@ -57,7 +51,6 @@ $creds = getCreds('AHR');
         display: flex;
         align-items: center;
         justify-content: center;
-        width: max-content;
         border-radius: 100px;
     }
     /* Header Style Ended */
@@ -70,7 +63,6 @@ $creds = getCreds('AHR');
         align-items: center;
         flex-direction: column;
     }
-
     .conversation {
         display: flex;
         justify-content: center;
@@ -79,70 +71,121 @@ $creds = getCreds('AHR');
     }
     .conversation .bot,
     .conversation .applicant {
-        width: 327px;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-direction: column;
+        max-width: 350px;
+        width: 350px;
+    }
+    .conversation .icon-wrapper .image, .conversation .icon-wrapper svg {
+        border: 1px solid #fff;
+        background-color: #0D9FBD;
+        z-index: 1;
+        border-radius: 10px;
+        width: 250px;
+        height: 250px;
     }
     .conversation .icon-wrapper {
         position: relative;
-        width: 327px;
-        height: 292px;
-        display: flex;
-        justify-content: center;
-    }
-
-    .frequency {
-        position: absolute;
-        transform: translateY(-35px);
-    }
-    .frequency-reverse {
-        position: absolute;
-        rotate: 180deg;
-        bottom: 0;
-    }
-
-    .applicant .person-icon {
-        border: 6px solid #001055;
-        border-radius: 100%;
-        z-index: 1;
-    }
-    .bot .icon {
         width: 250px;
         height: 250px;
-        background-color: #fff;
-        color: #3554DC;
-        font-weight: 700;
-        line-height: 40px;
-        border-radius: 100%;
         display: flex;
         justify-content: center;
-        align-items: center;
-        font-size: 128px;
+        border-radius: 10px;
+    }
+
+    .layer-1, .layer-2, .layer-3 {
+        position: absolute;
+        background-color: #FFFFFF4D;
+        transform: translateY(-50%) scale(0.5) rotate(0deg);
+        top: 50%;
+        border-radius: 10px;
+        will-change: transform;
+        transform-origin: center center;
+        transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .layer-1 { width: 265px; height: 265px; }
+    .layer-2 { width: 280px; height: 280px; }
+    .layer-3 { width: 295px; height: 295px; }
+
+    .bot .image {
+        width: 250px;
+        height: 250px;
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .bot .image img {
+        position: absolute;
+        object-fit: contain;
+        inset: 0;
+        width: 100%;
     }
 
     .caller-title {
         font-weight: 400;
         font-size: 40px;
         line-height: 40px;
-        margin-top: 10px;
+        margin-top: 49px;
         text-wrap: nowrap;
     }
     
     .button-wrapper {
-        margin-top: 140px;
+        margin-top: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .timer-wrapper {
+        width: 240px;
+    }
+    .timer {
+        display: block;
+        background-color: #FFFFFF4D;
+        height: 50px;
+        padding: 0px 21px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: max-content;
+        border-radius: 100px;
+        margin: auto;
     }
 
     button.end-call {
-        margin: 70px 0;
+        margin: 70px 0 40px 0px;
         background-color: #FF4343;
-        width: 87px;
+        width: 116px;
         height: 46px;
         border: none;
         border-radius: 100px;
         box-shadow: 0px 4px 4px 0px #00000040;
         cursor: pointer;
+    }
+
+    .footer {
+        max-width: calc(100vw - 200px);
+        width: 100%;
+        text-align: right;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-bottom: 23px;
+    }
+
+    .footer p {
+        line-height: 22px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .footer img {
+        width: auto;
+        height: 50px;
     }
 
     @media screen and (max-width: 1025px) {
@@ -179,6 +222,62 @@ $creds = getCreds('AHR');
             overflow: hidden;
         }
     }
+
+    /* Microphone Connection Style */
+    .microphone-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .microphone-popup-content {
+        background-color: rgb(13 202 240 / 30%);
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+        max-width: 400px;
+        width: 90%;
+    }
+
+    .microphone-popup h3 {
+        color: #ffffff;
+        margin-bottom: 15px;
+        font-size: 24px;
+    }
+
+    .microphone-popup p {
+        color: #f1f1f1;
+        margin-bottom: 25px;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    .microphone-popup button {
+        background-color: #0DCAF0;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .microphone-popup button:hover {
+        background-color: #0bb5d1;
+    }
+
+    .hidden {
+        display: none;
+    }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -205,167 +304,91 @@ $creds = getCreds('AHR');
         </div>
         <div class="title-wrapper">
             <div class="page-title">
-                <span>Interviewing for job "<?php echo $portal_job_list['desired_job_title']; ?>"</span>
+                <span>Interviewing for job "<?php echo trim($portal_job_list['desired_job_title']); ?>"</span>
             </div>
         </div>
 
-        <div class="timer-wrapper">
-            <span class="timer">Total Call Time: &nbsp; <span id="time">00:00</span> </span>
+        <div class="right-section">
+            <span>Demo</span>
         </div>
     </div>
 
     <div class="main">
         <div class="conversation">
-            <div class="applicant">
-                <div class="icon-wrapper">
-                    <svg width="327" height="164" viewBox="0 0 327 164" fill="none" xmlns="http://www.w3.org/2000/svg" class="frequency">
-                        <path d="M35.8867 156.693L35.6273 161.565L9.13867 161.103L9.4269 155.223L35.8867 156.693Z" fill="white"/>
-                        <path d="M36.5207 148.391L36.146 150.813L36.0307 153.263L0.750977 150.351L0.923916 147.238L1.38509 144.125L36.5207 148.391Z" fill="white"/>
-                        <path d="M37.7889 140.176L37.0684 145.019L16.9497 142.021L17.8144 136.428L37.7889 140.176Z" fill="white"/>
-                        <path d="M39.6626 132.105L38.452 136.832L25.2798 133.978L26.6345 128.732L39.6626 132.105Z" fill="white"/>
-                        <path d="M41.9104 124.12C41.2763 125.619 40.8728 127.204 40.4981 128.79L12.626 120.805C13.116 118.874 13.606 116.913 14.3554 115.069L41.9104 124.149V124.12Z" fill="white"/>
-                        <path d="M44.764 116.308L43.0922 120.891L15.4219 110.946L17.4683 105.297L44.764 116.308Z" fill="white"/>
-                        <path d="M48.367 108.41L46.2341 112.791L16.1426 99.5603L18.8231 94.0258L48.367 108.41Z" fill="white"/>
-                        <path d="M52.2004 101.03L50.9322 103.106C50.5575 103.826 50.2404 104.576 49.8657 105.297L14.4419 86.8481C14.9319 85.8968 15.3642 84.9168 15.8542 83.9655L17.4972 81.2271L52.2004 101.002V101.03Z" fill="white"/>
-                        <path d="M56.4952 93.9105L53.9876 98.0902L18.9097 76.8168L22.282 71.311L56.4952 93.9105Z" fill="white"/>
-                        <path d="M61.3951 87.194L58.4552 91.1143L41.0459 78.921L44.4759 74.3376L61.3951 87.194Z" fill="white"/>
-                        <path d="M66.6121 80.7082C65.5168 81.9188 64.3639 83.0719 63.4416 84.4267L43.9282 68.7743C45.0523 67.16 46.407 65.7476 47.7041 64.3063L66.6121 80.6793V80.7082Z" fill="white"/>
-                        <path d="M72.1751 74.5394L68.9181 78.1715L45.7153 56.9557L49.8371 52.4589L72.1751 74.5394Z" fill="white"/>
-                        <path d="M78.6025 68.6302L74.9708 71.9163L60.3862 56.6386L64.5944 52.8048L78.6025 68.6302Z" fill="white"/>
-                        <path d="M85.0014 63.3551C83.7331 64.364 82.3208 65.2287 81.139 66.3241L72.7515 56.2927C74.0773 55.082 75.605 54.102 77.0173 53.0066L85.0302 63.3551H85.0014Z" fill="white"/>
-                        <path d="M91.6598 58.3394L87.7398 61.2796L73.1553 41.3322L77.8246 37.8442L91.6598 58.3394Z" fill="white"/>
-                        <path d="M98.7791 54.0444L94.5997 56.581L77.1616 29.1677L82.4075 25.968L98.7791 54.0444Z" fill="white"/>
-                        <path d="M106.071 50.124C104.601 50.8447 103.103 51.4788 101.69 52.2571L83.8198 19.6263C85.6645 18.6174 87.5957 17.7526 89.4692 16.8302L106.043 50.124H106.071Z" fill="white"/>
-                        <path d="M113.565 46.5496C112.066 47.1838 110.625 47.9621 109.155 48.6539L94.7148 17.5509C96.5884 16.6861 98.433 15.706 100.335 14.9277L113.565 46.5496Z" fill="white"/>
-                        <path d="M121.751 43.5517L117.168 45.2524L111.778 31.2143L116.909 29.3406L121.751 43.5517Z" fill="white"/>
-                        <path d="M129.706 41.188L124.979 42.3987L122.645 34.8464L127.66 33.5492L129.706 41.188Z" fill="white"/>
-                        <path d="M137.748 39.1702C136.134 39.4008 134.578 39.9485 133.021 40.3232L127.112 15.5907C129.015 15.1583 130.888 14.5241 132.819 14.2358L137.748 39.1702Z" fill="white"/>
-                        <path d="M145.963 37.9307L141.149 38.6802L137.46 17.0608L143.138 16.196L145.963 37.9307Z" fill="white"/>
-                        <path d="M154.235 37.1524C152.621 37.2389 150.978 37.2677 149.335 37.4118L146.078 5.93404C148.096 5.76109 150.142 5.70344 152.16 5.58813L154.206 37.1812L154.235 37.1524Z" fill="white"/>
-                        <path d="M162.565 36.72L157.665 36.9794L156.281 0.572438L162.565 0.28418V36.72Z" fill="white"/>
-                        <path d="M169.857 37.0947L164.957 36.8353L165.447 10.3732L171.327 10.6614L169.857 37.0947Z" fill="white"/>
-                        <path d="M178.129 37.7577L175.708 37.383L173.287 37.2677L176.198 1.98486L179.311 2.15782L182.395 2.61903L178.129 37.7577Z" fill="white"/>
-                        <path d="M186.344 39.026L181.53 38.3054L184.528 18.1849L190.12 19.0497L186.344 39.026Z" fill="white"/>
-                        <path d="M194.443 40.8997L189.716 39.689L192.57 26.5156L197.787 27.8704L194.443 40.8997Z" fill="white"/>
-                        <path d="M202.427 43.1769C200.928 42.5427 199.343 42.1392 197.758 41.7645L205.771 13.8899C207.731 14.3511 209.662 14.87 211.507 15.6194L202.427 43.1769Z" fill="white"/>
-                        <path d="M210.209 46.0307L205.626 44.3588L215.599 16.6572L221.249 18.7327L210.209 46.0307Z" fill="white"/>
-                        <path d="M218.136 49.6339L213.726 47.5008L226.956 17.4066L232.519 20.0586L218.136 49.6339Z" fill="white"/>
-                        <path d="M225.486 53.439C224.103 52.5454 222.719 51.7382 221.22 51.0752L239.667 15.6483C241.627 16.5131 243.472 17.6085 245.288 18.7327L225.486 53.4101V53.439Z" fill="white"/>
-                        <path d="M232.605 57.7628L228.426 55.2261L249.697 20.174L255.231 23.5466L232.605 57.7628Z" fill="white"/>
-                        <path d="M239.321 62.6632L235.401 59.7229L247.593 42.3121L252.176 45.7136L239.321 62.6632Z" fill="white"/>
-                        <path d="M245.806 67.8518C244.596 66.7564 243.443 65.6034 242.088 64.681L257.739 45.1659C259.353 46.2613 260.737 47.6449 262.207 48.9421L245.806 67.823V67.8518Z" fill="white"/>
-                        <path d="M251.974 73.444L248.343 70.1867L269.557 47.0107L274.053 51.104L251.974 73.444Z" fill="white"/>
-                        <path d="M257.854 79.8722L254.568 76.2402L269.874 61.6543L273.707 65.8917L257.854 79.8722Z" fill="white"/>
-                        <path d="M263.158 86.2715C262.149 85.0031 261.284 83.5907 260.189 82.4088L270.219 74.0205C271.43 75.3465 272.41 76.8743 273.505 78.2867L263.158 86.3003V86.2715Z" fill="white"/>
-                        <path d="M268.145 92.9302L265.205 89.0099L285.179 74.4241L288.667 79.1227L268.145 92.9302Z" fill="white"/>
-                        <path d="M272.439 100.05L269.902 95.8705L297.342 78.4597L300.541 83.6772L272.439 100.05Z" fill="white"/>
-                        <path d="M276.359 107.372C275.638 105.902 275.004 104.403 274.226 102.991L306.854 85.1473C307.834 86.9922 308.728 88.9235 309.65 90.826L276.359 107.401V107.372Z" fill="white"/>
-                        <path d="M279.962 114.867C279.357 113.368 278.55 111.927 277.887 110.456L308.987 96.0146C309.852 97.8883 310.832 99.7332 311.61 101.636L279.991 114.867H279.962Z" fill="white"/>
-                        <path d="M282.931 123.024L281.23 118.441L295.267 113.08L297.169 118.211L282.931 123.024Z" fill="white"/>
-                        <path d="M285.294 130.98L284.083 126.253L291.635 123.918L292.932 128.934L285.294 130.98Z" fill="white"/>
-                        <path d="M287.283 139.052C287.052 137.437 286.505 135.881 286.13 134.324L310.86 128.444C311.293 130.346 311.927 132.22 312.215 134.151L287.283 139.08V139.052Z" fill="white"/>
-                        <path d="M288.522 147.267L287.802 142.424L309.419 138.763L310.284 144.413L288.522 147.267Z" fill="white"/>
-                        <path d="M289.3 155.54L289.07 150.64L320.545 147.411L320.891 153.493L289.3 155.54Z" fill="white"/>
-                        <path d="M289.762 163.871L289.474 158.97L325.877 157.587L326.194 163.871H289.762Z" fill="white"/>
-                    </svg>
-                    <svg width="327" height="164" viewBox="0 0 327 164" fill="none" xmlns="http://www.w3.org/2000/svg" class="frequency-reverse">
-                        <path d="M35.8867 156.693L35.6273 161.565L9.13867 161.103L9.4269 155.223L35.8867 156.693Z" fill="white"/>
-                        <path d="M36.5207 148.391L36.146 150.813L36.0307 153.263L0.750977 150.351L0.923916 147.238L1.38509 144.125L36.5207 148.391Z" fill="white"/>
-                        <path d="M37.7889 140.176L37.0684 145.019L16.9497 142.021L17.8144 136.428L37.7889 140.176Z" fill="white"/>
-                        <path d="M39.6626 132.105L38.452 136.832L25.2798 133.978L26.6345 128.732L39.6626 132.105Z" fill="white"/>
-                        <path d="M41.9104 124.12C41.2763 125.619 40.8728 127.204 40.4981 128.79L12.626 120.805C13.116 118.874 13.606 116.913 14.3554 115.069L41.9104 124.149V124.12Z" fill="white"/>
-                        <path d="M44.764 116.308L43.0922 120.891L15.4219 110.946L17.4683 105.297L44.764 116.308Z" fill="white"/>
-                        <path d="M48.367 108.41L46.2341 112.791L16.1426 99.5603L18.8231 94.0258L48.367 108.41Z" fill="white"/>
-                        <path d="M52.2004 101.03L50.9322 103.106C50.5575 103.826 50.2404 104.576 49.8657 105.297L14.4419 86.8481C14.9319 85.8968 15.3642 84.9168 15.8542 83.9655L17.4972 81.2271L52.2004 101.002V101.03Z" fill="white"/>
-                        <path d="M56.4952 93.9105L53.9876 98.0902L18.9097 76.8168L22.282 71.311L56.4952 93.9105Z" fill="white"/>
-                        <path d="M61.3951 87.194L58.4552 91.1143L41.0459 78.921L44.4759 74.3376L61.3951 87.194Z" fill="white"/>
-                        <path d="M66.6121 80.7082C65.5168 81.9188 64.3639 83.0719 63.4416 84.4267L43.9282 68.7743C45.0523 67.16 46.407 65.7476 47.7041 64.3063L66.6121 80.6793V80.7082Z" fill="white"/>
-                        <path d="M72.1751 74.5394L68.9181 78.1715L45.7153 56.9557L49.8371 52.4589L72.1751 74.5394Z" fill="white"/>
-                        <path d="M78.6025 68.6302L74.9708 71.9163L60.3862 56.6386L64.5944 52.8048L78.6025 68.6302Z" fill="white"/>
-                        <path d="M85.0014 63.3551C83.7331 64.364 82.3208 65.2287 81.139 66.3241L72.7515 56.2927C74.0773 55.082 75.605 54.102 77.0173 53.0066L85.0302 63.3551H85.0014Z" fill="white"/>
-                        <path d="M91.6598 58.3394L87.7398 61.2796L73.1553 41.3322L77.8246 37.8442L91.6598 58.3394Z" fill="white"/>
-                        <path d="M98.7791 54.0444L94.5997 56.581L77.1616 29.1677L82.4075 25.968L98.7791 54.0444Z" fill="white"/>
-                        <path d="M106.071 50.124C104.601 50.8447 103.103 51.4788 101.69 52.2571L83.8198 19.6263C85.6645 18.6174 87.5957 17.7526 89.4692 16.8302L106.043 50.124H106.071Z" fill="white"/>
-                        <path d="M113.565 46.5496C112.066 47.1838 110.625 47.9621 109.155 48.6539L94.7148 17.5509C96.5884 16.6861 98.433 15.706 100.335 14.9277L113.565 46.5496Z" fill="white"/>
-                        <path d="M121.751 43.5517L117.168 45.2524L111.778 31.2143L116.909 29.3406L121.751 43.5517Z" fill="white"/>
-                        <path d="M129.706 41.188L124.979 42.3987L122.645 34.8464L127.66 33.5492L129.706 41.188Z" fill="white"/>
-                        <path d="M137.748 39.1702C136.134 39.4008 134.578 39.9485 133.021 40.3232L127.112 15.5907C129.015 15.1583 130.888 14.5241 132.819 14.2358L137.748 39.1702Z" fill="white"/>
-                        <path d="M145.963 37.9307L141.149 38.6802L137.46 17.0608L143.138 16.196L145.963 37.9307Z" fill="white"/>
-                        <path d="M154.235 37.1524C152.621 37.2389 150.978 37.2677 149.335 37.4118L146.078 5.93404C148.096 5.76109 150.142 5.70344 152.16 5.58813L154.206 37.1812L154.235 37.1524Z" fill="white"/>
-                        <path d="M162.565 36.72L157.665 36.9794L156.281 0.572438L162.565 0.28418V36.72Z" fill="white"/>
-                        <path d="M169.857 37.0947L164.957 36.8353L165.447 10.3732L171.327 10.6614L169.857 37.0947Z" fill="white"/>
-                        <path d="M178.129 37.7577L175.708 37.383L173.287 37.2677L176.198 1.98486L179.311 2.15782L182.395 2.61903L178.129 37.7577Z" fill="white"/>
-                        <path d="M186.344 39.026L181.53 38.3054L184.528 18.1849L190.12 19.0497L186.344 39.026Z" fill="white"/>
-                        <path d="M194.443 40.8997L189.716 39.689L192.57 26.5156L197.787 27.8704L194.443 40.8997Z" fill="white"/>
-                        <path d="M202.427 43.1769C200.928 42.5427 199.343 42.1392 197.758 41.7645L205.771 13.8899C207.731 14.3511 209.662 14.87 211.507 15.6194L202.427 43.1769Z" fill="white"/>
-                        <path d="M210.209 46.0307L205.626 44.3588L215.599 16.6572L221.249 18.7327L210.209 46.0307Z" fill="white"/>
-                        <path d="M218.136 49.6339L213.726 47.5008L226.956 17.4066L232.519 20.0586L218.136 49.6339Z" fill="white"/>
-                        <path d="M225.486 53.439C224.103 52.5454 222.719 51.7382 221.22 51.0752L239.667 15.6483C241.627 16.5131 243.472 17.6085 245.288 18.7327L225.486 53.4101V53.439Z" fill="white"/>
-                        <path d="M232.605 57.7628L228.426 55.2261L249.697 20.174L255.231 23.5466L232.605 57.7628Z" fill="white"/>
-                        <path d="M239.321 62.6632L235.401 59.7229L247.593 42.3121L252.176 45.7136L239.321 62.6632Z" fill="white"/>
-                        <path d="M245.806 67.8518C244.596 66.7564 243.443 65.6034 242.088 64.681L257.739 45.1659C259.353 46.2613 260.737 47.6449 262.207 48.9421L245.806 67.823V67.8518Z" fill="white"/>
-                        <path d="M251.974 73.444L248.343 70.1867L269.557 47.0107L274.053 51.104L251.974 73.444Z" fill="white"/>
-                        <path d="M257.854 79.8722L254.568 76.2402L269.874 61.6543L273.707 65.8917L257.854 79.8722Z" fill="white"/>
-                        <path d="M263.158 86.2715C262.149 85.0031 261.284 83.5907 260.189 82.4088L270.219 74.0205C271.43 75.3465 272.41 76.8743 273.505 78.2867L263.158 86.3003V86.2715Z" fill="white"/>
-                        <path d="M268.145 92.9302L265.205 89.0099L285.179 74.4241L288.667 79.1227L268.145 92.9302Z" fill="white"/>
-                        <path d="M272.439 100.05L269.902 95.8705L297.342 78.4597L300.541 83.6772L272.439 100.05Z" fill="white"/>
-                        <path d="M276.359 107.372C275.638 105.902 275.004 104.403 274.226 102.991L306.854 85.1473C307.834 86.9922 308.728 88.9235 309.65 90.826L276.359 107.401V107.372Z" fill="white"/>
-                        <path d="M279.962 114.867C279.357 113.368 278.55 111.927 277.887 110.456L308.987 96.0146C309.852 97.8883 310.832 99.7332 311.61 101.636L279.991 114.867H279.962Z" fill="white"/>
-                        <path d="M282.931 123.024L281.23 118.441L295.267 113.08L297.169 118.211L282.931 123.024Z" fill="white"/>
-                        <path d="M285.294 130.98L284.083 126.253L291.635 123.918L292.932 128.934L285.294 130.98Z" fill="white"/>
-                        <path d="M287.283 139.052C287.052 137.437 286.505 135.881 286.13 134.324L310.86 128.444C311.293 130.346 311.927 132.22 312.215 134.151L287.283 139.08V139.052Z" fill="white"/>
-                        <path d="M288.522 147.267L287.802 142.424L309.419 138.763L310.284 144.413L288.522 147.267Z" fill="white"/>
-                        <path d="M289.3 155.54L289.07 150.64L320.545 147.411L320.891 153.493L289.3 155.54Z" fill="white"/>
-                        <path d="M289.762 163.871L289.474 158.97L325.877 157.587L326.194 163.871H289.762Z" fill="white"/>
-                    </svg>
-            
-                    <svg width="244" height="244" viewBox="0 0 244 244" fill="none" xmlns="http://www.w3.org/2000/svg" class="person-icon">
-                        <g clip-path="url(#clip0_1904_1055)">
-                        <path d="M0 122C0 154.744 12.9004 184.475 33.8956 206.388C56.1018 229.568 87.366 244 122 244C156.634 244 187.898 229.568 210.104 206.388C231.1 184.475 244 154.744 244 122C244 54.622 189.378 0 122 0C54.622 0 0 54.622 0 122Z" fill="url(#paint0_radial_1904_1055)"/>
-                        <path d="M122 128.548C94.4738 128.548 72.1594 106.234 72.1594 78.7074C72.1594 51.1811 94.4738 28.8667 122 28.8667C149.526 28.8667 171.841 51.1811 171.841 78.7074C171.841 106.234 149.526 128.548 122 128.548Z" fill="url(#paint1_radial_1904_1055)"/>
-                        <path d="M33.8958 206.388C56.1019 229.568 87.3661 244 122 244C156.634 244 187.898 229.568 210.104 206.388C197.564 169.784 162.854 143.471 122 143.471C81.1461 143.471 46.4361 169.784 33.8958 206.388Z" fill="url(#paint2_radial_1904_1055)"/>
-                        </g>
-                        <defs>
-                        <radialGradient id="paint0_radial_1904_1055" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(176.318 66.9329) rotate(180) scale(191.017)">
-                        <stop stop-color="#63DFFC"/>
-                        <stop offset="1" stop-color="#3F7CD1"/>
-                        </radialGradient>
-                        <radialGradient id="paint1_radial_1904_1055" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(133.538 61.1504) rotate(180) scale(73.0116 73.0116)">
-                        <stop stop-color="white"/>
-                        <stop offset="1" stop-color="#D1D1D1"/>
-                        </radialGradient>
-                        <radialGradient id="paint2_radial_1904_1055" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(142.397 176.029) rotate(180) scale(102.547 102.547)">
-                        <stop stop-color="white"/>
-                        <stop offset="1" stop-color="#D1D1D1"/>
-                        </radialGradient>
-                        <clipPath id="clip0_1904_1055">
-                        <rect width="244" height="244" fill="white" transform="matrix(-1 0 0 1 244 0)"/>
-                        </clipPath>
-                        </defs>
-                    </svg>
-                </div>
-                <span class="caller-title"><?php echo $portal_job_list['first_name'] . ' ' . $portal_job_list['last_name']; ?></span>
-            </div>
             <div class="bot">
                 <div class="icon-wrapper">
-                    <span class="icon">A</span>
+                    <div class="image">
+                        <img src="/assets/images/Michael.jpg" alt="Michael Photo" />
+                    </div>
+
+                    <div class="layer-1"></div>
+                    <div class="layer-2"></div>
+                    <div class="layer-3"></div>
                 </div>
-                <span class="caller-title">Alex (AI Interviewer)</span>
+                <span class="caller-title">Michael (AI Interviewer)</span>
+            </div>
+
+            <div class="applicant">
+                <div class="icon-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="245" height="245" viewBox="0 0 245 245" fill="none">
+                    <g clip-path="url(#clip0_1957_6058)">
+                    <path d="M122.585 155.507C91.2411 155.507 65.8316 130.098 65.8316 98.7536C65.8316 67.4095 91.2411 42 122.585 42C153.929 42 179.339 67.4095 179.339 98.7536C179.339 130.098 153.929 155.507 122.585 155.507Z" fill="url(#paint0_radial_1957_6058)"/>
+                    <path d="M22.3329 236.689C40.5422 255.697 90.0841 242.733 118.484 242.733C146.885 242.733 202.057 255.697 220.267 236.689C204.043 167.25 151.985 160.297 118.484 160.297C84.9836 160.297 41.8023 175.686 22.3329 236.689Z" fill="url(#paint1_radial_1957_6058)"/>
+                    </g>
+                    <defs>
+                    <radialGradient id="paint0_radial_1957_6058" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(135.723 78.7614) rotate(180) scale(83.1383 83.1383)">
+                    <stop stop-color="white"/>
+                    <stop offset="1" stop-color="#D1D1D1"/>
+                    </radialGradient>
+                    <radialGradient id="paint1_radial_1957_6058" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(135.21 186.996) rotate(180) scale(84.09 84.09)">
+                    <stop stop-color="white"/>
+                    <stop offset="1" stop-color="#D1D1D1"/>
+                    </radialGradient>
+                    <clipPath id="clip0_1957_6058">
+                    <rect width="244" height="244" fill="white" transform="matrix(-1 0 0 1 244.867 0.288208)"/>
+                    </clipPath>
+                    </defs>
+                    </svg>
+
+                    <div class="layer-1"></div>
+                    <div class="layer-2"></div>
+                    <div class="layer-3"></div>
+                </div>
+                <span class="caller-title"><?php echo $portal_job_list['first_name'] . ' ' . $portal_job_list['last_name']; ?></span>
             </div>
         </div>
 
         <div class="button-wrapper">
+            <div class="timer-wrapper">
+                <span class="timer">Total Call Time: &nbsp; <span id="time">00:00</span> </span>
+            </div>
+
             <button class="end-call">
                 <svg width="38" height="15" viewBox="0 0 38 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.30351 13.643L1.32627 10.6657C1.04876 10.3905 0.831798 10.0603 0.689284 9.69631C0.546767 9.33234 0.481838 8.94262 0.498655 8.55211C0.51547 8.16159 0.613658 7.77889 0.786935 7.42853C0.960213 7.07816 1.20476 6.76784 1.5049 6.51745C4.89055 3.79545 8.86748 1.90556 13.1161 0.999626C17.0377 0.125472 21.1036 0.125474 25.0251 0.999627C29.2913 1.91143 33.2827 3.81535 36.676 6.55714C36.9753 6.80678 37.2193 7.11599 37.3924 7.46508C37.5656 7.81417 37.6642 8.1955 37.682 8.58479C37.6997 8.97408 37.6362 9.36279 37.4955 9.72619C37.3547 10.0896 37.1399 10.4197 36.8646 10.6955L33.8874 13.6727C33.4105 14.1591 32.773 14.4555 32.0938 14.5066C31.4145 14.5577 30.7399 14.3601 30.1956 13.9506C29.1171 13.1235 27.9486 12.421 26.7122 11.8566C26.2235 11.6349 25.8085 11.2778 25.5166 10.8275C25.2246 10.3772 25.0678 9.8527 25.0648 9.31605V6.79532C21.1675 5.72353 17.0531 5.72353 13.1558 6.79532L13.1558 9.31605C13.1528 9.8527 12.9961 10.3772 12.7041 10.8275C12.4121 11.2778 11.9972 11.6349 11.5084 11.8566C10.2721 12.421 9.1035 13.1235 8.02506 13.9506C7.47497 14.3647 6.79188 14.5621 6.10571 14.5054C5.41953 14.4487 4.77814 14.1418 4.30351 13.643Z" fill="white"/>
                 </svg>
             </button>
         </div>
+
+        <div class="footer">
+            <p>Powered by</p> <img src="/assets/images/automotoHr-logo.png" alt="automoto Logo" />
+        </div>
+    </div>
+
+    <!-- Microphone Connection Popup -->
+    <div id="microphonePopup" class="microphone-popup">
+        <div class="microphone-popup-content">
+            <h3>🎤 Microphone Access Required</h3>
+            <p>We need access to your microphone to conduct the interview. Please click the button below to enable microphone access.</p>
+            <button id="enableMicrophoneBtn">Click Here to Enable Microphone</button>
+        </div>
     </div>
 </div>
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <script>
+    // let chatId = '';
+
     const job_list_sid = `<?php echo $portal_job_list["jobs_list_sid"]; ?>`;
     const ServerPath = '<?php echo $creds->API_BROWSER_URL; ?>';
     let socket;
@@ -373,17 +396,13 @@ $creds = getCreds('AHR');
     let interviewStarted = false;
     let mediaRecorder = null;
     let audioStream = null;
-    let silenceDetectionInterval = null;
-    let chatId = '';
     let audioQueue = [];
     let isPlaying = false;
     let audioContext;
     let nextScheduledTime = 0;
-    let scriptProcessor;
     const sampleRate = 24000;
     let currentSource = null;
     let gainNode = null;
-    let audioAnalyser;
     // Crossfade duration in seconds
     const CROSSFADE_TIME = 0.008; // 8ms crossfade
     
@@ -399,28 +418,11 @@ $creds = getCreds('AHR');
 
     // timer variables
     let timerInterval;
+    let frequencyAnalyser = null;
+    let frequencyDataArray = null;
+    let frequencyCheckInterval = null;
 
     document.addEventListener('DOMContentLoaded', function() {
-
-        // Initialize AudioContext
-        function initAudioContext() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)({
-                    sampleRate: sampleRate
-                });
-                nextScheduledTime = audioContext.currentTime
-
-                audioAnalyser = audioContext.createAnalyser();
-                audioAnalyser.fftSize = 256;
-                audioAnalyser.smoothingTimeConstant = 0.8;
-
-                // Create main gain node
-                gainNode = audioContext.createGain();
-                gainNode.gain.value = 1.0;
-                gainNode.connect(audioContext.destination);
-            }
-            return audioContext;
-        }
 
         function startCallTimer() {
             const timeElement = document.querySelector('.timer #time');
@@ -445,326 +447,35 @@ $creds = getCreds('AHR');
         function stopCallTimer() {
             clearInterval(timerInterval);
         }
-
         startCallTimer();
-        
-        function setupSocketConnection() {
-            // Connect to your Node.js server with Socket.IO
-            socket = io(ServerPath);
-            socket.binaryType = 'arraybuffer';
-            
-            // Handle connection events
-            socket.on('connect', () => {
-                console.log('Connected to Socket.IO server');
-                startInterview();
-            });
 
-            // Handle status updates
-            socket.on('status', (data) => {
-                if (data.status === 'ready') {
-                    // Deepgram connection is ready, setup audio recording
-                    console.log(`Status: ${data.status} - ${data.message}`);
-                    setupAudioRecording();
-                }
-                else {
-                    console.log(`Status: ${data.status} - ${data.message}`);
-                }
-            });
 
-            /* -----------------------
-            3. Method (Play in audio wav format)
-            ----------------------- */
-
-            socket.on('message', async (data) => {
-                try {
-                    console.log('isSpeaking', isSpeaking);
-                    if(isSpeaking) {
-                        return;
-                    }
-                    const parsedData = JSON.parse(data);
-                    
-                    if (parsedData.type === 'audio') {
-                        initAudioContext();
-
-                        // If user is speaking, don't add to queue
-                        // if (isSpeaking) {
-                        //     return;
-                        // }
-
-                        console.log('data', parsedData.data);
-
-                        try {
-
-                        const binaryString = atob(parsedData.data);
-                        const len = binaryString.length;
-                        const bytes = new Uint8Array(len);
-                        
-                        for (let i = 0; i < len; i++) {
-                            bytes[i] = binaryString.charCodeAt(i);
-                        }
-                        
-                        // In Audio play format
-                        const blob = new Blob([bytes], { type: 'audio/wav' });
-                        const audioUrl = URL.createObjectURL(blob);
-                        
-                        // Add to queue
-                        audioQueue.push(audioUrl);
-                        
-                        // Start playing if not already playing
-                        if (!isPlaying) {
-                            playNextInQueue();
-                        }
-
-                        } catch (decodeError) {
-                            console.error('Error decoding audio:', decodeError);
-                        }
-
-                        // Decode the audio data
-                        // try {
-                        //     const audioBuffer = await audioContext.decodeAudioData(bytes.buffer);
-                        //     // Add to queue and process
-                        //     audioQueue.push(audioBuffer);
-                        //     scheduleAudioPlayback();
-
-                        // } catch (decodeError) {
-                        //     console.error('Error decoding audio:', decodeError);
-                        // }
-                    }
-                } catch (error) {
-                    console.error('Error processing message:', error);
-                }
-            });
-
-            // socket.on('speaking', (_isSpeaking) => {
-            //     if(_isSpeaking) {
-            //         console.log('_isSpeaking', _isSpeaking);
-            //         stopPlayback();
-            //         resetAudio();
-            //     }
-            // })
-
-            // Handle errors
-            socket.on('error', (error) => {
-                console.error('Socket.IO error:', error);
-            });
-
-            // Handle disconnection
-            socket.on('disconnect', () => {
-                console.log('Disconnected from Socket.IO server');
-                
-                // Clear silence detection interval
-                if (silenceDetectionInterval) {
-                    clearInterval(silenceDetectionInterval);
-                    silenceDetectionInterval = null;
-                }
-                
-                // Stop MediaRecorder if running
-                if (mediaRecorder && mediaRecorder.state === 'recording') {
-                    mediaRecorder.stop();
-                }
-                
-                // Attempt to reconnect if interview is still ongoing
-                if (interviewStarted) {
-                    console.log('Attempting to reconnect...');
-                    setTimeout(setupSocketConnection, 2000);
-                }
-            });
-        }
-
-        setupSocketConnection();
-
-        // Add audio recording function for Deepgram
-        function setupAudioRecording() {
-            console.log('Setting up audio recording...');
-
-            // Request access to the microphone
-            navigator.mediaDevices.getUserMedia({
-                audio: true
-            })
-            .then(stream => {
-                console.log('Got microphone access!');
-                audioStream = stream
-                // Store the stream for later use
-                window.audioStream = audioStream;
-
-                initAudioContext();
-
-                // Setup voice detection using Web Audio API
-                detectSpeaking(stream);
-                // setupVoiceDetection(stream);
-
-                // Setup MediaRecorder for sending audio data
-                setupMediaRecorder(stream);
-
-                // Setup script processor for Deepgram (if needed)
-                // setupScriptProcessor(stream);
-            })
-            .catch(error => {
-                console.error('Error accessing microphone:', error);
-            });
-        }
-
-        function detectSpeaking(stream) {
-        const source = audioContext.createMediaStreamSource(stream);
-        const analyser = audioContext.createAnalyser();
-        analyser.fftSize = 1024;
-        
-        const dataArray = new Uint8Array(analyser.fftSize);
-        source.connect(analyser);
-        
-            function analyze() {
-                analyser.getByteTimeDomainData(dataArray);
-            
-                // Compute average volume from waveform
-                let sum = 0;
-                for (let i = 0; i < dataArray.length; i++) {
-                let sample = dataArray[i] - 128; // Normalize to -128 to +127
-                sum += Math.abs(sample);
-                }
-                const avg = sum / dataArray.length;
-            
-                // Simple threshold: tune this value
-                const threshold = 8;
-            
-                if (avg > threshold) {
-                    onVoiceDetected(avg);
-                } else {
-                    onSilenceDetected(avg);
-                }
-            
-                requestAnimationFrame(analyze);
-            }
-            
-            analyze();
-        }
-
-        // New function to setup voice detection
-        function setupVoiceDetection(stream) {
-            try {
-                // Create analyser for voice detection
-                voiceDetectionAnalyser = audioContext.createAnalyser();
-                voiceDetectionAnalyser.fftSize = 256;
-                voiceDetectionAnalyser.smoothingTimeConstant = 0.8;
-                
-                // Create source from microphone stream
-                voiceDetectionSource = audioContext.createMediaStreamSource(stream);
-                voiceDetectionSource.connect(voiceDetectionAnalyser);
-                
-                // Create data array for frequency data
-                const bufferLength = voiceDetectionAnalyser.frequencyBinCount;
-                voiceDetectionDataArray = new Uint8Array(bufferLength);
-                
-                // Start checking voice levels
-                startVoiceDetection();
-                
-                console.log('Voice detection setup complete');
-            } catch (error) {
-                console.error('Error setting up voice detection:', error);
-            }
-        }
-
-        // Function to start voice detection monitoring
-        function startVoiceDetection() {
-            if (voiceCheckInterval) {
-                clearInterval(voiceCheckInterval);
-            }
-            
-            voiceCheckInterval = setInterval(() => {
-                checkVoiceLevel();
-            }, 50); // Check every 50ms for responsiveness
-        }
-
-        // Function to check current voice level
-        function checkVoiceLevel() {
-            if (!voiceDetectionAnalyser || !voiceDetectionDataArray) return;
-            
-            // Get current frequency data
-            voiceDetectionAnalyser.getByteFrequencyData(voiceDetectionDataArray);
-            
-            // Calculate average volume
-            let sum = 0;
-            for (let i = 0; i < voiceDetectionDataArray.length; i++) {
-                sum += voiceDetectionDataArray[i];
-            }
-            const averageVolume = sum / voiceDetectionDataArray.length;
-            
-            // Check if user is speaking
-            if (averageVolume > VOLUME_THRESHOLD) {
-                onVoiceDetected(averageVolume);
-            } else {
-                onSilenceDetected(averageVolume);
-            }
-        }
-
-        // Updated voice detection handler
-        function onVoiceDetected(volume) {
-            if (!isSpeaking) {
-                isSpeaking = true;
-                console.log(`🎤 Voice detected (volume: ${volume.toFixed(1)}) - User is speaking`);
-                
-                // Notify server that user is speaking
-                if (socket && socket.connected) {
-                    socket.emit('userSpeaking', { speaking: true, job_list_sid });
-                }
-
-                // Pause audio if playing
-                if (currentAudio && !currentAudio.paused) {
-                    currentAudio.pause();
-                    console.log('🔇 Audio paused - user speaking');
-
-                    setTimeout(() => {
-                        if(isSpeaking) {
-                            currentAudio = null;
-                            isPlaying = false;
-                            console.log('🔇 Audio cleared - user speaking');
-                        } else {
-                            currentAudio.play().catch(e => {
-                                console.error('Error resuming audio:', e);
-                            });
-                            console.log('🔊 Audio resumed');
-                        }
-                    }, SILENCE_DELAY + 3000);
-                }
-            }
-            
-            // Clear silence timer
-            if (silenceTimer) {
-                clearTimeout(silenceTimer);
-                silenceTimer = null;
-            }
-        }
-
-        // Updated silence detection handler
-        function onSilenceDetected(volume) {
-            // Only process if user was speaking
-            if (isSpeaking && !silenceTimer) {
-                silenceTimer = setTimeout(() => {
-                    isSpeaking = false;
-                    console.log(`🔇 Silence detected (volume: ${volume.toFixed(1)}) - User stopped speaking`);
-                    
-                    // Notify server that user stopped speaking
-                    if (socket && socket.connected) {
-                        socket.emit('userSpeaking', { speaking: false, job_list_sid });
-                    }
-                    
-                    // Resume audio if it was playing
-                    // resumeAudio();
-                    silenceTimer = null;
-                }, SILENCE_DELAY);
-            }
-        }
-
-        // Function to resume audio playback
-        function resumeAudio() {
-            if (currentAudio) {
-                currentAudio.play().catch(e => {
-                    console.error('Error resuming audio:', e);
+        // Initialize AudioContext
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)({
+                    sampleRate: sampleRate
                 });
-                console.log('🔊 Audio resumed');
+                nextScheduledTime = audioContext.currentTime;
+
+                // Create main gain node
+                gainNode = audioContext.createGain();
+                gainNode.gain.value = 1.0;
+                gainNode.connect(audioContext.destination);
+            }
+            return audioContext;
+        }
+        
+        function startInterview() {
+            interviewStarted = true;
+            try {
+                socket.emit('startSpeechRecognition', {job_list_sid});
+            } catch (e) {
+                console.error('Error starting interview:', e);
             }
         }
 
-        // Separate MediaRecorder setup
+        // MediaRecorder Setup and Frequency Tracking
         function setupMediaRecorder(stream) {
             try {
                 // Check supported MIME types
@@ -816,91 +527,107 @@ $creds = getCreds('AHR');
             }
         }
 
-        function setupScriptProcessor(stream) {
-            const source = audioContext.createMediaStreamSource(stream);
-            scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
-
-            scriptProcessor.onaudioprocess = (event) => {
-                const floatData = event.inputBuffer.getChannelData(0);
-                const int16Data = floatToInt16(floatData);
-            };
-    
-            source.connect(scriptProcessor);
-            scriptProcessor.connect(audioContext.destination);
-        }
-
-        function calculateRMS(channelData) {
-            let sum = 0;
-            for (let i = 0; i < channelData.length; i++) {
-                sum += channelData[i] * channelData[i];
-            }
-            return sum / channelData.length;
-        }
-
-        async function analyzeRecordedAudio(audioBlob) {
-            try {
-                // Convert blob to array buffer for analysis
-                const arrayBuffer = await audioBlob.arrayBuffer();
-                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-                
-                // Analyze audio buffer for voice activity
-                const channelData = audioBuffer.getChannelData(0);
-                const rms = calculateRMS(channelData);
-                const volume = Math.sqrt(rms) * 100;
-                console.log('volume', volume);
-                // if (volume > 40) {
-                //     onVoiceDetected(volume);
-                // } else {
-                //     onSilenceDetected(volume);
-                // }
-                
-            } catch (error) {
-                // Fallback to real-time analysis if decoding fails
-                console.log('real time audio analysis', error);
-            }
-        }
-
-
-        function stopInterview() {
-            interviewStarted = false;
-            // recognition.stop();
-
-            // Stop audio recording
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-            }
-
-            // Stop all audio tracks
-            if (audioStream) {
-                audioStream.getTracks().forEach(track => track.stop());
-            }
+        function setupSocketConnection() {
+            // Connect to your Node.js server with Socket.IO
+            socket = io(ServerPath);
+            socket.binaryType = 'arraybuffer';
             
-            // Clear silence detection interval
-            if (silenceDetectionInterval) {
-                clearInterval(silenceDetectionInterval);
-                silenceDetectionInterval = null;
-            }
-        }
+            // Handle connection events
+            socket.on('connect', () => {
+                console.log('Connected to Socket.IO server');
+                startInterview();
+            });
 
-        function startInterview() {
-            interviewStarted = true;
-            try {
-                socket.emit('startSpeechRecognition', {job_list_sid});
-            } catch (e) {
-                console.error('Error starting interview:', e);
-            }
-        }
+            // Handle status updates
+            socket.on('status', (data) => {
+                if (data.status === 'ready') {
+                    // Deepgram connection is ready, setup audio recording
+                    console.log(`Status: ${data.status} - ${data.message}`);
+                    
+                    // Setup MediaRecorder for sending audio data
+                    if(audioStream) {
+                        setupMediaRecorder(audioStream);
+                    } else {
+                        console.error('Audio steaming not define!');
+                    }
+                }
+                else {
+                    console.log(`Status: ${data.status} - ${data.message}`);
+                }
+            });
 
-        function floatToInt16(floatArray) {
-            const int16Array = new Int16Array(floatArray.length);
-            for (let i = 0; i < floatArray.length; i++) {
-                int16Array[i] = Math.min(32767, Math.max(-32768, floatArray[i] * 32768));
-            }
-            return int16Array;
+            /* -----------------------
+            3. Method (Play in audio wav format)
+            ----------------------- */
+
+            socket.on('message', async (data) => {
+                try {
+                    
+                    if(isSpeaking) {
+                        return;
+                    }
+                    const parsedData = JSON.parse(data);
+                    
+                    if (parsedData.type === 'audio') {
+                        initAudioContext();
+
+                        try {
+
+                        const binaryString = atob(parsedData.data);
+                        const len = binaryString.length;
+                        const bytes = new Uint8Array(len);
+                        
+                        for (let i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+                        
+                        // In Audio play format
+                        const blob = new Blob([bytes], { type: 'audio/wav' });
+                        const audioUrl = URL.createObjectURL(blob);
+                        
+                        // Add to queue
+                        audioQueue.push(audioUrl);
+                        
+                        // Start playing if not already playing
+                        if (!isPlaying) {
+                            playNextInQueue();
+                        }
+
+                        } catch (decodeError) {
+                            console.error('Error decoding audio:', decodeError);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error processing message:', error);
+                }
+            });
+
+            // Handle errors
+            socket.on('error', (error) => {
+                console.error('Socket.IO error:', error);
+            });
+
+            // Handle disconnection
+            socket.on('disconnect', () => {
+                console.log('Disconnected from Socket.IO server');
+                
+                // Stop MediaRecorder if running
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                }
+                
+                // Attempt to reconnect if interview is still ongoing
+                if (interviewStarted) {
+                    console.log('Attempting to reconnect...');
+                    setTimeout(setupSocketConnection, 2000);
+                }
+            });
+
+            return socket;
         }
 
         /* -----------------------
-           3. Method to play audio wav
+           Method to listen audio
         ------------------------- */
 
         function playNextInQueue() {
@@ -918,128 +645,380 @@ $creds = getCreds('AHR');
             
             currentAudio.onended = () => {
                 URL.revokeObjectURL(audioUrl); // Clean up
+                stopFrequencyAnalysis();
                 playNextInQueue();
             };
             
             currentAudio.onerror = (e) => {
                 console.error('Audio playback error:', e);
                 URL.revokeObjectURL(audioUrl);
+                stopFrequencyAnalysis();
                 playNextInQueue(); // Skip to next
+            };
+
+            currentAudio.onplay = () => {
+                analyzeAudioFrequency(currentAudio); // Start frequency analysis
             };
             
             currentAudio.src = audioUrl;
             currentAudio.play().catch(e => console.error('Failed to play audio:', e));
         }
 
-        // function scheduleAudioPlayback() {
-        //     // If we're already playing or no audio to play, return
-        //     if (audioQueue.length === 0) {
-        //         return;
-        //     }
+        function analyzeAudioFrequency(audioElement) {
+            if (!audioContext) return;
             
-        //     // Get the next buffer to play
-        //     const nextBuffer = audioQueue.shift();
-
-        //     // Apply gentle smoothing to start and end of buffer to prevent clicks
-        //     smoothBufferEdges(nextBuffer);
-            
-        //     // Create a source node
-        //     const source = audioContext.createBufferSource();
-        //     source.buffer = nextBuffer;
-
-        //     // Create a dedicated gain node for this source (for crossfading)
-        //     const sourceGain = audioContext.createGain();
-        //     sourceGain.gain.value = 1.0;
-            
-        //     // Connect source → sourceGain → main gainNode → destination
-        //     source.connect(sourceGain);
-        //     sourceGain.connect(gainNode);
-            
-        //     // If we're already scheduled into the future, keep scheduling
-        //     // Otherwise, start playing immediately
-        //     const startTime = Math.max(nextScheduledTime, audioContext.currentTime);
-
-        //     // Fade in this source
-        //     sourceGain.gain.setValueAtTime(0, startTime);
-        //     sourceGain.gain.linearRampToValueAtTime(1, startTime + CROSSFADE_TIME);
-            
-        //     // Fade out at the end
-        //     sourceGain.gain.setValueAtTime(1, startTime + nextBuffer.duration - CROSSFADE_TIME);
-        //     sourceGain.gain.linearRampToValueAtTime(0, startTime + nextBuffer.duration);
-
-        //     source.start(startTime);
-        //     currentSource = source;
-            
-        //     // Update scheduled time for next audio chunk
-        //     nextScheduledTime = startTime + nextBuffer.duration - CROSSFADE_TIME;
-            
-        //     // Keep playing consecutive audio chunks
-        //     source.onended = () => {
-        //         if (audioQueue.length > 0) {
-        //             scheduleAudioPlayback();
-        //         }
-        //     };
-            
-        //     // If this is the first audio starting to play
-        //     if (!isPlaying) {
-        //         isPlaying = true;
-                
-        //         // Reset if current time has moved past our scheduled time
-        //         // (This can happen if playback was paused for a while)
-        //         if (audioContext.currentTime > nextScheduledTime) {
-        //             nextScheduledTime = audioContext.currentTime;
-        //         }
-        //     }
-        // }
-
-        // Apply smoothing to buffer edges to prevent clicks/pops
-        // function smoothBufferEdges(audioBuffer) {
-        //     // Number of samples to smooth at each end
-        //     const smoothSamples = Math.floor(audioContext.sampleRate * 0.005); // 5ms smoothing
-            
-        //     // Process each channel
-        //     for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
-        //         const data = audioBuffer.getChannelData(channel);
-                
-        //         // Apply fade-in (start of buffer)
-        //         for (let i = 0; i < smoothSamples; i++) {
-        //             const factor = i / smoothSamples;
-        //             data[i] *= factor;
-        //         }
-                
-        //         // Apply fade-out (end of buffer)
-        //         for (let i = 0; i < smoothSamples; i++) {
-        //             const factor = i / smoothSamples;
-        //             data[data.length - 1 - i] *= factor;
-        //         }
-        //     }
-        // }
-
-        function stopPlayback() {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio = null;
+            // Create analyser if not exists
+            if (!frequencyAnalyser) {
+                frequencyAnalyser = audioContext.createAnalyser();
+                frequencyAnalyser.fftSize = 2048;
+                frequencyDataArray = new Uint8Array(frequencyAnalyser.frequencyBinCount);
             }
             
-            // Clear URL objects to prevent memory leaks
-            audioQueue.forEach(url => URL.revokeObjectURL(url));
-            audioQueue = [];
-            isPlaying = false;
+            // Connect audio to analyser
+            const source = audioContext.createMediaElementSource(audioElement);
+            source.connect(frequencyAnalyser);
+            frequencyAnalyser.connect(audioContext.destination);
+            
+            const layers = document.querySelectorAll('.bot .layer-1, .bot .layer-2, .bot .layer-3');
+
+            // Start frequency monitoring
+            frequencyCheckInterval = setInterval(() => {
+                frequencyAnalyser.getByteFrequencyData(frequencyDataArray);
+                
+                // Calculate average amplitude across frequency spectrum
+                let sum = 0;
+                let count = 0;
+                
+                // Focus on speech frequency range (300Hz - 3400Hz)
+                const minFreqIndex = Math.floor((300 * frequencyAnalyser.fftSize) / audioContext.sampleRate);
+                const maxFreqIndex = Math.floor((3400 * frequencyAnalyser.fftSize) / audioContext.sampleRate);
+                
+                for (let i = minFreqIndex; i < maxFreqIndex && i < frequencyDataArray.length; i++) {
+                    sum += frequencyDataArray[i];
+                    count++;
+                }
+                const avgAmplitude = count > 0 ? sum / count : 0;
+
+                // Normalize amplitude (0-255) to scale factor
+                const normalizedAmplitude = avgAmplitude / 255;
+                const baseScale = 0.5;
+                const maxScale = 1.2;
+                const scaleRange = maxScale - baseScale;
+                const intensity = Math.min(normalizedAmplitude * 3, 1);
+                
+                // Animate layers with different intensities for depth effect
+                layers.forEach((layer, index) => {
+
+                    const layerDelay = index * 0.05; // Stagger animation
+                    const layerIntensity = 0.9 + (index * 0.05); // Vary intensity per layer
+                    const targetScale = baseScale + (intensity * (maxScale - baseScale) * layerIntensity);
+
+                    // Smooth interpolation instead of direct assignment
+                    const currentScale = parseFloat(layer.style.transform.match(/scale\(([^)]+)\)/)?.[1] || '1');
+                    const smoothScale = currentScale + (targetScale - currentScale) * 0.3; // Lerp factor
+                    const rotation = (normalizedAmplitude * 2 - 1) * 1; // Subtle rotation
+                    
+                    setTimeout(() => {
+                        layer.style.transform = `translateY(-50%) scale(${smoothScale.toFixed(3)}) rotate(${rotation.toFixed(1)}deg)`;
+                        layer.style.transition = 'transform 0.1s ease-out';
+                    }, layerDelay * 1000);
+                });
+                
+            }, 100);
         }
 
-        // Reset function (useful if you need to clear the audio)
-        function resetAudio() {
-            // Clear any pending audio
-            audioQueue = [];
-            nextScheduledTime = audioContext.currentTime;
-            
-            // If you want to stop currently playing audio
-            if (currentSource) {
-                currentSource.stop();
-                currentSource = null;
+        function stopFrequencyAnalysis() {
+            if (frequencyCheckInterval) {
+                clearInterval(frequencyCheckInterval);
+                frequencyCheckInterval = null;
+            }
+
+            const layers = document.querySelectorAll('.bot .layer-1, .bot .layer-2, .bot .layer-3');
+            layers.forEach((layer, index) => {
+                setTimeout(() => {
+                    layer.style.transform = 'translateY(-50%) scale(0.5)';
+                    layer.style.transition = 'transform 0.15s ease-out';
+                }, index * 100);
+            });
+        }
+
+        function hideMicrophonePopup() {
+            const popup = document.getElementById('microphonePopup');
+            if(!popup.classList.contains('hidden')) {
+                popup.classList.add('hidden');
+            }
+        }
+
+        function showMicrophonePopup() {
+            const popup = document.getElementById('microphonePopup');
+            if(popup.classList.contains('hidden')) {
+                popup.classList.remove('hidden');
             }
             
-            isPlaying = false;
+            // Add click event to the button
+            document.getElementById('enableMicrophoneBtn').addEventListener('click', setupAudioRecording);
         }
+
+        /* ----------------------------------------------------
+          Microphone Speaking Detection and Frequency Tracking
+        ---------------------------------------------------- */
+
+        function detectSpeaking(stream) {
+            const source = audioContext.createMediaStreamSource(stream);
+            const analyser = audioContext.createAnalyser();
+            analyser.fftSize = 1024;
+            
+            const dataArray = new Uint8Array(analyser.fftSize);
+            const frequencyDataArray = new Uint8Array(analyser.frequencyBinCount);
+            source.connect(analyser);
+
+            // Cache applicant layer elements for frequency animation
+            const applicantLayers = document.querySelectorAll('.applicant .layer-1, .applicant .layer-2, .applicant .layer-3');
+            let lastActiveTime = 0;
+        
+            function analyze() {
+                analyser.getByteTimeDomainData(dataArray);
+            
+                // Compute average volume from waveform
+                let sum = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                let sample = dataArray[i] - 128; // Normalize to -128 to +127
+                sum += Math.abs(sample);
+                }
+                const avg = sum / dataArray.length;
+            
+                // Simple threshold: tune this value
+                const threshold = 8;
+
+                // Frequency analysis (frequency domain)
+                analyser.getByteFrequencyData(frequencyDataArray);
+                
+                // Calculate weighted average for voice frequencies
+                let weightedSum = 0;
+                let totalWeight = 0;
+                
+                const fundamentalStart = Math.floor((85 * analyser.fftSize) / audioContext.sampleRate);
+                const fundamentalEnd = Math.floor((300 * analyser.fftSize) / audioContext.sampleRate);
+                const harmonicsStart = Math.floor((300 * analyser.fftSize) / audioContext.sampleRate);
+                const harmonicsEnd = Math.floor((8000 * analyser.fftSize) / audioContext.sampleRate);
+                
+                // Weight fundamental frequencies more heavily
+                for (let i = fundamentalStart; i < fundamentalEnd; i++) {
+                    weightedSum += frequencyDataArray[i] * 2;
+                    totalWeight += 2;
+                }
+                
+                for (let i = harmonicsStart; i < harmonicsEnd; i++) {
+                    weightedSum += frequencyDataArray[i];
+                    totalWeight += 1;
+                }
+                
+                const avgAmplitude = totalWeight > 0 ? weightedSum / totalWeight : 0;
+                const normalizedAmplitude = avgAmplitude / 255;
+            
+                if (avg > threshold) {
+                    onVoiceDetected(avg);
+                } else {
+                    onSilenceDetected(avg);
+                }
+
+                // console.log('normalizedAmplitude', normalizedAmplitude);
+
+                // Frequency-based layer animation with smooth transitions
+                const frequencyThreshold = 0.10;
+                const isCurrentlyActive = normalizedAmplitude > frequencyThreshold;
+                const baseScale = 0.5;
+                
+                if (isCurrentlyActive) {
+                    lastActiveTime = Date.now();
+                    
+                    const maxScale = 1.2; // Reduced for subtlety
+                    const intensity = Math.min(normalizedAmplitude * 3, 1); // Amplify but cap at 1
+                    
+                    applicantLayers.forEach((layer, index) => {
+                        const layerDelay = index * 0.05; // Stagger animation
+                        const layerIntensity = 0.9 + (index * 0.05); // Vary intensity per layer
+                        const targetScale = baseScale + (intensity * (maxScale - baseScale) * layerIntensity);
+                        
+                        // Smooth interpolation instead of direct assignment
+                        const currentScale = parseFloat(layer.style.transform.match(/scale\(([^)]+)\)/)?.[1] || '1');
+                        const smoothScale = currentScale + (targetScale - currentScale) * 0.3; // Lerp factor
+                        
+                        setTimeout(() => {
+                            layer.style.transform = `translateY(-50%) scale(${smoothScale.toFixed(3)})`;
+                            layer.style.transition = 'transform 0.1s ease-out';
+                        }, layerDelay * 1000);
+                    });
+                    
+                } else {
+                    // Gradual fade out
+                    const timeSinceActive = Date.now() - lastActiveTime;
+                    if (timeSinceActive > 100) {
+                        applicantLayers.forEach((layer, index) => {
+                            const currentScale = parseFloat(layer.style.transform.match(/scale\(([^)]+)\)/)?.[1] || baseScale);
+                            const fadeScale = currentScale + (baseScale - currentScale) * 0.15; // Gradual return to 1
+                            layer.style.transform = `translateY(-50%) scale(${fadeScale.toFixed(3)})`;
+                            layer.style.transition = 'transform 0.15s ease-out';
+                        });
+                    }
+                }
+            
+                requestAnimationFrame(analyze);
+            }
+            
+            analyze();
+        }
+
+        // Updated voice detection handler
+        function onVoiceDetected(volume) {
+            if (!isSpeaking) {
+                isSpeaking = true;
+                console.log(`🎤 Voice detected (volume: ${volume.toFixed(1)}) - User is speaking`);
+                
+                // Notify server that user is speaking
+                if (socket && socket.connected) {
+                    socket.emit('userSpeaking', { speaking: true, job_list_sid });
+                }
+
+                // Pause audio if playing
+                if (currentAudio && !currentAudio.paused) {
+                    currentAudio.pause();
+                    console.log('🔇 Audio paused - user speaking');
+
+                    setTimeout(() => {
+                        if(isSpeaking) {
+                            currentAudio = null;
+                            isPlaying = false;
+                            console.log('🔇 Audio cleared - user speaking');
+                        } else {
+                            currentAudio.play().catch(e => {
+                                console.error('Error resuming audio:', e);
+                            });
+                            console.log('🔊 Audio resumed');
+                        }
+                    }, SILENCE_DELAY + 3000);
+                }
+            }
+            
+            // Clear silence timer
+            if (silenceTimer) {
+                clearTimeout(silenceTimer);
+                silenceTimer = null;
+            }
+        }
+
+        // Updated silence detection handler
+        function onSilenceDetected(volume) {
+            // Only process if user was speaking
+            if (isSpeaking && !silenceTimer) {
+                silenceTimer = setTimeout(() => {
+                    isSpeaking = false;
+                    const applicantLayers = document.querySelectorAll('.applicant .layer-1, .applicant .layer-2, .applicant .layer-3');
+                    // Reset layers when not speaking
+                    applicantLayers.forEach(layer => {
+                        layer.style.transform = 'translateY(-50%) scale(0.5)';
+                        layer.style.transition = 'transform 0.08s cubic-bezier(0.4, 0, 0.2, 1)';
+                    });
+
+                    console.log(`🔇 Silence detected (volume: ${volume.toFixed(1)}) - User stopped speaking`);
+                    
+                    // Notify server that user stopped speaking
+                    if (socket && socket.connected) {
+                        socket.emit('userSpeaking', { speaking: false, job_list_sid });
+                    }
+                    silenceTimer = null;
+                }, SILENCE_DELAY);
+            }
+        }
+
+        // Setup audio recording function. After microphone connection start Websocket
+        function setupAudioRecording() {
+            // Request access to the microphone
+            navigator.mediaDevices.getUserMedia({
+                audio: true
+            })
+            .then(async (stream) => {
+                hideMicrophonePopup();
+
+                await setupSocketConnection();
+                
+                console.log('Got microphone access!');
+                audioStream = stream
+                // Store the stream for later use
+                window.audioStream = audioStream;
+
+                initAudioContext();
+
+                // Microphone Speaking Detection and Frequency Tracking
+                detectSpeaking(stream);
+
+            })
+            .catch(error => {
+                console.error('Error accessing microphone:', error);
+
+                // Update popup content to show error
+                const popupContent = document.querySelector('.microphone-popup-content');
+                popupContent.innerHTML = `
+                    <h3>❌ Microphone Access Denied</h3>
+                    <p>Please allow microphone access in your browser settings and refresh the page to start the interview.</p>
+                    <button onclick="location.reload()">Refresh Page</button>
+                `;
+            });
+        }
+
+        function stopInterview() {
+            interviewStarted = false;
+            // recognition.stop();
+
+            // Stop audio recording
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+
+            // Stop all audio tracks
+            if (audioStream) {
+                audioStream.getTracks().forEach(track => track.stop());
+            }
+
+            // Reset applicant layers
+            const applicantLayers = document.querySelectorAll('.applicant .layer-1, .applicant .layer-2, .applicant .layer-3');
+            applicantLayers.forEach(layer => {
+                layer.style.transform = 'translateY(-50%) scale(0.5)';
+                layer.style.transition = 'transform 0.3s ease-out';
+            });
+
+            // Stop frequency analysis
+            stopFrequencyAnalysis(); // For AI audio
+        }
+
+        // Check Microphone Permission Status
+        async function checkMicrophonePermission() {
+            try {
+                // Check if getUserMedia is supported
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    console.log('getUserMedia not supported');
+                    return false;
+                }
+
+                // Try to get microphone access without showing permission prompt
+                const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
+                
+                if (permissionStatus.state === 'granted') {
+                    console.log('Microphone permission already granted');
+                    hideMicrophonePopup();
+                    setupAudioRecording();
+                    return true;
+                } else {
+                    console.log('Microphone permission not granted:', permissionStatus.state);
+                    showMicrophonePopup();
+                    return false;
+                }
+            } catch (error) {
+                console.log('Error checking microphone permission:', error);
+                return false;
+            }
+        }
+
+        checkMicrophonePermission();
     });
 </script>
