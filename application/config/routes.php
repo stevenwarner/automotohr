@@ -2888,3 +2888,8 @@ $route["cms/update_product_sort_order/(:num)"]["post"] = "manage_admin/Cms/updat
 $route["cms/update_product_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateHomeProductSortOrder/$1";
 
 $route["cms/update_sections_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateSectionsSortOrder/$1";
+
+$route["savecookiedata"]["post"] = "Home/saveCookieData";
+$route['cookies_report'] = 'manage_admin/reports/Main/cookiesDataReport';
+
+

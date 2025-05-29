@@ -29,6 +29,7 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     // Utility to set a cookie
@@ -37,10 +38,28 @@
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
         const expires = "expires=" + date.toUTCString();
         document.cookie = `${name}=${value};${expires};path=/`;
+
+
+        //
+        var baseURI = '<?php echo base_url(); ?>';
+        var userAgent = navigator.userAgent;
+        var currentUrl = window.location.href;
+        const cookieDataObj = {
+            userAgent: userAgent,
+            currentUrl: currentUrl
+        };
+
+        $.ajax({
+            url: baseURI + "savecookiedata",
+            method: "POST",
+            data: cookieDataObj,
+        })
+
     }
 
     // Utility to get a cookie
     function getCookie(name) {
+
         const nameEQ = name + "=";
         const ca = document.cookie.split(';');
         for (let c of ca) {
@@ -51,13 +70,13 @@
     }
 
     // Check cookie on page load
-    window.addEventListener("load", function () {
+    window.addEventListener("load", function() {
         const cookieConsent = getCookie("cookie_consent");
         if (!cookieConsent) {
             document.getElementById("cookie-banner").style.display = "flex";
         }
 
-        document.getElementById("accept-cookies").addEventListener("click", function () {
+        document.getElementById("accept-cookies").addEventListener("click", function() {
             setCookie("cookie_consent", "accepted", 365);
             document.getElementById("cookie-banner").style.display = "none";
         });

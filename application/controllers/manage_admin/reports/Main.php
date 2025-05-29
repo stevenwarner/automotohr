@@ -103,4 +103,18 @@ class Main extends Admin_Controller
         //
         $this->render('manage_admin/company/ai_whishlist_report');
     }
+
+    //
+
+        public function cookiesDataReport()
+    {
+        //
+        $this->data['page_title'] = 'Cookies Report';
+        // load user model
+        $this->load->model('2022/User_model', 'user_model');
+        // get filter records
+        $this->data['records'] = $this->user_model->getCookiesData($this->input->get(null, false));
+        //
+        $this->render('manage_admin/company/cookies_report');
+    }
 }
