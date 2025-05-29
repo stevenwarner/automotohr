@@ -26,6 +26,7 @@ class Survey_template extends Base_survey
         $this->setJs("templates/add_question");
         $this->setJs("templates/edit_question");
         $this->setJs("templates/add");
+        $this->setJs("templates/edit");
         $this->setJs("templates/view");
         // Load the required JavaScript file
         $this->renderView('survey/templates/listing');

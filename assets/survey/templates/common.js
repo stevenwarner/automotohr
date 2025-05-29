@@ -43,10 +43,9 @@ $(function () {
 });
 
 
-function getDescriptionPreview(obj) {
+function getDescriptionPreview(obj, isEdit = false) {
     // set the HTML
     let rows = "";
-
     rows += `<div class="panel panel-default jsQuestionDescription" data-id="desc_${obj.question_id}">`;
     rows += `<div class="panel-heading">`;
     rows += `   <div class="row">`;
@@ -58,14 +57,25 @@ function getDescriptionPreview(obj) {
     rows += `               </strong>`;
     rows += `           </h1>`;
     rows += `       </div>`;
-    rows += `       <div class="col-xs-3 text-right panel-text-heading" style="margin-top: 5px;">`;
-    rows += `               <button type="button" class="btn btn-warning jsTemplateEditDescription" title="Edit Question">`;
-    rows += `                   <i class="fa fa-edit"></i>`;
-    rows += `               </button>`;
-    rows += `               <button type="button" class="btn btn-danger jsRemoveDescription" title="Remove Question">`;
-    rows += `                   <i class="fa fa-trash"></i>`;
-    rows += `               </button>`;
-    rows += `       </div>`;
+    if (isEdit) {
+        rows += `       <div class="col-xs-3 text-right panel-text-heading" style="margin-top: 5px;">`;
+        rows += `               <button type="button" class="btn btn-warning jsTemplateEditEditDescription" title="Edit Description">`;
+        rows += `                   <i class="fa fa-edit"></i>`;
+        rows += `               </button>`;
+        rows += `               <button type="button" class="btn btn-danger jsRemoveEditDescription" title="Remove Description">`;
+        rows += `                   <i class="fa fa-trash"></i>`;
+        rows += `               </button>`;
+        rows += `       </div>`;
+    } else {
+        rows += `       <div class="col-xs-3 text-right panel-text-heading" style="margin-top: 5px;">`;
+        rows += `               <button type="button" class="btn btn-warning jsTemplateEditDescription" title="Edit Description">`;
+        rows += `                   <i class="fa fa-edit"></i>`;
+        rows += `               </button>`;
+        rows += `               <button type="button" class="btn btn-danger jsRemoveDescription" title="Remove Description">`;
+        rows += `                   <i class="fa fa-trash"></i>`;
+        rows += `               </button>`;
+        rows += `       </div>`;
+    }
     rows += `   </div>`;
     rows += `</div>`;
     // panel ends
@@ -76,8 +86,7 @@ function getDescriptionPreview(obj) {
 }
 
 
-function getQuestionPreview(questionObject, answer = "") {
-
+function getQuestionPreview(questionObject, answer = "", isEdit = false) {
     // set the HTML
     let rows = "";
 
@@ -93,16 +102,29 @@ function getQuestionPreview(questionObject, answer = "") {
     rows += `               </strong>`;
     rows += `           </h1>`;
     rows += `       </div>`;
-    rows += `       <div class="col-xs-4 text-right panel-text-heading" style="margin-top: 5px;">`;
-    rows += `               <button type="button" class="btn btn-warning jsEditQuestion" title="Edit Question">`;
-    rows += `                   <i class="fa fa-edit"></i>`;
-    rows += `               </button>`;
-    rows += `               <button type="button" class="btn btn-danger jsRemoveQuestion" title="Remove Question">`;
-    rows += `                   <i class="fa fa-trash"></i>`;
-    rows += `               </button>`;
-    rows += `       </div>`;
-    rows += `   </div>`;
-    rows += `</div>`;
+    if (isEdit) {
+        rows += `       <div class="col-xs-4 text-right panel-text-heading" style="margin-top: 5px;">`;
+        rows += `               <button type="button" class="btn btn-warning jsEditEditQuestion" title="Edit Question">`;
+        rows += `                   <i class="fa fa-edit"></i>`;
+        rows += `               </button>`;
+        rows += `               <button type="button" class="btn btn-danger jsRemoveEditQuestion" title="Remove Question">`;
+        rows += `                   <i class="fa fa-trash"></i>`;
+        rows += `               </button>`;
+        rows += `       </div>`;
+        rows += `   </div>`;
+        rows += `</div>`;
+    } else {
+        rows += `       <div class="col-xs-4 text-right panel-text-heading" style="margin-top: 5px;">`;
+        rows += `               <button type="button" class="btn btn-warning jsEditQuestion" title="Edit Question">`;
+        rows += `                   <i class="fa fa-edit"></i>`;
+        rows += `               </button>`;
+        rows += `               <button type="button" class="btn btn-danger jsRemoveQuestion" title="Remove Question">`;
+        rows += `                   <i class="fa fa-trash"></i>`;
+        rows += `               </button>`;
+        rows += `       </div>`;
+        rows += `   </div>`;
+        rows += `</div>`;
+    }
 
     rows += `   <div class="panel-body hidden" id="collapse${questionObject.question_id}">`;
     // Question title

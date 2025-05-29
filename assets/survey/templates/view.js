@@ -180,10 +180,36 @@ $(function () {
         previewModal.setContent(html)
         previewModal.loader(false)
     }
+
+
+    // Delete the template
+    $(document).on("click", ".jsDeleteSurveyTemplate", function () {
+        const templateId = $(this).closest(".jsSurveyTemplateRow").data("id");
+        _confirm("Do you want to delete this template?", async function () {
+            try {
+                const response = await makeSecureCallToApiServer(
+                    `surveys/templates/${templateId}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+                _success(response.message, function () {
+                    getTemplates();
+                });
+            } catch (error) {
+                handleErrorResponse(error);
+            }
+        });
+    });
+
+    // Edit the template
+    $(document).on("click", ".jsEditSurveyTemplate", function () {
+        const templateId = $(this).closest(".jsSurveyTemplateRow").data("id");
+        startTemplateEditProcess(templateId);
+    });
     //
     window.getTemplates = getTemplates;
 
-    // getTemplates();
-    startTemplateAddProcess();
+    getTemplates();
 });
 

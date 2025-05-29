@@ -232,6 +232,7 @@ $(function () {
      * @param {*} view 
      */
     function showView(view) {
+        console.log("Add ", view)
         //
         $("#sectionMain").addClass("hidden");
         $("#sectionAddQuestionBox").addClass("hidden");
@@ -332,15 +333,6 @@ $(function () {
         }
     );
 
-
-    questionsArray.push({
-        question_id: generateRandomAndUniqueId(),
-        description: "Description 1",
-        plainDescription: "Description 1",
-        slug: "description_1",
-        questions: [],
-    });
-
     $(document).on(
         "click",
         ".jsAddEditDescription",
@@ -401,7 +393,7 @@ $(function () {
         ".jsRemoveDescription",
         function (event) {
             event.preventDefault();
-            const questionId = $(this).closest(".jsQuestionView").data("id");
+            const questionId = $(this).closest(".jsQuestionDescription").data("id").replace("desc_", "");
 
             _confirm(
                 "Do you want to delete this question?",

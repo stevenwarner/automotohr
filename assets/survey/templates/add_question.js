@@ -4,11 +4,12 @@ $(function addQuestion() {
 	let questionObj = {
 		question_id: 0,
 		question_required: false,
+		is_required: false,
 		question_title: "",
 		question_content: "",
 		question_type: "text",
 		choice_list: {},
-		video_type: "upload",
+		video_type: "none",
 		video_file_name: "",
 	};
 
@@ -204,6 +205,7 @@ $(function addQuestion() {
 			question_id: 0,
 			question_title: "",
 			question_required: false,
+			is_required: false,
 			question_content: "",
 			question_type: "text",
 			choice_list: {},
@@ -223,6 +225,9 @@ $(function addQuestion() {
 		questionObj.question_title = $("#jsAddQuestionTitle").val().trim();
 		questionObj.question_content = $("#jsAddQuestionHelp").val().trim();
 		questionObj.question_required = $("#jsAddQuestionRequired").prop(
+			"checked"
+		);
+		questionObj.is_required = $("#jsAddQuestionRequired").prop(
 			"checked"
 		);
 		questionObj.question_type = $("#jsAddQuestionType").select2("val");

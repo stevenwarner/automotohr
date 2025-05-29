@@ -21,13 +21,11 @@
                     <div class="modal-body"></div>
                     <div class="modal-footer">
                         <div class="row">
-                            <div class="col-md-2 col-xs-12 text-left">
-                                <button type="button" class="btn btn-black" id="${modalId}-closeBtn">
+                            <div class="col-sm-12 col-xs-12 text-right">
+                                <button type="button" class="btn btn-black pull-left" id="${modalId}-closeBtn">
                                     <i class="fa fa-times-circle"></i>    
                                     Close
                                 </button>
-                            </div>
-                            <div class="col-md-10 col-xs-12 text-right">
                                 <div class="jsButtonsArea"></div>
                             </div>
                         </div>
@@ -58,6 +56,8 @@
                 $backdrop.fadeOut(200);
                 settings.onClose.call($modal[0]);
                 $("body").css("overflow-y", "auto");
+                $backdrop.remove();
+                $modal.remove();
                 return this;
             },
             closeModal: function () {

@@ -5,10 +5,11 @@ $(function editQuestion() {
         question_id: 0,
         question_title: "",
         question_required: false,
+        is_required: false,
         question_content: "",
         question_type: "text",
         choice_list: {},
-        video_type: "upload",
+        video_type: "none",
         video_file_name: "",
         tag: "",
     };
@@ -158,6 +159,7 @@ $(function editQuestion() {
             errorSectionReference: "jsEditQuestionRecordingError",
         });
         //
+        $(".jsEditQuestionUploadVideoBox").find(".jsMainUploadAreaWrapper").remove();
         $("#jsEditQuestionUploadVideo").msFileUploader({
             fileLimit: "200mb",
             allowedTypes: ["mp4", "mov"],
@@ -180,6 +182,10 @@ $(function editQuestion() {
         $("#jsEditQuestionRequired").prop(
             "checked",
             questionObj.question_required
+        );
+        $("#jsEditQuestionRequired").prop(
+            "checked",
+            questionObj.is_required
         );
         $("#jsEditQuestionHelp").val(questionObj.question_content);
         //
@@ -379,6 +385,9 @@ $(function editQuestion() {
         const errorArray = [];
         // set data
         questionObj.question_required = $("#jsEditQuestionRequired").prop(
+            "checked"
+        );
+        questionObj.is_required = $("#jsEditQuestionRequired").prop(
             "checked"
         );
         questionObj.question_title = $("#jsEditQuestionTitle").val().trim();

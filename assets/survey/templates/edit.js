@@ -3,6 +3,7 @@ $(function () {
     let saveBtnRef;
     //
     let siteModalRef;
+    let templateId = 0;
     // set the object
     let template = {
         title: "",
@@ -17,15 +18,15 @@ $(function () {
     // set the default questions array
     let questionsArray = [];
 
-    $(document).on("keyup", "#jsTemplateTitle", function (event) {
+    $(document).on("keyup", "#jsTemplateEditTitle", function (event) {
         template.title = $(this).val();
     });
 
-    $(document).on("keyup", "#jsTemplateDescription", function (event) {
+    $(document).on("keyup", "#jsTemplateEditDescription", function (event) {
         template.description = $(this).val();
     });
 
-    $(document).on("click", "#jsTemplateRecur", function (event) {
+    $(document).on("click", "#jsTemplateEditRecur", function (event) {
         template.is_recurring = $(this).prop("checked");
         if (template.is_recurring) {
             $(".jsRecurringSurveyBox").removeClass("hidden");
@@ -34,15 +35,15 @@ $(function () {
         }
     });
 
-    $(document).on("keyup", "#jsTemplateRecurNumber", function (event) {
+    $(document).on("keyup", "#jsTemplateEditRecurNumber", function (event) {
         template.recur_number = $(this).val();
     });
 
-    $(document).on("change", "#jsTemplateRecurType", function (event) {
+    $(document).on("change", "#jsTemplateEditRecurType", function (event) {
         template.recur_type = $(this).val();
     });
 
-    $(document).on("click", ".jsTemplateSaveBtn", function (event) {
+    $(document).on("click", ".jsTemplateEditSaveBtn", function (event) {
         event.preventDefault();
 
         //
@@ -69,14 +70,14 @@ $(function () {
 
     async function saveTemplate() {
         saveBtnRef = callButtonHook(
-            $(".jsTemplateSaveBtn"),
+            $(".jsTemplateEditSaveBtn"),
             true
         );
         try {
             const response = await makeSecureCallToApiServer(
-                "surveys/templates/create",
+                `surveys/templates/${templateId}`,
                 {
-                    method: "POST",
+                    method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
                     },
@@ -97,7 +98,8 @@ $(function () {
         }
     }
 
-    function startTemplateEditProcess() {
+    function startTemplateEditProcess(idOfTemplate) {
+        templateId = idOfTemplate;
         // start the modal
         siteModalRef = $.msSiteModal();
         siteModalRef.loader(true).open();
@@ -122,16 +124,21 @@ $(function () {
         };
 
         try {
-            const response = await makeSecureCallToApiServer("surveys/templates/view", {
+            const response = await makeSecureCallToApiServer(`surveys/templates/view/edit/${templateId}`, {
                 method: "GET",
             });
-
-            siteModalRef.setContent(response);
+            // set the template
+            template = response.data;
+            // set the questions
+            questionsArray = template.questions;
+            // ste the view
+            siteModalRef.setContent(response.view);
+            // set the view
             setView();
-            loadQuestionsView();
+            loadQuestionsView(true);
             siteModalRef.loader(false);
             showView("basic");
-            $("#jsAddQuestionsArea").sortable({
+            $("#jsEditQuestionsArea").sortable({
                 stop: function (event) {
                     console.log(event);
                     processQuestions();
@@ -148,31 +155,17 @@ $(function () {
 
     // set view
     function setView() {
-        $("#jsTemplateTitle").val(template.title);
-        $("#jsTemplateDescription").val(template.description);
-        $("#jsTemplateRecur").prop("checked", template.is_recurring);
-        $("#jsTemplateRecurNumber").val(template.recur_number);
-        $("#jsTemplateRecurType option[value='" + (template.recur_type) + "']").prop("selected", true);
-        //
-        if (template.is_recurring == false) {
+        $("#jsTemplateEditTitle").val(template.title);
+        $("#jsTemplateEditDescription").val(template.description);
+        $("#jsTemplateEditRecur").prop("checked", template.is_recurring);
+        $("#jsTemplateEditRecurNumber").val(template.recur_number);
+        $("#jsTemplateEditRecurType option[value='" + (template.recur_type) + "']").prop("selected", true);
+        // //
+        if (!template.is_recurring) {
             $(".jsRecurringSurveyBox").addClass("hidden");
         } else {
-            $(",jsRecurringSurveyBox").removeClass("hidden");
+            $(".jsRecurringSurveyBox").removeClass("hidden");
         }
-    }
-
-    /**
-     * Callback for add question
-     *
-     * @param {*} questionObj
-     */
-    function saveQuestionToQuestions(questionObj) {
-        // hide the loader
-        ml(false, modalLoaderId);
-        // push the question to questions array
-        questionsArray.push(questionObj);
-        // load questions view
-        loadQuestionsView();
     }
 
     /**
@@ -180,25 +173,37 @@ $(function () {
      *
      * @returns
      */
-    function loadQuestionsView() {
+    function loadQuestionsView(initialSet = false) {
         // check the length of questions
         if (!questionsArray.length) {
-            return $("#jsAddQuestionsArea").html(
+            return $("#jsEditQuestionsArea").html(
                 '<p class="alert alert-info text-center">No questions found yet.</p>'
             );
         }
         // set default trs
         let tr = "";
         //
-        questionsArray.map(function (questionObj) {
-            if (questionObj.description !== undefined) {
-                tr += getDescriptionPreview(questionObj)
+        questionsArray.map(function (questionObj, i) {
+
+            if (questionObj.description !== undefined || questionObj.question_type === "tag") {
+                if (initialSet) {
+                    questionObj.plainDescription = $("<div>").html(questionObj.question_content).text().trim();
+                    questionObj.description = questionObj.question_content;
+                    questionObj.slug = getSlug(questionObj.question_content);
+                    questionsArray[i] = questionObj;
+                }
+                tr += getDescriptionPreview(questionObj, true)
             } else {
-                tr += getQuestionPreview(questionObj)
+                if (initialSet) {
+                    questionObj.choice_list = JSON.parse(questionObj.choices_json);
+                    questionObj.question_required = questionObj.is_required;
+                    questionsArray[i] = questionObj;
+                }
+                tr += getQuestionPreview(questionObj, "", true)
             }
         });
         //
-        $("#jsAddQuestionsArea").html(tr);
+        $("#jsEditQuestionsArea").html(tr);
     }
 
     /**
@@ -232,35 +237,43 @@ $(function () {
      * @param {*} view 
      */
     function showView(view) {
+        console.log("Edit")
         //
         $("#sectionMain").addClass("hidden");
         $("#sectionAddQuestionBox").addClass("hidden");
         $("#sectionEditQuestionBox").addClass("hidden");
-        $("#sectionAddDescription").addClass("hidden");
+        $("#sectionEditDescription").addClass("hidden");
+        $("#jsEditEditDescriptionId").val("");
         siteModalRef.setButtons("");
 
         setTimeout(function () {
             //
             if (view === "basic") {
                 $("#sectionMain").removeClass("hidden");
-                siteModalRef.setButtons(`<button type="button" class="btn btn-orange jsTemplateSaveBtn"><i class="fa fa-save"></i>Save Changes</button>`);
+                siteModalRef.setButtons(`<button type="button" class="btn btn-orange jsTemplateEditSaveBtn"><i class="fa fa-save"></i>Save Changes</button>`);
             } else if (view === "add_question") {
                 $("#sectionAddQuestionBox").removeClass("hidden");
                 siteModalRef.setButtons(`
-                    <button type="button" class="btn btn-black jsBackToAddCoursePage"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back</button>
+                    <button type="button" class="btn btn-black jsBackToEditCoursePage"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back</button>
                     <button type="button" class="btn btn-orange jsAddQuestionSaveBtn"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Save Question</button>
                 `);
             } else if (view === "edit_question") {
                 $("#sectionEditQuestionBox").removeClass("hidden");
                 siteModalRef.setButtons(`
-                    <button type="button" class="btn btn-black jsBackToAddCoursePage"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back</button>
+                    <button type="button" class="btn btn-black jsBackToEditCoursePage"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back</button>
                     <button type="button" class="btn btn-orange jsEditQuestionSaveBtn"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Update Question</button>
                 `);
-            } else if (view === "add_description") {
-                $("#sectionAddDescription").removeClass("hidden");
+            } else if (view === "edit_description") {
+                $("#sectionEditDescription").removeClass("hidden");
                 siteModalRef.setButtons(`
-                    <button type="button" class="btn btn-black jsBackToAddCoursePage"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back</button>
-                    <button type="button" class="btn btn-orange jsAddEditDescription"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Save Changes</button>
+                    <button type="button" class="btn btn-black jsBackToEditCoursePage"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back</button>
+                    <button type="button" class="btn btn-orange jsEditEditDescription"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Save Changes</button>
+                `);
+            } else if (view === "edit_edit_description") {
+                $("#sectionEditDescription").removeClass("hidden");
+                siteModalRef.setButtons(`
+                    <button type="button" class="btn btn-black jsBackToEditCoursePage"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back</button>
+                    <button type="button" class="btn btn-orange jsEditModifyDescription"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Save Changes</button>
                 `);
             }
         }, 10)
@@ -269,7 +282,7 @@ $(function () {
     // Add question process
     $(document).on(
         "click",
-        ".jsTemplateAddQuestion",
+        ".jsTemplateEditAddQuestion",
         function (event) {
             event.preventDefault();
             showView("add_question");
@@ -284,24 +297,24 @@ $(function () {
 
     $(document).on(
         "click",
-        ".jsTemplateAddDescription",
+        ".jsTemplateEditAddDescription",
         function (event) {
             event.preventDefault();
-            showView("add_description");
-            if (!CKEDITOR.instances["jsAddEditDescription"]) {
-                CKEDITOR.replace("jsAddEditDescription", {
+            showView("edit_description");
+            if (!CKEDITOR.instances["jsEditEditDescription"]) {
+                CKEDITOR.replace("jsEditEditDescription", {
                     toolbar: [
                         { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] }
                     ]
                 });
             }
-            CKEDITOR.instances["jsAddEditDescription"].setData("");
+            CKEDITOR.instances["jsEditEditDescription"].setData("");
         }
     );
 
     $(document).on(
         "click",
-        ".jsTemplateEditDescription",
+        ".jsTemplateEditEditDescription",
         function (event) {
             event.preventDefault();
             const descriptionId = $(this).closest(".jsQuestionDescription").data("id").replace("desc_", "");
@@ -310,38 +323,31 @@ $(function () {
             console.log(descriptionId)
             console.log(descriptionObject)
 
-            showView("add_description");
+            showView("edit_edit_description");
 
-            if (!CKEDITOR.instances["jsAddEditDescription"]) {
-                CKEDITOR.replace("jsAddEditDescription", {
+            if (!CKEDITOR.instances["jsEditEditDescription"]) {
+                CKEDITOR.replace("jsEditEditDescription", {
                     toolbar: [
                         { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] }
                     ]
                 });
             }
-            CKEDITOR.instances["jsAddEditDescription"].setData(
+
+            CKEDITOR.instances["jsEditEditDescription"].setData(
                 descriptionObject.description
             );
 
-            console.log(descriptionObject)
+            $("#jsEditEditDescriptionId").val(descriptionObject.question_id);
         }
     );
 
-
-    questionsArray.push({
-        question_id: generateRandomAndUniqueId(),
-        description: "Description 1",
-        plainDescription: "Descritpion 1",
-        slug: "description_1",
-        questions: [],
-    });
     $(document).on(
         "click",
-        ".jsAddEditDescription",
+        ".jsEditEditDescription",
         function (event) {
             event.preventDefault();
 
-            const description = CKEDITOR.instances["jsAddEditDescription"].getData();
+            const description = CKEDITOR.instances["jsEditEditDescription"].getData();
 
             if (!description.trim() || $("<div>").html(description).text().trim() === "") {
                 _error("Description cannot be empty.");
@@ -360,10 +366,57 @@ $(function () {
             loadQuestionsView();
         }
     );
+
+    $(document).on(
+        "click",
+        ".jsEditModifyDescription",
+        function (event) {
+            event.preventDefault();
+
+            const description = CKEDITOR.instances["jsEditEditDescription"].getData();
+            const descriptionId = $("#jsEditEditDescriptionId").val();
+
+            if (!description.trim() || $("<div>").html(description).text().trim() === "") {
+                _error("Description cannot be empty.");
+                return;
+            }
+            //
+            questionsArray = questionsArray.map(function (existingQuestion) {
+                if (existingQuestion.question_id == descriptionId) {
+                    console.log("Found it")
+                    existingQuestion.description = description;
+                    existingQuestion.plainDescription = $("<div>").html(description).text().trim();
+                    existingQuestion.slug = getSlug(description);
+                }
+                return existingQuestion;
+            });
+
+            //
+            showView("basic");
+            loadQuestionsView();
+        }
+    );
+
+    // delete question
+    $(document).on(
+        "click",
+        ".jsRemoveEditDescription",
+        function (event) {
+            event.preventDefault();
+            const questionId = $(this).closest(".jsQuestionDescription").data("id").replace("desc_", "");
+
+            _confirm(
+                "Do you want to delete this question?",
+                function () {
+                    deleteQuestion(questionId)
+                }
+            );
+        }
+    );
     // close button
     $(document).on(
         "click",
-        ".jsBackToAddCoursePage",
+        ".jsBackToEditCoursePage",
         function (event) {
             event.preventDefault();
             showView("basic");
@@ -372,7 +425,7 @@ $(function () {
     );
     $(document).on(
         "click",
-        ".jsRemoveQuestion",
+        ".jsRemoveEditQuestion",
         function (event) {
             event.preventDefault();
             const questionId = $(this).closest(".jsQuestionView").data("id");
@@ -388,7 +441,7 @@ $(function () {
 
     $(document).on(
         "click",
-        ".jsEditQuestion",
+        ".jsEditEditQuestion",
         function (event) {
             event.preventDefault();
             event.stopPropagation();
@@ -399,6 +452,8 @@ $(function () {
             showView("edit_question");
 
             loadEditQuestionView(singleQuestion, function (obj) {
+                console.log(obj)
+
                 updateQuestionToQuestions(obj, obj.question_id)
                 loadQuestionsView();
                 showView("basic");
@@ -415,7 +470,7 @@ $(function () {
 
 
     function processQuestions() {
-        let sortedIds = $("#jsAddQuestionsArea").sortable("toArray", { attribute: "data-id" });
+        let sortedIds = $("#jsEditQuestionsArea").sortable("toArray", { attribute: "data-id" });
 
         let newQuestionsArray = [];
         let currentDescription = "";
