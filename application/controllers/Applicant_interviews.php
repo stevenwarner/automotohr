@@ -19,7 +19,12 @@ class Applicant_interviews extends Public_Controller
     }
 
     public function interviewCall($id) {
-        $data['portal_job_list'] = $this->applicant_interview_model->get_applicant_data($id);
+        $portal_job_list = $this->applicant_interview_model->get_applicant_data($id);
+        $data['company'] = array(
+            'name' => $portal_job_list['CompanyName'],
+            'logo' => $portal_job_list['profile_picture'] ? $portal_job_list['profile_picture'] : $portal_job_list['Logo']
+        );
+        $data['portal_job_list'] = $portal_job_list;
         $this->load->view('applicant/interview', $data);
     }
 }
