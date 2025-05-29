@@ -237,6 +237,7 @@ $(function () {
         $("#sectionAddQuestionBox").addClass("hidden");
         $("#sectionEditQuestionBox").addClass("hidden");
         $("#sectionAddDescription").addClass("hidden");
+        $("#jsAddEditDescriptionId").val("");
         siteModalRef.setButtons("");
 
         setTimeout(function () {
@@ -261,6 +262,12 @@ $(function () {
                 siteModalRef.setButtons(`
                     <button type="button" class="btn btn-black jsBackToAddCoursePage"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back</button>
                     <button type="button" class="btn btn-orange jsAddEditDescription"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Save Changes</button>
+                `);
+            } else if (view === "edit_description") {
+                $("#sectionAddDescription").removeClass("hidden");
+                siteModalRef.setButtons(`
+                    <button type="button" class="btn btn-black jsBackToAddCoursePage"><i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back</button>
+                    <button type="button" class="btn btn-orange jsAddModifyDescription"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Save Changes</button>
                 `);
             }
         }, 10)
@@ -307,10 +314,7 @@ $(function () {
             const descriptionId = $(this).closest(".jsQuestionDescription").data("id").replace("desc_", "");
             const descriptionObject = getTheQuestionObjById(descriptionId);
 
-            console.log(descriptionId)
-            console.log(descriptionObject)
-
-            showView("add_description");
+            showView("edit_description");
 
             if (!CKEDITOR.instances["jsAddEditDescription"]) {
                 CKEDITOR.replace("jsAddEditDescription", {
@@ -319,11 +323,12 @@ $(function () {
                     ]
                 });
             }
+
             CKEDITOR.instances["jsAddEditDescription"].setData(
                 descriptionObject.description
             );
 
-            console.log(descriptionObject)
+            $("#jsAddEditDescriptionId").val(descriptionObject.question_id);
         }
     );
 
@@ -331,10 +336,11 @@ $(function () {
     questionsArray.push({
         question_id: generateRandomAndUniqueId(),
         description: "Description 1",
-        plainDescription: "Descritpion 1",
+        plainDescription: "Description 1",
         slug: "description_1",
         questions: [],
     });
+
     $(document).on(
         "click",
         ".jsAddEditDescription",
@@ -358,6 +364,51 @@ $(function () {
 
             showView("basic")
             loadQuestionsView();
+        }
+    );
+
+    $(document).on(
+        "click",
+        ".jsAddModifyDescription",
+        function (event) {
+            event.preventDefault();
+
+            const description = CKEDITOR.instances["jsAddEditDescription"].getData();
+            const descriptionId = $("#jsAddEditDescriptionId").val();
+
+            if (!description.trim() || $("<div>").html(description).text().trim() === "") {
+                _error("Description cannot be empty.");
+                return;
+            }
+            //
+            questionsArray = questionsArray.map(function (existingQuestion) {
+                if (existingQuestion.question_id === descriptionId) {
+                    existingQuestion.description = description;
+                    existingQuestion.plainDescription = $("<div>").html(description).text().trim();
+                    existingQuestion.slug = getSlug(description);
+                }
+                return existingQuestion;
+            });
+            //
+            showView("basic");
+            loadQuestionsView();
+        }
+    );
+
+    // delete question
+    $(document).on(
+        "click",
+        ".jsRemoveDescription",
+        function (event) {
+            event.preventDefault();
+            const questionId = $(this).closest(".jsQuestionView").data("id");
+
+            _confirm(
+                "Do you want to delete this question?",
+                function () {
+                    deleteQuestion(questionId)
+                }
+            );
         }
     );
     // close button

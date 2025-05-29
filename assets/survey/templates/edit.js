@@ -97,7 +97,7 @@ $(function () {
         }
     }
 
-    function startTemplateAddProcess() {
+    function startTemplateEditProcess() {
         // start the modal
         siteModalRef = $.msSiteModal();
         siteModalRef.loader(true).open();
@@ -301,6 +301,42 @@ $(function () {
 
     $(document).on(
         "click",
+        ".jsTemplateEditDescription",
+        function (event) {
+            event.preventDefault();
+            const descriptionId = $(this).closest(".jsQuestionDescription").data("id").replace("desc_", "");
+            const descriptionObject = getTheQuestionObjById(descriptionId);
+
+            console.log(descriptionId)
+            console.log(descriptionObject)
+
+            showView("add_description");
+
+            if (!CKEDITOR.instances["jsAddEditDescription"]) {
+                CKEDITOR.replace("jsAddEditDescription", {
+                    toolbar: [
+                        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline'] }
+                    ]
+                });
+            }
+            CKEDITOR.instances["jsAddEditDescription"].setData(
+                descriptionObject.description
+            );
+
+            console.log(descriptionObject)
+        }
+    );
+
+
+    questionsArray.push({
+        question_id: generateRandomAndUniqueId(),
+        description: "Description 1",
+        plainDescription: "Descritpion 1",
+        slug: "description_1",
+        questions: [],
+    });
+    $(document).on(
+        "click",
         ".jsAddEditDescription",
         function (event) {
             event.preventDefault();
@@ -313,7 +349,7 @@ $(function () {
             }
             //
             questionsArray.push({
-                question_id: 0,
+                question_id: generateRandomAndUniqueId(),
                 description: description,
                 plainDescription: $("<div>").html(description).text().trim(),
                 slug: getSlug(description),
@@ -410,6 +446,6 @@ $(function () {
         //
         return lastDescription;
     }
-    window.startTemplateAddProcess = startTemplateAddProcess;
+    window.startTemplateEditProcess = startTemplateEditProcess;
 });
 

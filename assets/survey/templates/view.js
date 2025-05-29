@@ -128,7 +128,7 @@ $(function () {
             previewModal.closeModal()
         }
         previewModal = $.msSiteModal();
-        previewModal.setContent("");
+        previewModal.setContent("").open();
         previewModal.loader(true);
         // Logic to preview the template
         //
@@ -155,43 +155,26 @@ $(function () {
         //
         let questionsHTML = "";
         question.questions.map(function (sq) {
-            questionsHTML += getQuestionPreview(sq, "", "preview");
+            questionsHTML += generateQuestionPreviewView(sq, "", "preview");
         });
         let html = "";
         html += `
-            <div class="row">
-                <div class="col-sm-12">
-                    <label>
-                        Title
-                    </label>
-                    <p>${question.title}</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <label>
-                        Description
-                    </label>
-                    <p>${question.description}</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <label>
-                        Recur
-                    </label>
-                    <p>${question.is_recurring ? `Every ${question.recur_number} ${question.recur_type}` : "-"}</p>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-12">
-                    <label>
-                        Questions
-                    </label>
-                    ${questionsHTML}
-                </div>
-            </div>
+            <table class="table table-bordered">
+                <tr>
+                    <th class="text-small">Title</th>
+                    <td class="text-medium">${question.title}</td>
+                </tr>
+                <tr>
+                    <th class="text-small">Description</th>
+                    <td class="text-medium">${question.description || "-"}</td>
+                </tr>
+                <tr>
+                    <th class="text-small">Recur</th>
+                    <td class="text-medium">${question.is_recurring ? `Every ${question.recur_number} ${question.recur_type}` : "-"}</td>
+                </tr>
+            </table>
+            <hr />
+            ${questionsHTML}
         `;
         //
         previewModal.setContent(html)
@@ -200,6 +183,7 @@ $(function () {
     //
     window.getTemplates = getTemplates;
 
-    getTemplates();
+    // getTemplates();
+    startTemplateAddProcess();
 });
 

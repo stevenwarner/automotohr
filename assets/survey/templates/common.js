@@ -314,11 +314,132 @@ function getQuestionViewPreview(questionObject, answer = "") {
     return rows;
 };
 
+
+function generateQuestionPreviewView(questionObject) {
+    if (questionObject["choices_json"]) {
+        questionObject["choice_list"] = JSON.parse(questionObject["choices_json"]);
+    }
+    // set the HTML
+    let rows = "";
+
+    rows += `<div class="panel panel-default jsQuestionView" data-id="${questionObject.question_id}">`;
+    if (questionObject["question_type"] === "tag") {
+
+        rows += `<div class="panel-heading">`;
+        rows += `   <div class="row">`;
+        rows += `       <div class="col-xs-8">`;
+        rows += `           <h1 class="panel-text-heading text-medium jsCollapseBtn" data-target="collapse${questionObject.question_id}">`;
+        rows += `               <strong>`;
+        rows += `               <i class="fa fa-${getIconFromQuestionType(questionObject.question_type)}"></i>`;
+        rows += `               ${questionObject.question_title}`;
+        rows += `               </strong>`;
+        rows += `           </h1>`;
+        rows += `       </div>`;;
+        rows += `   </div>`;
+        rows += `</div>`;
+    }
+
+    if (questionObject["question_type"] != "tag") {
+        rows += `   <div class="panel-body" id="collapse${questionObject.question_id}">`;
+        // Question title
+        rows += `       <div class="row">`;
+        rows += `           <div class="col-sm-12 col-md-${questionObject["video_file_name"] ? "8" : "12"}">`;
+        rows += `               <h1 class="text-medium">`;
+        rows += `                   <strong>`;
+        rows += `               <i class="fa fa-${getIconFromQuestionType(questionObject.question_type)}"></i>`;
+
+        rows += `                   ${questionObject["question_title"]}`;
+        // check for required question
+        rows += `                   ${questionObject["question_required"] == true ? "<span class=\"text-danger\">*</span>" : ""}`;
+        rows += `                   </strong>`;
+        rows += `               </h1>`;
+        rows += `               <p class="text-medium">`;
+        rows += `                   ${questionObject["question_content"]}`;
+        rows += `               </p>`;
+        rows += `           </div>`;
+        // check if there is an attachment
+        if (questionObject["video_file_name"] && questionObject["video_file_name"] != "none") {
+            rows += `           <div class="col-sm-12 col-md-4">`;
+            rows += getFileWithTag(questionObject["video_file_name"], { style: "width: 100%", controls: "true" });
+            rows += `           </div>`;
+        }
+        rows += `       </div>`;
+        rows += `       <br/>`;
+
+        // question type area
+        rows += `       <div class="row">`;
+        rows += `           <div class="col-sm-12 col-md-12">`;
+
+        if (questionObject["question_type"] === "text") {
+            rows += `<textarea type="text" name="textarea_${questionObject["question_id"]}" class="form-control cs-text-answer" is_required="${questionObject["question_required"] == true ? 1 : 0}" rows="5" style="resize: none;" placeholder="Write the answer here...."></textarea>`;
+        } else if (questionObject["question_type"] === "yes_no") {
+            rows += `<div class="row">`;
+            rows += `	<div class="col-sm-12">`;
+            rows += `       <label class="control control--radio">`;
+            rows += `           <input type="radio" name="yes_no_${questionObject["question_id"]}" value="yes"> Yes`;
+            rows += `	        <div class="control__indicator"></div>`;
+            rows += `	    </label> &nbsp;&nbsp;`;
+            rows += `		<label class="control control--radio">`;
+            rows += `			<input type="radio" name="yes_no_${questionObject["question_id"]}" value="no"> No`;
+            rows += `			<div class="control__indicator"></div>`;
+            rows += `		</label>`;
+            rows += `	</div>`;
+            rows += `</div>`;
+        } else if (questionObject["question_type"] === "rating") {
+            rows += `<div class="row">`;
+            rows += `   <div class="col-sm-12">`;
+            rows += `       <div class="rating-container" style="text-align: center; font-size: 2rem; display: flex; justify-content: center; width: 100%;">`;
+            rows += `           <div class="rating-stars" style="display: flex; justify-content: space-between; width: 100%;">`;
+            for (let i = 1; i <= questionObject["choice_list"]["rating"]; i++) {
+                rows += `               <label class="control control--radio" style="cursor: pointer; flex: 1; text-align: center;">`;
+                rows += `                   <input type="radio" name="rating_${questionObject["question_id"]}" value="${i}" style="display: none;">`;
+                rows += `                   <span class="star" style="color: #ccc; font-size: 50px;">&#9733;</span>`;
+                rows += `               </label>`;
+            }
+            rows += `           </div>`;
+            rows += `       </div>`;
+            rows += `   </div>`;
+            rows += `   <div class="col-xs-6 text-left">`;
+            rows += `           <span class="rating-text text-medium" style="margin-right: 10px;">${questionObject["choice_list"]["min"] || "Poor"}</span>`;
+            rows += `   </div>`;
+            rows += `   <div class="col-xs-6 text-right">`;
+            rows += `           <span class="rating-text text-medium" style="margin-left: 10px;">${questionObject["choice_list"]["max"] || "Excellent"}</span>`;
+            rows += `   </div>`;
+            rows += `</div>`;
+        } else {
+            const inputType = questionObject["question_type"] === "multiple_choice" ? "checkbox" : "radio";
+            const inputName = (questionObject["question_type"] === "multiple_choice" ? "multiple_choice" : "single_choice") +
+                "_" + questionObject["question_id"];
+            //
+            for (const index in questionObject["choice_list"]) {
+                const current = questionObject["choice_list"][index];
+
+                rows += `
+            <label class="control control--${inputType}">
+                <input type="${inputType}" name="${inputName}" value="${current.answer_choice}"> ${current.answer_choice}
+                <div class="control__indicator"></div>
+            </label> &nbsp;&nbsp;`;
+            }
+        }
+    }
+
+    rows += `           </div>`;
+    rows += `       </div>`;
+
+    // panel ends
+    rows += `   </div>`;
+    rows += `</div>`;
+
+    return rows;
+};
+
 function getIconFromQuestionType(questionType) {
     if (questionType === "rating") {
         return "star-o";
     } else if (questionType === "text") {
-        return "file-o";
+        return "comment-o";
+    } else if (questionType === "tag") {
+        return "align-left";
     } else {
         return "square-o";
     }
