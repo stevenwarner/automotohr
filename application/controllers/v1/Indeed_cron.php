@@ -914,7 +914,7 @@ class Indeed_cron extends CI_Controller
 
     private function setCountryCodeByCountryId()
     {
-        if (!$this->job["Location_Country"] == "38") {
+        if ($this->job["Location_Country"] == "38") {
             $this->job["Location_Country"] = "CA";
         } else {
             $this->job["Location_Country"] = "US";
