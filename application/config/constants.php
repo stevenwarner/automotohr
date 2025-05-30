@@ -792,3 +792,7 @@ define("CSP_INCIDENT_UPDATED_EMAIL_TEMPLATE_ID", 503);
 //
 define('SHIFTS_CLAIM_ADMIN_REJECTED', 475);
 define('SHIFTS_CLAIM_ADMIN_APPROVED', 476);
+
+
+define('SCHEDULED_DOCUMENT_ASSIGN', 'The selected contacts will be notified by email when a document is assigned to the employees/applicants.');
+
