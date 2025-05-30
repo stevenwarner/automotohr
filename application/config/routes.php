@@ -286,7 +286,7 @@ $route['admin-event-handler'] = 'home/admin_event_handler';
 // Added on: 12-03-2019
 $route['manage_admin/event-detail/(:num)'] = 'manage_admin/calendar/event_detail/$1';
 $route['manage_admin/process-event'] = 'manage_admin/calendar/process_event';
-$route['manage_admin/get-events']    = 'manage_admin/calendar/get_events';
+$route['manage_admin/get-events'] = 'manage_admin/calendar/get_events';
 // Added on: 10-03-2019
 $route['manage_admin/invoice/list_admin_invoices/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/invoice/list_admin_invoices/$1/$2/$3/$4/$5';
 // Added on: 03-03-2019
@@ -2726,7 +2726,7 @@ $route["compliance_safety_reporting/incident_item_management/(:num)/(:num)/(:num
 
 // add notes to incident item
 $route["compliance_safety_reporting/notes/(:num)/(:num)/(:num)"]["post"] =
-"v1/Compliance_safety_reporting/processIncidentItemNotes/$1/$2/$3";
+  "v1/Compliance_safety_reporting/processIncidentItemNotes/$1/$2/$3";
 
 $route["csp/incident_item_management/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting_public/manageIncidentItem/$1/$2/$3";
@@ -2735,10 +2735,10 @@ $route["csp/incident_item_management/(:num)/(:num)/(:num)"]["post"] =
   "v1/Compliance_safety_reporting_public/processIncidentItem/$1/$2/$3";
 
 $route["csp/add_file_to_incident_item"]["post"] =
-  "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";  
+  "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";
 
 $route["csp/notes/(:num)/(:num)/(:num)"]["post"] =
-  "v1/Compliance_safety_reporting_public/processIncidentItemNotes/$1/$2/$3"; 
+  "v1/Compliance_safety_reporting_public/processIncidentItemNotes/$1/$2/$3";
 
 $route["compliance_safety_reporting/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting/downloadCSPIncidentItem/$1/$2/$3";
@@ -2747,3 +2747,7 @@ $route["csp/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting_public/downloadCSPIncidentItem/$1/$2/$3";
 
 $route['interview/(:any)'] = 'Applicant_interviews/interviewCall/$1';
+
+
+$route["ai_recruiter/config"]["get"] =
+  "manage_admin/Ai_recruiter/config";
