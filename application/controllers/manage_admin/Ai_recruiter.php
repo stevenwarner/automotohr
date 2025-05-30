@@ -25,6 +25,7 @@ class Ai_recruiter extends Admin_Controller
                 ->update(
                     "ai_recruiter_config",
                     [
+                        "model" => $this->input->post("model"),
                         "prompt" => $this->input->post("prompt", false)
                     ]
                 );
@@ -36,7 +37,7 @@ class Ai_recruiter extends Admin_Controller
         $this->data['page_title'] = 'Ai Recruiter Configuration :: ' . (STORE_NAME);
 
         $this->data["result"] = $this->db
-            ->select("prompt")
+            ->select("prompt, model")
             ->where("sid", 1)
             ->get("ai_recruiter_config")
             ->row_array();

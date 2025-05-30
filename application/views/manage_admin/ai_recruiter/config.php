@@ -30,6 +30,44 @@
 
 
                             <form action="" method="post">
+
+                                <div class="form-group">
+                                    <label for="voiceSelect">Choose a Deepgram Aura 2 voice:</label>
+                                    <select id="voiceSelect" name="model" class="form-control">
+                                        <!-- Female Voices -->
+                                        <optgroup label="Female Voices (English - US)">
+                                            <option <?= $result["model"] == "aura-asteria-en" ? "selected" : ""; ?>
+                                                value="aura-asteria-en">Asteria</option>
+                                            <option <?= $result["model"] == "aura-luna-en" ? "selected" : ""; ?>
+                                                value="aura-luna-en">Luna</option>
+                                            <option <?= $result["model"] == "aura-stella-en" ? "selected" : ""; ?>
+                                                value="aura-stella-en">Stella</option>
+                                            <option <?= $result["model"] == "aura-athena-en" ? "selected" : ""; ?>
+                                                value="aura-athena-en">Athena</option>
+                                            <option <?= $result["model"] == "aura-hera-en" ? "selected" : ""; ?>
+                                                value="aura-hera-en">Hera</option>
+                                        </optgroup>
+
+                                        <!-- Male Voices -->
+                                        <optgroup label="Male Voices (English - US)">
+                                            <option <?= $result["model"] == "aura-orion-en" ? "selected" : ""; ?>
+                                                value="aura-orion-en">Orion</option>
+                                            <option <?= $result["model"] == "aura-arcas-en" ? "selected" : ""; ?>
+                                                value="aura-arcas-en">Arcas</option>
+                                            <option <?= $result["model"] == "aura-perseus-en" ? "selected" : ""; ?>
+                                                value="aura-perseus-en">Perseus</option>
+                                            <option <?= $result["model"] == "aura-angus-en" ? "selected" : ""; ?>
+                                                value="aura-angus-en">Angus</option>
+                                            <option <?= $result["model"] == "aura-orpheus-en" ? "selected" : ""; ?>
+                                                value="aura-orpheus-en">Orpheus</option>
+                                            <option <?= $result["model"] == "aura-helios-en" ? "selected" : ""; ?>
+                                                value="aura-helios-en">Helios</option>
+                                            <option <?= $result["model"] == "aura-zeus-en" ? "selected" : ""; ?>
+                                                value="aura-zeus-en">Zeus</option>
+                                        </optgroup>
+                                    </select>
+
+                                </div>
                                 <div class="form-group">
                                     <label>
                                         Prompt
