@@ -64,6 +64,8 @@
                                                 value="aura-helios-en">Helios</option>
                                             <option <?= $result["model"] == "aura-zeus-en" ? "selected" : ""; ?>
                                                 value="aura-zeus-en">Zeus</option>
+                                            <option <?= $result["model"] == "aura-2-mars-en" ? "selected" : ""; ?>
+                                                value="aura-2-mars-en">Mars</option>
                                         </optgroup>
                                     </select>
 
