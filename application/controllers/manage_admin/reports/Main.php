@@ -106,7 +106,7 @@ class Main extends Admin_Controller
 
     //
 
-        public function cookiesDataReport()
+    public function cookiesDataReport()
     {
         //
         $this->data['page_title'] = 'Cookies Report';
@@ -114,6 +114,30 @@ class Main extends Admin_Controller
         $this->load->model('2022/User_model', 'user_model');
         // get filter records
         $this->data['records'] = $this->user_model->getCookiesData($this->input->get(null, false));
+
+        if ($this->input->get('export') == 1) {
+
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: CookiesData; filename=CookiesData.csv');
+            $output = fopen('php://output', 'w');
+            fputcsv($output, array(''));
+            fputcsv($output, array('Cookies Data Report'));
+            fputcsv($output, array(''));
+            fputcsv($output, array('IP', 'Agent', 'Page URl', 'Date'));
+
+            foreach ($this->data['records'] as $dataRow) {
+
+                $input = array();
+                $input['IP'] = $dataRow['client_ip'];
+                $input['Agent'] = $dataRow['client_agent'];
+                $input['Page_URl'] = $dataRow['page_url'];
+                $input['Date'] = $dataRow['created_at'];
+                fputcsv($output, $input);
+            }
+            fclose($output);
+            exit;
+        }
+
         //
         $this->render('manage_admin/company/cookies_report');
     }

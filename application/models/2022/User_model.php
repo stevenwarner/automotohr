@@ -858,7 +858,6 @@ class User_model extends CI_Model
 
 
     //
-
     public function getCookiesData($get)
     {
         //
@@ -875,6 +874,10 @@ class User_model extends CI_Model
         } else {
             $whereArray['created_at >='] = getSystemDate(DB_DATE) . ' 00:00:00';
             $whereArray['created_at <='] = getSystemDate(DB_DATE) . ' 23:59:59';
+        }
+
+        if ($get['client_ip'] != '') {
+            $whereArray['client_ip ='] = trim($get['client_ip']);
         }
         //
         $resultData =

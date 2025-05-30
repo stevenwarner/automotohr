@@ -7,7 +7,7 @@
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
                     <div class="dashboard-content">
                         <div class="dash-inner-block">
-                            <form action="<?= base_url('cookies_report'); ?>">
+                            <form action="<?= base_url('cookies_report'); ?>" id="cookies_form">
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                         <div class="heading-title page-title">
@@ -28,6 +28,26 @@
                                                         <label>End Date</label>
                                                         <input type="text" name="end_date" readonly class="invoice-fields" placeholder="M/D/Y" value="<?= $this->input->get('end_date') ?? date('m/d/Y'); ?>">
                                                     </div>
+
+                                                    <div class="col-lg-4 col-md-3 col-xs-12 col-sm-3 field-row">
+                                                        <label>IP</label>
+                                                        <input type="text" name="client_ip" class="invoice-fields" placeholder="" value="<?= $this->input->get('client_ip') ?? ''; ?>">
+                                                        <input name="export" id="export" placeholder="" value="0" type="hidden">
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+                                            <div class="row">
+                                                <div class="col-xs-12">
+
+                                                    <div class="col-lg-2 col-md-3 col-xs-12 col-sm-3 field-row">
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-3 col-xs-12 col-sm-3 field-row">
+                                                    </div>
+
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 field-row">
                                                         <label>&nbsp;</label>
                                                         <button type="submit" class="btn btn-success btn-block" style="padding: 9px;">Search</button>
@@ -36,6 +56,16 @@
                                                         <label>&nbsp;</label>
                                                         <a href="<?php echo base_url('cookies_report'); ?>" class="btn black-btn btn-block" style="padding: 9px;">Reset Search</a>
                                                     </div>
+
+
+
+                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 field-row">
+                                                        <label>&nbsp;</label>
+                                                        <button type="button" id="js-export" class="btn btn-success btn-block" style="padding: 9px;">Export CSV</button>
+
+                                                    </div>
+
+
                                                 </div>
                                             </div>
                                         </div>
@@ -114,4 +144,14 @@
             changeMonth: true
         });
     })
+
+
+
+    //
+    $('#js-export').click(function() {
+        
+         $("#export").val("1");
+         $('#cookies_form').submit();
+        
+    });
 </script>
