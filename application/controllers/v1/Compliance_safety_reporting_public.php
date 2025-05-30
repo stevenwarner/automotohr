@@ -1256,7 +1256,7 @@ class Compliance_safety_reporting_public extends Base_csp
             $userType = 'employee';
         }
         //
-        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($userId, $reportId, 0);
+        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($userId, $reportId, 0, 0);
         //
         if ($haveAccess == 'access_report') {
             // get types
@@ -1342,7 +1342,7 @@ class Compliance_safety_reporting_public extends Base_csp
             $userType = 'employee';
         }
         //
-        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($userId, $reportId, $incidentId);
+        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($userId, $reportId, $incidentId, 0);
         //
         if ($haveAccess == 'access_report' || $haveAccess == 'access_incident') {
             $this->data["incidentDetail"] = $this
@@ -1821,7 +1821,7 @@ class Compliance_safety_reporting_public extends Base_csp
             $userType = 'employee';
         }
         //
-        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($userId, $reportId, $incidentId);
+        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($userId, $reportId, $incidentId, $itemId);
         //
         if ($haveAccess == 'access_report' || $haveAccess == 'access_incident') {
             $this->data["itemDetail"] = $this

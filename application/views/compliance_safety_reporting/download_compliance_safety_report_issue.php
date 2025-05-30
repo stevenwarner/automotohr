@@ -163,105 +163,80 @@
                 <h2 style="margin: 0;"><?php echo $company_name; ?></h2>
                 <small>
                     <?php echo $action_date; ?>: <b><?php echo reset_datetime(array('datetime' => date('Y-m-d'), '_this' => $this)); ?></b><br>
-                    <?php echo $action_by; ?>: <b><?php echo $action_by_name; ?></b>
+                    <?php echo $action_by; ?>: <b><?php echo $employeeName; ?></b>
+                    <br>
+                    Report Title: <b><?php echo $reports['title']; _e($reports,true,true); ?></b>
+                    <br>
+                    Incident Title: <b><?php echo $reports['incident_title']; ?></b>
                 </small>
             </div>
             <div class="center-col">
-                <h2><?php echo $report['title']; ?></h2>
+                <h2><?php echo $itemDetail['compliance_incident_type_name']; ?></h2>
             </div>
         </article>
-
-        <!-- Report Basic Information section Start -->
+        
+        <!-- Incident Creator Information section Start -->
         <table class="incident-table">
             <thead>
                 <tr class="bg-gray">
-                    <th colspan="5">
-                        <strong>Compliance Report Information</strong>
+                    <th colspan="4">
+                        <strong>Issue Information</strong>
                     </th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <th class="text-center">Report Name</th>
-                    <th class="text-center">Reported By</th>
-                    <th class="text-center">Reported Date</th>
+                    <th class="text-center">Created By</th>
+                    <th class="text-center">Created Date</th>
                     <th class="text-center">Completion Date</th>
-                    <th class="text-center">Report Status</th>
+                    <th class="text-center">Completion Status</th>
                 </tr>
                 <tr>
-                    <td class="text-center"><?php echo !empty($report['compliance_report_name']) ? $report['compliance_report_name'] : 'N/A'; ?></td>
-                    <td class="text-center"><?php echo $report['first_name'].' '.$report['last_name']; ?></td>
-                    <td class="text-center"><?php echo !empty($report['report_date']) ? formatDateToDB($report['report_date'], DB_DATE, DATE) : 'N/A'; ?></td>
-                    <td class="text-center"><?php echo !empty($report['completion_date']) ? formatDateToDB($report['completion_date'], DB_DATE, DATE) : 'N/A'; ?></td>
-                    <td class="text-center"><?php echo !empty($report['status']) ? strtoupper($report['status']) : 'N/A'; ?></td>
+                    <td class="text-center"><?php echo $itemDetail['created_by']; ?></td>
+                    <td class="text-center"><?php echo !empty($itemDetail['created_date']) ? formatDateToDB($itemDetail['created_date'], DB_DATE_WITH_TIME, DATE) : 'N/A'; ?></td>
+                    <td class="text-center"><?php echo !empty($itemDetail['completion_date']) ? formatDateToDB($itemDetail['completion_date'], DB_DATE, DATE) : 'N/A'; ?></td>
+                    <td class="text-center"><?php echo !empty($itemDetail['completion_status']) ? strtoupper($itemDetail['completion_status']) : 'N/A'; ?></td>
                 </tr>
             </tbody>
         </table>
-        <!-- Report Basic Information section End -->
+        <!-- Incident Creator Information section End -->
+        <?php 
+            // if ($itemDetail['incidentItemsSelected']) { 
+            //     $this->load->view("compliance_safety_reporting/partials/download/items", 
+            //         [
+            //             'incidentItemsSelected' => $itemDetail['incidentItemsSelected'],
+            //             'severityStatus' => $itemDetail['severity_status']
+            //         ]
+            //     );
+            // }    
+        ?>
 
         <?php 
-            if ($report['question_answers']) { 
-                $this->load->view("compliance_safety_reporting/partials/download/question", ['questions' => $report['question_answers']]); 
-            }
-        ?>
-        
-        <?php 
-            if ($report['incidents']) { 
-                $this->load->view("compliance_safety_reporting/partials/download/incidents", ['incidents' => $report['incidents']]); 
+            if ($itemDetail['documents']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $itemDetail['documents']]); 
             }
         ?> 
 
         <?php 
-            if ($report['documents']) { 
-                $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $report['documents']]); 
+            if ($itemDetail['audios']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $itemDetail['audios']]); 
             }
         ?> 
 
         <?php 
-            if ($report['audios']) { 
-                $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $report['audios']]); 
-            }
-        ?> 
-
-        <?php 
-            if ($report['internal_employees']) { 
-                $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $report['internal_employees']]); 
-            }
-        ?>
-
-
-        <?php 
-            if ($report['external_employees']) { 
-                $this->load->view("compliance_safety_reporting/partials/download/external", ['externalEmployees' => $report['external_employees']]); 
+            if ($itemDetail['emails']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $itemDetail['emails']]);
             }
         ?>
 
         <?php 
-            if ($report['emails']) { 
-                $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $report['emails']]);
+            if ($itemDetail['notes']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $itemDetail['notes']]);
             }
-        ?>
-
-        <?php 
-            if ($report['notes']) { 
-                $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $report['notes']]);
-            }
-        ?>
-
-        <?php if (isset($report['incidents'])) { ?>
-            <?php foreach ($report['incidents'] as $incident) { ?>
-                <?php $this->load->view("compliance_safety_reporting/partials/download/incident_detail", ['incidentDetail' => $incident, 'severityLevels' => $report['severity_status']]); ?> 
-            <?php } ?>
-        <?php } ?>  
-
-        <?php if (isset($report['incidentsDetail'])) { ?>
-            <?php foreach ($report['incidentsDetail'] as $incidentDetail) { ?>
-                <?php $this->load->view("compliance_safety_reporting/partials/download/incident_detail", ['incidentDetail' => $incidentDetail]); ?> 
-            <?php } ?>
-        <?php } ?>    
+        ?>  
 
     </section>
-    <a href="<?php echo base_url('compliance_safety_report/download_report_zip').'/'.$report_sid; ?>"  id="JsCreateZipFile"></a>
+    <a href="<?php echo base_url('compliance_safety_report/download_report_zip').'/'.$report_sid; ?>"  id="JsCreateZipFile101"></a>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
@@ -279,8 +254,7 @@
                     window.close();
 
                 }
-            } else if (action == 'downloadm') {
-                //
+            } else if (action == 'download') {
                 var draw = kendo.drawing;
                 draw.drawDOM($("#safety_checklist"), {
                     avoidLinks: false,
@@ -302,7 +276,6 @@
                         },
                         url: "<?php echo base_url('compliance_safety_report/save_compliance_report_pdf'); ?>",
                         success: function(data){
-                            // 
                             $('#JsCreateZipFile')[0].click();
                             window.setTimeout(function(){
                                 window.close();

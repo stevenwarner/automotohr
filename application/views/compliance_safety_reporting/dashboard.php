@@ -265,6 +265,12 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                 <i class="fa fa-download"></i>
                                 Export CSV
                             </a>
+                            <?php if ($reports) { ?>
+                                <a class="btn btn-black" id="jsCSVButton" href="<?= $downloadUrl ?>" target="_blank">
+                                    <i class="fa fa-download"></i>
+                                    Download Report(s)
+                                </a>
+                            <?php } ?>    
                         </div>
                     </div>
                     <br />
@@ -287,6 +293,17 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                 <div class="jsChildRows hidden jsChildRows<?= $v0["id"]; ?>">
                                     <div class="panel-body js-tr">
                                         <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="pull-right">
+                                                    <a class="btn btn-black" href="<?= base_url("compliance_safety_reporting/download_report/".$v0["id"]) ?>" target="_blank">
+                                                        <i class="fa fa-download"></i>
+                                                        Download Report
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row">
                                             <?php foreach ($v0["issues"] as $record): ?>
                                                 <?php
                                                 $statusText = "Pending";
@@ -306,20 +323,20 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                 //
                                                 $severityLevelGraph["data"][$record["level"]]++;
                                                 $severityLevelGraph["colors"][$record["level"]] = $record["bg_color"];
+                                                //
+                                                $panelClass = 'panel-default';
+                                                $panelBackground = '';
+                                                //
+                                                if ($record["completion_status"] === "completed") {
+                                                    $panelClass = 'panel-success';
+                                                    $panelBackground = 'background: rgba(92, 184, 92, .6);';
+                                                } else if ($record["completion_status"] === "on_hold") {
+                                                    $panelClass = 'panel-warning';
+                                                    $panelBackground = 'background: rgba(240, 173, 78, .6);';
+                                                }
+                                                // 
                                                 ?>
                                                 <div class="col-md-12">
-                                                    <?php 
-                                                        $panelClass = 'panel-default';
-                                                        $panelBackground = '';
-                                                        //
-                                                        if ($record["completion_status"] === "completed") {
-                                                            $panelClass = 'panel-success';
-                                                            $panelBackground = 'background: rgba(92, 184, 92, .6);';
-                                                        } else if ($record["completion_status"] === "on_hold") {
-                                                            $panelClass = 'panel-warning';
-                                                            $panelBackground = 'background: rgba(240, 173, 78, .6);';
-                                                        }
-                                                    ?>
                                                     <div
                                                         class="panel <?=$panelClass?>">
                                                         <div class="panel-heading jsToggle2" data-target="issue<?= $record["sid"] ?>"
@@ -331,14 +348,13 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                                         <?= strip_tags(substr($record["description"], 0, 70)); ?>...
                                                                     </h3>
                                                                 </div>
+
                                                                 <div class="col-md-2 col-xs-12 text-right">
                                                                     <label class="btn form-control"
                                                                         style="background: <?= $record["bg_color"]; ?>; color: <?= $record["txt_color"]; ?>; border-radius: 5px;">
                                                                         <?= is_numeric($record["level"]) ? " Severity Level " . $record["level"] : $record["level"] ?>
                                                                     </label>
-
                                                                 </div>
-
                                                             </div>
                                                         </div>
                                                         <div class="panel-body hidden jsIssuesBody" id="issue<?= $record["sid"]; ?>">
@@ -352,6 +368,9 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                                     </label>
                                                                 </div>
                                                                 <div class="col-xs-11 text-right">
+                                                                    <a class="btn btn-black" href="<?= base_url("compliance_safety_reporting/download_incident_item/". $record["csp_reports_sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]) ?>" target="_blank">
+                                                                        <i class="fa fa-download"></i>
+                                                                    </a>
                                                                     <?php if ($record["completion_status"] != "completed"): ?>
                                                                         <button class="btn btn-green jsMarkIssueDone"
                                                                             data-issue_id="<?= $record["sid"]; ?>"

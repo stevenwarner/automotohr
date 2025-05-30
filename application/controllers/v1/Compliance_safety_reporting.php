@@ -1,5 +1,8 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 require_once APPPATH . 'controllers/csp/Base_csp.php';
+require 'vendor/autoload.php';
+use Dompdf\Dompdf;
+
 
 /**
  * Indeed controller to handle all new
@@ -48,9 +51,11 @@ class Compliance_safety_reporting extends Base_csp
         //
         $queryString = $_SERVER['QUERY_STRING'];
         $this->data['CSVUrl'] = base_url('compliance_safety_reporting/export_csv');
+        $this->data['downloadUrl'] = base_url('compliance_safety_reporting/download_reports');
         //
         if ($queryString) {
             $this->data['CSVUrl'] = $this->data['CSVUrl'] . '?' . $queryString;
+            $this->data['downloadUrl'] = $this->data['downloadUrl'] . '?' . $queryString;
         }
         //
         // get all the incidents
@@ -1396,7 +1401,7 @@ class Compliance_safety_reporting extends Base_csp
     {
         //
         $employeeId = $this->getLoggedInEmployee("sid");
-        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($employeeId, $reportId, 0);
+        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($employeeId, $reportId, 0, 0);
         //
         if ($haveAccess == 'access_report') {
             // get types
@@ -1450,6 +1455,7 @@ class Compliance_safety_reporting extends Base_csp
                     ]
                 ]
             );
+            // _e($this->data['report'],true,true);
             //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report', $this->data);
         } else {
@@ -1461,7 +1467,7 @@ class Compliance_safety_reporting extends Base_csp
     {
         //
         $employeeId = $this->getLoggedInEmployee("sid");
-        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($employeeId, $reportId, $incidentId);
+        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($employeeId, $reportId, $incidentId, 0);
         //
         if ($haveAccess == 'access_report' || $haveAccess == 'access_incident') {
             //
@@ -1845,7 +1851,7 @@ class Compliance_safety_reporting extends Base_csp
     {
 
         $employeeId = $this->getLoggedInEmployee("sid");
-        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($employeeId, $reportId, $incidentId);
+        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($employeeId, $reportId, $incidentId, $itemId);
 
         //
         if ($haveAccess == 'access_report' || $haveAccess == 'access_incident') {
@@ -2436,6 +2442,74 @@ class Compliance_safety_reporting extends Base_csp
         return sendResponse(
             200,
             ["message" => "Departments and teams removed successfully."]
+        );
+    }
+
+    public function downloadReports()
+    {
+        //
+        if (!isMainAllowedForCSP()) {
+            return redirect("dashboard");
+        }
+        // get filter    
+        $filter = [
+            "severity_level" => $this->input->get("severityLevel", true) ?? "-1",
+            "incident" => $this->input->get("incidentType", true) ?? "-1",
+            "status" => $this->input->get("status", true) ?? "-1",
+            "title" => $this->input->get("title") ?? "",
+            "date_range" => $this->input->get("date_range", true) ?? ""
+        ];
+        // get the reports
+        $reports = $this
+            ->compliance_report_model
+            ->getAllSelectedReports(
+                $this->getLoggedInCompany("sid"),
+                $filter
+            );
+        //
+        $this->data['reports'] = $reports;
+        $this->data['companyName'] = $this->getLoggedInCompany("CompanyName");
+        $this->data['employeeName'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
+        $this->data['generatedDate'] = date('Y_m_d-H:i:s');
+        $this->data['action_date'] = 'Downloaded Date';
+        $this->data['action_by'] = "Downloaded By";
+        $this->data['action'] = "download";
+        
+        // _e($reports, true);
+        $this->load->view('compliance_safety_reporting/download_compliance_safety_report_issue', $this->data);
+    }
+
+    public function saveComplianceSafetyReportIssuePDF()
+    {
+        $companyName = $this->getLoggedInCompany("CompanyName");
+        //
+        $form_post = $this->input->post();
+        $base64 = $form_post['report_base64'];
+        $reportId = $form_post['report_sid'];
+        $files = $form_post['file_links'];
+        //
+        $reportName = $this->compliance_report_model->getReportTitleById($reportId);
+        //
+        $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . '/' . strtolower(preg_replace('/\s+/', '_', $reportName)) . '/';
+        //
+        if (!is_dir($basePath)) {
+            mkdir($basePath, 0777, true);
+        }
+        //
+        $handler = fopen($basePath . strtolower(preg_replace('/\s+/', '_', $reportName)) . '.pdf', 'w');
+        fwrite($handler, base64_decode(str_replace('data:application/pdf;base64,', '', $base64)));
+        fclose($handler);
+        //
+        if ($files) {
+            foreach ($files as $file) {
+                // @file_put_contents($basePath . $file['file_name'], @file_get_contents($file['link']));
+                downloadFileFromAWS($basePath . $file['file_name'], $file['link']);
+            }
+        }
+        //
+        return sendResponse(
+            200,
+            ["id" => $reportId, "message" => "Report downloaded successfully."]
         );
     }
 

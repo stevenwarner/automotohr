@@ -8,19 +8,19 @@
         </tr>
     </thead>
     <tbody>
-        <?php if (!empty($incidentItemsSelected)) { ?>
+        <?php if (!empty($incidentIssues)) { ?>
             <tr>
                 <th class="text-center">Severity Level</th>
                 <th class="text-center">Description</th>
             </tr>
-            <?php foreach ($incidentItemsSelected as $item) { ?>
+            <?php foreach ($incidentIssues as $issue) { ?>
                 <tr>
                     <?php
                         //
-                        $level = $severityStatus[$item["severity_level_sid"]];
+                        $level = $severityStatus[$issue["severity_level_sid"]];
                         //
                         $decodedJSON = json_decode(
-                            $item["answers_json"],
+                            $issue["answers_json"],
                             true
                         );
                     ?>
@@ -31,7 +31,7 @@
                     </td>
                     <td>
                         <div class="col-sm-10 jsCSPItemDescription">
-                            <?= convertCSPTags($item["description"], $decodedJSON ?? []); ?>
+                            <?= convertCSPTags($issue["issue_description"], $decodedJSON ?? []); ?>
                         </div>
                     </td>
                 </tr>
@@ -47,4 +47,50 @@
         <?php } ?>    
     </tbody>
 </table>
-<!-- Incident Item Section End -->
+
+<?php if (!empty($incidentIssues)) { ?>
+    <?php foreach ($incidentIssues as $issue) { ?>
+        <?php _e($issue,true,true);
+            if ($report['question_answers']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/question", ['questions' => $issue['question_answers']]); 
+            }
+        ?>
+    <?php } ?>    
+
+    <?php 
+        if ($issue['documents']) { 
+            $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $issue['documents']]); 
+        }
+    ?> 
+
+    <?php 
+        if ($issue['audios']) { 
+            $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $issue['audios']]); 
+        }
+    ?> 
+
+    <?php 
+        if ($issue['internal_employees']) { 
+            $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $issue['internal_employees']]); 
+        }
+    ?>
+
+
+    <?php 
+        if ($issue['external_employees']) { 
+            $this->load->view("compliance_safety_reporting/partials/download/external", ['externalEmployees' => $issue['external_employees']]); 
+        }
+    ?>
+
+    <?php 
+        if ($issue['emails']) { 
+            $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $issue['emails']]);
+        }
+    ?>
+
+    <?php 
+        if ($report['notes']) { 
+            $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $issue['notes']]);
+        }
+    ?>
+<?php } ?>  

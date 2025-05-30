@@ -2059,6 +2059,8 @@ class Hr_documents_management extends Public_Controller
             $data['approval_documents'] = array_column($approval_documents, "document_sid");
             $approval_offer_letters = $this->hr_documents_management_model->get_user_approval_pending_offer_letters($user_type, $user_sid);
             $data['approval_offer_letters'] = array_column($approval_offer_letters, "document_sid");
+            $currentUserFirstName = '';
+            $currentUserLastName = '';
 
             switch ($user_type) {
                 case 'employee':
@@ -2076,6 +2078,8 @@ class Hr_documents_management extends Public_Controller
                     //     $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessable!');
                     //     redirect('employee_management', 'refresh');
                     // }
+                    $currentUserFirstName = $user_info['first_name'];
+                    $currentUserLastName = $user_info['last_name'];
 
                     $data = employee_right_nav($user_sid, $data);
                     $left_navigation = 'manage_employer/employee_management/profile_right_menu_employee_new';
@@ -2111,6 +2115,9 @@ class Hr_documents_management extends Public_Controller
                         'profile_picture' => $applicant_info['pictures'],
                         'user_type' => ucwords($user_type)
                     );
+
+                    $currentUserFirstName = $applicant_info['first_name'];
+                    $currentUserLastName = $applicant_info['last_name'];
 
                     $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($user_sid, 'applicant'); //getting average rating of applicant
                     $data['employer'] = $data_employer;
@@ -2424,6 +2431,24 @@ class Hr_documents_management extends Public_Controller
                             $w4_sid = getVerificationDocumentSid($user_sid, $user_type, 'w4');
                             keepTrackVerificationDocument($security_sid, "employee", 'assign', $w4_sid, 'w4', 'Document Center');
                             //
+                            if ($user_type == 'employee') {
+                                broadcastAlert(
+                                    DOCUMENT_NOTIFICATION_ASSIGNED_TEMPLATE,
+                                    'documents_status',
+                                    'w4_assigned',
+                                    $company_sid,
+                                    $data['session']['company_detail']['CompanyName'],
+                                    $data['session']['employer_detail']['first_name'],
+                                    $data['session']['employer_detail']['last_name'],
+                                    $user_sid,
+                                    [
+                                        'document_title' => 'W4 Fillable',
+                                        'employee_name' => $currentUserFirstName . ' ' . $currentUserLastName
+                                    ],
+                                    $user_type
+                                );
+                            }    
+                            //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
 
                             if ($user_type == 'employee') {
@@ -2570,6 +2595,24 @@ class Hr_documents_management extends Public_Controller
                             $w9_sid = getVerificationDocumentSid($user_sid, $user_type, 'w9');
                             keepTrackVerificationDocument($security_sid, "employee", 'assign', $w9_sid, 'w9', 'Document Center');
                             //
+                            if ($user_type == 'employee') {
+                                broadcastAlert(
+                                    DOCUMENT_NOTIFICATION_ASSIGNED_TEMPLATE,
+                                    'documents_status',
+                                    'w9_assigned',
+                                    $company_sid,
+                                    $data['session']['company_detail']['CompanyName'],
+                                    $data['session']['employer_detail']['first_name'],
+                                    $data['session']['employer_detail']['last_name'],
+                                    $user_sid,
+                                    [
+                                        'document_title' => 'W9 Fillable',
+                                        'employee_name' => $currentUserFirstName . ' ' . $currentUserLastName
+                                    ],
+                                    $user_type
+                                );
+                            }    
+                            //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
 
                             if ($user_type == 'employee') {
@@ -2646,6 +2689,24 @@ class Hr_documents_management extends Public_Controller
                             //
                             $i9_sid = getVerificationDocumentSid($user_sid, $user_type, 'i9');
                             keepTrackVerificationDocument($security_sid, "employee", 'assign', $i9_sid, 'i9', 'Document Center');
+                            //
+                            if ($user_type == 'employee') {
+                                broadcastAlert(
+                                    DOCUMENT_NOTIFICATION_ASSIGNED_TEMPLATE,
+                                    'documents_status',
+                                    'i9_assigned',
+                                    $company_sid,
+                                    $data['session']['company_detail']['CompanyName'],
+                                    $data['session']['employer_detail']['first_name'],
+                                    $data['session']['employer_detail']['last_name'],
+                                    $user_sid,
+                                    [
+                                        'document_title' => 'I9 Fillable',
+                                        'employee_name' => $currentUserFirstName . ' ' . $currentUserLastName
+                                    ],
+                                    $user_type
+                                );
+                            }    
                             //
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
 

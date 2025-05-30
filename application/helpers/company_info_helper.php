@@ -2490,15 +2490,36 @@ if (!function_exists('broadcastAlert')) {
                 $action = 'Acknowledged';
                 $link = 'equipment_info/' . $userType . '/';
                 break;
+            case 'i9_assigned':
+                $dt = 'I9 Form';
+                $subject = 'I9 Form Assigned';
+                $action = 'Assigned';
+                $employeeName = $extra['employee_name'];
+                $documentTitle = $extra['document_title'];
+                break;
             case 'i9_completed':
                 $dt = 'I9 Form';
                 $subject = 'I9 Form Completed';
                 $action = 'Completed';
                 break;
+            case 'w9_assigned':
+                $dt = 'W9 Form';
+                $subject = 'W9 Form Assigned';
+                $action = 'Assigned';
+                $employeeName = $extra['employee_name'];
+                $documentTitle = $extra['document_title'];
+                break;
             case 'w9_completed':
                 $dt = 'W9 Form';
                 $subject = 'W9 Form Completed';
                 $action = 'Completed';
+                break;
+            case 'w4_assigned':
+                $dt = 'W4 Form';
+                $subject = 'W4 Form Assigned';
+                $action = 'Assigned';
+                $employeeName = $extra['employee_name'];
+                $documentTitle = $extra['document_title'];
                 break;
             case 'w4_completed':
                 $dt = 'W4 Form';

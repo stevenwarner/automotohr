@@ -17,7 +17,6 @@
         <tr>
             <th class="text-center">Created By</th>
             <th class="text-center">Created Date</th>
-            <th class="text-center">Completion Date</th>
             <th class="text-center">Incident Status</th>
         </tr>
         <tr>
@@ -41,11 +40,11 @@
 <!-- Incident Creator Information section End -->
 
 <?php 
-    if ($incidentDetail['incidentItemsSelected']) { 
+    if ($incidentDetail['issues']) { 
         $this->load->view("compliance_safety_reporting/partials/download/items", 
             [
-                'incidentItemsSelected' => $incidentDetail['incidentItemsSelected'],
-                'severityStatus' => $incidentDetail['severity_status']
+                'incidentIssues' => $incidentDetail['issues'],
+                'severityStatus' => $severityLevels
             ]
         );
     }    

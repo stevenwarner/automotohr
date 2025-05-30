@@ -4283,6 +4283,7 @@ class Compliance_report_model extends CI_Model
 		//
 		$report["incidents"] = $this->getCSPReportIncidents($reportId, [
 			"compliance_incident_types.compliance_incident_type_name",
+			"compliance_incident_types.description",
 			"csp_reports_incidents.sid",
 			"csp_reports_incidents.updated_at",
 			"csp_reports_incidents.status",
@@ -4292,11 +4293,15 @@ class Compliance_report_model extends CI_Model
 		//
 		if ($report["incidents"]) {
 			//
-			$report["incidentsDetail"] = [];
+			// $report["incidentsDetail"] = [];
+			$report["severity_status"] = $this->getSeverityLevels();
 			//
-			foreach ($report["incidents"] as $incident) {
-				$incidentsDetail = $this->getCSPIncidentByIdForDownload($reportId, $incident['sid']);
-				$report["incidentsDetail"][] = $incidentsDetail;
+			foreach ($report["incidents"] as $iKey => $incident) {
+				//
+				// $incidentsDetail = $this->getCSPIncidentByIdForDownload($reportId, $incident['sid']);
+				$incidentsIssues = $this->getCSPIncidentIssuesByIdForDownload($reportId, $incident['sid']);
+				$report["incidents"][$iKey]['issues'] = $incidentsIssues;
+				// $report["incidentsDetail"][] = $incidentsDetail;
 			}
 		}
 		//
@@ -4353,8 +4358,6 @@ class Compliance_report_model extends CI_Model
 		$report["severity_status"] = $this->getSeverityLevels();
 		//
 		if ($report["incidentItemsSelected"]) {
-			//
-			$report["incidentsItemDetail"] = [];
 			//
 			foreach ($report["incidentItemsSelected"] as $item) {
 				$itemDetail = $this->getCSPIncidentItemByIdForDownload($reportId, $incidentId, $item['sid']);
@@ -4435,6 +4438,28 @@ class Compliance_report_model extends CI_Model
 		}
 		//
 		return $report;
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @return array
+	 */
+	public function getCSPIncidentIssuesByIdForDownload(int $reportId, int $incidentId, $onlyIncident = false)
+	{
+		// get the list of items available to the incident
+		$report["incidentItemsSelected"] = $this->getCSPAttachedItems($incidentId);
+		$issues = [];
+		//
+		if ($report["incidentItemsSelected"]) {
+			//
+			foreach ($report["incidentItemsSelected"] as $item) {
+				$issues[] = $this->getCSPIncidentItemByIdForDownload($reportId, $incidentId, $item['sid']);
+			}
+		}
+		//
+		return $issues;
 	}
 
 	public function getComplianceFilesToDownload($reportId, $incidentId, $itemId)
@@ -4866,7 +4891,7 @@ class Compliance_report_model extends CI_Model
 		return $record_arr['title'];
 	}
 
-	public function checkEmployeeHaveReportAccess($userId, $reportId, $incidentId)
+	public function checkEmployeeHaveReportAccess($userId, $reportId, $incidentId, $issueId = 0)
 	{
 		//
 		if (
@@ -4876,20 +4901,24 @@ class Compliance_report_model extends CI_Model
 				->count_all_results('csp_reports')
 		) {
 			return 'access_report';
-		} else if ($this->checkComplianceSafetyReportAssigned($userId, $reportId, 0)) {
+		} else if ($this->checkComplianceSafetyReportAssigned($userId, $reportId, 0, 0)) {
 			return 'access_report';
-		} else if ($this->checkComplianceSafetyReportAssigned($userId, $reportId, $incidentId)) {
+		} else if ($this->checkComplianceSafetyReportAssigned($userId, $reportId, $incidentId, 0)) {
 			return 'access_incident';
+		} else if ($this->checkComplianceSafetyReportAssigned($userId, $reportId, $incidentId, $issueId)) {
+			return 'access_issue';
 		} else {
 			return 'not_have_access';
 		}
 	}
 
-	public function checkComplianceSafetyReportAssigned($userId, $reportId, $incidentId)
+	public function checkComplianceSafetyReportAssigned($userId, $reportId, $incidentId, $issueId)
 	{
 		$this->db->select('sid');
 		$this->db->where('csp_reports_sid', $reportId);
 		$this->db->where('csp_report_incident_sid', $incidentId);
+		$this->db->where('csp_reports_incidents_items_sid', $issueId);
+		
 		$this->db->where('status', 1);
 		//
 		if (filter_var($userId, FILTER_VALIDATE_EMAIL)) {
@@ -5482,8 +5511,24 @@ class Compliance_report_model extends CI_Model
 		//
 		$item = $this
 			->db
-			->select("created_by, created_at, completion_date, completion_status")
-			->where("sid", $itemId)
+			->select("
+				csp_reports_incidents_items.created_by, 
+				csp_reports_incidents_items.created_at, 
+				csp_reports_incidents_items.completion_date,
+				csp_reports_incidents_items.completion_status,
+				compliance_report_incident_types.description,
+				compliance_report_incident_types.title,
+				csp_reports_incidents_items.severity_level_sid,
+				csp_reports_incidents_items.answers_json,
+				csp_reports_incidents_items.question_answer_json
+
+			")
+			->join(
+				"compliance_report_incident_types",
+				"compliance_report_incident_types.sid = csp_reports_incidents_items.compliance_report_incident_types_sid",
+				"inner"
+			)
+			->where("csp_reports_incidents_items.sid", $itemId)
 			->get("csp_reports_incidents_items")
 			->row_array();
 		//
@@ -5495,27 +5540,31 @@ class Compliance_report_model extends CI_Model
 		$data["created_date"] = $item['created_at'];
 		$data["completion_date"] = $item['completion_date'];
 		$data["completion_status"] = $item['completion_status'];
+		$data["issue_title"] = $item['title'];
+		$data["issue_description"] = $item['description'];
+		$data["severity_level_sid"] = $item['severity_level_sid'];
+		$data["answers_json"] = $item['answers_json'];
+		$data["question_answer_json"] = $item['question_answer_json'];
 		//
 		// get the list of items available to the incident
 		$data["incidentItemsSelected"] = $this->getCSPAttachedItemByItemSid($itemId);
-		$data["severity_status"] = $this->getSeverityLevels();
 		//
-		// $data["internal_employees"] = $this
-		// 	->getCSPIncidentInternalEmployeesById($reportId, $incidentId, $itemId, [
-		// 		"csp_reports_employees.sid",
-		// 		"csp_reports_employees.employee_sid",
-		// 		"csp_reports_employees.created_by",
-		// 		"csp_reports_employees.created_at"
-		// 	]);
-		// //
-		// $data["external_employees"] = $this
-		// 	->getCSPIncidentExternalEmployeesById($reportId, $incidentId, $itemId, [
-		// 		"sid",
-		// 		"external_name",
-		// 		"external_email",
-		// 		"created_by",
-		// 		"created_at"
-		// 	]);
+		$data["internal_employees"] = $this
+			->getCSPIncidentInternalEmployeesById($reportId, $incidentId, $itemId, [
+				"csp_reports_employees.sid",
+				"csp_reports_employees.employee_sid",
+				"csp_reports_employees.created_by",
+				"csp_reports_employees.created_at"
+			]);
+		//
+		$data["external_employees"] = $this
+			->getCSPIncidentExternalEmployeesById($reportId, $incidentId, $itemId, [
+				"sid",
+				"external_name",
+				"external_email",
+				"created_by",
+				"created_at"
+			]);
 		//
 		$data["notes"] = $this->getCSPReportNotesByIdAndType($reportId, $incidentId, 'employee', [
 			$this->userFields,
@@ -7576,5 +7625,219 @@ class Compliance_report_model extends CI_Model
 		//
 		return array_unique($ids);
 	}
+
+	public function getAllSelectedReports(int $companyId, array $filter, bool $isMainCPA = true): array
+	{
+		$reportIds = [];
+		//
+		if ($isMainCPA) {
+			//
+			if ((array_key_exists("departments", $filter) && $filter["departments"] != "") || (array_key_exists("teams", $filter) && $filter["teams"] != "")) {
+				$this->db->select('csp_reports_employees.csp_reports_sid');
+				$this->db->join(
+					"csp_reports",
+					"csp_reports.sid = csp_reports_employees.csp_reports_sid",
+					"inner"
+				);
+				$this->db->where('csp_reports.company_sid', $companyId);
+				$this->db->where('csp_reports_employees.status', 1);
+				$this->db->group_start();
+				if (array_key_exists("departments", $filter) && $filter["departments"] != "") {
+					foreach ($filter["departments"] as $department) {
+						$this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
+					}
+				}
+				// For teams
+				if (array_key_exists("teams", $filter) && $filter["teams"] != "") {
+					foreach ($filter["teams"] as $team) {
+						$this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
+					}
+				}
+				$this->db->group_end();
+				$records_obj = $this->db->get('csp_reports_employees');
+				$records_arr = $records_obj->result_array();
+				$records_obj->free_result();
+				//
+				$reportIds = array_column($records_arr, 'csp_reports_sid');
+			}
+		}
+
+		$this->db->select([
+			// Item columns
+			"csp_reports_incidents_items.sid",
+			"csp_reports_incidents_items.answers_json",
+			"csp_reports_incidents_items.completion_status",
+			"csp_reports_incidents_items.question_answer_json",
+			"csp_reports_incidents_items.allowed_departments",
+			"csp_reports_incidents_items.allowed_teams",
+			"csp_reports_incidents_items.completion_date",
+			"csp_reports_incidents_items.completed_by",
+			"csp_reports_incidents_items.csp_reports_incidents_sid",
+			// Add severity columns
+			"compliance_severity_levels.level",
+			"compliance_severity_levels.bg_color",
+			"compliance_severity_levels.txt_color",
+			// get the item description
+			"compliance_report_incident_types.title as item_title",
+			"compliance_report_incident_types.description",
+			// get the incident description
+			"compliance_incident_types.compliance_incident_type_name",
+			// get report title
+			"csp_reports.sid as csp_report_sid",
+			"csp_reports.title",
+			"csp_reports.report_date",
+			"csp_reports.disable_answers",
+			"csp_reports.report_type_sid",
+			"csp_reports.completion_date",
+			"csp_reports.status as report_status",
+			"csp_reports.updated_at",
+		]);
+		//
+		$this->db->select($this->userFields);
+		// join with severity to get the colors
+		$this->db->join(
+			"compliance_severity_levels",
+			"compliance_severity_levels.sid = csp_reports_incidents_items.severity_level_sid",
+			"inner"
+		);
+		// join with the report incident types to get the description
+		$this->db->join(
+			"compliance_report_incident_types",
+			"compliance_report_incident_types.sid = csp_reports_incidents_items.compliance_report_incident_types_sid",
+			"inner"
+		);
+		// join with the incident
+		$this->db->join(
+			"csp_reports_incidents",
+			"csp_reports_incidents.sid = csp_reports_incidents_items.csp_reports_incidents_sid",
+			"inner"
+		);
+		// join with the main incident
+		$this->db->join(
+			"compliance_incident_types",
+			"compliance_incident_types.id = csp_reports_incidents.incident_type_sid",
+			"inner"
+		);
+		// join with the report
+		$this->db->join(
+			"csp_reports",
+			"csp_reports.sid = csp_reports_incidents.csp_reports_sid",
+			"inner"
+		);
+		// join with the completed by
+		$this->db->join(
+			"users",
+			"users.sid = csp_reports_incidents_items.completed_by",
+			"left"
+		);
+		$this->db->where('csp_reports_incidents_items.status', 1);
+		$this->db->where('csp_reports.company_sid', $companyId);
+		//
+		if ($reportIds) {
+			$this->db->where_in("csp_reports.sid", $reportIds);
+		}
+		// check report date range
+		if (array_key_exists("date_range", $filter) && $filter["date_range"] != "") {
+			list($start_date, $end_date) = explode(" - ", $_GET['date_range']);
+			$between = "report_date between '" . formatDateToDB($start_date, SITE_DATE, DB_DATE) . "' and '" . formatDateToDB($end_date, SITE_DATE, DB_DATE) . "'";
+			$this->db->where($between);
+		}
+
+		// check for severity status
+		if (array_key_exists("severity_level", $filter) && $filter["severity_level"] != "-1") {
+			$this->db->where(
+				"compliance_severity_levels.sid",
+				$filter["severity_level"]
+			);
+		}
+		// check for incident
+		if (array_key_exists("incident", $filter) && $filter["incident"] != "-1") {
+			$this->db->where(
+				"csp_reports_incidents.sid",
+				$filter["incident"]
+			);
+		}
+		// check for status
+		if (array_key_exists("status", $filter) && $filter["status"] != "-1") {
+			$this->db->where(
+				"csp_reports_incidents_items.completion_status",
+				$filter["status"]
+			);
+		}
+		// check report title
+		if (array_key_exists("title", $filter) && $filter["title"] != "") {
+			$like = " `csp_reports.title` LIKE '%" . $filter["title"] . "%' ";
+			$this->db->where($like);
+		}
+		// strictly check for the allowed issues
+		// if is not ain CPA
+		if (!$isMainCPA) {
+			if ($this->allowedCSP["tasks"]) {
+				$this->db->where_in("csp_reports_incidents_items.sid", $this->allowedCSP["tasks"]);
+			}
+			//
+			if (array_key_exists("departmentIds", $this->allowedCSP) || array_key_exists("teamIds", $this->allowedCSP)) {
+				// check for departments
+				$this->db->group_start();
+
+				if (array_key_exists("departmentIds", $this->allowedCSP)) {
+					$this->db->group_start();
+					foreach ($this->allowedCSP["departmentIds"] as $v0) {
+						$this->db->where("FIND_IN_SET({$v0}, csp_reports_incidents_items.allowed_departments) >", 0);
+					}
+					$this->db->group_end();
+				}
+				if (array_key_exists("teamIds", $this->allowedCSP)) {
+					$this->db->or_group_start();
+					foreach ($this->allowedCSP["teamIds"] as $v0) {
+						$this->db->where("FIND_IN_SET({$v0}, csp_reports_incidents_items.allowed_teams) >", 0);
+					}
+					$this->db->group_end();
+				}
+				$this->db->group_end();
+			}
+
+		}
+
+		//
+		$this->db->order_by("csp_reports_incidents_items.sid", "DESC");
+		$records_obj = $this->db->get('csp_reports_incidents_items');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+
+		//
+		if ($records_arr) {
+			$recordHolder = [];
+			//
+			foreach ($records_arr as $v0) {
+				// check if 
+				$reportId = $v0["csp_report_sid"];
+				//
+				if (!array_key_exists($reportId, $recordHolder)) {
+					$recordHolder[$reportId] = [
+						"id" => $reportId,
+						"title" => $v0["title"],
+						"report_date" => $v0["report_date"],
+						"issues" => [],
+					];
+				}
+
+				// get attachments
+				$v0["files"] = $this->getAllItemsFiles(
+					$reportId,
+					$v0["csp_reports_incidents_sid"],
+					$v0["sid"]
+				);
+
+				//
+				$recordHolder[$reportId]["issues"][] = $v0;
+			}
+			//
+			$records_arr = array_values($recordHolder);
+		}
+
+		return $records_arr;
+	}
+
 
 }

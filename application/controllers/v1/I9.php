@@ -143,6 +143,7 @@ class I9 extends Public_Controller
                 ]
             );
         }
+        //
         // set rules
         $rules = 'required|trim|xss_clean';
         //
@@ -381,6 +382,22 @@ class I9 extends Public_Controller
         //
         $returnURl = "";
         $returnFlag = "false";
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        // Send document completion alert
+        broadcastAlert(
+            DOCUMENT_NOTIFICATION_ACTION_TEMPLATE,
+            'documents_status',
+            'i9_completed',
+            $session['company_detail']['sid'],
+            $session['company_detail']['CompanyName'],
+            $session['employer_detail']['first_name'],
+            $session['employer_detail']['last_name'],
+            $session['employer_detail']['sid'],
+            [],
+            'employee'
+        );
         //
         return SendResponse(
             200,
