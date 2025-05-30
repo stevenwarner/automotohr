@@ -2757,3 +2757,4 @@ $route["csp/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
  * Surveys
  */
 $route["survey/templates"]["get"] = "survey/Survey_template/listing";
+$route["survey/listing"]["get"] = "survey/Surveys/listing";

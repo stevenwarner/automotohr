@@ -11,7 +11,7 @@
                         <div class="page-header-area">
                             <span class="page-heading down-arrow">
                                 <?php $this->load->view('manage_employer/company_logo_name'); ?>
-                                Survey Templates
+                                Surveys
                             </span>
                         </div>
 
@@ -25,7 +25,7 @@
                                 </a>
                                 <button type="button" class="btn btn-orange jsAddSurveyTemplateBtn">
                                     <i class="fa fa-plus-circle"></i>
-                                    Add Survey Template
+                                    Add a Survey
                                 </button>
                             </div>
                         </div>
@@ -73,7 +73,7 @@
                                 <h1 class="panel-heading-text text-medium">
                                     <strong>
                                         <i class="fa fa-list text-orange"></i>
-                                        Templates
+                                        Surveys
                                     </strong>
                                 </h1>
                             </div>
@@ -82,15 +82,18 @@
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th class="bg-black">Template</th>
-                                                <th class="bg-black"># Of Questions</th>
+                                                <th class="bg-black">Survey<br>Title</th>
+                                                <th class="bg-black">Start/End<br />Date</th>
+                                                <th class="bg-black">Status</th>
+                                                <th class="bg-black">Progress</th>
+                                                <th class="bg-black">Employees</th>
                                                 <th class="bg-black">Recur</th>
                                                 <th class="bg-black text-right">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody id="jsTemplatesArea">
                                             <tr>
-                                                <td colspan="4">
+                                                <td colspan="7">
                                                     <div class="alert text-center">
                                                         <i class="fa fa-circle-o-notch fa-spin text-large"></i>
                                                     </div>

@@ -7,7 +7,7 @@ require_once APPPATH . 'controllers/survey/Base_survey.php';
  * @author  AutomotoHR Dev Team
  * @version 1.0
  */
-class Survey_template extends Base_survey
+class Surveys extends Base_survey
 {
     public function __construct()
     {
@@ -17,22 +17,19 @@ class Survey_template extends Base_survey
     public function listing()
     {
         // Set the page title
-        $this->data['title'] = 'Survey Template';
+        $this->data['title'] = 'Surveys';
         // set add
         $this->setPlugin("v1/plugins/jquery/jquery-ui.min", "css");
         $this->setPlugin("v1/plugins/jquery/jquery-ui.min", "js");
         $this->setPlugin("v1/plugins/ms_recorder/main");
-        $this->setAppJs("common");
-        $this->makeJsBundle("common");
-        $this->setAppJs("templates/add_question");
-        $this->setAppJs("templates/edit_question");
-        $this->setAppJs("templates/add");
-        $this->setAppJs("templates/edit");
-        $this->setAppJs("templates/view");
-        $this->makeJsBundle("templates");
-        //
+        $this->setJs("surveys/common");
+        $this->setJs("templates/add_question");
+        $this->setJs("surveys/edit_question");
+        $this->setJs("surveys/add");
+        $this->setJs("surveys/edit");
+        $this->setJs("surveys/view");
         // Load the required JavaScript file
-        $this->renderView('survey/templates/listing');
+        $this->renderView('survey/listing');
     }
 
 }

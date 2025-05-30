@@ -38,6 +38,8 @@ class Base_survey extends CI_Controller
      */
     private $isSecureUrl;
 
+    private $appJS;
+
     /**
      * main entry point
      */
@@ -153,6 +155,22 @@ class Base_survey extends CI_Controller
     protected function setJs(string $jsFile)
     {
         $this->data["pageJs"][] = "survey/{$jsFile}";
+    }
+
+    /**
+     * Summary of setJs
+     * @param string $jsFile
+     * @return void
+     */
+    protected function setAppJs(string $jsFile)
+    {
+        $this->appJS[] = "survey/{$jsFile}";
+    }
+
+    protected function makeJsBundle($filename)
+    {
+        $this->data["appJs"] = bundleJs($this->appJS, "public/surveys/js/", $filename, false);
+        $this->appJS = [];
     }
 
     /**
