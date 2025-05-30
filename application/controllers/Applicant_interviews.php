@@ -2,7 +2,7 @@
 ini_set("memory_limit", "1024M");
 
 
-class Applicant_interviews extends Public_Controller
+class Applicant_interviews extends CI_Controller
 {
     public function __construct()
     {
@@ -18,7 +18,8 @@ class Applicant_interviews extends Public_Controller
         //     );
     }
 
-    public function interviewCall($id) {
+    public function interviewCall($id)
+    {
         $portal_job_list = $this->applicant_interview_model->get_applicant_data($id);
         $data['company'] = array(
             'name' => $portal_job_list['CompanyName'],
