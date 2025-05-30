@@ -1,301 +1,12 @@
 <?php
-$creds = getCreds('AHR');
+    $creds = getCreds('AHR');
 ?>
-<style>
-    body {
-        margin: 0px;
-    }
-    .interview-container {
-        font-family: "Open Sans", sans-serif;
-        min-height: 100vh;
-        background-color: #0DCAF0;
-        color: #fff;
-    }
-    .header {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: space-between;
-        align-items: center;
-        max-width: calc(100vw - 200px);
-        margin: auto;
-        padding: 60px 0;
-        font-size: 20px;
-    }
-
-    .logo-wrapper img {
-        width: auto;
-        height: 119px;
-        border-radius: 10px;
-    }
-    .logo-wrapper,
-    .right-section{
-        width: 240px;
-    }
-    .header .title-wrapper {
-        max-width: 774px;
-        width: max-content;
-        display: flex;
-        justify-content: center;
-    }
-    .header .page-title {
-        background-color: #FFFFFF4D;
-        height: 50px;
-        padding: 0 80px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: max-content;
-        border-radius: 100px;
-        overflow: hidden;
-    }
-    .header .right-section > span {
-        display: block;
-        background-color: #FFFFFF4D;
-        height: 50px;
-        padding: 0px 21px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 100px;
-    }
-    /* Header Style Ended */
-
-    /* Main Style Started */
-    .main {
-        min-height: calc(100vh - 239px - 81px);
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        flex-direction: column;
-        gap: 50px;
-    }
-    .conversation {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 120px;
-    }
-    .conversation .bot,
-    .conversation .applicant {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        max-width: 350px;
-        width: 350px;
-    }
-    .conversation .icon-wrapper .image, .conversation .icon-wrapper svg {
-        border: 1px solid #fff;
-        background-color: #0D9FBD;
-        z-index: 1;
-        border-radius: 10px;
-        width: 250px;
-        height: 250px;
-    }
-    .conversation .icon-wrapper {
-        position: relative;
-        width: 250px;
-        height: 250px;
-        display: flex;
-        justify-content: center;
-        border-radius: 10px;
-    }
-
-    .layer-1, .layer-2, .layer-3 {
-        position: absolute;
-        background-color: #FFFFFF4D;
-        transform: translateY(-50%) scale(0.5) rotate(0deg);
-        top: 50%;
-        border-radius: 10px;
-        will-change: transform;
-        transform-origin: center center;
-        transition: transform 0.08s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .layer-1 { width: 265px; height: 265px; }
-    .layer-2 { width: 280px; height: 280px; }
-    .layer-3 { width: 295px; height: 295px; }
-
-    .bot .image {
-        width: 250px;
-        height: 250px;
-        border-radius: 10px;
-        position: relative;
-        overflow: hidden;
-        z-index: 1;
-    }
-
-    .bot .image img {
-        position: absolute;
-        object-fit: contain;
-        inset: 0;
-        width: 100%;
-    }
-
-    .caller-title {
-        font-weight: 400;
-        font-size: 40px;
-        line-height: 40px;
-        margin-top: 49px;
-        text-wrap: nowrap;
-    }
-    
-    .button-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 50px;
-    }
-
-    .timer-wrapper {
-        width: 240px;
-    }
-    .timer {
-        display: block;
-        background-color: #FFFFFF4D;
-        height: 50px;
-        padding: 0px 21px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: max-content;
-        border-radius: 100px;
-        margin: auto;
-    }
-
-    button.end-call {
-        /* margin: 70px 0 40px 0px; */
-        background-color: #FF4343;
-        width: 116px;
-        height: 46px;
-        border: none;
-        border-radius: 100px;
-        box-shadow: 0px 4px 4px 0px #00000040;
-        cursor: pointer;
-    }
-
-    .footer {
-        max-width: calc(100vw - 200px);
-        width: 100%;
-        text-align: right;
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-bottom: 23px;
-    }
-
-    .footer p {
-        line-height: 22px;
-        font-size: 18px;
-        font-weight: 600;
-    }
-
-    .footer img {
-        width: auto;
-        height: 50px;
-    }
-
-    @media screen and (max-width: 1025px) {
-        .header,
-        .conversation {
-            flex-direction: column;
-            align-items: center;
-        }
-        .header .logo-wrapper,
-        .header .title-wrapper,
-        .header .timer-wrapper {
-            margin: 0;
-            width: max-content;
-        }
-
-        .conversation {
-            margin-top: 70px;
-        }
-    }
-
-    @media screen and (max-width: 769px) {
-        .header {
-            max-width: calc(100vw - 50px);
-        }
-        .header .title-wrapper {
-            width: 100%;
-            overflow: hidden;
-            border-radius: 100px;
-        }
-
-        .header .title-wrapper span {
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-    }
-
-    /* Microphone Connection Style */
-    .microphone-popup,
-    .callended-popup {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    .microphone-popup-content,
-    .callended-popup-content {
-        background-color: rgb(13 202 240 / 30%);
-        padding: 30px;
-        border-radius: 15px;
-        text-align: center;
-        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
-        max-width: 400px;
-        width: 90%;
-    }
-
-    .microphone-popup h3,
-    .callended-popup h3 {
-        color: #ffffff;
-        margin-bottom: 15px;
-        font-size: 24px;
-    }
-
-    .microphone-popup p,
-    .callended-popup p {
-        color: #f1f1f1;
-        margin-bottom: 25px;
-        font-size: 16px;
-        line-height: 1.5;
-    }
-
-    .microphone-popup button,
-    .callended-popup button {
-        background-color: #0DCAF0;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 25px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .microphone-popup button:hover,
-    .callended-popup button:hover {
-        background-color: #0bb5d1;
-    }
-
-    .hidden {
-        display: none;
-    }
-</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="<?= base_url() ?>assets/css/interview-call.css" />
+<link rel="stylesheet" href="<?= base_url() ?>assets/css/loader.css" />
 
 <div class="interview-container">
     <div class="header">
@@ -304,7 +15,7 @@ $creds = getCreds('AHR');
         </div>
         <div class="title-wrapper">
             <div class="page-title">
-                <span>Interviewing for job "<?php echo trim($portal_job_list['desired_job_title']); ?>"</span>
+                <span>Interviewing for job "<?php echo trim($portal_job_list['job_title'] ? $portal_job_list['job_title'] : $portal_job_list['desired_job_title']); ?>"</span>
             </div>
         </div>
 
@@ -385,12 +96,20 @@ $creds = getCreds('AHR');
     </div>
 
     <!-- Call Ended Popup -->
-    <div id="callendedPopup" class="callended-popup hidden">
-        <div class="callended-popup-content">
+    <div id="callendedPopup" class="modal-popup hidden">
+        <div class="modal-popup-content">
             <h3>Interview Ended</h3>
             <p>Thank you for participating in the interview.</p>
             <p>We wish you the best of luck!</p>
-            <button id="enableMicrophoneBtn">Return to Home</button>
+            <button id="enableMicrophoneBtn" onclick="window.location.href='/';">Return to Home</button>
+        </div>
+    </div>
+
+    <!-- Call Ended Popup -->
+    <div id="connectingPopup" class="modal-popup">
+        <div class="modal-popup-content">
+            <h3 style="font-size: 18px;font-weight:500;">Please hold on a moment while we prepare your interview</h3>
+            <span class="loader"></span>
         </div>
     </div>
 </div>
@@ -581,7 +300,7 @@ $creds = getCreds('AHR');
             });
 
             /* -----------------------
-            3. Method (Play in audio wav format)
+             Play in audio wav format
             ----------------------- */
 
             socket.on('message', async (data) => {
@@ -614,6 +333,7 @@ $creds = getCreds('AHR');
                         
                         // Start playing if not already playing
                         if (!isPlaying) {
+                            hidePopup('connectingPopup');
                             playNextInQueue();
                         }
 
@@ -910,8 +630,8 @@ $creds = getCreds('AHR');
 
                 // Pause audio if playing
                 if (currentAudio && !currentAudio.paused) {
-                    // currentAudio.pause();
-                    // console.log('🔇 Audio paused - user speaking');
+                    currentAudio.pause();
+                    console.log('🔇 Audio paused - user speaking');
 
                     setTimeout(() => {
                         if(isSpeaking) {
@@ -919,12 +639,12 @@ $creds = getCreds('AHR');
                             isPlaying = false;
                             console.log('🔇 Audio cleared - user speaking');
                         } else {
-                            // currentAudio.play().catch(e => {
-                            //     console.error('Error resuming audio:', e);
-                            // });
-                            // console.log('🔊 Audio resumed');
+                            currentAudio.play().catch(e => {
+                                console.error('Error resuming audio:', e);
+                            });
+                            console.log('🔊 Audio resumed');
                         }
-                    }, SILENCE_DELAY + 3000);
+                    }, SILENCE_DELAY + 1500);
                 }
             }
             
@@ -1032,6 +752,7 @@ $creds = getCreds('AHR');
             }
 
             stopCallTimer();
+            socket.emit('generate_reports', true);
             socket.disconnect();
         }
 
@@ -1068,6 +789,13 @@ $creds = getCreds('AHR');
             console.log('enc call buton click stoping ...');
             stopInterview();
         })
+
+        function hidePopup(id) {
+            const popup = document.getElementById(id);
+            if(!popup.classList.contains('hidden')) {
+                popup.classList.add('hidden');
+            }
+        }
 
         checkMicrophonePermission();
     });
