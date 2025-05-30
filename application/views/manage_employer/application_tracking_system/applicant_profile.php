@@ -715,14 +715,18 @@ if ($_ssv) {
 
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Uniform Top Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
-                                                    <input class="invoice-fields" value="<?php echo set_value('uniform_top_size', isset($applicant_info["uniform_top_size"]) ? $applicant_info["uniform_top_size"] : ''); ?>" type="text" name="uniform_top_size">
-                                                    <?php echo form_error('uniform_top_size'); ?>
+                                                    <li>
+                                                        <label>Uniform Top Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
+                                                        <input class="invoice-fields" value="<?php echo set_value('uniform_top_size', isset($applicant_info["uniform_top_size"]) ? $applicant_info["uniform_top_size"] : ''); ?>" type="text" name="uniform_top_size">
+                                                        <?php echo form_error('uniform_top_size'); ?>
+                                                    </li>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Uniform Bottom Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
-                                                    <input class="invoice-fields" name="uniform_bottom_size" id="uniform_bottom_size" value="<?php echo set_value('uniform_bottom_size', isset($applicant_info["uniform_bottom_size"]) ? $applicant_info["uniform_bottom_size"] : ''); ?>" />
-                                                    <?php echo form_error('uniform_bottom_size'); ?>
+                                                    <li>
+                                                        <label>Uniform Bottom Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
+                                                        <input class="invoice-fields" name="uniform_bottom_size" id="uniform_bottom_size" value="<?php echo set_value('uniform_bottom_size', isset($applicant_info["uniform_bottom_size"]) ? $applicant_info["uniform_bottom_size"] : ''); ?>" />
+                                                        <?php echo form_error('uniform_bottom_size'); ?>
+                                                    </li>
 
                                                 </div>
                                             </div>
@@ -1533,11 +1537,11 @@ if ($_ssv) {
                                                             ?>
                                                             <?php if ($attachments) { ?>
                                                                 <li>
-                                                                     <?php foreach($attachments as $attachment) {?>
-                                                                    <a class="action-btn" href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">
-                                                                        <i class="fa fa-download"></i>
-                                                                        <span class="btn-tooltip">Download File</span>
-                                                                    </a>
+                                                                    <?php foreach ($attachments as $attachment) { ?>
+                                                                        <a class="action-btn" href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">
+                                                                            <i class="fa fa-download"></i>
+                                                                            <span class="btn-tooltip">Download File</span>
+                                                                        </a>
                                                                     <?php } ?>
                                                                 </li>
                                                             <?php } ?>

@@ -127,6 +127,8 @@ class Indeed_cron extends CI_Controller
             if (!$this->job["job_sid"]) {
                 continue;
             }
+            // set country of the job
+            $this->setCountryCodeByCountryId();
             $this->jobBody = "";
             // set the default errors
             $this->job["errors"] = [];
@@ -138,7 +140,7 @@ class Indeed_cron extends CI_Controller
                 $this->expiredJobs[] = $this->job;
                 continue;
             }
-            // generate the add/edit job body
+            // generate the add/$this->job["Location_Country"] = edit job body
             $this->generateJobBody();
             //
             if ($this->job["errors"]) {
@@ -278,11 +280,11 @@ class Indeed_cron extends CI_Controller
         // update cache
         $this->indeedContactDetails[$this->job["user_sid"]] =
             $this
-            ->indeed_model
-            ->GetCompanyIndeedDetails(
-                $this->job["user_sid"],
-                $this->job["job_sid"]
-            );
+                ->indeed_model
+                ->GetCompanyIndeedDetails(
+                    $this->job["user_sid"],
+                    $this->job["job_sid"]
+                );
     }
 
     /**
@@ -300,7 +302,7 @@ class Indeed_cron extends CI_Controller
             '\description' => $this->getDescription(),
             '\jobTypes' => $this->getJobType(),
             '\jobCategories' => $this->getJobCategories(),
-            '\country' => "US",
+            '\country' => $this->job["Location_Country"],
             '\cityRegionPostal' => $this->getRegionPostal(),
             '\currency' => 'USD',
             '\minimumMinor' => $salaryArray["min"],
@@ -504,25 +506,25 @@ class Indeed_cron extends CI_Controller
         if (
             $this->job["questionnaire_sid"] ||
             $this
-            ->indeed_model
-            ->hasEEOCEnabled(
-                $this->job["user_sid"]
-            )
+                ->indeed_model
+                ->hasEEOCEnabled(
+                    $this->job["user_sid"]
+                )
         ) {
             // create a file from teh questionnaire
             // and EEO
             if (
                 $this
-                ->indeed_model
-                ->saveQuestionIntoFile(
-                    $this->job['job_sid'],
-                    $this->job['user_sid'],
-                    true
-                )
+                    ->indeed_model
+                    ->saveQuestionIntoFile(
+                        $this->job['job_sid'],
+                        $this->job['user_sid'],
+                        true
+                    )
             ) {
                 $url =
                     STORE_FULL_URL_SSL . "indeed/{$this->job["uuid"]}/jobQuestions.json";
-                $jobQuestionnaireUrl =  'applyQuestions: "' . ($url) . '"';
+                $jobQuestionnaireUrl = 'applyQuestions: "' . ($url) . '"';
             }
         }
         return $jobQuestionnaireUrl;
@@ -666,13 +668,14 @@ class Indeed_cron extends CI_Controller
         $expireBody = "";
         // iterate
         foreach ($this->expiredJobs as $v0) {
-            if ($indeedPostingId = $this
-                ->indeed_model
-                ->checkAndGetJobPostingId(
-                    $v0["uuid"],
-                    $v0["job_sid"],
-                    $v0["sid"]
-                )
+            if (
+                $indeedPostingId = $this
+                    ->indeed_model
+                    ->checkAndGetJobPostingId(
+                        $v0["uuid"],
+                        $v0["job_sid"],
+                        $v0["sid"]
+                    )
             ) {
                 //
                 $this->expiredJobIds[] = [
@@ -893,12 +896,12 @@ class Indeed_cron extends CI_Controller
             $cat_id = explode(',', $JobCategorys);
             $job_category_array = array();
 
-            
+
             foreach ($cat_id as $id) {
                 $job_cat_name = $this->all_feed_model->get_job_category_name_by_id($id);
                 $job_category_array[] = $job_cat_name[0]['value'];
-                
-                $jobCatgoriesString .= '"'.($job_cat_name[0]['value']).'",';
+
+                $jobCatgoriesString .= '"' . ($job_cat_name[0]['value']) . '",';
 
             }
 
@@ -906,5 +909,15 @@ class Indeed_cron extends CI_Controller
         }
 
         return $jobCatgoriesString;
+    }
+
+
+    private function setCountryCodeByCountryId()
+    {
+        if ($this->job["Location_Country"] == "38") {
+            $this->job["Location_Country"] = "CA";
+        } else {
+            $this->job["Location_Country"] = "US";
+        }
     }
 }
