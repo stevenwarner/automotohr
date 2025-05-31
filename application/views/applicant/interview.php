@@ -149,7 +149,7 @@ $creds = getCreds('AHR');
     // Speeking detection
     let isSpeaking = false;
     let silenceTimer = null;
-    const SILENCE_DELAY = 1600;
+    const SILENCE_DELAY = 2000;
 
     // Call timer variables
     let timerInterval;
