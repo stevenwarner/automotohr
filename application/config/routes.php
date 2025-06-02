@@ -2289,6 +2289,7 @@ $route["manage_admin/indeed/disposition/status/map"]["get"] =
 $route["manage_admin/indeed/disposition/status/map"]["post"] =
   "manage_admin/Indeed_disposition_status_map/saveListing";
 
+$route["manage_admin/recruiter-configurations"]["get"] = "manage_admin/recruiter/configurations";
 
 //Manage Admin Employees Termination Report
 $route['manage_admin/reports/employees_termination_report/(:any)'] = 'manage_admin/reports/employees_termination_report/index/$1';

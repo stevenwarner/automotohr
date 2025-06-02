@@ -154,7 +154,7 @@ $creds = getCreds('AHR');
     // Call timer variables
     let timerInterval;
     let waitingTimeSeconds = 0;
-    const waitingTimelimit = 15 * 60; // 15 minutes in seconds
+    const waitingTimelimit = 5 * 60; // 15 minutes in seconds
 
     let frequencyAnalyser = null;
     let frequencyDataArray = null;
@@ -204,7 +204,7 @@ $creds = getCreds('AHR');
                 clearInterval(counterInterval);
                 console.log('stop in counter interval ...');
                 stopInterview();
-                console.log("Waiting upto 15 minutes.");
+                console.log("Waited upto 5 minutes.");
             }
         }, 999);
 
@@ -282,6 +282,19 @@ $creds = getCreds('AHR');
                 window.mediaRecorder = mediaRecorder;
             } catch (err) {
                 console.error('Failed to create MediaRecorder:', err);
+            }
+        }
+
+        function clearAudio() {
+            if (currentAudio) {
+                if(!currentAudio.paused)
+                {
+                    currentAudio.pause();
+                }
+                currentAudio = null;
+                isPlaying = false;
+                audioQueue = [];
+                console.log('🔇 Audio cleared - user speaking');
             }
         }
 
@@ -385,6 +398,12 @@ $creds = getCreds('AHR');
                     setTimeout(setupSocketConnection, 2000);
                 }
             });
+
+            socket.on('clearAudio', (data) => {
+                console.log('clearAudio', data);
+                isSpeaking = data.speaking;
+                clearAudio();
+            })
 
             return socket;
         }
@@ -638,30 +657,27 @@ $creds = getCreds('AHR');
                 isSpeaking = true;
                 console.log(`🎤 Voice detected (volume: ${volume.toFixed(1)}) - User is speaking`);
 
-                // Notify server that user is speaking
-                if (socket && socket.connected) {
-                    socket.emit('userSpeaking', { speaking: true, job_list_sid });
-                }
-
                 // Pause audio if playing
                 if (currentAudio && !currentAudio.paused) {
                     currentAudio.pause();
                     console.log('🔇 Audio paused - user speaking');
                     audioQueue = [];
 
+                    // Notify server that user is speaking
+                    if (socket && socket.connected) {
+                        socket.emit('userSpeaking', { speaking: true, job_list_sid });
+                    }
+
                     setTimeout(() => {
-                        if (isSpeaking) {
-                            currentAudio = null;
-                            isPlaying = false;
-                            audioQueue = [];
-                            console.log('🔇 Audio cleared - user speaking');
+                        if(isSpeaking) {
+                            clearAudio();
                         } else {
                             currentAudio.play().catch(e => {
                                 console.error('Error resuming audio:', e);
                             });
                             console.log('🔊 Audio resumed');
                         }
-                    }, SILENCE_DELAY + 1500);
+                    }, SILENCE_DELAY);
                 }
             }
 

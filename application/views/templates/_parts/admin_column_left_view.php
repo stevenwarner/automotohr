@@ -927,6 +927,13 @@ if (
                             ?> href="<?php echo site_url('manage_admin/ai_recruiter/config'); ?>">AI
                                 Recruiter Config</a>
                         </div>
+                        <div class="menu-item">
+                            <a <?php
+                                if (base_url(uri_string()) == site_url('manage_admin/indeed/disposition/status/map')) {
+                                    echo 'class="active"';
+                                }
+                                ?> href="<?php echo site_url('manage_admin/recruiter-configurations'); ?>">Recruiter Configrations</a>
+                        </div>
                     </div>
 
                 </li>
