@@ -71,6 +71,9 @@ $route['affiliate-program']['get'] = 'v1/App/affiliateProgram';
 $route['affiliate_program/process']['post'] = 'v1/App/processAffiliateProgram';
 $route['legal']['get'] = 'v1/App/legalHub';
 $route['market-place-and-integrations']['get'] = 'v1/App/marketPlaceAndIntegrations';
+
+$route["messages/consent"]["get"] = "v1/App/twilioMessageConsentForm";
+$route["messages/subscribe"]["post"] = "v1/App/twilioMessageConsentFormProcess";
 //
 $route['employee_login']['get'] = 'users/login';
 $route['services/career-website']['get'] = 'Home/index';
