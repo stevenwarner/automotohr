@@ -1808,7 +1808,8 @@ class Onboarding_model extends CI_Model
         $this->db->where('archive', 0);
         $this->db->group_start();
         $this->db->where('is_specific', 0);
-        if ($employeeSid) $this->db->or_where('is_specific', $employeeSid);
+        if ($employeeSid)
+            $this->db->or_where('is_specific', $employeeSid);
         $this->db->group_end();
         $this->db->from('offer_letter');
 
@@ -2492,7 +2493,8 @@ class Onboarding_model extends CI_Model
 
     function check_offer_letter_moved($document_sid, $document_type)
     {
-        $this->db->select('*');;
+        $this->db->select('*');
+        ;
         $this->db->where('doc_sid', $document_sid);
         $this->db->where('document_type', $document_type);
 
@@ -2745,7 +2747,8 @@ class Onboarding_model extends CI_Model
             $record_obj = $this->db->get('portal_job_applications');
             $record_arr = $record_obj->result_array();
             $record_obj->free_result();
-            if (sizeof($record_arr)) return $record_arr[0]['resume'];
+            if (sizeof($record_arr))
+                return $record_arr[0]['resume'];
             return array();
         }
     }
@@ -2970,6 +2973,8 @@ class Onboarding_model extends CI_Model
 
     function get_send_resume_template($company_sid)
     {
+        $this->db->query("SET NAMES 'utf8mb4'");
+
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('template_code', 'send-resume-request');
@@ -3187,21 +3192,20 @@ class Onboarding_model extends CI_Model
      */
     public function getPrimaryAddress(
         int $companyId
-    )
-    {
+    ) {
         return $this->db
-        ->select(
-            '
+            ->select(
+                '
                 location_address,
                 location_telephone,
                 location_fax
             '
-        )
-        ->where([
-            'company_sid' => $companyId,
-            'is_primary' => 1
-        ])
-        ->get('onboarding_office_locations')
-        ->row_array();
+            )
+            ->where([
+                'company_sid' => $companyId,
+                'is_primary' => 1
+            ])
+            ->get('onboarding_office_locations')
+            ->row_array();
     }
 }
