@@ -286,7 +286,8 @@ button.end-call {
     background-color: #0bb5d1;
 }
 
-#connectingPopup {
+#connectingPopup,
+#microphonePopup {
     backdrop-filter: blur(50px);
 }
 

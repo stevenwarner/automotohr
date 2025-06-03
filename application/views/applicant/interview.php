@@ -100,16 +100,6 @@ $creds = getCreds('AHR');
         </div>
     </div>
 
-    <!-- Microphone Connection Popup -->
-    <div id="microphonePopup" class="microphone-popup hidden">
-        <div class="microphone-popup-content">
-            <h3>🎤 Microphone Access Required</h3>
-            <p>We need access to your microphone to conduct the interview. Please click the button below to enable
-                microphone access.</p>
-            <button id="enableMicrophoneBtn">Click Here to Enable Microphone</button>
-        </div>
-    </div>
-
     <!-- Call Ended Popup -->
     <div id="callendedPopup" class="modal-popup hidden">
         <div class="modal-popup-content">
@@ -120,11 +110,21 @@ $creds = getCreds('AHR');
         </div>
     </div>
 
-    <!-- Call Ended Popup -->
+    <!-- Connecting Popup -->
     <div id="connectingPopup" class="modal-popup">
         <div class="modal-popup-content">
             <h3 style="font-size: 18px;font-weight:500;">Please hold on a moment while we prepare your interview</h3>
             <span class="loader"></span>
+        </div>
+    </div>
+
+    <!-- Microphone Connection Popup -->
+    <div id="microphonePopup" class="microphone-popup hidden">
+        <div class="microphone-popup-content">
+            <h3>🎤 Microphone Access Required</h3>
+            <p>We need access to your microphone to conduct the interview. Please click the button below to enable
+                microphone access.</p>
+            <button id="enableMicrophoneBtn">Click Here to Enable Microphone</button>
         </div>
     </div>
 </div>
@@ -136,6 +136,7 @@ $creds = getCreds('AHR');
     const job_list_sid = `<?php echo $portal_job_list["jobs_list_sid"]; ?>`;
     const ServerPath = '<?php echo getAPIServerUrlForBrowser(true); ?>';
     let socket;
+    let sessionId = null; // Store session ID
     let currentAudio = null;
     let interviewStarted = false;
     let mediaRecorder = null;
@@ -154,7 +155,7 @@ $creds = getCreds('AHR');
     // Call timer variables
     let timerInterval;
     let waitingTimeSeconds = 0;
-    const waitingTimelimit = 5 * 60; // 15 minutes in seconds
+    const waitingTimelimit = 30; // in seconds
 
     let frequencyAnalyser = null;
     let frequencyDataArray = null;
@@ -196,13 +197,9 @@ $creds = getCreds('AHR');
             // Convert seconds to mm:ss format
             const minutes = Math.floor(waitingTimeSeconds / 60);
             const remainingSeconds = waitingTimeSeconds % 60;
-            // console.log(
-            //     `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`
-            // );
 
             if (waitingTimeSeconds >= waitingTimelimit) {
                 clearInterval(counterInterval);
-                console.log('stop in counter interval ...');
                 stopInterview();
                 console.log("Waited upto 5 minutes.");
             }
@@ -224,6 +221,11 @@ $creds = getCreds('AHR');
         }
 
         function startInterview() {
+            if (!sessionId) {
+                console.error('Cannot start interview: No session ID');
+                return;
+            }
+
             interviewStarted = true;
             startCallTimer();
             try {
@@ -262,10 +264,11 @@ $creds = getCreds('AHR');
 
                 // Configure handlers
                 mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0 && socket && socket.connected) {
+                    if (event.data.size > 0 && socket && socket.connected && sessionId) {
                         socket.emit('audioData', {
                             clientId: socket.id,
                             job_list_sid,
+                            sessionId: sessionId,
                             data: event.data
                         });
                     }
@@ -306,6 +309,14 @@ $creds = getCreds('AHR');
             // Handle connection events
             socket.on('connect', () => {
                 console.log('Connected to Socket.IO server');
+
+                socket.emit('initializeSession', { job_list_sid })
+            });
+
+            // Add this new handler:
+            socket.on('sessionInitialized', (data) => {
+                sessionId = data.sessionId;
+                console.log('Session initialized:', sessionId);
                 startInterview();
             });
 
@@ -339,7 +350,8 @@ $creds = getCreds('AHR');
                     }
                     const parsedData = JSON.parse(data);
 
-                    if (parsedData.type === 'audio') {
+                    if (parsedData.type === 'audio' && 
+                        (!parsedData.sessionId || parsedData.sessionId === sessionId)) {
                         initAudioContext();
 
                         try {
@@ -387,6 +399,7 @@ $creds = getCreds('AHR');
             socket.on('disconnect', () => {
                 console.log('Disconnected from Socket.IO server');
 
+                sessionId = null;
                 // Stop MediaRecorder if running
                 if (mediaRecorder && mediaRecorder.state === 'recording') {
                     mediaRecorder.stop();
@@ -524,13 +537,6 @@ $creds = getCreds('AHR');
             });
         }
 
-        function hideMicrophonePopup() {
-            const popup = document.getElementById('microphonePopup');
-            if (!popup.classList.contains('hidden')) {
-                popup.classList.add('hidden');
-            }
-        }
-
         function showMicrophonePopup() {
             const popup = document.getElementById('microphonePopup');
             if (popup.classList.contains('hidden')) {
@@ -665,7 +671,7 @@ $creds = getCreds('AHR');
 
                     // Notify server that user is speaking
                     if (socket && socket.connected) {
-                        socket.emit('userSpeaking', { speaking: true, job_list_sid });
+                        socket.emit('userSpeaking', { speaking: true, job_list_sid, sessionId: sessionId });
                     }
 
                     setTimeout(() => {
@@ -677,7 +683,7 @@ $creds = getCreds('AHR');
                             });
                             console.log('🔊 Audio resumed');
                         }
-                    }, SILENCE_DELAY);
+                    }, SILENCE_DELAY + 1000);
                 }
             }
 
@@ -705,7 +711,7 @@ $creds = getCreds('AHR');
 
                     // Notify server that user stopped speaking
                     if (socket && socket.connected) {
-                        socket.emit('userSpeaking', { speaking: false, job_list_sid });
+                        socket.emit('userSpeaking', { speaking: false, job_list_sid, sessionId: sessionId });
                     }
                     silenceTimer = null;
                 }, SILENCE_DELAY);
@@ -719,7 +725,7 @@ $creds = getCreds('AHR');
                 audio: true
             })
                 .then(async (stream) => {
-                    hideMicrophonePopup();
+                    hidePopup('microphonePopup');
 
                     await setupSocketConnection();
 
@@ -744,7 +750,7 @@ $creds = getCreds('AHR');
                     <p>Please allow microphone access in your browser settings and refresh the page to start the interview.</p>
                     <button onclick="location.reload()">Refresh Page</button>
                 `;
-                });
+            });
         }
 
         function stopInterview() {
@@ -785,8 +791,14 @@ $creds = getCreds('AHR');
             }
 
             stopCallTimer();
-            socket.emit('generate_reports', true);
-            socket.disconnect();
+
+            if (socket && socket.connected && sessionId) {
+                socket.emit('generate_reports', true);
+                socket.disconnect();
+            }
+
+            // Clear session
+            sessionId = null;
         }
 
         // Check Microphone Permission Status
@@ -801,13 +813,14 @@ $creds = getCreds('AHR');
                 // Try to get microphone access without showing permission prompt
                 const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
 
+                setupAudioRecording();
                 if (permissionStatus.state === 'granted') {
                     console.log('Microphone permission already granted');
-                    hideMicrophonePopup();
-                    setupAudioRecording();
+                    hidePopup('microphonePopup');
                     return true;
                 } else {
                     console.log('Microphone permission not granted:', permissionStatus.state);
+                    hidePopup('connectingPopup');
                     showMicrophonePopup();
                     return false;
                 }
