@@ -3159,4 +3159,28 @@ class Reports_model extends CI_Model
         $r['Data'] = $holderArray;
         return $r;
     }
+
+    //
+    function getsDocumentSchedule($companySid)
+    {
+        return $this->db->where("company_sid", $companySid)
+            ->get('schedule_document')->row_array();
+    }
+
+    //
+    function getDocumentScheduleEmailLog($companySid, $logDate)
+    {
+        return $this->db->where("company_sid", $companySid)
+            ->where("created_at", $logDate)
+            ->get('schedule_document_sent_email_log')->row_array();
+    }
+
+    //
+    function saveDocumentScheduleEmailLog($companySid, $logDate)
+    {
+        $checklog = $this->getDocumentScheduleEmailLog($companySid, $logDate);
+        if (empty($checklog)) {
+            $this->db->insert("schedule_document_sent_email_log", ['company_sid' => $companySid, 'created_at' => $logDate]);
+        }
+    }
 }

@@ -1248,6 +1248,15 @@ class Testing extends CI_Controller
 
         _e($response);
     }
+
+
+    //
+    public function senddoc()
+    {
+        $this->load->model('cron_email_model');
+        $this->cron_email_model->sendScheduledDocumentReportToManagers();
+
+    }
 }
 
 
