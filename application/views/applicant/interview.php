@@ -155,7 +155,7 @@ $creds = getCreds('AHR');
     // Call timer variables
     let timerInterval;
     let waitingTimeSeconds = 0;
-    const waitingTimelimit = 30; // in seconds
+    const waitingTimelimit = 15; // in seconds
 
     let frequencyAnalyser = null;
     let frequencyDataArray = null;
