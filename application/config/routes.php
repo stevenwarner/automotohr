@@ -2894,3 +2894,7 @@ $route["cms/update_sections_sort_order/(:num)"]["post"] = "manage_admin/Cms/upda
 
 $route["compliance_safety_reporting/download_reports"]["get"] =
   "v1/Compliance_safety_reporting/downloadReports";
+$route["savecookiedata"]["post"] = "Home/saveCookieData";
+$route['cookies_report'] = 'manage_admin/reports/Main/cookiesDataReport';
+
+
