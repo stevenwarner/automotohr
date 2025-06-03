@@ -2898,3 +2898,8 @@ $route["savecookiedata"]["post"] = "Home/saveCookieData";
 $route['cookies_report'] = 'manage_admin/reports/Main/cookiesDataReport';
 
 
+/**
+ * CLI Routes
+ */
+// schedule document report
+$route["cron/scheduled_document_report"]["cli"] = "Cron_lms_courses/sendDocumentReportToManagers";

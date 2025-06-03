@@ -109,6 +109,102 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="card_div">
+                        <div class="dashboard-conetnt-wrp">
+
+                            <div class="table-responsive table-outer" style="margin-top: 30px;">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading"><b>Schedule Document</b></div>
+                                    <div class="panel-body">
+                                        <form action="<?php echo base_url('notification_emails/setscheduleddocuments'); ?>" id="form_set_schedule_document" method="post" enctype="multipart/form-data">
+
+                                            <div class="row">
+                                                <!-- Selection row -->
+                                                <div class="col-sm-12">
+                                                    <!-- None -->
+                                                    <label class="control control--radio">
+                                                        None &nbsp;&nbsp;
+                                                        <input type="radio" name="assignAndSendDocument" class="assignAndSendDocument" value="none" />
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                    <!-- Daily -->
+                                                    <label class="control control--radio">
+                                                        Daily &nbsp;&nbsp;
+                                                        <input type="radio" name="assignAndSendDocument" class="assignAndSendDocument" value="daily" />
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                    <!-- Weekly -->
+                                                    <label class="control control--radio">
+                                                        Weekly &nbsp;&nbsp;
+                                                        <input type="radio" name="assignAndSendDocument" class="assignAndSendDocument" value="weekly" />
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                    <!-- Monthly -->
+                                                    <label class="control control--radio">
+                                                        Monthly &nbsp;&nbsp;
+                                                        <input type="radio" name="assignAndSendDocument" class="assignAndSendDocument" value="monthly" />
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                    <!-- Yearly -->
+                                                    <label class="control control--radio">
+                                                        Yearly &nbsp;&nbsp;
+                                                        <input type="radio" name="assignAndSendDocument" class="assignAndSendDocument" value="yearly" />
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                    <!-- Custom -->
+                                                    <label class="control control--radio">
+                                                        Custom &nbsp;&nbsp;
+                                                        <input type="radio" name="assignAndSendDocument" class="assignAndSendDocument" value="custom" />
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                    <!--  -->
+                                                </div>
+
+                                                <!-- Custom date row -->
+                                                <div class="col-sm-12 jsCustomDateRow">
+                                                    <br />
+                                                    <label id="jsCustomLabel">Select a date & time</label>
+                                                    <div class="row">
+                                                        <div class="col-sm-4" id="jsCustomDate">
+                                                            <input type="text" class="form-control jsDatePicker" name="assignAndSendCustomDate" readonly="true" />
+                                                        </div>
+                                                        <div class="col-sm-4" id="jsCustomDay">
+                                                            <select name="assignAndSendCustomDay" id="jsCustomDaySLT">
+                                                                <option value="1">Monday</option>
+                                                                <option value="2">Tuesday</option>
+                                                                <option value="3">Wednesday</option>
+                                                                <option value="4">Thursday</option>
+                                                                <option value="5">Friday</option>
+                                                                <option value="6">Saturday</option>
+                                                                <option value="7">Sunday</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <input type="text" class="form-control jsTimePicker" name="assignAndSendCustomTime" readonly="true" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="row" style="margin-top: 20px;">
+                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">&nbsp;</div>
+                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                </div>
+
+                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                    <button type="button" onclick="set_schedule_document(); " class="btn btn-success btn-block">Update</button>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row">                        
                         <div class="add-credit-card-container payment-area-wrp">
                             <?php echo form_open('', array('id' => 'notifications_form')); ?>
@@ -305,6 +401,18 @@
  $(document).ready(function() { 
         $("#employee").select2();
         });
+
+        function set_schedule_document(status, notifications) {
+        alertify.confirm(
+            'Are you sure?',
+            'Are you sure you want to update schedule document ?',
+            function () {
+                $('#form_set_schedule_document').submit();
+            },
+            function () {
+                alertify.warning('Canceled!');
+            });
+    }
 </script>
 <style>
 .select2-container--default .select2-selection--single {
@@ -317,3 +425,81 @@
     top: 12px !important;
 }
 </style>
+
+<script>
+    $(function () {
+        //
+        //
+        $('.assignSelectedEmployees').select2({
+            closeOnSelect: false
+        });
+        //
+        $('#jsCustomDaySLT').select2();
+        //
+        $('.assignAndSendDocument').change(function () {
+            //
+            $('.jsCustomDateRow').show();
+            $('#jsCustomDay').hide();
+            $('#jsCustomLabel').text('Select a date & time');
+            $('#jsCustomDate').show();
+            $('.jsDatePicker').datepicker('option', {
+                changeMonth: true
+            });
+            //
+            if ($(this).val().toLowerCase() == 'daily') {
+                $('#jsCustomLabel').text('Select time');
+                $('#jsCustomDate').hide();
+            } else if ($(this).val().toLowerCase() == 'monthly') {
+                $('#jsCustomLabel').text('Select a date & time');
+                $('.jsDatePicker').datepicker('option', {
+                    dateFormat: 'dd'
+                });
+                $('.jsDatePicker').datepicker('option', {
+                    changeMonth: false
+                });
+            } else if ($(this).val().toLowerCase() == 'weekly') {
+                $('#jsCustomDate').hide();
+                $('#jsCustomDay').show();
+                $('#jsCustomLabel').text('Select day & time');
+            } else if ($(this).val().toLowerCase() == 'yearly' || $(this).val().toLowerCase() == 'custom') {
+                $('.jsDatePicker').datepicker('option', {
+                    dateFormat: 'mm/dd'
+                });
+            } else if ($(this).val().toLowerCase() == 'none') {
+                $('.jsCustomDateRow').hide();
+            }
+        });
+
+        //
+        $('.jsDatePicker').datepicker({
+            changeMonth: true,
+            dateFormat: 'mm/dd',
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
+        });
+
+        //
+        $('.jsTimePicker').datetimepicker({
+            datepicker: false,
+            format: 'g:i A',
+            formatTime: 'g:i A',
+            step: 15
+        });
+
+        //
+        <?php if (!empty($document_schedule)) { ?>
+                //
+                $(`.assignAndSendDocument[value="<?php echo $document_schedule['schedule_type']; ?>"]`).prop('checked', true).trigger('change');
+                $('.jsDatePicker').val('<?php echo $document_schedule['schedule_date']; ?>')
+                <?php if ($document_schedule['schedule_type'] == 'weekly') { ?>
+                        $('#jsCustomDaySLT').select2('val', '<?php echo $document_schedule['schedule_day']; ?>');
+                <?php } ?>
+
+                $('.jsTimePicker').val('<?php echo $document_schedule['schedule_time']; ?>')
+
+        <?php } else { ?>
+                $('.assignAndSendDocument[value="none"]').prop('checked', true);
+                $('.assignAndSendDocument[value="none"]').change();
+        <?php } ?>
+    });
+</script>
