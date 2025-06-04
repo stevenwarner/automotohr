@@ -1161,10 +1161,79 @@ class Cron_email_model extends CI_Model
         //
         $companies = $this->copy_employees_model->get_all_companies();
         //
+        if (!$companies) {
+            exit("No companies found!");
+        }
 
         $executiveAdminsList = [];
 
+        //
+        $scheduleArray = [
+            "schedule" => [],
+            "current" => [
+                "dayOfWeek" => getSystemDate("0N"),
+                "day" => getSystemDate("d"),
+                "month" => getSystemDate("m"),
+                "time" => getSystemDate("h:i A"),
+            ],
+        ];
+
         foreach ($companies as $companyRow) {
+            // check if we have sent the report today
+            // otherwise make an entry
+            if (
+                $this
+                    ->db
+                    ->where([
+                        "company_sid" => $companyRow["sid"],
+                        "created_at" => getSystemDate("Y-m-d")
+                    ])->count_all_results("schedule_document_sent_email_log")
+            ) {
+                continue;
+            }
+
+            // get the schedule
+            $schedule = $this
+                ->db
+                ->select([
+                    "schedule_type",
+                    "schedule_day",
+                    "schedule_time",
+                    "schedule_date",
+                ])
+                ->where([
+                    "company_sid" => $companyRow["sid"],
+                    "schedule_type <> " => "none"
+                ])
+                ->limit(1)
+                ->get("schedule_document")
+                ->row_array();
+            // skip when there is no schedule
+            if (!$schedule) {
+                continue;
+            } else {
+                //
+                $scheduleArray["schedule"] = [
+                    "type" => $schedule["schedule_type"],
+                    "dayOfWeek" => $schedule["schedule_day"],
+                    "date" => $schedule["schedule_date"],
+                    "time" => $schedule["schedule_time"],
+                ];
+            }
+            // check if the time to send emails
+            if (!doSendScheduleDocument($scheduleArray)) {
+                continue;
+            }
+            // Add record
+            $this->db
+                ->insert(
+                    "schedule_document_sent_email_log",
+                    [
+                        "company_sid" => $companyRow["sid"],
+                        "created_at" => getSystemDate("Y-m-d")
+                    ]
+                );
+
             //
             $post['companySid'] = $companyRow['sid'];
             $post['employeeSid'] = ['all'];
@@ -1227,6 +1296,7 @@ class Cron_email_model extends CI_Model
 
                             $executiveAdminsList[$empRow['email']]['data']['buttons'][] = $buttons;
                             $executiveAdminsList[$empRow['email']]['data']['contact_name'] = $empRow['contact_name'];
+                            $executiveAdminsList[$empRow['email']]['data']['email'] = $empRow['email'];
                         } else {
 
                             $template = get_email_template(DOCUMENT_REPORT_EMAILS);
@@ -1286,6 +1356,8 @@ class Cron_email_model extends CI_Model
                                 $replaceArray,
                                 $templateBody
                             );
+
+                            echo "SEb";
                             //
                             log_and_send_email_with_attachment(
                                 FROM_EMAIL_NOTIFICATIONS,
@@ -1301,7 +1373,6 @@ class Cron_email_model extends CI_Model
                 }
             }
         }
-
         //
         if (!empty($executiveAdminsList)) {
             foreach ($executiveAdminsList as $exRow) {
@@ -1355,7 +1426,6 @@ class Cron_email_model extends CI_Model
                     $replaceArray,
                     $templateBody
                 );
-
                 log_and_send_email_with_attachment(
                     FROM_EMAIL_NOTIFICATIONS,
                     $exRow["data"]['email'],

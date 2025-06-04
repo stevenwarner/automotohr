@@ -4925,8 +4925,63 @@ if (!function_exists('getPageFooterLinks')) {
         $CI = &get_instance();
         $CI->db
             ->select('title,slug,content');
-            $CI->db->where('is_footer_link', 1);
+        $CI->db->where('is_footer_link', 1);
         $CI->db->where('status', 1);
-        return  $CI->db->get('cms_pages_new')->result_array();
+        return $CI->db->get('cms_pages_new')->result_array();
+    }
+}
+
+
+if (!function_exists("doSendScheduleDocument")) {
+    /**
+     * Summary of doSendScheduleDocument
+     * @param array $schedule
+     * @return void
+     */
+    function doSendScheduleDocument(array $schedule): bool
+    {
+        // set default to false
+        $doSendScheduleDocument = false;
+        //
+        switch ($schedule["schedule"]["type"]):
+
+            case "daily":
+                if ($schedule["schedule"]["time"] == $schedule["current"]["time"]) {
+                    $doSendScheduleDocument = true;
+                }
+                break;
+
+            case "weekly":
+                if (
+                    $schedule["schedule"]["time"] == $schedule["current"]["time"]
+                    && $schedule["schedule"]["dayOfWeek"] == $schedule["current"]["dayOfWeek"]
+                ) {
+                    $doSendScheduleDocument = true;
+                }
+                break;
+
+            case "monthly":
+                if (
+                    $schedule["schedule"]["time"] == $schedule["current"]["time"]
+                    && $schedule["schedule"]["date"] == $schedule["current"]["day"]
+                ) {
+                    $doSendScheduleDocument = true;
+                }
+                break;
+
+            case "yearly":
+            case "custom":
+                if (
+                    $schedule["schedule"]["time"] == $schedule["current"]["time"]
+                    && $schedule["schedule"]["date"] == "{$schedule["current"]["month"]}/{$schedule["current"]["day"]}"
+                ) {
+                    $doSendScheduleDocument = true;
+                }
+                break;
+
+        endswitch;
+
+
+        return $doSendScheduleDocument;
     }
 }

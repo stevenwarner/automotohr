@@ -38,7 +38,8 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
+                                <span
+                                    class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <?php echo $title; ?>
                                 </span>
                             </div>
@@ -50,7 +51,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/billing_invoice_notifications'); ?>">Billing and Invoice Notifications</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/billing_invoice_notifications'); ?>">Billing
+                                                            and Invoice Notifications</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Billing and Invoice Notifications</small>
@@ -62,7 +65,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/billing_invoice_notifications'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/billing_invoice_notifications'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -72,7 +76,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/new_applicant_notifications'); ?>">New Applicant Notifications</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/new_applicant_notifications'); ?>">New
+                                                            Applicant Notifications</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View New Applicant Notifications</small>
@@ -84,7 +90,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/new_applicant_notifications'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/new_applicant_notifications'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -94,7 +101,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/video_interview_notifications'); ?>">Video Interview Notifications</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/video_interview_notifications'); ?>">Video
+                                                            Interview Notifications</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Video Interview Notifications</small>
@@ -106,7 +115,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/video_interview_notifications'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/video_interview_notifications'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -116,7 +126,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/approval_rights_notifications'); ?>">Approval Rights Management</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/approval_rights_notifications'); ?>">Approval
+                                                            Rights Management</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Approval Rights Management</small>
@@ -128,7 +140,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/approval_rights_notifications'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/approval_rights_notifications'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -138,7 +151,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/employment_application'); ?>">Full Employment Application</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/employment_application'); ?>">Full
+                                                            Employment Application</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Full Employment Application</small>
@@ -150,7 +165,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/employment_application'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/employment_application'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -160,7 +176,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/expiration_manager'); ?>">Expiration Manager</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/expiration_manager'); ?>">Expiration
+                                                            Manager</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Expiration Manager</small>
@@ -172,7 +190,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/expiration_manager'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/expiration_manager'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -182,7 +201,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/onboarding_request'); ?>">Onboarding Request Notifications</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/onboarding_request'); ?>">Onboarding
+                                                            Request Notifications</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Onboarding Request Notifications</small>
@@ -194,7 +215,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/onboarding_request'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/onboarding_request'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -204,7 +226,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/offer_letter'); ?>">Offer Letter Notifications</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/offer_letter'); ?>">Offer
+                                                            Letter Notifications</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Offer Letter Notifications</small>
@@ -216,7 +240,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/offer_letter'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/offer_letter'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -226,7 +251,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/documents'); ?>">Document Notifications</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/documents'); ?>">Document
+                                                            Notifications</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Document Notifications</small>
@@ -238,7 +265,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/documents'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/documents'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -248,7 +276,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/general_information'); ?>">General Information Notifications</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/general_information'); ?>">General
+                                                            Information Notifications</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View General Information Notifications</small>
@@ -260,12 +290,14 @@
                                                         </p>
                                                         <p>
                                                             <strong class="notification_Info">
-                                                                Driver's/Occupational license, dependent details, emergency contacts, direct deposit information.
+                                                                Driver's/Occupational license, dependent details,
+                                                                emergency contacts, direct deposit information.
                                                             </strong>
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/general_information'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/general_information'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -275,7 +307,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/employee_profile'); ?>">Employee Profile changes</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/employee_profile'); ?>">Employee
+                                                            Profile changes</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Employee Profile Notifications</small>
@@ -287,7 +321,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/employee_profile'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/employee_profile'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -297,7 +332,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/default_approvers'); ?>">Default Document Approvers</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/default_approvers'); ?>">Default
+                                                            Document Approvers</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Default Document Approvers</small>
@@ -309,7 +346,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/default_approvers'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/default_approvers'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -320,7 +358,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/private_message_notification'); ?>">Private Messages Notification</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/private_message_notification'); ?>">Private
+                                                            Messages Notification</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Private Messages Notifications</small>
@@ -332,7 +372,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/private_message_notification'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/private_message_notification'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -343,7 +384,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/courses'); ?>">Course Report Notification</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/courses'); ?>">Course
+                                                            Report Notification</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Courses Notifications</small>
@@ -355,7 +398,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/courses'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/courses'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -366,7 +410,9 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/document_report'); ?>">Document Report Notification</a>
+                                                        <a
+                                                            href="<?php echo base_url('notification_emails/document_report'); ?>">Document
+                                                            Report Notification</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Notifications</small>
@@ -378,7 +424,8 @@
                                                         </p>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/document_report'); ?>">View</a>
+                                                        <a class="site-btn"
+                                                            href="<?php echo base_url('notification_emails/document_report'); ?>">View</a>
                                                     </div>
                                                 </div>
                                             </div>

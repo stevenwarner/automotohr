@@ -71,6 +71,9 @@ $route['affiliate-program']['get'] = 'v1/App/affiliateProgram';
 $route['affiliate_program/process']['post'] = 'v1/App/processAffiliateProgram';
 $route['legal']['get'] = 'v1/App/legalHub';
 $route['market-place-and-integrations']['get'] = 'v1/App/marketPlaceAndIntegrations';
+
+$route["messages/consent"]["get"] = "v1/App/twilioMessageConsentForm";
+$route["messages/subscribe"]["post"] = "v1/App/twilioMessageConsentFormProcess";
 //
 $route['employee_login']['get'] = 'users/login';
 $route['services/career-website']['get'] = 'Home/index';
@@ -2891,3 +2894,12 @@ $route["cms/update_sections_sort_order/(:num)"]["post"] = "manage_admin/Cms/upda
 
 $route["compliance_safety_reporting/download_reports"]["get"] =
   "v1/Compliance_safety_reporting/downloadReports";
+$route["savecookiedata"]["post"] = "Home/saveCookieData";
+$route['cookies_report'] = 'manage_admin/reports/Main/cookiesDataReport';
+
+
+/**
+ * CLI Routes
+ */
+// schedule document report
+$route["cron/scheduled_document_report"]["cli"] = "Cron_lms_courses/sendDocumentReportToManagers";

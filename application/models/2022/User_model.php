@@ -855,4 +855,37 @@ class User_model extends CI_Model
 
         return  $resultData;
     }
+
+
+    //
+    public function getCookiesData($get)
+    {
+        //
+        $whereArray = [];
+        if ($get && $get['start_date'] && $get['end_date']) {
+            //
+            if ($get['start_date'] != '') {
+                $whereArray['created_at >='] = (formatDateToDB($get['start_date'], SITE_DATE, DB_DATE)) . ' 00:00:00';
+            }
+            //
+            if ($get['end_date']) {
+                $whereArray['created_at <='] = (formatDateToDB($get['end_date'], SITE_DATE, DB_DATE)) . ' 23:59:59';
+            }
+        } else {
+            $whereArray['created_at >='] = getSystemDate(DB_DATE) . ' 00:00:00';
+            $whereArray['created_at <='] = getSystemDate(DB_DATE) . ' 23:59:59';
+        }
+
+        if ($get['client_ip'] != '') {
+            $whereArray['client_ip ='] = trim($get['client_ip']);
+        }
+        //
+        $resultData =
+            $this->db->where($whereArray)
+            ->order_by('sid', 'DESC')
+            ->get('cookie_log_data')
+            ->result_array();
+
+        return  $resultData;
+    }
 }

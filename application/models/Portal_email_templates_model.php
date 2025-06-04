@@ -9,6 +9,8 @@ class portal_email_templates_model extends CI_Model
 
     function getallemailtemplates($company_sid)
     {
+        $this->db->query("SET NAMES 'utf8mb4'");
+
         $this->db->where('company_sid', $company_sid);
         $this->db->where('status', 1);
         //$this->db->order_by('template_name', 'ASC');
@@ -19,6 +21,8 @@ class portal_email_templates_model extends CI_Model
 
     function gettemplatedetails($sid, $company_sid)
     {
+        $this->db->query("SET NAMES 'utf8mb4'");
+
         $this->db->where('status', 1);
         $this->db->where('sid', $sid);
         $this->db->where('company_sid', $company_sid);
@@ -77,6 +81,8 @@ class portal_email_templates_model extends CI_Model
 
     function check_default_tables($company_sid, $company_email, $company_name)
     {
+        $this->db->query("SET NAMES 'utf8mb4'");
+
         // updated on: 2019-04-19
         // Get template_codes from 
         // employee email templates
@@ -120,17 +126,18 @@ class portal_email_templates_model extends CI_Model
                     array(
                         'template_code' => $v0['template_code'],
                         'template_name' => $v0['template_name'],
-                        'subject'       => $v0['subject'],
-                        'message_body'  => $v0['body'],
-                        'from_name'     => $v0['from_name'] == '' || $v0['from_name'] == null ? '{{company_name}}' : $v0['from_name'],
-                        'from_email'    => $v0['from_email'] == '' || $v0['from_email'] == null ? FROM_EMAIL_INFO : $v0['from_email'],
+                        'subject' => $v0['subject'],
+                        'message_body' => $v0['body'],
+                        'from_name' => $v0['from_name'] == '' || $v0['from_name'] == null ? '{{company_name}}' : $v0['from_name'],
+                        'from_email' => $v0['from_email'] == '' || $v0['from_email'] == null ? FROM_EMAIL_INFO : $v0['from_email'],
                         'enable_auto_responder' => 1,
-                        'company_sid'           => $company_sid,
-                        'created'               => $date
+                        'company_sid' => $company_sid,
+                        'created' => $date
                     )
                 );
                 //
-                if ($v0['attachment'] == '' || $v0['attachment'] == NULL) continue;
+                if ($v0['attachment'] == '' || $v0['attachment'] == NULL)
+                    continue;
                 //
                 $insert_id = $this->db->insert_id();
                 // TODO
@@ -154,15 +161,15 @@ class portal_email_templates_model extends CI_Model
 
             if (!empty($admin_template_data)) {
                 $data = array();
-                $data['template_code']                                          = str_replace(' ', '_', strtolower($admin_template_data['name']));
-                $data['company_sid']                                            = $company_sid;
-                $data['created']                                                = date('Y-m-d H:i:s');
-                $data['template_name']                                          = $admin_template_data['name'];
-                $data['from_name']                                              = '{{company_name}}';
-                $data['from_email']                                             = $admin_template_data['from_email'];
-                $data['subject']                                                = $admin_template_data['subject'];
-                $data['message_body']                                           = $admin_template_data['text'];
-                $data['admin_template_sid']                                     = $admin_template_data['sid'];
+                $data['template_code'] = str_replace(' ', '_', strtolower($admin_template_data['name']));
+                $data['company_sid'] = $company_sid;
+                $data['created'] = date('Y-m-d H:i:s');
+                $data['template_name'] = $admin_template_data['name'];
+                $data['from_name'] = '{{company_name}}';
+                $data['from_email'] = $admin_template_data['from_email'];
+                $data['subject'] = $admin_template_data['subject'];
+                $data['message_body'] = $admin_template_data['text'];
+                $data['admin_template_sid'] = $admin_template_data['sid'];
                 $this->db->insert("portal_email_templates", $data);
             }
         }
@@ -175,15 +182,15 @@ class portal_email_templates_model extends CI_Model
 
             if (!empty($admin_template_data)) {
                 $data = array();
-                $data['template_code']                                          = str_replace(' ', '_', strtolower($admin_template_data['name']));
-                $data['company_sid']                                            = $company_sid;
-                $data['created']                                                = date('Y-m-d H:i:s');
-                $data['template_name']                                          = $admin_template_data['name'];
-                $data['from_name']                                              = '{{company_name}}';
-                $data['from_email']                                             = $admin_template_data['from_email'];
-                $data['subject']                                                = $admin_template_data['subject'];
-                $data['message_body']                                           = $admin_template_data['text'];
-                $data['admin_template_sid']                                     = $admin_template_data['sid'];
+                $data['template_code'] = str_replace(' ', '_', strtolower($admin_template_data['name']));
+                $data['company_sid'] = $company_sid;
+                $data['created'] = date('Y-m-d H:i:s');
+                $data['template_name'] = $admin_template_data['name'];
+                $data['from_name'] = '{{company_name}}';
+                $data['from_email'] = $admin_template_data['from_email'];
+                $data['subject'] = $admin_template_data['subject'];
+                $data['message_body'] = $admin_template_data['text'];
+                $data['admin_template_sid'] = $admin_template_data['sid'];
                 $this->db->insert("portal_email_templates", $data);
             }
         }
@@ -221,15 +228,15 @@ class portal_email_templates_model extends CI_Model
 
             if (!empty($admin_template_data)) {
                 $data = array();
-                $data['template_code']                                          = str_replace(' ', '_', strtolower($admin_template_data['name']));
-                $data['company_sid']                                            = $company_sid;
-                $data['created']                                                = date('Y-m-d H:i:s');
-                $data['template_name']                                          = $admin_template_data['name'];
-                $data['from_name']                                              = '{{company_name}}';
-                $data['from_email']                                             = $admin_template_data['from_email'];
-                $data['subject']                                                = $admin_template_data['subject'];
-                $data['message_body']                                           = $admin_template_data['text'];
-                $data['admin_template_sid']                                     = $admin_template_data['sid'];
+                $data['template_code'] = str_replace(' ', '_', strtolower($admin_template_data['name']));
+                $data['company_sid'] = $company_sid;
+                $data['created'] = date('Y-m-d H:i:s');
+                $data['template_name'] = $admin_template_data['name'];
+                $data['from_name'] = '{{company_name}}';
+                $data['from_email'] = $admin_template_data['from_email'];
+                $data['subject'] = $admin_template_data['subject'];
+                $data['message_body'] = $admin_template_data['text'];
+                $data['admin_template_sid'] = $admin_template_data['sid'];
                 $this->db->insert("portal_email_templates", $data);
             }
         }
@@ -242,15 +249,15 @@ class portal_email_templates_model extends CI_Model
 
             if (!empty($admin_template_data)) {
                 $data = array();
-                $data['template_code']                                          = str_replace(' ', '_', strtolower($admin_template_data['name']));
-                $data['company_sid']                                            = $company_sid;
-                $data['created']                                                = date('Y-m-d H:i:s');
-                $data['template_name']                                          = $admin_template_data['name'];
-                $data['from_name']                                              = '{{company_name}}';
-                $data['from_email']                                             = $admin_template_data['from_email'];
-                $data['subject']                                                = $admin_template_data['subject'];
-                $data['message_body']                                           = $admin_template_data['text'];
-                $data['admin_template_sid']                                     = $admin_template_data['sid'];
+                $data['template_code'] = str_replace(' ', '_', strtolower($admin_template_data['name']));
+                $data['company_sid'] = $company_sid;
+                $data['created'] = date('Y-m-d H:i:s');
+                $data['template_name'] = $admin_template_data['name'];
+                $data['from_name'] = '{{company_name}}';
+                $data['from_email'] = $admin_template_data['from_email'];
+                $data['subject'] = $admin_template_data['subject'];
+                $data['message_body'] = $admin_template_data['text'];
+                $data['admin_template_sid'] = $admin_template_data['sid'];
                 $this->db->insert("portal_email_templates", $data);
             }
         }
@@ -264,15 +271,15 @@ class portal_email_templates_model extends CI_Model
 
             if (!empty($admin_template_data)) {
                 $data = array();
-                $data['template_code']                                          = str_replace(' ', '_', strtolower($admin_template_data['name']));
-                $data['company_sid']                                            = $company_sid;
-                $data['created']                                                = date('Y-m-d H:i:s');
-                $data['template_name']                                          = $admin_template_data['name'];
-                $data['from_name']                                              = '{{company_name}}';
-                $data['from_email']                                             = $admin_template_data['from_email'];
-                $data['subject']                                                = $admin_template_data['subject'];
-                $data['message_body']                                           = $admin_template_data['text'];
-                $data['admin_template_sid']                                     = $admin_template_data['sid'];
+                $data['template_code'] = str_replace(' ', '_', strtolower($admin_template_data['name']));
+                $data['company_sid'] = $company_sid;
+                $data['created'] = date('Y-m-d H:i:s');
+                $data['template_name'] = $admin_template_data['name'];
+                $data['from_name'] = '{{company_name}}';
+                $data['from_email'] = $admin_template_data['from_email'];
+                $data['subject'] = $admin_template_data['subject'];
+                $data['message_body'] = $admin_template_data['text'];
+                $data['admin_template_sid'] = $admin_template_data['sid'];
                 $this->db->insert("portal_email_templates", $data);
             }
         }
@@ -287,16 +294,16 @@ class portal_email_templates_model extends CI_Model
 
             if (!empty($admin_template_data)) {
                 $data = array();
-                $data['template_code']                                          = str_replace(' ', '_', strtolower($admin_template_data['name']));
-                $data['company_sid']                                            = $company_sid;
-                $data['created']                                                = date('Y-m-d H:i:s');
-                $data['template_name']                                          = $admin_template_data['name'];
-                $data['from_name']                                              = '{{company_name}}';
-                $data['from_email']                                             = $admin_template_data['from_email'];
-                $data['subject']                                                = $admin_template_data['subject'];
-                $data['message_body']                                           = $admin_template_data['text'];
-                $data['enable_auto_responder']                                  = 0;
-                $data['admin_template_sid']                                     = $admin_template_data['sid'];
+                $data['template_code'] = str_replace(' ', '_', strtolower($admin_template_data['name']));
+                $data['company_sid'] = $company_sid;
+                $data['created'] = date('Y-m-d H:i:s');
+                $data['template_name'] = $admin_template_data['name'];
+                $data['from_name'] = '{{company_name}}';
+                $data['from_email'] = $admin_template_data['from_email'];
+                $data['subject'] = $admin_template_data['subject'];
+                $data['message_body'] = $admin_template_data['text'];
+                $data['enable_auto_responder'] = 0;
+                $data['admin_template_sid'] = $admin_template_data['sid'];
                 $this->db->insert("portal_email_templates", $data);
             }
         }

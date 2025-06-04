@@ -880,4 +880,47 @@ class App extends CI_Controller
         $this->db->insert('cms_highlights', $formData);
         return SendResponse(200, ["msg" => "Thank you for your request, we will contact you soon."]);
     }
+
+    public function twilioMessageConsentForm()
+    {
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = "Message Consent Form :: {STORE_NAME}";
+        $data['meta']['description'] = "Message Consent Form :: {STORE_NAME}";
+        $data['meta']['keywords'] = "Message Consent Form :: {STORE_NAME}";
+
+
+        $this->setCommon("v1/app/css/legal", "css");
+        $this->getCommon($data, "sitemap");
+
+        //
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/message_consent');
+        $this->load->view($this->footer);
+    }
+
+
+    public function twilioMessageConsentFormProcess()
+    {
+        // set rules
+        $this->form_validation->set_rules('phone', 'Please provide phone number', 'trim|required|xss_clean');
+
+        // run validation
+        if (!$this->form_validation->run()) {
+            $this->session->set_flashdata('errors', implode(',', getFormErrors()['errors']));
+            redirect('messages/consent', "location");
+            return;
+        }
+        //
+        $formData = [];
+        $formData['phone_number'] = preg_replace("/[^0-9+]/", "", $this->input->post('phone', true));
+        $formData['ip'] = getUserIP();
+        $formData['user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $formData['created_at'] = getSystemDate();
+        //     
+        $this->db->insert('cms_messages_consent', $formData);
+        $this->session->set_flashdata('success', "You have successfully Opt-In to receive messages.");
+        redirect('messages/consent', "location");
+        return;
+    }
 }

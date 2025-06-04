@@ -228,7 +228,8 @@ if (
     $this->uri->segment(3) == 'invoice_item_usage' ||
     $this->uri->segment(3) == 'complynet_report' ||
     $this->uri->segment(3) == 'employees_termination_report' ||
-    $this->uri->segment(1) == 'ai_whishlist_data_report'
+    $this->uri->segment(1) == 'ai_whishlist_data_report'||
+    $this->uri->segment(1) == 'cookies_report'
 ) {
     $reports_menu = true;
 } else if (
@@ -1419,6 +1420,14 @@ if (
                                 echo 'class="active"';
                             } ?>
                                 href="<?php echo site_url('ai_whishlist_data_report'); ?>">AI Recruiter Wait-list Report</a>
+                        </div>
+
+
+                            <div class="menu-item">
+                            <a <?php if (strpos(base_url(uri_string()), site_url('cookies_report')) !== false || ($this->uri->segment(3) == 'cookies_report')) {
+                                echo 'class="active"';
+                            } ?>
+                                href="<?php echo site_url('cookies_report'); ?>">Cookies Report</a>
                         </div>
 
                     </div>

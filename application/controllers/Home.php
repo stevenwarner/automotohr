@@ -460,13 +460,13 @@ class Home extends CI_Controller
         // Double check indexes
         if (
             !isset(
-            $event_array['id'],
-            $event_array['eid'],
-            $event_array['etype'],
-            $event_array['name'],
-            $event_array['email'],
-            $event_array['type']
-        )
+                $event_array['id'],
+                $event_array['eid'],
+                $event_array['etype'],
+                $event_array['name'],
+                $event_array['email'],
+                $event_array['type']
+            )
         ) {
             show_404();
         }
@@ -1074,9 +1074,9 @@ class Home extends CI_Controller
         // Double check indexes
         if (
             !isset(
-            $event_array['eid'],
-            $event_array['type']
-        )
+                $event_array['eid'],
+                $event_array['type']
+            )
         ) {
             show_404();
         }
@@ -1312,13 +1312,13 @@ class Home extends CI_Controller
         // Double check indexes
         if (
             !isset(
-            $event_array['id'],
-            $event_array['eid'],
-            $event_array['etype'],
-            $event_array['name'],
-            $event_array['email'],
-            $event_array['type']
-        )
+                $event_array['id'],
+                $event_array['eid'],
+                $event_array['etype'],
+                $event_array['name'],
+                $event_array['email'],
+                $event_array['type']
+            )
         ) {
             show_404();
         }
@@ -1599,9 +1599,9 @@ class Home extends CI_Controller
         // Double check indexes
         if (
             !isset(
-            $event_array['eid'],
-            $event_array['type']
-        )
+                $event_array['eid'],
+                $event_array['type']
+            )
         ) {
             show_404();
         }
@@ -2023,11 +2023,11 @@ class Home extends CI_Controller
         // Double check indexes
         if (
             !isset(
-            $event_array['id'],
-            $event_array['type'],
-            $event_array['cid'],
-            $event_array['cname']
-        )
+                $event_array['id'],
+                $event_array['type'],
+                $event_array['cid'],
+                $event_array['cname']
+            )
         ) {
             show_404();
         }
@@ -2316,5 +2316,37 @@ class Home extends CI_Controller
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/dynamic_pages');
         $this->load->view($this->footer);
+    }
+
+
+
+    public function saveCookieData()
+    {
+        $this->load->model('settings_model');
+        $post = $this->input->post(NULL, TRUE);
+
+        $ip = getUserIP();
+
+        $insertData = [];
+        $insertData['client_ip'] = $ip;
+        $insertData['client_agent'] = $post['userAgent'];
+        $insertData['page_url'] = $post['currentUrl'];
+        $insertData['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        $this->settings_model->insert_cookie_log($insertData);      
+    }
+
+
+    function getUserIP()
+    {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            // Shared internet or proxy
+            return $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            // Proxy or load balancer
+            return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
+        } else {
+            // Direct connection
+            return $_SERVER['REMOTE_ADDR'];
+        }
     }
 }

@@ -1,12 +1,15 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Portal_email_templates extends Public_Controller {
-    public function __construct() {
+class Portal_email_templates extends Public_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('portal_email_templates_model');
     }
 
-    public function index() {
+    public function index()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -24,9 +27,9 @@ class Portal_email_templates extends Public_Controller {
             $data['employer_id'] = $employer_id;
             $data['company_id'] = $company_id;
             $data['company_name'] = $company_name;
-            
+
             $this->form_validation->set_rules('perform_action', 'perform_action', 'trim|xss_clean|required');
-            
+
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
                 $this->load->view('email_templates/portal_email_templates');
@@ -38,7 +41,7 @@ class Portal_email_templates extends Public_Controller {
                     case 'save_template':
                         $template_name = $this->input->post('template_name');
                         $template_subject = $this->input->post('template_subject');
-                        $template_body = $this->input->post('template_body');
+                        $template_body = $this->input->post('template_body', false);
                         $company_sid = $this->input->post('company_sid');
                         $company_name = $this->input->post('company_name');
                         $data_to_insert = array();
@@ -82,7 +85,8 @@ class Portal_email_templates extends Public_Controller {
         }
     }
 
-    public function add_email_template() {
+    public function add_email_template()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -96,14 +100,14 @@ class Portal_email_templates extends Public_Controller {
             $data['company_name'] = $data['session']['company_detail']['CompanyName'];
             $names = array();
             $temp_names = $this->portal_email_templates_model->get_company_custom_template_names($company_id);
-            foreach($temp_names as $name){
+            foreach ($temp_names as $name) {
                 $names[] = strtolower($name['template_name']);
             }
             $data['names'] = json_encode($names);
             if (isset($_POST['action']) && $_POST['action'] == 'edit_email_template') {
                 $template_name = $this->input->post('template_name');
                 $template_subject = $this->input->post('subject');
-                $template_body = $this->input->post('message_body');
+                $template_body = $this->input->post('message_body', false);
                 $company_sid = $this->input->post('company_sid');
                 $company_name = $this->input->post('company_name');
                 $from_name = $this->input->post('from_name');
@@ -152,7 +156,8 @@ class Portal_email_templates extends Public_Controller {
         }
     }
 
-    public function edit_email_template($sid = null) {
+    public function edit_email_template($sid = null)
+    {
         if ($this->session->userdata('logged_in')) {
             if (!empty($sid) || $sid != null) {
                 $data['session'] = $this->session->userdata('logged_in');
@@ -171,8 +176,8 @@ class Portal_email_templates extends Public_Controller {
                     $data['template_data'] = $template_data[0];
 
                     $names = array();
-                    $temp_names = $this->portal_email_templates_model->get_company_custom_template_names($company_id,$sid);
-                    foreach($temp_names as $name){
+                    $temp_names = $this->portal_email_templates_model->get_company_custom_template_names($company_id, $sid);
+                    foreach ($temp_names as $name) {
                         $names[] = strtolower($name['template_name']);
                     }
                     $data['names'] = json_encode($names);
@@ -182,7 +187,7 @@ class Portal_email_templates extends Public_Controller {
                         $from_name = $formpost['from_name'];
                         //$from_email                                         = $formpost['from_email'];
                         $subject = $formpost['subject'];
-                        $message_body = $formpost['message_body'];
+                        $message_body = $this->input->post('message_body', false);
                         $enable_auto_responder = 0;
 
                         if (isset($formpost['enable_auto_responder'])) {
@@ -207,7 +212,6 @@ class Portal_email_templates extends Public_Controller {
                         }
 
                         $this->portal_email_templates_model->update_email_template($data_to_save, $sid);
-
                         foreach ($file_names as $key => $file_name) {
                             $attachment_data = array();
                             $attachment_data['company_sid'] = $company_id;
@@ -226,45 +230,44 @@ class Portal_email_templates extends Public_Controller {
                     $attachments = $this->portal_email_templates_model->get_all_email_template_attachments($sid);
 
                     if (!empty($attachments)) {
-                        foreach ($attachments as $key => $attachment) 
-                        {
+                        foreach ($attachments as $key => $attachment) {
                             $attached_document = $attachment['attachment_aws_file'];
-                            $file_name = explode(".",$attached_document); 
+                            $file_name = explode(".", $attached_document);
                             $document_name = $file_name[0];
                             $document_extension = $file_name[1];
 
                             if ($document_extension == 'pdf') {
-                                $attachments[$key]['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pdf';
+                                $attachments[$key]['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
                             } else if ($document_extension == 'doc') {
-                                $attachments[$key]['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edoc&wdAccPdf=0';
+                                $attachments[$key]['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
                             } else if ($document_extension == 'docx') {
-                                $attachments[$key]['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edocx&wdAccPdf=0';
-                            } else if ($document_extension =='xls') {
-                                $attachments[$key]['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exls';
+                                $attachments[$key]['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+                            } else if ($document_extension == 'xls') {
+                                $attachments[$key]['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exls';
                             } else if ($document_extension == 'xlsx') {
-                                $attachments[$key]['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exlsx';
+                                $attachments[$key]['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exlsx';
                             } else if ($document_extension == 'csv') {
-                                $attachments[$key]['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.csv';
+                                $attachments[$key]['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.csv';
 
                             } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
-                                $attachments[$key]['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/'.$document_sid);
-                            }  
+                                $attachments[$key]['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document_sid);
+                            }
 
-                            $attachments[$key]['download_url'] = base_url('hr_documents_management/download_upload_document/'.$attached_document);
-                        }  
+                            $attachments[$key]['download_url'] = base_url('hr_documents_management/download_upload_document/' . $attached_document);
+                        }
                     }
-                
+
                     $data['attachments'] = $attachments;
-                    
+
                     $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
-                    
+
                     if ($this->form_validation->run() == false) {
                         $this->load->view('main/header', $data);
                         $this->load->view('email_templates/portal_edit_email_templates');
                         $this->load->view('main/footer');
                     } else {
                         $perform_action = $this->input->post('perform_action');
-                        
+
                         switch ($perform_action) {
                             case 'delete_attachment':
                                 $attachment_sid = $this->input->post('attachment_sid');
@@ -288,23 +291,25 @@ class Portal_email_templates extends Public_Controller {
         }
     }
 
-    public function ajax_handler(){
-        if($this->input->is_ajax_request()){
+    public function ajax_handler()
+    {
+        if ($this->input->is_ajax_request()) {
             $id = $this->input->post('id');
             $this->portal_email_templates_model->delete_custom_email_template($id);
             echo 1;
-        }else{
+        } else {
             echo 0;
         }
     }
 
-    private function upload_multiple_attachments($company_sid, $employer_sid, $document_name) {
+    private function upload_multiple_attachments($company_sid, $employer_sid, $document_name)
+    {
         $aws_file_names = array();
-        
+
         foreach ($_FILES as $key => $file) {
             $original_name = 'empty';
             if (isset($_FILES[$key]) && $_FILES[$key]['name'] != '') {
-               $original_name = $_FILES[$key]['name'];
+                $original_name = $_FILES[$key]['name'];
                 if ($_FILES[$key]['size'] == 0) {
                     $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
                     $result = 'error';

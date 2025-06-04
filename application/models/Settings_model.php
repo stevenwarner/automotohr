@@ -1,12 +1,15 @@
-<?php 
-class Settings_model extends CI_Model {
-    function __construct() {
+<?php
+class Settings_model extends CI_Model
+{
+    function __construct()
+    {
         parent::__construct();
     }
 
-    function Get_all_admin_invoices($page_number, $invoices_per_page, $company_sid = null, $invoice_status = 'active') {
+    function Get_all_admin_invoices($page_number, $invoices_per_page, $company_sid = null, $invoice_status = 'active')
+    {
         $offset = 0;
-        
+
         if ($page_number > 1) {
             $offset = ($page_number - 1) * $invoices_per_page;
         }
@@ -20,7 +23,7 @@ class Settings_model extends CI_Model {
         }
 
         $this->db->where('invoice_status', $invoice_status);
-        
+
         $records_obj = $this->db->get('admin_invoices');
         $invoices = $records_obj->result_array();
         $records_obj->free_result();
@@ -29,7 +32,7 @@ class Settings_model extends CI_Model {
             foreach ($invoices as $key => $invoice) {
                 $this->db->select('item_name');
                 $this->db->where('invoice_sid', $invoice['sid']);
-                
+
                 $records_obj = $this->db->get('admin_invoice_items');
                 $invoice_item_names = $records_obj->result_array();
                 $records_obj->free_result();
@@ -45,10 +48,11 @@ class Settings_model extends CI_Model {
         return $invoices;
     }
 
-    function Get_admin_invoice($invoice_sid, $get_items = false) {
+    function Get_admin_invoice($invoice_sid, $get_items = false)
+    {
         $this->db->select('*');
         $this->db->where('sid', $invoice_sid);
-        
+
         $records_obj = $this->db->get('admin_invoices');
         $invoice = $records_obj->result_array();
         $records_obj->free_result();
@@ -70,7 +74,8 @@ class Settings_model extends CI_Model {
         return $invoice;
     }
 
-    public function insert_company_timezone_modification_history($company_sid, $employer_sid, $timezone) {
+    public function insert_company_timezone_modification_history($company_sid, $employer_sid, $timezone)
+    {
         $data_to_insert = array();
         $data_to_insert['company_sid'] = $company_sid;
         $data_to_insert['modified_by'] = $employer_sid;
@@ -80,7 +85,8 @@ class Settings_model extends CI_Model {
         $this->db->insert('company_timezone_modification_history', $data_to_insert);
     }
 
-    public function get_unpaid_admin_invoices($company_sid) {
+    public function get_unpaid_admin_invoices($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('payment_status', 'unpaid');
         $this->db->where('company_sid', $company_sid);
@@ -94,7 +100,8 @@ class Settings_model extends CI_Model {
         return $records_arr;
     }
 
-    public function get_admin_invoices($sids = array()) {
+    public function get_admin_invoices($sids = array())
+    {
         $this->db->select('*');
         $this->db->where_in('sid', $sids);
         $this->db->from('admin_invoices');
@@ -104,7 +111,8 @@ class Settings_model extends CI_Model {
         return $records_arr;
     }
 
-    public function get_job_listing_template_group_template_ids($template_group_sid) {
+    public function get_job_listing_template_group_template_ids($template_group_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $template_group_sid);
         $record_obj = $this->db->get('portal_job_listing_template_groups');
@@ -125,7 +133,8 @@ class Settings_model extends CI_Model {
         }
     }
 
-    public function get_job_listing_templates($template_sids) {
+    public function get_job_listing_templates($template_sids)
+    {
         $this->db->select('title, sid');
 
         if (!empty($template_sids) && is_array($template_sids)) {
@@ -138,7 +147,8 @@ class Settings_model extends CI_Model {
         return $record_arr;
     }
 
-    public function get_job_listing_template($template_sid) {
+    public function get_job_listing_template($template_sid)
+    {
         $this->db->select('*');
         $this->db->where('sid', $template_sid);
         $record_obj = $this->db->get('portal_job_listing_templates');
@@ -152,7 +162,8 @@ class Settings_model extends CI_Model {
         }
     }
 
-    function job_fair_configuration($company_sid) {
+    function job_fair_configuration($company_sid)
+    {
         $this->db->select('status');
         $this->db->where('company_sid', $company_sid);
         $record_obj = $this->db->get('job_fairs_recruitment');
@@ -166,7 +177,8 @@ class Settings_model extends CI_Model {
         }
     }
 
-    function get_job_fair_data($company_sid) {
+    function get_job_fair_data($company_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('status', 1);
@@ -176,7 +188,8 @@ class Settings_model extends CI_Model {
         return $record_arr;
     }
 
-    function fetch_active_job_fair_title($company_sid) {
+    function fetch_active_job_fair_title($company_sid)
+    {
         $this->db->select('title');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('status', 1);
@@ -204,7 +217,8 @@ class Settings_model extends CI_Model {
         return $record_arr;
     }
 
-    function check_reassign_candidate($sid) {
+    function check_reassign_candidate($sid)
+    {
         $this->db->select('sid');
         $this->db->where('company_sid', $sid);
         $record_obj = $this->db->get('reassign_candidate_companies');
@@ -217,14 +231,15 @@ class Settings_model extends CI_Model {
             return false;
         }
     }
-    
-    function fetch_details($id) {
+
+    function fetch_details($id)
+    {
         $this->db->select('mykey, myvalue, mydomain, mytype, mysec');
         $this->db->where('myid', $id);
         $record_obj = $this->db->get('portal_themes_data');
         $result = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($result)) {
             $data = $result[0];
             $sec = $data['mysec'];
@@ -232,14 +247,20 @@ class Settings_model extends CI_Model {
             $key = $data['mykey'];
             $value = $data['myvalue'];
 
-            $enc = openssl_decrypt($type,"AES-128-ECB",$sec);
-            $key = openssl_decrypt($key,$enc,$sec);
-            $value = openssl_decrypt($value,$enc,$sec);
-            
+            $enc = openssl_decrypt($type, "AES-128-ECB", $sec);
+            $key = openssl_decrypt($key, $enc, $sec);
+            $value = openssl_decrypt($value, $enc, $sec);
+
             return array('auth_user' => $key, 'auth_pass' => $value);
         } else {
             return array();
         }
     }
 
+
+    //
+    public function insert_cookie_log($data)
+    {
+        $this->db->insert('cookie_log_data', $data);
+    }
 }

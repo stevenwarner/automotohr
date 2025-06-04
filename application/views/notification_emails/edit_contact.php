@@ -35,7 +35,9 @@
                                                                             echo base_url("notification_emails/default_approvers");
                                                                         } else if ($notification_type == 'course_status') {
                                                                             echo base_url("notification_emails/courses");
-                                                                        } else {
+                                                                        }  else if ($notification_type == 'scheduled_documents_status') {
+                                                                            echo base_url("notification_emails/scheduleddocuments");
+                                                                        }else {
                                                                             echo base_url('notification_emails/new_applicant_notifications');
                                                                         }
                                                                         ?>">
@@ -127,6 +129,8 @@
                                                                     echo base_url("notification_emails/default_approvers");
                                                                 } else if ($notification_type == 'course_status') {
                                                                     echo base_url("notification_emails/courses");
+                                                                }else if ($notification_type == 'scheduled_documents_status') {
+                                                                    echo base_url("notification_emails/scheduleddocuments");
                                                                 } else {
                                                                     echo base_url('notification_emails/new_applicant_notifications');
                                                                 }
