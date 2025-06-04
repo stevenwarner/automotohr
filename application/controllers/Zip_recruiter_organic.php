@@ -1,69 +1,74 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 require_once(APPPATH . 'libraries/aws/aws.php');
 ini_set('memory_limit', '50M');
 
-class Zip_recruiter_organic extends CI_Controller {
+class Zip_recruiter_organic extends CI_Controller
+{
 
     private $path;
     private $debug_email = TO_EMAIL_DEV;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('all_feed_model');
         $this->load->model('users_model');
     }
     /**
- * 
- */
-private function addLastRead($sid){
-    $this->db
-    ->where('sid', $sid)
-    ->set([
-        'last_read' => date('Y-m-d H:i:s', strtotime('now')),
-        'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
-    ])->update('job_feeds_management');
-    //
-    $this->db
-    ->insert('job_feeds_management_history', [
-        'feed_id' => $sid,
-        'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
-        'created_at' => date('Y-m-d H:i:s', strtotime('now'))
-    ]);
-}
+     * 
+     */
+    private function addLastRead($sid)
+    {
+        $this->db
+            ->where('sid', $sid)
+            ->set([
+                'last_read' => date('Y-m-d H:i:s', strtotime('now')),
+                'referral' => !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : ''
+            ])->update('job_feeds_management');
+        //
+        $this->db
+            ->insert('job_feeds_management_history', [
+                'feed_id' => $sid,
+                'referral' => !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '',
+                'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+            ]);
+    }
     /**
      * 
      */
-    private function addReport($source, $email, $type = 'add'){
-        if($type == 'add'){
+    private function addReport($source, $email, $type = 'add')
+    {
+        if ($type == 'add') {
             $this->db
-            ->insert('daily_job_counter', [
-                'source' => $source,
-                'email' => $email,
-                'created_at' => date('Y-m-d H:i:s', strtotime('now')),
-                'already_exists' => 0
-            ]);
-        } else{
+                ->insert('daily_job_counter', [
+                    'source' => $source,
+                    'email' => $email,
+                    'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                    'already_exists' => 0
+                ]);
+        } else {
             $this->db
-            ->where('email', $email)
-            ->where('created_at', date('Y-m-d H:i:s', strtotime('now')))
-            ->update('daily_job_counter', [
-                'already_exists' => 1
-            ]);
+                ->where('email', $email)
+                ->where('created_at', date('Y-m-d H:i:s', strtotime('now')))
+                ->update('daily_job_counter', [
+                    'already_exists' => 1
+                ]);
         }
     }
 
-    public function index($generateXML = null) {
+    public function index($generateXML = null)
+    {
         $sid = $this->isActiveFeed();
         $this->addLastRead(4);
         $isOld = TRUE;
         // Added on: 05-08-2019
         // Load the XML file ifgenerate check is false
         //if($generateXML == 'dwwbtQzuoHI9d5TEIKBKDGWwuioGEUlRuSidW8wQ4zSUHIl9gBxRx18Z3Dqk5HV7ZNCbu2ZfkjFVLHWINnM5uzMkUfIiINdZ19NJj' ) { $isOld = FALSE; $this->index_new(); $isOld = TRUE; }
-      //  mail(TO_EMAIL_DEV, 'Feed XML - Zip: ' . date('Y-m-d H:i:s'), 'Pinged');
+        //  mail(TO_EMAIL_DEV, 'Feed XML - Zip: ' . date('Y-m-d H:i:s'), 'Pinged');
         //
         $featuredArray = array();
         // For old flow
-        if($isOld){
+        if ($isOld) {
             //
             $featuredJobs = $this->all_feed_model->get_all_company_jobs_ams();
             $activeCompaniesArray = $this->all_feed_model->get_all_active_companies($sid);
@@ -85,11 +90,12 @@ private function addLastRead($sid){
         //
         $newArray = array();
 
-        foreach($organicJobData as $job) {
+        foreach ($organicJobData as $job) {
             if (in_array($job['user_sid'], $activeCompaniesArray)) {
                 $company_id = $job['user_sid'];
                 $companyPortal = $this->all_feed_model->get_portal_detail($company_id);
-                if(!isset($companyPortal['sub_domain'])) continue;
+                if (!isset($companyPortal['sub_domain']))
+                    continue;
                 $companyDetail = $this->all_feed_model->get_company_detail($company_id);
                 $companyName = $companyDetail['CompanyName'];
                 $has_job_approval_rights = $companyDetail['has_job_approval_rights'];
@@ -99,10 +105,10 @@ private function addLastRead($sid){
 
 
 
-                if($has_job_approval_rights ==  1) {
+                if ($has_job_approval_rights == 1) {
                     $approval_right_status = $job['approval_status'];
 
-                    if($approval_right_status != 'approved') {
+                    if ($approval_right_status != 'approved') {
                         continue;
                     }
                 }
@@ -111,7 +117,7 @@ private function addLastRead($sid){
                 $publish_date = $job['activation_date'];
                 $feed_data = $this->all_feed_model->fetch_uid_from_job_sid($uid);
 
-                if(!empty($feed_data)){
+                if (!empty($feed_data)) {
                     $uid = $feed_data['uid'];
                     $publish_date = $feed_data['publish_date'];
                 }
@@ -162,30 +168,30 @@ private function addLastRead($sid){
                     $jobType = "";
                 }
 
-                $jobDescription ="Job Description:".'<br /><br />'.str_replace('"', "'", strip_tags($job['JobDescription'], '<br>'));
+                $jobDescription = "Job Description:" . '<br /><br />' . str_replace('"', "'", strip_tags($job['JobDescription'], '<br>'));
                 if (isset($job['JobRequirements']) && $job['JobRequirements'] != NULL) {
-                    $jobDescription .= '<br /><br />'." Job Requirement:".str_replace('"', "'", strip_tags($job['JobRequirements'], '<br>'));
+                    $jobDescription .= '<br /><br />' . " Job Requirement:" . str_replace('"', "'", strip_tags($job['JobRequirements'], '<br>'));
                 } else {
                     $jobRequirements = "";
                 }
                 //
                 $newArray[] = array(
                     'title' => $job['Title'],
-                    'dateo'  =>  ($publish_date),
-                    'date'  =>  date_with_time($publish_date),
-                    'referencenumber'  => $uid,
-                    'company'  => $companyName,
-                    'city'  => $city,
-                    'state'  => $state['state_name'],
-                    'country'  => $country['country_code'],
-                    'postalcode'  => $zipcode,
-                    'description'  => $jobDescription
+                    'dateo' => ($publish_date),
+                    'date' => date_with_time($publish_date),
+                    'referencenumber' => $uid,
+                    'company' => $companyName,
+                    'city' => $city,
+                    'state' => $state['state_name'],
+                    'country' => $country['country_code'],
+                    'postalcode' => $zipcode,
+                    'description' => $jobDescription
                 );
             }
         }
 
         $rows = '';
-        if(sizeof($newArray)){
+        if (sizeof($newArray)) {
             $columns = array_column($newArray, 'dateo');
             array_multisort($columns, SORT_DESC, $newArray);
             //
@@ -198,7 +204,7 @@ private function addLastRead($sid){
                 <city><![CDATA[" . $v0['city'] . "]]></city>
                 <state><![CDATA[" . $v0['state'] . "]]></state>
                 <country><![CDATA[" . $v0['country'] . "]]></country>
-                ".( $v0['postalcode'] == '' ? '<postalcode />' :  '<postalcode><![CDATA[' . $v0['postalcode'] . ']]></postalcode>' )."
+                " . ($v0['postalcode'] == '' ? '<postalcode />' : '<postalcode><![CDATA[' . $v0['postalcode'] . ']]></postalcode>') . "
                 <description><![CDATA[" . $v0['description'] . "]]></description>
 				<email />
 				<url />
@@ -211,25 +217,26 @@ private function addLastRead($sid){
         header('Pragma: public');
         header('Cache-control: private');
         header('Expires: -1');
-		$row = '
+        $row = '
     		<?xml version="1.0" encoding="utf-8"?>
     		<source>
-    			<publisher>'.(STORE_NAME).'</publisher>
-    			<publisherurl><![CDATA['.(STORE_FULL_URL_SSL).']]></publisherurl>
-    			<lastBuildDate>'.(date('D, d M Y h:i:s')).' PST</lastBuildDate>
-    			'.$rows.'
+    			<publisher>' . (STORE_NAME) . '</publisher>
+    			<publisherurl><![CDATA[' . (STORE_FULL_URL_SSL) . ']]></publisherurl>
+    			<lastBuildDate>' . (date('D, d M Y h:i:s')) . ' PST</lastBuildDate>
+    			' . $rows . '
     		</source>
         ';
         //
         echo trim($row);
-        mail(TO_EMAIL_DEV, 'Feed XML - Zip Data: ' . date('Y-m-d H:i:s'), print_r($newArray, true));
-        @mail('mubashir.saleemi123@gmail.com', 'Ziprecruiter Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($rows));
+        // mail(TO_EMAIL_DEV, 'Feed XML - Zip Data: ' . date('Y-m-d H:i:s'), print_r($newArray, true));
+        // @mail('mubashir.saleemi123@gmail.com', 'Ziprecruiter Feed - HIT on ' . date('Y-m-d H:i:s') . '', count($rows));
 
         //echo xml_template_indeed($rows);
         exit;
     }
 
-    public function zipPostUrl() {
+    public function zipPostUrl()
+    {
         $this->addLastRead(10);
         $this->output->set_content_type('application/json');
         $this->output->set_header('Accept: */*');
@@ -240,13 +247,14 @@ private function addLastRead($sid){
         $insert_job_list = array();
         //  mail('mubashir.saleemi123@gmail.com', 'ZipRecruter Request -' . date('Y-m-d H:i:s'),' Pinged');
         //
-        @mail('mubashir.saleemi123@gmail.com', 'ZipRecruter - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
+        @mail(OFFSITE_DEV_EMAIL, 'ZipRecruter - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', (file_get_contents('php://input')));
         //
-        $folder = APPPATH.'../../applicant/zipRecruter';
+        $folder = APPPATH . '../../applicant/zipRecruter';
         //
-        if(!is_dir($folder)) mkdir($folder, 0777, true);
+        if (!is_dir($folder))
+            mkdir($folder, 0777, true);
         // 
-        $categories_file = fopen($folder.'/ZipRecruter_Applicant_Recieve_' . date('Y_m_d_H_i_s') . '.json', 'w');
+        $categories_file = fopen($folder . '/ZipRecruter_Applicant_Recieve_' . date('Y_m_d_H_i_s') . '.json', 'w');
         //
         fwrite($categories_file, file_get_contents('php://input'));
         //
@@ -256,10 +264,10 @@ private function addLastRead($sid){
             try {
                 $jSonData = file_get_contents('php://input');
                 $data = json_decode(trim($jSonData), true);
-				 // mail($this->debug_email, 'ZipRecruiter applicant Full Data - AWS Server: ' . date('Y-m-d H:i:s'), print_r($data, true));
-              //  mail('mubashir.saleemi123@gmail.com', 'ZipRecruter Request Headers -' . date('Y-m-d H:i:s'), print_r($data, true));
+                // mail($this->debug_email, 'ZipRecruiter applicant Full Data - AWS Server: ' . date('Y-m-d H:i:s'), print_r($data, true));
+                //  mail('mubashir.saleemi123@gmail.com', 'ZipRecruter Request Headers -' . date('Y-m-d H:i:s'), print_r($data, true));
 
-                if(!empty($data)){
+                if (!empty($data)) {
                     $name = $data['name'];
                     $first_name = $data['first_name'];
                     $last_name = $data['last_name'];
@@ -274,7 +282,7 @@ private function addLastRead($sid){
                      */
                     $this->addReport('ZipRecruiter', $data['email']);
 
-                    if(!is_numeric($job_sid)){
+                    if (!is_numeric($job_sid)) {
                         $job_sid = $this->all_feed_model->fetch_job_id_from_random_key($job_sid);
                     }
 
@@ -283,7 +291,7 @@ private function addLastRead($sid){
                     $referer = 'https://www.ziprecruiter.com/';
                     $userAgent = '';
 
-                    if(!empty($resume)) { //Generate Resume - Start
+                    if (!empty($resume)) { //Generate Resume - Start
                         $file_name = 'resume_ziprecruiter_' . clean($first_name) . '_' . clean($last_name) . '_' . date('YmdHis') . '.pdf';
                         $file_location = sys_get_temp_dir();
                         $file_path = $file_location . '/' . $file_name;
@@ -295,7 +303,7 @@ private function addLastRead($sid){
                         unlink($file_path);
                     } //Generate Resume - End
 
-                    if(!empty($job_details)){
+                    if (!empty($job_details)) {
                         $company_sid = $job_details['user_sid'];
                         $company_name = $this->all_feed_model->get_company_name_by_id($company_sid);
                         $all_status = $this->all_feed_model->get_default_status_sid_and_text($company_sid);
@@ -348,8 +356,16 @@ private function addLastRead($sid){
                             $portal_applicant_jobs_list_sid = $jobs_list_result[0];
                             $job_added_successfully = $jobs_list_result[1];
 
+                            // Send applicant to the queue
+                            storeApplicantInQueueToProcess([
+                                "portal_job_applications_sid" => $job_applications_sid,
+                                "portal_applicant_job_sid" => $portal_applicant_jobs_list_sid,
+                                "job_sid" => $job_sid,
+                                "company_sid" => $company_sid,
+                            ]);
+
                             $my_debug_message = '<br><pre>' . print_r($insert_data_primary, true) . print_r($insert_job_list, true) . '</pre>';
-//                            mail($this->debug_email, 'ZipRecruiter Direct Applicant Data AWS' . $date_applied, $my_debug_message);
+                            //                            mail($this->debug_email, 'ZipRecruiter Direct Applicant Data AWS' . $date_applied, $my_debug_message);
 
                             $acknowledgement_email_data['company_name'] = $company_name;
                             $acknowledgement_email_data['sid'] = $job_applications_sid;
@@ -370,7 +386,7 @@ private function addLastRead($sid){
                             $replacement_array['job_title'] = $job_details['Title'];
                             $replacement_array['phone_number'] = $phone;
                             $replacement_array['original_job_title'] = $original_job_title;
-                            $profile_anchor = '<a href="'.base_url('applicant_profile/'.$job_applications_sid.'/'.$portal_applicant_jobs_list_sid).'" style="'.DEF_EMAIL_BTN_STYLE_DANGER.'"  download="resume" >View Profile</a>';
+                            $profile_anchor = '<a href="' . base_url('applicant_profile/' . $job_applications_sid . '/' . $portal_applicant_jobs_list_sid) . '" style="' . DEF_EMAIL_BTN_STYLE_DANGER . '"  download="resume" >View Profile</a>';
 
                             if (isset($city_name)) {
                                 $replacement_array['city'] = $city_name;
@@ -402,98 +418,99 @@ private function addLastRead($sid){
                                         $replacement_array['email'] = $email;
                                         $replacement_array['company_name'] = $company_name;
                                         $replacement_array['resume_link'] = $resume_anchor;
-                                        $replacement_array['applicant_profile_link']   = $profile_anchor;
+                                        $replacement_array['applicant_profile_link'] = $profile_anchor;
                                         log_and_send_templated_notification_email(APPLY_ON_JOB_EMAIL_ID, $contact['email'], $replacement_array, $message_hf, $company_sid, $job_sid, 'new_applicant_notification');
                                     }
                                     // mail($this->debug_email, 'Zip Applicant Notification', print_r($replacement_array, true ));
                                 } /* else {
-                                    if (!empty($company_primary_admin_info)) {
-                                        $admin_first_name = $company_primary_admin_info['first_name'];
-                                        $admin_last_name = $company_primary_admin_info['last_name'];
-                                        $admin_email = $company_primary_admin_info['email'];
-                                        $contact_name = ucwords($admin_first_name . ' ' . $admin_last_name);
-                                        $replacement_array['firstname'] = $first_name;
-                                        $replacement_array['lastname'] = $last_name;
-                                        $replacement_array['email'] = $email;
-                                        $replacement_array['original_job_title'] = $original_job_title;
-                                        $replacement_array['company_name'] = $company_name;
-                                        $replacement_array['resume_link'] = $resume_anchor;
-                                        log_and_send_templated_notification_email(APPLY_ON_JOB_EMAIL_ID, $admin_email, $replacement_array, $message_hf, $company_sid, $job_sid, 'new_applicant_notification');
-                                    }
-                                } */
+                     if (!empty($company_primary_admin_info)) {
+                         $admin_first_name = $company_primary_admin_info['first_name'];
+                         $admin_last_name = $company_primary_admin_info['last_name'];
+                         $admin_email = $company_primary_admin_info['email'];
+                         $contact_name = ucwords($admin_first_name . ' ' . $admin_last_name);
+                         $replacement_array['firstname'] = $first_name;
+                         $replacement_array['lastname'] = $last_name;
+                         $replacement_array['email'] = $email;
+                         $replacement_array['original_job_title'] = $original_job_title;
+                         $replacement_array['company_name'] = $company_name;
+                         $replacement_array['resume_link'] = $resume_anchor;
+                         log_and_send_templated_notification_email(APPLY_ON_JOB_EMAIL_ID, $admin_email, $replacement_array, $message_hf, $company_sid, $job_sid, 'new_applicant_notification');
+                     }
+                 } */
                             }
 
-                //check if screening Questionnaire is attached to the job - If Yes, Send screen questionnaire email to applicant ***  START ***
-                        $questionnaire_sid = $job_details['questionnaire_sid'];
+                            //check if screening Questionnaire is attached to the job - If Yes, Send screen questionnaire email to applicant ***  START ***
+                            $questionnaire_sid = $job_details['questionnaire_sid'];
 
-                        if($questionnaire_sid > 0) {
-                            $questionnaire_status = $this->all_feed_model->check_screening_questionnaires($questionnaire_sid);
+                            if ($questionnaire_sid > 0) {
+                                $questionnaire_status = $this->all_feed_model->check_screening_questionnaires($questionnaire_sid);
 
-                            if($questionnaire_status == 'found') {
-                                $email_template_information = $this->all_feed_model->get_email_template_data(SCREENING_QUESTIONNAIRE_FOR_JOB);
-                                $screening_questionnaire_key = $this->all_feed_model->generate_questionnaire_key($portal_applicant_jobs_list_sid);
+                                if ($questionnaire_status == 'found') {
+                                    $email_template_information = $this->all_feed_model->get_email_template_data(SCREENING_QUESTIONNAIRE_FOR_JOB);
+                                    $screening_questionnaire_key = $this->all_feed_model->generate_questionnaire_key($portal_applicant_jobs_list_sid);
 
-                                if(empty($email_template_information)) {
-                                    $email_template_information = array('subject' =>'{{company_name}} - Screening Questionnaire for {{job_title}}',
-                                                                    'text' => '<p>Dear {{applicant_name}},</p>
+                                    if (empty($email_template_information)) {
+                                        $email_template_information = array(
+                                            'subject' => '{{company_name}} - Screening Questionnaire for {{job_title}}',
+                                            'text' => '<p>Dear {{applicant_name}},</p>
                                                                             <p>You have successfully applied for the job: "{{job_title}}" and your job application is in our system. </p>
                                                                             <p><strong>Please complete the Job Screening Questionnaire by clicking on the link below. We are excited to learn more about you. </strong></p>
                                                                             <p>{{url}}</p>
                                                                             <p>Thank you, again, for your interest in {{company_name}}</p>',
-                                                                    'from_name' => '{{company_name}}'
-                                                                );
-                                }
-
-                                $emailTemplateBody = $email_template_information['text'];
-                                $emailTemplateSubject = $email_template_information['subject'];
-                                $emailTemplateFromName = $email_template_information['from_name'];
-                                $replacement_array = array();
-                                $replacement_array['company_name'] = $company_name;
-
-                                if($original_job_title != '') {
-                                    $replacement_array['job_title'] = $original_job_title;
-                                } else {
-                                    $replacement_array['job_title'] = $job_details['Title'];
-                                }
-
-                                $replacement_array['applicant_name'] = $first_name.'&nbsp;'.$last_name;
-                                $replacement_array['url'] = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'Job_screening_questionnaire/' . $screening_questionnaire_key . '" target="_blank">Screening Questionnaire</a>';
-
-                                if (!empty($replacement_array)) {
-                                    foreach ($replacement_array as $key => $value) {
-                                        $emailTemplateBody = str_replace('{{' . $key . '}}', $value, $emailTemplateBody);
-                                        $emailTemplateSubject = str_replace('{{' . $key . '}}', $value, $emailTemplateSubject);
-                                        $emailTemplateFromName = str_replace('{{' . $key . '}}', $value, $emailTemplateFromName);
+                                            'from_name' => '{{company_name}}'
+                                        );
                                     }
+
+                                    $emailTemplateBody = $email_template_information['text'];
+                                    $emailTemplateSubject = $email_template_information['subject'];
+                                    $emailTemplateFromName = $email_template_information['from_name'];
+                                    $replacement_array = array();
+                                    $replacement_array['company_name'] = $company_name;
+
+                                    if ($original_job_title != '') {
+                                        $replacement_array['job_title'] = $original_job_title;
+                                    } else {
+                                        $replacement_array['job_title'] = $job_details['Title'];
+                                    }
+
+                                    $replacement_array['applicant_name'] = $first_name . '&nbsp;' . $last_name;
+                                    $replacement_array['url'] = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'Job_screening_questionnaire/' . $screening_questionnaire_key . '" target="_blank">Screening Questionnaire</a>';
+
+                                    if (!empty($replacement_array)) {
+                                        foreach ($replacement_array as $key => $value) {
+                                            $emailTemplateBody = str_replace('{{' . $key . '}}', $value, $emailTemplateBody);
+                                            $emailTemplateSubject = str_replace('{{' . $key . '}}', $value, $emailTemplateSubject);
+                                            $emailTemplateFromName = str_replace('{{' . $key . '}}', $value, $emailTemplateFromName);
+                                        }
+                                    }
+
+                                    $message_data = array();
+                                    $message_data['to_id'] = $email;
+                                    $message_data['from_type'] = 'employer';
+                                    $message_data['to_type'] = 'admin';
+                                    $message_data['job_id'] = $job_applications_sid;
+                                    $message_data['users_type'] = 'applicant';
+                                    $message_data['subject'] = $emailTemplateSubject;
+                                    $message_data['message'] = $emailTemplateBody;
+                                    $message_data['date'] = $date_applied;
+                                    $message_data['from_id'] = REPLY_TO;
+                                    $message_data['contact_name'] = $first_name . '&nbsp;' . $last_name;
+                                    $message_data['identity_key'] = generateRandomString(48);
+                                    $message_hf = message_header_footer_domain($company_sid, $company_name);
+                                    $secret_key = $message_data['identity_key'] . "__";
+                                    $autoemailbody = $message_hf['header']
+                                        . $emailTemplateBody
+                                        . $message_hf['footer']
+                                        . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                                        . $secret_key . '</div>';
+
+                                    //sendMail(REPLY_TO, $email, $emailTemplateSubject, $autoemailbody, $company_name, REPLY_TO);
+                                    sendMail(REPLY_TO, $this->debug_email, $emailTemplateSubject . ' ZiP', $autoemailbody, $company_name, REPLY_TO);
+                                    $sent_to_pm = common_save_message($message_data, NULL);
+                                    $this->all_feed_model->update_questionnaire_status($portal_applicant_jobs_list_sid);
                                 }
-
-                                $message_data = array();
-                                $message_data['to_id'] = $email;
-                                $message_data['from_type'] = 'employer';
-                                $message_data['to_type'] = 'admin';
-                                $message_data['job_id'] = $job_applications_sid;
-                                $message_data['users_type'] = 'applicant';
-                                $message_data['subject'] = $emailTemplateSubject;
-                                $message_data['message'] = $emailTemplateBody;
-                                $message_data['date'] = $date_applied;
-                                $message_data['from_id'] = REPLY_TO;
-                                $message_data['contact_name'] = $first_name.'&nbsp;'.$last_name;
-                                $message_data['identity_key'] = generateRandomString(48);
-                                $message_hf = message_header_footer_domain($company_sid, $company_name);
-                                $secret_key = $message_data['identity_key'] . "__";
-                                $autoemailbody = $message_hf['header']
-                                                . $emailTemplateBody
-                                                . $message_hf['footer']
-                                                . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-                                                . $secret_key . '</div>';
-
-                                //sendMail(REPLY_TO, $email, $emailTemplateSubject, $autoemailbody, $company_name, REPLY_TO);
-                                sendMail(REPLY_TO, $this->debug_email, $emailTemplateSubject.' ZiP', $autoemailbody, $company_name, REPLY_TO);
-                                $sent_to_pm = common_save_message($message_data, NULL);
-                                $this->all_feed_model->update_questionnaire_status($portal_applicant_jobs_list_sid);
                             }
-                        }
-                // *** END - Screening Questionnaire Email ***
+                            // *** END - Screening Questionnaire Email ***
 
 
                         } else {
@@ -531,25 +548,28 @@ private function addLastRead($sid){
      * Loads the new
      *
      */
-    function index_new(){
-       // Check in database
+    function index_new()
+    {
+        // Check in database
         $jobs = $this->all_feed_model->getZipRecruiterXmlJobs();
-        if(sizeof($jobs)){
+        if (sizeof($jobs)) {
             header('Content-type: text/xml');
             header('Pragma: public');
             header('Cache-control: private');
             header('Expires: -1');
             $jobRows = '';
-            foreach($jobs as $job) $jobRows .= $job['job'];
+            foreach ($jobs as $job)
+                $jobRows .= $job['job'];
             echo xml_template_indeed(($jobRows));
             exit(0);
         }
     }
 
-    private function isActiveFeed(){
+    private function isActiveFeed()
+    {
         $this->load->model('all_job_feed_model');
         $validSlug = $this->all_job_feed_model->check_for_slug('ziprecruiter_organic');
-        if(!$validSlug){
+        if (!$validSlug) {
             echo '<h1>404. Feed Not Found!</h1>';
             die();
         }
