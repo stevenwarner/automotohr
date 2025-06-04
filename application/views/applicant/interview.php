@@ -150,12 +150,14 @@ $creds = getCreds('AHR');
     // Speeking detection
     let isSpeaking = false;
     let silenceTimer = null;
-    const SILENCE_DELAY = 2000;
+    let voiceTimer = null;
+    const DEBOUNCE_DELAY = 200;
+    const SILENCE_DELAY = 3000;
 
     // Call timer variables
     let timerInterval;
     let waitingTimeSeconds = 0;
-    const waitingTimelimit = 15; // in seconds
+    const waitingTimelimit = 60; // in seconds
 
     let frequencyAnalyser = null;
     let frequencyDataArray = null;
@@ -414,7 +416,7 @@ $creds = getCreds('AHR');
 
             socket.on('clearAudio', (data) => {
                 console.log('clearAudio', data);
-                isSpeaking = data.speaking;
+                // isSpeaking = data.speaking;
                 clearAudio();
             })
 
@@ -567,13 +569,13 @@ $creds = getCreds('AHR');
             function analyze() {
                 analyser.getByteTimeDomainData(dataArray);
 
-                // Compute average volume from waveform
-                let sum = 0;
+                // Compute RMS for better volume detection
+                let sumOfSquares = 0;
                 for (let i = 0; i < dataArray.length; i++) {
-                    let sample = dataArray[i] - 128; // Normalize to -128 to +127
-                    sum += Math.abs(sample);
+                    let sample = (dataArray[i] - 128) / 128; // Normalize to -1 to +1
+                    sumOfSquares += sample * sample;
                 }
-                const avg = sum / dataArray.length;
+                const rms = Math.sqrt(sumOfSquares / dataArray.length) * 100;
 
                 // Simple threshold: tune this value
                 const threshold = 8;
@@ -604,13 +606,11 @@ $creds = getCreds('AHR');
                 const avgAmplitude = totalWeight > 0 ? weightedSum / totalWeight : 0;
                 const normalizedAmplitude = avgAmplitude / 255;
 
-                if (avg > threshold) {
-                    onVoiceDetected(avg);
+                if (rms > threshold) {
+                    onVoiceDetected(rms);
                 } else {
-                    onSilenceDetected(avg);
+                    onSilenceDetected(rms);
                 }
-
-                // console.log('normalizedAmplitude', normalizedAmplitude);
 
                 // Frequency-based layer animation with smooth transitions
                 const frequencyThreshold = 0.10;
@@ -659,63 +659,76 @@ $creds = getCreds('AHR');
 
         // Updated voice detection handler
         function onVoiceDetected(volume) {
-            if (!isSpeaking) {
-                isSpeaking = true;
-                console.log(`🎤 Voice detected (volume: ${volume.toFixed(1)}) - User is speaking`);
 
-                // Pause audio if playing
-                if (currentAudio && !currentAudio.paused) {
-                    currentAudio.pause();
-                    console.log('🔇 Audio paused - user speaking');
-                    audioQueue = [];
-
-                    // Notify server that user is speaking
-                    if (socket && socket.connected) {
-                        socket.emit('userSpeaking', { speaking: true, job_list_sid, sessionId: sessionId });
-                    }
-
-                    setTimeout(() => {
-                        if(isSpeaking) {
-                            clearAudio();
-                        } else {
-                            currentAudio.play().catch(e => {
-                                console.error('Error resuming audio:', e);
-                            });
-                            console.log('🔊 Audio resumed');
-                        }
-                    }, SILENCE_DELAY + 1000);
-                }
-            }
-
-            // Clear silence timer
+            // Always clear silence timer if it exists
             if (silenceTimer) {
                 clearTimeout(silenceTimer);
                 silenceTimer = null;
             }
+
+            // Debounce speaking to avoid repeated triggers
+            if (voiceTimer) {
+                clearTimeout(voiceTimer);
+            }
+
+            voiceTimer = setTimeout(() => {
+                if (!isSpeaking) {
+                    isSpeaking = true;
+                    console.log(`🎤 Voice detected (volume: ${volume.toFixed(1)}) - User is speaking`);
+
+                    // Notify server that user is speaking
+                    if (socket && socket.connected) {
+                        console.log('speaking true ...');
+                        socket.emit('userSpeaking', { speaking: true, job_list_sid, sessionId: sessionId });
+                    }
+
+                    // Pause audio if playing
+                    if (currentAudio && !currentAudio.paused) {
+                        currentAudio.pause();
+                        console.log('🔇 Audio paused - user speaking');
+                        audioQueue = [];
+
+                        setTimeout(() => {
+                            if(isSpeaking) {
+                                clearAudio();
+                            } else {
+                                currentAudio.play().catch(e => {
+                                    console.error('Error resuming audio:', e);
+                                });
+                                console.log('🔊 Audio resumed');
+                            }
+                        }, SILENCE_DELAY + 1000);
+                    }
+                }
+            }, DEBOUNCE_DELAY);
         }
 
         // Updated silence detection handler
         function onSilenceDetected(volume) {
-            // Only process if user was speaking
-            if (isSpeaking && !silenceTimer) {
-                silenceTimer = setTimeout(() => {
-                    isSpeaking = false;
-                    const applicantLayers = document.querySelectorAll('.applicant .layer-1, .applicant .layer-2, .applicant .layer-3');
-                    // Reset layers when not speaking
-                    applicantLayers.forEach(layer => {
-                        layer.style.transform = 'translateY(-50%) scale(0.5)';
-                        layer.style.transition = 'transform 0.08s cubic-bezier(0.4, 0, 0.2, 1)';
-                    });
 
-                    console.log(`🔇 Silence detected (volume: ${volume.toFixed(1)}) - User stopped speaking`);
-
-                    // Notify server that user stopped speaking
-                    if (socket && socket.connected) {
-                        socket.emit('userSpeaking', { speaking: false, job_list_sid, sessionId: sessionId });
-                    }
-                    silenceTimer = null;
-                }, SILENCE_DELAY);
+            if (!isSpeaking || silenceTimer || volume >= 8) {
+                return;
             }
+
+            silenceTimer = setTimeout(() => {
+                isSpeaking = false;
+                const applicantLayers = document.querySelectorAll('.applicant .layer-1, .applicant .layer-2, .applicant .layer-3');
+                // Reset layers when not speaking
+                applicantLayers.forEach(layer => {
+                    layer.style.transform = 'translateY(-50%) scale(0.5)';
+                    layer.style.transition = 'transform 0.08s cubic-bezier(0.4, 0, 0.2, 1)';
+                });
+
+                console.log(`🔇 Silence detected (volume: ${volume.toFixed(1)}) - User stopped speaking`);
+
+                // Notify server that user stopped speaking
+                if (socket && socket.connected) {
+                    console.log('speaking false ...');
+                    socket.emit('userSpeaking', { speaking: false, job_list_sid, sessionId });
+                    socket.emit('sendTTSMessage', {job_list_sid, sessionId});
+                }
+                silenceTimer = null;
+            }, SILENCE_DELAY);
         }
 
         // Setup audio recording function. After microphone connection start Websocket
