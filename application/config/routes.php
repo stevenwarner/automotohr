@@ -2731,8 +2731,14 @@ $route["csp/download_incident/(:num)/(:num)"]["get"] =
 $route["compliance_safety_report/save_compliance_report_pdf"]["post"] =
   "v1/Compliance_safety_reporting/saveComplianceSafetyReportPDF";
 
+$route["compliance_safety_report/save_compliance_reports_pdf"]["post"] =
+  "v1/Compliance_safety_reporting/saveComplianceSafetyReportsPDF";
+
 $route["compliance_safety_report/download_report_zip/(:num)"]["get"] =
   "v1/Compliance_safety_reporting/createAndDownloadZip/$1";
+
+$route["compliance_safety_report/download_reports_zip"]["get"] =
+  "v1/Compliance_safety_reporting/createAndDownloadReportsZip";
 
 $route["compliance_safety_reporting/get_item_attachment_view"]["get"] =
   "v1/Compliance_safety_reporting/getUploadAttachmentView";

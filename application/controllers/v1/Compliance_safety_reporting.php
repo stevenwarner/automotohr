@@ -1,8 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 require_once APPPATH . 'controllers/csp/Base_csp.php';
 require 'vendor/autoload.php';
-use Dompdf\Dompdf;
-
 
 /**
  * Indeed controller to handle all new
@@ -1458,7 +1456,7 @@ class Compliance_safety_reporting extends Base_csp
             );
             //
             $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $this->data['company_name'])) . '/' . strtolower(preg_replace('/\s+/', '_', $this->data['report']['title']));
-            //
+            // 
             if (!is_dir($basePath)) {
                 mkdir($basePath, 0777, true);
             }
@@ -1549,8 +1547,6 @@ class Compliance_safety_reporting extends Base_csp
         $form_post = $this->input->post();
         $base64 = $form_post['report_base64'];
         $reportId = $form_post['report_sid'];
-        //
-        $reportName = $this->compliance_report_model->getReportTitleById($reportId);
         //
         $reportName = $this->compliance_report_model->getReportTitleById($reportId);
         //
@@ -2511,35 +2507,93 @@ class Compliance_safety_reporting extends Base_csp
         // get the reports
         $reports = $this
             ->compliance_report_model
-            ->getAllSelectedReports(
+            ->getAllSelectedReportIds(
                 $this->getLoggedInCompany("sid"),
                 $filter
             );
         //
         $this->data['reports'] = $reports;
-        $this->data['companyName'] = $this->getLoggedInCompany("CompanyName");
-        $this->data['employeeName'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
-        $this->data['generatedDate'] = date('Y_m_d-H:i:s');
+        $this->data['company_name'] = $this->getLoggedInCompany("CompanyName");
         $this->data['action_date'] = 'Downloaded Date';
         $this->data['action_by'] = "Downloaded By";
         $this->data['action'] = "download";
-        
-        // _e($reports, true);
-        $this->load->view('compliance_safety_reporting/download_compliance_safety_report_issue', $this->data);
+        $this->data['generatedDate'] = date('Y_m_d-H:i:s');
+        $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
+        //
+        // Save log on download report
+        $this->compliance_report_model->saveComplianceSafetyReportLog(
+            [
+                'reportId' => 0,
+                'incidentId' => 0,
+                'incidentItemId' => 0,
+                'type' => 'main',
+                'userType' => 'employee',
+                'userId' => $this->getLoggedInEmployee("sid"),
+                'jsonData' => [
+                    'action' => 'download report',
+                    'dateTime' => getSystemDate()
+                ]
+            ]
+        );
+        //
+        $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $this->data['company_name']))."/compliance_reports";
+        // //
+        if (!is_dir($basePath)) {
+            mkdir($basePath, 0777, true);
+        }
+        //
+        foreach ($reports as $report) {
+            //
+            $reportPath = $basePath . '/' . strtolower(preg_replace('/\s+/', '_', $report['title']));
+            //
+            if (!is_dir($reportPath)) {
+                mkdir($reportPath, 0777, true);
+            }
+            //
+            if ($report['fileToDownload'])
+            {
+                foreach ($report['fileToDownload'] as $file) {
+                    downloadFileFromAWS($reportPath .'/'. $file['file_name'], $file['link']);
+                }
+            }
+            //
+            if ($report['incidents'])
+            {
+                foreach ($report['incidents'] as $incident) {
+                    foreach ($incident['issues'] as $issue) {
+                        //
+                        $issuePath = $reportPath .'/'. strtolower(preg_replace('/\s+/', '_', $issue['issue_title'])).'/';
+                        //
+                        if (!is_dir($issuePath)) {
+                            mkdir($issuePath, 0777, true);
+                        }
+                        //
+                        if ($issue['fileToDownload'])
+                        { 
+                            foreach ($issue['fileToDownload'] as $file) {
+                                downloadFileFromAWS($issuePath . $file['file_name'], $file['link']);
+                            }
+                        }
+                    }
+                }    
+            }
+        }
+        // //
+        $this->load->view('compliance_safety_reporting/download_compliance_safety_reports', $this->data);
     }
 
-    public function saveComplianceSafetyReportIssuePDF()
+    public function saveComplianceSafetyReportsPDF()
     {
         $companyName = $this->getLoggedInCompany("CompanyName");
         //
         $form_post = $this->input->post();
         $base64 = $form_post['report_base64'];
         $reportId = $form_post['report_sid'];
-        $files = $form_post['file_links'];
         //
         $reportName = $this->compliance_report_model->getReportTitleById($reportId);
         //
-        $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . '/' . strtolower(preg_replace('/\s+/', '_', $reportName)) . '/';
+        //
+        $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . "/compliance_reports/" . strtolower(preg_replace('/\s+/', '_', $reportName)) . '/';
         //
         if (!is_dir($basePath)) {
             mkdir($basePath, 0777, true);
@@ -2549,17 +2603,25 @@ class Compliance_safety_reporting extends Base_csp
         fwrite($handler, base64_decode(str_replace('data:application/pdf;base64,', '', $base64)));
         fclose($handler);
         //
-        if ($files) {
-            foreach ($files as $file) {
-                // @file_put_contents($basePath . $file['file_name'], @file_get_contents($file['link']));
-                downloadFileFromAWS($basePath . $file['file_name'], $file['link']);
-            }
-        }
-        //
         return sendResponse(
             200,
             ["id" => $reportId, "message" => "Report downloaded successfully."]
         );
+    }
+
+    public function createAndDownloadReportsZip()
+    {
+        //
+        $companyName = $this->getLoggedInCompany("CompanyName");
+        $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . '/compliance_reports/';
+        $zip_name = 'compliance_safety_report.zip';
+        //
+        ini_set('memory_limit', '-1');
+        $this->load->library('zip');
+        $this->zip->read_dir(rtrim($basePath, '/'), FALSE);
+        $this->zip->archive($basePath);
+        deleteFolderWithFiles(ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)));
+        $this->zip->download($zip_name);
     }
 
 }

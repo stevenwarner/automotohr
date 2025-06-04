@@ -7915,5 +7915,192 @@ class Compliance_report_model extends CI_Model
 		return $records_arr;
 	}
 
+	public function getAllSelectedReportIds(int $companyId, array $filter, bool $isMainCPA = true): array
+	{
+		$reportIds = [];
+		//
+		if ($isMainCPA) {
+			//
+			if ((array_key_exists("departments", $filter) && $filter["departments"] != "") || (array_key_exists("teams", $filter) && $filter["teams"] != "")) {
+				$this->db->select('csp_reports_employees.csp_reports_sid');
+				$this->db->join(
+					"csp_reports",
+					"csp_reports.sid = csp_reports_employees.csp_reports_sid",
+					"inner"
+				);
+				$this->db->where('csp_reports.company_sid', $companyId);
+				$this->db->where('csp_reports_employees.status', 1);
+				$this->db->group_start();
+				if (array_key_exists("departments", $filter) && $filter["departments"] != "") {
+					foreach ($filter["departments"] as $department) {
+						$this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
+					}
+				}
+				// For teams
+				if (array_key_exists("teams", $filter) && $filter["teams"] != "") {
+					foreach ($filter["teams"] as $team) {
+						$this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
+					}
+				}
+				$this->db->group_end();
+				$records_obj = $this->db->get('csp_reports_employees');
+				$records_arr = $records_obj->result_array();
+				$records_obj->free_result();
+				//
+				$reportIds = array_column($records_arr, 'csp_reports_sid');
+			}
+		}
+		$this->db->distinct();
+		$this->db->select([
+			// Item columns
+			"csp_reports.sid",
+		]);
+		// join with severity to get the colors
+		$this->db->join(
+			"compliance_severity_levels",
+			"compliance_severity_levels.sid = csp_reports_incidents_items.severity_level_sid",
+			"inner"
+		);
+		// join with the report incident types to get the description
+		$this->db->join(
+			"compliance_report_incident_types",
+			"compliance_report_incident_types.sid = csp_reports_incidents_items.compliance_report_incident_types_sid",
+			"inner"
+		);
+		// join with the incident
+		$this->db->join(
+			"csp_reports_incidents",
+			"csp_reports_incidents.sid = csp_reports_incidents_items.csp_reports_incidents_sid",
+			"inner"
+		);
+		// join with the main incident
+		$this->db->join(
+			"compliance_incident_types",
+			"compliance_incident_types.id = csp_reports_incidents.incident_type_sid",
+			"inner"
+		);
+		// join with the report
+		$this->db->join(
+			"csp_reports",
+			"csp_reports.sid = csp_reports_incidents.csp_reports_sid",
+			"inner"
+		);
+		// join with the completed by
+		$this->db->join(
+			"users",
+			"users.sid = csp_reports_incidents_items.completed_by",
+			"left"
+		);
+		$this->db->where('csp_reports_incidents_items.status', 1);
+		$this->db->where('csp_reports.company_sid', $companyId);
+		//
+		if ($reportIds) {
+			$this->db->where_in("csp_reports.sid", $reportIds);
+		}
+		// check report date range
+		if (array_key_exists("date_range", $filter) && $filter["date_range"] != "") {
+			list($start_date, $end_date) = explode(" - ", $_GET['date_range']);
+			$between = "report_date between '" . formatDateToDB($start_date, SITE_DATE, DB_DATE) . "' and '" . formatDateToDB($end_date, SITE_DATE, DB_DATE) . "'";
+			$this->db->where($between);
+		}
 
+		// check for severity status
+		if (array_key_exists("severity_level", $filter) && $filter["severity_level"] != "-1") {
+			$this->db->where(
+				"compliance_severity_levels.sid",
+				$filter["severity_level"]
+			);
+		}
+		// check for incident
+		if (array_key_exists("incident", $filter) && $filter["incident"] != "-1") {
+			$this->db->where(
+				"csp_reports_incidents.sid",
+				$filter["incident"]
+			);
+		}
+		// check for status
+		if (array_key_exists("status", $filter) && $filter["status"] != "-1") {
+			$this->db->where(
+				"csp_reports_incidents_items.completion_status",
+				$filter["status"]
+			);
+		}
+		// check report title
+		if (array_key_exists("title", $filter) && $filter["title"] != "") {
+			$like = " `csp_reports.title` LIKE '%" . $filter["title"] . "%' ";
+			$this->db->where($like);
+		}
+		// strictly check for the allowed issues
+		// if is not ain CPA
+		if (!$isMainCPA) {
+			if ($this->allowedCSP["tasks"]) {
+				$this->db->where_in("csp_reports_incidents_items.sid", $this->allowedCSP["tasks"]);
+			}
+			//
+			if (array_key_exists("departmentIds", $this->allowedCSP) || array_key_exists("teamIds", $this->allowedCSP)) {
+				// check for departments
+				$this->db->group_start();
+
+				if (array_key_exists("departmentIds", $this->allowedCSP)) {
+					$this->db->group_start();
+					foreach ($this->allowedCSP["departmentIds"] as $v0) {
+						$this->db->where("FIND_IN_SET({$v0}, csp_reports_incidents_items.allowed_departments) >", 0);
+					}
+					$this->db->group_end();
+				}
+				if (array_key_exists("teamIds", $this->allowedCSP)) {
+					$this->db->or_group_start();
+					foreach ($this->allowedCSP["teamIds"] as $v0) {
+						$this->db->where("FIND_IN_SET({$v0}, csp_reports_incidents_items.allowed_teams) >", 0);
+					}
+					$this->db->group_end();
+				}
+				$this->db->group_end();
+			}
+
+		}
+		//
+
+		//
+		$this->db->order_by("csp_reports_incidents_items.sid", "DESC");
+		$records_obj = $this->db->get('csp_reports_incidents_items');
+		$records_arr = $records_obj->result_array();
+		$records_obj->free_result();
+		//
+		$reports = [];
+		//
+		if ($records_arr) {
+			foreach ($records_arr as $row) {
+				$reports[] = $this
+					->getCSPReportByIdForDownload(
+						$row['sid'],
+						[
+							"csp_reports.sid",
+							"csp_reports.title",
+							"csp_reports.report_date",
+							"csp_reports.disable_answers",
+							"csp_reports.report_type_sid",
+							"csp_reports.completion_date",
+							"csp_reports.status",
+							"csp_reports.updated_at",
+							"csp_reports.answers_json",
+							"compliance_report_types.compliance_report_name",
+							"users.first_name",
+							"users.last_name",
+							"users.middle_name",
+							"users.access_level",
+							"users.access_level_plus",
+							"users.pay_plan_flag",
+							"users.job_title",
+							"users.is_executive_admin",
+							"users.email",
+							"users.PhoneNumber",
+							"users.parent_sid"
+						]
+					);
+			}
+		}
+		//
+		return $reports;
+	}
 }

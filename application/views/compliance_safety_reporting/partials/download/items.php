@@ -3,7 +3,7 @@
     <thead>
         <tr class="bg-gray">
             <th colspan="2">
-                <strong>Incident Item(s)</strong>
+                <strong>Incident Issue(s)</strong>
             </th>
         </tr>
     </thead>
@@ -40,7 +40,7 @@
             <tr>
                 <td>
                     <div class="center-col">
-                        <h2>No Incident Item Found</h2>
+                        <h2>No Incident Issue Found</h2>
                     </div>
                 </td>
             </tr>
@@ -49,52 +49,60 @@
 </table>
 
 <?php if (!empty($incidentIssues)) { ?>
-    <?php 
-        if ($issue['question_answer_json']) { 
-            $this->load->view("compliance_safety_reporting/partials/download/question_new", ['questions' => $issue['question_answer_json']]); 
-        }
-    ?> 
+    <?php foreach ($incidentIssues as $issue) { ?>
+        <article class="sheet-header">
+            <div class="center-col">
+                <h2><?php echo $issue['issue_title']; ?></h2>
+            </div>
+        </article>
 
-    <?php 
-        if ($issue['documents']) { 
-            $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $issue['documents']]); 
-        }
-    ?> 
+        <?php 
+            if ($issue['question_answer_json']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/question_new", ['questions' => $issue['question_answer_json']]); 
+            }
+        ?> 
 
-    <?php 
-        if ($issue['audios']) { 
-            $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $issue['audios']]); 
-        }
-    ?> 
+        <?php 
+            if ($issue['documents']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/documents", ['documents' => $issue['documents']]); 
+            }
+        ?> 
 
-    <?php 
-        if ($issue['visibilityManagersList']) { 
-            $this->load->view("compliance_safety_reporting/partials/download/department_team_managers", ['managerList' => $issue['visibilityManagersList']]); 
-        }
-    ?>
+        <?php 
+            if ($issue['audios']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $issue['audios']]); 
+            }
+        ?> 
 
-    <?php 
-        if ($issue['internal_employees']) { 
-            $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $issue['internal_employees']]); 
-        }
-    ?>
+        <?php 
+            if ($issue['visibilityManagersList']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/department_team_managers", ['managerList' => $issue['visibilityManagersList']]); 
+            }
+        ?>
+
+        <?php 
+            if ($issue['internal_employees']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $issue['internal_employees']]); 
+            }
+        ?>
 
 
-    <?php 
-        if ($issue['external_employees']) { 
-            $this->load->view("compliance_safety_reporting/partials/download/external", ['externalEmployees' => $issue['external_employees']]); 
-        }
-    ?>
+        <?php 
+            if ($issue['external_employees']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/external", ['externalEmployees' => $issue['external_employees']]); 
+            }
+        ?>
 
-    <?php 
-        if ($issue['emails']) { 
-            $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $issue['emails']]);
-        }
-    ?>
+        <?php 
+            if ($issue['emails']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/emails", ['emails' => $issue['emails']]);
+            }
+        ?>
 
-    <?php 
-        if ($report['notes']) { 
-            $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $issue['notes']]);
-        }
-    ?>
+        <?php 
+            if ($report['notes']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/comments", ['notes' => $issue['notes']]);
+            }
+        ?>
+    <?php } ?>    
 <?php } ?>  
