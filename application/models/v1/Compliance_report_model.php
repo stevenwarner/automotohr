@@ -4299,9 +4299,10 @@ class Compliance_report_model extends CI_Model
 			foreach ($report["incidents"] as $iKey => $incident) {
 				//
 				// $incidentsDetail = $this->getCSPIncidentByIdForDownload($reportId, $incident['sid']);
+				// $report["incidentsDetail"][] = $incidentsDetail;
+				//
 				$incidentsIssues = $this->getCSPIncidentIssuesByIdForDownload($reportId, $incident['sid']);
 				$report["incidents"][$iKey]['issues'] = $incidentsIssues;
-				// $report["incidentsDetail"][] = $incidentsDetail;
 			}
 		}
 		//
@@ -5516,6 +5517,8 @@ class Compliance_report_model extends CI_Model
 				csp_reports_incidents_items.created_at, 
 				csp_reports_incidents_items.completion_date,
 				csp_reports_incidents_items.completion_status,
+				csp_reports_incidents_items.allowed_departments,
+				csp_reports_incidents_items.allowed_teams,
 				compliance_report_incident_types.description,
 				compliance_report_incident_types.title,
 				csp_reports_incidents_items.severity_level_sid,
@@ -5534,7 +5537,7 @@ class Compliance_report_model extends CI_Model
 		//
 		if (!$item) {
 			return [];
-		}
+		} 
 		//
 		$data["created_by"] = getEmployeeOnlyNameBySID($item['created_by']);
 		$data["created_date"] = $item['created_at'];
@@ -5545,6 +5548,10 @@ class Compliance_report_model extends CI_Model
 		$data["severity_level_sid"] = $item['severity_level_sid'];
 		$data["answers_json"] = $item['answers_json'];
 		$data["question_answer_json"] = $item['question_answer_json'];
+		$data['visibilityManagersList'] = $this->getDepartmentAndTeamManagersInfo(
+			$item['allowed_departments'], 
+			$item['allowed_teams']
+		);
 		//
 		// get the list of items available to the incident
 		$data["incidentItemsSelected"] = $this->getCSPAttachedItemByItemSid($itemId);
@@ -5615,9 +5622,7 @@ class Compliance_report_model extends CI_Model
 		//
 		$data["emails"] = $this->getComplianceEmailsForDownload($reportId, $incidentId, $itemId);
 		//
-		if ($onlyItem) {
-			$data["fileToDownload"] = $this->getComplianceFilesToDownload($reportId, $incidentId, $itemId);
-		}
+		$data["fileToDownload"] = $this->getComplianceFilesToDownload($reportId, $incidentId, $itemId);
 		//
 		return $data;
 	}
@@ -7275,6 +7280,77 @@ class Compliance_report_model extends CI_Model
 							$managerIdsList[] = $managerId;
 						}
 					}
+				}
+			}
+		}
+		//
+		return $managerIdsList;
+	}
+
+	public function getDepartmentAndTeamManagersInfo($departments, $teams)
+	{
+		$managerIdsList = [];
+		//
+		if ($departments) {
+			foreach (explode(',', $departments) as $departmentId) {
+				$this->db->select("name, csp_managers_ids");
+				$this->db->where("sid", $departmentId);
+				$this->db->where("is_deleted", 0);
+				//
+				$records_obj = $this->db->get("departments_management");
+				$cspDepartmentInfo = $records_obj->row_array();
+				$records_obj->free_result();
+				//
+				if ($cspDepartmentInfo) {
+					//
+					$departmentManagerIds = explode(',', $cspDepartmentInfo['csp_managers_ids']);
+					//
+					if ($departmentManagerIds) {
+						foreach ($departmentManagerIds as $managerId) {
+							if (!in_array($managerId, $managerIdsList)) {
+								$managerInfo = db_get_employee_profile($managerId);
+								$managerName = $managerInfo[0]["first_name"] . " " . $managerInfo[0]["middle_name"] . " " . $managerInfo[0]["last_name"];
+								//
+								$managerIdsList[$managerId]['name'] = $managerName;
+								$managerIdsList[$managerId]['email'] = $managerInfo[0]["email"];
+								$managerIdsList[$managerId]['departments'][] = $cspDepartmentInfo['name'];
+							} else {
+								$managerIdsList[$managerId]['departments'][] = $cspDepartmentInfo['name'];
+							}
+						}
+					}	
+				}
+			}
+		}
+
+		if ($teams) {
+			foreach (explode(',', $teams) as $teamId) {
+				$this->db->select("name, csp_managers_ids");
+				$this->db->where("sid", $teamId);
+				$this->db->where("is_deleted", 0);
+				//
+				$records_obj = $this->db->get("departments_team_management");
+				$cspTeamInfo = $records_obj->row_array();
+				$records_obj->free_result();
+				//
+				if ($cspTeamInfo) {
+					//
+					$teamManagerIds = explode(',', $cspTeamInfo['csp_managers_ids']);
+					//
+					if ($teamManagerIds) {
+						foreach ($teamManagerIds as $managerId) {
+							if (!in_array($managerId, $managerIdsList)) {
+								$managerInfo = db_get_employee_profile($managerId);
+								$managerName = $managerInfo[0]["first_name"] . " " . $managerInfo[0]["middle_name"] . " " . $managerInfo[0]["last_name"];
+								//
+								$managerIdsList[$managerId]['name'] = $managerName;
+								$managerIdsList[$managerId]['email'] = $managerInfo[0]["email"];
+								$managerIdsList[$managerId]['teams'][] = $cspTeamInfo['name'];
+							} else {
+								$managerIdsList[$managerId]['teams'][] = $cspTeamInfo['name'];
+							} 
+						}
+					}	
 				}
 			}
 		}

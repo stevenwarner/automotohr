@@ -200,8 +200,8 @@
         <!-- Report Basic Information section End -->
 
         <?php 
-            if ($report['question_answers']) { 
-                $this->load->view("compliance_safety_reporting/partials/download/question", ['questions' => $report['question_answers']]); 
+            if ($report['question_answers'] || $report['answers_json']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/question", ['questions' => $report['question_answers'], 'answers_json' => $report['answers_json']]); 
             }
         ?>
         
@@ -252,13 +252,7 @@
             <?php foreach ($report['incidents'] as $incident) { ?>
                 <?php $this->load->view("compliance_safety_reporting/partials/download/incident_detail", ['incidentDetail' => $incident, 'severityLevels' => $report['severity_status']]); ?> 
             <?php } ?>
-        <?php } ?>  
-
-        <?php if (isset($report['incidentsDetail'])) { ?>
-            <?php foreach ($report['incidentsDetail'] as $incidentDetail) { ?>
-                <?php $this->load->view("compliance_safety_reporting/partials/download/incident_detail", ['incidentDetail' => $incidentDetail]); ?> 
-            <?php } ?>
-        <?php } ?>    
+        <?php } ?>   
 
     </section>
     <a href="<?php echo base_url('compliance_safety_report/download_report_zip').'/'.$report_sid; ?>"  id="JsCreateZipFile"></a>
@@ -277,9 +271,8 @@
 
                 window.onafterprint = function(){
                     window.close();
-
                 }
-            } else if (action == 'downloadm') {
+            } else if (action == 'download') {
                 //
                 var draw = kendo.drawing;
                 draw.drawDOM($("#safety_checklist"), {
@@ -298,7 +291,6 @@
                         data:{
                             report_sid: '<?php echo $report_sid; ?>',
                             report_base64: report_data,
-                            file_links: <?= json_encode($report['fileToDownload']); ?>
                         },
                         url: "<?php echo base_url('compliance_safety_report/save_compliance_report_pdf'); ?>",
                         success: function(data){

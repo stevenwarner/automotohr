@@ -49,13 +49,11 @@
 </table>
 
 <?php if (!empty($incidentIssues)) { ?>
-    <?php foreach ($incidentIssues as $issue) { ?>
-        <?php _e($issue,true,true);
-            if ($report['question_answers']) { 
-                $this->load->view("compliance_safety_reporting/partials/download/question", ['questions' => $issue['question_answers']]); 
-            }
-        ?>
-    <?php } ?>    
+    <?php 
+        if ($issue['question_answer_json']) { 
+            $this->load->view("compliance_safety_reporting/partials/download/question_new", ['questions' => $issue['question_answer_json']]); 
+        }
+    ?> 
 
     <?php 
         if ($issue['documents']) { 
@@ -68,6 +66,12 @@
             $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $issue['audios']]); 
         }
     ?> 
+
+    <?php 
+        if ($issue['visibilityManagersList']) { 
+            $this->load->view("compliance_safety_reporting/partials/download/department_team_managers", ['managerList' => $issue['visibilityManagersList']]); 
+        }
+    ?>
 
     <?php 
         if ($issue['internal_employees']) { 

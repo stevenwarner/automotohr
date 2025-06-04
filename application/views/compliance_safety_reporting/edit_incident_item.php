@@ -23,6 +23,10 @@
                     <i class="fa fa-pie-chart"></i>
                     Compliance Safety Reporting
                 </a>
+                <a class="btn btn-black" href="<?= base_url("compliance_safety_reporting/download_incident_item/". $report_id . "/" . $incidentId . "/" . $itemId) ?>" target="_blank">
+                    <i class="fa fa-download"></i>
+                    Download Issue
+                </a>
             </div>
 
         </div>

@@ -200,15 +200,47 @@
             </tbody>
         </table>
         <!-- Incident Creator Information section End -->
+        <table class="incident-table">
+            <thead>
+                <tr class="bg-gray">
+                    <th colspan="2">
+                        <strong>Incident Item(s)</strong>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th class="text-center">Severity Level</th>
+                    <th class="text-center">Description</th>
+                </tr>
+                <tr>
+                    <?php
+                        //
+                        $level = $severityStatus[$itemDetail["severity_level_sid"]];
+                        //
+                        $decodedJSON = json_decode(
+                            $itemDetail["answers_json"],
+                            true
+                        );
+                    ?>
+                    <td>
+                        <div class="csLabelPill jsSelectedLabelPill text-center"
+                            style="background-color: <?= $level["bg_color"]; ?>; 
+                        color: <?= $level["txt_color"]; ?>;">Severity Level <?= $level["level"]; ?></div>
+                    </td>
+                    <td>
+                        <div class="col-sm-10 jsCSPItemDescription">
+                            <?= convertCSPTags($itemDetail["issue_description"], $decodedJSON ?? []); ?>
+                        </div>
+                    </td>
+                </tr> 
+            </tbody>
+        </table>
+
         <?php 
-            // if ($itemDetail['incidentItemsSelected']) { 
-            //     $this->load->view("compliance_safety_reporting/partials/download/items", 
-            //         [
-            //             'incidentItemsSelected' => $itemDetail['incidentItemsSelected'],
-            //             'severityStatus' => $itemDetail['severity_status']
-            //         ]
-            //     );
-            // }    
+            if ($itemDetail['question_answer_json']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/question_new", ['questions' => $itemDetail['question_answer_json']]); 
+            }
         ?>
 
         <?php 
@@ -222,6 +254,25 @@
                 $this->load->view("compliance_safety_reporting/partials/download/media", ['audios' => $itemDetail['audios']]); 
             }
         ?> 
+
+        <?php 
+            if ($itemDetail['visibilityManagersList']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/department_team_managers", ['managerList' => $itemDetail['visibilityManagersList']]); 
+            }
+        ?>
+
+        <?php 
+            if ($itemDetail['internal_employees']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/internal", ['internalEmployees' => $itemDetail['internal_employees']]); 
+            }
+        ?>
+
+
+        <?php 
+            if ($itemDetail['external_employees']) { 
+                $this->load->view("compliance_safety_reporting/partials/download/external", ['externalEmployees' => $itemDetail['external_employees']]); 
+            }
+        ?>
 
         <?php 
             if ($itemDetail['emails']) { 
@@ -272,7 +323,6 @@
                         data:{
                             report_sid: '<?php echo $report_sid; ?>',
                             report_base64: report_data,
-                            file_links: <?= json_encode($report['fileToDownload']); ?>
                         },
                         url: "<?php echo base_url('compliance_safety_report/save_compliance_report_pdf'); ?>",
                         success: function(data){
