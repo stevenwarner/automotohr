@@ -1356,8 +1356,6 @@ class Cron_email_model extends CI_Model
                                 $replaceArray,
                                 $templateBody
                             );
-
-                            echo "SEb";
                             //
                             log_and_send_email_with_attachment(
                                 FROM_EMAIL_NOTIFICATIONS,

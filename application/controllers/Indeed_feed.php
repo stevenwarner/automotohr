@@ -39,7 +39,7 @@ class Indeed_feed extends CI_Controller
         header('Expires: -1');
         $rows .= "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
         // echo '<xml>';
-        $rows .=  "<source>
+        $rows .= "<source>
         <publisher>" . STORE_NAME . "</publisher>
         <publisherurl><![CDATA[" . STORE_FULL_URL_SSL . "]]></publisherurl>
         <lastBuildDate>" . date('D, d M Y h:i:s') . " PST</lastBuildDate>";
@@ -54,7 +54,7 @@ class Indeed_feed extends CI_Controller
                     $companyName = $companydata['CompanyName'];
                     $has_job_approval_rights = $companydata['has_job_approval_rights'];
 
-                    if ($has_job_approval_rights ==  1) {
+                    if ($has_job_approval_rights == 1) {
                         $approval_right_status = $job['approval_status'];
 
                         if ($approval_right_status != 'approved') {
@@ -138,7 +138,7 @@ class Indeed_feed extends CI_Controller
                         );
                     }
 
-                    $rows .=  "
+                    $rows .= "
                     <job>
                     <title><![CDATA[" . db_get_job_title($company_id, $job['Title'], fasle) . "]]></title>
                     <sponsored><![CDATA[yes]]></sponsored>
@@ -160,10 +160,10 @@ class Indeed_feed extends CI_Controller
                 }
             }
         }
-        $rows .=  '</source>
+        $rows .= '</source>
         ';
         echo trim($rows);
-        @mail('mubashir.saleemi123@gmail.com', 'Indeed Feed Paid - HIT on ' . date('Y-m-d H:i:s') . '', count($jobData));
+        // @mail(OFFSITE_DEV_EMAIL, 'Indeed Feed Paid - HIT on ' . date('Y-m-d H:i:s') . '', count($jobData));
         exit;
     }
 
@@ -195,11 +195,12 @@ class Indeed_feed extends CI_Controller
         // error_reporting(E_ALL);
         //
         $this->addLastRead(9);
-        @mail('mubashir.saleemi123@gmail.com', 'Indeed - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', print_r(file_get_contents('php://input'), true));
+        @mail(OFFSITE_DEV_EMAIL, 'Indeed - Applicant Recieve - ' . date('Y-m-d H:i:s') . '', (file_get_contents('php://input')));
         //
         $folder = APPPATH . '../../applicant/indeed';
         //
-        if (!is_dir($folder)) mkdir($folder, 0777, true);
+        if (!is_dir($folder))
+            mkdir($folder, 0777, true);
         // 
         $categories_file = fopen($folder . '/Indeed_Applicant_Recieve_' . date('Y_m_d_H_i_s') . '.json', 'w');
         //
@@ -476,7 +477,7 @@ class Indeed_feed extends CI_Controller
                 foreach ($indeedPost['demographicQuestionsAndAnswers']['questionsAndAnswers'] as $eeocQuestion) {
                     //
                     switch ($eeocQuestion['question']['id']) {
-                            //
+                        //
                         case 'citizen':
                             $index = 'us_citizen';
                             $value = $eeocQuestion['answer']['value'];
@@ -504,7 +505,7 @@ class Indeed_feed extends CI_Controller
                         case 'group-eeo':
                             $index = 'group_status';
                             break;
-                            //
+                        //
                         case 'veteran-eeo':
                             $index = 'veteran';
                             break;
@@ -552,6 +553,15 @@ class Indeed_feed extends CI_Controller
                     // https://www.youtube.com/shorts/o99t-97sD1o
                     $jobs_list_result = $this->all_feed_model->add_applicant_job_details($insert_job_list);
                     $portal_applicant_jobs_list_sid = $jobs_list_result[0];
+
+                    // Add the applicant to the Queue
+                    storeApplicantInQueueToProcess([
+                        "portal_job_applications_sid" => $job_applications_sid,
+                        "portal_applicant_job_sid" => $portal_applicant_jobs_list_sid,
+                        "job_sid" => $job_sid,
+                        "company_sid" => $companyId,
+                    ]);
+
                     //
                     // Comment below line because this function exit the process  and now allow to send emails on 11 Apr 2024;
                     // $this->indeed_model->pushTheApplicantStatus(
@@ -709,13 +719,13 @@ class Indeed_feed extends CI_Controller
                                 }
 
                                 if (!empty($emailTemplateBody)) {
-                                    $emailTemplateBody     = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{firstname}}', $nameArray[0], $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{lastname}}', $nameArray[1], $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{applicant_name}}', $nameArray[0] . ' ' . $nameArray[1], $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{job_title}}', $replacement_array['job_title'], $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{company_name}}', $company_name, $emailTemplateBody);
+                                    $emailTemplateBody = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
+                                    $emailTemplateBody = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
+                                    $emailTemplateBody = str_replace('{{firstname}}', $nameArray[0], $emailTemplateBody);
+                                    $emailTemplateBody = str_replace('{{lastname}}', $nameArray[1], $emailTemplateBody);
+                                    $emailTemplateBody = str_replace('{{applicant_name}}', $nameArray[0] . ' ' . $nameArray[1], $emailTemplateBody);
+                                    $emailTemplateBody = str_replace('{{job_title}}', $replacement_array['job_title'], $emailTemplateBody);
+                                    $emailTemplateBody = str_replace('{{company_name}}', $company_name, $emailTemplateBody);
                                 }
 
                                 $message_data = array();

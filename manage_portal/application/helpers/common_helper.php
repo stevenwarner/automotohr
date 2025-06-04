@@ -1990,3 +1990,67 @@ if (!function_exists("encryptAttributeForIndeed")) {
         }
     }
 }
+
+
+
+if (!function_exists('storeApplicantInQueueToProcess')) {
+    /**
+     * Add the Applicant to the queue
+     * so Node server can process it
+     * @todo add logic to handle desired job title
+     * @param array $data
+     * portal_applicant_job_sid - The middle table id 
+     * portal_job_applications_sid - The actual applicant id
+     * company_sid - The company id
+     * job_sid - The job id (For now it will not be empty)
+     * @return array
+     */
+    function storeApplicantInQueueToProcess(array $data): array
+    {
+        // set errors array
+        $errors = [];
+        // add requiremnt check
+        if ((int) $data["portal_job_applications_sid"] === 0) {
+            $errors[] = "Applicant job id is missing";
+        } else if ((int) $data["portal_applicant_job_sid"] === 0) {
+            $errors[] = "Applicant applied job id is missing";
+        } else if ((int) $data["job_sid"] === 0) {
+            $errors[] = "Job id is missing";
+        } else if ((int) $data["company_sid"] === 0) {
+            $errors[] = "Company id is missing";
+        }
+        // check and retuen errors if any
+        if ($errors) {
+            return $errors;
+        }
+        // Get CI instance
+        $_this = &get_instance();
+        // check if applicant is already processed or not
+        if (
+            !$_this->db->where([
+                'portal_job_applications_sid' => $data['portal_job_applications_sid'],
+                'portal_applicant_job_sid' => $data["portal_applicant_job_sid"],
+                'company_sid' => $data['company_sid'],
+                'job_sid' => $data['job_sid'],
+            ])->count_all_results("portal_applicant_jobs_queue")
+        ) {
+            // insert it
+            $_this
+                ->db
+                ->insert("portal_applicant_jobs_queue", [
+                    'portal_job_applications_sid' => $data['portal_job_applications_sid'],
+                    'portal_applicant_job_sid' => $data["portal_applicant_job_sid"],
+                    'company_sid' => $data['company_sid'],
+                    'job_sid' => $data['job_sid'],
+                    "status" => "queued",
+                    "priority" => 1,
+                    "created_at" => date("Y-m-d H:i:s", strtotime("now")),
+                    "updated_at" => date("Y-m-d H:i:s", strtotime("now")),
+                ]);
+            return ["success" => true, "message" => "You have successfully added an applicant to queue.", "is_updated" => false];
+        }
+        //
+        return ["success" => true, "message" => "You have successfully updated an applicant to queue.", "is_updated" => true];
+
+    }
+}

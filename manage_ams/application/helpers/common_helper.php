@@ -1,10 +1,11 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 if (!function_exists('clean_domain')) {
 
-    function clean_domain($string) {
+    function clean_domain($string)
+    {
         $string = trim($string, '/');
         if (!preg_match('#^http(s)?://#', $string)) {
             $string = STORE_PROTOCOL . $string;
@@ -16,33 +17,36 @@ if (!function_exists('clean_domain')) {
 
 }
 
-if(!function_exists('verifyCaptcha_old')){
-    function verifyCaptcha_old($secret, $token){
+if (!function_exists('verifyCaptcha_old')) {
+    function verifyCaptcha_old($secret, $token)
+    {
         //
-        if($token == '' || $secret == '') return false;
+        if ($token == '' || $secret == '')
+            return false;
         //
         $curl = curl_init();
         //
         curl_setopt_array($curl, array(
-              CURLOPT_URL => "https://www.google.com/recaptcha/api/siteverify",
-              CURLOPT_RETURNTRANSFER => true,
-              CURLOPT_ENCODING => "",
-              CURLOPT_MAXREDIRS => 10,
-              CURLOPT_TIMEOUT => 0,
-              CURLOPT_FOLLOWLOCATION => true,
-              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-              CURLOPT_CUSTOMREQUEST => "POST",
-              CURLOPT_POSTFIELDS => array(
-                  'secret' => $secret,
-                  'response' => $token
-              ),
+            CURLOPT_URL => "https://www.google.com/recaptcha/api/siteverify",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => array(
+                'secret' => $secret,
+                'response' => $token
+            ),
         ));
         //
         $response = curl_exec($curl);
         //
         curl_close($curl);
         //
-        if(json_decode($response, true)['success'] == 1) return true;
+        if (json_decode($response, true)['success'] == 1)
+            return true;
         //
         return false;
     }
@@ -82,12 +86,13 @@ if (!function_exists('verifyCaptcha')) {
 
 if (!function_exists('get_company_logo')) {
 
-    function get_company_logo($company_sid) {
+    function get_company_logo($company_sid)
+    {
         if (empty($company_sid)) {
             return 0;
         }
 
-        $CI = & get_instance();
+        $CI = &get_instance();
         $CI->db->select('Logo');
         $CI->db->where('sid', $company_sid);
         $result = $CI->db->get('users')->result_array();
@@ -103,19 +108,20 @@ if (!function_exists('get_company_logo')) {
 
 if (!function_exists('getUserIP')) {
 
-    function getUserIP() {
+    function getUserIP()
+    {
         $ipaddress = '';
         if (getenv('HTTP_CLIENT_IP'))
             $ipaddress = getenv('HTTP_CLIENT_IP');
-        else if(getenv('HTTP_X_FORWARDED_FOR'))
+        else if (getenv('HTTP_X_FORWARDED_FOR'))
             $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
-        else if(getenv('HTTP_X_FORWARDED'))
+        else if (getenv('HTTP_X_FORWARDED'))
             $ipaddress = getenv('HTTP_X_FORWARDED');
-        else if(getenv('HTTP_FORWARDED_FOR'))
+        else if (getenv('HTTP_FORWARDED_FOR'))
             $ipaddress = getenv('HTTP_FORWARDED_FOR');
-        else if(getenv('HTTP_FORWARDED'))
-           $ipaddress = getenv('HTTP_FORWARDED');
-        else if(getenv('REMOTE_ADDR'))
+        else if (getenv('HTTP_FORWARDED'))
+            $ipaddress = getenv('HTTP_FORWARDED');
+        else if (getenv('REMOTE_ADDR'))
             $ipaddress = getenv('REMOTE_ADDR');
         else
             $ipaddress = 'UNKNOWN';
@@ -126,7 +132,8 @@ if (!function_exists('getUserIP')) {
 
 if (!function_exists('clean')) {
 
-    function clean($string) {
+    function clean($string)
+    {
         $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
         $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
         return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
@@ -136,7 +143,8 @@ if (!function_exists('clean')) {
 
 if (!function_exists('generateRandomString')) {
 
-    function generateRandomString($length) {
+    function generateRandomString($length)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
@@ -150,7 +158,8 @@ if (!function_exists('generateRandomString')) {
 
 if (!function_exists('random_key')) {
 
-    function random_key($str_length = 24) {
+    function random_key($str_length = 24)
+    {
         $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $bytes = openssl_random_pseudo_bytes(3 * $str_length / 4 + 1);
         $repl = unpack('C2', $bytes);
@@ -164,7 +173,8 @@ if (!function_exists('random_key')) {
 
 if (!function_exists('random_key')) {
 
-    function render($the_view = NULL, $template = 'master') {
+    function render($the_view = NULL, $template = 'master')
+    {
         if ($template == 'json' || $this->input->is_ajax_request()) {
             header('Content-Type: application/json');
             echo json_encode($this->data);
@@ -180,7 +190,8 @@ if (!function_exists('random_key')) {
 
 if (!function_exists('render')) {
 
-    function render($the_view = NULL, $template = 'master') {
+    function render($the_view = NULL, $template = 'master')
+    {
         echo "inside render function in common helper";
         exit;
         if ($template == 'json' || $this->input->is_ajax_request()) {
@@ -196,7 +207,8 @@ if (!function_exists('render')) {
 
 if (!function_exists('sendMail')) {
 
-    function sendMail($from, $to, $subject, $body, $fromName = NULL, $replyTo = NULL) {
+    function sendMail($from, $to, $subject, $body, $fromName = NULL, $replyTo = NULL)
+    {
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
         $mail->From = $from;
@@ -223,8 +235,9 @@ if (!function_exists('sendMail')) {
 
 if (!function_exists('db_get_active_countries')) {
 
-    function db_get_active_countries() {
-        $CI = & get_instance();
+    function db_get_active_countries()
+    {
+        $CI = &get_instance();
         $CI->db->select('*');
         $CI->db->where('active', '1');
         $CI->db->order_by("order", "asc");
@@ -236,8 +249,9 @@ if (!function_exists('db_get_active_countries')) {
 
 if (!function_exists('db_get_active_states')) {
 
-    function db_get_active_states($sid = NULL) {
-        $CI = & get_instance();
+    function db_get_active_states($sid = NULL)
+    {
+        $CI = &get_instance();
         $CI->db->select('sid, state_code, state_name');
         $CI->db->where('country_sid', $sid);
         $CI->db->order_by("order", "asc");
@@ -250,8 +264,9 @@ if (!function_exists('db_get_active_states')) {
 
 if (!function_exists('db_get_country_name')) {
 
-    function db_get_country_name($sid) {
-        $CI = & get_instance();
+    function db_get_country_name($sid)
+    {
+        $CI = &get_instance();
         $CI->db->select('*');
         $CI->db->where('sid', $sid);
         $CI->db->from('countries');
@@ -263,8 +278,9 @@ if (!function_exists('db_get_country_name')) {
 
 if (!function_exists('db_get_state_name')) {
 
-    function db_get_state_name($sid) {
-        $CI = & get_instance();
+    function db_get_state_name($sid)
+    {
+        $CI = &get_instance();
         $CI->db->select('country_sid, state_code, state_name, country_code, country_name');
         $CI->db->join('countries', 'countries.sid = states.country_sid');
         $CI->db->where('states.sid', $sid);
@@ -277,7 +293,8 @@ if (!function_exists('db_get_state_name')) {
 
 if (!function_exists('generate_image_thumbnail')) {
 
-    function generate_image_thumbnail($source_image_path, $thumbnail_image_path) {
+    function generate_image_thumbnail($source_image_path, $thumbnail_image_path)
+    {
         list($source_image_width, $source_image_height, $source_image_type) = getimagesize($source_image_path);
         switch ($source_image_type) {
             case IMAGETYPE_GIF:
@@ -323,7 +340,8 @@ if (!function_exists('generate_image_thumbnail')) {
 
     if (!function_exists('generate_image_compressed')) {
 
-        function generate_image_compressed($source_image_path, $thumbnail_image_path) {
+        function generate_image_compressed($source_image_path, $thumbnail_image_path)
+        {
             ImageJPEG(ImageCreateFromString(file_get_contents($source_image_path)), $thumbnail_image_path, 75);
         }
 
@@ -331,8 +349,9 @@ if (!function_exists('generate_image_thumbnail')) {
 
     if (!function_exists('message_header_footer_domain')) {
 
-        function message_header_footer_domain($compnay_id, $company_Name) {
-            $CI = & get_instance();
+        function message_header_footer_domain($compnay_id, $company_Name)
+        {
+            $CI = &get_instance();
             $CI->db->select('sub_domain');
             $CI->db->where('user_sid', $compnay_id);
             $CI->db->from('portal_employer');
@@ -352,8 +371,9 @@ if (!function_exists('generate_image_thumbnail')) {
 
 if (!function_exists('db_get_job_title')) {
 
-    function db_get_job_title($user_sid, $title, $city, $state, $country) {
-        $CI = & get_instance();
+    function db_get_job_title($user_sid, $title, $city, $state, $country)
+    {
+        $CI = &get_instance();
         $CI->db->select('job_title_location');
         $CI->db->where('user_sid', $user_sid);
         $CI->db->from('portal_employer');
@@ -372,8 +392,9 @@ if (!function_exists('db_get_job_title')) {
 
 if (!function_exists('db_get_job_category')) {
 
-    function db_get_job_category($company_sid = NULL) {
-        $CI = & get_instance();
+    function db_get_job_category($company_sid = NULL)
+    {
+        $CI = &get_instance();
         $CI->db->where('field_sid', 198);
 
         if ($company_sid == NULL) {
@@ -399,8 +420,9 @@ if (!function_exists('db_get_job_category')) {
 
 if (!function_exists('get_email_template')) {
 
-    function get_email_template($template_id) {
-        $CI = & get_instance();
+    function get_email_template($template_id)
+    {
+        $CI = &get_instance();
         $CI->db->where('sid', $template_id);
         $result = $CI->db->get('email_templates')->row_array();
         if (count($result) > 0) {
@@ -414,7 +436,8 @@ if (!function_exists('get_email_template')) {
 
 if (!function_exists('month_date_year')) {
 
-    function month_date_year($date) {
+    function month_date_year($date)
+    {
         return date('M d Y', strtotime($date));
     }
 
@@ -422,8 +445,9 @@ if (!function_exists('month_date_year')) {
 
 if (!function_exists('save_email_log_common')) {
 
-    function save_email_log_common($from, $to, $subject, $message, $admin = '') {
-        $CI = & get_instance();
+    function save_email_log_common($from, $to, $subject, $message, $admin = '')
+    {
+        $CI = &get_instance();
 
         $emailData = array(
             'date' => date('Y-m-d H:i:s'),
@@ -443,7 +467,8 @@ if (!function_exists('save_email_log_common')) {
 
 if (!function_exists('is_subdomain_of_automotohr')) {
 
-    function is_subdomain_of_automotohr() {
+    function is_subdomain_of_automotohr()
+    {
         $base = strtoupper(base_url());
 
         $baseParts = explode('.', $base);
@@ -460,7 +485,8 @@ if (!function_exists('is_subdomain_of_automotohr')) {
 
 if (!function_exists('send_templated_email')) {
 
-    function send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 0) {
+    function send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 0)
+    {
         $emailTemplateData = get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
         $emailTemplateSubject = $emailTemplateData['subject'];
@@ -480,8 +506,8 @@ if (!function_exists('send_templated_email')) {
 
         if (!empty($message_hf)) {
             $body = $message_hf['header']
-                    . $emailTemplateBody
-                    . $message_hf['footer'];
+                . $emailTemplateBody
+                . $message_hf['footer'];
         }
 
         if ($log_email == 1) {
@@ -495,8 +521,9 @@ if (!function_exists('send_templated_email')) {
 
 if (!function_exists('log_and_send_templated_notification_email')) {
 
-    function log_and_send_templated_notification_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $company_sid, $job_sid, $notification_type) {
-        $CI = & get_instance();
+    function log_and_send_templated_notification_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $company_sid, $job_sid, $notification_type)
+    {
+        $CI = &get_instance();
 
         $CI->load->model('common/job_details');
 
@@ -519,8 +546,8 @@ if (!function_exists('log_and_send_templated_notification_email')) {
 
         if (!empty($message_hf)) {
             $body = $message_hf['header']
-                    . $emailTemplateBody
-                    . $message_hf['footer'];
+                . $emailTemplateBody
+                . $message_hf['footer'];
         }
 
         sendMail($from, $to, $subject, $body, $from_name);
@@ -532,8 +559,9 @@ if (!function_exists('log_and_send_templated_notification_email')) {
 
 if (!function_exists('get_notification_email_contacts')) {
 
-    function get_notification_email_contacts($company_sid, $notification_type, $job_sid = 0) {
-        $CI = & get_instance();
+    function get_notification_email_contacts($company_sid, $notification_type, $job_sid = 0)
+    {
+        $CI = &get_instance();
         $contacts = array();
 
         if ($job_sid > 0) {
@@ -563,10 +591,11 @@ if (!function_exists('get_notification_email_contacts')) {
         }
 
         // Remove the in-active / terminated employers
-        if(count($contacts)){
+        if (count($contacts)) {
             foreach ($contacts as $key => $contact) {
-                if($contact['employer_sid'] != 0 && $contact['employer_sid'] != null){
-                    if($contact['userActive'] == 0 || $contact['terminated_status'] == 1) unset($contacts[$key]);
+                if ($contact['employer_sid'] != 0 && $contact['employer_sid'] != null) {
+                    if ($contact['userActive'] == 0 || $contact['terminated_status'] == 1)
+                        unset($contacts[$key]);
                     $contacts[$key]["email"] = $contact["userEmail"];
                 }
             }
@@ -605,7 +634,8 @@ if (!function_exists('get_notification_email_contacts')) {
 
 if (!function_exists('unique_multi_dimension_array')) {
 
-    function unique_multi_dimension_array($array, $key) {
+    function unique_multi_dimension_array($array, $key)
+    {
         $temp_array = array();
         $i = 0;
         $key_array = array();
@@ -624,8 +654,9 @@ if (!function_exists('unique_multi_dimension_array')) {
 
 if (!function_exists('get_primary_administrator_information')) {
 
-    function get_primary_administrator_information($company_sid) {
-        $CI = & get_instance();
+    function get_primary_administrator_information($company_sid)
+    {
+        $CI = &get_instance();
 
         $CI->db->select('*');
         $CI->db->where('is_primary_admin', 1);
@@ -658,8 +689,9 @@ if (!function_exists('get_primary_administrator_information')) {
 
 if (!function_exists('get_notifications_status')) {
 
-    function get_notifications_status($company_sid) {
-        $CI = & get_instance();
+    function get_notifications_status($company_sid)
+    {
+        $CI = &get_instance();
 
         $CI->db->where('company_sid', $company_sid);
         $CI->db->limit(1);
@@ -679,8 +711,9 @@ if (!function_exists('get_notifications_status')) {
 
 if (!function_exists('get_primary_administrator_information')) {
 
-    function get_primary_administrator_information($company_sid) {
-        $CI = & get_instance();
+    function get_primary_administrator_information($company_sid)
+    {
+        $CI = &get_instance();
 
         $CI->db->select('*');
         $CI->db->where('is_primary_admin', 1);
@@ -713,7 +746,8 @@ if (!function_exists('get_primary_administrator_information')) {
 
 if (!function_exists('db_get_sub_domain')) {
 
-    function db_get_sub_domain($company_id) {
+    function db_get_sub_domain($company_id)
+    {
         $CI = &get_instance();
         $CI->db->select('sub_domain');
         $CI->db->where('user_sid', $company_id);
@@ -733,7 +767,8 @@ if (!function_exists('db_get_sub_domain')) {
 //Function to compare dates
 if (!function_exists('jobs_array_date_compare')) {
 
-    function jobs_array_date_compare($a, $b) {
+    function jobs_array_date_compare($a, $b)
+    {
         $t1 = strtotime($a['activation_date']);
         $t2 = strtotime($b['activation_date']);
         return $t1 - $t2;
@@ -743,11 +778,12 @@ if (!function_exists('jobs_array_date_compare')) {
 
 if (!function_exists('date_with_time')) {
 
-    function date_with_time($date) {
+    function date_with_time($date)
+    {
         $with_time = date('M d Y, D H:i:s', strtotime($date));
-        
-        if(strpos($with_time,'00:00:00')){
-            $with_time = date('M d Y, D',strtotime($date));
+
+        if (strpos($with_time, '00:00:00')) {
+            $with_time = date('M d Y, D', strtotime($date));
         }
         return $with_time;
     }
@@ -767,8 +803,9 @@ if (!function_exists('date_with_time')) {
  *
  * @return String
  */
-if(!function_exists('phonenumber_format')){
-    function phonenumber_format($phone_number, $strip_country_code = FALSE, $country_code = '+1'){
+if (!function_exists('phonenumber_format')) {
+    function phonenumber_format($phone_number, $strip_country_code = FALSE, $country_code = '+1')
+    {
         // Removes country code if exists
         $phone_number = str_replace($country_code, '', $phone_number);
         // Clean phone number
@@ -778,9 +815,9 @@ if(!function_exists('phonenumber_format')){
             // For US & Canada
             case '+1':
                 // Match format & convert
-                if(preg_match('/^(\d{3})(\d{3})(\d{4})(\d+)?$/', $phone_number, $match))
-                    return trim(''.($strip_country_code ? '': $country_code.' ').'('.($match[1]).') '.($match[2]).'-'.($match[3]).' ');
-            break;
+                if (preg_match('/^(\d{3})(\d{3})(\d{4})(\d+)?$/', $phone_number, $match))
+                    return trim('' . ($strip_country_code ? '' : $country_code . ' ') . '(' . ($match[1]) . ') ' . ($match[2]) . '-' . ($match[3]) . ' ');
+                break;
         }
         // When no format is found
         return $phone_number;
@@ -799,18 +836,27 @@ if(!function_exists('phonenumber_format')){
  *
  * @return VOID
  */
-if(!function_exists('_e')){
-    function _e($e, $print = FALSE, $die = FAlSE, $isHidden = FALSE){
-        if($isHidden) echo '<!-- ';
+if (!function_exists('_e')) {
+    function _e($e, $print = FALSE, $die = FAlSE, $isHidden = FALSE)
+    {
+        if ($isHidden)
+            echo '<!-- ';
         echo '<pre>';
-        if($print) echo '<br />*****************************<br />';
-        if(is_array($e)) print_r($e);
-        else if(is_object($e)) var_dump($e);
-        else echo($e);
-        if($print) echo '<br />*****************************<br />';
+        if ($print)
+            echo '<br />*****************************<br />';
+        if (is_array($e))
+            print_r($e);
+        else if (is_object($e))
+            var_dump($e);
+        else
+            echo ($e);
+        if ($print)
+            echo '<br />*****************************<br />';
         echo '</pre>';
-        if($isHidden) echo ' -->';
-        if($die) exit(0);
+        if ($isHidden)
+            echo ' -->';
+        if ($die)
+            exit(0);
     }
 }
 
@@ -825,23 +871,26 @@ if(!function_exists('_e')){
  *
  * @return VOID
  */
-if(!function_exists('company_phone_regex_module_check')){
-    function company_phone_regex_module_check($company_sid, &$to, $_this){
-        $result = 
-        $_this
-        ->db
-        ->select('phone_pattern_module')
-        ->from('users')
-        ->where('sid', $company_sid)
-        ->order_by('sid', 'DESC')
-        ->limit(1)
-        ->get();
+if (!function_exists('company_phone_regex_module_check')) {
+    function company_phone_regex_module_check($company_sid, &$to, $_this)
+    {
+        $result =
+            $_this
+                ->db
+                ->select('phone_pattern_module')
+                ->from('users')
+                ->where('sid', $company_sid)
+                ->order_by('sid', 'DESC')
+                ->limit(1)
+                ->get();
         //
         $result_arr = $result->row_array();
-        $result     = $result->free_result();
+        $result = $result->free_result();
 
-        if(!sizeof($result_arr)) $to['phone_pattern_enable'] = 0;
-        else $to['phone_pattern_enable'] = $result_arr['phone_pattern_module'];
+        if (!sizeof($result_arr))
+            $to['phone_pattern_enable'] = 0;
+        else
+            $to['phone_pattern_enable'] = $result_arr['phone_pattern_module'];
     }
 }
 
@@ -858,11 +907,15 @@ if(!function_exists('company_phone_regex_module_check')){
  *
  * @return String
  */
-if(!function_exists('phonenumber_format')){
-    function phonenumber_format($phone_number, $strip_country_code = FALSE, $country_code = '+1'){
-        if(strlen($phone_number) === 0) return $phone_number;
-        if($phone_number == $country_code) return '';
-        if($phone_number == '') return '';
+if (!function_exists('phonenumber_format')) {
+    function phonenumber_format($phone_number, $strip_country_code = FALSE, $country_code = '+1')
+    {
+        if (strlen($phone_number) === 0)
+            return $phone_number;
+        if ($phone_number == $country_code)
+            return '';
+        if ($phone_number == '')
+            return '';
         // Removes country code if exists
         $phone_number = str_replace($country_code, '', $phone_number);
         // Clean phone number
@@ -872,89 +925,91 @@ if(!function_exists('phonenumber_format')){
             // For US & Canada
             case '+1':
                 // Match format & convert
-                if(preg_match('/^(\d{3})(\d{3})(\d{4})(\d+)?$/', $phone_number, $match))
-                    return trim(''.($strip_country_code ? '': $country_code.' ').'('.($match[1]).') '.($match[2]).'-'.($match[3]).' ');
-            break;
+                if (preg_match('/^(\d{3})(\d{3})(\d{4})(\d+)?$/', $phone_number, $match))
+                    return trim('' . ($strip_country_code ? '' : $country_code . ' ') . '(' . ($match[1]) . ') ' . ($match[2]) . '-' . ($match[3]) . ' ');
+                break;
         }
         // When no format is found
         return $phone_number;
     }
 }
 
-if(!function_exists('job_title_uri')){
-    function job_title_uri($job, $is_title = false, $onlyTitle = false){
+if (!function_exists('job_title_uri')) {
+    function job_title_uri($job, $is_title = false, $onlyTitle = false)
+    {
         //
         $companyName = strtolower(trim($job['CompanyName']));
         //
-        $title = ucwords(trim(preg_replace('/'.($companyName).'/', '', explode('-',preg_replace('/\s+/i', ' ', trim(strtolower(str_replace(',', '-',$job['Title'])))))[0]))).'';
+        $title = ucwords(trim(preg_replace('/' . ($companyName) . '/', '', explode('-', preg_replace('/\s+/i', ' ', trim(strtolower(str_replace(',', '-', $job['Title'])))))[0]))) . '';
         //
-        if($onlyTitle){
+        if ($onlyTitle) {
             return $title;
         }
         //
         $postfix = ' Job in';
         //
-        if(!empty($job['Location_City'])){
-            $postfix .= ' '.$job['Location_City'].',';
-        } 
-        if(!empty($job['Location_State'])){
-            $postfix .= ' '.$job['Location_State'].' at';
+        if (!empty($job['Location_City'])) {
+            $postfix .= ' ' . $job['Location_City'] . ',';
+        }
+        if (!empty($job['Location_State'])) {
+            $postfix .= ' ' . $job['Location_State'] . ' at';
         } else {
-            $postfix .= ' '.$job['Location_Country'].' at ';
+            $postfix .= ' ' . $job['Location_Country'] . ' at ';
         }
         //
-        $postfix .= ' '.$job['CompanyName'];
+        $postfix .= ' ' . $job['CompanyName'];
         //
-        $title .= ''.$postfix;
+        $title .= '' . $postfix;
         //
-        if($is_title){
+        if ($is_title) {
             return $title;
-        }else{
+        } else {
             $title = preg_replace("/[^A-Za-z0-9 ]/", '', $title);
-            $title = str_replace(" ","-",$title);
+            $title = str_replace(" ", "-", $title);
             $title = strtolower($title);
-            return '/display-job/' . $title."-".$job['sid'];
+            return '/display-job/' . $title . "-" . $job['sid'];
         }
-        
+
     }
 }
 
-if(!function_exists('job_meta_keywords')){
-    function job_meta_keywords($job){
+if (!function_exists('job_meta_keywords')) {
+    function job_meta_keywords($job)
+    {
         $meta_keywords = "Job";
         if (!empty($job['TitleOnly'])) {
-            $meta_keywords .=  ", ".str_replace("-",",",$job['TitleOnly']);
+            $meta_keywords .= ", " . str_replace("-", ",", $job['TitleOnly']);
         }
         if (!empty($job['JobType'])) {
-            $meta_keywords .= ', '.$job['JobType'].' Job';
+            $meta_keywords .= ', ' . $job['JobType'] . ' Job';
         }
         if (!empty($job['JobCategory'])) {
-            $categories = @explode(",",$job['JobCategory']);
-                if(is_array($categories)){
-                    foreach($categories as $category){
-                        $meta_keywords .= ', '.$category.' Jobs';
-                    }
+            $categories = @explode(",", $job['JobCategory']);
+            if (is_array($categories)) {
+                foreach ($categories as $category) {
+                    $meta_keywords .= ', ' . $category . ' Jobs';
                 }
+            }
         }
         if (!empty($job['Location_City'])) {
-            $meta_keywords .= ', '.$job['Location_City'];
-            $meta_keywords .= ', Jobs in '.$job['Location_City'];
-            $meta_keywords .= ', Best Jobs in '.$job['Location_City'];
-            $meta_keywords .= ', Search Jobs in '.$job['Location_City'];
-            if (!empty($job['JobCategory'])){
-                $categories = @explode(",",$job['JobCategory']);
-                if(is_array($categories)){
-                    foreach($categories as $category){
-                        $meta_keywords .= ', '.$category.' Jobs in '.$job['Location_City'];
+            $meta_keywords .= ', ' . $job['Location_City'];
+            $meta_keywords .= ', Jobs in ' . $job['Location_City'];
+            $meta_keywords .= ', Best Jobs in ' . $job['Location_City'];
+            $meta_keywords .= ', Search Jobs in ' . $job['Location_City'];
+            if (!empty($job['JobCategory'])) {
+                $categories = @explode(",", $job['JobCategory']);
+                if (is_array($categories)) {
+                    foreach ($categories as $category) {
+                        $meta_keywords .= ', ' . $category . ' Jobs in ' . $job['Location_City'];
                     }
                 }
             }
         }
-        
+
         if (!empty($job['Location_State'])) {
-            $meta_keywords .=  ', Jobs in '.$job['Location_State'];
+            $meta_keywords .= ', Jobs in ' . $job['Location_State'];
         }
-        $meta_keywords .= ', Jobs in '.$job['Location_Country'];
+        $meta_keywords .= ', Jobs in ' . $job['Location_Country'];
         $meta_keywords .= ', Jobs portal';
         $meta_keywords .= ', Jobs on AutomotoSocial.com';
         return $meta_keywords;
@@ -962,12 +1017,12 @@ if(!function_exists('job_meta_keywords')){
 }
 
 // 
-if(!function_exists('mailAWSSES')){
+if (!function_exists('mailAWSSES')) {
     function mailAWSSES(
         &$mail,
         $to,
         $d = false
-    ){
+    ) {
         //
         $creds = getCreds('AHR');
         // Set XMailer
@@ -985,7 +1040,7 @@ if(!function_exists('mailAWSSES')){
         // $mail->Port       = $creds->SES->Port; 
         //
         // For local machines
-        if(in_array($_SERVER['HTTP_HOST'], ['localhost', 'automotohr.local'])){
+        if (in_array($_SERVER['HTTP_HOST'], ['localhost', 'automotohr.local'])) {
             // $mail->SMTPOptions = array(
             //     'ssl' => array(
             //         'verify_peer' => false,
@@ -1241,72 +1296,73 @@ if (!function_exists('replace_tags_for_document')) {
         }
 
         for ($stb = 0; $stb < $short_textboxes; $stb++) {
-            $short_textbox_name = 'short_textbox_'.$stb;
+            $short_textbox_name = 'short_textbox_' . $stb;
             $short_textbox_value = !empty($form_input_data[$short_textbox_name]) && $autofill == 1 ? $form_input_data[$short_textbox_name] : '';
-            $short_textbox_id = 'short_textbox_'.$stb.'_id';
-            $short_textbox = '<input type="text" data-type="text" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="'.$short_textbox_name.'" id="'.$short_textbox_id.'" value="'.$short_textbox_value.'" />';
-            $my_return = preg_replace('/{{short_text}}/', $short_textbox , $my_return, 1 );
-        }      
+            $short_textbox_id = 'short_textbox_' . $stb . '_id';
+            $short_textbox = '<input type="text" data-type="text" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="' . $short_textbox_name . '" id="' . $short_textbox_id . '" value="' . $short_textbox_value . '" />';
+            $my_return = preg_replace('/{{short_text}}/', $short_textbox, $my_return, 1);
+        }
 
         for ($ltb = 0; $ltb < $long_textboxes; $ltb++) {
-            $long_textbox_name = 'long_textbox_'.$ltb;
+            $long_textbox_name = 'long_textbox_' . $ltb;
             $long_textbox_value = !empty($form_input_data[$long_textbox_name]) && $autofill == 1 ? $form_input_data[$long_textbox_name] : '';
-            $long_textbox_id = 'long_textbox_'.$ltb.'_id';
-            $long_textbox = '<input type="text" data-type="text" class="form-control input-grey long_textbox" name="'.$long_textbox_name.'" id="'.$long_textbox_id.'" value="'.$long_textbox_value.'"/>';
-            $my_return = preg_replace('/{{text}}/', $long_textbox , $my_return, 1 );
+            $long_textbox_id = 'long_textbox_' . $ltb . '_id';
+            $long_textbox = '<input type="text" data-type="text" class="form-control input-grey long_textbox" name="' . $long_textbox_name . '" id="' . $long_textbox_id . '" value="' . $long_textbox_value . '"/>';
+            $my_return = preg_replace('/{{text}}/', $long_textbox, $my_return, 1);
         }
 
         for ($cb = 0; $cb < $checkboxes; $cb++) {
-            $checkbox_name = 'checkbox_'.$cb;
+            $checkbox_name = 'checkbox_' . $cb;
             $checkbox_value = !empty($form_input_data[$checkbox_name]) && $form_input_data[$checkbox_name] == 'yes' && $autofill == 1 ? 'checked="checked"' : '';
-            $checkbox_id = 'checkbox_'.$cb.'_id';
-            $checkbox = '<br><input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="'.$checkbox_name.'" id="'.$checkbox_id.'" '.$checkbox_value.'/>';
-            $my_return = preg_replace('/{{checkbox}}/', $checkbox , $my_return, 1 );
+            $checkbox_id = 'checkbox_' . $cb . '_id';
+            $checkbox = '<br><input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="' . $checkbox_name . '" id="' . $checkbox_id . '" ' . $checkbox_value . '/>';
+            $my_return = preg_replace('/{{checkbox}}/', $checkbox, $my_return, 1);
         }
 
         for ($ta = 0; $ta < $textareas; $ta++) {
-            $textarea_name = 'textarea_'.$ta;
+            $textarea_name = 'textarea_' . $ta;
             $textarea_value = !empty($form_input_data[$textarea_name]) && $autofill == 1 ? $form_input_data[$textarea_name] : '';
-            $textarea_id = 'textarea_'.$ta.'_id';
-            $div_id = 'textarea_'.$ta.'_id_sec';
-            $textarea = '<textarea data-type="textarea" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="'.$textarea_name.'" id="'.$textarea_id.'">'.$textarea_value.'</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="'.$div_id.'"  contenteditable="false"></div>';
-            $my_return = preg_replace('/{{text_area}}/', $textarea , $my_return, 1 );
+            $textarea_id = 'textarea_' . $ta . '_id';
+            $div_id = 'textarea_' . $ta . '_id_sec';
+            $textarea = '<textarea data-type="textarea" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="' . $textarea_name . '" id="' . $textarea_id . '">' . $textarea_value . '</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="' . $div_id . '"  contenteditable="false"></div>';
+            $my_return = preg_replace('/{{text_area}}/', $textarea, $my_return, 1);
         }
 
         //E_signature process
-        $signature_person_name = !empty($form_input_data['signature_person_name']) && $autofill == 1  ? $form_input_data['signature_person_name'] : '';
+        $signature_person_name = !empty($form_input_data['signature_person_name']) && $autofill == 1 ? $form_input_data['signature_person_name'] : '';
 
-        $value = '<input type="text" id="signature_person_name" class="form-control input-grey" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="'.$signature_person_name.'">';
+        $value = '<input type="text" id="signature_person_name" class="form-control input-grey" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="' . $signature_person_name . '">';
         $my_return = str_replace('{{signature_print_name}}', $value, $my_return);
 
-        if($forDownload){
+        if ($forDownload) {
             $signature_bas64_image = '_______________________';
-        } else{
-            if(!$signature_base64)
-                $signature_bas64_image = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="draw_upload_img" />';
+        } else {
+            if (!$signature_base64)
+                $signature_bas64_image = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="draw_upload_img" />';
             else
-                $signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.( $signature_base64 ).'"  id="draw_upload_img" />';
+                $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . ($signature_base64) . '"  id="draw_upload_img" />';
         }
-        
+
         if ($authorized_signature == 1) {
-            $authorized_signature = '<a class="btn btn-sm blue-button show_authorized_signature_popup" data-auth-signature="" href="javascript:;">Create Authorized E-Signature</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="show_authorized_signature" />'; 
-            $authorized_signature_date = '<a class="btn btn-sm blue-button get_authorized_sign_date" href="javascript:;">Authorized Sign Date</a><p id="target_authorized_signature_date"></p>'; 
+            $authorized_signature = '<a class="btn btn-sm blue-button show_authorized_signature_popup" data-auth-signature="" href="javascript:;">Create Authorized E-Signature</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="show_authorized_signature" />';
+            $authorized_signature_date = '<a class="btn btn-sm blue-button get_authorized_sign_date" href="javascript:;">Authorized Sign Date</a><p id="target_authorized_signature_date"></p>';
         } else {
             $authorized_signature = '<p>Authorized Signature (<b>Not Signed</b>)</p>';
-            $authorized_signature_date = '<p>Authorized Signature Date (<b>Not Entered</b>)</p>';;
+            $authorized_signature_date = '<p>Authorized Signature Date (<b>Not Entered</b>)</p>';
+            ;
         }
 
 
         $authorized_signature_name = '<input type="text" class="form-control" readonly style="background: #fff; margin-top:16px; width: 50%;">';
-        $init_signature_bas64_image = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="target_signature_init" />';
+        $init_signature_bas64_image = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="target_signature_init" />';
         $signature_timestamp = '<a class="btn btn-sm blue-button get_signature_date" href="javascript:;">Sign Date</a><p id="target_signature_timestamp"></p>';
 
         $my_return = str_replace('{{signature}}', $signature_bas64_image, $my_return);
         $my_return = str_replace('{{inital}}', $init_signature_bas64_image, $my_return);
-        $my_return = str_replace('{{sign_date}}', $signature_timestamp , $my_return);
-        $my_return = str_replace('{{authorized_signature}}', $authorized_signature , $my_return);
-        $my_return = str_replace('{{authorized_signature_print_name}}', $authorized_signature_name , $my_return);
-        $my_return = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $my_return);
+        $my_return = str_replace('{{sign_date}}', $signature_timestamp, $my_return);
+        $my_return = str_replace('{{authorized_signature}}', $authorized_signature, $my_return);
+        $my_return = str_replace('{{authorized_signature_print_name}}', $authorized_signature_name, $my_return);
+        $my_return = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $my_return);
 
         return $my_return;
     }
@@ -1317,7 +1373,8 @@ if (!function_exists('log_and_sendEmail')) {
     function log_and_sendEmail($from, $to, $subject, $body, $senderName)
     {
         $CI = &get_instance();
-        if (empty($to) || $to == NULL) return 0;
+        if (empty($to) || $to == NULL)
+            return 0;
         //
         $emailData = array(
             'date' => date('Y-m-d H:i:s'),
@@ -1347,40 +1404,41 @@ if (!function_exists('log_and_sendEmail')) {
  * 
  * @return Void
  */
-if(!function_exists('sendResumeEmailToApplicant')){
-    function sendResumeEmailToApplicant($post, $ec = FALSE){
+if (!function_exists('sendResumeEmailToApplicant')) {
+    function sendResumeEmailToApplicant($post, $ec = FALSE)
+    {
         //
         $_this = &get_instance();
         $_this->load->model('resume_model');
         $_this->load->library('encryption');
         //
-        $user_info           = array();
-        $emailTemplate       = '';
-        $default_subject     = '';
-        $default_template    = '';
-        $user_sid            = $post['user_sid'];
-        $user_type           = $post['user_type'];
-        $job_list_sid        = $post['job_list_sid']; 
-        $requested_job_sid   = $post['requested_job_sid']; 
-        $requested_job_type  = $post['requested_job_type']; 
-        $company_sid         = $post['company_sid']; 
-        $company_name        = $post['company_name']; 
+        $user_info = array();
+        $emailTemplate = '';
+        $default_subject = '';
+        $default_template = '';
+        $user_sid = $post['user_sid'];
+        $user_type = $post['user_type'];
+        $job_list_sid = $post['job_list_sid'];
+        $requested_job_sid = $post['requested_job_sid'];
+        $requested_job_type = $post['requested_job_type'];
+        $company_sid = $post['company_sid'];
+        $company_name = $post['company_name'];
 
         $emailTemplate = $_this->resume_model->get_send_resume_template($company_sid);
 
         if (!empty($emailTemplate)) {
             $default_subject = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['subject']);
-            $default_template  = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['message_body']);
+            $default_template = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['message_body']);
         } else {
             $emailTemplate = get_email_template(SEND_RESUME_REQUEST);
             $default_subject = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['subject']);
-            $default_template  = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['text']);
+            $default_template = replace_tags_for_document($company_sid, $user_sid, $user_type, $emailTemplate['text']);
         }
 
         $user_info = $_this->resume_model->get_applicant_information($user_sid);
 
         if (empty($user_info)) {
-            if($ec){
+            if ($ec) {
 
                 $resp = array();
                 $resp['Status'] = FALSE;
@@ -1388,7 +1446,7 @@ if(!function_exists('sendResumeEmailToApplicant')){
                 header('Content-Type: application/json');
                 echo @json_encode($resp);
                 exit(0);
-            } else{
+            } else {
                 return false;
             }
         }
@@ -1404,20 +1462,20 @@ if(!function_exists('sendResumeEmailToApplicant')){
         }
 
         $data_to_insert = array();
-        $data_to_insert['company_sid']              = $company_sid;
-        $data_to_insert['user_type']                = $user_type;
-        $data_to_insert['user_sid']                 = $user_sid;
-        $data_to_insert['user_email']               = $applicant_email;
-        $data_to_insert['requested_by']             = 0;
-        $data_to_insert['requested_subject']        = $default_subject;
-        $data_to_insert['requested_message']        = $default_template;
-        $data_to_insert['requested_ip_address']     =  getUserIP();
-        $data_to_insert['requested_user_agent']     = $_SERVER['HTTP_USER_AGENT'];
-        $data_to_insert['request_status']           = 1;
-        $data_to_insert['requested_date']           = date('Y-m-d H:i:s', strtotime('now'));
-        $data_to_insert['job_sid']                  = $requested_job_sid;
-        $data_to_insert['job_type']                 = $requested_job_type;
-        $data_to_insert['is_manual']                = 0;
+        $data_to_insert['company_sid'] = $company_sid;
+        $data_to_insert['user_type'] = $user_type;
+        $data_to_insert['user_sid'] = $user_sid;
+        $data_to_insert['user_email'] = $applicant_email;
+        $data_to_insert['requested_by'] = 0;
+        $data_to_insert['requested_subject'] = $default_subject;
+        $data_to_insert['requested_message'] = $default_template;
+        $data_to_insert['requested_ip_address'] = getUserIP();
+        $data_to_insert['requested_user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+        $data_to_insert['request_status'] = 1;
+        $data_to_insert['requested_date'] = date('Y-m-d H:i:s', strtotime('now'));
+        $data_to_insert['job_sid'] = $requested_job_sid;
+        $data_to_insert['job_type'] = $requested_job_type;
+        $data_to_insert['is_manual'] = 0;
 
         $_this->resume_model->deactivate_old_resume_request($company_sid, $user_type, $user_sid, $requested_job_sid, $requested_job_type);
         $_this->resume_model->insert_resume_request($data_to_insert);
@@ -1430,7 +1488,7 @@ if(!function_exists('sendResumeEmailToApplicant')){
         $requested_job_type = $_this->encryption->encrypt($requested_job_type);
         $requested_job_type = str_replace('/', '$type', $requested_job_type);
 
-        $url = 'https://www.automotohr.com/onboarding/send_requested_resume/' . $verification_key.'/'.$requested_job_sid.'/'.$requested_job_type;
+        $url = 'https://www.automotohr.com/onboarding/send_requested_resume/' . $verification_key . '/' . $requested_job_sid . '/' . $requested_job_type;
         $link_btn = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Send Resume</a>';
         //
         $message_body = str_replace('{{link}}', $link_btn, $message_body);
@@ -1440,12 +1498,12 @@ if(!function_exists('sendResumeEmailToApplicant')){
         $from_name = ucwords(STORE_DOMAIN);
         $email_hf = message_header_footer_domain($company_sid, $company_name);
         $body = $email_hf['header']
-                . $message_body
-                . $email_hf['footer'];
+            . $message_body
+            . $email_hf['footer'];
         //
         log_and_sendEmail($from, $to, $subject, $body, $from_name);
         //
-        if($ec){
+        if ($ec) {
             $resp = array();
             $resp['Status'] = TRUE;
             $resp['Response'] = '<strong>Success! </strong> You have successfully sent a resume request.';
@@ -1465,7 +1523,7 @@ if (!function_exists('getFileData')) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
         $data = curl_exec($ch);
         curl_close($ch);
         //
@@ -1474,29 +1532,32 @@ if (!function_exists('getFileData')) {
 }
 
 //
-if(!function_exists('slug')){
-    function slug($string){
-        return 
-        preg_replace(
-            '/[^a-zA-Z0-9]/i',
-            '-',
+if (!function_exists('slug')) {
+    function slug($string)
+    {
+        return
             preg_replace(
-                '/\s+/',
-                ' ',
-                strtolower(trim($string))
-            )
-        );
+                '/[^a-zA-Z0-9]/i',
+                '-',
+                preg_replace(
+                    '/\s+/',
+                    ' ',
+                    strtolower(trim($string))
+                )
+            );
     }
 }
 
 
 //
-if(!function_exists('GetJobHeaderForGoogle')){
-    function GetJobHeaderForGoogle($job_details, $company_details){
+if (!function_exists('GetJobHeaderForGoogle')) {
+    function GetJobHeaderForGoogle($job_details, $company_details)
+    {
         $acDate = $job_details['activation_date'];
-        if(!preg_match('/[0-9]/',$acDate)) $acDate = date('m-d-Y');
+        if (!preg_match('/[0-9]/', $acDate))
+            $acDate = date('m-d-Y');
 
-        if(preg_replace('/[^0-9]/', '', $job_details['activation_date']) == '' && $job_details['approval_status_change_datetime'] != ''){
+        if (preg_replace('/[^0-9]/', '', $job_details['activation_date']) == '' && $job_details['approval_status_change_datetime'] != '') {
             $acDate = DateTime::createFromFormat(
                 'Y-m-d H:i:s',
                 $job_details['approval_status_change_datetime']
@@ -1509,24 +1570,24 @@ if(!function_exists('GetJobHeaderForGoogle')){
         //
         $stateCountryArray = empty($company_details['Location_State']) ? [] : db_get_state_name($company_details['Location_State']);
         //
-        if(!empty($company_details['Location_Address'])){
+        if (!empty($company_details['Location_Address'])) {
             $locationAddress .= $company_details['Location_Address'];
         }
         //
-        if(!empty($company_details['Location_Address_2'])){
-            $locationAddress .= ', '.$company_details['Location_Address_2'];
+        if (!empty($company_details['Location_Address_2'])) {
+            $locationAddress .= ', ' . $company_details['Location_Address_2'];
         }
         //
-        if(!empty($company_details['Location_City'])){
-            $locationAddress .= ', '.$company_details['Location_City'];
+        if (!empty($company_details['Location_City'])) {
+            $locationAddress .= ', ' . $company_details['Location_City'];
         }
         //
-        if(!empty($company_details['Location_State'])){
-            $locationAddress .= ', '.$stateCountryArray['state_name'];
+        if (!empty($company_details['Location_State'])) {
+            $locationAddress .= ', ' . $stateCountryArray['state_name'];
         }
         //
-        if(!empty($company_details['Location_State'])){
-            $locationAddress .= ', '.$stateCountryArray['country_name'];
+        if (!empty($company_details['Location_State'])) {
+            $locationAddress .= ', ' . $stateCountryArray['country_name'];
         }
         //
         $job_details['Location'] = $locationAddress;
@@ -1536,18 +1597,18 @@ if(!function_exists('GetJobHeaderForGoogle')){
         $googleJobOBJ['@context'] = 'http://schema.org';
         $googleJobOBJ['@type'] = 'JobPosting';
         $googleJobOBJ['title'] = $job_details['Title'];
-        $googleJobOBJ['description'] = ($job_details['JobDescription'].' '.$job_details['JobRequirements']);
+        $googleJobOBJ['description'] = ($job_details['JobDescription'] . ' ' . $job_details['JobRequirements']);
         $googleJobOBJ['employmentType'] = strtoupper(str_replace(' ', '_', $job_details['JobType'])); // FULL_TIME, PART_TIME, CONTRACTOR, TEMPORARY, INTERN, VOLUNTEER, PER_DIEM, OTHER [FULL_TIME,PART_TIME]
         $googleJobOBJ['industry'] = 'business';
         $googleJobOBJ['datePosted'] = DateTime::createFromFormat('m-d-Y', $acDate)->format('Y-m-d\TH:i:s\Z');
         $googleJobOBJ['validThrough'] = DateTime::createFromFormat('m-d-Y', $acDate)->add(new DateInterval('P30D'))->format('Y-m-d'); // Add interval of one month
-        $googleJobOBJ['url'] = 'https://www.automotosocial.com/display-job/'.(preg_replace('/\s+/', '-',preg_replace('/[^0-9a-zA-Z]/', ' ', strtolower($job_details['Title'])))).'-'.$job_details['sid']; // Add interval of one month
+        $googleJobOBJ['url'] = 'https://www.automotosocial.com/display-job/' . (preg_replace('/\s+/', '-', preg_replace('/[^0-9a-zA-Z]/', ' ', strtolower($job_details['Title'])))) . '-' . $job_details['sid']; // Add interval of one month
         // Organization details
         $googleJobOBJ['hiringOrganization'] = [];
         $googleJobOBJ['hiringOrganization']['@type'] = 'Organization';
         $googleJobOBJ['hiringOrganization']['name'] = $company_details['CompanyName'];
-        $googleJobOBJ['hiringOrganization']['sameAs'] = 'https://'.$company_details['sub_domain'];
-        $googleJobOBJ['hiringOrganization']['logo'] = AWS_S3_BUCKET_URL.$company_details['Logo'];
+        $googleJobOBJ['hiringOrganization']['sameAs'] = 'https://' . $company_details['sub_domain'];
+        $googleJobOBJ['hiringOrganization']['logo'] = AWS_S3_BUCKET_URL . $company_details['Logo'];
         // Job location details
         $googleJobOBJ['jobLocation']['@type'] = 'Place';
         $googleJobOBJ['jobLocation']['address'] = [];
@@ -1568,24 +1629,30 @@ if(!function_exists('GetJobHeaderForGoogle')){
         $googleJobOBJ['baseSalary']['value']['unitText'] = 'HOUR';
         $googleJobOBJ['baseSalary']['value']['value'] = '20';
 
-        if(!empty($job_details['Salary'])){
+        if (!empty($job_details['Salary'])) {
             //
-            $salary = preg_replace('/\s+/', ' ', str_replace('-',' ',trim($job_details['Salary'])));
+            $salary = preg_replace('/\s+/', ' ', str_replace('-', ' ', trim($job_details['Salary'])));
             //
             $salary = preg_replace('/((\d\.?)\s)(?=\d[^>]*(<|$))/', '$2$3', $salary);
             //
             $salary = trim(preg_replace('/[^0-9\s]/', '', $salary));
             //
-            if(!empty($salary)){
+            if (!empty($salary)) {
                 //
                 $salaryArray = explode(' ', $salary);
                 //
                 $salaryType = 'MONTH';
                 //
                 switch ($job_details['SalaryType']) {
-                    case 'per_hour': $salaryType = 'HOUR'; break;
-                    case 'per_week': $salaryType = 'WEEK'; break;
-                    case 'per_year': $salaryType = 'YEAR'; break;
+                    case 'per_hour':
+                        $salaryType = 'HOUR';
+                        break;
+                    case 'per_week':
+                        $salaryType = 'WEEK';
+                        break;
+                    case 'per_year':
+                        $salaryType = 'YEAR';
+                        break;
                 }
                 $googleJobOBJ['baseSalary'] = [];
                 $googleJobOBJ['baseSalary']['@type'] = 'MonetaryAmount';
@@ -1595,7 +1662,7 @@ if(!function_exists('GetJobHeaderForGoogle')){
                 //
                 $googleJobOBJ['baseSalary']['value']['unitText'] = $salaryType;
                 //
-                if(count($salaryArray) == 1){
+                if (count($salaryArray) == 1) {
                     $googleJobOBJ['baseSalary']['value']['value'] = number_format($salaryArray[0], 2, '.', '');
                 } else {
                     $googleJobOBJ['baseSalary']['value']['minValue'] = number_format($salaryArray[0], 2, '.', '');
@@ -1670,7 +1737,7 @@ if (!function_exists('send_full_employment_application')) {
             //
             $company_email_header_footer = message_header_footer_domain($company_sid, ucwords($company_name));
             send_templated_email(FULL_EMPLOYMENT_APPLICATION_REQUEST, $user_email, $replacement_array, $company_email_header_footer, 1);
-        }    
+        }
     }
 }
 
@@ -1701,7 +1768,7 @@ if (!function_exists('getCompanyNameBySid')) {
     {
         $company_name = '';
         if (!empty($company_sid)) {
-            
+
             $CI = &get_instance();
             $CI->db->select('CompanyName');
             $CI->db->where('sid', $company_sid);
@@ -1710,9 +1777,9 @@ if (!function_exists('getCompanyNameBySid')) {
 
             if (!empty($company_info)) {
                 $company_name = $company_info['CompanyName'];
-            }   
+            }
 
-        } 
+        }
 
         return $company_name;
     }
@@ -1776,7 +1843,7 @@ if (!function_exists('get_applicant_name')) {
         if (empty($result)) { // applicant does not exits
             return 'error';
         } else {
-            return $result[0]['first_name']. ' ' . $result[0]['last_name'];
+            return $result[0]['first_name'] . ' ' . $result[0]['last_name'];
         }
     }
 }
@@ -1793,8 +1860,9 @@ if (!function_exists('get_employee_profile_info')) {
 }
 
 //
-if(!function_exists('getUserNameBySID')){
-    function getUserNameBySID($sid, $remake = true){
+if (!function_exists('getUserNameBySID')) {
+    function getUserNameBySID($sid, $remake = true)
+    {
         $user_info = db_get_employee_profile($sid);
 
         if (!empty($user_info)) {
@@ -1822,7 +1890,7 @@ if (!function_exists('check_company_status')) {
         $CI->db->where('sid', $company_sid);
         $result = $CI->db->get('users')->row_array();
         //
-        return $result["active"]; 
+        return $result["active"];
     }
 }
 
@@ -1831,15 +1899,86 @@ if (!function_exists('check_company_status')) {
 if (!function_exists('_e')) {
     function _e($e, $print = FALSE, $die = FAlSE, $isHidden = FALSE)
     {
-        if ($isHidden) echo '<!-- ';
+        if ($isHidden)
+            echo '<!-- ';
         echo '<pre>';
-        if ($print) echo '<br />*****************************<br />';
-        if (is_array($e)) print_r($e);
-        else if (is_object($e)) var_dump($e);
-        else echo ($e);
-        if ($print) echo '<br />*****************************<br />';
+        if ($print)
+            echo '<br />*****************************<br />';
+        if (is_array($e))
+            print_r($e);
+        else if (is_object($e))
+            var_dump($e);
+        else
+            echo ($e);
+        if ($print)
+            echo '<br />*****************************<br />';
         echo '</pre>';
-        if ($isHidden) echo ' -->';
-        if ($die) exit(0);
+        if ($isHidden)
+            echo ' -->';
+        if ($die)
+            exit(0);
+    }
+}
+
+
+if (!function_exists('storeApplicantInQueueToProcess')) {
+    /**
+     * Add the Applicant to the queue
+     * so Node server can process it
+     * @todo add logic to handle desired job title
+     * @param array $data
+     * portal_applicant_job_sid - The middle table id 
+     * portal_job_applications_sid - The actual applicant id
+     * company_sid - The company id
+     * job_sid - The job id (For now it will not be empty)
+     * @return array
+     */
+    function storeApplicantInQueueToProcess(array $data): array
+    {
+        // set errors array
+        $errors = [];
+        // add requiremnt check
+        if ((int) $data["portal_job_applications_sid"] === 0) {
+            $errors[] = "Applicant job id is missing";
+        } else if ((int) $data["portal_applicant_job_sid"] === 0) {
+            $errors[] = "Applicant applied job id is missing";
+        } else if ((int) $data["job_sid"] === 0) {
+            $errors[] = "Job id is missing";
+        } else if ((int) $data["company_sid"] === 0) {
+            $errors[] = "Company id is missing";
+        }
+        // check and retuen errors if any
+        if ($errors) {
+            return $errors;
+        }
+        // Get CI instance
+        $_this = &get_instance();
+        // check if applicant is already processed or not
+        if (
+            !$_this->db->where([
+                'portal_job_applications_sid' => $data['portal_job_applications_sid'],
+                'portal_applicant_job_sid' => $data["portal_applicant_job_sid"],
+                'company_sid' => $data['company_sid'],
+                'job_sid' => $data['job_sid'],
+            ])->count_all_results("portal_applicant_jobs_queue")
+        ) {
+            // insert it
+            $_this
+                ->db
+                ->insert("portal_applicant_jobs_queue", [
+                    'portal_job_applications_sid' => $data['portal_job_applications_sid'],
+                    'portal_applicant_job_sid' => $data["portal_applicant_job_sid"],
+                    'company_sid' => $data['company_sid'],
+                    'job_sid' => $data['job_sid'],
+                    "status" => "queued",
+                    "priority" => 1,
+                    "created_at" => date("Y-m-d H:i:s", strtotime("now")),
+                    "updated_at" => date("Y-m-d H:i:s", strtotime("now")),
+                ]);
+            return ["success" => true, "message" => "You have successfully added an applicant to queue.", "is_updated" => false];
+        }
+        //
+        return ["success" => true, "message" => "You have successfully updated an applicant to queue.", "is_updated" => true];
+
     }
 }
