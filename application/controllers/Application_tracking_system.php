@@ -26,24 +26,24 @@ class Application_tracking_system extends Public_Controller
     {
         // _e($this->db->get('portal_company_sms_module')->result_array(), true, true);
         if ($this->session->userdata('logged_in')) {
-            $job_sid_urldecode                                                  = urldecode($job_sid);
-            $app_type                                                           = urldecode($app_type);
-            $fair_type                                                          = urldecode($fair_type);
-            $ques_status                                                        = urldecode($ques_status);
-            $emp_app_status                                                     = urldecode($emp_app_status);
-            $search_activated                                                   = 0;
-            $all_manual_applicants                                              = 0;
-            $all_talent_applicants                                              = 0;
-            $all_job_fair_applicants                                            = 0;
-            $applicant_total                                                    = 0;
-            $applicant_total_pagination                                         = 0;
+            $job_sid_urldecode = urldecode($job_sid);
+            $app_type = urldecode($app_type);
+            $fair_type = urldecode($fair_type);
+            $ques_status = urldecode($ques_status);
+            $emp_app_status = urldecode($emp_app_status);
+            $search_activated = 0;
+            $all_manual_applicants = 0;
+            $all_talent_applicants = 0;
+            $all_job_fair_applicants = 0;
+            $applicant_total = 0;
+            $applicant_total_pagination = 0;
 
             if (($searchKeyword != NULL && $searchKeyword != 'all') || ($job_sid != NULL && $job_sid != 'all' && $job_sid != 'null') || ($status != NULL && $status != 'all') || $job_fit_category_sid > 0) {
-                $search_activated                                           = 1;
+                $search_activated = 1;
             }
 
-            $data['session']                                                    = $this->session->userdata('logged_in');
-            $company_sid                                                        = $data['session']['company_detail']['sid'];
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_sid = $data['session']['company_detail']['sid'];
             // Check and set the company sms module
             // phone number
             company_sms_phonenumber(
@@ -52,28 +52,28 @@ class Application_tracking_system extends Public_Controller
                 $data,
                 $this
             );
-            $company_email                                                      = $data['session']['company_detail']['email'];
-            $company_name                                                       = $data['session']['company_detail']['CompanyName'];
-            $employers_details                                                  = $data['session']['employer_detail'];
-            $employer_sid                                                       = $employers_details['sid'];
-            $access_level                                                       = $employers_details['access_level'];
-            $ats_active_job_flag                                                = null; // get both active and inactive jobs
+            $company_email = $data['session']['company_detail']['email'];
+            $company_name = $data['session']['company_detail']['CompanyName'];
+            $employers_details = $data['session']['employer_detail'];
+            $employer_sid = $employers_details['sid'];
+            $access_level = $employers_details['access_level'];
+            $ats_active_job_flag = null; // get both active and inactive jobs
 
             if (isset($data['session']['portal_detail']['ats_active_job_flag'])) {
-                $ats_active_job_flag                                            = $data['session']['portal_detail']['ats_active_job_flag'];
+                $ats_active_job_flag = $data['session']['portal_detail']['ats_active_job_flag'];
             }
 
-            $is_admin                                                           = false;
+            $is_admin = false;
 
             if ($access_level == 'Admin') {
-                $is_admin                                                       = true;
+                $is_admin = true;
             }
 
             if ($ats_active_job_flag == 0) {
-                $ats_active_job_flag                                            = null; // get both active and inactive jobs
+                $ats_active_job_flag = null; // get both active and inactive jobs
             }
 
-            $security_sid                                                       = $employer_sid;
+            $security_sid = $employer_sid;
 
             //            if (!$this->session->userdata('security_details_' . $security_sid)) {
             //                $security_details                                               = db_get_access_level_details($security_sid);
@@ -81,30 +81,30 @@ class Application_tracking_system extends Public_Controller
             //            }
 
             //            $security_details                                                   = $this->session->userdata('security_details_' . $security_sid);
-            $security_details                                                   = db_get_access_level_details($security_sid);
-            $data['security_details']                                           = $security_details;
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
             check_access_permissions($security_details, 'dashboard', 'application_tracking');
             $data['remarket_company_settings'] = $this->remarket_model->get_remarket_company_settings($company_sid);
-            $data['title']                                                      = 'Application Tracking System';
+            $data['title'] = 'Application Tracking System';
 
             if (!$this->session->userdata('job_fit_categories_' . $security_sid)) {
-                $job_fit_categories                                             = db_get_job_category($company_sid);
+                $job_fit_categories = db_get_job_category($company_sid);
                 $this->session->set_userdata('job_fit_categories_' . $security_sid, $job_fit_categories);
             }
 
-            $data['job_fit_categories']                                         = $this->session->userdata('job_fit_categories_' . $security_sid);
-            $data['search_activated']                                           = $search_activated;
-            $data['app_type']                                                   = $app_type;
-            $data['fair_type']                                                  = $fair_type;
-            $data['ques_status']                                                = $ques_status;
-            $data['emp_app_status']                                             = $emp_app_status;
+            $data['job_fit_categories'] = $this->session->userdata('job_fit_categories_' . $security_sid);
+            $data['search_activated'] = $search_activated;
+            $data['app_type'] = $app_type;
+            $data['fair_type'] = $fair_type;
+            $data['ques_status'] = $ques_status;
+            $data['emp_app_status'] = $emp_app_status;
 
             if (!$this->session->userdata('has_access_to_profile' . $security_sid)) {
                 $has_access_to_profile = check_access_permissions_for_view($security_details, 'applicant_profile');
                 $this->session->set_userdata('has_access_to_profile_' . $security_sid, $has_access_to_profile);
             }
 
-            $data['has_access_to_profile']                                      = $this->session->userdata('has_access_to_profile_' . $security_sid);
+            $data['has_access_to_profile'] = $this->session->userdata('has_access_to_profile_' . $security_sid);
 
             if (isset($_POST['delete_contacts']) && $_POST['delete_contacts'] == 'true') {
                 $delete_fields = $_POST['ej_check'];
@@ -140,9 +140,9 @@ class Application_tracking_system extends Public_Controller
             }
 
             if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'ajax_update_status') {
-                $sid                                                            = $_REQUEST['id'];
-                $status                                                         = $_REQUEST['status'];
-                $status_sid                                                     = $_REQUEST['status_sid'];
+                $sid = $_REQUEST['id'];
+                $status = $_REQUEST['status'];
+                $status_sid = $_REQUEST['status_sid'];
 
                 //
                 $oldStatus = getApplicantOnboardingPreviousStatus($sid);
@@ -150,8 +150,8 @@ class Application_tracking_system extends Public_Controller
 
                 // Log 
                 $data['session'] = $this->session->userdata('logged_in');
-                $employers_details  = $data['session']['employer_detail'];
-                $employer_sid       = $employers_details['sid'];
+                $employers_details = $data['session']['employer_detail'];
+                $employer_sid = $employers_details['sid'];
                 saveApplicantOnboardingStatusLog($sid, $employer_sid, $status, $oldStatus);
                 // load indeed library
                 $this->load->model("indeed_model");
@@ -165,8 +165,8 @@ class Application_tracking_system extends Public_Controller
             }
 
             if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'ajax_update_status_candidate') {
-                $sid                                                            = $_REQUEST['id'];
-                $status                                                         = $_REQUEST['status'];
+                $sid = $_REQUEST['id'];
+                $status = $_REQUEST['status'];
                 $this->application_tracking_system_model->change_current_status($sid, $status, $company_sid, 'portal_manual_candidates'); // function name changed with new pararmeter!
                 // load indeed library
                 $this->load->model("indeed_model");
@@ -185,61 +185,61 @@ class Application_tracking_system extends Public_Controller
                 $archived = 1;
             }
 
-            $assigned_applicants_sids                                           = array();
+            $assigned_applicants_sids = array();
 
             if ($archive == 'assigned_to') {
-                $assigned_applicants_sids                                       = $this->application_tracking_system_model->get_all_applicants_assigned_to_me($company_sid, $employer_sid);
+                $assigned_applicants_sids = $this->application_tracking_system_model->get_all_applicants_assigned_to_me($company_sid, $employer_sid);
             } else if ($archive == 'assigned_by') {
-                $assigned_applicants_sids                                       = $this->application_tracking_system_model->get_all_applicants_assigned_by_me($company_sid, $employer_sid);
+                $assigned_applicants_sids = $this->application_tracking_system_model->get_all_applicants_assigned_by_me($company_sid, $employer_sid);
             }
 
-            $records_per_page                                                   = 30;
-            $baseUrl                                                            = base_url('application_tracking_system') . '/' . $archive . '/' . urlencode($searchKeyword) . '/' . $job_sid . '/' . $status . '/' . $job_fit_category_sid . '/' . $app_type . '/' . $fair_type . '/' . $ques_status . '/' . $emp_app_status;
-            $uri_segment                                                        = 11;
-            $keywords                                                           = '';
-            $my_offset                                                          = 0;
-            $page                                                               = ($this->uri->segment(11)) ? $this->uri->segment(11) : 0;
+            $records_per_page = 30;
+            $baseUrl = base_url('application_tracking_system') . '/' . $archive . '/' . urlencode($searchKeyword) . '/' . $job_sid . '/' . $status . '/' . $job_fit_category_sid . '/' . $app_type . '/' . $fair_type . '/' . $ques_status . '/' . $emp_app_status;
+            $uri_segment = 11;
+            $keywords = '';
+            $my_offset = 0;
+            $page = ($this->uri->segment(11)) ? $this->uri->segment(11) : 0;
 
             if ($page > 1) {
-                $my_offset                                                      = ($page - 1) * $records_per_page;
+                $my_offset = ($page - 1) * $records_per_page;
             }
             //**** search and filtration code ****//
             if ($searchKeyword != null) {                                       // sets the keywords for search and $data
-                $data['search']                                                 = 'true';
+                $data['search'] = 'true';
 
                 if ($searchKeyword != 'all') {
-                    $data['searchValue']                                        = urldecode($searchKeyword);
-                    $keywords                                                   = urldecode($searchKeyword);
-                    $data['keyword']                                            = $keywords;
+                    $data['searchValue'] = urldecode($searchKeyword);
+                    $keywords = urldecode($searchKeyword);
+                    $data['keyword'] = $keywords;
                 } else {
-                    $data['searchValue']                                        = '';
-                    $keywords                                                   = '';
-                    $data['keyword']                                            = '';
+                    $data['searchValue'] = '';
+                    $keywords = '';
+                    $data['keyword'] = '';
                 }
             } else {
-                $data['keyword']                                                = '';
+                $data['keyword'] = '';
             }
 
-            $data['status']                                                     = $status; // sets the status for search and $data
-            $data['job_fit_category_sid']                                       = $job_fit_category_sid;
-            $status                                                             = urldecode($status);
-            $status                                                             = str_replace("_", " ", $status);
-            $status                                                             = ucwords($status);
-            $applicant_filters                                                  = array(); // create the filter array
-            $have_status                                                        = $this->application_tracking_system_model->have_status_records($company_sid);
-            $data['have_status']                                                = $have_status;
+            $data['status'] = $status; // sets the status for search and $data
+            $data['job_fit_category_sid'] = $job_fit_category_sid;
+            $status = urldecode($status);
+            $status = str_replace("_", " ", $status);
+            $status = ucwords($status);
+            $applicant_filters = array(); // create the filter array
+            $have_status = $this->application_tracking_system_model->have_status_records($company_sid);
+            $data['have_status'] = $have_status;
 
             if ($data['have_status'] == true) {
-                $company_statuses                                               = $this->application_tracking_system_model->get_company_statuses($company_sid);
-                $data['company_statuses']                                       = $company_statuses;
+                $company_statuses = $this->application_tracking_system_model->get_company_statuses($company_sid);
+                $data['company_statuses'] = $company_statuses;
             }
 
             if ($status != '' && $status != NULL && $status != 'all' && $status != 'All') {
                 if ($data['have_status'] == true) {
-                    $status_sid                                                 = $this->application_tracking_system_model->get_status_sid($company_sid, $status);
-                    $applicant_filters['status_sid']                            = $status_sid;
+                    $status_sid = $this->application_tracking_system_model->get_status_sid($company_sid, $status);
+                    $applicant_filters['status_sid'] = $status_sid;
                 } else {
-                    $applicant_filters['status']                                = $status;
+                    $applicant_filters['status'] = $status;
                 }
             }
 
@@ -333,13 +333,13 @@ class Application_tracking_system extends Public_Controller
                             $applicant_total_pagination = $applicant_total + $all_manual_applicants + $all_talent_applicants + $all_job_fair_applicants;
                         } else {
                             if (strtolower($app_type) == 'applicant') {
-                                $applicant_total_pagination                     = $applicant_total;
+                                $applicant_total_pagination = $applicant_total;
                             } elseif (strtolower($app_type) == 'manual candidate') {
-                                $applicant_total_pagination                     = $all_manual_applicants;
+                                $applicant_total_pagination = $all_manual_applicants;
                             } elseif (strtolower($app_type) == 'talent network') {
-                                $applicant_total_pagination                     = $all_talent_applicants;
+                                $applicant_total_pagination = $all_talent_applicants;
                             } elseif (strtolower($app_type) == 'job fair') {
-                                $applicant_total_pagination                     = $all_job_fair_applicants;
+                                $applicant_total_pagination = $all_job_fair_applicants;
                             }
                         }
                     }
@@ -347,39 +347,39 @@ class Application_tracking_system extends Public_Controller
             }
 
             if ($is_admin) {
-                $data['all_jobs']                                               = $this->application_tracking_system_model->get_all_jobs_company_specific($company_sid, $ats_active_job_flag);
+                $data['all_jobs'] = $this->application_tracking_system_model->get_all_jobs_company_specific($company_sid, $ats_active_job_flag);
             } else {
-                $data['all_jobs']                                               = $this->application_tracking_system_model->get_all_jobs_company_and_employer_specific($company_sid, $employer_sid, $ats_active_job_flag);
+                $data['all_jobs'] = $this->application_tracking_system_model->get_all_jobs_company_and_employer_specific($company_sid, $employer_sid, $ats_active_job_flag);
             }
 
-            $config                                                             = array();
-            $config['base_url']                                                 = $baseUrl;
-            $config['total_rows']                                               = $applicant_total_pagination;
-            $config['per_page']                                                 = $records_per_page;
-            $config['uri_segment']                                              = $uri_segment;
-            $choice                                                             = $config['total_rows'] / $config['per_page'];
-            $config['num_links']                                                = 4; //ceil($choice);
-            $config['use_page_numbers']                                         = true;
-            $config['full_tag_open']                                            = '<nav class="hr-pagination"><ul>';
-            $config['full_tag_close']                                           = '</ul></nav><!--pagination-->';
-            $config['first_link']                                               = '&laquo; First';
-            $config['first_tag_open']                                           = '<li class="prev page">';
-            $config['first_tag_close']                                          = '</li>';
-            $config['last_link']                                                = 'Last &raquo;';
-            $config['last_tag_open']                                            = '<li class="next page">';
-            $config['last_tag_close']                                           = '</li>';
-            $config['next_link']                                                = '<i class="fa fa-angle-right"></i>';
-            $config['next_tag_open']                                            = '<li class="next page">';
-            $config['next_tag_close']                                           = '</li>';
-            $config['prev_link']                                                = '<i class="fa fa-angle-left"></i>';
-            $config['prev_tag_open']                                            = '<li class="prev page">';
-            $config['prev_tag_close']                                           = '</li>';
-            $config['cur_tag_open']                                             = '<li class="active"><a href="">';
-            $config['cur_tag_close']                                            = '</a></li>';
-            $config['num_tag_open']                                             = '<li class="page">';
-            $config['num_tag_close']                                            = '</li>';
+            $config = array();
+            $config['base_url'] = $baseUrl;
+            $config['total_rows'] = $applicant_total_pagination;
+            $config['per_page'] = $records_per_page;
+            $config['uri_segment'] = $uri_segment;
+            $choice = $config['total_rows'] / $config['per_page'];
+            $config['num_links'] = 4; //ceil($choice);
+            $config['use_page_numbers'] = true;
+            $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+            $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+            $config['first_link'] = '&laquo; First';
+            $config['first_tag_open'] = '<li class="prev page">';
+            $config['first_tag_close'] = '</li>';
+            $config['last_link'] = 'Last &raquo;';
+            $config['last_tag_open'] = '<li class="next page">';
+            $config['last_tag_close'] = '</li>';
+            $config['next_link'] = '<i class="fa fa-angle-right"></i>';
+            $config['next_tag_open'] = '<li class="next page">';
+            $config['next_tag_close'] = '</li>';
+            $config['prev_link'] = '<i class="fa fa-angle-left"></i>';
+            $config['prev_tag_open'] = '<li class="prev page">';
+            $config['prev_tag_close'] = '</li>';
+            $config['cur_tag_open'] = '<li class="active"><a href="">';
+            $config['cur_tag_close'] = '</a></li>';
+            $config['num_tag_open'] = '<li class="page">';
+            $config['num_tag_close'] = '</li>';
             $this->pagination->initialize($config);
-            $data['links']                                                      = $this->pagination->create_links();
+            $data['links'] = $this->pagination->create_links();
 
             /*foreach ($applicants as $key => $applicant) {
                 $average_interview_score = $this->interview_questionnaires_model->get_questionnaire_average_score($company_sid, $applicant['applicant_sid'], 'applicant', 0);
@@ -401,16 +401,16 @@ class Application_tracking_system extends Public_Controller
                 $applicants[$key]['video_interview_score'] = round($average_rating, 1);
             } */
 
-            $employer_id                                                        = $employer_sid;
-            $job_fair_configuration                                             = $this->application_tracking_system_model->job_fair_configuration($company_sid);
-            $data['job_fair_configuration']                                     = $job_fair_configuration;
-            $job_fair_forms                                                     = array();
+            $employer_id = $employer_sid;
+            $job_fair_configuration = $this->application_tracking_system_model->job_fair_configuration($company_sid);
+            $data['job_fair_configuration'] = $job_fair_configuration;
+            $job_fair_forms = array();
 
             if ($job_fair_configuration != 0) { // get all job fairs and their keys
                 $job_fair_forms = $this->application_tracking_system_model->job_fair_forms($company_sid);
             }
 
-            $data['job_fair_forms']                                             = $job_fair_forms;
+            $data['job_fair_forms'] = $job_fair_forms;
             //**** code for graph ****//
             if ($archived == 0) {
                 $ApplciantPerMonth = $this->application_tracking_system_model->getApplicantCountByMonth('Applicant', $company_sid);
@@ -513,32 +513,32 @@ class Application_tracking_system extends Public_Controller
             //**** code for graph ****//
 
             if ($job_sid_urldecode != null || $job_sid_urldecode != 'all') {
-                $data['job_sid']                                                = $job_sid_urldecode;
-                $data['job_sid_array']                                          = explode(',', $job_sid_urldecode);
+                $data['job_sid'] = $job_sid_urldecode;
+                $data['job_sid_array'] = explode(',', $job_sid_urldecode);
             }
 
-            $data['applicant_total']                                            = $applicant_total;
-            $data['all_manual_applicants']                                      = $all_manual_applicants;
-            $data['all_talent_applicants']                                      = $all_talent_applicants;
-            $data['all_job_fair_applicants']                                    = $all_job_fair_applicants;
-            $data['all_job_applicants']                                         = $applicant_total;
-            $data['archive']                                                    = $archive;
-            $data['archived']                                                   = $archived;
-            $data['employer_jobs']                                              = $applicants;
-            $data['employer_sid']                                               = $employer_sid;
-            $data['jobs_approval_module_status']                                = $this->job_approval_rights_model->GetModuleStatus($company_sid, 'jobs');
-            $questionnaires                                                     = $this->application_tracking_system_model->get_all_questionnaires_by_employer($company_sid, 'job'); //Getting questionnaires of company
-            $data['questionnaires']                                             = $questionnaires;
-            $portal_email_templates                                             = $this->application_tracking_system_model->get_portal_email_templates($company_sid);
+            $data['applicant_total'] = $applicant_total;
+            $data['all_manual_applicants'] = $all_manual_applicants;
+            $data['all_talent_applicants'] = $all_talent_applicants;
+            $data['all_job_fair_applicants'] = $all_job_fair_applicants;
+            $data['all_job_applicants'] = $applicant_total;
+            $data['archive'] = $archive;
+            $data['archived'] = $archived;
+            $data['employer_jobs'] = $applicants;
+            $data['employer_sid'] = $employer_sid;
+            $data['jobs_approval_module_status'] = $this->job_approval_rights_model->GetModuleStatus($company_sid, 'jobs');
+            $questionnaires = $this->application_tracking_system_model->get_all_questionnaires_by_employer($company_sid, 'job'); //Getting questionnaires of company
+            $data['questionnaires'] = $questionnaires;
+            $portal_email_templates = $this->application_tracking_system_model->get_portal_email_templates($company_sid);
 
             foreach ($portal_email_templates as $key => $template) {
-                $portal_email_templates[$key]['attachments']                    = $this->portal_email_templates_model->get_all_email_template_attachments($template['sid']);
+                $portal_email_templates[$key]['attachments'] = $this->portal_email_templates_model->get_all_email_template_attachments($template['sid']);
             }
 
             $data['portal_email_templates'] = $portal_email_templates;
-            $emailTemplateData                                                  = get_email_template(SEND_CANDIDATES_INFO);
-            $data['candidate_notification_template']                            = $emailTemplateData;
-            $data['employees']                                                  = get_users_list($company_sid, 'employee', 'all');
+            $emailTemplateData = get_email_template(SEND_CANDIDATES_INFO);
+            $data['candidate_notification_template'] = $emailTemplateData;
+            $data['employees'] = get_users_list($company_sid, 'employee', 'all');
             // echo "<pre>"; _e($data,true,true);
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/application_tracking_system/index');
@@ -597,15 +597,15 @@ class Application_tracking_system extends Public_Controller
         if ($app_id == NULL) {
             redirect('application_tracking_system/active/all/all/all/all/all/all');
         } else {
-            $ats_full_url                                                       = $this->session->userdata('ats_full_url');
-            $ats_params                                                         = $this->session->userdata('ats_params');
-            $data                                                               = applicant_right_nav($app_id, $job_list_sid, $ats_params);
-            $company_sid                                                        = $data['session']['company_detail']['sid'];
-            $employer_sid                                                       = $data['session']['employer_detail']['sid'];
-            $employer_details                                                   = $data['session']['employer_detail'];
-            $access_level                                                       = $employer_details['access_level'];
-            $security_sid                                                       = $employer_sid;
-            $employer_id                                                        = $data['applicant_info']['employer_sid'];
+            $ats_full_url = $this->session->userdata('ats_full_url');
+            $ats_params = $this->session->userdata('ats_params');
+            $data = applicant_right_nav($app_id, $job_list_sid, $ats_params);
+            $company_sid = $data['session']['company_detail']['sid'];
+            $employer_sid = $data['session']['employer_detail']['sid'];
+            $employer_details = $data['session']['employer_detail'];
+            $access_level = $employer_details['access_level'];
+            $security_sid = $employer_sid;
+            $employer_id = $data['applicant_info']['employer_sid'];
             $data['main_employer_id'] = $security_sid;
             $data['tab_type'] = $tab_type;
             if ($company_sid != $employer_id) {
@@ -615,7 +615,7 @@ class Application_tracking_system extends Public_Controller
             $data['company_timezone'] = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
 
             if (!empty($data['session']['employer_detail']['timezone']))
-                $data['employer_timezone'] =   $data['session']['employer_detail']['timezone'];
+                $data['employer_timezone'] = $data['session']['employer_detail']['timezone'];
             else
                 $data['employer_timezone'] = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
 
@@ -628,7 +628,7 @@ class Application_tracking_system extends Public_Controller
                 $this
             );
 
-            $security_details                                                   = $data['security_details'];
+            $security_details = $data['security_details'];
             check_access_permissions($security_details, 'application_tracking_system/active/all/all/all/all', 'applicant_profile');
 
             $config = array(
@@ -652,30 +652,30 @@ class Application_tracking_system extends Public_Controller
             $this->form_validation->set_message('required', 'Please provide your %s.');
             $this->form_validation->set_error_delimiters('<label class="error">', '</label>');
             $this->form_validation->set_rules($config);
-            $hired_status                                                       = $data['applicant_info']['hired_status'];
+            $hired_status = $data['applicant_info']['hired_status'];
 
             if ($hired_status == 1) {
                 $this->session->set_flashdata('message', '<b>Error:</b> No Applicant Found!');
                 redirect('application_tracking_system/active/all/all/all/all');
             }
 
-            $interview_questionnaires                                           = $this->application_tracking_system_model->get_interview_questionnaires($company_sid);
-            $data['interview_questionnaires']                                   = $interview_questionnaires;
-            $data['applicant_sid']                                              = $app_id;
-            $data['employer_sid']                                               = $employer_sid;
-            $data['main_employer_id']                                               = $employer_sid;
-            $data['employer_id']                                                = $employer_sid;
-            $interview_questionnaire_scores                                     = $this->application_tracking_system_model->get_interview_questionnaires_scores($app_id);
-            $data['interview_questionnaire_scores']                             = $interview_questionnaire_scores;
-            $data['applicant_jobs']                                             = $this->application_tracking_system_model->get_single_applicant_all_jobs($app_id, $company_sid);
+            $interview_questionnaires = $this->application_tracking_system_model->get_interview_questionnaires($company_sid);
+            $data['interview_questionnaires'] = $interview_questionnaires;
+            $data['applicant_sid'] = $app_id;
+            $data['employer_sid'] = $employer_sid;
+            $data['main_employer_id'] = $employer_sid;
+            $data['employer_id'] = $employer_sid;
+            $interview_questionnaire_scores = $this->application_tracking_system_model->get_interview_questionnaires_scores($app_id);
+            $data['interview_questionnaire_scores'] = $interview_questionnaire_scores;
+            $data['applicant_jobs'] = $this->application_tracking_system_model->get_single_applicant_all_jobs($app_id, $company_sid);
 
-            $data['have_status']                                                = $this->application_tracking_system_model->have_status_records($company_sid);
+            $data['have_status'] = $this->application_tracking_system_model->have_status_records($company_sid);
 
             if ($data['have_status'] == true) {
-                $data['company_statuses']                                       = $this->application_tracking_system_model->get_company_statuses($company_sid);
+                $data['company_statuses'] = $this->application_tracking_system_model->get_company_statuses($company_sid);
             }
 
-            $data['ats_full_url']                                               = $ats_full_url;
+            $data['ats_full_url'] = $ats_full_url;
 
             $data['l_employment'] = 0;
             $data['ssn_required'] = 0;
@@ -709,60 +709,60 @@ class Application_tracking_system extends Public_Controller
 
 
             if ($this->form_validation->run() == FALSE) { //checking if the form is submitted so i can open the form screen again
-                $data['edit_form']                                              = false;
+                $data['edit_form'] = false;
 
                 if ($this->input->post()) {
-                    $data['edit_form']                                          = true;
+                    $data['edit_form'] = true;
                 }
 
-                $data['notes_view']                                             = false;
+                $data['notes_view'] = false;
 
                 if (isset($_SESSION['show_notes']) && $_SESSION['show_notes'] == 'true') {
-                    $data['notes_view']                                         = true;
-                    $_SESSION['show_notes']                                     = 'false';
+                    $data['notes_view'] = true;
+                    $_SESSION['show_notes'] = 'false';
                 }
 
-                $data['show_event']                                             = false;
+                $data['show_event'] = false;
 
                 if (isset($_SESSION['show_event']) && $_SESSION['show_event'] == 'true') {
-                    $data['show_event']                                         = true;
-                    $_SESSION['show_event']                                     = 'false';
+                    $data['show_event'] = true;
+                    $_SESSION['show_event'] = 'false';
                 }
 
-                $data['show_message']                                           = false; //checking if the form is submitted so i can open the Messages form screen again
+                $data['show_message'] = false; //checking if the form is submitted so i can open the Messages form screen again
 
                 if (isset($_SESSION['show_message']) && $_SESSION['show_message'] == 'true') {
-                    $data['show_message']                                       = true;
-                    $_SESSION['show_message']                                   = 'false';
+                    $data['show_message'] = true;
+                    $_SESSION['show_message'] = 'false';
                 }
 
-                $data['error_message']                                          = '';
-                $data['invalid_email']                                          = '';
-                $data['applicant_notes']                                        = $this->application_tracking_system_model->getApplicantNotes($app_id); //Getting Notes
-                $data['applicant_average_rating']                               = $this->application_tracking_system_model->getApplicantAverageRating($app_id, 'applicant'); //getting average rating of applicant
-                $rating_result                                                  = $this->application_tracking_system_model->getApplicantAllRating($app_id, 'applicant'); //getting all rating of applicant
+                $data['error_message'] = '';
+                $data['invalid_email'] = '';
+                $data['applicant_notes'] = $this->application_tracking_system_model->getApplicantNotes($app_id); //Getting Notes
+                $data['applicant_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($app_id, 'applicant'); //getting average rating of applicant
+                $rating_result = $this->application_tracking_system_model->getApplicantAllRating($app_id, 'applicant'); //getting all rating of applicant
 
                 if ($rating_result != NULL) {
-                    $data['applicant_ratings_count']                            = $rating_result->num_rows();
-                    $data['applicant_all_ratings']                              = $rating_result->result_array();
+                    $data['applicant_ratings_count'] = $rating_result->num_rows();
+                    $data['applicant_all_ratings'] = $rating_result->result_array();
                 } else {
-                    $data['applicant_all_ratings']                              = NULL;
-                    $data['applicant_ratings_count']                            = NULL;
+                    $data['applicant_all_ratings'] = NULL;
+                    $data['applicant_ratings_count'] = NULL;
                 }
                 //getting private messages of the user
-                $rawMessages                                                    = $this->application_tracking_system_model->get_sent_messages($data['applicant_info']['email'], $app_id);
+                $rawMessages = $this->application_tracking_system_model->get_sent_messages($data['applicant_info']['email'], $app_id);
 
                 if (!empty($rawMessages)) {
                     //
-                    $i                                                          = 0;
+                    $i = 0;
                     //
                     foreach ($rawMessages as $message) {
                         if ($message['outbox'] == 1) {
-                            $employerData                                       = $employer_details;
-                            $message['profile_picture']                         = $employerData['profile_picture'];
-                            $message['first_name']                              = $employerData['first_name'];
-                            $message['last_name']                               = $employerData['last_name'];
-                            $message['username']                                = $employerData['username'];
+                            $employerData = $employer_details;
+                            $message['profile_picture'] = $employerData['profile_picture'];
+                            $message['first_name'] = $employerData['first_name'];
+                            $message['last_name'] = $employerData['last_name'];
+                            $message['username'] = $employerData['username'];
 
                             if ($message['from_id'] == "notifications@automotohr.com") {
                                 $message['sender_name'] = "AutoMoto HR";
@@ -772,85 +772,92 @@ class Application_tracking_system extends Public_Controller
                                 $message['sender_profile_picture'] = get_employee_profile_info($message['from_id'])['profile_picture'];
                             }
                         } else {
-                            $message['profile_picture']                         = $data['applicant_info']['pictures'];
-                            $message['first_name']                              = $data['applicant_info']['first_name'];
-                            $message['last_name']                               = $data['applicant_info']['last_name'];
-                            $message['username']                                = "";
-                            $message['sender_name']                             = $data['applicant_info']['first_name'] . " " . $data['applicant_info']['last_name'];
-                            $message['sender_profile_picture']                  = $data['applicant_info']['pictures'];
+                            $message['profile_picture'] = $data['applicant_info']['pictures'];
+                            $message['first_name'] = $data['applicant_info']['first_name'];
+                            $message['last_name'] = $data['applicant_info']['last_name'];
+                            $message['username'] = "";
+                            $message['sender_name'] = $data['applicant_info']['first_name'] . " " . $data['applicant_info']['last_name'];
+                            $message['sender_profile_picture'] = $data['applicant_info']['pictures'];
                         }
                         //
-                        $allMessages[$i]                                        = $message;
+                        $allMessages[$i] = $message;
                         $i++;
                     }
                     //
-                    $data['applicant_message']                                  = $allMessages;
+                    $data['applicant_message'] = $allMessages;
                 } else {
-                    $data['applicant_message']                                  = array();
+                    $data['applicant_message'] = array();
                 }
 
-                $data['company_accounts']                                       = $this->application_tracking_system_model->getCompanyAccounts($company_sid); //fetching list of all sub-accounts
-                $data['upcoming_events']                                        = $this->application_tracking_system_model->get_applicant_events($app_id, 'upcoming');
+                $data['company_accounts'] = $this->application_tracking_system_model->getCompanyAccounts($company_sid); //fetching list of all sub-accounts
+                $data['upcoming_events'] = $this->application_tracking_system_model->get_applicant_events($app_id, 'upcoming');
 
                 if (empty($data['applicant_info']['country'])) {
-                    $data['applicant_info']['country_name']                     = "";
+                    $data['applicant_info']['country_name'] = "";
                 } else {
                     $country_id = $data['applicant_info']['country'];
-                    $data['applicant_info']['country_name']                     = $this->application_tracking_system_model->getCountryName($country_id);
+                    $data['applicant_info']['country_name'] = $this->application_tracking_system_model->getCountryName($country_id);
                 }
 
                 if (empty($data['applicant_info']['state'])) { // get state name
-                    $data['applicant_info']['state_name']                       = '';
+                    $data['applicant_info']['state_name'] = '';
                 } else {
-                    $state_id                                                   = $data['applicant_info']['state'];
-                    $data['applicant_info']['state_name']                       = $this->application_tracking_system_model->getStateName($state_id);
+                    $state_id = $data['applicant_info']['state'];
+                    $data['applicant_info']['state_name'] = $this->application_tracking_system_model->getStateName($state_id);
                 }
 
-                $data['applicant_info']['test']                                 = false;
-                $data['title']                                                  = 'Applicant Detail'; //header data
-                $data_countries                                                 = db_get_active_countries();
+                $data['applicant_info']['test'] = false;
+                $data['title'] = 'Applicant Detail'; //header data
+                $data_countries = db_get_active_countries();
 
                 foreach ($data_countries as $value) {
                     $data_states[$value['sid']] = db_get_active_states($value['sid']);
                 }
 
-                $data['active_countries']                                       = $data_countries;
-                $data['active_states']                                          = $data_states;
-                $data_states_encode                                             = htmlentities(json_encode($data_states));
-                $data['states']                                                 = $data_states_encode;
-                $is_onboarding_configured                                       = $this->application_tracking_system_model->is_onboarding_configured($company_sid);
-                $data['is_onboarding_configured']                               = $is_onboarding_configured;
-                $onboarding_status                                              = $this->application_tracking_system_model->get_onboarding_status($company_sid, $app_id);
-                $data['onboarding_status']                                      = $onboarding_status;
-                $data['company_sid']                                            = $company_sid;
-                $data['extra_info']                                             = unserialize($data['applicant_info']['extra_info']);
-                $applicants_approval_module_status                              = $this->job_approval_rights_model->GetModuleStatus($company_sid, 'applicants');
-                $data['applicants_approval_module_status']                      = $applicants_approval_module_status;
-                $portal_email_templates                                         = $this->application_tracking_system_model->get_portal_email_templates($company_sid);
+                $data['active_countries'] = $data_countries;
+                $data['active_states'] = $data_states;
+                $data_states_encode = htmlentities(json_encode($data_states));
+                $data['states'] = $data_states_encode;
+                $is_onboarding_configured = $this->application_tracking_system_model->is_onboarding_configured($company_sid);
+                $data['is_onboarding_configured'] = $is_onboarding_configured;
+                $onboarding_status = $this->application_tracking_system_model->get_onboarding_status($company_sid, $app_id);
+                $data['onboarding_status'] = $onboarding_status;
+                $data['company_sid'] = $company_sid;
+                $data['extra_info'] = unserialize($data['applicant_info']['extra_info']);
+                $applicants_approval_module_status = $this->job_approval_rights_model->GetModuleStatus($company_sid, 'applicants');
+                $data['applicants_approval_module_status'] = $applicants_approval_module_status;
+                $portal_email_templates = $this->application_tracking_system_model->get_portal_email_templates($company_sid);
 
                 foreach ($portal_email_templates as $key => $template) {
-                    $portal_email_templates[$key]['attachments']                = $this->portal_email_templates_model->get_all_email_template_attachments($template['sid']);
+                    $portal_email_templates[$key]['attachments'] = $this->portal_email_templates_model->get_all_email_template_attachments($template['sid']);
                 }
 
                 $this->load->model('resend_screening_questionnaires_model');
-                $questionnaires                                                 = $this->resend_screening_questionnaires_model->get_all_questionnaires_by_employer($company_sid); //Getting questionnaires of company
-                $data['questionnaires']                                         = $questionnaires;
-                $data['portal_email_templates']                                 = $portal_email_templates;
-                $addresses                                                      = $this->application_tracking_system_model->get_company_addresses($company_sid);
-                $data['addresses']                                              = $addresses;
-                $unique_sid                                                     = 0;
-                $onboarding_url                                                 = 'javascript:;';
+                $questionnaires = $this->resend_screening_questionnaires_model->get_all_questionnaires_by_employer($company_sid); //Getting questionnaires of company
+                $data['questionnaires'] = $questionnaires;
+                $data['portal_email_templates'] = $portal_email_templates;
+                $addresses = $this->application_tracking_system_model->get_company_addresses($company_sid);
+                $data['addresses'] = $addresses;
+                $unique_sid = 0;
+                $onboarding_url = 'javascript:;';
 
                 if ($data['applicant_info']['is_onboarding'] == 1) { //get unique ID
-                    $unique_sid                                                 = $this->application_tracking_system_model->get_applicant_unique_sid($company_sid, $app_id);
-                    $onboarding_url                                             = base_url('onboarding/getting_started/' . $unique_sid . '?employer=' . $data['session']['employer_detail']['sid']);
+                    $unique_sid = $this->application_tracking_system_model->get_applicant_unique_sid($company_sid, $app_id);
+                    $onboarding_url = base_url('onboarding/getting_started/' . $unique_sid . '?employer=' . $data['session']['employer_detail']['sid']);
                 }
 
-                $data['unique_sid']                                             = $unique_sid;
-                $data['onboarding_url']                                         = $onboarding_url;
-                $data['is_new_calendar']                                        = (int)$this->call_old_event();
+                $data['unique_sid'] = $unique_sid;
+                $data['onboarding_url'] = $onboarding_url;
+                $data['is_new_calendar'] = (int) $this->call_old_event();
                 //
                 $data['_ssv'] = getSSV($data['session']['employer_detail']);
+
+                $data["applicant_job_queue"] =
+                    $this->db->where([
+                        "portal_job_applications_sid" => $app_id,
+                        "portal_applicant_job_sid" => $job_list_sid
+                    ])->count_all_results("portal_applicant_jobs_queue");
+
                 //
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/application_tracking_system/applicant_profile');
@@ -900,8 +907,8 @@ class Application_tracking_system extends Public_Controller
 
                 // Reset phone number
                 $user_data['phone_number'] = isset($formpost['txt_phonenumber']) ? $formpost['txt_phonenumber'] : $formpost['phone_number'];
-                $secondary_phonenumber    = isset($formpost['txt_secondary_phonenumber']) ? $formpost['txt_secondary_phonenumber'] : $this->input->post('secondary_PhoneNumber', true);
-                $other_phonenumber        = isset($formpost['txt_other_phonenumber']) ? $formpost['txt_other_phonenumber'] : $this->input->post('other_PhoneNumber', true);
+                $secondary_phonenumber = isset($formpost['txt_secondary_phonenumber']) ? $formpost['txt_secondary_phonenumber'] : $this->input->post('secondary_PhoneNumber', true);
+                $other_phonenumber = isset($formpost['txt_other_phonenumber']) ? $formpost['txt_other_phonenumber'] : $this->input->post('other_PhoneNumber', true);
 
                 $date_of_birth = $this->input->post('DOB');
 
@@ -921,7 +928,8 @@ class Application_tracking_system extends Public_Controller
                 if ($this->input->post('SSN') && !preg_match(XSYM_PREG, $this->input->post('SSN')))
                     $user_data['ssn'] = $this->input->post('SSN');
                 //
-                if (preg_match(XSYM_PREG, $this->input->post('SSN'))) unset($user_data['SSN']);
+                if (preg_match(XSYM_PREG, $this->input->post('SSN')))
+                    unset($user_data['SSN']);
                 //
                 $user_data['employee_number'] = $this->input->post('employee_number');
                 $user_data['employer_sid'] = $employer_id;
@@ -991,8 +999,10 @@ class Application_tracking_system extends Public_Controller
 
                 //
                 if (IS_NOTIFICATION_ENABLED == 1 && $data['phone_sid'] != '') {
-                    if (!sizeof($this->input->post('notified_by', true))) $user_data['notified_by'] = 'email';
-                    else $user_data['notified_by'] = implode(',', $this->input->post('notified_by', true));
+                    if (!sizeof($this->input->post('notified_by', true)))
+                        $user_data['notified_by'] = 'email';
+                    else
+                        $user_data['notified_by'] = implode(',', $this->input->post('notified_by', true));
                 }
                 //
                 $full_emp_app = isset($data['applicant_info']['full_employment_application']) && !empty($data['applicant_info']['full_employment_application']) ? unserialize($data['applicant_info']['full_employment_application']) : array();
@@ -1056,23 +1066,22 @@ class Application_tracking_system extends Public_Controller
         }
     }
 
-    public function applicant_submitted_resume_result($app_id = NULL, $applicant_id = NULL) {
+    public function applicant_submitted_resume_result($app_id = NULL, $applicant_id = NULL)
+    {
         // if ($app_id == NULL || $applicant_id == NULL) {
         //     redirect('application_tracking_system/active/all/all/all/all/all/all');
         //     return;
         // }
 
-        if(isset($_POST['resume_id'])) {
-            
+        if (isset($_POST['resume_id'])) {
+
             $data = array();
-            if(isset($_POST['questions']))
-            {
+            if (isset($_POST['questions'])) {
                 $questions = $_POST['questions'];
                 $data = array('screening_questions' => json_encode($questions));
             }
 
-            if(isset($_POST['score']))
-            {
+            if (isset($_POST['score'])) {
                 $score = $_POST['score'];
                 $data = array('match_score' => $score);
             }
@@ -1134,12 +1143,12 @@ class Application_tracking_system extends Public_Controller
         if ($app_id == NULL) {
             redirect('application_tracking_system/active/all/all/all/all/all/all');
         } else {
-            $session                = $this->session->userdata('logged_in');
-            $company_sid            = $session["company_detail"]["sid"];
-            $employer_sid           = $session['employer_detail']['sid'];
+            $session = $this->session->userdata('logged_in');
+            $company_sid = $session["company_detail"]["sid"];
+            $employer_sid = $session['employer_detail']['sid'];
 
-            $job_sid                = $this->input->post('job_sid', true);
-            $job_type               = $this->input->post('job_type', true);
+            $job_sid = $this->input->post('job_sid', true);
+            $job_type = $this->input->post('job_type', true);
 
             $resume_extension = '';
             $resume_original_name = '';
@@ -1147,7 +1156,7 @@ class Application_tracking_system extends Public_Controller
 
             // if (in_array($company_sid, array("7", "51"))) {
             if (!in_array($company_sid, array("0"))) {
-                $resume_log_data        = array();
+                $resume_log_data = array();
 
                 if (isset($_FILES['resume']) && $_FILES['resume']['name'] != '') {
 
@@ -1156,11 +1165,11 @@ class Application_tracking_system extends Public_Controller
                         redirect("applicant_profile/" . $app_id, "location");
                     }
 
-                    $resume_upload_file     = $_FILES['resume']['name'];
-                    $upload_file            = explode(".", $resume_upload_file);
-                    $resume_original_name   = $upload_file[0];
-                    $resume_extension       = $upload_file[1];
-                    $resume_name            = 'applicant-resume';
+                    $resume_upload_file = $_FILES['resume']['name'];
+                    $upload_file = explode(".", $resume_upload_file);
+                    $resume_original_name = $upload_file[0];
+                    $resume_extension = $upload_file[1];
+                    $resume_name = 'applicant-resume';
 
                     if ($_SERVER['HTTP_HOST'] == 'localhost') {
                         // $resume_s3_name = '0057-test_latest_uploaded_document-58-Yo2.pdf';
@@ -1175,30 +1184,30 @@ class Application_tracking_system extends Public_Controller
 
                     if (!empty($old_s3_resume)) {
 
-                        $applicant_info         = $this->application_tracking_system_model->getApplicantData($app_id);
-                        $applicant_email        = $applicant_info['email'];
-                        $user_type              = $applicant_info['applicant_type'];
-                        $user_sid               = $app_id;
+                        $applicant_info = $this->application_tracking_system_model->getApplicantData($app_id);
+                        $applicant_email = $applicant_info['email'];
+                        $user_type = $applicant_info['applicant_type'];
+                        $user_sid = $app_id;
 
-                        $resume_log_data['company_sid']             = $company_sid;
-                        $resume_log_data['user_type']               = $user_type;
-                        $resume_log_data['user_sid']                = $user_sid;
-                        $resume_log_data['user_email']              = $applicant_email;
-                        $resume_log_data['requested_by']            = $employer_sid;
-                        $resume_log_data['requested_subject']       = '';
-                        $resume_log_data['requested_message']       = '';
-                        $resume_log_data['requested_ip_address']    =  getUserIP();
-                        $resume_log_data['requested_user_agent']    = $_SERVER['HTTP_USER_AGENT'];
-                        $resume_log_data['request_status']          = 3;
-                        $resume_log_data['is_respond']              = 1;
-                        $resume_log_data['resume_original_name']    = $resume_original_name;
-                        $resume_log_data['resume_s3_name']          = $resume_s3_name;
-                        $resume_log_data['resume_extension']        = $resume_extension;
-                        $resume_log_data['old_resume_s3_name']      = $old_s3_resume;
-                        $resume_log_data['response_date']           = date('Y-m-d H:i:s');
-                        $resume_log_data['requested_date']          = date('Y-m-d H:i:s');
-                        $resume_log_data['job_sid']                 = $job_sid;
-                        $resume_log_data['job_type']                = $job_type;
+                        $resume_log_data['company_sid'] = $company_sid;
+                        $resume_log_data['user_type'] = $user_type;
+                        $resume_log_data['user_sid'] = $user_sid;
+                        $resume_log_data['user_email'] = $applicant_email;
+                        $resume_log_data['requested_by'] = $employer_sid;
+                        $resume_log_data['requested_subject'] = '';
+                        $resume_log_data['requested_message'] = '';
+                        $resume_log_data['requested_ip_address'] = getUserIP();
+                        $resume_log_data['requested_user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                        $resume_log_data['request_status'] = 3;
+                        $resume_log_data['is_respond'] = 1;
+                        $resume_log_data['resume_original_name'] = $resume_original_name;
+                        $resume_log_data['resume_s3_name'] = $resume_s3_name;
+                        $resume_log_data['resume_extension'] = $resume_extension;
+                        $resume_log_data['old_resume_s3_name'] = $old_s3_resume;
+                        $resume_log_data['response_date'] = date('Y-m-d H:i:s');
+                        $resume_log_data['requested_date'] = date('Y-m-d H:i:s');
+                        $resume_log_data['job_sid'] = $job_sid;
+                        $resume_log_data['job_type'] = $job_type;
 
                         $this->application_tracking_system_model->insert_resume_log($resume_log_data);
                     }
@@ -1256,11 +1265,11 @@ class Application_tracking_system extends Public_Controller
                     // echo $resume; exit;
                     $user_data['resume'] = $resume;
 
-                    $data['session']        = $this->session->userdata('logged_in');
-                    $company_sid            = $data["session"]["company_detail"]["sid"];
+                    $data['session'] = $this->session->userdata('logged_in');
+                    $company_sid = $data["session"]["company_detail"]["sid"];
 
-                    $jobdetails             = $this->application_tracking_system_model->get_single_job_detail_old($app_id, $company_sid, $job_sid, $job_type);
-                    $resume_log_data                            = array();
+                    $jobdetails = $this->application_tracking_system_model->get_single_job_detail_old($app_id, $company_sid, $job_sid, $job_type);
+                    $resume_log_data = array();
 
                     if (isset($jobdetails['sid'])) {
                         $job_sid = $jobdetails['sid'];
@@ -1269,31 +1278,31 @@ class Application_tracking_system extends Public_Controller
                         $resume_log_data['job_type'] = 'job';
                     }
 
-                    $employer_sid           = $data['session']['employer_detail']['sid'];
-                    $applicant_info         = $this->application_tracking_system_model->getApplicantData($app_id);
-                    $old_resume_s3_name     = $jobdetails['resume'] ? $jobdetails['resume'] : $applicant_info['resume'];
-                    $applicant_email        = $applicant_info['email'];
-                    $user_type              = $applicant_info['applicant_type'];
-                    $user_sid               = $app_id;
+                    $employer_sid = $data['session']['employer_detail']['sid'];
+                    $applicant_info = $this->application_tracking_system_model->getApplicantData($app_id);
+                    $old_resume_s3_name = $jobdetails['resume'] ? $jobdetails['resume'] : $applicant_info['resume'];
+                    $applicant_email = $applicant_info['email'];
+                    $user_type = $applicant_info['applicant_type'];
+                    $user_sid = $app_id;
 
-                    $resume_log_data['company_sid']             = $company_sid;
-                    $resume_log_data['user_type']               = $user_type;
-                    $resume_log_data['user_sid']                = $user_sid;
-                    $resume_log_data['user_email']              = $applicant_email;
-                    $resume_log_data['requested_by']            = $employer_sid;
-                    $resume_log_data['requested_subject']       = '';
-                    $resume_log_data['requested_message']       = '';
-                    $resume_log_data['requested_ip_address']    =  getUserIP();
-                    $resume_log_data['requested_user_agent']    = $_SERVER['HTTP_USER_AGENT'];
-                    $resume_log_data['request_status']          = 3;
-                    $resume_log_data['is_respond']              = 1;
-                    $resume_log_data['resume_original_name']    = $resume_original_name;
-                    $resume_log_data['resume_s3_name']          = $resume_s3_name;
-                    $resume_log_data['resume_extension']        = $resume_extension;
-                    $resume_log_data['old_resume_s3_name']      = $old_resume_s3_name;
-                    $resume_log_data['response_date']           = date('Y-m-d H:i:s');
-                    $resume_log_data['requested_date']           = date('Y-m-d H:i:s');
-                    $resume_log_data['job_sid']                 = $job_sid;
+                    $resume_log_data['company_sid'] = $company_sid;
+                    $resume_log_data['user_type'] = $user_type;
+                    $resume_log_data['user_sid'] = $user_sid;
+                    $resume_log_data['user_email'] = $applicant_email;
+                    $resume_log_data['requested_by'] = $employer_sid;
+                    $resume_log_data['requested_subject'] = '';
+                    $resume_log_data['requested_message'] = '';
+                    $resume_log_data['requested_ip_address'] = getUserIP();
+                    $resume_log_data['requested_user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                    $resume_log_data['request_status'] = 3;
+                    $resume_log_data['is_respond'] = 1;
+                    $resume_log_data['resume_original_name'] = $resume_original_name;
+                    $resume_log_data['resume_s3_name'] = $resume_s3_name;
+                    $resume_log_data['resume_extension'] = $resume_extension;
+                    $resume_log_data['old_resume_s3_name'] = $old_resume_s3_name;
+                    $resume_log_data['response_date'] = date('Y-m-d H:i:s');
+                    $resume_log_data['requested_date'] = date('Y-m-d H:i:s');
+                    $resume_log_data['job_sid'] = $job_sid;
                     if (!empty($jobdetails['resume'])) {
                         $this->application_tracking_system_model->insert_resume_log($resume_log_data);
                     }
@@ -1473,12 +1482,14 @@ class Application_tracking_system extends Public_Controller
                 $source_value = upload_file_to_aws('upload_video', $company_sid, 'upload_video', $employer_sid);
                 if ($source_value != 'error') {
                     $data_to_save['source_value'] = $source_value;
-                } else unset($data_to_save['source_value']);
+                } else
+                    unset($data_to_save['source_value']);
                 //
                 $source_value = upload_file_to_aws('add_upload_video', $company_sid, 'add_upload_video', $employer_sid);
                 if ($source_value != 'error') {
                     $data_to_save['source_value'] = $source_value;
-                } else unset($data_to_save['source_value']);
+                } else
+                    unset($data_to_save['source_value']);
             }
 
             $this->application_tracking_system_model->save_rating($data_to_save);
@@ -2194,7 +2205,9 @@ class Application_tracking_system extends Public_Controller
                         $job_sid = $this->input->post('job_sid');
                         $applicant_notes = $this->application_tracking_system_model->getApplicantNotes($applicant_sid);
                         // Added on: 26-06-2019
-                        if (sizeof($applicant_notes)) foreach ($applicant_notes as $k0 => $v0) $applicant_notes[$k0]['insert_date'] = reset_datetime(array('datetime' => $v0['insert_date'], '_this' => $this, 'from_format' => 'b d Y H:i a', 'format' => 'default'));
+                        if (sizeof($applicant_notes))
+                            foreach ($applicant_notes as $k0 => $v0)
+                                $applicant_notes[$k0]['insert_date'] = reset_datetime(array('datetime' => $v0['insert_date'], '_this' => $this, 'from_format' => 'b d Y H:i a', 'format' => 'default'));
                         print_r(json_encode($applicant_notes));
                         break;
                     case 'fetch_applicant_reviews':
@@ -2292,11 +2305,11 @@ class Application_tracking_system extends Public_Controller
                                     $job_manual_questionnaire_history_count = count($job_manual_questionnaire_history);
                                     $manual_question_data = '';
                                     foreach ($job_manual_questionnaire_history as $job_man_key => $job_man_value) {
-                                        $job_manual_questionnaire       = $job_man_value['questionnaire'];
-                                        $job_questionnaire_sent_date    = $job_man_value['questionnaire_sent_date'];
-                                        $job_man_questionnaire_result   = $job_man_value['questionnaire_result'];
-                                        $job_man_score                  = $job_man_value['score'];
-                                        $job_man_passing_score          = $job_man_value['passing_score'];
+                                        $job_manual_questionnaire = $job_man_value['questionnaire'];
+                                        $job_questionnaire_sent_date = $job_man_value['questionnaire_sent_date'];
+                                        $job_man_questionnaire_result = $job_man_value['questionnaire_result'];
+                                        $job_man_score = $job_man_value['score'];
+                                        $job_man_passing_score = $job_man_value['passing_score'];
 
                                         $resent = '<br>Resent on: ' . date_with_time($job_questionnaire_sent_date) . '<hr style="margin-top: 5px; margin-bottom: 5px;">';
                                         $manual_question_data = $manual_question_data . $resent;
@@ -2517,8 +2530,8 @@ class Application_tracking_system extends Public_Controller
 
         // Log 
         $data['session'] = $this->session->userdata('logged_in');
-        $employers_details  = $data['session']['employer_detail'];
-        $employer_sid       = $employers_details['sid'];
+        $employers_details = $data['session']['employer_detail'];
+        $employer_sid = $employers_details['sid'];
         saveApplicantOnboardingStatusLog($user_id, $employer_sid, $status, $oldStatus);
 
         echo 'success';
@@ -2554,7 +2567,8 @@ class Application_tracking_system extends Public_Controller
                     $source_value = upload_file_to_aws('upload_video', $company_sid, 'upload_video', $employer_sid);
                     if ($source_value != 'error') {
                         $data_to_save['source_value'] = $source_value;
-                    } else unset($data_to_save['source_value']);
+                    } else
+                        unset($data_to_save['source_value']);
                 }
             }
 
@@ -2681,13 +2695,14 @@ class Application_tracking_system extends Public_Controller
     {
         //
         $data['session'] = $this->session->userdata('logged_in');
-        $company_name    = $data['session']['company_detail']['CompanyName'];
-        $company_id      = $data['session']['company_detail']['sid'];
+        $company_name = $data['session']['company_detail']['CompanyName'];
+        $company_id = $data['session']['company_detail']['sid'];
         // Set default aray
         $resp['Status'] = false;
         $resp['Response'] = 'Invalid request.';
         //
-        if (!sizeof($this->input->post()) || $this->input->method(TRUE) != 'POST') $this->resp($resp);
+        if (!sizeof($this->input->post()) || $this->input->method(TRUE) != 'POST')
+            $this->resp($resp);
         //
         $form_data = $this->input->post(NULL, TRUE);
         // Load the twilio library
@@ -2735,7 +2750,7 @@ class Application_tracking_system extends Public_Controller
                 // Set Insert Array
                 $insert_array = $resp2['DataArray'];
                 $insert_array['module_slug'] = $module;
-                $insert_array['company_id']  = $company_sid;
+                $insert_array['company_id'] = $company_sid;
                 $insert_array['sender_user_id'] = $employee_sid;
                 $insert_array['sender_user_type'] = 'employee';
                 $insert_array['message_service_sid'] = $companyDetails['message_service_sid'];
@@ -2796,13 +2811,14 @@ class Application_tracking_system extends Public_Controller
                 $dataArray = array();
                 $dataArray['type'] = $form_data['type'];
                 $dataArray['name'] = $form_data['name'];
-                $dataArray['sid']  = $form_data['sid'];
+                $dataArray['sid'] = $form_data['sid'];
                 $dataArray['companyId'] = $company_id;
                 $dataArray['companyName'] = $company_name;
                 $dataArray['emailAddress'] = $form_data['email_address'];
                 //
                 $result = sendEmailToUpdatePhoneNumber($dataArray, $this);
-                if (!$result) $this->resp($resp);
+                if (!$result)
+                    $this->resp($resp);
                 //
                 $resp['Status'] = true;
                 $resp['Response'] = 'Email is sent to the applicant.';
