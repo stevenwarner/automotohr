@@ -1953,7 +1953,7 @@ class Advanced_report_model extends CI_Model
         if ($status != 'all') {
             $this->db->where('portal_applicant_jobs_queue.status', $status);
         } else {
-            $this->db->where('portal_applicant_jobs_queue.status <>', "queued");
+            // $this->db->where('portal_applicant_jobs_queue.status <>', "queued");
         }
 
         if ($start_date && $end_date) {
