@@ -1179,6 +1179,14 @@ if (
                                     Report</a>
                             </div>
                         <?php } ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'applicants_ai_report')) { ?>
+                            <div class="menu-item">
+                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicants_ai_report')) !== false || ($this->uri->segment(3) == 'applicants_ai_report')) {
+                                    echo 'class="active"';
+                                } ?>
+                                    href="<?php echo site_url('manage_admin/reports/applicants_ai_report'); ?>">Applicants AI Report</a>
+                            </div>
+                        <?php } ?>
                         <?php if (check_access_permissions_for_view($security_details, 'applicants_report')) { ?>
                             <div class="menu-item">
                                 <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicants_report')) !== false || ($this->uri->segment(3) == 'applicants_report')) {

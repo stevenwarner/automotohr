@@ -1908,4 +1908,85 @@ $this->db->select('portal_job_applications.applicant_type');
         // //
         // return array( 'Data' => $result_arr, 'Total' => $totalRecords );
     }
+
+    function get_applicant_ai_report ($company_sid, $keyword = '', $start_date = '', $end_date = '', $status, $count, $per_page = NULL, $offset = NULL)
+    {
+        $this->db->select('portal_applicant_jobs_queue.created_at');
+        $this->db->select('portal_applicant_jobs_queue.job_sid');
+        $this->db->select('portal_applicant_jobs_queue.company_sid');
+        $this->db->select('portal_applicant_jobs_queue.status');
+        $this->db->select('portal_applicant_jobs_queue.attempts');
+        $this->db->select('portal_applicant_jobs_queue.failed_message');
+        $this->db->select('portal_applicant_jobs_list.applicant_source');
+        $this->db->select('portal_job_applications.first_name');
+        $this->db->select('portal_job_applications.last_name');
+        $this->db->select('portal_job_listings.Location_City');
+        $this->db->select('portal_job_listings.Location_State');
+        $this->db->select('portal_job_listings.Title');
+
+        $this->db->select('users.CompanyName');
+
+        if (!empty($keyword) && $keyword != 'all') {
+            $multiple_keywords = explode(' ', $keyword);
+
+            if (count($multiple_keywords) == 1) {
+                $this->db->group_start();
+                $this->db->like('portal_job_applications.first_name', $keyword);
+                $this->db->or_like('portal_job_applications.last_name', $keyword);
+                $this->db->group_end();
+            } else {
+                foreach ($multiple_keywords as $keywrd) {
+                    $this->db->group_start();
+                    $this->db->like('portal_job_applications.first_name', $keywrd);
+                    $this->db->or_like('portal_job_applications.last_name', $keywrd);
+                    $this->db->group_end();
+                }
+            }
+        }
+
+        if ($status != 'all') {
+            $this->db->where('portal_applicant_jobs_queue.status', $status);
+        } else {
+            $this->db->where('portal_applicant_jobs_queue.status <>', "queued");
+        }
+
+        if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
+            $this->db->where('portal_applicant_jobs_queue.created_at BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
+        } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
+            $this->db->where('portal_applicant_jobs_queue.created_at >=', $start_date);
+        } else if ((empty($start_date) || is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
+            $this->db->where('portal_applicant_jobs_queue.created_at <=', $end_date);
+        }
+
+        if ($company_sid != 'all') {
+            $this->db->where('portal_applicant_jobs_queue.company_sid', $company_sid);
+        }
+        if ($per_page !== null && $offset !== null) {
+            $this->db->limit($per_page, $offset);
+        }
+
+        $this->db->join('portal_job_applications', 'portal_applicant_jobs_queue.portal_job_applications_sid = portal_job_applications.sid', 'left');
+        $this->db->join('users', 'portal_applicant_jobs_queue.company_sid = users.sid', 'left');
+        $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_queue.job_sid','left');
+        $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid','left');
+        $this->db->order_by('portal_applicant_jobs_queue.created_at', 'DESC');
+//        $applications = array();
+
+
+        if ($count) {
+            $this->db->from('portal_applicant_jobs_queue');
+            $applications = $this->db->count_all_results();
+        } else {
+            $applications = $this->db->get('portal_applicant_jobs_queue')->result_array();
+
+            foreach ($applications as $key => $application) {
+                //
+                if (empty($application['applicant_source']) || is_null($application['applicant_source']) || $application['applicant_source'] == 'career_website') {
+                    $applications[$key]['applicant_source'] = 'Career Website';
+                }
+            }
+        }
+
+        return $applications;
+    }
 }
