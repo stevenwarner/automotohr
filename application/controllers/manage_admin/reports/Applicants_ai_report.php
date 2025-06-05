@@ -77,8 +77,8 @@ class Applicants_ai_report extends Admin_Controller
         $config["base_url"] = $pagination_base;
         $config["total_rows"] = $total_records;
         $config["per_page"] = $per_page;
-        $config["uri_segment"] = 8;
-        $config["num_links"] = 8;
+        $config["uri_segment"] = 9;
+        $config["num_links"] = 9;
         $config["use_page_numbers"] = true;
         $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
         $config['full_tag_close'] = '</ul></nav><!--pagination-->';
