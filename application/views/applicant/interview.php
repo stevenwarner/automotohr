@@ -16,8 +16,10 @@ $creds = getCreds('AHR');
         </div>
         <div class="title-wrapper">
             <div class="page-title">
-                <span>Interviewing for job
-                    "<?php echo trim($portal_job_list['job_title'] ? $portal_job_list['job_title'] : $portal_job_list['desired_job_title']); ?>"</span>
+                <!-- <span>Interviewing for job
+                    "<?php echo trim($portal_job_list['job_title'] ? $portal_job_list['job_title'] : $portal_job_list['desired_job_title']); ?>"</span> -->
+                  <span>Interviewing with
+                    "<?php echo $portal_job_list['first_name'] . ' ' . $portal_job_list['last_name']; ?>"</span>
             </div>
         </div>
 
@@ -152,7 +154,7 @@ $creds = getCreds('AHR');
     let silenceTimer = null;
     let voiceTimer = null;
     const DEBOUNCE_DELAY = 200;
-    const SILENCE_DELAY = 3000;
+    const SILENCE_DELAY = 2000;
 
     // Call timer variables
     let timerInterval;
@@ -230,11 +232,16 @@ $creds = getCreds('AHR');
 
             interviewStarted = true;
             startCallTimer();
-            try {
-                socket.emit('startSpeechRecognition', { job_list_sid });
-            } catch (e) {
-                console.error('Error starting interview:', e);
+        }
+
+        function arrayBufferToBase64(buffer) {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            const len = bytes.byteLength;
+            for (let i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
             }
+            return btoa(binary);
         }
 
         // MediaRecorder Setup and Frequency Tracking
@@ -265,13 +272,15 @@ $creds = getCreds('AHR');
                 });
 
                 // Configure handlers
-                mediaRecorder.ondataavailable = (event) => {
+                mediaRecorder.ondataavailable = async (event) => {
                     if (event.data.size > 0 && socket && socket.connected && sessionId) {
+                        const arrayBuffer = await event.data.arrayBuffer();
+                        const base64Data = arrayBufferToBase64(arrayBuffer);
                         socket.emit('audioData', {
                             clientId: socket.id,
                             job_list_sid,
                             sessionId: sessionId,
-                            data: event.data
+                            data: base64Data
                         });
                     }
                 };
@@ -319,7 +328,11 @@ $creds = getCreds('AHR');
             socket.on('sessionInitialized', (data) => {
                 sessionId = data.sessionId;
                 console.log('Session initialized:', sessionId);
-                startInterview();
+                try {
+                    socket.emit('startSpeechRecognition', { job_list_sid });
+                } catch (e) {
+                    console.error('Error starting interview:', e);
+                }
             });
 
             // Handle status updates
@@ -346,6 +359,10 @@ $creds = getCreds('AHR');
 
             socket.on('message', async (data) => {
                 try {
+
+                    if(!interviewStarted) {
+                        startInterview();
+                    }
 
                     if (isSpeaking) {
                         return;
@@ -567,87 +584,90 @@ $creds = getCreds('AHR');
             let lastActiveTime = 0;
 
             function analyze() {
-                analyser.getByteTimeDomainData(dataArray);
 
-                // Compute RMS for better volume detection
-                let sumOfSquares = 0;
-                for (let i = 0; i < dataArray.length; i++) {
-                    let sample = (dataArray[i] - 128) / 128; // Normalize to -1 to +1
-                    sumOfSquares += sample * sample;
-                }
-                const rms = Math.sqrt(sumOfSquares / dataArray.length) * 100;
+                if(interviewStarted) {
+                    analyser.getByteTimeDomainData(dataArray);
 
-                // Simple threshold: tune this value
-                const threshold = 8;
+                    // Compute RMS for better volume detection
+                    let sumOfSquares = 0;
+                    for (let i = 0; i < dataArray.length; i++) {
+                        let sample = (dataArray[i] - 128) / 128; // Normalize to -1 to +1
+                        sumOfSquares += sample * sample;
+                    }
+                    const rms = Math.sqrt(sumOfSquares / dataArray.length) * 100;
 
-                // Frequency analysis (frequency domain)
-                analyser.getByteFrequencyData(frequencyDataArray);
+                    // Simple threshold: tune this value
+                    const threshold = 8;
 
-                // Calculate weighted average for voice frequencies
-                let weightedSum = 0;
-                let totalWeight = 0;
+                    // Frequency analysis (frequency domain)
+                    analyser.getByteFrequencyData(frequencyDataArray);
 
-                const fundamentalStart = Math.floor((85 * analyser.fftSize) / audioContext.sampleRate);
-                const fundamentalEnd = Math.floor((300 * analyser.fftSize) / audioContext.sampleRate);
-                const harmonicsStart = Math.floor((300 * analyser.fftSize) / audioContext.sampleRate);
-                const harmonicsEnd = Math.floor((8000 * analyser.fftSize) / audioContext.sampleRate);
+                    // Calculate weighted average for voice frequencies
+                    let weightedSum = 0;
+                    let totalWeight = 0;
 
-                // Weight fundamental frequencies more heavily
-                for (let i = fundamentalStart; i < fundamentalEnd; i++) {
-                    weightedSum += frequencyDataArray[i] * 2;
-                    totalWeight += 2;
-                }
+                    const fundamentalStart = Math.floor((85 * analyser.fftSize) / audioContext.sampleRate);
+                    const fundamentalEnd = Math.floor((300 * analyser.fftSize) / audioContext.sampleRate);
+                    const harmonicsStart = Math.floor((300 * analyser.fftSize) / audioContext.sampleRate);
+                    const harmonicsEnd = Math.floor((8000 * analyser.fftSize) / audioContext.sampleRate);
 
-                for (let i = harmonicsStart; i < harmonicsEnd; i++) {
-                    weightedSum += frequencyDataArray[i];
-                    totalWeight += 1;
-                }
+                    // Weight fundamental frequencies more heavily
+                    for (let i = fundamentalStart; i < fundamentalEnd; i++) {
+                        weightedSum += frequencyDataArray[i] * 2;
+                        totalWeight += 2;
+                    }
 
-                const avgAmplitude = totalWeight > 0 ? weightedSum / totalWeight : 0;
-                const normalizedAmplitude = avgAmplitude / 255;
+                    for (let i = harmonicsStart; i < harmonicsEnd; i++) {
+                        weightedSum += frequencyDataArray[i];
+                        totalWeight += 1;
+                    }
 
-                if (rms > threshold) {
-                    onVoiceDetected(rms);
-                } else {
-                    onSilenceDetected(rms);
-                }
+                    const avgAmplitude = totalWeight > 0 ? weightedSum / totalWeight : 0;
+                    const normalizedAmplitude = avgAmplitude / 255;
 
-                // Frequency-based layer animation with smooth transitions
-                const frequencyThreshold = 0.10;
-                const isCurrentlyActive = normalizedAmplitude > frequencyThreshold;
-                const baseScale = 0.5;
+                    if (rms > threshold) {
+                        onVoiceDetected(rms);
+                    } else {
+                        onSilenceDetected(rms);
+                    }
 
-                if (isCurrentlyActive) {
-                    lastActiveTime = Date.now();
+                    // Frequency-based layer animation with smooth transitions
+                    const frequencyThreshold = 0.10;
+                    const isCurrentlyActive = normalizedAmplitude > frequencyThreshold;
+                    const baseScale = 0.5;
 
-                    const maxScale = 1.2; // Reduced for subtlety
-                    const intensity = Math.min(normalizedAmplitude * 3, 1); // Amplify but cap at 1
+                    if (isCurrentlyActive) {
+                        lastActiveTime = Date.now();
 
-                    applicantLayers.forEach((layer, index) => {
-                        const layerDelay = index * 0.05; // Stagger animation
-                        const layerIntensity = 0.9 + (index * 0.05); // Vary intensity per layer
-                        const targetScale = baseScale + (intensity * (maxScale - baseScale) * layerIntensity);
+                        const maxScale = 1.2; // Reduced for subtlety
+                        const intensity = Math.min(normalizedAmplitude * 3, 1); // Amplify but cap at 1
 
-                        // Smooth interpolation instead of direct assignment
-                        const currentScale = parseFloat(layer.style.transform.match(/scale\(([^)]+)\)/)?.[1] || '1');
-                        const smoothScale = currentScale + (targetScale - currentScale) * 0.3; // Lerp factor
-
-                        setTimeout(() => {
-                            layer.style.transform = `translateY(-50%) scale(${smoothScale.toFixed(3)})`;
-                            layer.style.transition = 'transform 0.1s ease-out';
-                        }, layerDelay * 1000);
-                    });
-
-                } else {
-                    // Gradual fade out
-                    const timeSinceActive = Date.now() - lastActiveTime;
-                    if (timeSinceActive > 100) {
                         applicantLayers.forEach((layer, index) => {
-                            const currentScale = parseFloat(layer.style.transform.match(/scale\(([^)]+)\)/)?.[1] || baseScale);
-                            const fadeScale = currentScale + (baseScale - currentScale) * 0.15; // Gradual return to 1
-                            layer.style.transform = `translateY(-50%) scale(${fadeScale.toFixed(3)})`;
-                            layer.style.transition = 'transform 0.15s ease-out';
+                            const layerDelay = index * 0.05; // Stagger animation
+                            const layerIntensity = 0.9 + (index * 0.05); // Vary intensity per layer
+                            const targetScale = baseScale + (intensity * (maxScale - baseScale) * layerIntensity);
+
+                            // Smooth interpolation instead of direct assignment
+                            const currentScale = parseFloat(layer.style.transform.match(/scale\(([^)]+)\)/)?.[1] || '1');
+                            const smoothScale = currentScale + (targetScale - currentScale) * 0.3; // Lerp factor
+
+                            setTimeout(() => {
+                                layer.style.transform = `translateY(-50%) scale(${smoothScale.toFixed(3)})`;
+                                layer.style.transition = 'transform 0.1s ease-out';
+                            }, layerDelay * 1000);
                         });
+
+                    } else {
+                        // Gradual fade out
+                        const timeSinceActive = Date.now() - lastActiveTime;
+                        if (timeSinceActive > 100) {
+                            applicantLayers.forEach((layer, index) => {
+                                const currentScale = parseFloat(layer.style.transform.match(/scale\(([^)]+)\)/)?.[1] || baseScale);
+                                const fadeScale = currentScale + (baseScale - currentScale) * 0.15; // Gradual return to 1
+                                layer.style.transform = `translateY(-50%) scale(${fadeScale.toFixed(3)})`;
+                                layer.style.transition = 'transform 0.15s ease-out';
+                            });
+                        }
                     }
                 }
 
@@ -667,11 +687,11 @@ $creds = getCreds('AHR');
             }
 
             // Debounce speaking to avoid repeated triggers
-            if (voiceTimer) {
-                clearTimeout(voiceTimer);
-            }
+            // if (voiceTimer) {
+            //     clearTimeout(voiceTimer);
+            // }
 
-            voiceTimer = setTimeout(() => {
+            // voiceTimer = setTimeout(() => {
                 if (!isSpeaking) {
                     isSpeaking = true;
                     console.log(`🎤 Voice detected (volume: ${volume.toFixed(1)}) - User is speaking`);
@@ -690,6 +710,7 @@ $creds = getCreds('AHR');
 
                         setTimeout(() => {
                             if(isSpeaking) {
+                                console.log('clearAudio')
                                 clearAudio();
                             } else {
                                 currentAudio.play().catch(e => {
@@ -697,10 +718,10 @@ $creds = getCreds('AHR');
                                 });
                                 console.log('🔊 Audio resumed');
                             }
-                        }, SILENCE_DELAY + 1000);
+                        }, SILENCE_DELAY + 500);
                     }
                 }
-            }, DEBOUNCE_DELAY);
+            // }, DEBOUNCE_DELAY);
         }
 
         // Updated silence detection handler
@@ -739,8 +760,6 @@ $creds = getCreds('AHR');
             })
                 .then(async (stream) => {
                     hidePopup('microphonePopup');
-
-                    await setupSocketConnection();
 
                     console.log('Got microphone access!');
                     audioStream = stream
@@ -826,6 +845,7 @@ $creds = getCreds('AHR');
                 // Try to get microphone access without showing permission prompt
                 const permissionStatus = await navigator.permissions.query({ name: 'microphone' });
 
+                await setupSocketConnection();
                 setupAudioRecording();
                 if (permissionStatus.state === 'granted') {
                     console.log('Microphone permission already granted');
