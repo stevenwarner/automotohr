@@ -1953,9 +1953,8 @@ if (!function_exists('applicant_right_nav')) {
             $data['questions_answered'] = false;
         }
 
-        if($job_list_sid)
-        {
-            $data['applicant_job_queue'] = $CI->application_tracking_system_model->get_applicant_job_queue($job_list_sid);
+        if ($job_list_sid) {
+            // $data['applicant_job_queue'] = $CI->application_tracking_system_model->get_applicant_job_queue($job_list_sid);
         }
 
         return $data;
@@ -3214,10 +3213,10 @@ if (!function_exists('log_and_sendEmail')) {
             'username' => $senderName,
             'temp_id' => $temp_id,
             'temp_data' => json_encode([
-                'SCRIPT_FILENAME' => $_SERVER['SCRIPT_FILENAME'],
-                'REQUEST_URI' => $_SERVER['REQUEST_URI'],
-                'argv' => $_SERVER['argv']
-            ])
+                        'SCRIPT_FILENAME' => $_SERVER['SCRIPT_FILENAME'],
+                        'REQUEST_URI' => $_SERVER['REQUEST_URI'],
+                        'argv' => $_SERVER['argv']
+                    ])
         );
         //
         save_email_log_common($emailData);
@@ -4870,8 +4869,8 @@ if (!function_exists('common_indeed_acknowledgement_email')) {
             $email_log_autoresponder['job_or_employee_id'] = $applicationData['sid'];
             $save_email_log = save_email_log_autoresponder($email_log_autoresponder);
         } /* else {
-        mail('mubashir.saleemi123@gmail.com', 'Indeed acknowledgement - opt out', print_r($applicationData, true));
-        } */
+       mail('mubashir.saleemi123@gmail.com', 'Indeed acknowledgement - opt out', print_r($applicationData, true));
+       } */
     }
 }
 
@@ -6533,16 +6532,16 @@ if (!function_exists('ics_files')) {
 
                 // // Add event status buttons
                 $user_email_status_button_rows =
-                    generate_event_status_rows(
-                        $event_details['sid'],
-                        $v0['id'],
-                        $v0['type'],
-                        $v0['value'],
-                        $v0['email_address'],
-                        $event_details['category'],
-                        $event_details['learning_center_training_sessions'],
-                        $_this
-                    );
+                generate_event_status_rows(
+                    $event_details['sid'],
+                    $v0['id'],
+                    $v0['type'],
+                    $v0['value'],
+                    $v0['email_address'],
+                    $event_details['category'],
+                    $event_details['learning_center_training_sessions'],
+                    $_this
+                );
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message);
                 log_and_send_email_with_attachment(FROM_EMAIL_NOTIFICATIONS, $v0['email_address'], $email_subject, $user_message, $from_name, $ics_file);
             }
@@ -6572,16 +6571,16 @@ if (!function_exists('ics_files')) {
             if ($event_details['users_type'] != 'personal' && $action != 'confirm') {
                 // Add event status buttons
                 $user_email_status_button_rows =
-                    generate_event_status_rows(
-                        $event_details['sid'],
-                        $user_info['sid'],
-                        $event_details['users_type'],
-                        $user_info['first_name'] . ' ' . $user_info['last_name'],
-                        $user_info['email'],
-                        $event_details['category'],
-                        $event_details['learning_center_training_sessions'],
-                        $_this
-                    );
+                generate_event_status_rows(
+                    $event_details['sid'],
+                    $user_info['sid'],
+                    $event_details['users_type'],
+                    $user_info['first_name'] . ' ' . $user_info['last_name'],
+                    $user_info['email'],
+                    $event_details['category'],
+                    $event_details['learning_center_training_sessions'],
+                    $_this
+                );
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message);
             } else
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', '', $user_message);
@@ -6607,16 +6606,16 @@ if (!function_exists('ics_files')) {
 
                 // Add event status buttons
                 $interviewer_email_status_button_rows =
-                    generate_event_status_rows(
-                        $event_details['sid'],
-                        $employer['sid'],
-                        'interviewer',
-                        $employer_name,
-                        $employer['email'],
-                        $event_details['category'],
-                        $event_details['learning_center_training_sessions'],
-                        $_this
-                    );
+                generate_event_status_rows(
+                    $event_details['sid'],
+                    $employer['sid'],
+                    'interviewer',
+                    $employer_name,
+                    $employer['email'],
+                    $event_details['category'],
+                    $event_details['learning_center_training_sessions'],
+                    $_this
+                );
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $interviewer_email_status_button_rows, $user_message);
                 // $_this->_e($user_message, true);
 
@@ -6636,16 +6635,16 @@ if (!function_exists('ics_files')) {
                     $user_message = str_replace('{{target_user}}', $applicant_name, $user_message);
                     // Add event status buttons
                     $extrainterviewer_email_status_button_rows =
-                        generate_event_status_rows(
-                            $event_details['sid'],
-                            $event_external_participant['sid'],
-                            'extrainterviewer',
-                            $employer_name,
-                            $event_external_participant['email'],
-                            $event_details['category'],
-                            $event_details['learning_center_training_sessions'],
-                            $_this
-                        );
+                    generate_event_status_rows(
+                        $event_details['sid'],
+                        $event_external_participant['sid'],
+                        'extrainterviewer',
+                        $employer_name,
+                        $event_external_participant['email'],
+                        $event_details['category'],
+                        $event_details['learning_center_training_sessions'],
+                        $_this
+                    );
                     $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $extrainterviewer_email_status_button_rows, $user_message);
                     // $_this->_e($user_message, true);
                     log_and_send_email_with_attachment(FROM_EMAIL_NOTIFICATIONS, $event_external_participant['email'], $email_subject, $user_message, $from_name, $ics_file);
@@ -7626,16 +7625,16 @@ if (!function_exists('send_calendar_email')) {
                 } else {
                     // // Add event status buttons
                     $user_email_status_button_rows =
-                        generate_event_status_rows(
-                            $event_details['sid'],
-                            $v0['id'],
-                            $v0['type'],
-                            $v0['value'],
-                            $v0['email_address'],
-                            $event_details['category'],
-                            $event_details['learning_center_training_sessions'],
-                            $_this
-                        );
+                    generate_event_status_rows(
+                        $event_details['sid'],
+                        $v0['id'],
+                        $v0['type'],
+                        $v0['value'],
+                        $v0['email_address'],
+                        $event_details['category'],
+                        $event_details['learning_center_training_sessions'],
+                        $_this
+                    );
                 }
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message);
 
@@ -7827,16 +7826,16 @@ if (!function_exists('send_calendar_email')) {
                 } else {
                     // Add event status buttons
                     $user_email_status_button_rows =
-                        generate_event_status_rows(
-                            $event_details['sid'],
-                            $user_info['sid'],
-                            $event_details['users_type'],
-                            $user_info['first_name'] . ' ' . $user_info['last_name'],
-                            $user_info['email'],
-                            $event_details['category'],
-                            $event_details['learning_center_training_sessions'],
-                            $_this
-                        );
+                    generate_event_status_rows(
+                        $event_details['sid'],
+                        $user_info['sid'],
+                        $event_details['users_type'],
+                        $user_info['first_name'] . ' ' . $user_info['last_name'],
+                        $user_info['email'],
+                        $event_details['category'],
+                        $event_details['learning_center_training_sessions'],
+                        $_this
+                    );
                 }
             } else
                 $user_email_status_button_rows = '';
@@ -8092,17 +8091,17 @@ if (!function_exists('send_calendar_email')) {
 
                 // Add event status buttons
                 $interviewer_email_status_button_rows =
-                    generate_event_status_rows(
-                        $event_details['sid'],
-                        $employer['sid'],
-                        'interviewer',
-                        $employer_name,
-                        $employer['email'],
-                        $event_details['category'],
-                        $event_details['learning_center_training_sessions'],
-                        $_this,
-                        $links_url
-                    );
+                generate_event_status_rows(
+                    $event_details['sid'],
+                    $employer['sid'],
+                    'interviewer',
+                    $employer_name,
+                    $employer['email'],
+                    $event_details['category'],
+                    $event_details['learning_center_training_sessions'],
+                    $_this,
+                    $links_url
+                );
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $interviewer_email_status_button_rows, $user_message);
                 // $_this->_e($user_message, true);
 
@@ -8228,16 +8227,16 @@ if (!function_exists('send_calendar_email')) {
 
                     // Add event status buttons
                     $extrainterviewer_email_status_button_rows =
-                        generate_event_status_rows(
-                            $event_details['sid'],
-                            0,
-                            'extrainterviewer',
-                            $employer_name,
-                            $event_external_participant['email'],
-                            $event_details['category'],
-                            $event_details['learning_center_training_sessions'],
-                            $_this
-                        );
+                    generate_event_status_rows(
+                        $event_details['sid'],
+                        0,
+                        'extrainterviewer',
+                        $employer_name,
+                        $event_external_participant['email'],
+                        $event_details['category'],
+                        $event_details['learning_center_training_sessions'],
+                        $_this
+                    );
                     $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $extrainterviewer_email_status_button_rows, $user_message);
 
                     // Set calendar
@@ -10940,7 +10939,7 @@ if (!function_exists('xml_create_job')) {
 
         $indeedURI = 'indeed-apply-joburl='
             . urlencode(STORE_PROTOCOL_SSL .
-                $subDomain . '/job_details/' . $uid)
+            $subDomain . '/job_details/' . $uid)
             . '&indeed-apply-jobid=' . $uid
             . '&indeed-apply-jobtitle=' . urlencode($title)
             . '&indeed-apply-jobcompanyname=' . urlencode($companyName)
@@ -13443,21 +13442,20 @@ if (!function_exists('downloadAWSFileToBrowser')) {
  * 
  * @return Void
  */
-if(!function_exists('storeApplicantApplicationInQueue'))
-{
-    function storeApplicantApplicationInQueue($data) {
+if (!function_exists('storeApplicantApplicationInQueue')) {
+    function storeApplicantApplicationInQueue($data)
+    {
         // Get CI instance
         $_this = &get_instance();
         $_this->load->model('All_feed_model');
-        
+
         $applicant_id = $data['portal_applicant_job_sid'];
-        if(empty($applicant_id)) {
+        if (empty($applicant_id)) {
             $applicant = $_this->All_feed_model->get_applicant_job();
             $applicant_id = $applicant->sid;
         }
 
-        if(!empty($applicant))
-        {
+        if (!empty($applicant)) {
             $_this->All_feed_model->insert_applicant_job_queue([
                 'portal_applicant_job_sid' => $applicant_id,
                 'portal_job_applications_sid' => $data['portal_job_applications_sid'],
@@ -17771,7 +17769,7 @@ if (!function_exists('checkIfAnyIncidentIssueAssigned')) {
             ->where("FIND_IN_SET({$employeeId}, departments_management.csp_managers_ids) > 0", null, null)
             ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.csp_managers_ids) > 0", null, null)
             ->group_end();
-    
+
         //
         $records_obj = $CI->db->get("departments_team_management");
         $departmentAndTeams = $records_obj->result_array();
@@ -17782,11 +17780,11 @@ if (!function_exists('checkIfAnyIncidentIssueAssigned')) {
             $teams = [];
             //
             foreach ($departmentAndTeams as $row) {
-                if(!in_array($row['sid'], $departments)){
+                if (!in_array($row['sid'], $departments)) {
                     $departments[] = $row['sid'];
                 }
                 //
-                if(!in_array($row['team_sid'], $teams)){
+                if (!in_array($row['team_sid'], $teams)) {
                     $teams[] = $row['team_sid'];
                 }
             }
@@ -17802,17 +17800,17 @@ if (!function_exists('checkIfAnyIncidentIssueAssigned')) {
                 $CI->db->where('csp_reports.company_sid', $companyId);
                 $CI->db->where('csp_reports_employees.status', 1);
                 $CI->db->group_start();
-                    if ($departments) {
-                        foreach ($departments as $department) {
-                            $CI->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
-                        }
+                if ($departments) {
+                    foreach ($departments as $department) {
+                        $CI->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
                     }
-                    // For teams
-                    if ($teams) {
-                        foreach ($teams as $team) {
-                            $CI->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
-                        }
+                }
+                // For teams
+                if ($teams) {
+                    foreach ($teams as $team) {
+                        $CI->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
                     }
+                }
                 $CI->db->group_end();
                 $CI->db->from('csp_reports_employees');
                 $assignCount = $CI->db->count_all_results();
