@@ -1977,7 +1977,7 @@ class Advanced_report_model extends CI_Model
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_queue.portal_job_applications_sid = portal_job_applications.sid', 'inner');
         $this->db->join('users', 'portal_applicant_jobs_queue.company_sid = users.sid', 'inner');
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_queue.job_sid', 'inner');
-        $this->db->order_by('portal_applicant_jobs_queue.created_at', 'DESC');
+        $this->db->order_by('portal_applicant_jobs_queue.sid', 'DESC');
         //        $applications = array();
 
 
