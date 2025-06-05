@@ -389,6 +389,16 @@ class Indeed_feed extends CI_Controller
                 ], false);
             }
 
+            if(isset($resume) && !empty($resume) && $companyId == 21)
+            {
+                storeApplicantApplicationInQueue([
+                    'portal_applicant_job_sid' => null,
+                    'portal_job_applications_sid' => $job_applications_sid,
+                    'company_sid' => $companyId,
+                    'job_sid' => $job_sid
+                ]);
+            }
+
             // Indeed questionnaire
             $eeoc = [];
             $jobQuestions = [];

@@ -577,6 +577,7 @@ $route['applicant_profile/upload_attachment/(:any)'] = 'application_tracking_sys
 $route['applicant_profile/downloadFile/(:any)'] = 'application_tracking_system/downloadFile/$1';
 $route['applicant_profile/(:num)'] = 'application_tracking_system/applicant_profile/$1';
 $route['applicant_profile/(:num)/(:num)'] = 'application_tracking_system/applicant_profile/$1/$2';
+$route['applicant_profile/submitted/resume/(:num)/(:num)'] = 'application_tracking_system/applicant_submitted_resume_result/$1/$2';
 $route['archive_single_applicant'] = 'application_tracking_system/archive_single_applicant';
 $route['active_single_applicant'] = 'application_tracking_system/active_single_applicant';
 $route['delete_single_applicant'] = 'application_tracking_system/delete_single_applicant';
@@ -2289,6 +2290,7 @@ $route["manage_admin/indeed/disposition/status/map"]["get"] =
 $route["manage_admin/indeed/disposition/status/map"]["post"] =
   "manage_admin/Indeed_disposition_status_map/saveListing";
 
+$route["manage_admin/recruiter-configurations"]["get"] = "manage_admin/recruiter/configurations";
 
 //Manage Admin Employees Termination Report
 $route['manage_admin/reports/employees_termination_report/(:any)'] = 'manage_admin/reports/employees_termination_report/index/$1';
@@ -2912,3 +2914,8 @@ $route["cron/scheduled_document_report"]["cli"] = "Cron_lms_courses/sendDocument
 
 $route['manage_admin/reports/applicants_ai_report/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/applicants_ai_report/index/$1/$2/$3/$4/$5/$6';
 $route['manage_admin/reports/applicants_ai_report/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/applicants_ai_report/index/$1/$2/$3/$4/$5';
+$route['interview/(:any)'] = 'Applicant_interviews/interviewCall/$1';
+
+
+$route["ai_recruiter/config"]["get"] =
+  "manage_admin/Ai_recruiter/config";

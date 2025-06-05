@@ -198,24 +198,24 @@
 
                                         <li class="form-col-50-left">
                                             <div class="form-col-50-left">
-                                                <label>Salary From:
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon" id="basic-addon1">$</span>
-                                                        <input class="invoice-fields" type="text" name="minSalary"
-                                                            id="minSalary"
-                                                            value="<?php echo set_value('minSalary', $listing["minSalary"]); ?>">
-                                                        <?php echo form_error('minSalary'); ?>
-                                                    </div>
+                                                <label>Salary From:</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" id="basic-addon1">$</span>
+                                                    <input class="invoice-fields" type="text" name="minSalary"
+                                                        id="minSalary"
+                                                        value="<?php echo set_value('minSalary', $listing["minSalary"]); ?>">
+                                                    <?php echo form_error('minSalary'); ?>
+                                                </div>
                                             </div>
                                             <div class="form-col-50-right">
-                                                <label>Salary To:
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon" id="basic-addon1">$</span>
-                                                        <input class="invoice-fields" type="text" name="maxSalary"
-                                                            id="maxSalary"
-                                                            value="<?php echo set_value('maxSalary', $listing["maxSalary"]); ?>">
-                                                        <?php echo form_error('maxSalary'); ?>
-                                                    </div>
+                                                <label>Salary To:</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" id="basic-addon1">$</span>
+                                                    <input class="invoice-fields" type="text" name="maxSalary"
+                                                        id="maxSalary"
+                                                        value="<?php echo set_value('maxSalary', $listing["maxSalary"]); ?>">
+                                                    <?php echo form_error('maxSalary'); ?>
+                                                </div>
                                             </div>
                                         </li>
 
@@ -1311,6 +1311,101 @@
         </div>
     </div>
 </div>
+
+<div id="generate_with_prompt_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form onsubmit="generateWithPrompt(event)">
+            <div class="modal-content">
+                <div class="modal-header modal-header-bg">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Generate Description</h4>
+                </div>
+                <div class="modal-body">
+                    <label for="generate_prompt_input">Prompt: <span class="staric">*</span></label>
+                    <textarea class="invoice-fields" type="text" name="generate_prompt_input" id="generate_prompt_input"
+                        placeholder="Prompt ..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="generate-button" type="submit" id="submit_prompt">Generate</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="generate_questionnaire_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form>
+            <div class="modal-content">
+                <div class="modal-header modal-header-bg">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Questions</h4>
+                </div>
+                <div class="modal-body" id="questionnaire_generated_body_data">
+                    <div>
+                        <label for="generate_prompt_input">Question: <span class="staric">*</span></label>
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Suscipit mollitia laborum odio
+                            dicta nesciunt assumenda facere, cum porro, nemo consequatur ex id eum totam, debitis ad
+                            necessitatibus incidunt? Et, tenetur.</p>
+                        <strong>Type: </strong> <span>Yes / No</span>
+
+                        <!-- <div>
+                            <div>
+                                <label>Yes: <samp style="color:red;">*</samp></label>
+                                <div class="hr-select-dropdown">
+                                    <select class="invoice-fields" id="answer_boolean_edit_yes" name="answer_boolean_edit[]">
+                                        <option value="">Select Question Score</option>          
+                                        <option value="0">Not acceptable - 0</option>
+                                        <option value="1">Acceptable - 1</option>
+                                        <option value="2">Good - 2</option>
+                                        <option value="3">Very Good - 3</option>
+                                        <option value="4">Excellent - 4</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label>Status: <samp style="color:red;">*</samp></label>
+                                <div class="hr-select-dropdown">
+                                    <select class="invoice-fields" id="status_boolean_edit_yes" name="status_boolean_edit[]">        
+                                        <option value="Pass">Pass</option>
+                                        <option value="Fail">Fail</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <!-- <div>
+                            <label>No: <samp style="color:red;">*</samp></label>
+                            <div class="hr-select-dropdown">
+                                    <select class="invoice-fields" id="answer_boolean_edit_no" name="answer_boolean_edit[]">
+                                    <option value="">Select Question Score</option>          
+                                    <option value="0">Not acceptable - 0</option>
+                                    <option value="1">Acceptable - 1</option>
+                                    <option value="2">Good - 2</option>
+                                    <option value="3">Very Good - 3</option>
+                                    <option value="4">Excellent - 4</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label>Status: <samp style="color:red;">*</samp></label>
+                            <div class="hr-select-dropdown">
+                                <select class="invoice-fields" id="status_boolean_edit_no" name="status_boolean_edit[]">        
+                                    <option value="Pass">Pass</option>
+                                    <option value="Fail">Fail</option>
+                                </select>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="generate-button" type="submit" id="submit_prompt">Generate</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript"
     src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
@@ -2184,6 +2279,27 @@
     .cs-purchased-product p {
         font-size: 16px !important;
     }
+
+    .generate-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        gap: 1rem;
+    }
+
+    .generate-button {
+        background: #81b431;
+        border: none;
+        padding: 5px 10px;
+        color: #fff;
+        width: max-content;
+        border-radius: 3px;
+    }
+
+    .generate-button:disabled {
+        background: #ddd;
+        color: #000;
+    }
 </style>
 <?php if ($hasNewModuleAccess) { ?>
 
@@ -2298,6 +2414,86 @@
 
 <script>
     // $('#select_template').select2();
+    const CompanyName = '<?= $session['company_detail']['CompanyName'] ?>';
+
+    async function generateJobDescription(newInput = "") {
+        // Start Submission
+        document.querySelector('button#generate_button').disabled = true;
+        document.querySelector('button#generate_prompt_button').disabled = true;
+        document.querySelector('button#submit_prompt').disabled = true;
+
+        const title = document.querySelector('input#Title').value;
+        const country = document.querySelector("select[name=Location_Country] option:checked").text;
+        const state = document.querySelector("select[name=Location_State] option:checked").text;
+        const city = document.querySelector("input[name=Location_City]").value;
+        const options = document.querySelector('select#Category').selectedOptions;
+        let optionsTextAr = [];
+        for (let i = 0; i < options.length; i++) {
+            optionsTextAr.push(options[i].text);
+        }
+
+        const instructions = `
+        You are a professional job post writer.
+        Based on the input data provided, generate a full-length job post in the given job category, structured for use in WYSIWYG editors like CKEditor or TinyMCE.
+        The post must be returned as HTML only (no <html>/<head>/<body>), and all styles should be written using inline CSS
+        The post should include the following sections:
+        1. A header with the job title and company name.
+        2. A short paragraph introducing the company using the provided or generated company description.
+        3. A "Key Responsibilities" section using an HTML list.
+        4. A "Qualifications" section based on the job category and responsibilities.
+        5. A closing paragraph on how to apply.
+        `;
+
+        let template_sid = $('#select_template').val();
+        let template = '';
+        if (template_sid) {
+            let selectedTemplate = $('#template_' + template_sid);
+            template = `Template Format: ${$(selectedTemplate).attr('data-description')}`;
+        }
+
+        let input = `${template}
+        Write down Job Description in detail from 500 to 1000 words and required information given below:
+        Job position: ${title}
+        Company Name: ${CompanyName}
+        Location: ${city}, ${state} ${country}.
+        Following Categories and Work Experience are ${optionsTextAr.join(', ')} and describe in details according job criteria.
+        Define list of Key Responsibilities in detail according to job position and work experience.`;
+        if (newInput.length > 5) {
+            input += `${input}
+            Use the following extra infromation to generate job description: ${newInput}`
+        }
+        const resp = await generateJDOpenAiCall(input, instructions);
+
+        CKEDITOR.instances.JobDescription.setData(resp.result);
+
+        // Clear Submission
+        document.querySelector('button#generate_button').disabled = false;
+        document.querySelector('button#generate_prompt_button').disabled = false;
+        document.querySelector('button#submit_prompt').disabled = false;
+        $('#generate_with_prompt_modal').modal('hide');
+    }
+
+    document.querySelector('#generate_with_prompt_modal form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const newInput = document.querySelector('#generate_with_prompt_modal form textarea').value;
+        generateJobDescription(newInput);
+
+        return false;
+    })
+
+    async function generateJDOpenAiCall(input, instructions) {
+        return await fetch("http://127.0.0.1:3000/openai/generate-JD", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                instructions,
+                input
+            }),
+        }).then(async response => response.json())
+            .catch(e => e);
+    }
 </script>
 
 <style>

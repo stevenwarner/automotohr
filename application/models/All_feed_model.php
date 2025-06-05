@@ -442,6 +442,15 @@ class all_feed_model extends CI_Model {
         return $this->db->get()->num_rows();
     }
 
+    function get_applicant_job($job_applications_sid, $job_sid, $companyId) {
+        $this->db->select('*');
+        $this->db->where('portal_job_applications_sid', $job_applications_sid);
+        $this->db->where('job_sid', $job_sid);
+        $this->db->where('company_sid', $companyId);
+        $this->db->from('portal_applicant_jobs_list');
+        return $this->db->get()->row();
+    }
+
     function get_all_active_company_jobs() {
         $this->db->select('pjl.sid, pjl.user_sid, pjl.active, pjl.status, pjl.featured, pjl.activation_date, pjl.deactivation_date, pjl.access_type, pjl.company_name');
         $this->db->select('pjl.Title, pjl.JobType, pjl.JobCategory, pjl.Location_Country, pjl.Location_State, pjl.Location_ZipCode, pjl.YouTube_Video');
@@ -1163,5 +1172,9 @@ class all_feed_model extends CI_Model {
 
     function save_eeo_form($data) {
         $this->db->insert('portal_eeo_form', $data);
+    }
+
+    function insert_applicant_job_queue($data) {
+        $this->db->insert('portal_applicant_jobs_queue', $data);
     }
 }
