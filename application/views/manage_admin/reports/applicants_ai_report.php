@@ -198,12 +198,14 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                                             <?php echo date_with_time($applicant['created_at']); ?>
                                                                         </td>
                                                                         <td style="vertical-align: middle;">
-                                                                            <div class="">
-                                                                                <a href="<?= "https://staging.automotohr.com/interview/{$applicant["portal_applicant_job_sid"]}"; ?>"
-                                                                                    target="_blank" class="btn btn-success">
-                                                                                    Start Interview
-                                                                                </a>
-                                                                            </div>
+                                                                            <?php if ($applicant["status"] == "completed"): ?>
+                                                                                <div class="">
+                                                                                    <a href="<?= "https://staging.automotohr.com/interview/{$applicant["portal_applicant_job_sid"]}"; ?>"
+                                                                                        target="_blank" class="btn btn-success">
+                                                                                        Start Interview
+                                                                                    </a>
+                                                                                </div>
+                                                                            <?php endif; ?>
                                                                         </td>
                                                                     </tr>
                                                                 <?php } ?>
