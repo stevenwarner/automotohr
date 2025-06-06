@@ -218,6 +218,7 @@ class logs_model extends CI_Model
     public function get_email_log_detail($log_id)
     {
         //$this->db->join('users', 'users.sid = email_log.username');
+        $this->db->query("SET NAMES 'utf8mb4'");
         $this->db->where('email_log.sid', $log_id);
         $data = $this->db->get('email_log');
         return $data->result_array();

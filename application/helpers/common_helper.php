@@ -904,6 +904,7 @@ if (!function_exists('save_email_log_common')) {
     function save_email_log_common($data)
     {
         $CI = &get_instance();
+        $CI->db->query("SET NAMES 'utf8mb4'");
         $CI->db->insert('email_log', $data);
     }
 }
@@ -17785,5 +17786,24 @@ if (!function_exists('checkIfAnyIncidentIssueAssigned')) {
         }
         //
         return false;
+    }
+}
+
+
+//
+if (!function_exists('get_email_template_by_code')) {
+
+    function get_email_template_by_code($template_code)
+    {
+        $CI = &get_instance();
+        $CI->db->query("SET NAMES 'utf8mb4'");
+        $CI->db->where('template_code', $template_code);
+        $result = $CI->db->get('email_templates')->row_array();
+
+        if (count($result) > 0) {
+            return $result;
+        } else {
+            return 0;
+        }
     }
 }

@@ -384,13 +384,15 @@ class Demo_model extends CI_Model
     }
 
     function save_demo_reply($data)
-    {
+    {  
+        $this->db->query("SET NAMES 'utf8mb4'");
         $this->db->insert('demo_enquiry_admin_reply', $data);
         return $this->db->insert_id();
     }
 
     function get_demo_reply($user_sid, $user_type)
     {
+        $this->db->query("SET NAMES 'utf8mb4'");
         $this->db->where('demo_sid', $user_sid);
         $this->db->where('user_type', $user_type);
         $this->db->order_by('reply_date', 'DESC');
@@ -399,6 +401,7 @@ class Demo_model extends CI_Model
 
     function get_reply_by_id($sid)
     {
+        $this->db->query("SET NAMES 'utf8mb4'");
         $this->db->where('sid', $sid);
         return $this->db->get('demo_enquiry_admin_reply')->result_array();
     }
@@ -476,6 +479,7 @@ class Demo_model extends CI_Model
      */
     function fetch_admin_templates()
     {
+        $this->db->query("SET NAMES 'utf8mb4'");
         $result = $this->db
             ->select('
             sid AS id, name as templateName, subject, text as body
