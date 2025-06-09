@@ -1186,7 +1186,7 @@ if (
                                 } ?>
                                     href="<?php echo site_url('manage_admin/reports/job_products_report'); ?>">Job Products
                                     Report</a>
-                                <<<<<<< HEAD </div>
+                                </div>
                                 <?php } ?>
                                 <?php if (check_access_permissions_for_view($security_details, 'applicants_ai_report')) { ?>
                                     <div class="menu-item">
@@ -1195,8 +1195,6 @@ if (
                                         } ?>
                                             href="<?php echo site_url('manage_admin/reports/applicants_ai_report'); ?>">Applicants
                                             AI Report</a>
-                                        =======
-                                        >>>>>>> feature/GenerateJD
                                     </div>
                                 <?php } ?>
                                 <?php if (check_access_permissions_for_view($security_details, 'applicants_report')) { ?>
