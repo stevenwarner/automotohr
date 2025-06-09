@@ -30,7 +30,7 @@ class Advanced_report_model extends CI_Model
     function get_company_jobs($company_sid)
     {
         $this->db->select('sid, Title, active');
-//        $this->db->where('active', 1);
+        //        $this->db->where('active', 1);
         $this->db->where('user_sid', $company_sid);
         return $this->db->get('portal_job_listings')->result_array();
     }
@@ -50,7 +50,7 @@ class Advanced_report_model extends CI_Model
         return $applicant_sids;
     }
 
-//    function get_applicants($company_sid = NULL, $brand_sid = NULL, $search = '', $search2 = '') {
+    //    function get_applicants($company_sid = NULL, $brand_sid = NULL, $search = '', $search2 = '') {
 //        if ($company_sid == NULL) {
 //            $companies = $this->get_brand_companies($brand_sid);
 //            $company_sids = array();
@@ -268,7 +268,7 @@ class Advanced_report_model extends CI_Model
         $this->db->where('active', 1);
         $this->db->where('is_executive_admin', 0);
         $this->db->where('terminated_status', 0);
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         return $this->db->get('users')->result_array();
     }
 
@@ -310,7 +310,7 @@ class Advanced_report_model extends CI_Model
 
     function GetAllApplicantsBetween($company_sid = NULL, $brand_sid = NULL, $start_date, $end_date, $keyword, $hired_status = null, $check_hired_date = false, $count, $all, $limit = NULL, $offset = NULL)
     {
-//        if ($company_sid != NULL || $brand_sid != NULL) {
+        //        if ($company_sid != NULL || $brand_sid != NULL) {
 //            if ($company_sid == NULL) { // create array beforehand in case of brand selection to avoid errors between where conditions
 //                $companies = $this->get_brand_companies($brand_sid);
 //                $company_sids = array();
@@ -386,7 +386,7 @@ class Advanced_report_model extends CI_Model
         }
 
         if ($check_hired_date == true) {
-//            if ($start_date != null && $end_date != null) {
+            //            if ($start_date != null && $end_date != null) {
 //                $this->db->where('portal_job_applications.hired_date BETWEEN "' . date('Y-m-d', strtotime($start_date)) . '" and "' . date('Y-m-d', strtotime($end_date)) . '"');
 //            }
             if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
@@ -397,7 +397,7 @@ class Advanced_report_model extends CI_Model
                 $this->db->where('portal_job_applications.hired_date <=', $end_date);
             }
         } else {
-//            if ($start_date != null && $end_date != null) {
+            //            if ($start_date != null && $end_date != null) {
 //                $this->db->where('portal_applicant_jobs_list.date_applied BETWEEN "' . date('Y-m-d 00:00:00', strtotime($start_date)) . '" and "' . date('Y-m-d 23:59:59', strtotime($end_date)) . '"');
 //            }
             if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
@@ -414,7 +414,7 @@ class Advanced_report_model extends CI_Model
         }
 
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
-        $this->db->join('portal_job_listings','portal_job_listings.sid=portal_applicant_jobs_list.job_sid','left');
+        $this->db->join('portal_job_listings', 'portal_job_listings.sid=portal_applicant_jobs_list.job_sid', 'left');
         $this->db->order_by('date_applied', 'DESC');
 
         if ($count) {
@@ -689,7 +689,7 @@ class Advanced_report_model extends CI_Model
 
     function GetAllApplicantsOnboarding($company_sid = NULL, $brand_sid = NULL, $start_date, $end_date, $keyword, $check_hired_date = false, $count, $all, $limit = NULL, $offset = NULL)
     {
-//        if ($company_sid == NULL) { // create array beforehand in case of brand selection to avoid errors between where conditions
+        //        if ($company_sid == NULL) { // create array beforehand in case of brand selection to avoid errors between where conditions
 //            $companies = $this->get_brand_companies($brand_sid);
 //            $company_sids = array();
 //
@@ -792,7 +792,7 @@ class Advanced_report_model extends CI_Model
                 $this->db->where('portal_job_applications.hired_date <=', $end_date);
             }
         } else {
-//            if ($start_date != null && $end_date != null) {
+            //            if ($start_date != null && $end_date != null) {
 //                $this->db->where('portal_job_applications.date_applied BETWEEN "' . $start_date . '" and "' . $end_date . '"');
 //            }
             if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
@@ -912,7 +912,7 @@ class Advanced_report_model extends CI_Model
         if (!empty($brand_company_sids)) {
             $this->db->select('*');
             $this->db->where('sid IN ( ' . implode(',', $brand_company_sids) . ' ) ');
-            $this->db->where('career_page_type','standard_career_site');
+            $this->db->where('career_page_type', 'standard_career_site');
             return $this->db->get('users')->result_array();
         } else {
             return array();
@@ -1128,7 +1128,7 @@ class Advanced_report_model extends CI_Model
         }
 
         $this->db->select('first_name, last_name, registration_date, CompanyName, access_level, email, applicant_sid');
-        
+
         $this->db->where('username', NULL);
         $this->db->where('password', NULL);
         $this->db->where('active', 0);
@@ -1137,7 +1137,7 @@ class Advanced_report_model extends CI_Model
         if ($start_date != null && $end_date != null) {
             $this->db->where('registration_date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
         }
-        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $this->db->order_by(SORT_COLUMN, SORT_ORDER);
         $candidates = $this->db->get('users')->result_array();
 
         // get job title
@@ -1153,14 +1153,14 @@ class Advanced_report_model extends CI_Model
             // $candidates[$key]['Location_State'] =$job_sid[0]['Location_City'];
             // $candidates[$key]['Location_City'] =$job_sid[0]['Location_State'];
             if (isset($job_sid[0]['job_sid'])) {
-                $candidates[$key]['Location_State'] =$job_sid[0]['Location_State'];
+                $candidates[$key]['Location_State'] = $job_sid[0]['Location_State'];
                 $candidates[$key]['Location_City'] = $job_sid[0]['Location_City'];
                 $job_sid = $job_sid[0]['job_sid'];
                 $candidates[$key]['job_title'] = get_job_title($job_sid);
             } else {
                 $candidates[$key]['job_title'] = 'Job Deleted';
             }
-           
+
         }
         return $candidates;
     }
@@ -1370,7 +1370,7 @@ class Advanced_report_model extends CI_Model
         $this->db->select('portal_job_applications.first_name');
         $this->db->select('portal_job_applications.last_name');
         $this->db->select('portal_job_listings.Location_City');
-         $this->db->select('portal_job_listings.Location_State');
+        $this->db->select('portal_job_listings.Location_State');
 
         $this->db->select('users.CompanyName');
 
@@ -1421,9 +1421,9 @@ class Advanced_report_model extends CI_Model
 
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
         $this->db->join('users', 'portal_applicant_jobs_list.company_sid = users.sid', 'left');
-        $this->db->join('portal_job_listings', 'portal_job_listings.sid =portal_applicant_jobs_list.job_sid','left');
+        $this->db->join('portal_job_listings', 'portal_job_listings.sid =portal_applicant_jobs_list.job_sid', 'left');
         $this->db->order_by('portal_applicant_jobs_list.date_applied', 'DESC');
-//        $applications = array();
+        //        $applications = array();
 
 
         if ($count) {
@@ -1466,21 +1466,21 @@ class Advanced_report_model extends CI_Model
 
     function get_total_job_applications($start_date, $end_date, $city = NULL, $state = NULL)
     {
-        if($city != NULL){
+        if ($city != NULL) {
             $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
             $this->db->where('portal_job_applications.city', $city);
             $this->db->where('portal_applicant_jobs_list.date_applied BETWEEN "' . $start_date . '" and "' . $end_date . '"');
             $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
             $this->db->from('portal_applicant_jobs_list');
             return $this->db->count_all_results();
-        }elseif($state != NULL){
+        } elseif ($state != NULL) {
             $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
             $this->db->where('portal_job_applications.state', $state);
             $this->db->where('portal_applicant_jobs_list.date_applied BETWEEN "' . $start_date . '" and "' . $end_date . '"');
             $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
             $this->db->from('portal_applicant_jobs_list');
             return $this->db->count_all_results();
-        }else{
+        } else {
             $this->db->select('portal_applicant_jobs_list.sid');
             $this->db->select('portal_applicant_jobs_list.portal_job_applications_sid');
             $this->db->select('portal_applicant_jobs_list.company_sid');
@@ -1497,12 +1497,12 @@ class Advanced_report_model extends CI_Model
             $this->db->select('portal_job_applications.email');
             $this->db->select('portal_job_applications.city');
             $this->db->select('portal_job_applications.state');
-$this->db->select('portal_job_applications.applicant_type');
+            $this->db->select('portal_job_applications.applicant_type');
             $this->db->select('states.state_name');
             $this->db->select('users.CompanyName');
             $this->db->select('portal_job_listings.Location_State');
             $this->db->select('portal_job_listings.Location_City');
-	$this->db->where('portal_job_applications.email not regexp "@mail.ru"');
+            $this->db->where('portal_job_applications.email not regexp "@mail.ru"');
 
             $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
             $this->db->where('portal_applicant_jobs_list.date_applied BETWEEN "' . $start_date . '" and "' . $end_date . '"');
@@ -1554,7 +1554,7 @@ $this->db->select('portal_job_applications.applicant_type');
         $this->db->select('portal_applicant_jobs_list.score');
         $this->db->select('portal_applicant_jobs_list.passing_score');
         $this->db->select('portal_applicant_jobs_list.desired_job_title');
-    
+
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.employer_sid');
         $this->db->select('portal_job_applications.first_name');
@@ -1567,7 +1567,7 @@ $this->db->select('portal_job_applications.applicant_type');
         $this->db->select('portal_applicant_jobs_list.applicant_source');
         $this->db->select('portal_applicant_jobs_list.main_referral');
         $this->db->select('portal_applicant_jobs_list.ip_address');
-         
+
 
         $this->db->select('application_status.css_class');
 
@@ -1582,7 +1582,7 @@ $this->db->select('portal_job_applications.applicant_type');
                 $this->db->or_where('portal_applicant_jobs_list.applicant_source', NULL);
                 $this->db->or_where('portal_applicant_jobs_list.applicant_source', '');
                 $this->db->group_end();
-            }else if ($source == 'others') {
+            } else if ($source == 'others') {
                 $this->db->group_start();
                 $this->db->not_like('portal_applicant_jobs_list.applicant_source', 'indeed');
                 $this->db->not_like('portal_applicant_jobs_list.applicant_source', 'automotosocial');
@@ -1597,7 +1597,7 @@ $this->db->select('portal_job_applications.applicant_type');
                 $this->db->where('portal_applicant_jobs_list.applicant_source <>', NULL);
                 $this->db->where('portal_applicant_jobs_list.applicant_source <>', '');
                 $this->db->group_end();
-            }else {
+            } else {
                 $this->db->like('portal_applicant_jobs_list.applicant_source', $source);
             }
         }
@@ -1633,7 +1633,7 @@ $this->db->select('portal_job_applications.applicant_type');
                 $this->db->where('portal_applicant_jobs_list.job_sid', $job_sid);
             }
         }
-//        if (!empty($job_sid) && $job_sid != 'all') {
+        //        if (!empty($job_sid) && $job_sid != 'all') {
 //            $this->db->where('portal_applicant_jobs_list.job_sid', $job_sid);
 //        }
 
@@ -1704,7 +1704,7 @@ $this->db->select('portal_job_applications.applicant_type');
                 $this->db->where('interview_questionnaire_score.job_sid', $application['job_sid']);
                 $this->db->where('interview_questionnaire_score.candidate_sid', $application['applicant_sid']);
                 $this->db->join('users', 'users.sid = interview_questionnaire_score.employer_sid');
-                
+
                 $applications[$key]['scores'] = $this->db->get('interview_questionnaire_score')->result_array();
                 //**** get interview quesionnaire score ****//
             }
@@ -1731,7 +1731,7 @@ $this->db->select('portal_job_applications.applicant_type');
 
     function get_all_advanced_jobs($company_sid, $start_date = null, $end_date = null, $priority, $count, $limit = null, $offset = null)
     {
-//        if ($brand_sid == NULL) {
+        //        if ($brand_sid == NULL) {
 //            $this->db->where('user_sid', $company_sid);
 //        }
 //        else {
@@ -1751,7 +1751,7 @@ $this->db->select('portal_job_applications.applicant_type');
         $this->db->select('activation_date,deactivation_date,Title,active,views,user_sid,sid');
         $this->db->select('Location_State');
         $this->db->select('Location_City');
-        if($priority=='active'){
+        if ($priority == 'active') {
             if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
                 $this->db->where('portal_job_listings.activation_date BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
             } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
@@ -1761,7 +1761,7 @@ $this->db->select('portal_job_applications.applicant_type');
             }
             $this->db->where('active <> ', 2);
             $this->db->order_by('activation_date', 'DESC');
-        } else{
+        } else {
             if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
                 $this->db->where('portal_job_listings.deactivation_date BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
             } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
@@ -1822,43 +1822,46 @@ $this->db->select('portal_job_applications.applicant_type');
      *
      * @return Array|Bool
      */
-    function fetchCopyApplicantData($startDate, $endDate, $page, $limit = 100){
+    function fetchCopyApplicantData($startDate, $endDate, $page, $limit = 100)
+    {
         //
-        $start = $page == 1 ? 0 : ( ($page * $limit) - $limit );
+        $start = $page == 1 ? 0 : (($page * $limit) - $limit);
         //
         $result = $this->db
-        ->select('
+            ->select('
             copy_applicant_tracking.token, 
             copy_applicant_tracking.job_title, 
             from_user.CompanyName as from_company_name,
             to_user.CompanyName as to_company_name,
             copy_applicant_tracking.created_at
         ')
-        ->from('copy_applicant_tracking')
-        ->where('DATE_FORMAT(copy_applicant_tracking.created_at, "%m-%d-%Y") BETWEEN "'.( $startDate ).'" AND "'.( $endDate ).'"', NULL)
-        ->group_by('copy_applicant_tracking.token')
-        ->order_by('copy_applicant_tracking.sid', 'DESC')
-        ->limit($limit, $start)
-        ->join('users as to_user', 'to_user.sid = copy_applicant_tracking.to_company_id', 'inner')
-        ->join('users as from_user', 'from_user.sid = copy_applicant_tracking.from_company_id', 'inner')
-        ->get();
+            ->from('copy_applicant_tracking')
+            ->where('DATE_FORMAT(copy_applicant_tracking.created_at, "%m-%d-%Y") BETWEEN "' . ($startDate) . '" AND "' . ($endDate) . '"', NULL)
+            ->group_by('copy_applicant_tracking.token')
+            ->order_by('copy_applicant_tracking.sid', 'DESC')
+            ->limit($limit, $start)
+            ->join('users as to_user', 'to_user.sid = copy_applicant_tracking.to_company_id', 'inner')
+            ->join('users as from_user', 'from_user.sid = copy_applicant_tracking.from_company_id', 'inner')
+            ->get();
         //
         $result_arr = $result->result_array();
-        $result     = $result->free_result();
+        $result = $result->free_result();
 
         //
-        if(!sizeof($result_arr)) return false;
+        if (!sizeof($result_arr))
+            return false;
         //
-        if($page != 1) return $result_arr;
+        if ($page != 1)
+            return $result_arr;
         //
         $totalRecords = $this->db
-        ->from('copy_applicant_tracking')
-        ->where('DATE_FORMAT(copy_applicant_tracking.created_at, "%m-%d-%Y") BETWEEN "'.( $startDate ).'" AND "'.( $endDate ).'"', NULL)
-        ->group_by('copy_applicant_tracking.token')
-        ->count_all_results();
+            ->from('copy_applicant_tracking')
+            ->where('DATE_FORMAT(copy_applicant_tracking.created_at, "%m-%d-%Y") BETWEEN "' . ($startDate) . '" AND "' . ($endDate) . '"', NULL)
+            ->group_by('copy_applicant_tracking.token')
+            ->count_all_results();
         // _e($result_arr, true, true);
         //
-        return array( 'Data' => $result_arr, 'Total' => $totalRecords );
+        return array('Data' => $result_arr, 'Total' => $totalRecords);
     }
 
     /**
@@ -1871,30 +1874,32 @@ $this->db->select('portal_job_applications.applicant_type');
      *
      * @return Array|Bool
      */
-    function fetchCopyApplicantDetail($token, $page = 1, $limit = 100){
+    function fetchCopyApplicantDetail($token, $page = 1, $limit = 100)
+    {
         //
-        $start = $page == 1 ? 0 : ( ($page * $limit) - $limit );
+        $start = $page == 1 ? 0 : (($page * $limit) - $limit);
         //
         $result = $this->db
-        ->select('
+            ->select('
             copy_applicant_tracking.job_title,
             copy_applicant_tracking.copied_applicants,
             copy_applicant_tracking.failed_applicants,
             copy_applicant_tracking.existed_applicants
         ')
-        ->from('copy_applicant_tracking')
-        ->order_by('copy_applicant_tracking.sid', 'DESC')
-        // ->limit($limit, $start)
-        ->where('copy_applicant_tracking.token', $token)
-        ->join('users as to_user', 'to_user.sid = copy_applicant_tracking.to_company_id', 'inner')
-        ->join('users as from_user', 'from_user.sid = copy_applicant_tracking.from_company_id', 'inner')
-        ->get();
+            ->from('copy_applicant_tracking')
+            ->order_by('copy_applicant_tracking.sid', 'DESC')
+            // ->limit($limit, $start)
+            ->where('copy_applicant_tracking.token', $token)
+            ->join('users as to_user', 'to_user.sid = copy_applicant_tracking.to_company_id', 'inner')
+            ->join('users as from_user', 'from_user.sid = copy_applicant_tracking.from_company_id', 'inner')
+            ->get();
         //
         $result_arr = $result->result_array();
-        $result     = $result->free_result();
+        $result = $result->free_result();
 
         //
-        if(!sizeof($result_arr)) return false;
+        if (!sizeof($result_arr))
+            return false;
         //
         return $result_arr;
         // if($page != 1) return $result_arr;
@@ -1909,7 +1914,7 @@ $this->db->select('portal_job_applications.applicant_type');
         // return array( 'Data' => $result_arr, 'Total' => $totalRecords );
     }
 
-    function get_applicant_ai_report ($company_sid, $keyword = '', $start_date = '', $end_date = '', $status, $count, $per_page = NULL, $offset = NULL)
+    function get_applicant_ai_report($company_sid, $keyword = '', $start_date = '', $end_date = '', $status, $count, $per_page = NULL, $offset = NULL)
     {
         $this->db->select('portal_applicant_jobs_queue.sid');
         $this->db->select('portal_applicant_jobs_queue.created_at');
@@ -1918,7 +1923,7 @@ $this->db->select('portal_job_applications.applicant_type');
         $this->db->select('portal_applicant_jobs_queue.status');
         $this->db->select('portal_applicant_jobs_queue.attempts');
         $this->db->select('portal_applicant_jobs_queue.failed_message');
-        $this->db->select('portal_applicant_jobs_list.applicant_source');
+        $this->db->select('portal_applicant_jobs_queue.portal_applicant_job_sid');
         $this->db->select('portal_job_applications.first_name');
         $this->db->select('portal_job_applications.last_name');
         $this->db->select('portal_job_listings.Location_City');
@@ -1948,15 +1953,18 @@ $this->db->select('portal_job_applications.applicant_type');
         if ($status != 'all') {
             $this->db->where('portal_applicant_jobs_queue.status', $status);
         } else {
-            $this->db->where('portal_applicant_jobs_queue.status <>', "queued");
+            // $this->db->where('portal_applicant_jobs_queue.status <>', "queued");
         }
 
-        if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
-            $this->db->where('portal_applicant_jobs_queue.created_at BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
-        } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
-            $this->db->where('portal_applicant_jobs_queue.created_at >=', $start_date);
-        } else if ((empty($start_date) || is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
-            $this->db->where('portal_applicant_jobs_queue.created_at <=', $end_date);
+        if ($start_date && $end_date) {
+
+            if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
+                $this->db->where('portal_applicant_jobs_queue.created_at BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
+            } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
+                $this->db->where('portal_applicant_jobs_queue.created_at >=', $start_date);
+            } else if ((empty($start_date) || is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
+                $this->db->where('portal_applicant_jobs_queue.created_at <=', $end_date);
+            }
         }
 
         if ($company_sid != 'all') {
@@ -1966,12 +1974,11 @@ $this->db->select('portal_job_applications.applicant_type');
             $this->db->limit($per_page, $offset);
         }
 
-        $this->db->join('portal_job_applications', 'portal_applicant_jobs_queue.portal_job_applications_sid = portal_job_applications.sid', 'left');
-        $this->db->join('users', 'portal_applicant_jobs_queue.company_sid = users.sid', 'left');
-        $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_queue.job_sid','left');
-        $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid','left');
-        $this->db->order_by('portal_applicant_jobs_queue.created_at', 'DESC');
-        // $applications = array();
+        $this->db->join('portal_job_applications', 'portal_applicant_jobs_queue.portal_job_applications_sid = portal_job_applications.sid', 'inner');
+        $this->db->join('users', 'portal_applicant_jobs_queue.company_sid = users.sid', 'inner');
+        $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_queue.job_sid', 'inner');
+        $this->db->order_by('portal_applicant_jobs_queue.sid', 'DESC');
+        // 
 
         if ($count) {
             $this->db->from('portal_applicant_jobs_queue');
@@ -1998,7 +2005,6 @@ $this->db->select('portal_job_applications.applicant_type');
         $this->db->select('portal_applicant_jobs_queue.status');
         $this->db->select('portal_applicant_jobs_queue.attempts');
         $this->db->select('portal_applicant_jobs_queue.failed_message');
-        $this->db->select('portal_applicant_jobs_list.applicant_source');
         $this->db->select('portal_job_applications.first_name');
         $this->db->select('portal_job_applications.last_name');
         $this->db->select('portal_job_listings.Location_City');
@@ -2012,15 +2018,13 @@ $this->db->select('portal_job_applications.applicant_type');
         $this->db->select('portal_applicant_resume_analysis.extra_content');
         $this->db->select('portal_applicant_resume_analysis.screening_questions');
         $this->db->select('users.CompanyName');
-
+        //
         $this->db->where('portal_applicant_jobs_queue.sid', $sid);
-
-        $this->db->join('portal_job_applications', 'portal_applicant_jobs_queue.portal_job_applications_sid = portal_job_applications.sid', 'left');
-        $this->db->join('users', 'portal_applicant_jobs_queue.company_sid = users.sid', 'left');
-        $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_queue.job_sid','left');
-        $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid','left');
-        $this->db->join('portal_applicant_resume_analysis', 'portal_applicant_resume_analysis.portal_applicant_jobs_queue_sid = portal_applicant_jobs_queue.sid','left');
-        $this->db->order_by('portal_applicant_jobs_queue.created_at', 'DESC');
+        //
+        $this->db->join('portal_job_applications', 'portal_applicant_jobs_queue.portal_job_applications_sid = portal_job_applications.sid', 'inner');
+        $this->db->join('users', 'portal_applicant_jobs_queue.company_sid = users.sid', 'inner');
+        $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_queue.job_sid', 'inner');
+        $this->db->join('portal_applicant_resume_analysis', 'portal_applicant_resume_analysis.portal_applicant_jobs_queue_sid = portal_applicant_jobs_queue.sid','inner');
         // 
         $applicantInfo = $this->db->get('portal_applicant_jobs_queue')->row_array();
         //

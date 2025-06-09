@@ -1,10 +1,12 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Applicants_ai_report extends Admin_Controller {
+class Applicants_ai_report extends Admin_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->model('manage_admin/advanced_report_model');
@@ -36,13 +38,13 @@ class Applicants_ai_report extends Admin_Controller {
         if (!empty($start_date) && $start_date != 'all') {
             $start_date_applied = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
         } else {
-            $start_date_applied = date('Y-m-d 00:00:00');
+            $start_date_applied = "";
         }
 
         if (!empty($end_date) && $end_date != 'all') {
             $end_date_applied = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
         } else {
-            $end_date_applied = date('Y-m-d 23:59:59');
+            $end_date_applied = "";
         }
 
         $this->data['page_title'] = 'Applicants AI Report';
@@ -64,7 +66,7 @@ class Applicants_ai_report extends Admin_Controller {
 
         $final_applicants = array();
         $final_applicants = $applicants;
-       
+
         $this->load->library('pagination');
 
         $pagination_base = base_url('manage_admin/reports/applicants_ai_report') . '/' . $company_sid . '/' . urlencode($keyword) . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($status);
@@ -75,8 +77,8 @@ class Applicants_ai_report extends Admin_Controller {
         $config["base_url"] = $pagination_base;
         $config["total_rows"] = $total_records;
         $config["per_page"] = $per_page;
-        $config["uri_segment"] = 8;
-        $config["num_links"] = 8;
+        $config["uri_segment"] = 9;
+        $config["num_links"] = 9;
         $config["use_page_numbers"] = true;
         $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
         $config['full_tag_close'] = '</ul></nav><!--pagination-->';

@@ -161,6 +161,7 @@ if (
     base_url(uri_string()) == site_url('sa/lms/courses') ||
     $this->uri->segment(2) == 'benefits' ||
     $this->uri->segment(2) == 'job_title_templates' ||
+    $this->uri->segment(2) == 'ai_recruiter' ||
     (
         ($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_templates') ||
         ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_templates' ||
@@ -228,7 +229,7 @@ if (
     $this->uri->segment(3) == 'invoice_item_usage' ||
     $this->uri->segment(3) == 'complynet_report' ||
     $this->uri->segment(3) == 'employees_termination_report' ||
-    $this->uri->segment(1) == 'ai_whishlist_data_report'||
+    $this->uri->segment(1) == 'ai_whishlist_data_report' ||
     $this->uri->segment(1) == 'cookies_report'
 ) {
     $reports_menu = true;
@@ -920,6 +921,14 @@ if (
                                 href="<?php echo site_url('manage_admin/indeed/disposition/status/map'); ?>">Indeed
                                 Disposition Status</a>
                         </div>
+                        <div class="menu-item">
+                            <a <?php
+                            if (base_url(uri_string()) == site_url('manage_admin/ai_recruiter/config')) {
+                                echo 'class="active"';
+                            }
+                            ?> href="<?php echo site_url('manage_admin/ai_recruiter/config'); ?>">AI
+                                Recruiter Config</a>
+                        </div>
                     </div>
 
                 </li>
@@ -1177,268 +1186,277 @@ if (
                                 } ?>
                                     href="<?php echo site_url('manage_admin/reports/job_products_report'); ?>">Job Products
                                     Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'applicants_ai_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicants_ai_report')) !== false || ($this->uri->segment(3) == 'applicants_ai_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/applicants_ai_report'); ?>">Applicants AI Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'applicants_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicants_report')) !== false || ($this->uri->segment(3) == 'applicants_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/applicants_report'); ?>">Applicants
-                                    Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'applicant_status_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_status_report')) !== false || ($this->uri->segment(3) == 'applicant_status_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/applicant_status_report'); ?>">Applicant
-                                    Status Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'applicant_offers_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_offers_report')) !== false || ($this->uri->segment(3) == 'applicant_offers_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/applicant_offers_report'); ?>">Applicant
-                                    Offers Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'applicant_source_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (($this->uri->segment(3) == 'applicant_source_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/applicant_source_report'); ?>">Applicant
-                                    Source Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'applicant_source_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (($this->uri->segment(3) == 'copy_applicants_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/copy_applicants_report'); ?>">Copy Applicant
-                                    Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'daily_applicant_source_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_source_report_daily')) !== false || ($this->uri->segment(3) == 'applicant_source_report_daily')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/applicant_source_report_daily'); ?>">Daily
-                                    Based Applicants Source Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'applicant_origination_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_origination_report')) !== false || ($this->uri->segment(3) == 'applicant_origination_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/applicant_origination_report'); ?>">Applicant
-                                    Origination Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'applicant_origination_statistics')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_origination_statistics')) !== false || ($this->uri->segment(3) == 'applicant_origination_statistics')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/applicant_origination_statistics'); ?>">Applicant
-                                    Origination Statistics</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'applicants_referrals_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicants_referrals_report')) !== false || ($this->uri->segment(3) == 'applicants_referrals_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/applicants_referrals_report'); ?>">Company
-                                    Referrals Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'jobs_per_month_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/jobs_per_month_report')) !== false || ($this->uri->segment(3) == 'jobs_per_month_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/jobs_per_month_report'); ?>">Jobs Per Month
-                                    Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'interviews_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/interviews_report')) !== false || ($this->uri->segment(3) == 'interviews_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/interviews_report'); ?>">Interviews
-                                    Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'applicants_between_period_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicants_between_period_report')) !== false || ($this->uri->segment(3) == 'applicants_between_period_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/applicants_between_period_report'); ?>">Applicants
-                                    Between Period Report</a>
-                            </div>
-                        <?php } ?>
-                        <!--
+                                <<<<<<< HEAD </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'applicants_ai_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicants_ai_report')) !== false || ($this->uri->segment(3) == 'applicants_ai_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/applicants_ai_report'); ?>">Applicants
+                                            AI Report</a>
+                                        =======
+                                        >>>>>>> feature/GenerateJD
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'applicants_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicants_report')) !== false || ($this->uri->segment(3) == 'applicants_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/applicants_report'); ?>">Applicants
+                                            Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'applicant_status_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_status_report')) !== false || ($this->uri->segment(3) == 'applicant_status_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/applicant_status_report'); ?>">Applicant
+                                            Status Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'applicant_offers_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_offers_report')) !== false || ($this->uri->segment(3) == 'applicant_offers_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/applicant_offers_report'); ?>">Applicant
+                                            Offers Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'applicant_source_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (($this->uri->segment(3) == 'applicant_source_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/applicant_source_report'); ?>">Applicant
+                                            Source Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'applicant_source_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (($this->uri->segment(3) == 'copy_applicants_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/copy_applicants_report'); ?>">Copy
+                                            Applicant
+                                            Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'daily_applicant_source_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_source_report_daily')) !== false || ($this->uri->segment(3) == 'applicant_source_report_daily')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/applicant_source_report_daily'); ?>">Daily
+                                            Based Applicants Source Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'applicant_origination_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_origination_report')) !== false || ($this->uri->segment(3) == 'applicant_origination_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/applicant_origination_report'); ?>">Applicant
+                                            Origination Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'applicant_origination_statistics')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_origination_statistics')) !== false || ($this->uri->segment(3) == 'applicant_origination_statistics')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/applicant_origination_statistics'); ?>">Applicant
+                                            Origination Statistics</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'applicants_referrals_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicants_referrals_report')) !== false || ($this->uri->segment(3) == 'applicants_referrals_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/applicants_referrals_report'); ?>">Company
+                                            Referrals Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'jobs_per_month_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/jobs_per_month_report')) !== false || ($this->uri->segment(3) == 'jobs_per_month_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/jobs_per_month_report'); ?>">Jobs
+                                            Per Month
+                                            Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'interviews_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/interviews_report')) !== false || ($this->uri->segment(3) == 'interviews_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/interviews_report'); ?>">Interviews
+                                            Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'applicants_between_period_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicants_between_period_report')) !== false || ($this->uri->segment(3) == 'applicants_between_period_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/applicants_between_period_report'); ?>">Applicants
+                                            Between Period Report</a>
+                                    </div>
+                                <?php } ?>
+                                <!--
                         <?php /*if (check_access_permissions_for_view($security_details, 'time_to_fill_job_report')) { */ ?>
                             <div class="menu-item">
                                 <a <?php /*if(strpos(base_url(uri_string()), site_url('manage_admin/reports/time_to_fill_job_report')) !== false || ($this->uri->segment(3) == 'time_to_fill_job_report')) {
-                             echo 'class="active"';
-                        } */ ?> href="<?php /*echo site_url('manage_admin/reports/time_to_fill_job_report'); */ ?>">Time to Fill a Posted Job Report</a>
+                     echo 'class="active"';
+                } */ ?> href="<?php /*echo site_url('manage_admin/reports/time_to_fill_job_report'); */ ?>">Time to Fill a Posted Job Report</a>
                             </div>
                         <?php /*} */ ?>
                         -->
 
-                        <!--                        -->
-                        <?php //if (check_access_permissions_for_view($security_details, 'time_to_hire_job_report')) { 
-                            ?>
-                        <!--                            <div class="menu-item">-->
-                        <!--                                <a -->
-                        <?php //if(strpos(base_url(uri_string()), site_url('manage_admin/reports/time_to_hire_job_report')) !== false || ($this->uri->segment(3) == 'time_to_hire_job_report')) {
-                            //                                     echo 'class="active"';
-                            //                                } 
-                            ?>
-                        <!-- href="-->
-                        <?php //echo site_url('manage_admin/reports/time_to_hire_job_report'); 
-                            ?>
-                        <!--">Time to Hire a Candidate for Job Report</a>-->
-                        <!--                            </div>-->
-                        <!--                        -->
-                        <?php //} 
-                            ?>
-                        <!--
+                                <!--                        -->
+                                <?php //if (check_access_permissions_for_view($security_details, 'time_to_hire_job_report')) { 
+                                    ?>
+                                <!--                            <div class="menu-item">-->
+                                <!--                                <a -->
+                                <?php //if(strpos(base_url(uri_string()), site_url('manage_admin/reports/time_to_hire_job_report')) !== false || ($this->uri->segment(3) == 'time_to_hire_job_report')) {
+                                    //                                     echo 'class="active"';
+                                    //                                } 
+                                    ?>
+                                <!-- href="-->
+                                <?php //echo site_url('manage_admin/reports/time_to_hire_job_report'); 
+                                    ?>
+                                <!--">Time to Hire a Candidate for Job Report</a>-->
+                                <!--                            </div>-->
+                                <!--                        -->
+                                <?php //} 
+                                    ?>
+                                <!--
                         <?php /*if (check_access_permissions_for_view($security_details, 'job_categories_report')) { */ ?>
                             <div class="menu-item">
                                 <a <?php /*if(strpos(base_url(uri_string()), site_url('manage_admin/reports/job_categories_report')) !== false || ($this->uri->segment(3) == 'job_categories_report')) {
-                             echo 'class="active"';
-                        } */ ?> href="<?php /*echo site_url('manage_admin/reports/job_categories_report'); */ ?>">Recently Hired from Job Categories Report</a>
+                     echo 'class="active"';
+                } */ ?> href="<?php /*echo site_url('manage_admin/reports/job_categories_report'); */ ?>">Recently Hired from Job Categories Report</a>
                             </div>
                         <?php /*} */ ?>
                         -->
-                        <!--
+                                <!--
                         <?php /*if (check_access_permissions_for_view($security_details, 'new_hires_report')) { */ ?>
                             <div class="menu-item">
                                 <a <?php /*if(strpos(base_url(uri_string()), site_url('manage_admin/reports/new_hires_report')) !== false || ($this->uri->segment(3) == 'new_hires_report')) {
-                             echo 'class="active"';
-                        } */ ?> href="<?php /*echo site_url('manage_admin/reports/new_hires_report'); */ ?>">New Hires Report</a>
+                     echo 'class="active"';
+                } */ ?> href="<?php /*echo site_url('manage_admin/reports/new_hires_report'); */ ?>">New Hires Report</a>
                             </div>
                         <?php /*} */ ?>
                         -->
-                        <!--
+                                <!--
                         <?php /*if (check_access_permissions_for_view($security_details, 'new_hires_onboarding_report')) { */ ?>
                             <div class="menu-item">
                                 <a <?php /*if(strpos(base_url(uri_string()), site_url('manage_admin/reports/new_hires_onboarding_report')) !== false || ($this->uri->segment(3) == 'new_hires_onboarding_report')) {
-                             echo 'class="active"';
-                        } */ ?> href="<?php /*echo site_url('manage_admin/reports/new_hires_onboarding_report'); */ ?>">New Hires On-Boarding Report</a>
+                     echo 'class="active"';
+                } */ ?> href="<?php /*echo site_url('manage_admin/reports/new_hires_onboarding_report'); */ ?>">New Hires On-Boarding Report</a>
                             </div>
                         <?php /*} */ ?>
                         -->
-                        <?php if (check_access_permissions_for_view($security_details, 'job_views_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/job_views_report')) !== false || ($this->uri->segment(3) == 'job_views_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/job_views_report'); ?>">Job Views Report</a>
-                            </div>
-                        <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'job_views_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/job_views_report')) !== false || ($this->uri->segment(3) == 'job_views_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/job_views_report'); ?>">Job Views
+                                            Report</a>
+                                    </div>
+                                <?php } ?>
 
-                        <?php if (check_access_permissions_for_view($security_details, 'advanced_jobs_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/advanced_jobs_report')) !== false || ($this->uri->segment(3) == 'advanced_jobs_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/advanced_jobs_report'); ?>">Advanced Jobs
-                                    Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'invoice_item_usage')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/invoice_item_usage')) !== false || ($this->uri->segment(3) == 'invoice_item_usage')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/invoice_item_usage'); ?>">Invoice Item
-                                    Usage</a>
-                            </div>
-                        <?php } ?>
-                        <!-- <?php if (check_access_permissions_for_view($security_details, 'accurate_background_report')) { ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'advanced_jobs_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/advanced_jobs_report')) !== false || ($this->uri->segment(3) == 'advanced_jobs_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/advanced_jobs_report'); ?>">Advanced
+                                            Jobs
+                                            Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'invoice_item_usage')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/invoice_item_usage')) !== false || ($this->uri->segment(3) == 'invoice_item_usage')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/invoice_item_usage'); ?>">Invoice
+                                            Item
+                                            Usage</a>
+                                    </div>
+                                <?php } ?>
+                                <!-- <?php if (check_access_permissions_for_view($security_details, 'accurate_background_report')) { ?>
                             <div class="menu-item">
                                 <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/accurate_background')) !== false || ($this->uri->segment(3) == 'accurate_background')) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo site_url('manage_admin/reports/accurate_background'); ?>">Accurate Background Report</a>
                             </div>
                         <?php } ?> -->
-                        <?php if (check_access_permissions_for_view($security_details, 'applicant_interview_scores')) { ?>
-                            <!--                            <div class="menu-item">
+                                <?php if (check_access_permissions_for_view($security_details, 'applicant_interview_scores')) { ?>
+                                    <!--                            <div class="menu-item">
                                 <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_interview_scores/all/all')) !== false || ($this->uri->segment(3) == 'applicant_interview_scores')) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo site_url('manage_admin/reports/applicant_interview_scores/all/all'); ?>">Applicant Interview Scores</a>
                             </div>-->
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'applicant_origination_tracker')) { ?>
-                            <!--                        <div class="menu-item">
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'applicant_origination_tracker')) { ?>
+                                    <!--                        <div class="menu-item">
                             <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicant_origination_tracker/all/all/all/all')) !== false || ($this->uri->segment(3) == 'applicant_origination_tracker')) {
                                 echo 'class="active"';
                             } ?> href="<?php echo site_url('manage_admin/reports/applicant_origination_tracker/all/all/all/all'); ?>">Applicant Origination Tracker Report</a>
                         </div>-->
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'complynet_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/complynet_report')) !== false || ($this->uri->segment(3) == 'complynet_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/complynet_report'); ?>">ComplyNet Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'employees_termination_report')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/employees_termination_report')) !== false || ($this->uri->segment(3) == 'employees_termination_report')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/employees_termination_report'); ?>">Employees
-                                    Termination Report</a>
-                            </div>
-                        <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'indeed')) { ?>
-                            <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/indeed')) !== false || ($this->uri->segment(3) == 'indeed')) {
-                                    echo 'class="active"';
-                                } ?>
-                                    href="<?php echo site_url('manage_admin/reports/indeed'); ?>">Indeed Reports</a>
-                            </div>
-                        <?php } ?>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'complynet_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/complynet_report')) !== false || ($this->uri->segment(3) == 'complynet_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/complynet_report'); ?>">ComplyNet
+                                            Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'employees_termination_report')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/employees_termination_report')) !== false || ($this->uri->segment(3) == 'employees_termination_report')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/employees_termination_report'); ?>">Employees
+                                            Termination Report</a>
+                                    </div>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'indeed')) { ?>
+                                    <div class="menu-item">
+                                        <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/indeed')) !== false || ($this->uri->segment(3) == 'indeed')) {
+                                            echo 'class="active"';
+                                        } ?>
+                                            href="<?php echo site_url('manage_admin/reports/indeed'); ?>">Indeed Reports</a>
+                                    </div>
+                                <?php } ?>
 
-                        <div class="menu-item">
-                            <a <?php if (strpos(base_url(uri_string()), site_url('ai_whishlist_data_report')) !== false || ($this->uri->segment(3) == 'ai_whishlist_data_report')) {
-                                echo 'class="active"';
-                            } ?>
-                                href="<?php echo site_url('ai_whishlist_data_report'); ?>">AI Recruiter Wait-list Report</a>
+                                <div class="menu-item">
+                                    <a <?php if (strpos(base_url(uri_string()), site_url('ai_whishlist_data_report')) !== false || ($this->uri->segment(3) == 'ai_whishlist_data_report')) {
+                                        echo 'class="active"';
+                                    } ?> href="<?php echo site_url('ai_whishlist_data_report'); ?>">AI
+                                        Recruiter Wait-list Report</a>
+                                </div>
+
+
+                                <div class="menu-item">
+                                    <a <?php if (strpos(base_url(uri_string()), site_url('cookies_report')) !== false || ($this->uri->segment(3) == 'cookies_report')) {
+                                        echo 'class="active"';
+                                    } ?>
+                                        href="<?php echo site_url('cookies_report'); ?>">Cookies Report</a>
+                                </div>
+
                         </div>
-
-
-                            <div class="menu-item">
-                            <a <?php if (strpos(base_url(uri_string()), site_url('cookies_report')) !== false || ($this->uri->segment(3) == 'cookies_report')) {
-                                echo 'class="active"';
-                            } ?>
-                                href="<?php echo site_url('cookies_report'); ?>">Cookies Report</a>
-                        </div>
-
-                    </div>
                 </li>
             <?php } ?>
             <?php $functions_names = array('employer_login_duration', 'company_daily_activity_report', 'company_weekly_activity_report', 'daily_activity_report', 'weekly_activity_report', 'daily_inactivity_report', 'weekly_inactivity_report', 'daily_activity_overview_report', 'weekly_activity_overview_report', 'daily_activity_detailed_overview_report'); ?>
