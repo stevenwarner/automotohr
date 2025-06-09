@@ -161,6 +161,7 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                                             <div class="table-responsive applicant_source_link_in_table">
                                                                                 <?php
                                                                                 $a = domainParser($applicant['applicant_source'], $applicant['main_referral'], true);
+                                                                                //
                                                                                 if (is_array($a)) {
                                                                                     //
                                                                                     // Set chart array
@@ -169,13 +170,10 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                                                     } else {
                                                                                         $referrerChartArray[$a['ReferrerSource']][1] = $referrerChartArray[$a['ReferrerSource']][1] + 1;
                                                                                     }
-                                                                                    echo $a['Text'] . '<a class="btn btn-link" href="'. base_url('manage_admin/reports/applicants_ai_report').'" data-html="true" data-toggle="popover" data-placement="left" data-content="Source: ' . $a['ReferrerSource'] . '<br /> Source URL: ' . $a['Original']['Source'] . (!empty($a['Original']['Referrer']) ? (' <br />Referrer: ' . $a['Original']['Referrer']) : '') . '">View More</a>';
-                                                                                } else {
-                                                                                    if ($a == 'N/A') {
-                                                                                        $referrerChartArray['Direct'] = array('Direct', ++$count);
-                                                                                        echo '<b>Direct</b>';
-                                                                                    } else {
-                                                                                        echo $a;
+                                                                                    echo $a['Text'] . '<br>';
+                                                                                    //
+                                                                                    if ($applicant['status'] != "failed") {
+                                                                                        echo '<a class="btn btn-success" href="'. base_url('manage_admin/reports/applicants_ai_report/view_detail/'.$applicant['sid']).'" target="_blank">View More</a>';
                                                                                     }
                                                                                 } ?>
                                                                             </div>

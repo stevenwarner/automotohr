@@ -112,4 +112,20 @@ class Applicants_ai_report extends Admin_Controller {
         $this->render('manage_admin/reports/applicants_ai_report');
     }
 
+    public function view_detail ($sid) {
+        // ** Check Security Permissions Checks - Start ** //
+        $redirect_url = 'manage_admin';
+        $function_name = 'applicant_resume_analysis_detail';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        // ** Check Security Permissions Checks - End ** //
+
+        $applicantResume = $this->advanced_report_model->get_applicant_resume_analysis($sid);
+        //
+        $this->data["applicant"] = $applicantResume;
+        $this->render('manage_admin/reports/applicant_resume_analysis');
+    }
+
 }
