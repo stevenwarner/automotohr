@@ -905,10 +905,10 @@ if (!function_exists('getDataFromTable')) {
     function getDataFromTable(string $table, array $where, array $columns = ['*'], string $method = 'row_array'): array
     {
         return get_instance()
-                    ->db
-                    ->select($columns)
-                    ->where($where)
-                    ->get($table)
+            ->db
+            ->select($columns)
+            ->where($where)
+            ->get($table)
             ->$method();
     }
 }
@@ -2615,8 +2615,10 @@ if (!function_exists("makeResourceView")) {
             return '<img src="' . (AWS_S3_BUCKET_URL . $file) . '" class="resources-card-images-adjustment-detail" alt="tablet with tea" ' . ($props) . '>';
         } elseif (in_array($extension, ['mp3', 'wav', 'aac', 'flac'])) {
             return ' <audio controls style="width: 100%"> <source src="' . (AWS_S3_BUCKET_URL . $file) . '" type="audio/mpeg" class="resources-video-detail" alt="smiling girl"> </audio>';
+        } elseif (in_array($extension, ['doc', 'docs'])) {
+            return  '<iframe src="https://view.officeapps.live.com/op/embed.aspx?src=' . (AWS_S3_BUCKET_URL . $file) . '" width="100%" height="600px" frameborder="0"></iframe>';
         } else {
-            return '<iframe src="' . (AWS_S3_BUCKET_URL . $file) . '" width="100%" height="500px"></iframe> ';
+            return '<iframe src="' . (AWS_S3_BUCKET_URL . $file) . '" width="100%" height="500px"></iframe> ';            
         }
     }
 }
@@ -2829,7 +2831,7 @@ if (!function_exists("getFile")) {
         // set alertify plugin
         $plugins["alertify"] = [
             "css" =>
-                main_url("public/v1/plugins/alertifyjs/css/alertify.min.css?v=3.0"),
+            main_url("public/v1/plugins/alertifyjs/css/alertify.min.css?v=3.0"),
             "js" => main_url("public/v1/plugins/alertifyjs/alertify.min.js?v=3.0")
         ];
         // set alertify plugin
@@ -2859,7 +2861,7 @@ if (!function_exists("getFile")) {
         // set select2
         $plugins["select2"] = [
             "css" =>
-                main_url("public/v1/plugins/select2/css/select2.min.css?v=3.0"),
+            main_url("public/v1/plugins/select2/css/select2.min.css?v=3.0"),
             "js" => main_url("public/v1/plugins/select2/select2.min.js?v=3.0")
         ];
         //
@@ -4045,12 +4047,12 @@ if (!function_exists("cleanTerminatedEmployees")) {
         foreach ($employeeArray as $index => $value) {
             $record =
                 $ci->db
-                    ->select("employee_status")
-                    ->where("employee_sid", $value["sid"])
-                    ->order_by("sid", "DESC")
-                    ->limit(1)
-                    ->get("terminated_employees")
-                    ->row_array();
+                ->select("employee_status")
+                ->where("employee_sid", $value["sid"])
+                ->order_by("sid", "DESC")
+                ->limit(1)
+                ->get("terminated_employees")
+                ->row_array();
             //
             if ($record && in_array($record["employee_status"], [1])) {
                 unset($employeeArray[$index]);
@@ -4217,12 +4219,12 @@ if (!function_exists("checkAndGetDocumentDescription")) {
         // check if fillable document
         if (
             $CI
-                ->db
-                ->where([
-                    "sid" => $documentId,
-                    "fillable_document_slug IS NOT NULL" => null
-                ])
-                ->count_all_results("documents_management")
+            ->db
+            ->where([
+                "sid" => $documentId,
+                "fillable_document_slug IS NOT NULL" => null
+            ])
+            ->count_all_results("documents_management")
         ) {
             return $encode ? htmlentities(
                 $description
@@ -4410,8 +4412,8 @@ if (!function_exists("getCompanyDataForPrefil")) {
         //
         $record =
             get_instance()
-                ->db
-                ->select('
+            ->db
+            ->select('
                 users.CompanyName,
                 users.company_corp_name,
                 users.Location_Address,
@@ -4423,16 +4425,16 @@ if (!function_exists("getCompanyDataForPrefil")) {
                 states.state_code,
                 users.extra_info
             ')
-                ->join(
-                    "states",
-                    "states.sid = users.Location_State",
-                    "left"
-                )
-                ->where('users.sid', $companyId)
-                ->where('users.parent_sid', 0)
-                ->limit(1)
-                ->get('users')
-                ->row_array();
+            ->join(
+                "states",
+                "states.sid = users.Location_State",
+                "left"
+            )
+            ->where('users.sid', $companyId)
+            ->where('users.parent_sid', 0)
+            ->limit(1)
+            ->get('users')
+            ->row_array();
         // when record found
         if ($record) {
             // set company details
@@ -4505,26 +4507,26 @@ if (!function_exists("checkIfEmployeeIsLMSManager")) {
         // check for department level
         if (
             $CI
-                ->db
-                ->where("is_deleted", 0)
-                ->where("FIND_IN_SET('{$employeeId}', lms_managers_ids) !=", 0)
-                ->count_all_results("departments_management")
+            ->db
+            ->where("is_deleted", 0)
+            ->where("FIND_IN_SET('{$employeeId}', lms_managers_ids) !=", 0)
+            ->count_all_results("departments_management")
         ) {
             return true;
         }
         // check it on team level
         return
             $CI
-                ->db
-                ->join(
-                    "departments_management",
-                    "departments_management.sid = departments_team_management.department_sid",
-                    "inner"
-                )
-                ->where("departments_management.is_deleted", 0)
-                ->where("departments_team_management.is_deleted", 0)
-                ->where("FIND_IN_SET('{$employeeId}', departments_team_management.lms_managers_ids) !=", 0)
-                ->count_all_results("departments_team_management");
+            ->db
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_team_management.department_sid",
+                "inner"
+            )
+            ->where("departments_management.is_deleted", 0)
+            ->where("departments_team_management.is_deleted", 0)
+            ->where("FIND_IN_SET('{$employeeId}', departments_team_management.lms_managers_ids) !=", 0)
+            ->count_all_results("departments_team_management");
     }
 }
 
@@ -4772,7 +4774,6 @@ if (!function_exists("convertCSPTags")) {
                             return '<input type="text" ' . ($isDisabled ? "disabled" : "") . ' name="dynamicInput[]" style="width: ' . ((strlen($value) * 8) + 5) . 'px;" value="' . htmlspecialchars($value) . '" />';
                         } else {
                             return '<input type="text" ' . ($isDisabled ? "disabled" : "") . ' name="dynamicInput[]" style="max-width: 400px;" value="" />';
-
                         }
                     },
                     $description
@@ -5045,6 +5046,5 @@ if (!function_exists('storeApplicantInQueueToProcess')) {
         }
         //
         return ["success" => true, "message" => "You have successfully updated an applicant to queue.", "is_updated" => true];
-
     }
 }
