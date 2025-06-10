@@ -796,3 +796,6 @@ define('SHIFTS_CLAIM_ADMIN_APPROVED', 476);
 
 define('SCHEDULED_DOCUMENT_ASSIGN', 'The selected contacts will be notified by email when a document is assigned to the employees/applicants.');
 
+
+
+define('AI_CANDIDATE_VOICE_INTERVIEWER', 'ai-candidate-voice-interviewer');

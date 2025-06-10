@@ -876,8 +876,55 @@ class App extends CI_Controller
         $formData['company_name'] = $this->input->post('wcompany_name', true) ?? null;
         $formData['phone_number'] = $this->input->post('wphone_number', true) ?? null;
         $formData['created_at'] = getSystemDate();
-        //     
+        //
+        $clientName = explode(" ", $formData['name']);
+
         $this->db->insert('cms_highlights', $formData);
+
+        $inserFreeDemo = [];
+        if (!empty($clientName)) {
+            $inserFreeDemo['first_name'] = $clientName[0];
+            $inserFreeDemo['last_name'] = $clientName[1];
+        } else {
+            $inserFreeDemo['first_name'] = $formData['name'];
+        }
+
+        $inserFreeDemo['email'] = $formData['email'];
+        $inserFreeDemo['phone_number'] = $formData['phone_number'];
+        $inserFreeDemo['title'] = 'AI recruiter wishlist';
+        $inserFreeDemo['job_role'] = 'AI recruiter wishlist';
+        $inserFreeDemo['company_name'] = $formData['company_name'] != '' ? $formData['company_name'] : $inserFreeDemo['first_name'];
+        $inserFreeDemo['date_requested'] = $formData['created_at'];
+        $inserFreeDemo['client_source'] = 'Web Ai Candidate Voice Interviewer';
+
+        $this->db->insert('free_demo_requests', $inserFreeDemo);
+        $demoSid = $this->db->insert_id();
+        //
+        $inserFreeDemoReply = [];
+        $inserFreeDemoReply['demo_sid'] = $demoSid;
+        $inserFreeDemoReply['user_type'] = 'demo_user';
+        $inserFreeDemoReply['email'] = $formData['email'];
+
+        $emailTemplateData = get_email_template_by_code(AI_CANDIDATE_VOICE_INTERVIEWER);
+
+        $emailTemplateBody = $emailTemplateData['text'];
+        $emailTemplateSubject = $emailTemplateData['subject'];
+        $emailTemplateFromName = str_replace('{{company_name}}', 'AutomotoHR', $emailTemplateData['from_name']);
+        $emailTemplateBody = str_replace('{{first_name}}', $inserFreeDemo['first_name'], $emailTemplateBody);
+
+        $inserFreeDemoReply['subject'] = $emailTemplateSubject;
+        $inserFreeDemoReply['message'] = $emailTemplateBody;
+        $inserFreeDemoReply['reply_date'] = $formData['created_at'];
+
+        $this->db->insert('demo_enquiry_admin_reply', $inserFreeDemoReply);
+
+        //
+        $body = EMAIL_HEADER
+            . $emailTemplateBody
+            . EMAIL_FOOTER;
+
+        log_and_sendEmail($emailTemplateFromName, $inserFreeDemo['email'], $emailTemplateSubject, $body, $emailTemplateFromName);
+
         return SendResponse(200, ["msg" => "Thank you for your request, we will contact you soon."]);
     }
 
