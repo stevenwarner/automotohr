@@ -251,7 +251,7 @@
     //
     $('#jsFileUpload').mFileUploader({
         fileLimit: -1,
-        allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov', 'mp3', 'wav', 'aac', 'flac'],
+        allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf','doc','docx', 'mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov', 'mp3', 'wav', 'aac', 'flac'],
         text: 'Click / Drag to upload',
         <?php if (isset($page_data['resources']) && $page_data['resources'] != "") { ?>
             placeholderImage: "<?= $page_data['resources']; ?>"
