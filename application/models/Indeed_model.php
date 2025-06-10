@@ -22,7 +22,8 @@ class Indeed_model extends CI_Model
         $insertArray['start_date'] = date('Y-m-d');
         if ($post['budgetPerDay'] != 0)
             $insertArray['expire_date'] = date('Y-m-d', strtotime('+' . ($post['budgetPerDay']) . ' days'));
-        else $insertArray['expire_date'] = date('Y-m-d', strtotime('+30 days'));
+        else
+            $insertArray['expire_date'] = date('Y-m-d', strtotime('+30 days'));
         $insertArray['budget_days'] = $post['budgetPerDay'];
         if ($post['phoneNumber'] != '')
             $insertArray['phone_number'] = $post['phoneNumber'];
@@ -45,24 +46,25 @@ class Indeed_model extends CI_Model
     {
         $result =
             $this->db
-            ->select('
+                ->select('
             sid as budget_sid,
             budget,
             budget_days,
             expire_date,
             phone_number
         ')
-            ->from('portal_job_indeed')
-            ->where('job_sid', $jobSid)
-            ->where('expire_date > CURDATE() OR expire_date IS NULL', null)
-            ->order_by('sid', 'DESC')
-            ->limit(1)
-            ->get();
+                ->from('portal_job_indeed')
+                ->where('job_sid', $jobSid)
+                ->where('expire_date > CURDATE() OR expire_date IS NULL', null)
+                ->order_by('sid', 'DESC')
+                ->limit(1)
+                ->get();
         //
         $budget = $result->row_array();
         $result = $result->free_result();
         //
-        if (!sizeof($budget)) $this->db->where('sid', $jobSid)->update('portal_job_listings', array('indeed_sponsored' => 0));
+        if (!sizeof($budget))
+            $this->db->where('sid', $jobSid)->update('portal_job_listings', array('indeed_sponsored' => 0));
         return $budget;
     }
 
@@ -87,8 +89,10 @@ class Indeed_model extends CI_Model
             //
             foreach ($jobs as $k0 => $v0) {
                 // Set budget
-                if (isset($budget[$v0['job_sid']])) $budget[$v0['job_sid']] += $v0['budget'];
-                else $budget[$v0['job_sid']] = $v0['budget'];
+                if (isset($budget[$v0['job_sid']]))
+                    $budget[$v0['job_sid']] += $v0['budget'];
+                else
+                    $budget[$v0['job_sid']] = $v0['budget'];
 
                 // Set Ids
                 $ids[] = $v0['job_sid'];
@@ -159,11 +163,12 @@ class Indeed_model extends CI_Model
             $data = array();
             foreach ($result as $r) {
                 // Check if feed is allowed
-                if ($this->db
-                    ->where('company_sid', $r['sid'])
-                    ->where('feed_sid', $feedSid)
-                    ->where('status', 0)
-                    ->count_all_results('feed_restriction')
+                if (
+                    $this->db
+                        ->where('company_sid', $r['sid'])
+                        ->where('feed_sid', $feedSid)
+                        ->where('status', 0)
+                        ->count_all_results('feed_restriction')
                 ) {
                     continue;
                 }
@@ -284,9 +289,11 @@ class Indeed_model extends CI_Model
         // $d = $a->row_array();
         // $a = $a->free_result();
         //
-        if (sizeof($b)) $r['phone_number'] = $b['phone_number'];
+        if (sizeof($b))
+            $r['phone_number'] = $b['phone_number'];
         // if(sizeof($d)) $r['email'] = $d['email'];
-        if (!sizeof($b) && sizeof($c)) $r['phone_number'] = $c['PhoneNumber'];
+        if (!sizeof($b) && sizeof($c))
+            $r['phone_number'] = $c['PhoneNumber'];
         //
         return $r;
     }
@@ -321,7 +328,8 @@ class Indeed_model extends CI_Model
         $updateArray['charged_by'] = $post['employeeSid'];
         if ($post['budgetPerDay'] != 0)
             $updateArray['expire_date'] = date('Y-m-d', strtotime('+' . ($post['budgetPerDay']) . ' days'));
-        else $insertArray['expire_date'] = date('Y-m-d', strtotime('+30 days'));
+        else
+            $insertArray['expire_date'] = date('Y-m-d', strtotime('+30 days'));
         $updateArray['budget_days'] = $post['budgetPerDay'];
         if ($post['phoneNumber'] != '')
             $updateArray['phone_number'] = $post['phoneNumber'];
@@ -542,10 +550,12 @@ class Indeed_model extends CI_Model
         int $companyId
     ) {
         // check if an applicant has Indeed ATS Id
-        if (!$this->db
-            ->where("sid", $applicantListId)
-            ->where("indeed_ats_sid <>", null)
-            ->count_all_results("portal_applicant_jobs_list")) {
+        if (
+            !$this->db
+                ->where("sid", $applicantListId)
+                ->where("indeed_ats_sid <>", null)
+                ->count_all_results("portal_applicant_jobs_list")
+        ) {
             return [
                 "error" => "Indeed ATS id not found."
             ];
@@ -565,11 +575,29 @@ class Indeed_model extends CI_Model
             ->row_array()["indeed_ats_sid"];
         // load the library
         $this->load->library("Indeed_lib");
+        //
+        $indeedStatus = $this->db
+            ->select("indeed_slug")
+            ->where([
+                "ats_slug" => strtolower(
+                    preg_replace(
+                        "/[^a-zA-Z]/",
+                        "",
+                        $status
+                    )
+                )
+            ])
+            ->get("indeed_disposition_status_map")
+            ->row_array();
+        //
+        if (!$indeedStatus) {
+            return ["errors" => "No status map found."];
+        }
         // send the call
         $response = $this->indeed_lib
             ->sendDispositionCall(
                 $indeedAtsId,
-                "NEW"
+                $indeedStatus["indeed_slug"]
             );
         // when error occurred
         if ($response["error"]) {
@@ -594,7 +622,7 @@ class Indeed_model extends CI_Model
         // set the folder path
         $folder = ROOTPATH . '../protected_files/jobs/';
         // set the file name
-        $fileName =  $jobId . '.json';
+        $fileName = $jobId . '.json';
         // create the file
         if ($createFile) {
             // check and get demographic questions
@@ -733,9 +761,11 @@ class Indeed_model extends CI_Model
             //
             // check if job is allowed to be added to queue
             if (!$this->getJobApprovalStatus($companyId, $jobId)) {
-                return ["errors" => [
-                    "The job is not approved."
-                ]];
+                return [
+                    "errors" => [
+                        "The job is not approved."
+                    ]
+                ];
             }
         }
         // set current date and time
@@ -792,9 +822,11 @@ class Indeed_model extends CI_Model
 
             // check if job is allowed to be added to queue
             if (!$this->getJobApprovalStatus($companyId, $jobId)) {
-                return ["errors" => [
-                    "The job is not approved."
-                ]];
+                return [
+                    "errors" => [
+                        "The job is not approved."
+                    ]
+                ];
             }
         }
         // set current date and time
@@ -809,16 +841,17 @@ class Indeed_model extends CI_Model
             return $this->addJobToQueue($jobId, $companyId, $byPass);
         }
         // check if the job is processed
-        if ($this->db
-            ->group_start()
-            ->where("is_processed", 1)
-            ->or_group_start()
-            ->where("is_processing", 1)
-            ->where("has_errors", 1)
-            ->group_end()
-            ->group_end()
-            ->where("job_sid", $jobId)
-            ->count_all_results("indeed_job_queue")
+        if (
+            $this->db
+                ->group_start()
+                ->where("is_processed", 1)
+                ->or_group_start()
+                ->where("is_processing", 1)
+                ->where("has_errors", 1)
+                ->group_end()
+                ->group_end()
+                ->where("job_sid", $jobId)
+                ->count_all_results("indeed_job_queue")
         ) {
             // move the record to history
             $this->db->query("
@@ -890,9 +923,9 @@ class Indeed_model extends CI_Model
         // check if job already exists
         if (
             $this->db
-            ->where("job_sid", $jobId)
-            ->where("is_expired <>", 1)
-            ->count_all_results("indeed_job_queue")
+                ->where("job_sid", $jobId)
+                ->where("is_expired <>", 1)
+                ->count_all_results("indeed_job_queue")
         ) {
             // set update array
             $updateArray = [];
@@ -904,10 +937,11 @@ class Indeed_model extends CI_Model
             //
             $isProcessed = 0;
             // check wether it was processed or not
-            if ($this->db
-                ->where("job_sid", $jobId)
-                ->where("is_processed", 1)
-                ->count_all_results("indeed_job_queue")
+            if (
+                $this->db
+                    ->where("job_sid", $jobId)
+                    ->where("is_processed", 1)
+                    ->count_all_results("indeed_job_queue")
             ) {
                 $isProcessed = 1;
                 // move the record to history
@@ -998,7 +1032,7 @@ class Indeed_model extends CI_Model
             return true;
         }
         // get job approval status
-        return (bool)$this->db
+        return (bool) $this->db
             ->where('approval_status', 'approved')
             ->where('sid', $jobId)
             ->count_all_results('portal_job_listings');
@@ -1161,7 +1195,7 @@ class Indeed_model extends CI_Model
 
 
     //
-    public function  getSourcedPostingId($sId)
+    public function getSourcedPostingId($sId)
     {
         $result = $this->db
             ->select('sourced_posting_Id')
@@ -1181,7 +1215,6 @@ class Indeed_model extends CI_Model
 
     //
     public function updateIndeedJobPostingResponse($updateArray, $jobId)
-
     {
         $this->db
             ->where("job_id", $jobId)
@@ -1315,7 +1348,7 @@ class Indeed_model extends CI_Model
             return [];
         }
         //
-        $t  = [];
+        $t = [];
         //
         foreach ($d as $v) {
             $t[$v["user_sid"]] = $v;
@@ -1377,19 +1410,21 @@ class Indeed_model extends CI_Model
         string $indeedPostingId
     ) {
         // check for job
-        if ($this
-            ->db
-            ->where('job_sid', $jobUUID)
-            ->where('is_deleted', 0)
-            ->count_all_results("indeed_job_queue_tracking")
-        ) {
-            // check if job is expired
-            if ($this
+        if (
+            $this
                 ->db
                 ->where('job_sid', $jobUUID)
                 ->where('is_deleted', 0)
-                ->where('tracking_key is not null', null)
                 ->count_all_results("indeed_job_queue_tracking")
+        ) {
+            // check if job is expired
+            if (
+                $this
+                    ->db
+                    ->where('job_sid', $jobUUID)
+                    ->where('is_deleted', 0)
+                    ->where('tracking_key is not null', null)
+                    ->count_all_results("indeed_job_queue_tracking")
             ) {
                 // mark the previous ones as deleted
                 $this
@@ -2016,10 +2051,10 @@ class Indeed_model extends CI_Model
         // check if company is inactive
         if (
             $this
-            ->db
-            ->where("sid", $queueJob["user_sid"])
-            ->where("active", 0)
-            ->count_all_results("users")
+                ->db
+                ->where("sid", $queueJob["user_sid"])
+                ->where("active", 0)
+                ->count_all_results("users")
         ) {
             $doExpire = true;
         }

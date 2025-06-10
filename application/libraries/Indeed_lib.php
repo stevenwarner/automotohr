@@ -75,7 +75,6 @@ class Indeed_lib
         string $atsId,
         string $status
     ) {
-        return ["error" => "Disabled."];
         //
         $dateTime =
             getSystemDateInUTC("Y-m-d\TH:i:s.") . substr(getSystemDateInUTC("u"), 0, 3) . 'Z';
@@ -84,6 +83,7 @@ class Indeed_lib
 
         // get the access token
         $accessToken = $this->getAccessToken();
+
         // when no access token found
         if (!$accessToken) {
             return ["error" => "Failed to retrieve access token."];
