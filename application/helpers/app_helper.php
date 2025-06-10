@@ -2615,7 +2615,7 @@ if (!function_exists("makeResourceView")) {
             return '<img src="' . (AWS_S3_BUCKET_URL . $file) . '" class="resources-card-images-adjustment-detail" alt="tablet with tea" ' . ($props) . '>';
         } elseif (in_array($extension, ['mp3', 'wav', 'aac', 'flac'])) {
             return ' <audio controls style="width: 100%"> <source src="' . (AWS_S3_BUCKET_URL . $file) . '" type="audio/mpeg" class="resources-video-detail" alt="smiling girl"> </audio>';
-        } elseif (in_array($extension, ['doc', 'docs'])) {
+        } elseif (in_array($extension, ['doc', 'docx'])) {
             return  '<iframe src="https://view.officeapps.live.com/op/embed.aspx?src=' . (AWS_S3_BUCKET_URL . $file) . '" width="100%" height="600px" frameborder="0"></iframe>';
         } else {
             return '<iframe src="' . (AWS_S3_BUCKET_URL . $file) . '" width="100%" height="500px"></iframe> ';            
