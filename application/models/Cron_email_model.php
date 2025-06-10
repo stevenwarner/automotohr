@@ -169,13 +169,13 @@ class Cron_email_model extends CI_Model
         // get the company id from queue
         $record =
             $this
-                ->db
-                ->select("distinct(company_sid)")
-                ->where("is_processing", 0)
-                ->limit(1)
-                // ->where_in('company_sid', $this->testingCompanyIds)
-                ->get("lms_course_email_queue")
-                ->row_array();
+            ->db
+            ->select("distinct(company_sid)")
+            ->where("is_processing", 0)
+            ->limit(1)
+            // ->where_in('company_sid', $this->testingCompanyIds)
+            ->get("lms_course_email_queue")
+            ->row_array();
         //
         if (!$record) {
             exit("Queue is empty.");
@@ -185,12 +185,12 @@ class Cron_email_model extends CI_Model
         // get the company courses
         $records =
             $this
-                ->db
-                ->select("course_sid, sid")
-                ->where("company_sid", $this->companyId)
-                ->where("is_processing", 0)
-                ->get("lms_course_email_queue")
-                ->result_array();
+            ->db
+            ->select("course_sid, sid")
+            ->where("company_sid", $this->companyId)
+            ->where("is_processing", 0)
+            ->get("lms_course_email_queue")
+            ->result_array();
         // update the processing flag
         $this
             ->db
@@ -1592,5 +1592,316 @@ class Cron_email_model extends CI_Model
         } else {
             return 0;
         }
+    }
+
+    //
+    public function sendScheduledDocumentReportToManagers()
+    {
+        //
+        $this->load->library('encryption');
+        //
+        $this->encryption->initialize(
+            get_encryption_initialize_array()
+        );
+        //
+        $this->load->model('reports_model');
+        $this->load->model('manage_admin/copy_employees_model');
+        //
+        $companies = $this->copy_employees_model->get_all_companies();
+        //
+
+        $executiveAdminsList = [];
+
+        foreach ($companies as $companyRow) {
+            //
+            $post['companySid'] = $companyRow['sid'];
+            $post['employeeSid'] = ['all'];
+            $post['employeeStatus'] = [];
+            $post['documentSid'] = ['all'];
+            $post['documentAction'] = 'all';
+
+            //
+            $scheduleData = $this->reports_model->getsDocumentSchedule($companyRow['sid']);
+
+            $sendEmail = 0;
+            $curentData = '';
+            $scheduleData['schedule_time'];
+            $curentData = getSystemDate();
+            $date = new DateTime($curentData);
+            $systemTime = $date->format('H:i A');
+
+            $scheduleTime = new DateTime($scheduleData['schedule_time']);
+            $newScheduleTime = $scheduleTime->format('H:i A');
+
+            $systemDay = $date->format('N');
+            $systemTodayDateMonth = $date->format('m/d');
+
+            $scheduleDatalog = $this->reports_model->getDocumentScheduleEmailLog($companyRow['sid'], $date->format('Y:m:d'));
+
+            if (empty($scheduleDatalog)) {
+
+                switch ($scheduleData['schedule_type']) {
+                    case 'weekly':
+                        if ($scheduleData['schedule_day'] == $systemDay) {
+                            if ($newScheduleTime < $systemTime) {
+                                $sendEmail = 1;
+                            } elseif ($newScheduleTime > $systemTime) {
+                                $sendEmail = 0;
+                            } else {
+                                $sendEmail = 1;
+                            }
+                        }
+
+                        break;
+                    case 'monthly':
+                        $systemTodayDate = $date->format('d');
+                        if ($scheduleData['schedule_date'] == $systemTodayDate) {
+                            if ($newScheduleTime < $systemTime) {
+                                $sendEmail = 1;
+                            } elseif ($newScheduleTime > $systemTime) {
+                                $sendEmail = 0;
+                            } else {
+                                $sendEmail = 1;
+                            }
+                        }
+
+                        //                          
+                        break;
+                    case 'yearly':
+                        if ($scheduleData['schedule_date'] == $systemTodayDateMonth) {
+                            if ($newScheduleTime < $systemTime) {
+                                $sendEmail = 1;
+                            } elseif ($newScheduleTime > $systemTime) {
+                                $sendEmail = 0;
+                            } else {
+                                $sendEmail = 1;
+                            }
+                        }
+
+                        break;
+                    case 'custom':
+                        if ($scheduleData['schedule_date'] == $systemTodayDateMonth) {
+
+                            if ($newScheduleTime < $systemTime) {
+                                $sendEmail = 1;
+                            } elseif ($newScheduleTime > $systemTime) {
+                                $sendEmail = 0;
+                            } else {
+                                $sendEmail = 1;
+                            }
+                        }
+                        break;
+                    case "daily":
+
+                        if ($newScheduleTime < $systemTime) {
+                            $sendEmail = 1;
+                        } elseif ($newScheduleTime > $systemTime) {
+                            $sendEmail = 0;
+                        } else {
+                            $sendEmail = 1;
+                        }
+
+                        break;
+                }
+
+                if (!empty($scheduleData) && $sendEmail == 1) {
+                    //
+                    $employeeDocument = $this->reports_model->getEmployeeAssignedDocumentForReport($post);
+                    //
+                    if (sizeof($employeeDocument['Data'])) {
+                        //
+                        $report = $this->generateDocumentReport($employeeDocument);
+                        //
+                        // get notifiers
+                        $managersList = get_notification_email_contacts(
+                            $companyRow['sid'],
+                            "scheduled_documents_status"
+                        );
+
+                        //
+                        if (!empty($managersList)) {
+                            //
+                            $companyDetails = getCompanyInfo($companyRow['sid']);
+                            // set common replace array
+                            $companyReplaceArray = [
+                                "{{company_name}}" => $companyDetails["company_name"],
+                                "{{company_address}}" => $companyDetails["company_address"],
+                                "{{company_phone}}" => $companyDetails["company_phone"],
+                                "{{career_site_url}}" => $companyDetails["career_site_url"],
+                            ];
+
+                            //
+                            foreach ($managersList as $key => $empRow) {
+                                //
+                                if ($empRow['is_executive_admin'] == 1) {
+                                    //
+                                    $viewCode = str_replace(
+                                        ['/', '+'],
+                                        ['$$ab$$', '$$ba$$'],
+                                        $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'view')
+                                    );
+                                    //
+                                    $downloadCode = str_replace(
+                                        ['/', '+'],
+                                        ['$$ab$$', '$$ba$$'],
+                                        $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'download')
+                                    );
+
+                                    //
+                                    $viewLink = base_url("hr_documents_management/manager_report") . '/' . $viewCode;
+                                    $downloadLink = base_url("hr_documents_management/manager_report") . '/' . $downloadCode;
+
+                                    $buttons = '';
+                                    $forCompany = "From: " . $companyDetails["company_name"] . "<br>";
+                                    $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
+                                    $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
+                                    $buttons .= $forCompany . $viewReport . '&nbsp;&nbsp;&nbsp;' . $downloadReport;
+
+                                    $executiveAdminsList[$empRow['email']]['data']['buttons'][] = $buttons;
+                                    $executiveAdminsList[$empRow['email']]['data']['contact_name'] = $empRow['contact_name'];
+                                    $executiveAdminsList[$empRow['email']]['data']['email'] = $empRow['email'];
+                                } else {
+
+                                    $template = get_email_template(DOCUMENT_REPORT_EMAILS);
+                                    //
+                                    $templateSubject = $template["subject"];
+                                    $templateFromName = $template["from_name"];
+                                    $templateBody = $template["text"];
+
+                                    // set replace array
+                                    //
+                                    $replaceArray = $companyReplaceArray;
+                                    //
+                                    $replaceArray["{{baseurl}}"] = base_url();
+                                    $replaceArray["{{full_name}}"] =
+                                        $replaceArray["{{contact_name}}"]
+                                        = $empRow['contact_name'];
+                                    //
+                                    $viewCode = str_replace(
+                                        ['/', '+'],
+                                        ['$$ab$$', '$$ba$$'],
+                                        $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'view')
+                                    );
+                                    //
+                                    $downloadCode = str_replace(
+                                        ['/', '+'],
+                                        ['$$ab$$', '$$ba$$'],
+                                        $this->encryption->encrypt($companyRow['sid'] . '/' . $empRow['employer_sid'] . '/' . 'download')
+                                    );
+                                    //
+                                    $viewLink = base_url("hr_documents_management/manager_report") . '/' . $viewCode;
+                                    $downloadLink = base_url("hr_documents_management/manager_report") . '/' . $downloadCode;
+                                    //
+                                    $viewReport = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $viewLink . '" target="_blank">View Report</a>';
+                                    $downloadReport = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . $downloadLink . '" target="_blank">Download Report</a>';
+
+                                    //
+                                    $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
+                                    $templateBody = str_replace('{{download_report}}', $downloadReport, $templateBody);
+
+                                    // set keys
+                                    $replaceKeys = array_keys($replaceArray);
+
+                                    // replace
+                                    $fromName = str_replace(
+                                        $replaceKeys,
+                                        $replaceArray,
+                                        $templateFromName
+                                    );
+                                    $subject = str_replace(
+                                        $replaceKeys,
+                                        $replaceArray,
+                                        $templateSubject
+                                    );
+                                    $body = str_replace(
+                                        $replaceKeys,
+                                        $replaceArray,
+                                        $templateBody
+                                    );
+                                    //
+
+                                    log_and_send_email_with_attachment(
+                                        FROM_EMAIL_NOTIFICATIONS,
+                                        $empRow['email'],
+                                        $subject,
+                                        $body,
+                                        $fromName,
+                                        $report,
+                                        "sendMailWithAttachmentAsString"
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //
+            $this->reports_model->saveDocumentScheduleEmailLog($companyRow['sid'], $date->format('Y:m:d'));
+        }
+
+        //
+        if (!empty($executiveAdminsList)) {
+            foreach ($executiveAdminsList as $exRow) {
+                $companyReplaceArray = [
+                    "{{company_name}}" => '',
+                    "{{company_address}}" => '',
+                    "{{company_phone}}" => '',
+                    "{{career_site_url}}" => '',
+                ];
+
+                $template = get_email_template(DOCUMENT_REPORT_EMAILS);
+                //
+                $templateSubject = $template["subject"];
+                $templateFromName = $template["from_name"];
+                $templateBody = $template["text"];
+                // set replace array
+                $replaceArray = $companyReplaceArray;
+                //
+                $replaceArray["{{baseurl}}"] = base_url();
+                $replaceArray["{{full_name}}"] =
+                    $replaceArray["{{contact_name}}"]
+                    = $exRow['data']['contact_name'];
+
+                $viewReport = '';
+                foreach ($exRow['data']['buttons'] as $buttonRow) {
+                    $viewReport .= "<br><br>" . $buttonRow;
+                }
+
+                $templateBody = str_replace('{{view_report}}', $viewReport, $templateBody);
+                $templateBody = str_replace('{{download_report}}', '', $templateBody);
+
+                // set keys
+                $replaceKeys = array_keys($replaceArray);
+
+                // replace
+                $fromName = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateFromName
+                );
+                $subject = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateSubject
+                );
+                $body = str_replace(
+                    $replaceKeys,
+                    $replaceArray,
+                    $templateBody
+                );
+
+                log_and_send_email_with_attachment(
+                    FROM_EMAIL_NOTIFICATIONS,
+                    $exRow["data"]['email'],
+                    $subject,
+                    $body,
+                    $fromName,
+                    $report,
+                    "sendMailWithAttachmentAsString"
+                );
+            }
+        }
+
+        echo "done";
     }
 }
