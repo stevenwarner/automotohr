@@ -542,7 +542,8 @@ class Indeed_feed extends CI_Controller
                     'user_agent' => $userAgent,
                     'resume' => $applicant_resume,
                     'last_update' => date('Y-m-d'),
-                    "indeed_ats_sid" => $indeedPost["id"]
+                    "indeed_ats_sid" => $indeedPost["id"],
+                    "indeed_parsed_resume_json" => json_encode($data["applicant"]["resume"]["json"] ?? [])
                 );
                 sleep(1);
                 $final_check = $this->all_feed_model->applicant_list_exists_check($job_applications_sid, $job_sid, $companyId);
