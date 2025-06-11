@@ -190,60 +190,176 @@
                     </div>
                     <div id="HorizontalTab" class="HorizontalTab">
                         <?php if(!empty($submitted_resume_data)) { ?>
-                        <ul class="resp-tabs-list hor_1 hidden-print">
-                            <li><a href="javascript:;">Parsed Data</a></li>
-                            <li><a href="javascript:;">Interview Data</a></li>
-                        </ul>
-                        <div class="resp-tabs-container hor_1">
-                            <div id="tab1" class="tabs-content">
-                                <div class="row">
-                                    <div class="col-lg-4 col-sm-12">
-                                        <div class="submitted_card_wrapper hr-widget">
-                                            <div class="score_wrapper">
-                                                <h3>Applicant Score</h3>
-                                                <div style="display: flex;align-items: center;">
-                                                    <span class="score_range"> <?= $submitted_resume_data['match_score']; ?> / 100</span>
-                                                    <a href="javascript:;" class="action-btn"
-                                                    onclick="displayScoring()"
-                                                    >
-                                                        <i class="fa fa-pencil"></i>
-                                                        <span class="btn-tooltip">Edit</span>
-                                                    </a>
+                            <ul class="resp-tabs-list hor_1 hidden-print">
+                                <li><a href="javascript:;">Parsed Data</a></li>
+                                <?php if(!empty($interview_logs)) { ?>
+                                    <li><a href="javascript:;">Interview Data</a></li>
+                                <?php } ?>
+                            </ul>
+                            <div class="resp-tabs-container hor_1">
+                                <div id="tab1" class="tabs-content">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-sm-12">
+                                            <div class="submitted_card_wrapper hr-widget">
+                                                <div class="score_wrapper">
+                                                    <h3>Applicant Score</h3>
+                                                    <div style="display: flex;align-items: center;">
+                                                        <span class="score_range"> <?= $submitted_resume_data['match_score']; ?> / 100</span>
+                                                        <a href="javascript:;" class="action-btn"
+                                                        onclick="displayScoring()"
+                                                        >
+                                                            <i class="fa fa-pencil"></i>
+                                                            <span class="btn-tooltip">Edit</span>
+                                                        </a>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <p>Rate the candidate on each criterion below</p>
-        
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    <strong> Reason </strong>
+                                                <p>Rate the candidate on each criterion below</p>
+            
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <strong> Reason </strong>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <div class="reasoning">
+                                                            <?php echo $extra_content; ?>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="panel-body">
-                                                    <div class="reasoning">
-                                                        <?php echo $extra_content; ?>
+            
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <strong> Skills </strong>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <div class="skills">
+                                                            <?php foreach($skills as $skill) {
+                                                                if(is_array($skill) || is_object($skill))
+                                                                {
+                                                                    foreach($skill as $key => $value) {
+                                                                    ?>
+                                                                        <div>
+                                                                            <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
+                                                                            <span> <?php echo $value; ?> </span>
+                                                                        </div>
+                                                                    <?php 
+                                                                    }    
+                                                                } else {
+                                                                    ?>
+                                                                    <span style="display: block;"> <?php echo ($skill); ?> </span>
+                                                                    <?php
+                                                                }
+                                                            } ?>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-        
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    <strong> Skills </strong>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <div class="skills">
-                                                        <?php foreach($skills as $skill) {
-                                                            if(is_array($skill) || is_object($skill))
+                                        </div>
+                                        <div class="col-lg-8 col-sm-12">
+                                            <div class="submitted_card_wrapper hr-widget">
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                            <strong>
+                                                                Screening Questions
+                                                            </strong>
+            
+                                                            <a href="javascript:;" class="action-btn"
+                                                            onclick="displayQuestions()"
+                                                            >
+                                                                <i class="fa fa-pencil"></i>
+                                                                <span class="btn-tooltip">Edit</span>
+                                                            </a>
+                                                    </div>
+                                                    <div class="panel-body questions">
+                                                        <?php foreach($screening_questions as $ques) {
+                                                            if(is_array($ques) || is_object($ques))
                                                             {
-                                                                foreach($skill as $key => $value) {
+                                                                foreach($ques as $key => $value) {
                                                                 ?>
                                                                     <div>
                                                                         <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
                                                                         <span> <?php echo $value; ?> </span>
                                                                     </div>
                                                                 <?php 
-                                                                }    
+                                                                }
                                                             } else {
                                                                 ?>
-                                                                <span style="display: block;"> <?php echo ($skill); ?> </span>
+                                                                <span style="display: block;"><strong>Q.</strong> &nbsp; <?php echo ($ques); ?> </span>
+                                                                <?php
+                                                            }
+                                                        } ?>
+                                                    </div>
+                                                </div>
+            
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <strong> Education </strong>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <?php foreach($education as $edu) {
+                                                            if(is_array($edu) || is_object($edu))
+                                                            {
+                                                                foreach($edu as $key => $value) {
+                                                                ?>
+                                                                    <div>
+                                                                        <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
+                                                                        <span> <?php echo $value; ?> </span>
+                                                                    </div>
+                                                                <?php
+                                                                }
+                                                            } else {
+                                                                ?>
+                                                                <span style="display: block;"> <?php echo $edu; ?> </span>
+                                                                <?php
+                                                            }
+                                                        } ?>
+                                                    </div>
+                                                </div>
+            
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <strong> Certifications </strong>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <?php foreach($certifications as $certificate) {
+                                                            if(is_array($certificate) || is_object($certificate))
+                                                            {
+                                                                foreach($certificate as $key => $value) {
+                                                                ?>
+                                                                    <div>
+                                                                        <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
+                                                                        <span> <?php echo $value; ?> </span>
+                                                                    </div>
+                                                                <?php
+                                                                }
+                                                            } else {
+                                                                ?>
+                                                                <span style="display: block;"> - <?php echo $certificate; ?> </span>
+                                                                <?php
+                                                            }
+                                                        } ?>
+                                                    </div>
+                                                </div>
+            
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <strong> Work Experience </strong>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <?php foreach($work_experience as $exp) {
+                                                            if(is_array($exp) || is_object($exp))
+                                                            {
+                                                                foreach($exp as $key => $value) {
+                                                                ?>
+                                                                    <div>
+                                                                        <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
+                                                                        <span> <?php echo $value; ?> </span>
+                                                                    </div>
+                                                                <?php 
+                                                                }
+                                                            } else {
+                                                                ?>
+                                                                <span style="display: block;"> <?php echo ($exp); ?> </span>
                                                                 <?php
                                                             }
                                                         } ?>
@@ -252,231 +368,119 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-8 col-sm-12">
-                                        <div class="submitted_card_wrapper hr-widget">
-                                            
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                        <strong>
-                                                            Screening Questions
-                                                        </strong>
-        
-                                                        <a href="javascript:;" class="action-btn"
-                                                        onclick="displayQuestions()"
-                                                        >
-                                                            <i class="fa fa-pencil"></i>
-                                                            <span class="btn-tooltip">Edit</span>
-                                                        </a>
-                                                </div>
-                                                <div class="panel-body questions">
-                                                    <?php foreach($screening_questions as $ques) {
-                                                        if(is_array($ques) || is_object($ques))
-                                                        {
-                                                            foreach($ques as $key => $value) {
-                                                            ?>
-                                                                <div>
-                                                                    <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
-                                                                    <span> <?php echo $value; ?> </span>
-                                                                </div>
-                                                            <?php 
-                                                            }
-                                                        } else {
-                                                            ?>
-                                                            <span style="display: block;"><strong>Q.</strong> &nbsp; <?php echo ($ques); ?> </span>
-                                                            <?php
-                                                        }
-                                                    } ?>
+                                </div>
+                                <?php if(!empty($interview_logs)) { ?>
+                                    <div id="tab2" class="tabs-content">
+                                        
+                                        <div class="row">
+                                            <div class="col-md-12 col-xs-12">
+                                                <div class="form-title-section">
+                                                    <h2>Audio</h2>
                                                 </div>
                                             </div>
-        
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    <strong> Education </strong>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <?php foreach($education as $edu) {
-                                                        if(is_array($edu) || is_object($edu))
-                                                        {
-                                                            foreach($edu as $key => $value) {
-                                                            ?>
-                                                                <div>
-                                                                    <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
-                                                                    <span> <?php echo $value; ?> </span>
-                                                                </div>
-                                                            <?php
-                                                            }
-                                                        } else {
-                                                            ?>
-                                                            <span style="display: block;"> <?php echo $edu; ?> </span>
-                                                            <?php
-                                                        }
-                                                    } ?>
-                                                </div>
+
+                                            <?php $audio_data = json_decode($interview_logs['file_path']); ?>
+                                            <div class="col-md-12 col-xs-12">
+                                                <audio controls>
+                                                    <source src="<?= $audio_data->file_path; ?>" type="audio/wav">
+                                                </audio>
                                             </div>
-        
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    <strong> Certifications </strong>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <?php foreach($certifications as $certificate) {
-                                                        if(is_array($certificate) || is_object($certificate))
-                                                        {
-                                                            foreach($certificate as $key => $value) {
-                                                            ?>
-                                                                <div>
-                                                                    <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
-                                                                    <span> <?php echo $value; ?> </span>
-                                                                </div>
-                                                            <?php
-                                                            }
-                                                        } else {
-                                                            ?>
-                                                            <span style="display: block;"> - <?php echo $certificate; ?> </span>
-                                                            <?php
-                                                        }
-                                                    } ?>
-                                                </div>
-                                            </div>
-        
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading">
-                                                    <strong> Work Experience </strong>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <?php foreach($work_experience as $exp) {
-                                                        if(is_array($exp) || is_object($exp))
-                                                        {
-                                                            foreach($exp as $key => $value) {
-                                                            ?>
-                                                                <div>
-                                                                    <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
-                                                                    <span> <?php echo $value; ?> </span>
-                                                                </div>
-                                                            <?php 
-                                                            }
-                                                        } else {
-                                                            ?>
-                                                            <span style="display: block;"> <?php echo ($exp); ?> </span>
-                                                            <?php
-                                                        }
-                                                    } ?>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12 col-xs-12">
+                                                <div class="custom-tabs">
+                                                    <span target="reports-data" class="active">Reports</span>
+                                                    <span target="transcript-data">Transcript</span>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div id="reports-data" class="custom-tab" style="display: block;">
+                                            <?php 
+                                                $reports = json_decode($interview_logs['reports']);
+                                                ?>
+                                                <table>
+                                                    <tr>
+                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Overall Score:</th>
+                                                        <td style="padding:10px;"><?= $reports->overallScore ?></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Confidence Level:</th>
+                                                        <td style="padding:10px;"><?= $reports->confidenceLevel ?></td>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Strengths:</th>
+                                                        <td style="padding:10px;">
+                                                            <ul>
+                                                                <?php foreach ($reports->strengths as $strength): ?>
+                                                                    <li><?= htmlspecialchars($strength) ?></li>
+                                                                <?php endforeach; ?>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Areas for Improvement:</th>
+                                                        <td style="padding:10px;">
+                                                            <ul>
+                                                                <?php foreach ($reports->areasForImprovement as $area): ?>
+                                                                    <li><?= htmlspecialchars($area) ?></li>
+                                                                <?php endforeach; ?>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Suitability Summary:</th>
+                                                        <td style="padding:10px;"><?= $reports->suitabilitySummary ?></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Notable Quotes:</th>
+                                                        <td style="padding:10px;">
+                                                            <ul>
+                                                                <?php foreach ($reports->notableQuotes as $quote): ?>
+                                                                    <li><?= htmlspecialchars($quote) ?></li>
+                                                                <?php endforeach; ?>
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Recommendation:</th>
+                                                        <td style="padding:10px;"><?= $reports->recommendation ?></td>
+                                                    </tr>
+                                                </table>
+                                        </div>
+
+                                        <div id="transcript-data" class="custom-tab" style="display: none;">
+                                            <table>
+                                                <?php 
+                                                $transript = json_decode($interview_logs['interview_content']);
+                                                foreach($transript as $key => $trans) {
+                                                    if($trans->role === "system") {
+                                                        continue;
+                                                    }
+                                                    ?>
+                                                    <tr>
+                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Role:</th>
+                                                        <td style="padding:10px;"><?php echo $trans->role; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Content:</th>
+                                                        <td style="padding:10px;"><?php echo $trans->content; ?></td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </table>
+                                        </div>
                                     </div>
-                                </div>
+                                <?php } ?>
                             </div>
-                            <div id="tab2" class="tabs-content">
-                                
-                                <div class="row">
-                                    <div class="col-md-12 col-xs-12">
-                                        <div class="form-title-section">
-                                            <h2>Audio</h2>
-                                        </div>
-                                    </div>
-
-                                    <?php $audio_data = json_decode($interview_logs['file_path']); ?>
-                                    <div class="col-md-12 col-xs-12">
-                                        <audio controls>
-                                            <source src="<?= $audio_data->file_path; ?>" type="audio/wav">
-                                        </audio>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-12 col-xs-12">
-                                        <div class="custom-tabs">
-                                            <span target="reports-data" class="active">Reports</span>
-                                            <span target="transcript-data">Transcript</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div id="reports-data" class="custom-tab" style="display: block;">
-                                    <?php 
-                                        $reports = json_decode($interview_logs['reports']);
-                                        ?>
-                                        <table>
-                                            <tr>
-                                                <th style="vertical-align: baseline;width:100px;padding:10px;">Overall Score:</th>
-                                                <td style="padding:10px;"><?= $reports->overallScore ?></td>
-                                            </tr>
-
-                                            <tr>
-                                                <th style="vertical-align: baseline;width:100px;padding:10px;">Confidence Level:</th>
-                                                <td style="padding:10px;"><?= $reports->confidenceLevel ?></td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <th style="vertical-align: baseline;width:100px;padding:10px;">Strengths:</th>
-                                                <td style="padding:10px;">
-                                                    <ul>
-                                                        <?php foreach ($reports->strengths as $strength): ?>
-                                                            <li><?= htmlspecialchars($strength) ?></li>
-                                                        <?php endforeach; ?>
-                                                    </ul>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <th style="vertical-align: baseline;width:100px;padding:10px;">Areas for Improvement:</th>
-                                                <td style="padding:10px;">
-                                                    <ul>
-                                                        <?php foreach ($reports->areasForImprovement as $area): ?>
-                                                            <li><?= htmlspecialchars($area) ?></li>
-                                                        <?php endforeach; ?>
-                                                    </ul>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <th style="vertical-align: baseline;width:100px;padding:10px;">Suitability Summary:</th>
-                                                <td style="padding:10px;"><?= $reports->suitabilitySummary ?></td>
-                                            </tr>
-
-                                            <tr>
-                                                <th style="vertical-align: baseline;width:100px;padding:10px;">Notable Quotes:</th>
-                                                <td style="padding:10px;">
-                                                    <ul>
-                                                        <?php foreach ($reports->notableQuotes as $quote): ?>
-                                                            <li><?= htmlspecialchars($quote) ?></li>
-                                                        <?php endforeach; ?>
-                                                    </ul>
-                                                </td>
-                                            </tr>
-
-                                            <tr>
-                                                <th style="vertical-align: baseline;width:100px;padding:10px;">Recommendation:</th>
-                                                <td style="padding:10px;"><?= $reports->recommendation ?></td>
-                                            </tr>
-                                        </table>
-                                </div>
-
-                                <div id="transcript-data" class="custom-tab" style="display: none;">
-                                    <table>
-                                        <?php 
-                                        $transript = json_decode($interview_logs['interview_content']);
-                                        foreach($transript as $key => $trans) {
-                                            if($trans->role === "system") {
-                                                continue;
-                                            }
-                                            ?>
-                                            <tr>
-                                                <th style="vertical-align: baseline;width:100px;padding:10px;">Role:</th>
-                                                <td style="padding:10px;"><?php echo $trans->role; ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th style="vertical-align: baseline;width:100px;padding:10px;">Content:</th>
-                                                <td style="padding:10px;"><?php echo $trans->content; ?></td>
-                                            </tr>
-                                            <?php
-                                        }
-                                        ?>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
                         <?php } else {
                             ?>
                             <div class="info-area" style="text-align:center;margin-top:20px;">
