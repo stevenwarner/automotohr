@@ -555,21 +555,6 @@ class Indeed_feed extends CI_Controller
                     $portal_applicant_jobs_list_sid = $jobs_list_result[0];
 
                     // Add the applicant to the Queue
-                    // storeApplicantInQueueToProcess([
-                    //     "portal_job_applications_sid" => $job_applications_sid,
-                    //     "portal_applicant_job_sid" => $portal_applicant_jobs_list_sid,
-                    //     "job_sid" => $job_sid,
-                    //     "company_sid" => $companyId,
-                    // ]);
-
-                    //
-                    // $this->load->model(model: "indeed_model");
-                    // Comment below line because this function exit the process  and now allow to send emails on 11 Apr 2024;
-                    // $this->indeed_model->pushTheApplicantStatus(
-                    //     "NEW",
-                    //     $portal_applicant_jobs_list_sid,
-                    //     $companyId
-                    // );
                     //
                     $job_added_successfully = $jobs_list_result[1];
                     $acknowledgement_email_data['company_name'] = $company_name;
