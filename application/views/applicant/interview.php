@@ -165,6 +165,9 @@ $creds = getCreds('AHR');
     let frequencyDataArray = null;
     let frequencyCheckInterval = null;
 
+    let currentAudioDataBase64 = null;
+    let currentAudioBase64Arr = [];
+
     document.addEventListener('DOMContentLoaded', function () {
 
         function startCallTimer() {
@@ -276,6 +279,7 @@ $creds = getCreds('AHR');
                     if (event.data.size > 0 && socket && socket.connected && sessionId) {
                         const arrayBuffer = await event.data.arrayBuffer();
                         const base64Data = arrayBufferToBase64(arrayBuffer);
+                        currentAudioDataBase64 = base64Data;
                         socket.emit('audioData', {
                             clientId: socket.id,
                             job_list_sid,
@@ -374,7 +378,6 @@ $creds = getCreds('AHR');
                         initAudioContext();
 
                         try {
-
                             const binaryString = atob(parsedData.data);
                             const len = binaryString.length;
                             const bytes = new Uint8Array(len);
@@ -388,7 +391,10 @@ $creds = getCreds('AHR');
                             const audioUrl = URL.createObjectURL(blob);
 
                             // Add to queue
-                            audioQueue.push(audioUrl);
+                            audioQueue.push({
+                                data: parsedData.data,
+                                audioUrl
+                            });
 
                             // Start playing if not already playing
                             if (!isPlaying) {
@@ -451,21 +457,21 @@ $creds = getCreds('AHR');
             }
 
             isPlaying = true;
-            const audioUrl = audioQueue.shift();
+            const _audio = audioQueue.shift();
 
             // Create and play audio
             const audio = new Audio();
             currentAudio = audio;
 
             currentAudio.onended = () => {
-                URL.revokeObjectURL(audioUrl); // Clean up
+                URL.revokeObjectURL(_audio.audioUrl); // Clean up
                 stopFrequencyAnalysis();
                 playNextInQueue();
             };
 
             currentAudio.onerror = (e) => {
                 console.error('Audio playback error:', e);
-                URL.revokeObjectURL(audioUrl);
+                URL.revokeObjectURL(_audio.audioUrl);
                 stopFrequencyAnalysis();
                 playNextInQueue(); // Skip to next
             };
@@ -474,7 +480,7 @@ $creds = getCreds('AHR');
                 analyzeAudioFrequency(currentAudio); // Start frequency analysis
             };
 
-            currentAudio.src = audioUrl;
+            currentAudio.src = _audio.audioUrl;
             currentAudio.play().catch(e => console.error('Failed to play audio:', e));
         }
 
@@ -686,6 +692,10 @@ $creds = getCreds('AHR');
                 silenceTimer = null;
             }
 
+            if(currentAudioDataBase64) {
+                currentAudioBase64Arr.push(currentAudioDataBase64);
+            }
+
             // Debounce speaking to avoid repeated triggers
             // if (voiceTimer) {
             //     clearTimeout(voiceTimer);
@@ -741,6 +751,15 @@ $creds = getCreds('AHR');
                 });
 
                 console.log(`🔇 Silence detected (volume: ${volume.toFixed(1)}) - User stopped speaking`);
+                if(currentAudioBase64Arr.length > 0) {
+                    const audioDataArrays = currentAudioBase64Arr.map(base64 => {
+                        return base64.split(',')[1] || base64;
+                    });
+                    
+                    // Combine the base64 data
+                    const combinedBse64Data = audioDataArrays.join('');
+                    // socket.emit('mediaData', { type: 'sended', data: combinedBse64Data, job_list_sid, sessionId});
+                }
 
                 // Notify server that user stopped speaking
                 if (socket && socket.connected) {
@@ -780,9 +799,8 @@ $creds = getCreds('AHR');
                     popupContent.innerHTML = `
                     <h3>❌ Microphone Access Denied</h3>
                     <p>Please allow microphone access in your browser settings and refresh the page to start the interview.</p>
-                    <button onclick="location.reload()">Refresh Page</button>
-                `;
-            });
+                    <button onclick="location.reload()">Refresh Page</button>`;
+                });
         }
 
         function stopInterview() {
