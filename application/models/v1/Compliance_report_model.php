@@ -3090,10 +3090,10 @@ class Compliance_report_model extends CI_Model
 		//
 		if (!$hasMainAccess) {
 			$where["csp_reports_employees.employee_sid"] = $employeeId;
-		}
-		//
-		$record = $this
+			//
+			$record = $this
 			->db
+			->select("csp_reports_incidents_items.sid, csp_reports_incidents_items.csp_reports_incidents_sid,csp_reports_incidents_items.compliance_report_incident_types_sid")
 			->where($where)
 			->join(
 				"csp_reports_incidents_items",
@@ -3106,6 +3106,18 @@ class Compliance_report_model extends CI_Model
 				"inner"
 			)
 			->count_all_results("csp_reports_employees");
+		} else {
+			$record = $this
+			->db
+			->select("csp_reports_incidents_items.sid, csp_reports_incidents_items.csp_reports_incidents_sid,csp_reports_incidents_items.compliance_report_incident_types_sid")
+			->where($where)
+			->join(
+				"csp_reports",
+				"csp_reports.sid = csp_reports_incidents_items.csp_reports_incidents_sid",
+				"inner"
+			)
+			->count_all_results("csp_reports_incidents_items");
+		}
 		//
 		if ($record) {
 			return $record;
