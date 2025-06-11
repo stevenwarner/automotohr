@@ -1931,9 +1931,8 @@ class Indeed_model extends CI_Model
             ])
             ->join(
                 "indeed_job_queue_tracking",
-                "indeed_job_queue_tracking.job_sid =indeed_job_queue_history.job_sid
-               ",
-                "left"
+                "indeed_job_queue_tracking.job_sid =indeed_job_queue_history.job_sid",
+                "inner"
             )
             ->join(
                 "portal_job_listings",
