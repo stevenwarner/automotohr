@@ -543,11 +543,14 @@ class Indeed_model extends CI_Model
      *
      * @param string $status
      * @param int $applicantListId
+     * @param int $companyId
+     * @param bool $isIndeedStatus
      */
     public function pushTheApplicantStatus(
         string $status,
         int $applicantListId,
-        int $companyId
+        int $companyId,
+        bool $isIndeedStatus = false
     ) {
         // check if an applicant has Indeed ATS Id
         if (
@@ -567,31 +570,59 @@ class Indeed_model extends CI_Model
             ];
         }
         // get the indeed ats id
-        $indeedAtsId = $this->db
-            ->select("indeed_ats_sid")
+        $record = $this->db
+            ->select("indeed_ats_sid, job_sid")
             ->where("sid", $applicantListId)
             ->where("indeed_ats_sid <>", null)
             ->get("portal_applicant_jobs_list")
-            ->row_array()["indeed_ats_sid"];
+            ->row_array();
+        // check if job is there
+        if (!$record) {
+            return [
+                "error" => "Job not found"
+            ];
+        }
+        //
+        $indeedAtsId = $record["indeed_ats_sid"];
+        $jobId = $record["job_sid"];
+        //
+        if (
+            !$this
+                ->db
+                ->where("job_sid", $jobId)
+                ->where("is_processed", 1)
+                ->where("is_expired", 0)
+                ->count_all_results("indeed_job_queue")
+        ) {
+            return [
+                "error" => "Job has been expired"
+            ];
+        }
         // load the library
         $this->load->library("Indeed_lib");
-        //
-        $indeedStatus = $this->db
-            ->select("indeed_slug")
-            ->where([
-                "ats_slug" => strtolower(
-                    preg_replace(
-                        "/[^a-zA-Z]/",
-                        "",
-                        $status
+
+        if (!$isIndeedStatus) {
+            //
+            $indeedStatus = $this->db
+                ->select("indeed_slug")
+                ->where([
+                    "ats_slug" => strtolower(
+                        preg_replace(
+                            "/[^a-zA-Z]/",
+                            "",
+                            $status
+                        )
                     )
-                )
-            ])
-            ->get("indeed_disposition_status_map")
-            ->row_array();
-        //
-        if (!$indeedStatus) {
-            return ["errors" => "No status map found."];
+                ])
+                ->get("indeed_disposition_status_map")
+                ->row_array();
+            //
+            if (!$indeedStatus) {
+                return ["errors" => "No status map found."];
+            }
+        } else {
+            $indeedStatus = [];
+            $indeedStatus["indeed_slug"] = strtoupper($status);
         }
         // send the call
         $response = $this->indeed_lib
@@ -1585,6 +1616,7 @@ class Indeed_model extends CI_Model
             //
             if (in_array("Processed", $filter["status"])) {
                 $this->db->where("is_processed", 1);
+                $this->db->where("is_expired", 0);
             }
             if (in_array("Errors", $filter["status"])) {
                 $this->db->where("errors is not null", null);
@@ -1900,9 +1932,8 @@ class Indeed_model extends CI_Model
             ])
             ->join(
                 "indeed_job_queue_tracking",
-                "indeed_job_queue_tracking.job_sid =indeed_job_queue_history.job_sid
-               ",
-                "left"
+                "indeed_job_queue_tracking.job_sid =indeed_job_queue_history.job_sid",
+                "inner"
             )
             ->join(
                 "portal_job_listings",

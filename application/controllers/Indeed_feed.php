@@ -542,7 +542,8 @@ class Indeed_feed extends CI_Controller
                     'user_agent' => $userAgent,
                     'resume' => $applicant_resume,
                     'last_update' => date('Y-m-d'),
-                    "indeed_ats_sid" => $indeedPost["id"]
+                    "indeed_ats_sid" => $indeedPost["id"],
+                    "indeed_parsed_resume_json" => json_encode($data["applicant"]["resume"]["json"] ?? [])
                 );
                 sleep(1);
                 $final_check = $this->all_feed_model->applicant_list_exists_check($job_applications_sid, $job_sid, $companyId);
@@ -554,19 +555,21 @@ class Indeed_feed extends CI_Controller
                     $jobs_list_result = $this->all_feed_model->add_applicant_job_details($insert_job_list);
                     $portal_applicant_jobs_list_sid = $jobs_list_result[0];
 
-                    // Add the applicant to the Queue
-                    storeApplicantInQueueToProcess([
-                        "portal_job_applications_sid" => $job_applications_sid,
-                        "portal_applicant_job_sid" => $portal_applicant_jobs_list_sid,
-                        "job_sid" => $job_sid,
-                        "company_sid" => $companyId,
-                    ]);
+                    if (isset($resume) && $resume) {
+                        // Add the applicant to the Queue
+                        storeApplicantInQueueToProcess([
+                            "portal_job_applications_sid" => $job_applications_sid,
+                            "portal_applicant_job_sid" => $portal_applicant_jobs_list_sid,
+                            "job_sid" => $job_sid,
+                            "company_sid" => $companyId,
+                        ]);
+                    }
 
                     //
-                    $this->load->model(model: "indeed_model");
                     // Comment below line because this function exit the process  and now allow to send emails on 11 Apr 2024;
+                    $this->load->model("indeed_model");
                     $this->indeed_model->pushTheApplicantStatus(
-                        "NEW",
+                        "not contacted yet",
                         $portal_applicant_jobs_list_sid,
                         $companyId
                     );
