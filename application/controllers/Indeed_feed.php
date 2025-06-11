@@ -389,15 +389,6 @@ class Indeed_feed extends CI_Controller
                 ], false);
             }
 
-            if (isset($resume) && !empty($resume) && $companyId == 21) {
-                storeApplicantApplicationInQueue([
-                    'portal_applicant_job_sid' => null,
-                    'portal_job_applications_sid' => $job_applications_sid,
-                    'company_sid' => $companyId,
-                    'job_sid' => $job_sid
-                ]);
-            }
-
             // Indeed questionnaire
             $eeoc = [];
             $jobQuestions = [];
@@ -573,11 +564,12 @@ class Indeed_feed extends CI_Controller
 
                     //
                     // Comment below line because this function exit the process  and now allow to send emails on 11 Apr 2024;
-                    // $this->indeed_model->pushTheApplicantStatus(
-                    //     "NEW",
-                    //     $portal_applicant_jobs_list_sid,
-                    //    $companyId
-                    // );
+                    $this->load->model("indeed_model");
+                    $this->indeed_model->pushTheApplicantStatus(
+                        "not contacted yet",
+                        $portal_applicant_jobs_list_sid,
+                        $companyId
+                    );
                     //
                     $job_added_successfully = $jobs_list_result[1];
                     $acknowledgement_email_data['company_name'] = $company_name;
