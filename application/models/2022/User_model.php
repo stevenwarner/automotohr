@@ -842,10 +842,7 @@ class User_model extends CI_Model
             if ($get['end_date']) {
                 $whereArray['created_at <='] = (formatDateToDB($get['end_date'], SITE_DATE, DB_DATE)) . ' 23:59:59';
             }
-        } else {
-            $whereArray['created_at >='] = getSystemDate(DB_DATE) . ' 00:00:00';
-            $whereArray['created_at <='] = getSystemDate(DB_DATE) . ' 23:59:59';
-        }
+        } 
         //
         $resultData =
             $this->db->where($whereArray)
@@ -871,10 +868,7 @@ class User_model extends CI_Model
             if ($get['end_date']) {
                 $whereArray['created_at <='] = (formatDateToDB($get['end_date'], SITE_DATE, DB_DATE)) . ' 23:59:59';
             }
-        } else {
-            $whereArray['created_at >='] = getSystemDate(DB_DATE) . ' 00:00:00';
-            $whereArray['created_at <='] = getSystemDate(DB_DATE) . ' 23:59:59';
-        }
+        } 
 
         if ($get['client_ip'] != '') {
             $whereArray['client_ip ='] = trim($get['client_ip']);

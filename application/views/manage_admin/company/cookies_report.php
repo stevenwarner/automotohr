@@ -21,12 +21,12 @@
                                                 <div class="col-xs-12">
                                                     <div class="col-lg-4 col-md-3 col-xs-12 col-sm-3 field-row">
                                                         <label>Start Date</label>
-                                                        <input type="text" name="start_date" readonly class="invoice-fields" placeholder="M/D/Y" value="<?= $this->input->get('start_date') ?? date('m/d/Y'); ?>">
+                                                        <input type="text" name="start_date" readonly class="invoice-fields"  value="<?= $this->input->get('start_date') ?? ''; ?>">
                                                     </div>
 
                                                     <div class="col-lg-4 col-md-3 col-xs-12 col-sm-3 field-row">
                                                         <label>End Date</label>
-                                                        <input type="text" name="end_date" readonly class="invoice-fields" placeholder="M/D/Y" value="<?= $this->input->get('end_date') ?? date('m/d/Y'); ?>">
+                                                        <input type="text" name="end_date" readonly class="invoice-fields"  value="<?= $this->input->get('end_date') ?? ''; ?>">
                                                     </div>
 
                                                     <div class="col-lg-4 col-md-3 col-xs-12 col-sm-3 field-row">

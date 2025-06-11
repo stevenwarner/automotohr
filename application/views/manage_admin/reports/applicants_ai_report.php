@@ -61,9 +61,9 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="field-row">
                                                         <label>Date From </label>
-                                                        <?php $start_date = $this->uri->segment(6) != 'all' && $this->uri->segment(6) != '' ? urldecode($this->uri->segment(6)) : date('m-d-Y'); ?>
+                                                        <?php $start_date = $this->uri->segment(6) != 'all' && $this->uri->segment(6) != '' ? urldecode($this->uri->segment(6)) : ''; ?>
                                                         <input class="invoice-fields"
-                                                            placeholder="<?php echo date('m-d-Y'); ?>" type="text"
+                                                            type="text" readonly
                                                             name="start_date_applied" id="start_date_applied"
                                                             value="<?php echo set_value('start_date_applied', $start_date); ?>" />
                                                     </div>
@@ -71,9 +71,9 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="field-row">
                                                         <label>Date To </label>
-                                                        <?php $end_date = $this->uri->segment(7) != 'all' && $this->uri->segment(7) != '' ? urldecode($this->uri->segment(7)) : date('m-d-Y'); ?>
+                                                        <?php $end_date = $this->uri->segment(7) != 'all' && $this->uri->segment(7) != '' ? urldecode($this->uri->segment(7)) : ''; ?>
                                                         <input class="invoice-fields"
-                                                            placeholder="<?php echo date('m-d-Y'); ?>" type="text"
+                                                            type="text" readonly
                                                             name="end_date_applied" id="end_date_applied"
                                                             value="<?php echo set_value('end_date_applied', $end_date); ?>" />
                                                     </div>

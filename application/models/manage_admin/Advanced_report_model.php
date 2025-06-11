@@ -1963,7 +1963,7 @@ class Advanced_report_model extends CI_Model
             } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
                 $this->db->where('portal_applicant_jobs_queue.created_at >=', $start_date);
             } else if ((empty($start_date) || is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
-                $this->db->where('portal_applicant_jobs_queue.created_at <=', $end_date);
+               // $this->db->where('portal_applicant_jobs_queue.created_at <=', $end_date);
             }
         }
 
