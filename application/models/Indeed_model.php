@@ -567,12 +567,34 @@ class Indeed_model extends CI_Model
             ];
         }
         // get the indeed ats id
-        $indeedAtsId = $this->db
-            ->select("indeed_ats_sid")
+        $record = $this->db
+            ->select("indeed_ats_sid, job_sid")
             ->where("sid", $applicantListId)
             ->where("indeed_ats_sid <>", null)
             ->get("portal_applicant_jobs_list")
-            ->row_array()["indeed_ats_sid"];
+            ->row_array();
+        // check if job is there
+        if (!$record) {
+            return [
+                "error" => "Job not found"
+            ];
+        }
+        //
+        $indeedAtsId = $record["indeed_ats_sid"];
+        $jobId = $record["job_sid"];
+        //
+        if (
+            !$this
+                ->db
+                ->where("job_sid", $jobId)
+                ->where("is_processed", 1)
+                ->where("is_expired", 0)
+                ->count_all_results("indeed_job_queue")
+        ) {
+            return [
+                "error" => "Job has been expired"
+            ];
+        }
         // load the library
         $this->load->library("Indeed_lib");
         //
