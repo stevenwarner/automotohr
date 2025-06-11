@@ -543,11 +543,14 @@ class Indeed_model extends CI_Model
      *
      * @param string $status
      * @param int $applicantListId
+     * @param int $companyId
+     * @param bool $isIndeedStatus
      */
     public function pushTheApplicantStatus(
         string $status,
         int $applicantListId,
-        int $companyId
+        int $companyId,
+        bool $isIndeedStatus = false
     ) {
         // check if an applicant has Indeed ATS Id
         if (
@@ -597,23 +600,29 @@ class Indeed_model extends CI_Model
         }
         // load the library
         $this->load->library("Indeed_lib");
-        //
-        $indeedStatus = $this->db
-            ->select("indeed_slug")
-            ->where([
-                "ats_slug" => strtolower(
-                    preg_replace(
-                        "/[^a-zA-Z]/",
-                        "",
-                        $status
+
+        if (!$isIndeedStatus) {
+            //
+            $indeedStatus = $this->db
+                ->select("indeed_slug")
+                ->where([
+                    "ats_slug" => strtolower(
+                        preg_replace(
+                            "/[^a-zA-Z]/",
+                            "",
+                            $status
+                        )
                     )
-                )
-            ])
-            ->get("indeed_disposition_status_map")
-            ->row_array();
-        //
-        if (!$indeedStatus) {
-            return ["errors" => "No status map found."];
+                ])
+                ->get("indeed_disposition_status_map")
+                ->row_array();
+            //
+            if (!$indeedStatus) {
+                return ["errors" => "No status map found."];
+            }
+        } else {
+            $indeedStatus = [];
+            $indeedStatus["indeed_slug"] = strtoupper($status);
         }
         // send the call
         $response = $this->indeed_lib

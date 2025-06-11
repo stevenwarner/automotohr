@@ -3214,10 +3214,10 @@ if (!function_exists('log_and_sendEmail')) {
             'username' => $senderName,
             'temp_id' => $temp_id,
             'temp_data' => json_encode([
-                        'SCRIPT_FILENAME' => $_SERVER['SCRIPT_FILENAME'],
-                        'REQUEST_URI' => $_SERVER['REQUEST_URI'],
-                        'argv' => $_SERVER['argv']
-                    ])
+                'SCRIPT_FILENAME' => $_SERVER['SCRIPT_FILENAME'],
+                'REQUEST_URI' => $_SERVER['REQUEST_URI'],
+                'argv' => $_SERVER['argv']
+            ])
         );
         //
         save_email_log_common($emailData);
@@ -4870,8 +4870,8 @@ if (!function_exists('common_indeed_acknowledgement_email')) {
             $email_log_autoresponder['job_or_employee_id'] = $applicationData['sid'];
             $save_email_log = save_email_log_autoresponder($email_log_autoresponder);
         } /* else {
-       mail('mubashir.saleemi123@gmail.com', 'Indeed acknowledgement - opt out', print_r($applicationData, true));
-       } */
+mail('mubashir.saleemi123@gmail.com', 'Indeed acknowledgement - opt out', print_r($applicationData, true));
+} */
     }
 }
 
@@ -6533,16 +6533,16 @@ if (!function_exists('ics_files')) {
 
                 // // Add event status buttons
                 $user_email_status_button_rows =
-                generate_event_status_rows(
-                    $event_details['sid'],
-                    $v0['id'],
-                    $v0['type'],
-                    $v0['value'],
-                    $v0['email_address'],
-                    $event_details['category'],
-                    $event_details['learning_center_training_sessions'],
-                    $_this
-                );
+                    generate_event_status_rows(
+                        $event_details['sid'],
+                        $v0['id'],
+                        $v0['type'],
+                        $v0['value'],
+                        $v0['email_address'],
+                        $event_details['category'],
+                        $event_details['learning_center_training_sessions'],
+                        $_this
+                    );
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message);
                 log_and_send_email_with_attachment(FROM_EMAIL_NOTIFICATIONS, $v0['email_address'], $email_subject, $user_message, $from_name, $ics_file);
             }
@@ -6572,16 +6572,16 @@ if (!function_exists('ics_files')) {
             if ($event_details['users_type'] != 'personal' && $action != 'confirm') {
                 // Add event status buttons
                 $user_email_status_button_rows =
-                generate_event_status_rows(
-                    $event_details['sid'],
-                    $user_info['sid'],
-                    $event_details['users_type'],
-                    $user_info['first_name'] . ' ' . $user_info['last_name'],
-                    $user_info['email'],
-                    $event_details['category'],
-                    $event_details['learning_center_training_sessions'],
-                    $_this
-                );
+                    generate_event_status_rows(
+                        $event_details['sid'],
+                        $user_info['sid'],
+                        $event_details['users_type'],
+                        $user_info['first_name'] . ' ' . $user_info['last_name'],
+                        $user_info['email'],
+                        $event_details['category'],
+                        $event_details['learning_center_training_sessions'],
+                        $_this
+                    );
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message);
             } else
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', '', $user_message);
@@ -6607,16 +6607,16 @@ if (!function_exists('ics_files')) {
 
                 // Add event status buttons
                 $interviewer_email_status_button_rows =
-                generate_event_status_rows(
-                    $event_details['sid'],
-                    $employer['sid'],
-                    'interviewer',
-                    $employer_name,
-                    $employer['email'],
-                    $event_details['category'],
-                    $event_details['learning_center_training_sessions'],
-                    $_this
-                );
+                    generate_event_status_rows(
+                        $event_details['sid'],
+                        $employer['sid'],
+                        'interviewer',
+                        $employer_name,
+                        $employer['email'],
+                        $event_details['category'],
+                        $event_details['learning_center_training_sessions'],
+                        $_this
+                    );
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $interviewer_email_status_button_rows, $user_message);
                 // $_this->_e($user_message, true);
 
@@ -6636,16 +6636,16 @@ if (!function_exists('ics_files')) {
                     $user_message = str_replace('{{target_user}}', $applicant_name, $user_message);
                     // Add event status buttons
                     $extrainterviewer_email_status_button_rows =
-                    generate_event_status_rows(
-                        $event_details['sid'],
-                        $event_external_participant['sid'],
-                        'extrainterviewer',
-                        $employer_name,
-                        $event_external_participant['email'],
-                        $event_details['category'],
-                        $event_details['learning_center_training_sessions'],
-                        $_this
-                    );
+                        generate_event_status_rows(
+                            $event_details['sid'],
+                            $event_external_participant['sid'],
+                            'extrainterviewer',
+                            $employer_name,
+                            $event_external_participant['email'],
+                            $event_details['category'],
+                            $event_details['learning_center_training_sessions'],
+                            $_this
+                        );
                     $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $extrainterviewer_email_status_button_rows, $user_message);
                     // $_this->_e($user_message, true);
                     log_and_send_email_with_attachment(FROM_EMAIL_NOTIFICATIONS, $event_external_participant['email'], $email_subject, $user_message, $from_name, $ics_file);
@@ -7626,16 +7626,16 @@ if (!function_exists('send_calendar_email')) {
                 } else {
                     // // Add event status buttons
                     $user_email_status_button_rows =
-                    generate_event_status_rows(
-                        $event_details['sid'],
-                        $v0['id'],
-                        $v0['type'],
-                        $v0['value'],
-                        $v0['email_address'],
-                        $event_details['category'],
-                        $event_details['learning_center_training_sessions'],
-                        $_this
-                    );
+                        generate_event_status_rows(
+                            $event_details['sid'],
+                            $v0['id'],
+                            $v0['type'],
+                            $v0['value'],
+                            $v0['email_address'],
+                            $event_details['category'],
+                            $event_details['learning_center_training_sessions'],
+                            $_this
+                        );
                 }
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message);
 
@@ -7827,16 +7827,16 @@ if (!function_exists('send_calendar_email')) {
                 } else {
                     // Add event status buttons
                     $user_email_status_button_rows =
-                    generate_event_status_rows(
-                        $event_details['sid'],
-                        $user_info['sid'],
-                        $event_details['users_type'],
-                        $user_info['first_name'] . ' ' . $user_info['last_name'],
-                        $user_info['email'],
-                        $event_details['category'],
-                        $event_details['learning_center_training_sessions'],
-                        $_this
-                    );
+                        generate_event_status_rows(
+                            $event_details['sid'],
+                            $user_info['sid'],
+                            $event_details['users_type'],
+                            $user_info['first_name'] . ' ' . $user_info['last_name'],
+                            $user_info['email'],
+                            $event_details['category'],
+                            $event_details['learning_center_training_sessions'],
+                            $_this
+                        );
                 }
             } else
                 $user_email_status_button_rows = '';
@@ -8092,17 +8092,17 @@ if (!function_exists('send_calendar_email')) {
 
                 // Add event status buttons
                 $interviewer_email_status_button_rows =
-                generate_event_status_rows(
-                    $event_details['sid'],
-                    $employer['sid'],
-                    'interviewer',
-                    $employer_name,
-                    $employer['email'],
-                    $event_details['category'],
-                    $event_details['learning_center_training_sessions'],
-                    $_this,
-                    $links_url
-                );
+                    generate_event_status_rows(
+                        $event_details['sid'],
+                        $employer['sid'],
+                        'interviewer',
+                        $employer_name,
+                        $employer['email'],
+                        $event_details['category'],
+                        $event_details['learning_center_training_sessions'],
+                        $_this,
+                        $links_url
+                    );
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $interviewer_email_status_button_rows, $user_message);
                 // $_this->_e($user_message, true);
 
@@ -8228,16 +8228,16 @@ if (!function_exists('send_calendar_email')) {
 
                     // Add event status buttons
                     $extrainterviewer_email_status_button_rows =
-                    generate_event_status_rows(
-                        $event_details['sid'],
-                        0,
-                        'extrainterviewer',
-                        $employer_name,
-                        $event_external_participant['email'],
-                        $event_details['category'],
-                        $event_details['learning_center_training_sessions'],
-                        $_this
-                    );
+                        generate_event_status_rows(
+                            $event_details['sid'],
+                            0,
+                            'extrainterviewer',
+                            $employer_name,
+                            $event_external_participant['email'],
+                            $event_details['category'],
+                            $event_details['learning_center_training_sessions'],
+                            $_this
+                        );
                     $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $extrainterviewer_email_status_button_rows, $user_message);
 
                     // Set calendar
@@ -10940,7 +10940,7 @@ if (!function_exists('xml_create_job')) {
 
         $indeedURI = 'indeed-apply-joburl='
             . urlencode(STORE_PROTOCOL_SSL .
-            $subDomain . '/job_details/' . $uid)
+                $subDomain . '/job_details/' . $uid)
             . '&indeed-apply-jobid=' . $uid
             . '&indeed-apply-jobtitle=' . urlencode($title)
             . '&indeed-apply-jobcompanyname=' . urlencode($companyName)
@@ -17841,6 +17841,55 @@ if (!function_exists('get_email_template_by_code')) {
             return $result;
         } else {
             return 0;
+        }
+    }
+}
+
+if (!function_exists("sendDispositionStatusToIndeed")) {
+    /**
+     * Send the applicant status to Indeed
+     * @param int $applicantId
+     * @param string $indeedStatus
+     * @param int $companyId
+     */
+    function sendDispositionStatusToIndeed(
+        $applicantId,
+        $indeedStatus,
+        $companyId
+    ) {
+        //
+        $CI = &get_instance();
+        // get the job with active indeed tracking key
+        $record = $CI->db
+            ->select([
+                "portal_applicant_jobs_list.sid",
+            ])
+            ->where("portal_applicant_jobs_list.portal_job_applications_sid", $applicantId)
+            ->where("portal_applicant_jobs_list.company_sid", $companyId)
+            ->group_start()
+            ->where("portal_applicant_jobs_list.indeed_ats_sid <>", null)
+            ->where("portal_applicant_jobs_list.indeed_ats_sid != ''", "")
+            ->group_end()
+            ->where("indeed_job_queue.is_processed", 1)
+            ->where("indeed_job_queue.is_expired", 0)
+            ->join(
+                "indeed_job_queue",
+                "indeed_job_queue.job_sid = portal_applicant_jobs_list.job_sid",
+                "inner"
+            )
+            ->limit(1)
+            ->get("portal_applicant_jobs_list")
+            ->row_array();
+        // cehck for job
+        if ($record) {
+            // load indeed model
+            $CI->load->model("indeed_model");
+            $CI->indeed_model->pushTheApplicantStatus(
+                $indeedStatus,
+                $record["sid"],
+                $companyId,
+                true
+            );
         }
     }
 }
