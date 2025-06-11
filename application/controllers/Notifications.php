@@ -212,6 +212,30 @@ class Notifications extends Public_Controller
             }
         }
         //
+        if (checkIfAppIsEnabled(MODULE_COMPLIANCE_SAFETY) && hasCSPAccess()) {
+            //
+            $this->load->model("v1/Compliance_report_model", "compliance_report_model");
+            //
+            $cspPendingCount = $this
+                ->compliance_report_model
+                ->getPendingCountReportsByEmployeeId(
+                    $ses['employer_detail']['sid'],
+                    $ses['company_detail']['sid'],
+                    isMainAllowedForCSP()
+                );
+            //
+            if ($cspPendingCount) {
+                //
+                $cspUrl = isMainAllowedForCSP() ? "dashboard" : "employee/dashboard";
+                //
+                $data[] = [
+                    'count' => $cspPendingCount,
+                    'link' => base_url('compliance_safety_reporting/' . $cspUrl),
+                    'title' => 'Compliance Safety Reporting'
+                ];
+            }
+        }
+        //
         if (!sizeof($data)) {
             $this->res['Response'] = 'No notifications found.';
             $this->resp();
