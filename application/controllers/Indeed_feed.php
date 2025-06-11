@@ -555,12 +555,12 @@ class Indeed_feed extends CI_Controller
                     $portal_applicant_jobs_list_sid = $jobs_list_result[0];
 
                     // Add the applicant to the Queue
-                    storeApplicantInQueueToProcess([
-                        "portal_job_applications_sid" => $job_applications_sid,
-                        "portal_applicant_job_sid" => $portal_applicant_jobs_list_sid,
-                        "job_sid" => $job_sid,
-                        "company_sid" => $companyId,
-                    ]);
+                    // storeApplicantInQueueToProcess([
+                    //     "portal_job_applications_sid" => $job_applications_sid,
+                    //     "portal_applicant_job_sid" => $portal_applicant_jobs_list_sid,
+                    //     "job_sid" => $job_sid,
+                    //     "company_sid" => $companyId,
+                    // ]);
 
                     //
                     // $this->load->model(model: "indeed_model");
