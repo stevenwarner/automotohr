@@ -3112,8 +3112,13 @@ class Compliance_report_model extends CI_Model
 			->select("csp_reports_incidents_items.sid, csp_reports_incidents_items.csp_reports_incidents_sid,csp_reports_incidents_items.compliance_report_incident_types_sid")
 			->where($where)
 			->join(
+				"csp_reports_incidents",
+				"csp_reports_incidents.sid = csp_reports_incidents_items.csp_reports_incidents_sid",
+				"inner"
+			)
+			->join(
 				"csp_reports",
-				"csp_reports.sid = csp_reports_incidents_items.csp_reports_incidents_sid",
+				"csp_reports.sid = csp_reports_incidents.csp_reports_sid",
 				"inner"
 			)
 			->count_all_results("csp_reports_incidents_items");
