@@ -1616,6 +1616,7 @@ class Indeed_model extends CI_Model
             //
             if (in_array("Processed", $filter["status"])) {
                 $this->db->where("is_processed", 1);
+                $this->db->where("is_expired", 0);
             }
             if (in_array("Errors", $filter["status"])) {
                 $this->db->where("errors is not null", null);
