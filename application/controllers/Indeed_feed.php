@@ -554,13 +554,15 @@ class Indeed_feed extends CI_Controller
                     $jobs_list_result = $this->all_feed_model->add_applicant_job_details($insert_job_list);
                     $portal_applicant_jobs_list_sid = $jobs_list_result[0];
 
-                    // Add the applicant to the Queue
-                    storeApplicantInQueueToProcess([
-                        "portal_job_applications_sid" => $job_applications_sid,
-                        "portal_applicant_job_sid" => $portal_applicant_jobs_list_sid,
-                        "job_sid" => $job_sid,
-                        "company_sid" => $companyId,
-                    ]);
+                    if (isset($resume) && $resume) {
+                        // Add the applicant to the Queue
+                        storeApplicantInQueueToProcess([
+                            "portal_job_applications_sid" => $job_applications_sid,
+                            "portal_applicant_job_sid" => $portal_applicant_jobs_list_sid,
+                            "job_sid" => $job_sid,
+                            "company_sid" => $companyId,
+                        ]);
+                    }
 
                     //
                     // Comment below line because this function exit the process  and now allow to send emails on 11 Apr 2024;
