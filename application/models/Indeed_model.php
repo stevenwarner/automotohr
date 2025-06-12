@@ -630,6 +630,20 @@ class Indeed_model extends CI_Model
                 $indeedAtsId,
                 $indeedStatus["indeed_slug"]
             );
+        //
+        $this
+            ->db
+            ->insert(
+                "portal_applicant_indeed_status_log",
+                [
+                    "portal_applicant_job_list_sid" => $applicantListId,
+                    "ats_status" => $status,
+                    "indeed_status" => $indeedStatus["indeed_slug"],
+                    "created_at" => getSystemDate(),
+                    "created_by" => $this->session->userdata("logged_in")["employer_detail"]["sid"] ?? 0,
+                    "status" => json_encode($response),
+                ]
+            );
         // when error occurred
         if ($response["error"]) {
             return $response;

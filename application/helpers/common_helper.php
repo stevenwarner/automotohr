@@ -17884,12 +17884,14 @@ if (!function_exists("sendDispositionStatusToIndeed")) {
         if ($record) {
             // load indeed model
             $CI->load->model("indeed_model");
-            $CI->indeed_model->pushTheApplicantStatus(
+            return $CI->indeed_model->pushTheApplicantStatus(
                 $indeedStatus,
                 $record["sid"],
                 $companyId,
                 true
             );
         }
+
+        return ["error" => "No record found"];
     }
 }
