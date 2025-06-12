@@ -1395,7 +1395,7 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
-    public function downloadCSPReport($reportId)
+    public function downloadCSPReport($reportId, $action)
     {
         //
         $employeeId = $this->getLoggedInEmployee("sid");
@@ -1436,7 +1436,7 @@ class Compliance_safety_reporting extends Base_csp
             $this->data['company_name'] = $this->getLoggedInCompany("CompanyName");
             $this->data['action_date'] = 'Downloaded Date';
             $this->data['action_by'] = "Downloaded By";
-            $this->data['action'] = "download";
+            $this->data['action'] = $action;
             $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
             //
             // Save log on download report
@@ -1449,45 +1449,48 @@ class Compliance_safety_reporting extends Base_csp
                     'userType' => 'employee',
                     'userId' => $employeeId,
                     'jsonData' => [
-                        'action' => 'download report',
+                        'action' => $action == 'download' ? 'download report' : 'print report',
                         'dateTime' => getSystemDate()
                     ]
                 ]
             );
             //
-            $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $this->data['company_name'])) . '/' . strtolower(preg_replace('/\s+/', '_', $this->data['report']['title']));
-            // 
-            if (!is_dir($basePath)) {
-                mkdir($basePath, 0777, true);
-            }
-            //
-            if ($this->data['report']['fileToDownload'])
-            {
-                foreach ($this->data['report']['fileToDownload'] as $file) {
-                    downloadFileFromAWS($basePath . $file['file_name'], $file['link']);
+            if ($action == 'download') {
+                //
+                $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $this->data['company_name'])) . '/' . strtolower(preg_replace('/\s+/', '_', $this->data['report']['title']));
+                // 
+                if (!is_dir($basePath)) {
+                    mkdir($basePath, 0777, true);
                 }
-            }
-            //
-            if ($this->data['report']['incidents'])
-            {
-                foreach ($this->data['report']['incidents'] as $incident) {
-                    foreach ($incident['issues'] as $issue) {
-                        //
-                        $issuePath = $basePath .'/'. strtolower(preg_replace('/\s+/', '_', $issue['issue_title'])).'/';
-                        //
-                        if (!is_dir($issuePath)) {
-                            mkdir($issuePath, 0777, true);
-                        }
-                        //
-                        if ($issue['fileToDownload'])
-                        { 
-                            foreach ($issue['fileToDownload'] as $file) {
-                                downloadFileFromAWS($issuePath . $file['file_name'], $file['link']);
+                //
+                if ($this->data['report']['fileToDownload'])
+                {
+                    foreach ($this->data['report']['fileToDownload'] as $file) {
+                        downloadFileFromAWS($basePath . $file['file_name'], $file['link']);
+                    }
+                }
+                //
+                if ($this->data['report']['incidents'])
+                {
+                    foreach ($this->data['report']['incidents'] as $incident) {
+                        foreach ($incident['issues'] as $issue) {
+                            //
+                            $issuePath = $basePath .'/'. strtolower(preg_replace('/\s+/', '_', $issue['issue_title'])).'/';
+                            //
+                            if (!is_dir($issuePath)) {
+                                mkdir($issuePath, 0777, true);
+                            }
+                            //
+                            if ($issue['fileToDownload'])
+                            { 
+                                foreach ($issue['fileToDownload'] as $file) {
+                                    downloadFileFromAWS($issuePath . $file['file_name'], $file['link']);
+                                }
                             }
                         }
-                    }
-                }    
-            }
+                    }    
+                }
+            }    
             //
             $this->load->view('compliance_safety_reporting/download_compliance_safety_report', $this->data);
         } else {
@@ -1871,14 +1874,14 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
-    public function downloadCSPIncidentItem(int $reportId, int $incidentId, int $itemId)
+    public function downloadCSPIncidentItem(int $reportId, int $incidentId, int $itemId, string $action)
     {
 
         $employeeId = $this->getLoggedInEmployee("sid");
         $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($employeeId, $reportId, $incidentId, $itemId);
 
         //
-        if ($haveAccess == 'access_report' || $haveAccess == 'access_incident') {
+        if ($haveAccess == 'access_report' || $haveAccess == 'access_issue') {
             //
             $this->data["itemDetail"] = $this
                 ->compliance_report_model
@@ -1893,7 +1896,7 @@ class Compliance_safety_reporting extends Base_csp
             $this->data['company_name'] = $this->getLoggedInCompany("CompanyName");
             $this->data['action_date'] = 'Downloaded Date';
             $this->data['action_by'] = "Downloaded By";
-            $this->data['action'] = "download";
+            $this->data['action'] = $action;
             $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
             //
             // Save log on download incident item
@@ -1906,30 +1909,33 @@ class Compliance_safety_reporting extends Base_csp
                     'userType' => 'employee',
                     'userId' => $employeeId,
                     'jsonData' => [
-                        'action' => 'download incident item',
+                        'action' => $action == 'download' ? 'download incident issue' : 'print incident issue',
                         'dateTime' => getSystemDate()
                     ]
                 ]
             );
             $this->data["severityStatus"] = $this->compliance_report_model->getSeverityLevels();
             //
-            $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $this->data['company_name'])) . '/' . strtolower(preg_replace('/\s+/', '_', $this->data['itemDetail']['report_title']));
-            //
-            if (!is_dir($basePath)) {
-                mkdir($basePath, 0777, true);
-            }
-            //
-            if ($this->data['itemDetail']['fileToDownload'])
-            {
+            if ($action == 'download') {
                 //
-                $issuePath = $basePath .'/'. strtolower(preg_replace('/\s+/', '_', $this->data['itemDetail']['issue_title'])).'/';
+                $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $this->data['company_name'])) . '/' . strtolower(preg_replace('/\s+/', '_', $this->data['itemDetail']['report_title']));
                 //
-                if (!is_dir($issuePath)) {
-                    mkdir($issuePath, 0777, true);
+                if (!is_dir($basePath)) {
+                    mkdir($basePath, 0777, true);
                 }
                 //
-                foreach ($this->data['itemDetail']['fileToDownload'] as $file) {
-                    downloadFileFromAWS($issuePath . $file['file_name'], $file['link']);
+                if ($this->data['itemDetail']['fileToDownload'])
+                {
+                    //
+                    $issuePath = $basePath .'/'. strtolower(preg_replace('/\s+/', '_', $this->data['itemDetail']['issue_title'])).'/';
+                    //
+                    if (!is_dir($issuePath)) {
+                        mkdir($issuePath, 0777, true);
+                    }
+                    //
+                    foreach ($this->data['itemDetail']['fileToDownload'] as $file) {
+                        downloadFileFromAWS($issuePath . $file['file_name'], $file['link']);
+                    }
                 }
             }
             //

@@ -84,6 +84,11 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                         <i class="fa fa-download"></i>
                         Download Report
                     </a>
+
+                    <a class="btn btn-green" href="<?= base_url("compliance_safety_reporting/print_report/".$reportId) ?>" target="_blank">
+                        <i class="fa fa-print"></i>
+                        Print Report
+                    </a>
                 </div>
             </div>
         </div>
@@ -169,7 +174,7 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                 <button class="btn btn-red jsDeleteIssue" type="button" data-issue_id="<?= $record['sid'] ?>">
                                     <i class="fa fa-trash"></i>
                                 </button>
-                                <a class="btn btn-black" href="<?= base_url("compliance_safety_reporting/download_incident_item/". $report["sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]) ?>" target="_blank">
+                                <a class="btn btn-black" title="Download Issue" href="<?= base_url("compliance_safety_reporting/download_incident_item/". $report["sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]) ?>" target="_blank">
                                     <i class="fa fa-download"></i>
                                 </a>
                             </div>

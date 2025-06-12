@@ -23,9 +23,13 @@
                     <i class="fa fa-pie-chart"></i>
                     Compliance Safety Reporting
                 </a>
-                <a class="btn btn-black" href="<?= base_url("compliance_safety_reporting/download_incident_item/". $report_id . "/" . $incidentId . "/" . $itemId) ?>" target="_blank">
+                <a class="btn btn-black" title="Download Issue" href="<?= base_url("compliance_safety_reporting/download_incident_item/". $report_id . "/" . $incidentId . "/" . $itemId) ?>" target="_blank">
                     <i class="fa fa-download"></i>
                     Download Issue
+                </a>
+                <a class="btn btn-green" title="Print Issue" href="<?= base_url("compliance_safety_reporting/print_incident_item/". $report_id . "/" . $incidentId . "/" . $itemId) ?>" target="_blank">
+                    <i class="fa fa-print"></i>
+                    Print Issue
                 </a>
             </div>
 

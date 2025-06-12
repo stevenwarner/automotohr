@@ -48,9 +48,11 @@ class Compliance_safety_reporting_employee extends Base_csp
         //
         $queryString = $_SERVER['QUERY_STRING'];
         $this->data['CSVUrl'] = base_url('compliance_safety_reporting/export_csv');
+        $this->data['downloadUrl'] = base_url('compliance_safety_reporting/employee/download_reports');
         //
         if ($queryString) {
             $this->data['CSVUrl'] = $this->data['CSVUrl'] . '?' . $queryString;
+            $this->data['downloadUrl'] = $this->data['downloadUrl'] . '?' . $queryString;
         }
         $this->data["severity_levels"] = $this
             ->compliance_report_model
@@ -233,6 +235,167 @@ class Compliance_safety_reporting_employee extends Base_csp
                 "status" => "error",
                 "message" => "Failed to update status",
             ]);
+        }
+    }
+
+    public function downloadReports()
+    {
+        //
+        // get filter    
+        $filter = [
+            "severity_level" => $this->input->get("severityLevel", true) ?? "-1",
+            "incident" => $this->input->get("incidentType", true) ?? "-1",
+            "status" => $this->input->get("status", true) ?? "-1",
+            "title" => $this->input->get("title") ?? "",
+            "date_range" => $this->input->get("date_range", true) ?? ""
+        ];
+        // get the reports
+        $reports = $this
+            ->compliance_report_model
+            ->getAllSelectedReportIds(
+                $this->getLoggedInCompany("sid"),
+                $filter
+            );
+        //
+        $this->data['reports'] = $reports;
+        $this->data['company_name'] = $this->getLoggedInCompany("CompanyName");
+        $this->data['action_date'] = 'Downloaded Date';
+        $this->data['action_by'] = "Downloaded By";
+        $this->data['action'] = "download";
+        $this->data['generatedDate'] = date('Y_m_d-H:i:s');
+        $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
+        //
+        // Save log on download report
+        $this->compliance_report_model->saveComplianceSafetyReportLog(
+            [
+                'reportId' => 0,
+                'incidentId' => 0,
+                'incidentItemId' => 0,
+                'type' => 'main',
+                'userType' => 'employee',
+                'userId' => $this->getLoggedInEmployee("sid"),
+                'jsonData' => [
+                    'action' => 'download report',
+                    'dateTime' => getSystemDate()
+                ]
+            ]
+        );
+        //
+        $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $this->data['company_name']))."/compliance_reports";
+        // //
+        if (!is_dir($basePath)) {
+            mkdir($basePath, 0777, true);
+        }
+        //
+        foreach ($reports as $report) {
+            //
+            $reportPath = $basePath . '/' . strtolower(preg_replace('/\s+/', '_', $report['title']));
+            //
+            if (!is_dir($reportPath)) {
+                mkdir($reportPath, 0777, true);
+            }
+            //
+            if ($report['fileToDownload'])
+            {
+                foreach ($report['fileToDownload'] as $file) {
+                    downloadFileFromAWS($reportPath .'/'. $file['file_name'], $file['link']);
+                }
+            }
+            //
+            if ($report['incidents'])
+            {
+                foreach ($report['incidents'] as $incident) {
+                    foreach ($incident['issues'] as $issue) {
+                        //
+                        $issuePath = $reportPath .'/'. strtolower(preg_replace('/\s+/', '_', $issue['issue_title'])).'/';
+                        //
+                        if (!is_dir($issuePath)) {
+                            mkdir($issuePath, 0777, true);
+                        }
+                        //
+                        if ($issue['fileToDownload'])
+                        { 
+                            foreach ($issue['fileToDownload'] as $file) {
+                                downloadFileFromAWS($issuePath . $file['file_name'], $file['link']);
+                            }
+                        }
+                    }
+                }    
+            }
+        }
+        // //
+        $this->load->view('compliance_safety_reporting/download_compliance_safety_reports', $this->data);
+    }
+
+    public function downloadCSPIncidentItem(int $reportId, int $incidentId, int $itemId, string $action)
+    {
+
+        $employeeId = $this->getLoggedInEmployee("sid");
+        $haveAccess = $this->compliance_report_model->checkEmployeeHaveReportAccess($employeeId, $reportId, $incidentId, $itemId);
+
+        //
+        if ($haveAccess == 'access_report' || $haveAccess == 'access_issue') {
+            //
+            $this->data["itemDetail"] = $this
+                ->compliance_report_model
+                ->getCSPIncidentItemByIdForDownload(
+                    $reportId,
+                    $incidentId,
+                    $itemId,
+                    true
+                );
+            //
+            $this->data['report_sid'] = $reportId;
+            $this->data['company_name'] = $this->getLoggedInCompany("CompanyName");
+            $this->data['action_date'] = 'Downloaded Date';
+            $this->data['action_by'] = "Downloaded By";
+            $this->data['action'] = $action;
+            $this->data['action_by_name'] = $this->getLoggedInEmployee("first_name") . ' ' . $this->getLoggedInEmployee("last_name");
+            //
+            // Save log on download incident item
+            $this->compliance_report_model->saveComplianceSafetyReportLog(
+                [
+                    'reportId' => $reportId,
+                    'incidentId' => $incidentId,
+                    'incidentItemId' => $itemId,
+                    'type' => 'incident_item',
+                    'userType' => 'employee',
+                    'userId' => $employeeId,
+                    'jsonData' => [
+                        'action' => $action == 'download' ? 'download incident issue' : 'print incident issue',
+                        'dateTime' => getSystemDate()
+                    ]
+                ]
+            );
+
+            $this->data["severityStatus"] = $this->compliance_report_model->getSeverityLevels();
+            //
+            if ($action == 'download') {
+                //
+                $basePath = ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $this->data['company_name'])) . '/' . strtolower(preg_replace('/\s+/', '_', $this->data['itemDetail']['report_title']));
+                //
+                if (!is_dir($basePath)) {
+                    mkdir($basePath, 0777, true);
+                }
+                //
+                if ($this->data['itemDetail']['fileToDownload'])
+                {
+                    //
+                    $issuePath = $basePath .'/'. strtolower(preg_replace('/\s+/', '_', $this->data['itemDetail']['issue_title'])).'/';
+                    //
+                    if (!is_dir($issuePath)) {
+                        mkdir($issuePath, 0777, true);
+                    }
+                    //
+                    foreach ($this->data['itemDetail']['fileToDownload'] as $file) {
+                        downloadFileFromAWS($issuePath . $file['file_name'], $file['link']);
+                    }
+                }
+            }    
+            //
+            $this->load->view('compliance_safety_reporting/download_compliance_safety_report_incident_item', $this->data);
+        } else {
+            return redirect("dashboard");
         }
     }
 }

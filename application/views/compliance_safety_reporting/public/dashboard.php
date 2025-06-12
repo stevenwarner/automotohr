@@ -198,7 +198,20 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                     </h3>
                 </div>
                 <div class="panel-body">
-
+                    <div class="row">
+                        <div class="col-sm-6">
+                            
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <?php if ($reports) { ?>
+                                <a class="btn btn-black" id="jsCSVButton" href="<?= $downloadUrl ?>" target="_blank">
+                                    <i class="fa fa-download"></i>
+                                    Download Report(s)
+                                </a>
+                            <?php } ?>    
+                        </div>
+                    </div>
+                    <br />
                     <?php if ($reports): ?>
                         <?php foreach ($reports as $v0): ?>
                             <div class="panel panel-default">
@@ -271,6 +284,20 @@ $severityLevelGraph["colors"] = array_column($severity_levels, "bg_color");
                                                         <div class="panel-body hidden jsIssuesBody" id="issue<?= $record["sid"]; ?>">
                                                             <div class="row">
                                                                 <div class="col-xs-12 text-right">
+                                                                    <a class="btn btn-black" 
+                                                                        title="Download Issue"
+                                                                        href="<?= base_url("csp/download_incident_item/". $record["csp_reports_sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]) ?>" 
+                                                                        target="_blank"
+                                                                        >
+                                                                        <i class="fa fa-download"></i>
+                                                                    </a>
+                                                                    <a class="btn btn-success" 
+                                                                        title="Print Issue"
+                                                                        href="<?= base_url("csp/print_incident_item/". $record["csp_reports_sid"] . "/" . $record["csp_reports_incidents_sid"] . "/" . $record["sid"]) ?>" 
+                                                                        target="_blank"
+                                                                        >
+                                                                        <i class="fa fa-print"></i>
+                                                                    </a>
                                                                     <?php if ($record["completion_status"] != "completed"): ?>
                                                                         <button class="btn btn-green jsMarkIssueDonePublic"
                                                                             data-issue_id="<?= $record["sid"]; ?>"

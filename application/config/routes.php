@@ -2722,7 +2722,10 @@ $route["compliance_safety_reporting/(:num)/emails/send/incidents"]["post"] =
   "v1/Compliance_safety_reporting/sendEmailsForCSPIncident/$1";
 
 $route["compliance_safety_reporting/download_report/(:num)"]["get"] =
-  "v1/Compliance_safety_reporting/downloadCSPReport/$1";
+  "v1/Compliance_safety_reporting/downloadCSPReport/$1/download";
+
+$route["compliance_safety_reporting/print_report/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/downloadCSPReport/$1/print";
 
 $route["compliance_safety_reporting/download_incident/(:num)/(:num)"]["get"] =
   "v1/Compliance_safety_reporting/downloadCSPIncident/$1/$2";
@@ -2774,10 +2777,22 @@ $route["csp/notes/(:num)/(:num)/(:num)"]["post"] =
   "v1/Compliance_safety_reporting_public/processIncidentItemNotes/$1/$2/$3";
 
 $route["compliance_safety_reporting/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
-  "v1/Compliance_safety_reporting/downloadCSPIncidentItem/$1/$2/$3";
+  "v1/Compliance_safety_reporting/downloadCSPIncidentItem/$1/$2/$3/download";
+
+$route["compliance_safety_reporting/print_incident_item/(:num)/(:num)/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting/downloadCSPIncidentItem/$1/$2/$3/print";
 
 $route["csp/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
-  "v1/Compliance_safety_reporting_public/downloadCSPIncidentItem/$1/$2/$3";
+  "v1/Compliance_safety_reporting_public/downloadCSPIncidentItem/$1/$2/$3/download";
+
+$route["csp/print_incident_item/(:num)/(:num)/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_public/downloadCSPIncidentItem/$1/$2/$3/print";
+
+$route["compliance_safety_reporting/employee/download_incident_item/(:num)/(:num)/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_employee/downloadCSPIncidentItem/$1/$2/$3/download";
+
+$route["compliance_safety_reporting/employee/print_incident_item/(:num)/(:num)/(:num)"]["get"] =
+  "v1/Compliance_safety_reporting_employee/downloadCSPIncidentItem/$1/$2/$3/print";
 
 //
 $route["settings/shifts/opensingle/create"]["post"] = "Settings/processCreateOpenSingleShift";
@@ -2902,6 +2917,13 @@ $route["cms/update_sections_sort_order/(:num)"]["post"] = "manage_admin/Cms/upda
 
 $route["compliance_safety_reporting/download_reports"]["get"] =
   "v1/Compliance_safety_reporting/downloadReports";
+
+$route["csp/download_reports"]["get"] =
+  "v1/Compliance_safety_reporting_public/downloadReports";
+
+$route["compliance_safety_reporting/employee/download_reports"]["get"] =
+  "v1/Compliance_safety_reporting_employee/downloadReports";
+
 $route["savecookiedata"]["post"] = "Home/saveCookieData";
 $route['cookies_report'] = 'manage_admin/reports/Main/cookiesDataReport';
 

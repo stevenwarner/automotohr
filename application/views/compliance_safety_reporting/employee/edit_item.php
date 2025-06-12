@@ -15,6 +15,14 @@
                     <i class="fa fa-pie-chart"></i>
                     Compliance Dashboard
                 </a>
+                <a class="btn btn-black" title="Download Issue" href="<?= base_url("compliance_safety_reporting/employee/download_incident_item/". $reportId . "/" . $incidentId . "/" . $itemId) ?>" target="_blank">
+                    <i class="fa fa-download"></i>
+                    Download Issue
+                </a>
+                <a class="btn btn-green" title="Print Issue" href="<?= base_url("compliance_safety_reporting/employee/print_incident_item/". $reportId . "/" . $incidentId . "/" . $itemId) ?>" target="_blank">
+                    <i class="fa fa-print"></i>
+                    Print Issue
+                </a>
             </div>
         </div>
 
