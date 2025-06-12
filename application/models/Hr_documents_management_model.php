@@ -6100,6 +6100,7 @@ class Hr_documents_management_model extends CI_Model
             ->where('company_sid', $cId)
             ->where('archive', 0)
             ->where('status', 1)
+            ->where('document_type <>', "offer_letter")
             ->group_start()
             ->where('acknowledgment_required IS NULL', NULL)
             ->or_where('acknowledgment_required', '')
