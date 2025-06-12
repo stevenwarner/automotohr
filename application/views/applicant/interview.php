@@ -18,7 +18,7 @@ $creds = getCreds('AHR');
             <div class="page-title">
                 <!-- <span>Interviewing for job
                     "<?php echo trim($portal_job_list['job_title'] ? $portal_job_list['job_title'] : $portal_job_list['desired_job_title']); ?>"</span> -->
-                  <span>Interviewing with
+                  <span>Interview with
                     "<?php echo $portal_job_list['first_name'] . ' ' . $portal_job_list['last_name']; ?>"</span>
             </div>
         </div>
@@ -108,7 +108,7 @@ $creds = getCreds('AHR');
             <h3>Interview Ended</h3>
             <p>Thank you for participating in the interview.</p>
             <p>We wish you the best of luck!</p>
-            <button id="enableMicrophoneBtn" onclick="window.location.href='/';">Return to Home</button>
+            <button id="enableMicrophoneBtn" onclick="window.location.href=`http://<?php echo $portal_employeer['sub_domain']; ?>`">Return to <?php echo $company['name']; ?></button>
         </div>
     </div>
 
@@ -205,7 +205,7 @@ $creds = getCreds('AHR');
             if (waitingTimeSeconds >= waitingTimelimit) {
                 clearInterval(counterInterval);
                 stopInterview();
-                console.log("Waited upto 5 minutes.");
+                console.log("Waited upto 1 minutes.");
             }
         }, 999);
 
@@ -306,10 +306,10 @@ $creds = getCreds('AHR');
                     currentAudio.pause();
                 }
                 currentAudio = null;
-                isPlaying = false;
-                audioQueue = [];
                 console.log('🔇 Audio cleared - user speaking');
             }
+            isPlaying = false;
+            audioQueue = [];
         }
 
         function setupSocketConnection() {
@@ -433,7 +433,6 @@ $creds = getCreds('AHR');
 
             socket.on('clearAudio', (data) => {
                 console.log('clearAudio', data);
-                // isSpeaking = data.speaking;
                 clearAudio();
             })
 
@@ -706,7 +705,6 @@ $creds = getCreds('AHR');
                     if (currentAudio && !currentAudio.paused) {
                         currentAudio.pause();
                         console.log('🔇 Audio paused - user speaking');
-                        audioQueue = [];
 
                         setTimeout(() => {
                             if(isSpeaking) {
@@ -825,7 +823,9 @@ $creds = getCreds('AHR');
             stopCallTimer();
 
             if (socket && socket.connected && sessionId) {
-                socket.emit('generate_reports', true);
+                socket.emit('generate_reports', {
+                    call_duration: document.querySelector('.timer #time').textContent
+                });
                 socket.disconnect();
             }
 

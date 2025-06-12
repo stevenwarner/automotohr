@@ -111,6 +111,73 @@
         color: #222222;
         border-bottom: 1px solid #222222;
     }
+
+    .application-header article {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .donut-chart {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: conic-gradient(
+            #252524 0deg,
+            #252524 var(--percentage, 216deg),
+            #e0e0e0 var(--percentage, 216deg),
+            #e0e0e0 360deg
+        );
+        position: relative;
+        transition: all 0.5s ease;
+    }
+
+    .donut-chart::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120px;
+        height: 120px;
+        background-color: #f5f5f5;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .donut-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 32px;
+        font-weight: bold;
+        color: #333;
+        z-index: 1;
+    }
+
+    .example-donut {
+        text-align: center;
+    }
+
+    .example-donut .donut-chart {
+        width: 120px;
+        height: 120px;
+    }
+
+    .example-donut .donut-chart::before {
+        width: 70px;
+        height: 70px;
+    }
+
+    .example-donut .donut-text {
+        font-size: 18px;
+    }
+
+    .example-title {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #666;
+    }
 </style>
 
 <?php
@@ -120,6 +187,8 @@
     $certifications = json_decode($submitted_resume_data['certifications']);
     $screening_questions = json_decode($submitted_resume_data['screening_questions']);
     $extra_content = $submitted_resume_data['extra_content'];
+    $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['reports']) : null;
+    $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/', $reports->overallScore)[0] : $submitted_resume_data['match_score'];
 ?>
 
 <div class="main-content">
@@ -149,42 +218,49 @@
                     <?php } ?>
                     <div class="application-header">
                         <article>
-                            <figure>
-                                <img src="<?php if (isset($applicant_info['pictures']) && $applicant_info['pictures'] != '') {
-                                                echo AWS_S3_BUCKET_URL . $applicant_info['pictures'];
-                                            } else {
-                                                echo AWS_S3_BUCKET_URL; ?>default_pic-ySWxT.jpg<?php } ?>" alt="Profile Picture">
-                            </figure>
-                            <div class="text">
-                                <h2><?php echo $applicant_info['first_name']; ?> <?= $applicant_info['last_name'] ?></h2>
-                                <div class="start-rating">
-                                    <input readonly="readonly" id="input-21b" <?php if (!empty($applicant_average_rating)) { ?> value="<?php echo $applicant_average_rating; ?>" <?php } ?> type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
-                                </div>
-
-                                <div class="" style="display: flex;justify-content:space-between;width: 100%;align-items: center;">
-                                    <?php if (check_blue_panel_status() && $applicant_info['is_onboarding'] == 1) { ?>
+                            <div>
+                                <figure>
+                                    <img src="<?php if (isset($applicant_info['pictures']) && $applicant_info['pictures'] != '') {
+                                                    echo AWS_S3_BUCKET_URL . $applicant_info['pictures'];
+                                                } else {
+                                                    echo AWS_S3_BUCKET_URL; ?>default_pic-ySWxT.jpg<?php } ?>" alt="Profile Picture">
+                                </figure>
+                                <div class="text">
+                                    <h2><?php echo $applicant_info['first_name']; ?> <?= $applicant_info['last_name'] ?></h2>
+                                    <div class="start-rating">
+                                        <input readonly="readonly" id="input-21b" <?php if (!empty($applicant_average_rating)) { ?> value="<?php echo $applicant_average_rating; ?>" <?php } ?> type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
+                                    </div>
     
-                                        <?php $send_notification = checkOnboardingNotification($id); ?>
-                                        <?php if ($send_notification) { ?>
-                                            <span class="badge" style="padding:8px; background-color: green;">On-boarding Request Sent</span>
+                                    <div class="" style="display: flex;justify-content:space-between;width: 100%;align-items: center;">
+                                        <?php if (check_blue_panel_status() && $applicant_info['is_onboarding'] == 1) { ?>
+        
+                                            <?php $send_notification = checkOnboardingNotification($id); ?>
+                                            <?php if ($send_notification) { ?>
+                                                <span class="badge" style="padding:8px; background-color: green;">On-boarding Request Sent</span>
+                                            <?php } else { ?>
+                                                <span class="badge" style="padding:8px; background-color: red;">On-boarding Request Pending</span>
+                                            <?php } ?>
+        
+                                            <span class="badge" style="padding:8px; background-color: blue;"><a href="<?php echo $onboarding_url; ?>" style="color:#fff;" target="_black">Preview On-boarding</a></span>
+                                            <?php if (!$send_notification) { ?>
+                                                <p class="" style="padding:18px; color: red;">
+                                                    <strong>
+                                                        <?php echo onboardingNotificationPendingText($id); ?>
+                                                    </strong>
+                                                </p>
+                                            <?php } ?>
                                         <?php } else { ?>
-                                            <span class="badge" style="padding:8px; background-color: red;">On-boarding Request Pending</span>
+                                            <span class="" style="padding:8px;"><?php echo $applicant_info['applicant_type']; ?></span>
                                         <?php } ?>
-    
-                                        <span class="badge" style="padding:8px; background-color: blue;"><a href="<?php echo $onboarding_url; ?>" style="color:#fff;" target="_black">Preview On-boarding</a></span>
-                                        <?php if (!$send_notification) { ?>
-                                            <p class="" style="padding:18px; color: red;">
-                                                <strong>
-                                                    <?php echo onboardingNotificationPendingText($id); ?>
-                                                </strong>
-                                            </p>
-                                        <?php } ?>
-                                    <?php } else { ?>
-                                        <span class="" style="padding:8px;"><?php echo $applicant_info['applicant_type']; ?></span>
-                                    <?php } ?>
-                                    <span style="padding: 5px;color:white;text-transform:capitalize;"><?php echo $applicant_job_queue['status']; ?></span>
+                                        <span style="padding: 5px;color:white;text-transform:capitalize;"><?php echo $applicant_job_queue['status']; ?></span>
+                                    </div>
+                                    
                                 </div>
-                                
+                            </div>
+                            <div class="example-donut">
+                                <div class="donut-chart" style="--percentage: <?= (360 * (int)$profile_scoring/100); ?>deg;">
+                                    <div class="donut-text"><?= (int)$profile_scoring; ?>%</div>
+                                </div>
                             </div>
                         </article>
                     </div>
@@ -369,7 +445,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <?php if(!empty($interview_logs)) { ?>
+                                <?php if(!empty($interview_logs) && $reports) { ?>
                                     <div id="tab2" class="tabs-content">
                                         
                                         <div class="row">
@@ -397,63 +473,60 @@
                                         </div>
 
                                         <div id="reports-data" class="custom-tab" style="display: block;">
-                                            <?php 
-                                                $reports = json_decode($interview_logs['reports']);
-                                                ?>
-                                                <table>
-                                                    <tr>
-                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Overall Score:</th>
-                                                        <td style="padding:10px;"><?= $reports->overallScore ?></td>
-                                                    </tr>
+                                            <table>
+                                                <tr>
+                                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Overall Score:</th>
+                                                    <td style="padding:10px;"><?= $reports->overallScore ?></td>
+                                                </tr>
 
-                                                    <tr>
-                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Confidence Level:</th>
-                                                        <td style="padding:10px;"><?= $reports->confidenceLevel ?></td>
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Strengths:</th>
-                                                        <td style="padding:10px;">
-                                                            <ul>
-                                                                <?php foreach ($reports->strengths as $strength): ?>
-                                                                    <li><?= htmlspecialchars($strength) ?></li>
-                                                                <?php endforeach; ?>
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
+                                                <tr>
+                                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Confidence Level:</th>
+                                                    <td style="padding:10px;"><?= $reports->confidenceLevel ?></td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Strengths:</th>
+                                                    <td style="padding:10px;">
+                                                        <ul>
+                                                            <?php foreach ($reports->strengths as $strength): ?>
+                                                                <li><?= htmlspecialchars($strength) ?></li>
+                                                            <?php endforeach; ?>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
 
-                                                    <tr>
-                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Areas for Improvement:</th>
-                                                        <td style="padding:10px;">
-                                                            <ul>
-                                                                <?php foreach ($reports->areasForImprovement as $area): ?>
-                                                                    <li><?= htmlspecialchars($area) ?></li>
-                                                                <?php endforeach; ?>
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
+                                                <tr>
+                                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Areas for Improvement:</th>
+                                                    <td style="padding:10px;">
+                                                        <ul>
+                                                            <?php foreach ($reports->areasForImprovement as $area): ?>
+                                                                <li><?= htmlspecialchars($area) ?></li>
+                                                            <?php endforeach; ?>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
 
-                                                    <tr>
-                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Suitability Summary:</th>
-                                                        <td style="padding:10px;"><?= $reports->suitabilitySummary ?></td>
-                                                    </tr>
+                                                <tr>
+                                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Suitability Summary:</th>
+                                                    <td style="padding:10px;"><?= $reports->suitabilitySummary ?></td>
+                                                </tr>
 
-                                                    <tr>
-                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Notable Quotes:</th>
-                                                        <td style="padding:10px;">
-                                                            <ul>
-                                                                <?php foreach ($reports->notableQuotes as $quote): ?>
-                                                                    <li><?= htmlspecialchars($quote) ?></li>
-                                                                <?php endforeach; ?>
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
+                                                <tr>
+                                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Notable Quotes:</th>
+                                                    <td style="padding:10px;">
+                                                        <ul>
+                                                            <?php foreach ($reports->notableQuotes as $quote): ?>
+                                                                <li><?= htmlspecialchars($quote) ?></li>
+                                                            <?php endforeach; ?>
+                                                        </ul>
+                                                    </td>
+                                                </tr>
 
-                                                    <tr>
-                                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Recommendation:</th>
-                                                        <td style="padding:10px;"><?= $reports->recommendation ?></td>
-                                                    </tr>
-                                                </table>
+                                                <tr>
+                                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Recommendation:</th>
+                                                    <td style="padding:10px;"><?= $reports->recommendation ?></td>
+                                                </tr>
+                                            </table>
                                         </div>
 
                                         <div id="transcript-data" class="custom-tab" style="display: none;">

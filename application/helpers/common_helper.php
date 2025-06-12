@@ -17893,3 +17893,23 @@ if (!function_exists("sendDispositionStatusToIndeed")) {
         }
     }
 }
+
+if (!function_exists('encrypt_id')) {
+    function encrypt_id($val) {
+        $CI =& get_instance();
+        $CI->load->library('encryption');
+        return base64_encode($CI->encryption->encrypt($val));
+    }
+}
+
+if (!function_exists('decrypt_id')) {
+    function decrypt_id($val) {
+        $CI =& get_instance();
+        $CI->load->library('encryption');
+        try {
+            return $CI->encryption->decrypt(base64_decode($val));
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+}
