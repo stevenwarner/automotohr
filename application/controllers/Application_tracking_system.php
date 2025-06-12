@@ -858,6 +858,8 @@ class Application_tracking_system extends Public_Controller
                         "portal_applicant_job_sid" => $job_list_sid
                     ])->count_all_results("portal_applicant_jobs_queue");
 
+                $data['submitted_resume_data'] = $this->application_tracking_system_model->get_submitted_resume_data($job_list_sid);
+                $data['interview_logs'] = $this->application_tracking_system_model->get_interview_log($job_list_sid);
                 //
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/application_tracking_system/applicant_profile');

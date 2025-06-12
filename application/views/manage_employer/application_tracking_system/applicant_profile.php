@@ -1,3 +1,92 @@
+<style>
+    .application-header article {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .donut-chart {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: conic-gradient(
+            #252524 0deg,
+            #252524 var(--percentage, 216deg),
+            #e0e0e0 var(--percentage, 216deg),
+            #e0e0e0 360deg
+        );
+        position: relative;
+        transition: all 0.5s ease;
+    }
+
+    .donut-chart.danger {
+        background: conic-gradient(
+            #f2dede 0deg,
+            #f2dede var(--percentage, 216deg),
+            #e0e0e0 var(--percentage, 216deg),
+            #e0e0e0 360deg
+        );
+    }
+
+    .donut-chart.warning {
+        background: conic-gradient(
+            #fcf8e3 0deg,
+            #fcf8e3 var(--percentage, 216deg),
+            #e0e0e0 var(--percentage, 216deg),
+            #e0e0e0 360deg
+        );
+    }
+
+    .donut-chart.orange {
+        background: conic-gradient(
+            #fd7a2a 0deg,
+            #fd7a2a var(--percentage, 216deg),
+            #e0e0e0 var(--percentage, 216deg),
+            #e0e0e0 360deg
+        );
+    }
+
+    .donut-chart::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120px;
+        height: 120px;
+        background-color: #f5f5f5;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .donut-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 32px;
+        font-weight: bold;
+        color: #333;
+        z-index: 1;
+    }
+
+    .example-donut {
+        text-align: center;
+    }
+
+    .example-donut .donut-chart {
+        width: 120px;
+        height: 120px;
+    }
+
+    .example-donut .donut-chart::before {
+        width: 70px;
+        height: 70px;
+    }
+
+    .example-donut .donut-text {
+        font-size: 18px;
+    }
+</style>
+
 <?php
 $field_phone = 'PhoneNumber';
 $field_sphone = 'secondary_PhoneNumber';
@@ -32,7 +121,8 @@ if ($_ssv) {
     $dob = $dob != 'Not Specified' ? ssvReplace($dob, true) : $dob;
 }
 
-
+$reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['reports']) : null;
+$profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/', $reports->overallScore)[0] : $submitted_resume_data['match_score'];
 ?>
 <div class="main-content">
     <div class="container-fluid">
@@ -61,37 +151,44 @@ if ($_ssv) {
                     <?php } ?>
                     <div class="application-header">
                         <article>
-                            <figure>
-                                <img src="<?php if (isset($applicant_info['pictures']) && $applicant_info['pictures'] != '') {
-                                                echo AWS_S3_BUCKET_URL . $applicant_info['pictures'];
-                                            } else {
-                                                echo AWS_S3_BUCKET_URL; ?>default_pic-ySWxT.jpg<?php } ?>" alt="Profile Picture">
-                            </figure>
-                            <div class="text">
-                                <h2><?php echo $applicant_info['first_name']; ?> <?= $applicant_info['last_name'] ?></h2>
-                                <div class="start-rating">
-                                    <input readonly="readonly" id="input-21b" <?php if (!empty($applicant_average_rating)) { ?> value="<?php echo $applicant_average_rating; ?>" <?php } ?> type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
-                                </div>
-                                <?php if (check_blue_panel_status() && $applicant_info['is_onboarding'] == 1) { ?>
-
-                                    <?php $send_notification = checkOnboardingNotification($id); ?>
-                                    <?php if ($send_notification) { ?>
-                                        <span class="badge" style="padding:8px; background-color: green;">On-boarding Request Sent</span>
+                            <div>
+                                <figure>
+                                    <img src="<?php if (isset($applicant_info['pictures']) && $applicant_info['pictures'] != '') {
+                                                    echo AWS_S3_BUCKET_URL . $applicant_info['pictures'];
+                                                } else {
+                                                    echo AWS_S3_BUCKET_URL; ?>default_pic-ySWxT.jpg<?php } ?>" alt="Profile Picture">
+                                </figure>
+                                <div class="text">
+                                    <h2><?php echo $applicant_info['first_name']; ?> <?= $applicant_info['last_name'] ?></h2>
+                                    <div class="start-rating">
+                                        <input readonly="readonly" id="input-21b" <?php if (!empty($applicant_average_rating)) { ?> value="<?php echo $applicant_average_rating; ?>" <?php } ?> type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
+                                    </div>
+                                    <?php if (check_blue_panel_status() && $applicant_info['is_onboarding'] == 1) { ?>
+    
+                                        <?php $send_notification = checkOnboardingNotification($id); ?>
+                                        <?php if ($send_notification) { ?>
+                                            <span class="badge" style="padding:8px; background-color: green;">On-boarding Request Sent</span>
+                                        <?php } else { ?>
+                                            <span class="badge" style="padding:8px; background-color: red;">On-boarding Request Pending</span>
+                                        <?php } ?>
+    
+                                        <span class="badge" style="padding:8px; background-color: blue;"><a href="<?php echo $onboarding_url; ?>" style="color:#fff;" target="_black">Preview On-boarding</a></span>
+                                        <?php if (!$send_notification) { ?>
+                                            <p class="" style="padding:18px; color: red;">
+                                                <strong>
+                                                    <?php echo onboardingNotificationPendingText($id); ?>
+                                                </strong>
+                                            </p>
+                                        <?php } ?>
                                     <?php } else { ?>
-                                        <span class="badge" style="padding:8px; background-color: red;">On-boarding Request Pending</span>
-                                    <?php } ?>
-
-                                    <span class="badge" style="padding:8px; background-color: blue;"><a href="<?php echo $onboarding_url; ?>" style="color:#fff;" target="_black">Preview On-boarding</a></span>
-                                    <?php if (!$send_notification) { ?>
-                                        <p class="" style="padding:18px; color: red;">
-                                            <strong>
-                                                <?php echo onboardingNotificationPendingText($id); ?>
-                                            </strong>
-                                        </p>
-                                    <?php } ?>
-                                <?php } else { ?>
-                                    <span class="" style="padding:8px;"><?php echo $applicant_info['applicant_type']; ?></span>
-                                <?php }  ?>
+                                        <span class="" style="padding:8px;"><?php echo $applicant_info['applicant_type']; ?></span>
+                                    <?php }  ?>
+                                </div>
+                            </div>
+                            <div class="example-donut">
+                                <div class="donut-chart <?php echo $profile_scoring < 34 ? 'danger' : ($profile_scoring < 67 ? 'warning' : 'orange'); ?>" style="--percentage: <?= (360 * (int)$profile_scoring/100); ?>deg;">
+                                    <div class="donut-text"><?= (int)$profile_scoring; ?>%</div>
+                                </div>
                             </div>
                         </article>
                     </div>
@@ -103,6 +200,7 @@ if ($_ssv) {
                             <li><a href="javascript:;">Messages</a></li>
                             <li id="tab5_nav"><a href="javascript:;">reviews</a></li>
                             <li id="js-calendar-btn"><a href="javascript:;">Calendar</a></li>
+                            <li id="js-calendar-btn"><a href="javascript:;">Applicant Scoring</a></li>
                             <?php if ($phone_sid != '') { ?>
                                 <li id="js-sms-btn"><a href="javascript:void(0)">SMS</a></li>
                             <?php } ?>
@@ -1571,11 +1669,15 @@ if ($_ssv) {
                                 <?php $this->load->view('manage_employer/application_tracking_system/' . ($is_new_calendar ? 'calendar_events_partial_ajax' : 'calendar_events_partial') . ''); ?>
                             </div>
                             <!-- #tab6 -->
+                            <div id="tab7" class="tabs-content">
+                                <?php $this->load->view('manage_employer/application_tracking_system/scoring'); ?>
+                            </div>
+                            <!-- #tab7 -->
                             <?php if ($phone_sid != '') { ?>
-                                <div id="tab7" class="tabs-content">
+                                <div id="tab8" class="tabs-content">
                                     <?php $this->load->view('manage_employer/application_tracking_system/sms_partial'); ?>
                                 </div>
-                                <!-- #tab7 -->
+                                <!-- #tab8 -->
                             <?php } ?>
                         </div>
                     </div>

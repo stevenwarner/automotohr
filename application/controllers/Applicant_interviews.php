@@ -1,7 +1,5 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 ini_set("memory_limit", "1024M");
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 class Applicant_interviews extends CI_Controller
 {
@@ -22,14 +20,13 @@ class Applicant_interviews extends CI_Controller
 
     public function interviewCall($id)
     {
-        $id = decrypt_id($id);
         $portal_job_list = $this->applicant_interview_model->get_applicant_data($id);
         $data['company'] = array(
             'name' => $portal_job_list['CompanyName'],
             'logo' => $portal_job_list['profile_picture'] ? $portal_job_list['profile_picture'] : $portal_job_list['Logo']
         );
         $data['portal_employeer'] = $this->applicant_interview_model->get_portal_employer($portal_job_list['userId']);
-        
+
         $interview_logs = $this->application_tracking_system_model->get_interview_log($id);
         if(!empty($interview_logs['reports'])) {
             $this->load->view('applicant/interview-expired', $data);
