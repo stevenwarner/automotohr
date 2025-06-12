@@ -265,7 +265,7 @@
                 /*display: block;*/
             }
         </style>
-    <?php } ?>    
+    <?php } ?>
 </head>
 
 <body style="overflow: hidden;">
@@ -337,7 +337,13 @@
             // if (has['W4MN'] != "null") assignedLength++;
             //
             let lmsCourses = <?= json_encode($documents['lms_courses']); ?>;
+
+            if (lmsCourses == null) {
+                lmsCourses = [{}];
+            }
+
             assignedLength = assignedLength + lmsCourses.length;
+
             //
             $('#js-dt').text(assignedLength);
 
@@ -785,18 +791,18 @@
 
     <!--  -->
     <div style="float: left; margin-left: -1000px; width: 800px;">
-    <!-- <div> -->
+        <!-- <div> -->
         <?php
         if ($documents['lms_courses']) {
             foreach ($documents['lms_courses'] as $key => $course) {
                 $employeeInfo = getEmployeeBasicInfo($course['employee_sid']);
                 $courseInfo = [];
-                $courseInfo['key'] = $course['sid'].'_'.$course['company_sid'].'_lms_certificate';
+                $courseInfo['key'] = $course['sid'] . '_' . $course['company_sid'] . '_lms_certificate';
                 $courseInfo['companyName'] = $employeeInfo['companyName'];
                 $courseInfo['employeeName'] = $employeeInfo['name'];
                 $courseInfo['AHRLogo'] = base_url('assets/images/lms_certificate_logo.png');
                 $courseInfo['AHRStudentID'] = $employeeInfo['AHREmployeeID'];
-                
+
                 $courseInfo['completedOn'] = convertDateTimeToTimeZone(
                     $course['updated_at'],
                     DB_DATE_WITH_TIME,
