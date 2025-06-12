@@ -842,7 +842,7 @@ class User_model extends CI_Model
             if ($get['end_date']) {
                 $whereArray['created_at <='] = (formatDateToDB($get['end_date'], SITE_DATE, DB_DATE)) . ' 23:59:59';
             }
-        } 
+        }
         //
         $resultData =
             $this->db->where($whereArray)
@@ -868,7 +868,7 @@ class User_model extends CI_Model
             if ($get['end_date']) {
                 $whereArray['created_at <='] = (formatDateToDB($get['end_date'], SITE_DATE, DB_DATE)) . ' 23:59:59';
             }
-        } 
+        }
 
         if ($get['client_ip'] != '') {
             $whereArray['client_ip ='] = trim($get['client_ip']);
@@ -878,6 +878,54 @@ class User_model extends CI_Model
             $this->db->where($whereArray)
             ->order_by('sid', 'DESC')
             ->get('cookie_log_data')
+            ->result_array();
+
+        return  $resultData;
+    }
+
+
+
+    //
+    public function getIndeedApplicantDispositionData($get)
+    {
+        //
+        $whereArray = [];
+        if ($get && $get['start_date'] && $get['end_date']) {
+            //
+            if ($get['start_date'] != '') {
+                $whereArray['portal_applicant_indeed_status_log.created_at >='] = (formatDateToDB($get['start_date'], SITE_DATE, DB_DATE)) . ' 00:00:00';
+            }
+            //
+            if ($get['end_date']) {
+                $whereArray['portal_applicant_indeed_status_log.created_at <='] = (formatDateToDB($get['end_date'], SITE_DATE, DB_DATE)) . ' 23:59:59';
+            }
+        }
+
+        if ($get['client_ip'] != '') {
+            $whereArray['client_ip ='] = trim($get['client_ip']);
+        }
+        //
+        $resultData =
+            $this->db
+            ->select('
+            portal_applicant_indeed_status_log.ats_status,
+            portal_applicant_indeed_status_log.indeed_status,
+            portal_applicant_indeed_status_log.created_by,
+            portal_applicant_indeed_status_log.created_at,
+            portal_applicant_indeed_status_log.status,
+            portal_applicant_jobs_list.company_sid,
+            portal_job_applications.first_name,
+            portal_job_applications.middle_name,
+            portal_job_applications.last_name,
+            users.CompanyName
+          
+        ')
+            ->where($whereArray)
+            ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.sid = portal_applicant_indeed_status_log.portal_applicant_job_list_sid', 'left')
+            ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
+            ->join('users', 'users.sid = portal_applicant_jobs_list.company_sid', 'left')
+            ->order_by('portal_applicant_indeed_status_log.sid', 'DESC')
+            ->get('portal_applicant_indeed_status_log')
             ->result_array();
 
         return  $resultData;

@@ -141,4 +141,43 @@ class Main extends Admin_Controller
         //
         $this->render('manage_admin/company/cookies_report');
     }
+
+    //
+    public function indeedApplicantDispositionReport()
+    {
+        //
+        $this->data['page_title'] = 'Indeed Applicant Disposition Status Report';
+        // load user model
+        $this->load->model('2022/User_model', 'user_model');
+        // get filter records
+        $this->data['records'] = $this->user_model->getIndeedApplicantDispositionData($this->input->get(null, false));
+
+        if ($this->input->get('export') == 1) {
+
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: CookiesData; filename=indeed_applicant_disposition_status_report.csv');
+            $output = fopen('php://output', 'w');
+            fputcsv($output, array(''));
+            fputcsv($output, array('Cookies Data Indeed Applicant Disposition Status Report'));
+            fputcsv($output, array(''));
+            fputcsv($output, array('Applicant Name', 'Company Name', 'ATS Status', 'Indeed Status', 'Changed By', 'Action Date'));
+
+            foreach ($this->data['records'] as $dataRow) {
+                $input = array();
+                $input['Applicant_Name'] = $dataRow['first_name'] . ' ' . $dataRow['last_name'];
+                $input['Company_Name'] = $dataRow['CompanyName'];
+                $input['ATS_Status'] = $dataRow['ats_status'];
+                $input['Indeed_Status'] = $dataRow['indeed_status'];
+                $input['Changed_By'] =  $dataRow['created_by'] != 0 ? getEmployeeOnlyNameBySID($dataRow['created_by']) : '';;
+                $input['Action_Date'] = $dataRow['created_at'];
+
+                fputcsv($output, $input);
+            }
+            fclose($output);
+            exit;
+        }
+
+        //
+        $this->render('manage_admin/company/indeed_applicant_disposition_report');
+    }
 }
