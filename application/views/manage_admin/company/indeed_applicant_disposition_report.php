@@ -11,7 +11,8 @@
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                         <div class="heading-title page-title">
-                                            <h1 class="page-title"><i class="fa fa-users"></i>Indeed Applicant Disposition Status Report</h1>
+                                            <h1 class="page-title"><i class="fa fa-users"></i>Indeed Applicant
+                                                Disposition Status Report</h1>
                                         </div>
                                         <div class="hr-search-criteria <?= $flag ? 'opened' : "" ?>">
                                             <strong>Click to modify search criteria</strong>
@@ -21,13 +22,18 @@
                                                 <div class="col-xs-12">
                                                     <div class="col-lg-4 col-md-3 col-xs-12 col-sm-3 field-row">
                                                         <label>Start Date</label>
-                                                        <input type="text" name="start_date" readonly class="invoice-fields" value="<?= $this->input->get('start_date') ?? ''; ?>">
+                                                        <input type="text" name="start_date" readonly
+                                                            class="invoice-fields"
+                                                            value="<?= $this->input->get('start_date') ?? ''; ?>">
                                                     </div>
 
                                                     <div class="col-lg-4 col-md-3 col-xs-12 col-sm-3 field-row">
                                                         <label>End Date</label>
-                                                        <input type="text" name="end_date" readonly class="invoice-fields" value="<?= $this->input->get('end_date') ?? ''; ?>">
-                                                        <input name="export" id="export" placeholder="" value="0" type="hidden">
+                                                        <input type="text" name="end_date" readonly
+                                                            class="invoice-fields"
+                                                            value="<?= $this->input->get('end_date') ?? ''; ?>">
+                                                        <input name="export" id="export" placeholder="" value="0"
+                                                            type="hidden">
 
                                                     </div>
 
@@ -47,18 +53,23 @@
 
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 field-row">
                                                         <label>&nbsp;</label>
-                                                        <button type="submit" class="btn btn-success btn-block" style="padding: 9px;">Search</button>
+                                                        <button type="submit" class="btn btn-success btn-block"
+                                                            style="padding: 9px;">Search</button>
                                                     </div>
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 field-row">
                                                         <label>&nbsp;</label>
-                                                        <a href="<?php echo base_url('indeed_applicant_disposition_report'); ?>" class="btn black-btn btn-block" style="padding: 9px;">Reset Search</a>
+                                                        <a href="<?php echo base_url('indeed_applicant_disposition_report'); ?>"
+                                                            class="btn black-btn btn-block" style="padding: 9px;">Reset
+                                                            Search</a>
                                                     </div>
 
 
 
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 field-row">
                                                         <label>&nbsp;</label>
-                                                        <button type="button" id="js-export" class="btn btn-success btn-block" style="padding: 9px;">Export CSV</button>
+                                                        <button type="button" id="js-export"
+                                                            class="btn btn-success btn-block"
+                                                            style="padding: 9px;">Export CSV</button>
 
                                                     </div>
 
@@ -72,39 +83,43 @@
                             <!--  -->
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <strong>(<span class="text-info"><?= count($records); ?></span>) Records found.</strong>
+                                    <strong>(<span class="text-info"><?= count($records); ?></span>) Records
+                                        found.</strong>
                                 </div>
                                 <div class="panel-body">
                                     <div class="table-responsive">
                                         <table class="table table-striped">
-                                            <thead>
-                                                <th>
-                                                    Applicant name
-                                                </th>
-                                                <th>
-                                                    Company Name
-                                                </th>
-                                                <th>
-                                                    ATS Status
-                                                </th>
-                                                <th>
-                                                    Indeed Status
-                                                </th>
-                                                <th>
-                                                    Changed By
-                                                </th>
-                                                <th>
-                                                    Action Date
-                                                </th>
-                                                <th>
-                                                    Errors/Success
-                                                </th>
+                                            <th>
+                                                Applicant<br> name
+                                            </th>
+                                            <th>
+                                                Company<br> Name
+                                            </th>
+                                            <th>
+                                                ATS<br> Status
+                                            </th>
+                                            <th>
+                                                Indeed<br> Status
+                                            </th>
+                                            <th>
+                                                Changed<br> By
+                                            </th>
+                                            <th>
+                                                Action<br> Date
+                                            </th>
+                                            <th>
+                                                Status
+                                            </th>
+                                            <th>
+                                                Message
+                                            </th>
                                             </thead>
                                             <tbody>
-                                                <?php if ($records) : ?>
-                                                    <?php foreach ($records as $record) : ?>
+                                                <?php if ($records): ?>
+                                                    <?php foreach ($records as $record): ?>
                                                         <tr>
-                                                            <td><?php echo $record['first_name'] . ' ' . $record['last_name']; ?></td>
+                                                            <td><?php echo $record['first_name'] . ' ' . $record['last_name']; ?>
+                                                            </td>
                                                             <td>
                                                                 <p><?php echo $record['CompanyName']; ?></p>
                                                             </td>
@@ -115,19 +130,41 @@
                                                                 <?php echo $record['indeed_status']; ?>
                                                             </td>
                                                             <td>
-                                                                <?php echo  $record['created_by'] != 0 ? getEmployeeOnlyNameBySID($record['created_by']) : ''; ?>
+                                                                <?php echo $record['created_by'] != 0 ? getEmployeeOnlyNameBySID($record['created_by']) : ''; ?>
                                                             </td>
                                                             <td>
                                                                 <?= formatDateToDB($record['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                                             </td>
+                                                            <?php $text = json_decode($record["status"], true); ?>
+                                                            <td class="text-center">
+                                                                <?php if ($text['error']): ?>
+                                                                    <span class="label label-danger">
+                                                                        ERROR
+                                                                    </span>
+                                                                <?php endif; ?>
+                                                                <?php if (!$text['error']): ?>
+                                                                    <span class="label label-success">
+                                                                        SUCCESS
+                                                                    </span>
+                                                                <?php endif; ?>
+                                                            </td>
                                                             <td>
 
-                                                                <?php echo $record['status']; ?>
+                                                                <?php if ($text['error']): ?>
+                                                                    <span class="text-danger">
+                                                                        <?= $text["error"]; ?>
+                                                                    </span>
+                                                                <?php else: ?>
+                                                                    <span class="text-success">
+                                                                        <?= $text["success"]; ?>
+                                                                    </span>
+                                                                <?php endif; ?>
 
                                                             </td>
+
                                                         </tr>
                                                     <?php endforeach; ?>
-                                                <?php else : ?>
+                                                <?php else: ?>
                                                     <tr>
                                                         <td colspan="7">
                                                             <p class="alert alert-info text-center">
@@ -150,7 +187,7 @@
 </div>
 
 <script>
-    $(function() {
+    $(function () {
         $('input[name="start_date"]').datepicker({
             changeYear: true,
             changeMonth: true
@@ -164,7 +201,7 @@
 
 
     //
-    $('#js-export').click(function() {
+    $('#js-export').click(function () {
 
         $("#export").val("1");
         $('#cookies_form').submit();
