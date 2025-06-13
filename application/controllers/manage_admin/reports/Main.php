@@ -151,44 +151,6 @@ class Main extends Admin_Controller
     public function indeedApplicantDispositionReport(int $pageNumber = 0)
     {
 
-        /*
-        
-        //
-        $this->data['page_title'] = 'Indeed Applicant Disposition Status Report';
-        // load user model
-        $this->load->model('2022/User_model', 'user_model');
-        // get filter records
-        $this->data['records'] = $this->user_model->getIndeedApplicantDispositionData($this->input->get(null, false));
-        $this->data['active_companies'] = $this->user_model->get_all_companies();
-
-
-        if ($this->input->get('export') == 1) {
-
-            header('Content-Type: text/csv; charset=utf-8');
-            header('Content-Disposition: CookiesData; filename=indeed_applicant_disposition_status_report.csv');
-            $output = fopen('php://output', 'w');
-            fputcsv($output, array(''));
-            fputcsv($output, array('Cookies Data Indeed Applicant Disposition Status Report'));
-            fputcsv($output, array(''));
-            fputcsv($output, array('Applicant Name', 'Company Name', 'ATS Status', 'Indeed Status', 'Changed By', 'Action Date'));
-
-            foreach ($this->data['records'] as $dataRow) {
-                $input = array();
-                $input['Applicant_Name'] = $dataRow['first_name'] . ' ' . $dataRow['last_name'];
-                $input['Company_Name'] = $dataRow['CompanyName'];
-                $input['ATS_Status'] = $dataRow['ats_status'];
-                $input['Indeed_Status'] = $dataRow['indeed_status'];
-                $input['Changed_By'] =  $dataRow['created_by'] != 0 ? getEmployeeOnlyNameBySID($dataRow['created_by']) : '';;
-                $input['Action_Date'] = $dataRow['created_at'];
-
-                fputcsv($output, $input);
-            }
-            fclose($output);
-            exit;
-        }
-*/
-
-
         $this->load->model('2022/User_model', 'user_model');
         // query params
         $this->data["filter"]["companies"] = $this->input->get("companies", true) ?? ["All"];
@@ -196,6 +158,8 @@ class Main extends Admin_Controller
         $this->data["filter"]["startDate"] = $this->input->get("start", true) ?? "";
         $this->data["filter"]["endDate"] = $this->input->get("end", true) ?? "";
         $this->data["filter"]["applicantName"] = $this->input->get("applicantname", true) ?? "";
+        $this->data["filter"]["atsIndeedId"] = $this->input->get("atsindeedid", true) ?? "";
+
 
         $this->data['page_title'] = 'Indeed Applicant Disposition Status Report';
         $this->data['companies'] = $this->user_model->get_all_companies();
@@ -258,7 +222,8 @@ class Main extends Admin_Controller
             $data["filter"]["status"] = $this->input->get("status", true) ?? ["All"];
             $data["filter"]["startDate"] = $this->input->get("start", true) ?? "";
             $data["filter"]["endDate"] = $this->input->get("end", true) ?? "";
-             $data["filter"]["applicantName"] = $this->input->get("applicantname", true) ?? "";
+            $data["filter"]["applicantName"] = $this->input->get("applicantname", true) ?? "";
+            $data["filter"]["atsIndeedId"] = $this->input->get("atsindeedid", true) ?? "";
 
             $records = $this
                 ->user_model
@@ -290,6 +255,7 @@ class Main extends Admin_Controller
                     'Applicant Name',
                     'Company Name',
                     'ATS Status',
+                    'ATS Indeed Id',
                     'Indeed Status',
                     'Changed By',
                     'Action Date'
@@ -304,6 +270,7 @@ class Main extends Admin_Controller
                     $a[] = $row['first_name'] . ' ' . $row['last_name'];
                     $a[] = $row['CompanyName'];
                     $a[] = $row['ats_status'];
+                    $a[] = $row['indeed_ats_sid'];
                     $a[] = $row['indeed_status'];
                     $a[] =  $row['created_by'] != 0 ? getEmployeeOnlyNameBySID($row['created_by']) : '';
                     $a[] = $row['created_at'];

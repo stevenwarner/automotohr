@@ -137,18 +137,20 @@
                                             </div>
 
                                             <div class="row">
-
-                                                <div class="col-sm-12 col-xs-12">
+                                                <div class="col-sm-6 col-xs-12">
                                                     <div class="form-group">
-                                                        <label>Applicant Name</label>
-                                                        <div class="row">
-                                                            <div class="col-sm-6">
-                                                                <input type="text" name="applicantname"
-                                                                    class="form-control"
-                                                                    value="<?= $filter["applicantName"]; ?>" />
-                                                            </div>
-
-                                                        </div>
+                                                        <label>Applicant Name</label>                                                      
+                                                            <input type="text" name="applicantname"
+                                                                class="form-control"
+                                                                value="<?= $filter["applicantName"]; ?>" />                                                    
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6 col-xs-12">
+                                                    <div class="form-group">
+                                                        <label>ATS Indeed Id</label>                                                      
+                                                            <input type="text" name="atsindeedid"
+                                                                class="form-control"
+                                                                value="<?= $filter["atsIndeedId"]; ?>" />                                                    
                                                     </div>
                                                 </div>
                                             </div>
@@ -167,16 +169,12 @@
                                                         <i class="fa fa-refresh"></i>
                                                         &nbsp;Reset
                                                     </a>
-
-
                                                     <button type="button" id="js-export" class="btn btn-success ">Export
                                                         CSV</button>
-
                                                 </div>
                                             </div>
                                         </form>
                                     </div>
-
 
                                 </div>
                             </div>
@@ -204,6 +202,7 @@
                                                         <th scope="col">Applicant<br>Name</th>
                                                         <th class="text-right" scope="col">Company <br>Name</th>
                                                         <th class="text-right" scope="col">ATS <br>Status</th>
+                                                        <th class="text-right" scope="col">ATS <br>Indeed<br>Id</th>
                                                         <th class="text-right" scope="col">Indeed <br>Status</th>
                                                         <th class="text-right" scope="col">Changed<br> By</th>
                                                         <th class="text-right" scope="col">Action <br>Date</th>
@@ -214,7 +213,7 @@
                                                     <?php $companyCache = []; ?>
                                                     <?php foreach ($records as $v0):
                                                         $response = json_decode($v0["status"], true);
-                                                        ?>
+                                                    ?>
                                                         <tr>
                                                             <td>
                                                                 <strong>
@@ -226,6 +225,9 @@
                                                             </td>
                                                             <td class="text-right">
                                                                 <?= $v0["ats_status"]; ?>
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <?= $v0["indeed_ats_sid"]; ?>
                                                             </td>
                                                             <td class="text-right">
                                                                 <?= $v0["indeed_status"]; ?>
@@ -287,11 +289,11 @@
 <script src="<?= base_url("public/v1/plugins/ms_modal/main.min.js"); ?>"></script>
 
 <script>
-    $(function () {
+    $(function() {
         //
         let jobId;
         let XHR = null;
-        $(".jsSetSalary").click(function (event) {
+        $(".jsSetSalary").click(function(event) {
             //
             event.preventDefault();
             //
@@ -305,7 +307,7 @@
             }, getSalary)
         });
 
-        $(document).on("click", ".jsSalaryUpdate", function (event) {
+        $(document).on("click", ".jsSalaryUpdate", function(event) {
             //
             event.preventDefault();
 
@@ -331,16 +333,16 @@
             //
             let formObj = $("#jsSalaryForm").serialize();
             $.ajax({
-                url: window.location.origin + "/manage_admin/reports/indeed/salary/" + jobId,
-                method: "post",
-                data: formObj
-            })
-                .always(function () {
+                    url: window.location.origin + "/manage_admin/reports/indeed/salary/" + jobId,
+                    method: "post",
+                    data: formObj
+                })
+                .always(function() {
                     ml(false, "jsSalaryModalLoader")
                 })
-                .fail(function () { })
-                .success(function (resp) {
-                    alertify.alert("You have successfully updated the salary!", function () {
+                .fail(function() {})
+                .success(function(resp) {
+                    alertify.alert("You have successfully updated the salary!", function() {
                         $("#jsSalaryModal .jsModalCancel").click();
                     })
                 })
@@ -357,11 +359,11 @@
                     url: window.location.origin + "/manage_admin/reports/indeed/salary/" + jobId,
                     method: "get"
                 })
-                .always(function () {
+                .always(function() {
                     XHR = null;
                 })
-                .fail(function () { })
-                .success(function (resp) {
+                .fail(function() {})
+                .success(function(resp) {
                     $("#jsSalaryModalBody").html(resp.view)
                     ml(false, "jsSalaryModalLoader")
                 })
@@ -369,7 +371,7 @@
     });
 
 
-    $(function () {
+    $(function() {
         $("#jsCompanies").select2({
             closeOnSelection: false
         });
@@ -379,25 +381,25 @@
 
         var dateFormat = "mm/dd/yy",
             from = $("#jsPeriodStart")
-                .datepicker({
-                    defaultDate: "+1w",
-                    changeMonth: true,
-                    numberOfMonths: 1
-                })
-                .on("change", function () {
-                    to.datepicker("option", "minDate", getDate(this));
-                    to.datepicker.click(function () {
-                        $(this).datepicker('show');
-                    });
-                }),
+            .datepicker({
+                defaultDate: "+1w",
+                changeMonth: true,
+                numberOfMonths: 1
+            })
+            .on("change", function() {
+                to.datepicker("option", "minDate", getDate(this));
+                to.datepicker.click(function() {
+                    $(this).datepicker('show');
+                });
+            }),
             to = $("#jsPeriodEnd").datepicker({
                 defaultDate: "+1w",
                 changeMonth: true,
                 numberOfMonths: 1
             })
-                .on("change", function () {
-                    from.datepicker("option", "maxDate", getDate(this));
-                });
+            .on("change", function() {
+                from.datepicker("option", "maxDate", getDate(this));
+            });
 
         function getDate(element) {
             var date;
@@ -410,7 +412,7 @@
             return date;
         }
 
-        $(".jsButton").click(function (event) {
+        $(".jsButton").click(function(event) {
             event.preventDefault();
 
             const recordId = $(this).closest("tr").data("id");
@@ -418,12 +420,12 @@
             const target = $(this).data("target");
 
             Modal({
-                Id: "jsModal",
-                Title: "",
-                Loader: "jsModalLoader",
-                Body: '<div id="jsModalBody"></div>'
-            },
-                function () {
+                    Id: "jsModal",
+                    Title: "",
+                    Loader: "jsModalLoader",
+                    Body: '<div id="jsModalBody"></div>'
+                },
+                function() {
                     if (target === "log") {
                         loadLog(logId)
                     }
@@ -438,11 +440,11 @@
                     url: window.location.origin + "/manage_admin/reports/indeed/log/" + logId,
                     method: "GET"
                 })
-                .fail(function () {
+                .fail(function() {
                     $("#jsModal .jsModalCancel").click();
                     alert("Something went wrong!");
                 })
-                .success(function (resp) {
+                .success(function(resp) {
                     $("#jsModalBody").html(resp.view);
                     $('.jsIPLoader[data-page="jsModalLoader"]').hide(0);
                 });
@@ -450,7 +452,7 @@
     })
 
     //js-search
-    $("#js-search").click(function (event) {
+    $("#js-search").click(function(event) {
         event.preventDefault();
 
         $("#perform_action").val('');
@@ -459,7 +461,7 @@
 
 
     //
-    $("#js-export").click(function (event) {
+    $("#js-export").click(function(event) {
         event.preventDefault();
         $("#perform_action").val('csvexport');
         $("#js-indeedform").submit();
@@ -472,35 +474,35 @@
                 url: window.location.origin + "/manage_admin/reports/indeed/history/" + logId,
                 method: "GET"
             })
-            .fail(function () {
+            .fail(function() {
                 $("#jsModal .jsModalCancel").click();
                 alert("Something went wrong!");
             })
-            .success(function (resp) {
+            .success(function(resp) {
                 $("#jsModalBody").html(resp.view);
                 $('.jsIPLoader[data-page="jsModalLoader"]').hide(0);
             });
     }
 
     //
-    $(".jsHistory").click(function (event) {
+    $(".jsHistory").click(function(event) {
         event.preventDefault();
 
         const jobId = $(this).closest("tr").data("jobid");
 
         Modal({
-            Id: "jsModal",
-            Title: "",
-            Loader: "jsModalLoader",
-            Body: '<div id="jsModalBody"></div>'
-        },
-            function () {
+                Id: "jsModal",
+                Title: "",
+                Loader: "jsModalLoader",
+                Body: '<div id="jsModalBody"></div>'
+            },
+            function() {
                 loadHistory(jobId)
             }
         );
     });
 
-    $(".jsHasErrors").click(function (event) {
+    $(".jsHasErrors").click(function(event) {
         event.preventDefault();
         const jobId = $(this).closest("tr").data("jobid");
         window.location.href = '<?php echo base_url('manage_admin/companies/runIndeedJob/'); ?>' + jobId;
@@ -508,8 +510,8 @@
     });
 
     // modal to show the errors
-    $(document).ready(function () {
-        $('.jsShowErrors').on('click', function () {
+    $(document).ready(function() {
+        $('.jsShowErrors').on('click', function() {
             var errors = $(this).data('errors');
 
             // Parse the JSON if it's a JSON string
