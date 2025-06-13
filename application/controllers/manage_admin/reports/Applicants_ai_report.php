@@ -55,8 +55,8 @@ class Applicants_ai_report extends Admin_Controller
         $result_array = array();
 
 
-        // $per_page = PAGINATION_RECORDS_PER_PAGE;
-        $per_page = 2;
+        $per_page = PAGINATION_RECORDS_PER_PAGE;
+        // $per_page = 2;
         $offset = 0;
         if ($page_number > 1) {
             $offset = ($page_number - 1) * $per_page;
