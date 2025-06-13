@@ -15,7 +15,7 @@ class Applicants_ai_report extends Admin_Controller
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
-    public function index($company_sid = 'all', $keyword = 'all', $startdate = 'all', $enddate = 'all', $status = 'all', $page_number = 1)
+    public function index($company_sid = 'all', $keyword = 'all', $startdate = 'all', $enddate = 'all', $status = 'all', $indeed_id = 'all', $page_number = 1)
     {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
@@ -31,6 +31,7 @@ class Applicants_ai_report extends Admin_Controller
         $end_date = urldecode($enddate);
         $keyword = urldecode($keyword);
         $status = urldecode($status);
+        $indeed_id = urldecode($indeed_id);
         $this->data['flag'] = true;
         $this->form_validation->set_data($this->input->get(NULL, true));
 
@@ -54,22 +55,22 @@ class Applicants_ai_report extends Admin_Controller
         $result_array = array();
 
 
-        $per_page = PAGINATION_RECORDS_PER_PAGE;
-        // $per_page = 2;
+        // $per_page = PAGINATION_RECORDS_PER_PAGE;
+        $per_page = 2;
         $offset = 0;
         if ($page_number > 1) {
             $offset = ($page_number - 1) * $per_page;
         }
         //
-        $total_records = $this->advanced_report_model->get_applicant_ai_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, 1);
-        $applicants = $this->advanced_report_model->get_applicant_ai_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, 0, $per_page, $offset);
+        $total_records = $this->advanced_report_model->get_applicant_ai_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 1);
+        $applicants = $this->advanced_report_model->get_applicant_ai_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 0, $per_page, $offset);
 
         $final_applicants = array();
         $final_applicants = $applicants;
 
         $this->load->library('pagination');
 
-        $pagination_base = base_url('manage_admin/reports/applicants_ai_report') . '/' . $company_sid . '/' . urlencode($keyword) . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($status);
+        $pagination_base = base_url('manage_admin/reports/applicants_ai_report') . '/' . $company_sid . '/' . urlencode($keyword) . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($status) . '/' . urlencode($indeed_id);
 
         //echo $pagination_base;
 
@@ -77,8 +78,8 @@ class Applicants_ai_report extends Admin_Controller
         $config["base_url"] = $pagination_base;
         $config["total_rows"] = $total_records;
         $config["per_page"] = $per_page;
-        $config["uri_segment"] = 9;
-        $config["num_links"] = 9;
+        $config["uri_segment"] = 10;
+        $config["num_links"] = 10;
         $config["use_page_numbers"] = true;
         $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
         $config['full_tag_close'] = '</ul></nav><!--pagination-->';

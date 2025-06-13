@@ -2934,8 +2934,8 @@ $route['cookies_report'] = 'manage_admin/reports/Main/cookiesDataReport';
 // schedule document report
 $route["cron/scheduled_document_report"]["cli"] = "Cron_lms_courses/sendDocumentReportToManagers";
 
+$route['manage_admin/reports/applicants_ai_report/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/applicants_ai_report/index/$1/$2/$3/$4/$5/$6/$7';
 $route['manage_admin/reports/applicants_ai_report/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/applicants_ai_report/index/$1/$2/$3/$4/$5/$6';
-$route['manage_admin/reports/applicants_ai_report/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/applicants_ai_report/index/$1/$2/$3/$4/$5';
 $route['interview/(:any)'] = 'Applicant_interviews/interviewCall/$1';
 
 

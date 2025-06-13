@@ -99,6 +99,19 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <div class="field-row">
+                                                        <label>ATS Indeed ID</label>
+                                                        <?php $indeed_ats_id = $this->uri->segment(9) != 'all' ? urldecode($this->uri->segment(9)) : ''; ?>
+                                                        <input class="invoice-fields" type="text" id="indeed_ats_id"
+                                                            name="indeed_ats_id"
+                                                            value="<?php echo set_value('indeed_ats_id', $indeed_ats_id); ?>" />
+                                                    </div>
+                                                </div>    
+                                            </div>
+                                            <div class="row">   
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                </div>  
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                     <div class="field-row">
                                                         <label>&nbsp;</label>
@@ -159,6 +172,7 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                                 <th>Status</th>
                                                                 <th>Failed<br />Reason</th>
                                                                 <th>Date<br />Applied</th>
+                                                                <th>ATS Indeed ID</th>
                                                                 <th>Action</th>
                                                             </tr>
                                                         </thead>
@@ -196,6 +210,9 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                                         </td>
                                                                         <td style="vertical-align: middle;">
                                                                             <?php echo date_with_time($applicant['created_at']); ?>
+                                                                        </td>
+                                                                        <td style="vertical-align: middle;">
+                                                                            <?php echo $applicant['indeed_ats_sid'] ?? 'N/A'; ?>
                                                                         </td>
                                                                         <td style="vertical-align: middle;">
                                                                             <?php if ($applicant["status"] == "completed"): ?>
@@ -262,14 +279,16 @@ $referrerChartArray[] = array('Referral', 'Count');
         var keyword = $("#keyword").val();
         var company = $('#company_sid').val();
         var status = $('#status').val();
+        var indeed_id = $('#indeed_ats_id').val();
         //
         start_date_applied = start_date_applied != '' && start_date_applied != null && start_date_applied != undefined && start_date_applied != 0 ? encodeURIComponent(start_date_applied) : 'all';
         end_date_applied = end_date_applied != '' && end_date_applied != null && end_date_applied != undefined && end_date_applied != 0 ? encodeURIComponent(end_date_applied) : 'all';
         keyword = keyword != '' && keyword != null && keyword != undefined && keyword != 0 ? encodeURIComponent(keyword) : 'all';
         company = company != '' && company != null && company != undefined && company != 0 ? encodeURIComponent(company) : 'all';
         status = status != '' && status != null && status != undefined && status != 0 ? encodeURIComponent(status) : 'all';
+        indeed_id = indeed_id != '' && indeed_id != null && indeed_id != undefined && indeed_id != 0 ? encodeURIComponent(indeed_id) : 'all';
         //
-        var url = '<?php echo base_url('manage_admin/reports/applicants_ai_report'); ?>' + '/' + company + '/' + keyword + '/' + start_date_applied + '/' + end_date_applied + '/' + status;
+        var url = '<?php echo base_url('manage_admin/reports/applicants_ai_report'); ?>' + '/' + company + '/' + keyword + '/' + start_date_applied + '/' + end_date_applied + '/' + status + '/' + indeed_id;
         //
         $('#btn_apply_filters').attr('href', url);
     }
@@ -306,6 +325,12 @@ $referrerChartArray[] = array('Referral', 'Count');
         });
 
         $('#keyword').trigger('keyup');
+
+        $('#indeed_ats_id').on('keyup', function () {
+            generate_search_url();
+        });
+
+        $('#indeed_ats_id').trigger('keyup');
 
         $('.datepicker').datepicker({
             dateFormat: 'mm-dd-yy'

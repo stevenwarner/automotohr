@@ -1914,7 +1914,7 @@ class Advanced_report_model extends CI_Model
         // return array( 'Data' => $result_arr, 'Total' => $totalRecords );
     }
 
-    function get_applicant_ai_report($company_sid, $keyword = '', $start_date = '', $end_date = '', $status, $count, $per_page = NULL, $offset = NULL)
+    function get_applicant_ai_report($company_sid, $keyword = '', $start_date = '', $end_date = '', $status, $indeed_id, $count, $per_page = NULL, $offset = NULL)
     {
         $this->db->select('portal_applicant_jobs_queue.sid');
         $this->db->select('portal_applicant_jobs_queue.created_at');
@@ -1929,6 +1929,7 @@ class Advanced_report_model extends CI_Model
         $this->db->select('portal_job_listings.Location_City');
         $this->db->select('portal_job_listings.Location_State');
         $this->db->select('portal_job_listings.Title');
+        $this->db->select('portal_applicant_jobs_list.indeed_ats_sid');
 
         $this->db->select('users.CompanyName');
 
@@ -1948,6 +1949,11 @@ class Advanced_report_model extends CI_Model
                     $this->db->group_end();
                 }
             }
+        }
+
+
+        if (!empty($indeed_id) && $indeed_id != 'all') {
+            $this->db->where('portal_applicant_jobs_list.indeed_ats_sid', $indeed_id);
         }
 
         if ($status != 'all') {
@@ -1975,6 +1981,7 @@ class Advanced_report_model extends CI_Model
         }
 
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_queue.portal_job_applications_sid = portal_job_applications.sid', 'inner');
+        $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'inner');
         $this->db->join('users', 'portal_applicant_jobs_queue.company_sid = users.sid', 'inner');
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_queue.job_sid', 'inner');
         $this->db->order_by('portal_applicant_jobs_queue.sid', 'DESC');
