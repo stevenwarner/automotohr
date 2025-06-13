@@ -478,9 +478,105 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
         </div>
     </div>
 </div>
+<!-- Main End -->
+
+<div id="edit_questionnaire_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form method="post" >
+            <input type="hidden" name="resume_id" value="<?php echo $submitted_resume_data['sid']; ?>" />
+            <div class="modal-content">
+                <div class="modal-header modal-header-bg">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Questions</h4>
+                </div>
+                <div class="modal-body" id="edit_questionnaire_body_data">
+                    <!-- Questions Input List -->
+                    <div id="question_wrapper"></div>
+                    <button class="btn btn-success" type="button" onclick="addQuestion()" >Add More</button>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        class="btn btn-success"
+                        type="submit"
+                        id="submit_prompt"
+                    >Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="edit_scoring_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form method="post" >
+            <input type="hidden" name="resume_id" value="<?php echo $submitted_resume_data['sid']; ?>" />
+            <div class="modal-content">
+                <div class="modal-header modal-header-bg">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Applicant Scoring</h4>
+                </div>
+                <div class="modal-body" id="edit_scoring_body_data">
+                    <!-- Scoring Input -->
+                    <input type="number" class="invoice-fields" name="score" id="score" value="<?= $submitted_resume_data['match_score']; ?>" min="1" max="100" required />
+                    <p>Maximum scoring will be 100.</p>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        class="btn btn-success"
+                        type="submit"
+                        id="submit_prompt"
+                    >Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
 
+    // --------------------------
+    // Parsed Data Script Code
+    // --------------------------
+    
+    let screening_questions = JSON.parse(`<?php echo $submitted_resume_data['screening_questions'] ?>`);
+    const displayQuestions = () => {    
+        let question_html_data = ``;
+        for(let i = 0; i < screening_questions.length; i++) {
+            question_html_data += `<div style="margin-bottom: 10px;display:grid;">
+                <div style="display:flex;justify-content: space-between;align-items: center;"> <label>Question:</label> <i class="fa fa-trash"></i> </div>
+                <textarea name="questions[]" key="${i}" rows="${3}" >${screening_questions[i]}</textarea>
+            </div>`;
+        }
+        $('#edit_questionnaire_body_data #question_wrapper').html(question_html_data);
+        $('#edit_questionnaire_modal').modal('show');
+
+        removeQuestionJS();
+    }
+
+    const addQuestion = () => {
+        let question_html_data = `<div style="margin-bottom: 10px;display:grid;">
+            <div style="display:flex;justify-content: space-between;align-items: center;"> <label>Question:</label> <i class="fa fa-trash"></i> </div>
+            <textarea name="questions[]" rows="3" >${''}</textarea>
+        </div>`;
+        $('#edit_questionnaire_body_data #question_wrapper').append(question_html_data);
+
+        removeQuestionJS();
+    }
+
+    const removeQuestionJS = () => {
+        $('#edit_questionnaire_body_data .fa-trash').click(function(e) {
+            e.target.parentElement.parentElement.remove();
+        })
+    }
+
+    const displayScoring = () => {
+        $('#edit_scoring_modal').modal('show');
+    }
+
+    // --------------------------
+    // Interview Data Script Code
+    // --------------------------
+    
     $(document).ready(function() {
         $('#HorizontalTab').easyResponsiveTabs({
             type: 'default', //Types: default, vertical, accordion
