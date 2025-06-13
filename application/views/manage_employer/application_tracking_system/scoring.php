@@ -2,35 +2,51 @@
     .form-title-section {
         margin: 20px 0px 10px 0px;
     }
+
     .HorizontalTab {
         display: inline-block;
     }
+
     .submitted_card_wrapper {
         background: #fff;
         border-radius: 2px;
         min-height: 400px;
         padding: 20px;
     }
+
     .submitted_card_wrapper p {
         font-size: 12px;
         color: #737373;
         margin: 10px 0;
     }
-    .score_wrapper h3, .score_wrapper span { margin: 0px; font-weight: 600; }
-    .submitted_card_wrapper h4 { font-size: 16px; font-weight: 600; }
+
+    .score_wrapper h3,
+    .score_wrapper span {
+        margin: 0px;
+        font-weight: 600;
+    }
+
+    .submitted_card_wrapper h4 {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
     .score_wrapper {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
     }
+
     .reasoning ul {
         padding: 0px 20px;
     }
+
     .reasoning,
     .questions {
         line-height: 1.6;
     }
+
     .questions span {
         padding: 10px;
         background-color: #eee;
@@ -42,6 +58,7 @@
         flex-wrap: wrap;
         gap: 5px;
     }
+
     .skills span {
         display: block;
         background-color: #eee;
@@ -60,15 +77,18 @@
         height: 25px;
         justify-content: center;
     }
+
     .action-btn i {
         margin: 0px;
     }
+
     .panel-heading {
         display: flex;
         justify-content: space-between;
     }
 
-    textarea, input {
+    textarea,
+    input {
         width: 100%;
         border-radius: 3px;
         border: 1px solid #ddd;
@@ -84,6 +104,7 @@
         line-height: 1.6;
         border: 1px solid #dddddd;
     }
+
     table tr:nth-of-type(even) {
         background-color: #f5f5f5;
     }
@@ -103,6 +124,7 @@
         user-select: none;
         transition: all 0.2s ease-in-out;
     }
+
     .custom-tabs span:hover {
         background: #f7f7f7;
     }
@@ -116,12 +138,10 @@
         width: 200px;
         height: 200px;
         border-radius: 50%;
-        background: conic-gradient(
-            #252524 0deg,
-            #252524 var(--percentage, 216deg),
-            #e0e0e0 var(--percentage, 216deg),
-            #e0e0e0 360deg
-        );
+        background: conic-gradient(#252524 0deg,
+                #252524 var(--percentage, 216deg),
+                #e0e0e0 var(--percentage, 216deg),
+                #e0e0e0 360deg);
         position: relative;
         transition: all 0.5s ease;
     }
@@ -187,8 +207,10 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
     <div class="row">
         <div class="col-xs-12">
             <ul class="nav nav-tabs nav-justified">
-                <li class="active"><a data-toggle="tab" href="#parsed_data">Parsed Data</a></li>
-                <li><a data-toggle="tab" href="#interview_data" onclick="activeInterviewData()">Interview Data</a></li>
+                <li class="active"><a data-toggle="tab" href="#parsed_data">Applicant Data</a></li>
+                <?php if ($interview_logs): ?>
+                    <li><a data-toggle="tab" href="#interview_data" onclick="activeInterviewData()">Interview Data</a></li>
+                <?php endif; ?>
             </ul>
             <div class="tab-content">
                 <div id="parsed_data" class="tab-pane fade in active hr-innerpadding">
@@ -198,10 +220,9 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                 <div class="score_wrapper">
                                     <h3>Applicant Score</h3>
                                     <div style="display: flex;align-items: center;">
-                                        <span class="score_range"> <?= $submitted_resume_data['match_score']; ?> / 100</span>
-                                        <a href="javascript:;" class="action-btn"
-                                        onclick="displayScoring()"
-                                        >
+                                        <span class="score_range"> <?= $submitted_resume_data['match_score']; ?> /
+                                            100</span>
+                                        <a href="javascript:;" class="action-btn" onclick="displayScoring()">
                                             <i class="fa fa-pencil"></i>
                                             <span class="btn-tooltip">Edit</span>
                                         </a>
@@ -226,17 +247,17 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                     </div>
                                     <div class="panel-body">
                                         <div class="skills">
-                                            <?php foreach($skills as $skill) {
-                                                if(is_array($skill) || is_object($skill))
-                                                {
-                                                    foreach($skill as $key => $value) {
-                                                    ?>
+                                            <?php foreach ($skills as $skill) {
+                                                if (is_array($skill) || is_object($skill)) {
+                                                    foreach ($skill as $key => $value) {
+                                                        ?>
                                                         <div>
-                                                            <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
+                                                            <span style="text-transform: capitalize;font-weight:600;">
+                                                                <?php echo $key; ?> </span>:
                                                             <span> <?php echo $value; ?> </span>
                                                         </div>
-                                                    <?php 
-                                                    }    
+                                                        <?php
+                                                    }
                                                 } else {
                                                     ?>
                                                     <span style="display: block;"> <?php echo ($skill); ?> </span>
@@ -250,35 +271,34 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                         </div>
                         <div class="col-lg-8 col-sm-12">
                             <div class="submitted_card_wrapper hr-widget">
-                                
+
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                            <strong>
-                                                Screening Questions
-                                            </strong>
+                                        <strong>
+                                            Screening Questions
+                                        </strong>
 
-                                            <a href="javascript:;" class="action-btn"
-                                            onclick="displayQuestions()"
-                                            >
-                                                <i class="fa fa-pencil"></i>
-                                                <span class="btn-tooltip">Edit</span>
-                                            </a>
+                                        <a href="javascript:;" class="action-btn" onclick="displayQuestions()">
+                                            <i class="fa fa-pencil"></i>
+                                            <span class="btn-tooltip">Edit</span>
+                                        </a>
                                     </div>
                                     <div class="panel-body questions">
-                                        <?php foreach($screening_questions as $ques) {
-                                            if(is_array($ques) || is_object($ques))
-                                            {
-                                                foreach($ques as $key => $value) {
-                                                ?>
+                                        <?php foreach ($screening_questions as $ques) {
+                                            if (is_array($ques) || is_object($ques)) {
+                                                foreach ($ques as $key => $value) {
+                                                    ?>
                                                     <div>
-                                                        <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
+                                                        <span style="text-transform: capitalize;font-weight:600;">
+                                                            <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                <?php 
+                                                    <?php
                                                 }
                                             } else {
                                                 ?>
-                                                <span style="display: block;"><strong>Q.</strong> &nbsp; <?php echo ($ques); ?> </span>
+                                                <span style="display: block;"><strong>Q.</strong> &nbsp; <?php echo ($ques); ?>
+                                                </span>
                                                 <?php
                                             }
                                         } ?>
@@ -290,19 +310,19 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                         <strong> Education </strong>
                                     </div>
                                     <div class="panel-body">
-                                        <?php foreach($education as $key => $edu) {
-                                            if($key > 0) {
+                                        <?php foreach ($education as $key => $edu) {
+                                            if ($key > 0) {
                                                 echo "<hr />";
                                             }
-                                            if(is_array($edu) || is_object($edu))
-                                            {
-                                                foreach($edu as $key => $value) {
-                                                ?>
+                                            if (is_array($edu) || is_object($edu)) {
+                                                foreach ($edu as $key => $value) {
+                                                    ?>
                                                     <div>
-                                                        <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
+                                                        <span style="text-transform: capitalize;font-weight:600;">
+                                                            <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                <?php
+                                                    <?php
                                                 }
                                             } else {
                                                 ?>
@@ -318,16 +338,16 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                         <strong> Certifications </strong>
                                     </div>
                                     <div class="panel-body">
-                                        <?php foreach($certifications as $certificate) {
-                                            if(is_array($certificate) || is_object($certificate))
-                                            {
-                                                foreach($certificate as $key => $value) {
-                                                ?>
+                                        <?php foreach ($certifications as $certificate) {
+                                            if (is_array($certificate) || is_object($certificate)) {
+                                                foreach ($certificate as $key => $value) {
+                                                    ?>
                                                     <div>
-                                                        <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
+                                                        <span style="text-transform: capitalize;font-weight:600;">
+                                                            <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                <?php
+                                                    <?php
                                                 }
                                             } else {
                                                 ?>
@@ -343,19 +363,19 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                         <strong> Work Experience </strong>
                                     </div>
                                     <div class="panel-body">
-                                        <?php foreach($work_experience as $key => $exp) {
-                                            if($key > 0) {
+                                        <?php foreach ($work_experience as $key => $exp) {
+                                            if ($key > 0) {
                                                 echo "<hr />";
                                             }
-                                            if(is_array($exp) || is_object($exp))
-                                            {
-                                                foreach($exp as $key => $value) {
-                                                ?>
+                                            if (is_array($exp) || is_object($exp)) {
+                                                foreach ($exp as $key => $value) {
+                                                    ?>
                                                     <div>
-                                                        <span style="text-transform: capitalize;font-weight:600;"> <?php echo $key; ?> </span>: 
+                                                        <span style="text-transform: capitalize;font-weight:600;">
+                                                            <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                <?php 
+                                                    <?php
                                                 }
                                             } else {
                                                 ?>
@@ -369,111 +389,117 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                         </div>
                     </div>
                 </div>
-                <div id="interview_data" class="tab-pane fade">
-                    <div class="row">
-                        <div class="col-md-12 col-xs-12">
-                            <div class="form-title-section">
-                                <h2>Audio</h2>
+                <?php if ($interview_logs): ?>
+
+                    <div id="interview_data" class="tab-pane fade">
+                        <div class="row">
+                            <div class="col-md-12 col-xs-12">
+                                <div class="form-title-section">
+                                    <h2>Audio</h2>
+                                </div>
+                            </div>
+
+                            <?php $audio_data = json_decode($interview_logs['file_path']); ?>
+                            <div class="col-md-12 col-xs-12">
+                                <audio controls>
+                                    <source src="<?= $audio_data->file_path; ?>" type="audio/wav">
+                                </audio>
                             </div>
                         </div>
 
-                        <?php $audio_data = json_decode($interview_logs['file_path']); ?>
-                        <div class="col-md-12 col-xs-12">
-                            <audio controls>
-                                <source src="<?= $audio_data->file_path; ?>" type="audio/wav">
-                            </audio>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div id="HorizontalTab" class="col-md-12 col-xs-12">
-                            <div class="custom-tabs">
-                                <span target="reports-data" class="active">Reports</span>
-                                <span target="transcript-data">Transcript</span>
+                        <div class="row">
+                            <div id="HorizontalTab" class="col-md-12 col-xs-12">
+                                <div class="custom-tabs">
+                                    <span target="reports-data" class="active">Reports</span>
+                                    <span target="transcript-data">Transcript</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="reports-data" class="custom-tab" style="display: block;">
-                        <table>
-                            <tr>
-                                <th style="vertical-align: baseline;width:100px;padding:10px;">Overall Score:</th>
-                                <td style="padding:10px;"><?= $reports->overallScore ?></td>
-                            </tr>
+                        <div id="reports-data" class="custom-tab" style="display: block;">
+                            <table>
+                                <tr>
+                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Overall Score:</th>
+                                    <td style="padding:10px;"><?= $reports->overallScore ?></td>
+                                </tr>
 
-                            <tr>
-                                <th style="vertical-align: baseline;width:100px;padding:10px;">Confidence Level:</th>
-                                <td style="padding:10px;"><?= $reports->confidenceLevel ?></td>
-                            </tr>
-                            
-                            <tr>
-                                <th style="vertical-align: baseline;width:100px;padding:10px;">Strengths:</th>
-                                <td style="padding:10px;">
-                                    <ul>
-                                        <?php foreach ($reports->strengths as $strength): ?>
-                                            <li><?= htmlspecialchars($strength) ?></li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Confidence Level:</th>
+                                    <td style="padding:10px;"><?= $reports->confidenceLevel ?></td>
+                                </tr>
 
-                            <tr>
-                                <th style="vertical-align: baseline;width:100px;padding:10px;">Areas for Improvement:</th>
-                                <td style="padding:10px;">
-                                    <ul>
-                                        <?php foreach ($reports->areasForImprovement as $area): ?>
-                                            <li><?= htmlspecialchars($area) ?></li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Strengths:</th>
+                                    <td style="padding:10px;">
+                                        <ul>
+                                            <?php foreach ($reports->strengths as $strength): ?>
+                                                <li><?= htmlspecialchars($strength) ?></li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </td>
+                                </tr>
 
-                            <tr>
-                                <th style="vertical-align: baseline;width:100px;padding:10px;">Suitability Summary:</th>
-                                <td style="padding:10px;"><?= $reports->suitabilitySummary ?></td>
-                            </tr>
+                                <tr>
+                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Areas for Improvement:
+                                    </th>
+                                    <td style="padding:10px;">
+                                        <ul>
+                                            <?php foreach ($reports->areasForImprovement as $area): ?>
+                                                <li><?= htmlspecialchars($area) ?></li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </td>
+                                </tr>
 
-                            <tr>
-                                <th style="vertical-align: baseline;width:100px;padding:10px;">Notable Quotes:</th>
-                                <td style="padding:10px;">
-                                    <ul>
-                                        <?php foreach ($reports->notableQuotes as $quote): ?>
-                                            <li><?= htmlspecialchars($quote) ?></li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Suitability Summary:</th>
+                                    <td style="padding:10px;"><?= $reports->suitabilitySummary ?></td>
+                                </tr>
 
-                            <tr>
-                                <th style="vertical-align: baseline;width:100px;padding:10px;">Recommendation:</th>
-                                <td style="padding:10px;"><?= $reports->recommendation ?></td>
-                            </tr>
-                        </table>
-                    </div>
+                                <tr>
+                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Notable Quotes:</th>
+                                    <td style="padding:10px;">
+                                        <ul>
+                                            <?php foreach ($reports->notableQuotes as $quote): ?>
+                                                <li><?= htmlspecialchars($quote) ?></li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </td>
+                                </tr>
 
-                    <div id="transcript-data" class="custom-tab" style="display: none;">
-                        <table>
-                            <?php 
-                            $transript = json_decode($interview_logs['interview_content']);
-                            foreach($transript as $key => $trans) {
-                                if($trans->role === "system") {
-                                    continue;
+                                <tr>
+                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Recommendation:</th>
+                                    <td style="padding:10px;"><?= $reports->recommendation ?></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div id="transcript-data" class="custom-tab" style="display: none;">
+                            <table>
+                                <?php
+                                $transript = json_decode($interview_logs['interview_content']);
+                                foreach ($transript as $key => $trans) {
+                                    if ($trans->role === "system") {
+                                        continue;
+                                    }
+                                    ?>
+                                    <tr>
+                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Role:</th>
+                                        <td style="padding:10px;">
+                                            <?php echo $trans->role === 'assistant' ? 'Michael' : ($applicant_info['first_name'] . ' ' . $applicant_info['last_name']); ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th style="vertical-align: baseline;width:100px;padding:10px;">Content:</th>
+                                        <td style="padding:10px;"><?php echo $trans->content; ?></td>
+                                    </tr>
+                                    <?php
                                 }
                                 ?>
-                                <tr>
-                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Role:</th>
-                                    <td style="padding:10px;"><?php echo $trans->role === 'assistant' ? 'Michael' : ($applicant_info['first_name'] . ' ' . $applicant_info['last_name']); ?></td>
-                                </tr>
-                                <tr>
-                                    <th style="vertical-align: baseline;width:100px;padding:10px;">Content:</th>
-                                    <td style="padding:10px;"><?php echo $trans->content; ?></td>
-                                </tr>
-                                <?php
-                            }
-                            ?>
-                        </table>
+                            </table>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -481,13 +507,13 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
 
 <script>
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#HorizontalTab').easyResponsiveTabs({
             type: 'default', //Types: default, vertical, accordion
             width: 'auto', //auto or any width like 600px
             fit: true, // 100% fit in a container
             tabidentify: 'hor_1', // The tab groups identifier
-            activate: function() {}
+            activate: function () { }
         });
 
         let customTabs = document.querySelectorAll('.custom-tabs span');
@@ -504,7 +530,7 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                 })
 
                 e.target.classList.add('active');
-                document.querySelector('#'+ref).style.display = 'block';
+                document.querySelector('#' + ref).style.display = 'block';
             })
         })
     });
@@ -513,7 +539,7 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
 
         document.querySelectorAll('.applicant_scoring .nav-tabs li').forEach(li => {
             li.classList.remove('active');
-            if(li.querySelector('a').href === '#interview_data' && !li.classList.contains('active')) {
+            if (li.querySelector('a').href === '#interview_data' && !li.classList.contains('active')) {
                 li.classList.add('active');
             }
         })
@@ -529,7 +555,7 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
 
         document.querySelectorAll('.applicant_scoring .nav-tabs li').forEach(li => {
             li.classList.remove('active');
-            if(li.querySelector('a').href === '#parsed_data' && !li.classList.contains('active')) {
+            if (li.querySelector('a').href === '#parsed_data' && !li.classList.contains('active')) {
                 li.classList.add('active');
             }
         })

@@ -4,45 +4,38 @@
         justify-content: space-between;
         align-items: center;
     }
+
     .donut-chart {
         width: 200px;
         height: 200px;
         border-radius: 50%;
-        background: conic-gradient(
-            #252524 0deg,
-            #252524 var(--percentage, 216deg),
-            #e0e0e0 var(--percentage, 216deg),
-            #e0e0e0 360deg
-        );
+        background: conic-gradient(#252524 0deg,
+                #252524 var(--percentage, 216deg),
+                #e0e0e0 var(--percentage, 216deg),
+                #e0e0e0 360deg);
         position: relative;
         transition: all 0.5s ease;
     }
 
     .donut-chart.danger {
-        background: conic-gradient(
-            #f2dede 0deg,
-            #f2dede var(--percentage, 216deg),
-            #e0e0e0 var(--percentage, 216deg),
-            #e0e0e0 360deg
-        );
+        background: conic-gradient(#f2dede 0deg,
+                #f2dede var(--percentage, 216deg),
+                #e0e0e0 var(--percentage, 216deg),
+                #e0e0e0 360deg);
     }
 
     .donut-chart.warning {
-        background: conic-gradient(
-            #fcf8e3 0deg,
-            #fcf8e3 var(--percentage, 216deg),
-            #e0e0e0 var(--percentage, 216deg),
-            #e0e0e0 360deg
-        );
+        background: conic-gradient(#fcf8e3 0deg,
+                #fcf8e3 var(--percentage, 216deg),
+                #e0e0e0 var(--percentage, 216deg),
+                #e0e0e0 360deg);
     }
 
     .donut-chart.orange {
-        background: conic-gradient(
-            #fd7a2a 0deg,
-            #fd7a2a var(--percentage, 216deg),
-            #e0e0e0 var(--percentage, 216deg),
-            #e0e0e0 360deg
-        );
+        background: conic-gradient(#fd7a2a 0deg,
+                #fd7a2a var(--percentage, 216deg),
+                #e0e0e0 var(--percentage, 216deg),
+                #e0e0e0 360deg);
     }
 
     .donut-chart::before {
@@ -103,12 +96,14 @@ $primary_phone_number_cc = $primary_phone_number = $applicant_info['phone_number
 if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
     $is_regex = 1;
     $input_group_start = '<div class="input-group"><div class="input-group-addon"><span class="input-group-text" id="basic-addon1">+1</span></div>';
-    $input_group_end   = '</div>';
+    $input_group_end = '</div>';
     $primary_phone_number = phonenumber_format($applicant_info['phone_number'], true);
     $primary_phone_number_cc = phonenumber_format($applicant_info['phone_number']);
 } else {
-    if ($primary_phone_number === '+1') $primary_phone_number = '';
-    if ($primary_phone_number_cc === '+1') $primary_phone_number_cc = 'Not Specified';
+    if ($primary_phone_number === '+1')
+        $primary_phone_number = '';
+    if ($primary_phone_number_cc === '+1')
+        $primary_phone_number_cc = 'Not Specified';
 }
 
 $dob = (isset($applicant_info["dob"]) && !empty($applicant_info["dob"]) && $applicant_info["dob"] != '0000-00-00') ? date('m-d-Y', strtotime(str_replace('-', '/', $applicant_info["dob"]))) : 'Not Specified';
@@ -130,11 +125,11 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             <div class="applicant-profile-wrp">
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
                     <script type="text/javascript">
-                        $(document).ready(function() {
+                        $(document).ready(function () {
                             $(".tab_content").hide();
                             $(".tab_content:first").show();
 
-                            $("ul.tabs li").click(function() {
+                            $("ul.tabs li").click(function () {
                                 $("ul.tabs li").removeClass("active");
                                 $(this).addClass("active");
                                 $(".tab_content").hide();
@@ -146,7 +141,9 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <?php if (check_access_permissions_for_view($security_details, $function_names)) { ?>
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Employee Profile</span>
+                            <span
+                                class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Employee
+                                Profile</span>
                         </div>
                     <?php } ?>
                     <div class="application-header">
@@ -154,25 +151,33 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             <div>
                                 <figure>
                                     <img src="<?php if (isset($applicant_info['pictures']) && $applicant_info['pictures'] != '') {
-                                                    echo AWS_S3_BUCKET_URL . $applicant_info['pictures'];
-                                                } else {
-                                                    echo AWS_S3_BUCKET_URL; ?>default_pic-ySWxT.jpg<?php } ?>" alt="Profile Picture">
+                                        echo AWS_S3_BUCKET_URL . $applicant_info['pictures'];
+                                    } else {
+                                        echo AWS_S3_BUCKET_URL; ?>default_pic-ySWxT.jpg<?php } ?>"
+                                        alt="Profile Picture">
                                 </figure>
                                 <div class="text">
-                                    <h2><?php echo $applicant_info['first_name']; ?> <?= $applicant_info['last_name'] ?></h2>
+                                    <h2><?php echo $applicant_info['first_name']; ?> <?= $applicant_info['last_name'] ?>
+                                    </h2>
                                     <div class="start-rating">
-                                        <input readonly="readonly" id="input-21b" <?php if (!empty($applicant_average_rating)) { ?> value="<?php echo $applicant_average_rating; ?>" <?php } ?> type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
+                                        <input readonly="readonly" id="input-21b" <?php if (!empty($applicant_average_rating)) { ?>
+                                                value="<?php echo $applicant_average_rating; ?>" <?php } ?> type="number"
+                                            name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
                                     </div>
                                     <?php if (check_blue_panel_status() && $applicant_info['is_onboarding'] == 1) { ?>
-    
+
                                         <?php $send_notification = checkOnboardingNotification($id); ?>
                                         <?php if ($send_notification) { ?>
-                                            <span class="badge" style="padding:8px; background-color: green;">On-boarding Request Sent</span>
+                                            <span class="badge" style="padding:8px; background-color: green;">On-boarding
+                                                Request Sent</span>
                                         <?php } else { ?>
-                                            <span class="badge" style="padding:8px; background-color: red;">On-boarding Request Pending</span>
+                                            <span class="badge" style="padding:8px; background-color: red;">On-boarding Request
+                                                Pending</span>
                                         <?php } ?>
-    
-                                        <span class="badge" style="padding:8px; background-color: blue;"><a href="<?php echo $onboarding_url; ?>" style="color:#fff;" target="_black">Preview On-boarding</a></span>
+
+                                        <span class="badge" style="padding:8px; background-color: blue;"><a
+                                                href="<?php echo $onboarding_url; ?>" style="color:#fff;"
+                                                target="_black">Preview On-boarding</a></span>
                                         <?php if (!$send_notification) { ?>
                                             <p class="" style="padding:18px; color: red;">
                                                 <strong>
@@ -181,13 +186,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             </p>
                                         <?php } ?>
                                     <?php } else { ?>
-                                        <span class="" style="padding:8px;"><?php echo $applicant_info['applicant_type']; ?></span>
-                                    <?php }  ?>
+                                        <span class=""
+                                            style="padding:8px;"><?php echo $applicant_info['applicant_type']; ?></span>
+                                    <?php } ?>
                                 </div>
                             </div>
                             <div class="example-donut">
-                                <div class="donut-chart <?php echo $profile_scoring < 34 ? 'danger' : ($profile_scoring < 67 ? 'warning' : 'orange'); ?>" style="--percentage: <?= (360 * (int)$profile_scoring/100); ?>deg;">
-                                    <div class="donut-text"><?= (int)$profile_scoring; ?>%</div>
+                                <div class="donut-chart <?php echo $profile_scoring < 34 ? 'danger' : ($profile_scoring < 67 ? 'warning' : 'orange'); ?>"
+                                    style="--percentage: <?= (360 * (int) $profile_scoring / 100); ?>deg;">
+                                    <div class="donut-text"><?= (int) $profile_scoring; ?>%</div>
                                 </div>
                             </div>
                         </article>
@@ -200,14 +207,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             <li><a href="javascript:;">Messages</a></li>
                             <li id="tab5_nav"><a href="javascript:;">reviews</a></li>
                             <li id="js-calendar-btn"><a href="javascript:;">Calendar</a></li>
-                            <li id="js-calendar-btn"><a href="javascript:;">Applicant Scoring</a></li>
+                            <li id=""><a href="javascript:;">Applicant Scoring</a></li>
                             <?php if ($phone_sid != '') { ?>
                                 <li id="js-sms-btn"><a href="javascript:void(0)">SMS</a></li>
                             <?php } ?>
                         </ul>
                         <div class="resp-tabs-container hor_1">
                             <div id="tab1" class="tabs-content">
-                                <div class="universal-form-style-v2 info_view" <?php if ($edit_form) { ?> style="display: none;" <?php } ?>>
+                                <div class="universal-form-style-v2 info_view" <?php if ($edit_form) { ?>
+                                        style="display: none;" <?php } ?>>
                                     <div class="row">
                                         <div class="col-md-12 col-xs-12">
                                             <div class="form-title-section">
@@ -221,19 +229,23 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                     <div class="row">
                                         <div class="col-md-3 col-xs-12">
                                             <label class="csF16">First Name</label>
-                                            <p class="dummy-invoice-fields"><?= GetVal($applicant_info["first_name"]); ?></p>
+                                            <p class="dummy-invoice-fields">
+                                                <?= GetVal($applicant_info["first_name"]); ?></p>
                                         </div>
                                         <div class="col-md-3 col-xs-12">
                                             <label class="csF16">Nick Name</label>
-                                            <p class="dummy-invoice-fields"><?= GetVal($applicant_info["nick_name"]); ?></p>
+                                            <p class="dummy-invoice-fields"><?= GetVal($applicant_info["nick_name"]); ?>
+                                            </p>
                                         </div>
                                         <div class="col-md-3 col-xs-12">
                                             <label class="csF16">Middle Name / Initial</label>
-                                            <p class="dummy-invoice-fields"><?= GetVal($applicant_info["middle_name"]); ?></p>
+                                            <p class="dummy-invoice-fields">
+                                                <?= GetVal($applicant_info["middle_name"]); ?></p>
                                         </div>
                                         <div class="col-md-3 col-xs-12">
                                             <label class="csF16">Last Name</label>
-                                            <p class="dummy-invoice-fields"><?= GetVal($applicant_info["last_name"]); ?></p>
+                                            <p class="dummy-invoice-fields"><?= GetVal($applicant_info["last_name"]); ?>
+                                            </p>
                                         </div>
                                     </div>
                                     <br>
@@ -266,11 +278,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                     <div class="row">
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">State</label>
-                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["state_name"] ?></p>
+                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["state_name"] ?>
+                                            </p>
                                         </div>
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Country</label>
-                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["country_name"] ?></p>
+                                            <p class="dummy-invoice-fields">
+                                                <?php echo $applicant_info["country_name"] ?></p>
                                         </div>
                                     </div><br>
                                     <!-- <div class = "row">     
@@ -329,11 +343,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                     <div class="row">
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Gender</label>
-                                            <p class="dummy-invoice-fields"><?php echo ucfirst(GetVal($applicant_info["gender"])); ?></p>
+                                            <p class="dummy-invoice-fields">
+                                                <?php echo ucfirst(GetVal($applicant_info["gender"])); ?></p>
                                         </div>
                                         <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Marital Status</label>
-                                            <p class="dummy-invoice-fields"><?php echo GetVal($applicant_info["marital_status"]); ?></p>
+                                            <p class="dummy-invoice-fields">
+                                                <?php echo GetVal($applicant_info["marital_status"]); ?></p>
                                         </div>
                                     </div><br>
                                     <div class="row">
@@ -363,7 +379,9 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             <label class="csF16">Linkedin public Profile URL</label>
                                             <p class="dummy-invoice-fields">
                                                 <?php if (isset($applicant_info["linkedin_profile_url"]) && $applicant_info["linkedin_profile_url"] != '') { ?>
-                                                    <a href="<?php echo $applicant_info["linkedin_profile_url"]; ?>" target="_blank"> <?php echo $applicant_info["linkedin_profile_url"]; ?></a>
+                                                    <a href="<?php echo $applicant_info["linkedin_profile_url"]; ?>"
+                                                        target="_blank">
+                                                        <?php echo $applicant_info["linkedin_profile_url"]; ?></a>
                                                 <?php } else { ?>
                                                     Not Specified
                                                 <?php } ?>
@@ -499,22 +517,33 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             $fileExt = strtolower(pathinfo($fileExt, PATHINFO_EXTENSION));
                                         } ?>
                                         <div class="applicant-video">
-                                            <div class="<?= !empty($fileExt) && $fileExt != 'mp3' ? 'well well-sm' : ''; ?>">
+                                            <div
+                                                class="<?= !empty($fileExt) && $fileExt != 'mp3' ? 'well well-sm' : ''; ?>">
                                                 <div class="embed-responsive embed-responsive-16by9">
                                                     <?php if ($applicant_info['video_type'] == 'youtube') { ?>
-                                                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/<?php echo $applicant_info['YouTube_Video']; ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                                        <iframe class="embed-responsive-item"
+                                                            src="https://www.youtube.com/embed/<?php echo $applicant_info['YouTube_Video']; ?>"
+                                                            frameborder="0" webkitallowfullscreen mozallowfullscreen
+                                                            allowfullscreen></iframe>
                                                     <?php } elseif ($applicant_info['video_type'] == 'vimeo') { ?>
-                                                        <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $applicant_info['YouTube_Video']; ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                                                        <?php } else {
+                                                        <iframe class="embed-responsive-item"
+                                                            src="https://player.vimeo.com/video/<?php echo $applicant_info['YouTube_Video']; ?>"
+                                                            frameborder="0" webkitallowfullscreen mozallowfullscreen
+                                                            allowfullscreen></iframe>
+                                                    <?php } else {
                                                         if ($fileExt == 'mp3') { ?>
                                                             <audio controls>
-                                                                <source src="<?php echo base_url() . 'assets/uploaded_videos/' . $applicant_info['YouTube_Video']; ?>" type='audio/mp3'>
+                                                                <source
+                                                                    src="<?php echo base_url() . 'assets/uploaded_videos/' . $applicant_info['YouTube_Video']; ?>"
+                                                                    type='audio/mp3'>
                                                             </audio>
                                                         <?php } else { ?>
                                                             <video controls>
-                                                                <source src="<?php echo base_url() . 'assets/uploaded_videos/' . $applicant_info['YouTube_Video']; ?>" type='video/mp4'>
+                                                                <source
+                                                                    src="<?php echo base_url() . 'assets/uploaded_videos/' . $applicant_info['YouTube_Video']; ?>"
+                                                                    type='video/mp4'>
                                                             </video>
-                                                    <?php }
+                                                        <?php }
                                                     } ?>
                                                 </div>
                                             </div>
@@ -529,10 +558,11 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                 <h2>Personal Information</h2>
 
                                                 <div class="form-btns">
-                                                    <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || $this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {  ?>
+                                                    <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || $this->session->userdata('logged_in')['employer_detail']['access_level_plus']) { ?>
 
                                                         <input type="button" value="save" class="add_edit_submit">
-                                                        <input type="submit" value="cancel" class="view_button" style="background-color: #d9534f;">
+                                                        <input type="submit" value="cancel" class="view_button"
+                                                            style="background-color: #d9534f;">
                                                     <?php } ?>
                                                 </div>
 
@@ -540,64 +570,89 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             <div class="row">
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
                                                     <label>First Name:<span class="staric">*</span></label>
-                                                    <input type="text" class="invoice-fields" name="first_name" id="first_name" value="<?php if (isset($applicant_info['first_name'])) {
-                                                                                                                                            echo $applicant_info['first_name'];
-                                                                                                                                        } ?>">
+                                                    <input type="text" class="invoice-fields" name="first_name"
+                                                        id="first_name"
+                                                        value="<?php if (isset($applicant_info['first_name'])) {
+                                                            echo $applicant_info['first_name'];
+                                                        } ?>">
                                                     <?php echo form_error('first_name'); ?>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
                                                     <label>Nick Name:</label>
-                                                    <input type="text" class="invoice-fields" name="nick_name" id="nick_name" value="<?php if (isset($applicant_info['nick_name'])) {
-                                                                                                                                            echo $applicant_info['nick_name'];
-                                                                                                                                        } ?>">
+                                                    <input type="text" class="invoice-fields" name="nick_name"
+                                                        id="nick_name"
+                                                        value="<?php if (isset($applicant_info['nick_name'])) {
+                                                            echo $applicant_info['nick_name'];
+                                                        } ?>">
                                                     <?php echo form_error('nick_name'); ?>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
                                                     <label>Middle name / initial:</label>
-                                                    <input class="invoice-fields  <?php if (form_error('middle_name') !== "") { ?> error <?php } ?>" value="<?php echo set_value('middle_name', $applicant_info["middle_name"]); ?>" type="text" name="middle_name">
+                                                    <input
+                                                        class="invoice-fields  <?php if (form_error('middle_name') !== "") { ?> error <?php } ?>"
+                                                        value="<?php echo set_value('middle_name', $applicant_info["middle_name"]); ?>"
+                                                        type="text" name="middle_name">
                                                     <?php echo form_error('middle_name'); ?>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
                                                     <label>last name:</label>
-                                                    <input class="invoice-fields  <?php if (form_error('last_name') !== "") { ?> error <?php } ?>" value="<?php echo set_value('last_name', $applicant_info["last_name"]); ?>" type="text" name="last_name">
+                                                    <input
+                                                        class="invoice-fields  <?php if (form_error('last_name') !== "") { ?> error <?php } ?>"
+                                                        value="<?php echo set_value('last_name', $applicant_info["last_name"]); ?>"
+                                                        type="text" name="last_name">
                                                     <?php echo form_error('last_name'); ?>
                                                 </div>
                                             </div>
                                             <li class="form-col-50-left">
                                                 <label>email:<samp class="red"> * </samp></label>
-                                                <input class="invoice-fields <?php if (form_error('email') !== "") { ?> error <?php } ?>" value="<?php echo set_value('email', $applicant_info["email"]); ?>" type="email" name="email">
+                                                <input
+                                                    class="invoice-fields <?php if (form_error('email') !== "") { ?> error <?php } ?>"
+                                                    value="<?php echo set_value('email', $applicant_info["email"]); ?>"
+                                                    type="email" name="email">
                                                 <?php echo form_error('email'); ?>
 
                                             </li>
                                             <li class="form-col-50-right">
-                                                <label>Primary number: <?php if (get_company_module_status($session['company_detail']['sid'], 'primary_number_required') == 1) { ?> <span class="staric">*</span> <? } ?></label>
+                                                <label>Primary number:
+                                                    <?php if (get_company_module_status($session['company_detail']['sid'], 'primary_number_required') == 1) { ?>
+                                                        <span class="staric">*</span> <? } ?></label>
                                                 <?= $input_group_start; ?>
-                                                <input class="invoice-fields" id="PhoneNumber" value="<?php echo set_value('phone_number', $primary_phone_number); ?>" type="text" name="phone_number">
+                                                <input class="invoice-fields" id="PhoneNumber"
+                                                    value="<?php echo set_value('phone_number', $primary_phone_number); ?>"
+                                                    type="text" name="phone_number">
                                                 <?php echo form_error('phone_number'); ?>
 
                                                 <?= $input_group_end; ?>
                                             </li>
                                             <li class="form-col-100">
                                                 <label>address:</label>
-                                                <input class="invoice-fields" value="<?php echo set_value('address', $applicant_info["address"]); ?>" type="text" name="address">
+                                                <input class="invoice-fields"
+                                                    value="<?php echo set_value('address', $applicant_info["address"]); ?>"
+                                                    type="text" name="address">
                                             </li>
                                             <li class="form-col-50-left">
                                                 <label>city:</label>
-                                                <input class="invoice-fields" value="<?php echo set_value('city', $applicant_info["city"]); ?>" type="text" name="city">
+                                                <input class="invoice-fields"
+                                                    value="<?php echo set_value('city', $applicant_info["city"]); ?>"
+                                                    type="text" name="city">
                                             </li>
                                             <li class="form-col-50-right">
                                                 <label>zipcode:</label>
-                                                <input class="invoice-fields" value="<?php echo set_value('zipcode', $applicant_info["zipcode"]); ?>" type="text" name="zipcode">
+                                                <input class="invoice-fields"
+                                                    value="<?php echo set_value('zipcode', $applicant_info["zipcode"]); ?>"
+                                                    type="text" name="zipcode">
                                             </li>
                                             <li class="form-col-50-left">
                                                 <label>country:</label>
                                                 <div class="hr-select-dropdown">
-                                                    <select class="invoice-fields" name="country" id="country" onchange="getStates(this.value, <?php echo $states; ?>)">
+                                                    <select class="invoice-fields" name="country" id="country"
+                                                        onchange="getStates(this.value, <?php echo $states; ?>)">
                                                         <?php if (empty($country_id)) { ?>
                                                             <option value="">Select Country</option>
                                                         <?php } ?>
                                                         <?php foreach ($active_countries as $active_country) { ?>
-                                                            <option value="<?= $active_country["sid"]; ?>" <?php if ($applicant_info['country'] == $active_country["sid"]) { ?> selected <?php } ?>>
+                                                            <option value="<?= $active_country["sid"]; ?>" <?php if ($applicant_info['country'] == $active_country["sid"]) { ?>
+                                                                    selected <?php } ?>>
                                                                 <?= $active_country["country_name"]; ?>
                                                             </option>
                                                         <?php } ?>
@@ -607,15 +662,17 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             </li>
                                             <li class="form-col-50-right">
                                                 <label>state: </label>
-                                                <p style="display: none;" id="state_id"><?php echo $applicant_info['state']; ?></p>
+                                                <p style="display: none;" id="state_id">
+                                                    <?php echo $applicant_info['state']; ?></p>
                                                 <div class="hr-select-dropdown">
                                                     <select class="invoice-fields" name="state" id="state">
                                                         <?php if (empty($country_id)) { ?>
                                                             <option value="">Select State</option>
-                                                            <?php } else {
+                                                        <?php } else {
                                                             foreach ($active_states[$country_id] as $active_state) { ?>
-                                                                <option value="<?= $active_state["sid"] ?>" <?php if ($active_state["sid"] == $applicant_info['state']) { ?>selected="selected" <?php } ?>><?= $active_state["state_name"] ?></option>
-                                                        <?php
+                                                                <option value="<?= $active_state["sid"] ?>" <?php if ($active_state["sid"] == $applicant_info['state']) { ?>selected="selected" <?php } ?>>
+                                                                    <?= $active_state["state_name"] ?></option>
+                                                                <?php
                                                             }
                                                         }
                                                         ?>
@@ -626,46 +683,66 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                 <label>Job Fit Category:</label>
                                                 <?php $job_fit_categories = explode(',', $applicant_info['job_fit_category_sid']); ?>
                                                 <div class="Category_chosen">
-                                                    <select data-placeholder="- Please Select -" multiple="multiple" onchange="multiselectbox()" name="job_fit_category_sid[]" id="job_fit_category_sid" class="chosen-select">
+                                                    <select data-placeholder="- Please Select -" multiple="multiple"
+                                                        onchange="multiselectbox()" name="job_fit_category_sid[]"
+                                                        id="job_fit_category_sid" class="chosen-select">
                                                         <?php foreach ($job_categories as $category) { ?>
                                                             <?php $default_selected = (in_array($category['id'], $job_fit_categories) ? true : false); ?>
-                                                            <option <?php echo set_select('job_fit_category_sid', $category['id'], $default_selected); ?> value="<?php echo $category["id"] ?>"><?php echo $category["value"] ?></option>
+                                                            <option <?php echo set_select('job_fit_category_sid', $category['id'], $default_selected); ?>
+                                                                value="<?php echo $category["id"] ?>">
+                                                                <?php echo $category["value"] ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
                                                 <div style="display: none;" id="choiceLimit">5</div>
-                                                <span class="available"><samp id="choicelimitavailable">5</samp> available</span>
+                                                <span class="available"><samp id="choicelimitavailable">5</samp>
+                                                    available</span>
                                             </li>
                                             <li class="form-col-50-left">
                                                 <label>secondary email:</label>
-                                                <input class="invoice-fields <?php if (form_error('secondary_email') !== "") { ?> error <?php } ?>" value="<?php echo set_value('secondary_email', $extra_info["secondary_email"]); ?>" type="email" name="secondary_email">
+                                                <input
+                                                    class="invoice-fields <?php if (form_error('secondary_email') !== "") { ?> error <?php } ?>"
+                                                    value="<?php echo set_value('secondary_email', $extra_info["secondary_email"]); ?>"
+                                                    type="email" name="secondary_email">
                                             </li>
                                             <li class="form-col-50-right">
                                                 <label>secondary mobile number:</label>
-                                                <input class="invoice-fields" id="secondary_PhoneNumber" value="<?php echo set_value('secondary_PhoneNumber', $extra_info["secondary_PhoneNumber"]); ?>" type="text" name="secondary_PhoneNumber">
+                                                <input class="invoice-fields" id="secondary_PhoneNumber"
+                                                    value="<?php echo set_value('secondary_PhoneNumber', $extra_info["secondary_PhoneNumber"]); ?>"
+                                                    type="text" name="secondary_PhoneNumber">
                                             </li>
                                             <li class="form-col-50-left">
                                                 <label>other email:</label>
-                                                <input class="invoice-fields <?php if (form_error('other_email') !== "") { ?> error <?php } ?>" value="<?php echo set_value('other_email', $extra_info["other_email"]); ?>" type="email" name="other_email">
+                                                <input
+                                                    class="invoice-fields <?php if (form_error('other_email') !== "") { ?> error <?php } ?>"
+                                                    value="<?php echo set_value('other_email', $extra_info["other_email"]); ?>"
+                                                    type="email" name="other_email">
                                             </li>
                                             <li class="form-col-50-right">
                                                 <label>telephone number:</label>
-                                                <input class="invoice-fields" id="other_PhoneNumber" value="<?php echo set_value('other_PhoneNumber', $extra_info["other_PhoneNumber"]); ?>" type="text" name="other_PhoneNumber">
+                                                <input class="invoice-fields" id="other_PhoneNumber"
+                                                    value="<?php echo set_value('other_PhoneNumber', $extra_info["other_PhoneNumber"]); ?>"
+                                                    type="text" name="other_PhoneNumber">
                                             </li>
                                             <li class="form-col-50-left">
                                                 <label>Gender:</label>
                                                 <select class="invoice-fields" name="gender">
                                                     <option value="">Please Select Gender</option>
-                                                    <option <?= $applicant_info["gender"] == 'male' ? 'selected' : ''; ?> value="male">Male</option>
-                                                    <option <?= $applicant_info["gender"] == 'female' ? 'selected' : ''; ?> value="female">Female</option>
-                                                    <option <?= $applicant_info["gender"] == 'other' ? 'selected' : ''; ?> value="other">Other</option>
+                                                    <option <?= $applicant_info["gender"] == 'male' ? 'selected' : ''; ?>
+                                                        value="male">Male</option>
+                                                    <option <?= $applicant_info["gender"] == 'female' ? 'selected' : ''; ?>
+                                                        value="female">Female</option>
+                                                    <option <?= $applicant_info["gender"] == 'other' ? 'selected' : ''; ?>
+                                                        value="other">Other</option>
                                                 </select>
                                                 <?php echo form_error('gender'); ?>
                                             </li>
                                             <!--  -->
                                             <li class="form-col-50-right">
                                                 <label>Marital Status:</label>
-                                                <select class="invoice-fields <?php if (form_error('marital_status') !== "") { ?> error <?php } ?>" name="marital_status">
+                                                <select
+                                                    class="invoice-fields <?php if (form_error('marital_status') !== "") { ?> error <?php } ?>"
+                                                    name="marital_status">
                                                     <option value="">
                                                         Please select marital status
                                                     </option>
@@ -683,41 +760,58 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             </li>
                                             <li class="form-col-50-left">
                                                 <label>Referred By:</label>
-                                                <input class="invoice-fields" value="<?php echo set_value('referred_by_name', $applicant_info["referred_by_name"]); ?>" type="text" name="referred_by_name" id="referred_by_name">
+                                                <input class="invoice-fields"
+                                                    value="<?php echo set_value('referred_by_name', $applicant_info["referred_by_name"]); ?>"
+                                                    type="text" name="referred_by_name" id="referred_by_name">
                                             </li>
                                             <li class="form-col-50-right">
                                                 <label>Referred By email:</label>
-                                                <input class="invoice-fields <?php if (form_error('referred_by_email') !== "") { ?> error <?php } ?>" value="<?php echo set_value('referred_by_email', $applicant_info["referred_by_email"]); ?>" type="email" name="referred_by_email" id="referred_by_email">
+                                                <input
+                                                    class="invoice-fields <?php if (form_error('referred_by_email') !== "") { ?> error <?php } ?>"
+                                                    value="<?php echo set_value('referred_by_email', $applicant_info["referred_by_email"]); ?>"
+                                                    type="email" name="referred_by_email" id="referred_by_email">
                                             </li>
                                             <li class="form-col-50-left">
                                                 <label>Linkedin Public Profile URL:</label>
-                                                <input class="invoice-fields" value="<?php echo set_value('linkedin_profile_url', $applicant_info["linkedin_profile_url"]); ?>" type="text" name="linkedin_profile_url">
+                                                <input class="invoice-fields"
+                                                    value="<?php echo set_value('linkedin_profile_url', $applicant_info["linkedin_profile_url"]); ?>"
+                                                    type="text" name="linkedin_profile_url">
                                             </li>
                                             <li class="form-col-50-right">
                                                 <label>Employee Number:</label>
-                                                <input class="invoice-fields" value="<?php echo set_value('employee_number', phonenumber_format($applicant_info["employee_number"], true)); ?>" type="text" name="employee_number">
+                                                <input class="invoice-fields"
+                                                    value="<?php echo set_value('employee_number', phonenumber_format($applicant_info["employee_number"], true)); ?>"
+                                                    type="text" name="employee_number">
                                             </li>
                                             <li class="form-col-50-left">
-                                                <label>Social Security Number:<?= $ssn_required == 1 ? ' <samp class="red"> * </samp>' : ''; ?></label>
-                                                <input class="invoice-fields" type="text" name="SSN" <?= $ssn_required == 1 ? 'required' : ''; ?> value="<?php echo isset($applicant_info["ssn"]) ? $applicant_info["ssn"] : ''; ?>">
+                                                <label>Social Security
+                                                    Number:<?= $ssn_required == 1 ? ' <samp class="red"> * </samp>' : ''; ?></label>
+                                                <input class="invoice-fields" type="text" name="SSN" <?= $ssn_required == 1 ? 'required' : ''; ?>
+                                                    value="<?php echo isset($applicant_info["ssn"]) ? $applicant_info["ssn"] : ''; ?>">
                                                 <?php echo form_error('SSN'); ?>
                                             </li>
                                             <li class="form-col-50-right">
-                                                <label>Date of Birth:<?= $dob_required == 1 ? ' <samp class="red"> * </samp>' : ''; ?></label>
-                                                <input class="invoice-fields" id="date_of_birth" readonly="" type="text" name="DOB" <?= $dob_required == 1 ? 'required' : ''; ?> value="<?php echo $dob != 'Not Specified' ? $dob : ''; ?>">
+                                                <label>Date of
+                                                    Birth:<?= $dob_required == 1 ? ' <samp class="red"> * </samp>' : ''; ?></label>
+                                                <input class="invoice-fields" id="date_of_birth" readonly="" type="text"
+                                                    name="DOB" <?= $dob_required == 1 ? 'required' : ''; ?>
+                                                    value="<?php echo $dob != 'Not Specified' ? $dob : ''; ?>">
                                                 <?php echo form_error('DOB'); ?>
                                             </li>
                                             <?php if (IS_NOTIFICATION_ENABLED == 1 && $phone_sid != '') { ?>
                                                 <li class="form-col-50-left">
                                                     <label>Notified By:</label>
                                                     <div class="hr-select-dropdown">
-                                                        <select class="invoice-fields" name="notified_by[]" id="employees" multiple="true">
+                                                        <select class="invoice-fields" name="notified_by[]" id="employees"
+                                                            multiple="true">
                                                             <option value="email" <?php if (in_array('email', explode(',', $applicant_info['notified_by']))) {
-                                                                                        echo 'selected';
-                                                                                    } ?>>Email</option>
+                                                                echo 'selected';
+                                                            } ?>>
+                                                                Email</option>
                                                             <option value="sms" <?php if (in_array('sms', explode(',', $applicant_info['notified_by']))) {
-                                                                                    echo 'selected';
-                                                                                } ?>>SMS</option>
+                                                                echo 'selected';
+                                                            } ?>>
+                                                                SMS</option>
                                                         </select>
                                                     </div>
                                                 </li>
@@ -725,8 +819,11 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             <li class="form-col-50-left">
                                                 <label>Profile picture:</label>
                                                 <div class="upload-file invoice-fields">
-                                                    <span class="selected-file" id="name_pictures">No file selected</span>
-                                                    <input type="file" name="pictures" id="pictures" onchange="check_file_all('pictures')" accept=".jpg,.jpeg,.jpe,.png">
+                                                    <span class="selected-file" id="name_pictures">No file
+                                                        selected</span>
+                                                    <input type="file" name="pictures" id="pictures"
+                                                        onchange="check_file_all('pictures')"
+                                                        accept=".jpg,.jpeg,.jpe,.png">
                                                     <a href="javascript:;" style="background: #549809;">Choose File</a>
                                                 </div>
                                             </li>
@@ -734,17 +831,25 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             <li class="form-col-50-right">
                                                 <label>Job Title: &nbsp;&nbsp;&nbsp;&nbsp;
                                                     <?php if ($templateTitles) { ?>
-                                                        <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $applicant_info['job_title_type'] != '0' ? 'checked' : '' ?>> Choose Job Title&nbsp;&nbsp;
-                                                        <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $applicant_info['job_title_type'] == '0' ? 'checked' : '' ?>> Custom Job Title
+                                                        <input type="radio" name="title_option" value="dropdown"
+                                                            class="titleoption" <?php echo $applicant_info['job_title_type'] != '0' ? 'checked' : '' ?>> Choose Job Title&nbsp;&nbsp;
+                                                        <input type="radio" name="title_option" value="manual"
+                                                            class="titleoption" <?php echo $applicant_info['job_title_type'] == '0' ? 'checked' : '' ?>>
+                                                        Custom Job Title
                                                     <?php } ?>
                                                 </label>
-                                                <input class="invoice-fields" type="text" name="desired_job_title" value="<?php echo isset($applicant_info["desired_job_title"]) ? $applicant_info["desired_job_title"] : ''; ?>" id="job_title">
+                                                <input class="invoice-fields" type="text" name="desired_job_title"
+                                                    value="<?php echo isset($applicant_info["desired_job_title"]) ? $applicant_info["desired_job_title"] : ''; ?>"
+                                                    id="job_title">
                                                 <?php echo form_error('desired_job_title'); ?>
                                                 <?php if ($templateTitles) { ?>
-                                                    <select name="template_job_title" id="template_job_title" class="invoice-fields" style="display: none;">
+                                                    <select name="template_job_title" id="template_job_title"
+                                                        class="invoice-fields" style="display: none;">
                                                         <option value="0">Please select job title</option>
                                                         <?php foreach ($templateTitles as $titleRow) { ?>
-                                                            <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                            <option
+                                                                value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>">
+                                                                <?php echo $titleRow['title']; ?> </option>
                                                         <?php } ?>
                                                     </select>
                                                 <?php } ?>
@@ -754,12 +859,16 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Hourly Rate:</label>
-                                                    <input class="invoice-fields" value="<?php echo set_value('hourly_rate', isset($applicant_info["hourly_rate"]) ? $applicant_info["hourly_rate"] : ''); ?>" type="number" name="hourly_rate">
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('hourly_rate', isset($applicant_info["hourly_rate"]) ? $applicant_info["hourly_rate"] : ''); ?>"
+                                                        type="number" name="hourly_rate">
                                                 </div>
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Hourly Technician:</label>
-                                                    <input class="invoice-fields" value="<?php echo isset($applicant_info["hourly_technician"]) ? $applicant_info["hourly_technician"] : ''; ?>" type="number" name="hourly_technician">
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo isset($applicant_info["hourly_technician"]) ? $applicant_info["hourly_technician"] : ''; ?>"
+                                                        type="number" name="hourly_technician">
                                                 </div>
                                                 <!--  -->
                                             </div>
@@ -767,12 +876,16 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Flat Rate Technician:</label>
-                                                    <input class="invoice-fields" value="<?php echo set_value('flat_rate_technician', isset($applicant_info["flat_rate_technician"]) ? $applicant_info["flat_rate_technician"] : ''); ?>" type="number" name="flat_rate_technician">
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('flat_rate_technician', isset($applicant_info["flat_rate_technician"]) ? $applicant_info["flat_rate_technician"] : ''); ?>"
+                                                        type="number" name="flat_rate_technician">
                                                 </div>
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Semi Monthly Salary:</label>
-                                                    <input class="invoice-fields" value="<?php echo isset($applicant_info["semi_monthly_salary"]) ? $applicant_info["semi_monthly_salary"] : ''; ?>" type="number" name="semi_monthly_salary">
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo isset($applicant_info["semi_monthly_salary"]) ? $applicant_info["semi_monthly_salary"] : ''; ?>"
+                                                        type="number" name="semi_monthly_salary">
                                                 </div>
                                                 <!--  -->
                                             </div>
@@ -780,13 +893,17 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Semi Monthly Draw:</label>
-                                                    <input class="invoice-fields" value="<?php echo set_value('semi_monthly_draw', isset($applicant_info["semi_monthly_draw"]) ? $applicant_info["semi_monthly_draw"] : ''); ?>" type="number" name="semi_monthly_draw">
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('semi_monthly_draw', isset($applicant_info["semi_monthly_draw"]) ? $applicant_info["semi_monthly_draw"] : ''); ?>"
+                                                        type="number" name="semi_monthly_draw">
                                                 </div>
                                                 <?php if (isPayrollOrPlus(true)) { ?>
                                                     <!--  -->
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                         <label>Workers Compensation Code:</label>
-                                                        <input class="invoice-fields" value="<?php echo set_value('workers_compensation_code', isset($applicant_info["workers_compensation_code"]) ? $applicant_info["workers_compensation_code"] : ''); ?>" type="text" name="workers_compensation_code">
+                                                        <input class="invoice-fields"
+                                                            value="<?php echo set_value('workers_compensation_code', isset($applicant_info["workers_compensation_code"]) ? $applicant_info["workers_compensation_code"] : ''); ?>"
+                                                            type="text" name="workers_compensation_code">
                                                     </div>
                                                     <!--  -->
                                                 <?php } ?>
@@ -798,12 +915,16 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <!--  -->
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                         <label>EEOC Code:</label>
-                                                        <input class="invoice-fields" value="<?php echo set_value('eeoc_code', isset($applicant_info["eeoc_code"]) ? $applicant_info["eeoc_code"] : ''); ?>" type="text" name="eeoc_code">
+                                                        <input class="invoice-fields"
+                                                            value="<?php echo set_value('eeoc_code', isset($applicant_info["eeoc_code"]) ? $applicant_info["eeoc_code"] : ''); ?>"
+                                                            type="text" name="eeoc_code">
                                                     </div>
                                                     <!--  -->
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                         <label>Benefits Salary:</label>
-                                                        <input class="invoice-fields" name="salary_benefits" id="salary_benefits" value="<?php echo set_value('salary_benefits', isset($applicant_info["salary_benefits"]) ? $applicant_info["salary_benefits"] : ''); ?>" />
+                                                        <input class="invoice-fields" name="salary_benefits"
+                                                            id="salary_benefits"
+                                                            value="<?php echo set_value('salary_benefits', isset($applicant_info["salary_benefits"]) ? $applicant_info["salary_benefits"] : ''); ?>" />
 
                                                     </div>
                                                 </div>
@@ -814,15 +935,21 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <li>
-                                                        <label>Uniform Top Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
-                                                        <input class="invoice-fields" value="<?php echo set_value('uniform_top_size', isset($applicant_info["uniform_top_size"]) ? $applicant_info["uniform_top_size"] : ''); ?>" type="text" name="uniform_top_size">
+                                                        <label>Uniform Top
+                                                            Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
+                                                        <input class="invoice-fields"
+                                                            value="<?php echo set_value('uniform_top_size', isset($applicant_info["uniform_top_size"]) ? $applicant_info["uniform_top_size"] : ''); ?>"
+                                                            type="text" name="uniform_top_size">
                                                         <?php echo form_error('uniform_top_size'); ?>
                                                     </li>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <li>
-                                                        <label>Uniform Bottom Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
-                                                        <input class="invoice-fields" name="uniform_bottom_size" id="uniform_bottom_size" value="<?php echo set_value('uniform_bottom_size', isset($applicant_info["uniform_bottom_size"]) ? $applicant_info["uniform_bottom_size"] : ''); ?>" />
+                                                        <label>Uniform Bottom
+                                                            Size:<?= $portalData["uniform_sizes"] ? '<strong class="text-danger">*</strong>' : ''; ?></label>
+                                                        <input class="invoice-fields" name="uniform_bottom_size"
+                                                            id="uniform_bottom_size"
+                                                            value="<?php echo set_value('uniform_bottom_size', isset($applicant_info["uniform_bottom_size"]) ? $applicant_info["uniform_bottom_size"] : ''); ?>" />
                                                         <?php echo form_error('uniform_bottom_size'); ?>
                                                     </li>
 
@@ -852,7 +979,9 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                 <div class="col-sm-12">
                                                     <!--  -->
                                                     <label class="control control--checkbox">
-                                                        <input type="checkbox" name="secondaryLanguages[]" value="english" <?= strpos($applicant_info['languages_speak'], 'english') !== false ? 'checked' : ''; ?> /> English
+                                                        <input type="checkbox" name="secondaryLanguages[]"
+                                                            value="english"
+                                                            <?= strpos($applicant_info['languages_speak'], 'english') !== false ? 'checked' : ''; ?> /> English
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
@@ -861,7 +990,9 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                 <div class="col-sm-12">
                                                     <!--  -->
                                                     <label class="control control--checkbox">
-                                                        <input type="checkbox" name="secondaryLanguages[]" value="spanish" <?= strpos($applicant_info['languages_speak'], 'spanish') !== false ? 'checked' : ''; ?> /> Spanish
+                                                        <input type="checkbox" name="secondaryLanguages[]"
+                                                            value="spanish"
+                                                            <?= strpos($applicant_info['languages_speak'], 'spanish') !== false ? 'checked' : ''; ?> /> Spanish
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
@@ -870,7 +1001,9 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                 <div class="col-sm-12">
                                                     <!--  -->
                                                     <label class="control control--checkbox">
-                                                        <input type="checkbox" name="secondaryLanguages[]" value="russian" <?= strpos($applicant_info['languages_speak'], 'russian') !== false ? 'checked' : ''; ?> /> Russian
+                                                        <input type="checkbox" name="secondaryLanguages[]"
+                                                            value="russian"
+                                                            <?= strpos($applicant_info['languages_speak'], 'russian') !== false ? 'checked' : ''; ?> /> Russian
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
@@ -879,20 +1012,24 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                 <div class="col-sm-12">
                                                     <!--  -->
                                                     <label class="control control--checkbox">
-                                                        <input type="checkbox" name="secondaryOption" value="other" <?= $hasOther ? 'checked' : ''; ?> /> Others
+                                                        <input type="checkbox" name="secondaryOption" value="other"
+                                                            <?= $hasOther ? 'checked' : ''; ?> /> Others
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
                                             </div>
                                             <div class="row jsOtherLanguage <?= $hasOther ? '' : 'dn'; ?>">
                                                 <div class="col-sm-12">
-                                                    <input type="text" class="invoice-fields" name="secondaryLanguages[]" placeholder="French, German" value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" />
-                                                    <p><strong class="text-danger"><i>Add comma separated languages. e.g. French, German</i></strong></p>
+                                                    <input type="text" class="invoice-fields"
+                                                        name="secondaryLanguages[]" placeholder="French, German"
+                                                        value="<?= $hasOther ? ucwords(implode(',', $hasOther)) : ''; ?>" />
+                                                    <p><strong class="text-danger"><i>Add comma separated languages.
+                                                                e.g. French, German</i></strong></p>
                                                 </div>
                                             </div>
 
                                             <script>
-                                                $('[name="secondaryOption"]').click(function() {
+                                                $('[name="secondaryOption"]').click(function () {
                                                     $('.jsOtherLanguage').toggleClass('dn');
                                                 });
                                             </script>
@@ -906,26 +1043,35 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9">
                                                         <div class="row">
                                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                <label class="control control--radio"><?php echo NO_VIDEO; ?>
-                                                                    <input type="radio" name="video_source" class="video_source" value="no_video" checked="">
+                                                                <label
+                                                                    class="control control--radio"><?php echo NO_VIDEO; ?>
+                                                                    <input type="radio" name="video_source"
+                                                                        class="video_source" value="no_video"
+                                                                        checked="">
                                                                     <div class="control__indicator"></div>
                                                                 </label>
                                                             </div>
                                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                <label class="control control--radio"><?php echo YOUTUBE_VIDEO; ?>
-                                                                    <input type="radio" name="video_source" class="video_source" value="youtube" <?php echo $applicant_info['video_type'] == 'youtube' ? 'checked="checked"' : ''; ?>>
+                                                                <label
+                                                                    class="control control--radio"><?php echo YOUTUBE_VIDEO; ?>
+                                                                    <input type="radio" name="video_source"
+                                                                        class="video_source" value="youtube" <?php echo $applicant_info['video_type'] == 'youtube' ? 'checked="checked"' : ''; ?>>
                                                                     <div class="control__indicator"></div>
                                                                 </label>
                                                             </div>
                                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                <label class="control control--radio"><?php echo VIMEO_VIDEO; ?>
-                                                                    <input type="radio" name="video_source" class="video_source" value="vimeo" <?php echo $applicant_info['video_type'] == 'vimeo' ? 'checked="checked"' : ''; ?>>
+                                                                <label
+                                                                    class="control control--radio"><?php echo VIMEO_VIDEO; ?>
+                                                                    <input type="radio" name="video_source"
+                                                                        class="video_source" value="vimeo" <?php echo $applicant_info['video_type'] == 'vimeo' ? 'checked="checked"' : ''; ?>>
                                                                     <div class="control__indicator"></div>
                                                                 </label>
                                                             </div>
                                                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                <label class="control control--radio"><?php echo UPLOAD_VIDEO; ?>
-                                                                    <input type="radio" name="video_source" class="video_source" value="uploaded" <?php echo $applicant_info['video_type'] == 'uploaded' ? 'checked="checked"' : ''; ?>>
+                                                                <label
+                                                                    class="control control--radio"><?php echo UPLOAD_VIDEO; ?>
+                                                                    <input type="radio" name="video_source"
+                                                                        class="video_source" value="uploaded" <?php echo $applicant_info['video_type'] == 'uploaded' ? 'checked="checked"' : ''; ?>>
                                                                     <div class="control__indicator"></div>
                                                                 </label>
                                                             </div>
@@ -945,25 +1091,33 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     }
                                                     ?>
                                                     <label for="YouTube_Video" id="label_youtube">Youtube Video:</label>
-                                                    <label for="Vimeo_Video" id="label_vimeo" style="display: none">Vimeo Video:</label>
-                                                    <input type="text" name="yt_vm_video_url" value="<?php echo $video_link; ?>" class="invoice-fields" id="yt_vm_video_url">
+                                                    <label for="Vimeo_Video" id="label_vimeo"
+                                                        style="display: none">Vimeo Video:</label>
+                                                    <input type="text" name="yt_vm_video_url"
+                                                        value="<?php echo $video_link; ?>" class="invoice-fields"
+                                                        id="yt_vm_video_url">
                                                 </div>
                                                 <div id="upload_input" style="display: none">
                                                     <label for="YouTubeVideo">Upload Video:</label>
                                                     <div class="upload-file invoice-fields">
                                                         <?php
                                                         if (!empty($applicant_info['YouTube_Video']) && $applicant_info['video_type'] == 'uploaded') {
-                                                        ?>
-                                                            <input type="hidden" id="pre_upload_video_url" name="pre_upload_video_url" value="<?php echo $applicant_info['YouTube_Video']; ?>">
-                                                        <?php
+                                                            ?>
+                                                            <input type="hidden" id="pre_upload_video_url"
+                                                                name="pre_upload_video_url"
+                                                                value="<?php echo $applicant_info['YouTube_Video']; ?>">
+                                                            <?php
                                                         } else {
-                                                        ?>
-                                                            <input type="hidden" id="pre_upload_video_url" name="pre_upload_video_url" value="">
-                                                        <?php
+                                                            ?>
+                                                            <input type="hidden" id="pre_upload_video_url"
+                                                                name="pre_upload_video_url" value="">
+                                                            <?php
                                                         }
                                                         ?>
-                                                        <span class="selected-file" id="name_upload_video">No video selected</span>
-                                                        <input name="upload_video" id="upload_video" onchange="upload_video_checker('upload_video')" type="file">
+                                                        <span class="selected-file" id="name_upload_video">No video
+                                                            selected</span>
+                                                        <input name="upload_video" id="upload_video"
+                                                            onchange="upload_video_checker('upload_video')" type="file">
                                                         <a href="javascript:;">Choose Video</a>
                                                     </div>
                                                 </div>
@@ -973,22 +1127,33 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                         $fileExt = strtolower(pathinfo($fileExt, PATHINFO_EXTENSION));
                                                     } ?>
                                                     <div class="applicant-video autoheight">
-                                                        <div class="<?= !empty($fileExt) && $fileExt != 'mp3' ? 'well well-sm' : ''; ?>">
+                                                        <div
+                                                            class="<?= !empty($fileExt) && $fileExt != 'mp3' ? 'well well-sm' : ''; ?>">
                                                             <div class="embed-responsive embed-responsive-16by9">
                                                                 <?php if ($applicant_info['video_type'] == 'youtube') { ?>
-                                                                    <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/<?php echo $applicant_info['YouTube_Video']; ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                                                    <iframe class="embed-responsive-item"
+                                                                        src="https://www.youtube.com/embed/<?php echo $applicant_info['YouTube_Video']; ?>"
+                                                                        frameborder="0" webkitallowfullscreen mozallowfullscreen
+                                                                        allowfullscreen></iframe>
                                                                 <?php } elseif ($applicant_info['video_type'] == 'vimeo') { ?>
-                                                                    <iframe class="embed-responsive-item" src="https://player.vimeo.com/video/<?php echo $applicant_info['YouTube_Video']; ?>" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                                                                    <?php } else {
+                                                                    <iframe class="embed-responsive-item"
+                                                                        src="https://player.vimeo.com/video/<?php echo $applicant_info['YouTube_Video']; ?>"
+                                                                        frameborder="0" webkitallowfullscreen mozallowfullscreen
+                                                                        allowfullscreen></iframe>
+                                                                <?php } else {
                                                                     if ($fileExt == 'mp3') { ?>
                                                                         <audio controls>
-                                                                            <source src="<?php echo base_url() . 'assets/uploaded_videos/' . $applicant_info['YouTube_Video']; ?>" type='audio/mp3'>
+                                                                            <source
+                                                                                src="<?php echo base_url() . 'assets/uploaded_videos/' . $applicant_info['YouTube_Video']; ?>"
+                                                                                type='audio/mp3'>
                                                                         </audio>
                                                                     <?php } else { ?>
                                                                         <video controls>
-                                                                            <source src="<?php echo base_url() . 'assets/uploaded_videos/' . $applicant_info['YouTube_Video']; ?>" type='video/mp4'>
+                                                                            <source
+                                                                                src="<?php echo base_url() . 'assets/uploaded_videos/' . $applicant_info['YouTube_Video']; ?>"
+                                                                                type='video/mp4'>
                                                                         </video>
-                                                                <?php }
+                                                                    <?php }
                                                                 } ?>
                                                             </div>
                                                         </div>
@@ -998,7 +1163,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             <div class="form-title-section" style="margin-top: 50px;">
                                                 <div class="form-btns">
                                                     <input type="button" value="save" class="add_edit_submit">
-                                                    <input type="submit" value="cancel" class="view_button" style="background-color: #d9534f;">
+                                                    <input type="submit" value="cancel" class="view_button"
+                                                        style="background-color: #d9534f;">
                                                 </div>
                                             </div>
                                         </form>
@@ -1019,8 +1185,10 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                             <th class="col-xs-4">Job Title / Desired Job Title</th>
                                                             <th class="col-xs-1 text-center">Applicant Type</th>
                                                             <th class="col-xs-3 text-center">Applicant Status</th>
-                                                            <th class="col-xs-1 text-center">Screening Questionnaire</th>
-                                                            <th class="col-xs-2 text-center">Job Specific Interview Questionnaire</th>
+                                                            <th class="col-xs-1 text-center">Screening Questionnaire
+                                                            </th>
+                                                            <th class="col-xs-2 text-center">Job Specific Interview
+                                                                Questionnaire</th>
                                                             <?php if (check_access_permissions_for_view($security_details, 'send_documents_onboarding_request')) { ?>
                                                                 <th class="col-xs-1 text-center">Actions</th>
                                                             <?php } ?>
@@ -1046,7 +1214,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                 ?>
                                                                 <tr>
                                                                     <td>
-                                                                        <p><strong><?php echo $applicant_job['job_title']; ?></strong></p>
+                                                                        <p><strong><?php echo $applicant_job['job_title']; ?></strong>
+                                                                        </p>
                                                                         <p><small><span>Date Applied: </span>
                                                                                 <span><?= reset_datetime(array('datetime' => $applicant_job['date_applied'], '_this' => $this)); ?></span>
                                                                             </small>
@@ -1065,91 +1234,147 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                         <div class="label-wrapper-outer">
                                                                             <?php if ($have_status == false) { ?>
                                                                                 <?php if ($applicant_job["status"] == 'Contacted') { ?>
-                                                                                    <div class="selected contacted"><?= $applicant_job["status"] ?></div>
+                                                                                    <div class="selected contacted">
+                                                                                        <?= $applicant_job["status"] ?></div>
                                                                                 <?php } elseif ($applicant_job["status"] == 'Candidate Responded') { ?>
-                                                                                    <div class="selected responded"><?= $applicant_job["status"] ?></div>
+                                                                                    <div class="selected responded">
+                                                                                        <?= $applicant_job["status"] ?></div>
                                                                                 <?php } elseif ($applicant_job["status"] == 'Qualifying') { ?>
-                                                                                    <div class="selected qualifying"><?= $applicant_job["status"] ?></div>
+                                                                                    <div class="selected qualifying">
+                                                                                        <?= $applicant_job["status"] ?></div>
                                                                                 <?php } elseif ($applicant_job["status"] == 'Submitted') { ?>
-                                                                                    <div class="selected submitted"><?= $applicant_job["status"] ?></div>
+                                                                                    <div class="selected submitted">
+                                                                                        <?= $applicant_job["status"] ?></div>
                                                                                 <?php } elseif ($applicant_job["status"] == 'Interviewing') { ?>
-                                                                                    <div class="selected interviewing"><?= $applicant_job["status"] ?></div>
+                                                                                    <div class="selected interviewing">
+                                                                                        <?= $applicant_job["status"] ?></div>
                                                                                 <?php } elseif ($applicant_job["status"] == 'Offered Job') { ?>
-                                                                                    <div class="selected offered"><?= $applicant_job["status"] ?></div>
+                                                                                    <div class="selected offered">
+                                                                                        <?= $applicant_job["status"] ?></div>
                                                                                 <?php } elseif ($applicant_job["status"] == 'Not In Consideration') { ?>
-                                                                                    <div class="selected notin"><?= $applicant_job["status"] ?></div>
+                                                                                    <div class="selected notin">
+                                                                                        <?= $applicant_job["status"] ?></div>
                                                                                 <?php } elseif ($applicant_job["status"] == 'Client Declined') { ?>
-                                                                                    <div class="selected decline"><?= $applicant_job["status"] ?></div>
+                                                                                    <div class="selected decline">
+                                                                                        <?= $applicant_job["status"] ?></div>
                                                                                 <?php } elseif ($applicant_job["status"] == 'Placed/Hired' || $applicant_job["status"] == 'Ready to Hire') { ?>
                                                                                     <div class="selected placed">Ready to Hire</div>
                                                                                 <?php } elseif ($applicant_job["status"] == 'Not Contacted Yet') { ?>
-                                                                                    <div class="selected not_contacted"><?= $applicant_job["status"] ?></div>
+                                                                                    <div class="selected not_contacted">
+                                                                                        <?= $applicant_job["status"] ?></div>
                                                                                 <?php } elseif ($applicant_job["status"] == 'Future Opportunity') { ?>
-                                                                                    <div class="selected future_opportunity"><?= $applicant_job["status"] ?></div>
+                                                                                    <div class="selected future_opportunity">
+                                                                                        <?= $applicant_job["status"] ?></div>
                                                                                 <?php } elseif ($applicant_job["status"] == 'Left Message') { ?>
-                                                                                    <div class="selected left_message"><?= $applicant_job["status"] ?></div>
+                                                                                    <div class="selected left_message">
+                                                                                        <?= $applicant_job["status"] ?></div>
                                                                                 <?php } ?>
                                                                             <?php } else { ?>
-                                                                                <div <?php echo isset($applicant_job['status_type']) && !empty($applicant_job['status_type']) ? ' style= "background-color: ' . $applicant_job['bar_bgcolor'] . '"' : '' ?> class="selected <?php echo (isset($applicant_job['status_css_class'])) ? $applicant_job['status_css_class'] : ''; ?>">
+                                                                                <div <?php echo isset($applicant_job['status_type']) && !empty($applicant_job['status_type']) ? ' style= "background-color: ' . $applicant_job['bar_bgcolor'] . '"' : '' ?>
+                                                                                    class="selected <?php echo (isset($applicant_job['status_css_class'])) ? $applicant_job['status_css_class'] : ''; ?>">
                                                                                     <?php echo (isset($applicant_job['status_name'])) ? $applicant_job['status_name'] : ''; ?>
                                                                                 </div>
                                                                             <?php } ?>
                                                                             <div class="lable-wrapper">
-                                                                                <div id="id" style="display:none;"><?= $applicant_job['sid'] ?></div>
-                                                                                <div style="height:20px;"><i class="fa fa-times cross"></i></div>
+                                                                                <div id="id" style="display:none;">
+                                                                                    <?= $applicant_job['sid'] ?></div>
+                                                                                <div style="height:20px;"><i
+                                                                                        class="fa fa-times cross"></i></div>
                                                                                 <?php if ($have_status == false) { ?>
-                                                                                    <div data-status_sid="1" data-status_class="not_contacted" data-status_name="Not Contacted Yet" class="label applicant not_contacted">
+                                                                                    <div data-status_sid="1"
+                                                                                        data-status_class="not_contacted"
+                                                                                        data-status_name="Not Contacted Yet"
+                                                                                        class="label applicant not_contacted">
                                                                                         <div id="status">Not Contacted Yet</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
-                                                                                    <div data-status_sid="2" data-status_class="left_message" data-status_name="Left Message" class="label applicant left_message">
+                                                                                    <div data-status_sid="2"
+                                                                                        data-status_class="left_message"
+                                                                                        data-status_name="Left Message"
+                                                                                        class="label applicant left_message">
                                                                                         <div id="status">Left Message</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
-                                                                                    <div data-status_sid="3" data-status_class="contacted" data-status_name="Contacted" class="label applicant contacted">
+                                                                                    <div data-status_sid="3"
+                                                                                        data-status_class="contacted"
+                                                                                        data-status_name="Contacted"
+                                                                                        class="label applicant contacted">
                                                                                         <div id="status">Contacted</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
-                                                                                    <div data-status_sid="4" data-status_class="responded" data-status_name="Candidate Responded" class="label applicant responded">
+                                                                                    <div data-status_sid="4"
+                                                                                        data-status_class="responded"
+                                                                                        data-status_name="Candidate Responded"
+                                                                                        class="label applicant responded">
                                                                                         <div id="status">Candidate Responded</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
-                                                                                    <div data-status_sid="5" data-status_class="qualifying" data-status_name="Interviewing" class="label applicant interviewing">
+                                                                                    <div data-status_sid="5"
+                                                                                        data-status_class="qualifying"
+                                                                                        data-status_name="Interviewing"
+                                                                                        class="label applicant interviewing">
                                                                                         <div id="status">Interviewing</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
-                                                                                    <div data-status_sid="6" data-status_class="submitted" data-status_name="Submitted" class="label applicant submitted">
+                                                                                    <div data-status_sid="6"
+                                                                                        data-status_class="submitted"
+                                                                                        data-status_name="Submitted"
+                                                                                        class="label applicant submitted">
                                                                                         <div id="status">Submitted</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
-                                                                                    <div data-status_sid="7" data-status_class="interviewing" data-status_name="Qualifying" class="label applicant qualifying">
+                                                                                    <div data-status_sid="7"
+                                                                                        data-status_class="interviewing"
+                                                                                        data-status_name="Qualifying"
+                                                                                        class="label applicant qualifying">
                                                                                         <div id="status">Qualifying</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
-                                                                                    <div data-status_sid="11" data-status_class="placed" data-status_name="Ready to Hire" class="label applicant placed">
+                                                                                    <div data-status_sid="11"
+                                                                                        data-status_class="placed"
+                                                                                        data-status_name="Ready to Hire"
+                                                                                        class="label applicant placed">
                                                                                         <div id="status">Ready to Hire</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
-                                                                                    <div data-status_sid="8" data-status_class="offered" data-status_name="Offered Job" class="label applicant offered">
+                                                                                    <div data-status_sid="8"
+                                                                                        data-status_class="offered"
+                                                                                        data-status_name="Offered Job"
+                                                                                        class="label applicant offered">
                                                                                         <div id="status">Offered Job</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
-                                                                                    <div data-status_sid="10" data-status_class="decline" data-status_name="Client Declined" class="label applicant decline">
+                                                                                    <div data-status_sid="10"
+                                                                                        data-status_class="decline"
+                                                                                        data-status_name="Client Declined"
+                                                                                        class="label applicant decline">
                                                                                         <div id="status">Client Declined</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
-                                                                                    <div data-status_sid="9" data-status_class="notin" data-status_name="Not In Consideration" class="label applicant notin">
+                                                                                    <div data-status_sid="9"
+                                                                                        data-status_class="notin"
+                                                                                        data-status_name="Not In Consideration"
+                                                                                        class="label applicant notin">
                                                                                         <div id="status">Not In Consideration</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
-                                                                                    <div data-status_sid="12" data-status_class="future_opportunity" data-status_name="Future Opportunity" class="label applicant future_opportunity">
+                                                                                    <div data-status_sid="12"
+                                                                                        data-status_class="future_opportunity"
+                                                                                        data-status_name="Future Opportunity"
+                                                                                        class="label applicant future_opportunity">
                                                                                         <div id="status">Future Opportunity</div>
                                                                                         <i class="fa fa-check-square check"></i>
                                                                                     </div>
                                                                                 <?php } else { ?>
                                                                                     <?php foreach ($company_statuses as $status) { ?>
-                                                                                        <div <?php echo !empty($status['status_type']) ? ' style= "background-color: ' . $status['bar_bgcolor'] . '"' : '' ?> data-status_sid="<?php echo $status['sid']; ?>" data-status_class="<?php echo $status['css_class']; ?>" data-status_name="<?php echo $status['name']; ?>" f class="label applicant <?php echo $status['css_class']; ?>">
-                                                                                            <div id="status"><?php echo $status['name']; ?></div>
+                                                                                        <div <?php echo !empty($status['status_type']) ? ' style= "background-color: ' . $status['bar_bgcolor'] . '"' : '' ?>
+                                                                                            data-status_sid="<?php echo $status['sid']; ?>"
+                                                                                            data-status_class="<?php echo $status['css_class']; ?>"
+                                                                                            data-status_name="<?php echo $status['name']; ?>"
+                                                                                            f
+                                                                                            class="label applicant <?php echo $status['css_class']; ?>">
+                                                                                            <div id="status">
+                                                                                                <?php echo $status['name']; ?></div>
                                                                                             <i class="fa fa-check-square check"></i>
                                                                                         </div>
                                                                                     <?php } ?>
@@ -1214,13 +1439,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                                     echo '<p class="fail">N/A</p>';
                                                                                 }
                                                                             }
-                                                                        }  ?>
+                                                                        } ?>
                                                                         <?php if (check_access_permissions_for_view($security_details, 'resend_screening_questionnaire')) { ?>
                                                                             <p>
                                                                                 <span>
-                                                                                    <a class="btn btn-sm btn-success" href="javascript:0;" data-toggle="modal" data-target="#job-id-<?php echo $applicant_job['sid']; ?>">Resend</a>
+                                                                                    <a class="btn btn-sm btn-success"
+                                                                                        href="javascript:0;" data-toggle="modal"
+                                                                                        data-target="#job-id-<?php echo $applicant_job['sid']; ?>">Resend</a>
                                                                                     <!-- <a class="btn btn-sm btn-success" href="--><?php //echo base_url('resend_screening_questionnaire') . '/' . $applicant_info['sid'] . '/' . $applicant_job['sid'] . '/' . $applicant_job['job_sid'] ; 
-                                                                                                                                    ?>
+                                                                                                ?>
                                                                                     <!--">Resend</a>-->
                                                                                 </span>
                                                                             </p>
@@ -1232,16 +1459,28 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                             <span>
                                                                                 <?php $interview_score_count = count_interview_score_records($applicant_info['sid'], $applicant_job['job_sid']); ?>
                                                                                 <?php if (intval($interview_score_count) > 0) { ?>
-                                                                                    <img style=" width: 22px; height: 22px; margin-right:5px; display: inline-block;" title="Interview Conducted" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                                    <img style=" width: 22px; height: 22px; margin-right:5px; display: inline-block;"
+                                                                                        title="Interview Conducted"
+                                                                                        data-toggle="tooltip" data-placement="top"
+                                                                                        class="img-responsive"
+                                                                                        src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
                                                                                 <?php } else { ?>
-                                                                                    <img style=" width: 22px; height: 22px; margin-right:5px; display: inline-block;" title="Interview Not Conducted" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                                    <img style=" width: 22px; height: 22px; margin-right:5px; display: inline-block;"
+                                                                                        title="Interview Not Conducted"
+                                                                                        data-toggle="tooltip" data-placement="top"
+                                                                                        class="img-responsive"
+                                                                                        src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                                                                                 <?php } ?>
                                                                             </span>
                                                                             <span>
-                                                                                <a class="btn btn-sm btn-success" href="<?php echo base_url('interview_questionnaires') . '/applicant/' . $applicant_info['sid'] . '/' . $applicant_job['job_sid']; ?>">Launch / View</a>
+                                                                                <a class="btn btn-sm btn-success"
+                                                                                    href="<?php echo base_url('interview_questionnaires') . '/applicant/' . $applicant_info['sid'] . '/' . $applicant_job['job_sid']; ?>">Launch
+                                                                                    / View</a>
                                                                             </span>
                                                                         <?php } else { ?>
-                                                                            <span class="" data-toggle="tooltip" title="Interview Questionnaire Not Assigned">Not Applicable</span>
+                                                                            <span class="" data-toggle="tooltip"
+                                                                                title="Interview Questionnaire Not Assigned">Not
+                                                                                Applicable</span>
                                                                         <?php } ?>
                                                                     </td>
                                                                     <?php if (check_access_permissions_for_view($security_details, 'send_documents_onboarding_request')) { ?>
@@ -1254,26 +1493,40 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                                     </button>-->
                                                                                         <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
                                                                                             <?php if ($is_onboarding_configured == false) { ?>
-                                                                                                <a href="<?php echo base_url('onboarding/configuration/'); ?>" class="btn btn-success btn-sm">Configure Onboarding</a>
+                                                                                                <a href="<?php echo base_url('onboarding/configuration/'); ?>"
+                                                                                                    class="btn btn-success btn-sm">Configure
+                                                                                                    Onboarding</a>
                                                                                             <?php } else { ?>
                                                                                                 <?php if (!empty($onboarding_status) && $onboarding_status['onboarding_status'] == 'in_process') { ?>
-                                                                                                    <a href="<?php echo base_url('onboarding/setup/applicant/' . $applicant_info['sid']) . '/' . $applicant_job['sid']; ?>" class="btn btn-success btn-sm">Resend Onboarding Request</a>
+                                                                                                    <a href="<?php echo base_url('onboarding/setup/applicant/' . $applicant_info['sid']) . '/' . $applicant_job['sid']; ?>"
+                                                                                                        class="btn btn-success btn-sm">Resend Onboarding
+                                                                                                        Request</a>
                                                                                                 <?php } else { ?>
-                                                                                                    <a href="<?php echo base_url('onboarding/setup/applicant/' . $applicant_info['sid']) . '/' . $applicant_job['sid']; ?>" class="btn btn-success btn-sm">Send Onboarding Request</a>
+                                                                                                    <a href="<?php echo base_url('onboarding/setup/applicant/' . $applicant_info['sid']) . '/' . $applicant_job['sid']; ?>"
+                                                                                                        class="btn btn-success btn-sm">Send Onboarding
+                                                                                                        Request</a>
                                                                                                 <?php } ?>
                                                                                             <?php } ?>
                                                                                         <?php } else { ?>
-                                                                                            <button class="btn btn-success btn-sm" onclick="func_get_hire_applicant_form(<?php echo $applicant_job['company_sid']; ?>, <?php echo $applicant_job['portal_job_applications_sid']; ?>, <?php echo $applicant_job['job_sid']; ?>, '<?php echo $applicant_info['email']; ?>');"><i class="fa fa-refresh fa-check-square"></i>&nbsp;Send Docs</button>
+                                                                                            <button class="btn btn-success btn-sm"
+                                                                                                onclick="func_get_hire_applicant_form(<?php echo $applicant_job['company_sid']; ?>, <?php echo $applicant_job['portal_job_applications_sid']; ?>, <?php echo $applicant_job['job_sid']; ?>, '<?php echo $applicant_info['email']; ?>');"><i
+                                                                                                    class="fa fa-refresh fa-check-square"></i>&nbsp;Send
+                                                                                                Docs</button>
                                                                                         <?php } ?>
                                                                                     </div>
                                                                                 <?php } else { ?>
                                                                                     <?php if ($applicant_job['approval_status'] == null || $applicant_job['approval_status'] == 'NULL' || $applicant_job['approval_status'] == 'null') { ?>
                                                                                         <div class="">
-                                                                                            <button class="btn btn-success btn-sm" onclick="fSetApplicantForApproval(<?php echo $applicant_job['portal_job_applications_sid']; ?>, <?php echo $applicant_job['job_sid']; ?>);"><i class="fa fa-refresh fa-check-square"></i>&nbsp;Get Hiring Approval</button>
+                                                                                            <button class="btn btn-success btn-sm"
+                                                                                                onclick="fSetApplicantForApproval(<?php echo $applicant_job['portal_job_applications_sid']; ?>, <?php echo $applicant_job['job_sid']; ?>);"><i
+                                                                                                    class="fa fa-refresh fa-check-square"></i>&nbsp;Get
+                                                                                                Hiring Approval</button>
                                                                                         </div>
                                                                                     <?php } elseif ($applicant_job['approval_status'] == 'pending') { ?>
                                                                                         <div class="">
-                                                                                            <div class="btn btn-success btn-sm" onclick=""><i class="fa fa-hourglass-half"></i>&nbsp;Approval Pending</div>
+                                                                                            <div class="btn btn-success btn-sm" onclick=""><i
+                                                                                                    class="fa fa-hourglass-half"></i>&nbsp;Approval
+                                                                                                Pending</div>
                                                                                         </div>
                                                                                     <?php } elseif ($applicant_job['approval_status'] == 'approved') { ?>
                                                                                         <div class="">
@@ -1282,27 +1535,42 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                                         </button>-->
                                                                                             <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
                                                                                                 <?php if ($is_onboarding_configured == false) { ?>
-                                                                                                    <a href="<?php echo base_url('onboarding/configuration/'); ?>" class="btn btn-success btn-sm">Configure Onboarding</a>
+                                                                                                    <a href="<?php echo base_url('onboarding/configuration/'); ?>"
+                                                                                                        class="btn btn-success btn-sm">Configure
+                                                                                                        Onboarding</a>
                                                                                                 <?php } else { ?>
                                                                                                     <?php if (!empty($onboarding_status) && $onboarding_status['onboarding_status'] == 'in_process') { ?>
-                                                                                                        <a href="<?php echo base_url('onboarding/setup/applicant/' . $applicant_info['sid'] . '/' . $applicant_job['sid']); ?>" class="btn btn-success btn-sm">Resend Onboarding Request</a>
+                                                                                                        <a href="<?php echo base_url('onboarding/setup/applicant/' . $applicant_info['sid'] . '/' . $applicant_job['sid']); ?>"
+                                                                                                            class="btn btn-success btn-sm">Resend Onboarding
+                                                                                                            Request</a>
                                                                                                     <?php } else { ?>
-                                                                                                        <a href="<?php echo base_url('onboarding/setup/applicant/' . $applicant_info['sid'] . '/' . $applicant_job['sid']); ?>" class="btn btn-success btn-sm">Send Onboarding Request</a>
+                                                                                                        <a href="<?php echo base_url('onboarding/setup/applicant/' . $applicant_info['sid'] . '/' . $applicant_job['sid']); ?>"
+                                                                                                            class="btn btn-success btn-sm">Send Onboarding
+                                                                                                            Request</a>
                                                                                                     <?php } ?>
                                                                                                 <?php } ?>
                                                                                             <?php } else { ?>
-                                                                                                <button class="btn btn-success btn-sm" onclick="func_get_hire_applicant_form(<?php echo $applicant_job['company_sid']; ?>, <?php echo $applicant_job['portal_job_applications_sid']; ?>, <?php echo $applicant_job['job_sid']; ?>, '<?php echo $applicant_info['email']; ?>');"><i class="fa fa-refresh fa-check-square"></i>&nbsp;Send Documents</button>
+                                                                                                <button class="btn btn-success btn-sm"
+                                                                                                    onclick="func_get_hire_applicant_form(<?php echo $applicant_job['company_sid']; ?>, <?php echo $applicant_job['portal_job_applications_sid']; ?>, <?php echo $applicant_job['job_sid']; ?>, '<?php echo $applicant_info['email']; ?>');"><i
+                                                                                                        class="fa fa-refresh fa-check-square"></i>&nbsp;Send
+                                                                                                    Documents</button>
                                                                                             <?php } ?>
                                                                                         </div>
                                                                                     <?php } elseif ($applicant_job['approval_status'] == 'rejected') { ?>
                                                                                         <?php if ($applicant_job['approval_status_type'] == 'rejected_unconditionally') { ?>
                                                                                             <div class="">
-                                                                                                <button class="btn btn-success btn-sm" onclick="func_show_permanent_rejection_info();"><i class="fa fa-ban"></i>&nbsp;<?php echo ucwords($applicant_job['approval_status']); ?> Click for Details</button>
+                                                                                                <button class="btn btn-success btn-sm"
+                                                                                                    onclick="func_show_permanent_rejection_info();"><i
+                                                                                                        class="fa fa-ban"></i>&nbsp;<?php echo ucwords($applicant_job['approval_status']); ?>
+                                                                                                    Click for Details</button>
                                                                                             </div>
                                                                                         <?php } else if ($applicant_job['approval_status_type'] == 'rejected_conditionally') { ?>
-                                                                                            <div class="">
-                                                                                                <button class="btn btn-success btn-sm" onclick="func_show_rejection_information(<?php echo $applicant_job['portal_job_applications_sid']; ?>, <?php echo $applicant_job['company_sid']; ?>, <?php echo $applicant_job['job_sid']; ?>);"><i class="fa fa-ban"></i>&nbsp;<?php echo ucwords($applicant_job['approval_status']); ?> Click for Details</button>
-                                                                                            </div>
+                                                                                                <div class="">
+                                                                                                    <button class="btn btn-success btn-sm"
+                                                                                                        onclick="func_show_rejection_information(<?php echo $applicant_job['portal_job_applications_sid']; ?>, <?php echo $applicant_job['company_sid']; ?>, <?php echo $applicant_job['job_sid']; ?>);"><i
+                                                                                                            class="fa fa-ban"></i>&nbsp;<?php echo ucwords($applicant_job['approval_status']); ?>
+                                                                                                        Click for Details</button>
+                                                                                                </div>
                                                                                         <?php } ?>
                                                                                     <?php } ?>
                                                                                 <?php } ?>
@@ -1353,9 +1621,12 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <div class="col-xs-10">
                                                         <?php if (!empty($interview_questionnaires)) { ?>
                                                             <div class="hr-select-dropdown">
-                                                                <select id="interview_questionnaire" name="interview_questionnaire" class="invoice-fields">
+                                                                <select id="interview_questionnaire"
+                                                                    name="interview_questionnaire" class="invoice-fields">
                                                                     <?php foreach ($interview_questionnaires as $questionnaire) { ?>
-                                                                        <option value="<?php echo base_url('interview_questionnaire/launch_interview/' . $applicant_sid . '/' . $questionnaire['sid']); ?>"><?php echo $questionnaire['title']; ?></option>
+                                                                        <option
+                                                                            value="<?php echo base_url('interview_questionnaire/launch_interview/' . $applicant_sid . '/' . $questionnaire['sid']); ?>">
+                                                                            <?php echo $questionnaire['title']; ?></option>
                                                                     <?php } ?>
                                                                 </select>
                                                             </div>
@@ -1364,7 +1635,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                         <?php } ?>
                                                     </div>
                                                     <div class="col-xs-2">
-                                                        <a href="#" id="btn_launch_interview" class="btn btn-success btn-block">Launch</a>
+                                                        <a href="#" id="btn_launch_interview"
+                                                            class="btn btn-success btn-block">Launch</a>
                                                     </div>
                                                 </div>
                                                 <?php if (!empty($interview_questionnaire_scores)) { ?>
@@ -1372,18 +1644,23 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <div class="row">
                                                         <div class="col-xs-12">
                                                             <div class="table-responsive">
-                                                                <table class="table table-bordered table-hover table-striped">
+                                                                <table
+                                                                    class="table table-bordered table-hover table-striped">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th class="col-xs-10">Interview Questionnaire</th>
+                                                                            <th class="col-xs-10">Interview Questionnaire
+                                                                            </th>
                                                                             <th class="col-xs-2 text-center">Actions</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
                                                                         <?php foreach ($interview_questionnaire_scores as $interview_questionnaire_score) { ?>
                                                                             <tr>
-                                                                                <td><?php echo $interview_questionnaire_score['title']; ?></td>
-                                                                                <td><a class="btn btn-success btn-block" href="<?php echo base_url('interview_questionnaire/launch_interview/' . $applicant_sid . '/' . $interview_questionnaire_score['questionnaire_sid']); ?>">View</a> </td>
+                                                                                <td><?php echo $interview_questionnaire_score['title']; ?>
+                                                                                </td>
+                                                                                <td><a class="btn btn-success btn-block"
+                                                                                        href="<?php echo base_url('interview_questionnaire/launch_interview/' . $applicant_sid . '/' . $interview_questionnaire_score['questionnaire_sid']); ?>">View</a>
+                                                                                </td>
                                                                             </tr>
                                                                         <?php } ?>
                                                                     </tbody>
@@ -1408,7 +1685,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
 
                                 if ($notes_popup_view == true) { ?>
                                     <div class="universal-form-style-v2" id="show_hide">
-                                        <form action="<?php echo base_url('applicant_profile/insert_notes') ?>" method="POST" id="note_form" enctype="multipart/form-data">
+                                        <form action="<?php echo base_url('applicant_profile/insert_notes') ?>"
+                                            method="POST" id="note_form" enctype="multipart/form-data">
                                             <input type="hidden" name="action" value="add_note">
                                             <input type="hidden" name="applicant_job_sid" value="<?php echo $id; ?>">
                                             <input type="hidden" name="job_list_sid" value="<?php echo $job_list_sid; ?>">
@@ -1416,8 +1694,10 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             <div class="form-title-section">
                                                 <h2>Applicant Notes</h2>
                                                 <div class="form-btns">
-                                                    <input type="submit" style="display: none;" class="note_div" value="save">
-                                                    <input type="button" id="cancel_note" style="display: none;" class="note_div" value="cancel">
+                                                    <input type="submit" style="display: none;" class="note_div"
+                                                        value="save">
+                                                    <input type="button" id="cancel_note" style="display: none;"
+                                                        class="note_div" value="cancel">
                                                     <input type="submit" class="no_note" id="add_notes" value="Add note">
                                                 </div>
                                             </div>
@@ -1426,11 +1706,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             </div>
                                             <div class="applicant-notes">
                                                 <div class="hr-ck-editor note_div" style="display: none;">
-                                                    <textarea class="ckeditor" id="notes" name="notes" rows="8" cols="60"></textarea>
+                                                    <textarea class="ckeditor" id="notes" name="notes" rows="8"
+                                                        cols="60"></textarea>
                                                     <div class="row">
                                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                             <label>Attachment</label>
-                                                            <input type="file" class="filestyle" id="insert_notes_attachment" name="notes_attachment" />
+                                                            <input type="file" class="filestyle"
+                                                                id="insert_notes_attachment" name="notes_attachment" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1440,41 +1722,64 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                         <h2>
                                                             <div class="col-xs-6 col-sm-6 col-md-12 col-lg-6 text-left">
                                                                 <span id="<?= $note['sid'] ?>"><?= $note['notes'] ?></span>
-                                                                <p class="postdate"><?= reset_datetime(array('datetime' => $note['insert_date'], '_this' => $this, 'from_format' => 'b d Y H:i a', 'format' => 'default')); ?></p>
+                                                                <p class="postdate">
+                                                                    <?= reset_datetime(array('datetime' => $note['insert_date'], '_this' => $this, 'from_format' => 'b d Y H:i a', 'format' => 'default')); ?>
+                                                                </p>
                                                             </div>
                                                             <?php if (!empty($note['attachment'])) { ?>
                                                                 <div class="col-xs-6 col-sm-6 col-md-12 col-lg-6 text-right">
                                                                     <?php if ($note['attachment_extension'] == 'png' || $note['attachment_extension'] == 'jpg' || $note['attachment_extension'] == 'jpe' || $note['attachment_extension'] == 'jpeg' || $note['attachment_extension'] == 'gif') { ?>
                                                                         <div class="img-thumbnail" style="max-width: 800px;">
-                                                                            <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>" />
+                                                                            <img class="img-responsive"
+                                                                                src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>" />
                                                                         </div>
                                                                     <?php } elseif ($note['attachment_extension'] == 'doc' || $note['attachment_extension'] == 'docx') { ?>
-                                                                        <iframe style="width: 100%; height: 600px" class="uploaded-file-preview" src="https://view.officeapps.live.com/op/embed.aspx?src=<?php echo AWS_S3_BUCKET_URL . $note['attachment'] ?>" frameborder="0"></iframe>
+                                                                        <iframe style="width: 100%; height: 600px"
+                                                                            class="uploaded-file-preview"
+                                                                            src="https://view.officeapps.live.com/op/embed.aspx?src=<?php echo AWS_S3_BUCKET_URL . $note['attachment'] ?>"
+                                                                            frameborder="0"></iframe>
                                                                     <?php } elseif ($note['attachment_extension'] == 'mp3' || $note['attachment_extension'] == 'aac') { ?>
                                                                         <audio width="800" controls>
                                                                             <?php if ($note['attachment_extension'] == 'mp3') { ?>
-                                                                                <source src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>" type="audio/mpeg">
+                                                                                <source
+                                                                                    src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>"
+                                                                                    type="audio/mpeg">
                                                                             <?php } else if ($note['attachment_extension'] == 'ogg') { ?>
-                                                                                <source src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>" type="audio/ogg">
+                                                                                    <source
+                                                                                        src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>"
+                                                                                        type="audio/ogg">
                                                                             <?php } else if ($note['attachment_extension'] == 'wav') { ?>
-                                                                                <source src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>" type="audio/wav">
+                                                                                        <source
+                                                                                            src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>"
+                                                                                            type="audio/wav">
                                                                             <?php } ?>
                                                                             Your browser does not support the audio element.
                                                                         </audio>
                                                                     <?php } elseif ($note['attachment_extension'] == 'pdf') { ?>
-                                                                        <iframe style="width: 100%; height: 600px" class="uploaded-file-preview" src="https://docs.google.com/gview?url=<?php echo AWS_S3_BUCKET_URL . $note['attachment'] ?>&embedded=true" frameborder="0"></iframe>
+                                                                        <iframe style="width: 100%; height: 600px"
+                                                                            class="uploaded-file-preview"
+                                                                            src="https://docs.google.com/gview?url=<?php echo AWS_S3_BUCKET_URL . $note['attachment'] ?>&embedded=true"
+                                                                            frameborder="0"></iframe>
                                                                     <?php } ?>
                                                                     <br />
                                                                     <br />
-                                                                    <a class="btn btn-success" href="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>" download="download">Download Attachment</a>
+                                                                    <a class="btn btn-success"
+                                                                        href="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>"
+                                                                        download="download">Download Attachment</a>
                                                                     <br />
                                                                     <br />
                                                                 </div>
                                                             <?php } ?>
                                                             <div class="edit-notes">
-                                                                <a href="javascript:;" style="height: 20px; line-height: 0; color: white; font-size: 10px;" class="grayButton siteBtn notes-btn" onclick="modify_note(<?= $note['sid'] ?>)">View /
+                                                                <a href="javascript:;"
+                                                                    style="height: 20px; line-height: 0; color: white; font-size: 10px;"
+                                                                    class="grayButton siteBtn notes-btn"
+                                                                    onclick="modify_note(<?= $note['sid'] ?>)">View /
                                                                     Edit</a>
-                                                                <a href="javascript:;" style="height: 20px; line-height: 0; color: white; font-size: 10px;" class="siteBtn notes-btn btncancel" onclick="delete_note(<?= $note['sid'] ?>)">Delete</a>
+                                                                <a href="javascript:;"
+                                                                    style="height: 20px; line-height: 0; color: white; font-size: 10px;"
+                                                                    class="siteBtn notes-btn btncancel"
+                                                                    onclick="delete_note(<?= $note['sid'] ?>)">Delete</a>
                                                             </div>
                                                         </h2>
                                                     </article>
@@ -1483,18 +1788,22 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                         </form>
                                     </div>
                                     <div class="universal-form-style-v2" style="display: none" id="edit_notes">
-                                        <form name="edit_note" action="<?php echo base_url('applicant_profile/insert_notes') ?>" method="POST" enctype="multipart/form-data">
+                                        <form name="edit_note"
+                                            action="<?php echo base_url('applicant_profile/insert_notes') ?>" method="POST"
+                                            enctype="multipart/form-data">
                                             <div class="form-title-section">
                                                 <h2>Applicant Notes</h2>
                                                 <div class="form-btns">
                                                     <input type="submit" name="note_submit" value="Update">
-                                                    <input onclick="cancel_notes()" type="button" name="cancel" value="Cancel">
+                                                    <input onclick="cancel_notes()" type="button" name="cancel"
+                                                        value="Cancel">
                                                 </div>
                                             </div>
                                             <div class="tab-header-sec">
                                                 <p class="questionnaire-heading">Miscellaneous Notes</p>
                                             </div>
-                                            <textarea class="ckeditor" name="my_edit_notes" id="my_edit_notes" cols="67" rows="6"></textarea>
+                                            <textarea class="ckeditor" name="my_edit_notes" id="my_edit_notes" cols="67"
+                                                rows="6"></textarea>
                                             <input type="hidden" name="action" value="edit_note">
                                             <input type="hidden" name="applicant_job_sid" value="<?php echo $id; ?>">
                                             <input type="hidden" name="job_list_sid" value="<?php echo $job_list_sid; ?>">
@@ -1503,12 +1812,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                     <label>Attachment</label>
-                                                    <input type="file" class="filestyle" id="update_notes_attachment" name="notes_attachment" />
+                                                    <input type="file" class="filestyle" id="update_notes_attachment"
+                                                        name="notes_attachment" />
                                                 </div>
                                             </div>
                                         </form>
                                     </div>
-                                <?php           } else { ?>
+                                <?php } else { ?>
                                     <div class="universal-form-style-v2" id="show_hide">
                                         <div class="form-title-section">
                                             <h2>Applicant Notes</h2>
@@ -1517,11 +1827,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             <p class="questionnaire-heading">You are not Authorised</p>
                                         </div>
                                     </div>
-                                <?php           } ?>
+                                <?php } ?>
                             </div>
                             <!-- #tab3 -->
                             <div id="tab4" class="tabs-content">
-                                <form enctype="multipart/form-data" action="<?php echo base_url('applicant_profile/applicant_message') ?>" method="post">
+                                <form enctype="multipart/form-data"
+                                    action="<?php echo base_url('applicant_profile/applicant_message') ?>"
+                                    method="post">
                                     <div class="compose-message">
                                         <div class="universal-form-style-v2">
                                             <ul>
@@ -1529,13 +1841,21 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <label>Email Template</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="template" id="template">
-                                                            <option id="" data-name="" data-subject="" data-body="" value="">Please Select</option>
+                                                            <option id="" data-name="" data-subject="" data-body=""
+                                                                value="">Please Select</option>
                                                             <?php if (!empty($portal_email_templates)) { ?>
                                                                 <?php foreach ($portal_email_templates as $template) { ?>
-                                                                    <option id="template_<?php echo $template['sid']; ?>" data-name="<?php echo $template['template_name'] ?>" data-subject="<?php echo $template['subject']; ?>" data-body="<?php echo htmlentities($template['message_body']); ?>" value="<?php echo $template['sid']; ?>"><?php echo $template['template_name']; ?></option>
+                                                                    <option id="template_<?php echo $template['sid']; ?>"
+                                                                        data-name="<?php echo $template['template_name'] ?>"
+                                                                        data-subject="<?php echo $template['subject']; ?>"
+                                                                        data-body="<?php echo htmlentities($template['message_body']); ?>"
+                                                                        value="<?php echo $template['sid']; ?>">
+                                                                        <?php echo $template['template_name']; ?></option>
                                                                 <?php } ?>
                                                             <?php } else { ?>
-                                                                <option id="template_" data-name="" data-subject="" data-body="" value="">No Custom Template Defined</option>
+                                                                <option id="template_" data-name="" data-subject=""
+                                                                    data-body="" value="">No Custom Template Defined
+                                                                </option>
                                                             <?php } ?>
                                                         </select>
                                                     </div>
@@ -1549,7 +1869,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                     </div>
                                     <?php if (!empty($portal_email_templates)) {
                                         foreach ($portal_email_templates as $template) { ?>
-                                            <ul id="<?php echo $template['sid']; ?>" class="temp-attachment list-group" style="display: none; float: left; width: 100%;">
+                                            <ul id="<?php echo $template['sid']; ?>" class="temp-attachment list-group"
+                                                style="display: none; float: left; width: 100%;">
                                                 <?php if (sizeof($template['attachments']) > 0) {
                                                     foreach ($template['attachments'] as $attachment) { ?>
                                                         <li class="list-group-item"><?php echo $attachment['original_file_name'] ?></li>
@@ -1558,7 +1879,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <li class="list-group-item">No Attachments</li>
                                                 <?php } ?>
                                             </ul>
-                                    <?php
+                                            <?php
                                         }
                                     } ?>
                                     <ul class="list-group" id="empty-attachment" style="float: left; width: 100%;">
@@ -1580,11 +1901,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                 <input type="hidden" name="to_id" value="<?= $email ?>">
                                                 <input type="hidden" name="from_type" value="employer">
                                                 <input type="hidden" name="to_type" value="applicant">
-                                                <input type="hidden" name="applicant_name" value="<?= $applicant_info["first_name"] ?> <?= $applicant_info["last_name"] ?>">
+                                                <input type="hidden" name="applicant_name"
+                                                    value="<?= $applicant_info["first_name"] ?> <?= $applicant_info["last_name"] ?>">
                                                 <input type="hidden" name="job_id" value="<?= $id ?>">
                                                 <input type="hidden" name="users_type" value="applicant">
-                                                <input id="applicantSubject" class="message-subject" required="required" name="subject" type="text" placeholder="Enter Subject (required)" />
-                                                <textarea style="padding:5px; height:200px; width:100%;" class="ckeditor" cols="40" id="applicantMessage" required="required" name="message"></textarea>
+                                                <input id="applicantSubject" class="message-subject" required="required"
+                                                    name="subject" type="text" placeholder="Enter Subject (required)" />
+                                                <textarea style="padding:5px; height:200px; width:100%;"
+                                                    class="ckeditor" cols="40" id="applicantMessage" required="required"
+                                                    name="message"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -1595,9 +1920,17 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                 <div class="respond">
                                     <?php if (count($applicant_message) > 0) {
                                         foreach ($applicant_message as $message) { ?>
-                                            <article <?php if ($message['outbox'] == 1) { ?>class="reply" <?php } ?> id="delete_message<?php echo $message['id']; ?>">
+                                            <article <?php if ($message['outbox'] == 1) { ?>class="reply" <?php } ?>
+                                                id="delete_message<?php echo $message['id']; ?>">
                                                 <figure>
-                                                    <img <?php if (empty($message['profile_picture'])) { ?> src="<?= base_url() ?>assets/images/attachment-img.png" <?php } else { ?> <?php if (isset($message['sender_logo'])) { ?> src="<?php echo $message['sender_logo']; ?>" width="48" style="height: 50px" <?php } else if ($message['sender_profile_picture']) { ?> src="<?php echo AWS_S3_BUCKET_URL . $message['sender_profile_picture']; ?>" width="48" <?php } else { ?> src="<?php echo AWS_S3_BUCKET_URL . $message['profile_picture']; ?>" width="48" <?php } ?> <?php } ?>>
+                                                    <img <?php if (empty($message['profile_picture'])) { ?>
+                                                            src="<?= base_url() ?>assets/images/attachment-img.png" <?php } else { ?>             <?php if (isset($message['sender_logo'])) { ?>
+                                                                src="<?php echo $message['sender_logo']; ?>" width="48"
+                                                                style="height: 50px" <?php } else if ($message['sender_profile_picture']) { ?>
+                                                                    src="<?php echo AWS_S3_BUCKET_URL . $message['sender_profile_picture']; ?>"
+                                                                    width="48" <?php } else { ?>
+                                                                    src="<?php echo AWS_S3_BUCKET_URL . $message['profile_picture']; ?>"
+                                                                    width="48" <?php } ?>         <?php } ?>>
                                                 </figure>
                                                 <div class="text">
                                                     <div class="message-header">
@@ -1624,7 +1957,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                             <?php if ($message['outbox'] == 1) { ?>
                                                                 <!--  <li>
                                                                         <a class="action-btn" onclick="resend_message(<?php //echo $message['id']; 
-                                                                                                                        ?>)" href="javascript:;">
+                                                                                    ?>)" href="javascript:;">
                                                                             <i class="fa fa-refresh"></i>
                                                                             <span class="btn-tooltip">Resend</span>
                                                                         </a>
@@ -1636,7 +1969,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                             <?php if ($attachments) { ?>
                                                                 <li>
                                                                     <?php foreach ($attachments as $attachment) { ?>
-                                                                        <a class="action-btn" href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">
+                                                                        <a class="action-btn"
+                                                                            href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">
                                                                             <i class="fa fa-download"></i>
                                                                             <span class="btn-tooltip">Download File</span>
                                                                         </a>
@@ -1644,7 +1978,9 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                 </li>
                                                             <?php } ?>
                                                             <li>
-                                                                <a class="action-btn remove" onclick="delete_message(<?php echo $message['id']; ?>)" href="javascript:;">
+                                                                <a class="action-btn remove"
+                                                                    onclick="delete_message(<?php echo $message['id']; ?>)"
+                                                                    href="javascript:;">
                                                                     <i class="fa fa-remove"></i>
                                                                     <span class="btn-tooltip">Delete</span>
                                                                 </a>
@@ -1655,7 +1991,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <p><?php echo ucfirst($message['message']); ?></p>
                                                 </div>
                                             </article>
-                                    <?php
+                                            <?php
                                         }
                                     } ?>
                                 </div>
@@ -1712,7 +2048,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     <div class="modal-dialog" role="document">
         <div class="modal-content panel-success">
             <div class="modal-header panel-heading">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Rejection Details</h4>
             </div>
             <div id="" class="modal-body">
@@ -1746,13 +2083,16 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     <div class="modal-body">
                         <div class="compose-message">
                             <div class="universal-form-style-v2">
-                                <form id="resendQueForm-<?php echo $applicant_job['sid']; ?>" action="<?php echo base_url('resend_screening_questionnaire' . '/' . $applicant_info['sid'] . '/' . $applicant_job['sid'] . '/' . $applicant_job['job_sid']) ?>" method="post">
+                                <form id="resendQueForm-<?php echo $applicant_job['sid']; ?>"
+                                    action="<?php echo base_url('resend_screening_questionnaire' . '/' . $applicant_info['sid'] . '/' . $applicant_job['sid'] . '/' . $applicant_job['job_sid']) ?>"
+                                    method="post">
                                     <div class="universal-form-style-v2">
                                         <ul>
                                             <li class="form-col-100">
                                                 <label>Questionnaire:</label>
                                                 <div class="hr-select-dropdown">
-                                                    <select class="invoice-fields" name="questionnaire" id="questionnaire" required>
+                                                    <select class="invoice-fields" name="questionnaire" id="questionnaire"
+                                                        required>
                                                         <option value="">Select Questionnaire</option>
                                                         <?php foreach ($questionnaires as $questionnaire) {
                                                             $select = $applicant_job['questionnaire_sid'] == $questionnaire['sid'] ? 'selected="selected"' : '';
@@ -1764,7 +2104,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             </li>
                                             <div class="btn-panel">
                                                 <input type="submit" class="submit-btn" value="Send">
-                                                <input type="button" value="Cancel" class="submit-btn btn-cancel" data-dismiss="modal" />
+                                                <input type="button" value="Cancel" class="submit-btn btn-cancel"
+                                                    data-dismiss="modal" />
                                             </div>
                                         </ul>
                                     </div>
@@ -1785,7 +2126,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     tags: true
                 });
             <?php } ?>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 $("#resendQueForm-<?php echo $applicant_job['sid']; ?>").validate({
                     ignore: ":hidden:not(select)",
                     rules: {
@@ -1798,13 +2139,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             required: 'Please Select Questionnaire'
                         }
                     },
-                    submitHandler: function(form) {
+                    submitHandler: function (form) {
                         form.submit();
                     }
                 });
             });
         </script>
-<?php }
+    <?php }
 } ?>
 
 <div id="my_loader" class="text-center my_loader" style="display: none;">
@@ -1819,7 +2160,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
 
 
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
+<script language="JavaScript" type="text/javascript"
+    src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/chosen.jquery.js"></script>
 <script language="JavaScript" type="text/javascript">
     var mylimit = parseInt($('#choiceLimit').html());
@@ -1827,8 +2169,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     $(".chosen-select").chosen({
         max_selected_options: mylimit
     });
-    $(".chosen-select").bind("liszt:maxselected", function() {});
-    $(".chosen-select").chosen().change(function() {});
+    $(".chosen-select").bind("liszt:maxselected", function () { });
+    $(".chosen-select").chosen().change(function () { });
 
     function multiselectbox() {
         var items_length = $('#job_fit_category_sid :selected').length;
@@ -1844,7 +2186,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         var i = 1;
 
         if (items_length > total_allowed) {
-            $('#Category option:selected').each(function() {
+            $('#Category option:selected').each(function () {
                 if (i > total_allowed) {
                     $(this).removeAttr("selected");
                     no_error = 1;
@@ -1858,12 +2200,12 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         }
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         <?php if (check_access_permissions_for_view($security_details, 'review_score')) { ?>
             CKEDITOR.replace('rating_comment');
         <?php } ?>
         CKEDITOR.replace('applicantMessage');
-        $('#interview_questionnaire').on('change', function() {
+        $('#interview_questionnaire').on('change', function () {
             $('#btn_launch_interview').attr('href', $(this).val());
         }).trigger('change');
 
@@ -1874,9 +2216,9 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             width: 'auto', //auto or any width like 600px
             fit: true, // 100% fit in a container
             tabidentify: 'hor_1', // The tab groups identifier
-            activate: function() {}
+            activate: function () { }
         });
-        $('#template').on('change', function() {
+        $('#template').on('change', function () {
             var template_sid = $(this).val();
             var msg_subject = $('#template_' + template_sid).attr('data-subject');
             var msg_body = $('#template_' + template_sid).attr('data-body');
@@ -1934,7 +2276,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         alertify.confirm(
             'Are you sure?',
             'Are you sure you want to delete this event?',
-            function() {
+            function () {
                 var my_request;
                 my_request = $.ajax({
                     url: '<?php echo base_url('calendar/tasks'); ?>',
@@ -1945,13 +2287,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     }
                 });
 
-                my_request.success(function(response) {
+                my_request.success(function (response) {
                     $('#remove_li' + event_sid + '').remove();
                     $('.btn').removeClass('disabled').prop('disabled', false);
                     // window.location.reload();
                 });
             },
-            function() {
+            function () {
                 alertify.error('Canceled!');
             });
     }
@@ -1960,16 +2302,16 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         var sid = val;
         alertify.defaults.glossary.title = 'Delete Message';
         alertify.confirm("Are you sure you want to delete this message?",
-            function() {
+            function () {
                 $.ajax({
                     url: "<?= base_url('applicant_profile/deleteMessage') ?>?action=delete_message&sid=" + sid,
-                    success: function(data) {
+                    success: function (data) {
                         $('#delete_message' + val).hide();
                         alertify.success('Message deleted successfully.');
                     }
                 });
             },
-            function() {});
+            function () { });
     }
 
     function resend_message(id) {
@@ -1981,11 +2323,11 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                 cancel: 'No'
             },
             'message': 'Are you sure you want to Resend this Message?',
-            'onok': function() {
+            'onok': function () {
                 $.post(url, {
-                        id: id
-                    })
-                    .done(function(data) {
+                    id: id
+                })
+                    .done(function (data) {
                         // console.log(data);
                     });
             }
@@ -2021,15 +2363,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         }
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         var myid = $('#state_id').html();
 
-        setTimeout(function() {
+        setTimeout(function () {
             $("#country").change();
         }, 1000);
 
         if (myid) {
-            setTimeout(function() {
+            setTimeout(function () {
                 $('#state').val(myid);
             }, 1200);
         }
@@ -2062,7 +2404,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             $('#tab4_nav').addClass('active');
         <?php } ?>
 
-        $('.interviewer_comment').click(function() {
+        $('.interviewer_comment').click(function () {
             if ($('.interviewer_comment').is(":checked")) {
                 $('.comment-div').fadeIn();
                 $('#interviewerComment').prop('required', true);
@@ -2072,7 +2414,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             }
         });
 
-        $('.goto_meeting').click(function() {
+        $('.goto_meeting').click(function () {
             if ($('.goto_meeting').is(":checked")) {
                 $('.meeting-div').fadeIn();
                 $('#meetingId').prop('required', true);
@@ -2086,7 +2428,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             }
         });
 
-        $('#candidate_msg').click(function() {
+        $('#candidate_msg').click(function () {
             if ($('#candidate_msg').is(":checked")) {
                 $('.message-div').fadeIn();
                 $('#applicantMessage').prop('required', true);
@@ -2108,7 +2450,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             format: 'g:iA',
             formatTime: 'g:iA',
             step: 15,
-            onShow: function(ct) {
+            onShow: function (ct) {
                 time = $('.eventstarttime').val();
                 timeAr = time.split(":");
                 last = parseInt(timeAr[1].substr(0, 2)) + 15;
@@ -2127,7 +2469,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             format: 'g:iA',
             formatTime: 'g:iA',
             step: 15,
-            onShow: function(ct) {
+            onShow: function (ct) {
                 this.setOptions({
                     maxTime: $('.eventendtime').val() ? $('.eventendtime').val() : false
                 })
@@ -2139,7 +2481,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             format: 'g:iA',
             formatTime: 'g:iA',
             step: 15,
-            onShow: function(ct) {
+            onShow: function (ct) {
 
                 //                console.log($('.in').find('.eventstarttime1').val());
                 time = $('.in').find('.eventstarttime1').val();
@@ -2160,7 +2502,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             format: 'g:iA',
             formatTime: 'g:iA',
             step: 15,
-            onShow: function(ct) {
+            onShow: function (ct) {
                 this.setOptions({
                     maxTime: $('.in').find('.eventendtime1').val() ? $('.in').find('.eventendtime1').val() : false
                 })
@@ -2180,35 +2522,35 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
         $("#eventdate").datepicker("setDate", new Date());
-        $('.selected').click(function() {
+        $('.selected').click(function () {
             $(this).next().css("display", "block");
         });
 
-        $('#edit_button').click(function(event) {
+        $('#edit_button').click(function (event) {
             event.preventDefault();
             $('.info_edit').fadeIn();
             $('.info_view').hide();
         });
 
-        $('#add_notes').click(function(event) {
+        $('#add_notes').click(function (event) {
             event.preventDefault();
             $('.note_div').fadeIn();
             $('.no_note').hide();
         });
 
-        $('#cancel_note').click(function(event) {
+        $('#cancel_note').click(function (event) {
             event.preventDefault();
             $('.note_div').hide();
             $('.no_note').fadeIn();
         });
 
-        $('.view_button').click(function(event) {
+        $('.view_button').click(function (event) {
             event.preventDefault();
             $('.info_edit').hide();
             $('.info_view').fadeIn();
         });
 
-        $('#add_event').click(function() {
+        $('#add_event').click(function () {
             $('.event_create').fadeIn();
             $('.event_detail').hide();
         });
@@ -2252,15 +2594,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     function delete_note(id) {
         url = "<?= base_url() ?>applicant_profile/delete_note";
         alertify.confirm('Confirmation', "Are you sure you want to delete this Note?",
-            function() {
+            function () {
                 $.post(url, {
-                        sid: id
-                    })
-                    .done(function(data) {
+                    sid: id
+                })
+                    .done(function (data) {
                         location.reload();
                     });
             },
-            function() {
+            function () {
                 alertify.error('Canceled');
             });
     }
@@ -2278,7 +2620,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     required: 'Please select an interviewer',
                 }
             },
-            submitHandler: function(form) {
+            submitHandler: function (form) {
                 form.submit();
             }
         });
@@ -2286,7 +2628,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
 
     function hire_applicant() {
         alertify.confirm("Please Confirm Hire", "Are you sure you want to Hire applicant?",
-            function() {
+            function () {
                 $.ajax({
                     url: "<?= base_url() ?>hire_applicant/hire_applicant",
                     type: "POST",
@@ -2297,7 +2639,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                         action: "hire_now"
                     },
                     dataType: "json",
-                    success: function(response) {
+                    success: function (response) {
                         if (response[0] == 'error') {
                             alertify.error(response[1]);
                         } else {
@@ -2305,12 +2647,12 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             window.location.assign(response[2]);
                         }
                     },
-                    error: function(request, status, error) {
+                    error: function (request, status, error) {
                         //console.log(request.responseText);
                     }
                 });
             },
-            function() {
+            function () {
                 alertify.error('Cancelled');
             });
     }
@@ -2318,15 +2660,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     function myPopup() {
         //$('#cc_send').addClass("disabled-btn");
         $('#loginForm').css('display', 'block');
-        alertify.genericDialog || alertify.dialog('genericDialog', function() {
+        alertify.genericDialog || alertify.dialog('genericDialog', function () {
             return {
-                main: function(content) {
+                main: function (content) {
                     this.setContent(content);
                 },
-                setup: function() {
+                setup: function () {
                     return {
                         focus: {
-                            element: function() {
+                            element: function () {
                                 return this.elements.body.querySelector(this.get('selector'));
                             },
                             select: true
@@ -2349,7 +2691,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         alertify.genericDialog($('#loginForm')[0]);
     }
 
-    $('#loginForm').on('submit', function(e) {
+    $('#loginForm').on('submit', function (e) {
         e.preventDefault();
         if ($('#myCheckbox').is(":checked")) {
             myFunctionAjax();
@@ -2366,15 +2708,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         }
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#yes-btn').attr('disabled', 'disabled');
         $('#yes-btn').addClass('disabled-btn');
-        $('.applied-jobs .selected').click(function() {
+        $('.applied-jobs .selected').click(function () {
             $(this).closest("tr").css({
                 'height': '420px'
             });
         });
-        $('.applied-jobs .cross, .applied-jobs .label').click(function() {
+        $('.applied-jobs .cross, .applied-jobs .label').click(function () {
             $(this).closest("tr").css({
                 'height': 'auto'
             });
@@ -2385,7 +2727,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         alertify.confirm(
             'Are You Sure!',
             'Are You Sure you Want to Get this Applicant Approved For Hiring?',
-            function() { //console.log(applicant_id);
+            function () { //console.log(applicant_id);
                 var url = '<?php echo base_url('applicant_profile/ajax_responder'); ?>';
                 var dataToSend = {
                     'applicant_id': applicant_id,
@@ -2400,14 +2742,14 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     type: 'POST'
                 });
 
-                myRequest.done(function(response) {
+                myRequest.done(function (response) {
                     if (response == 'success') {
                         url = '<?php echo base_url('applicant_profile') ?>' + '/' + applicant_id;
                         window.location = url;
                     }
                 });
             },
-            function() {
+            function () {
                 //Cancel
             }
         );
@@ -2433,7 +2775,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             responseType: 'json'
         });
 
-        my_request.done(function(response) {
+        my_request.done(function (response) {
             if (response != '') {
                 response = JSON.parse(response);
             }
@@ -2458,12 +2800,12 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     }
 
     //Code Related to Status Bar -start
-    $(document).ready(function() {
-        $('.selected').click(function() {
+    $(document).ready(function () {
+        $('.selected').click(function () {
             $(this).next().css("display", "block");
         });
 
-        $('.label').click(function() {
+        $('.label').click(function () {
             $(this).parent().find('.check').css("visibility", "hidden");
             $(this).parent().prev().html($(this).find('#status').html());
             $(this).find('.check').css("visibility", "visible");
@@ -2487,7 +2829,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                 }
             });
 
-            my_request.done(function(response) {
+            my_request.done(function (response) {
                 if (response == 'success' || response == 'Done') {
                     alertify.success("Candidate status updated successfully.");
                 } else {
@@ -2496,14 +2838,14 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             });
         });
 
-        $('.label').hover(function() {
+        $('.label').hover(function () {
             $(this).find('#status').animate({
                 'padding-top': 0,
                 'padding-right': 0,
                 'padding-bottom': 0,
                 'padding-left': 15,
             }, "fast");
-        }, function() {
+        }, function () {
             $(this).find('#status').animate({
                 'padding-top': 0,
                 'padding-right': 0,
@@ -2512,23 +2854,23 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             }, "fast");
         });
 
-        $('.cross').click(function() {
+        $('.cross').click(function () {
             $(this).parent().parent().css("display", "none");
         });
 
         var $selected = $('.selected');
-        $('.selected').each(function() {
+        $('.selected').each(function () {
             class_name = $(this).attr('class').split(' ');
             if (class_name.length > 0 && class_name[1] != '') {
                 $(this).next().find('.' + class_name[1]).find('.check').css("visibility", "visible");
             }
         });
 
-        $('.cross').click(function() {
+        $('.cross').click(function () {
             $(this).parent().parent().css("display", "none");
         });
 
-        $('.label').click(function() {
+        $('.label').click(function () {
             $(this).parent().css("display", "none");
         });
     });
@@ -2537,8 +2879,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         alertify.alert('Permanently Rejected', 'This Applicant has been permanently rejected!');
     }
 
-    $(document).ready(function() {
-        $('#popupmodal').on('shown.bs.modal', function() {
+    $(document).ready(function () {
+        $('#popupmodal').on('shown.bs.modal', function () {
             $('#response_container').hide('blind');
             $('#response_container').prop('disabled', true);
         });
@@ -2560,7 +2902,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                 'data': form_data
             });
 
-            my_request.done(function(response) {
+            my_request.done(function (response) {
                 if (response == 'success') {
                     window.location.href = window.location.href;
                 } else {
@@ -2581,7 +2923,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                 'action': "hire_now"
             },
             dataType: "json",
-            success: function(response) {
+            success: function (response) {
                 if (response[0] == 'error') {
                     alertify.error(response[1]);
                 } else {
@@ -2589,7 +2931,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     window.location.assign(response[2]);
                 }
             },
-            error: function(request, status, error) {
+            error: function (request, status, error) {
                 //console.log(request.responseText);
             }
         });
@@ -2611,7 +2953,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             }
         });
 
-        my_request.done(function(response) {
+        my_request.done(function (response) {
             if (response != '') {
                 response = JSON.parse(response); // comment it at LOCALHOST
             }
@@ -2633,7 +2975,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             dataType: "json",
         });
 
-        my_request.done(function(response) {
+        my_request.done(function (response) {
             if (response[0] == 'error') {
                 $('#popupmodal').modal('toggle');
                 alertify.error(response[1]);
@@ -2648,10 +2990,10 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     function send_questionnaire_confirmation() {
         alertify.defaults.glossary.title = 'Send Questionnaire Confirmation';
         alertify.confirm("Are you sure you want to send Screening Questionnaire?",
-            function() {
+            function () {
                 document.getElementById('questionnaire_confirm_click').click();
             },
-            function() {
+            function () {
                 alertify.error('Cancelled');
             });
     }
@@ -2663,7 +3005,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         yearRange: "-100:+50",
     }).val();
 
-    $('.add_edit_submit').click(function() {
+    $('.add_edit_submit').click(function () {
         if ($('input[name="video_source"]:checked').val() != 'no_video') {
             var flag = 0;
             if ($('input[name="video_source"]:checked').val() == 'youtube') {
@@ -2695,7 +3037,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             url: $('#yt_vm_video_url').val()
                         },
                         async: false,
-                        success: function(data) {
+                        success: function (data) {
                             if (data == false) {
                                 alertify.error('Not a Valid Vimeo URL');
                                 flag = 0;
@@ -2704,7 +3046,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                 flag = 1;
                             }
                         },
-                        error: function(data) {}
+                        error: function (data) { }
                     });
                 } else {
                     flag = 0;
@@ -2737,7 +3079,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         }
     });
 
-    $('.video_source').on('click', function() {
+    $('.video_source').on('click', function () {
         var selected = $(this).val();
         if (selected == 'youtube') {
             $('#label_youtube').show();
@@ -2806,14 +3148,14 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         // Reset phone number on load
         // Added on: 05-07-2019
         var val = fpn(_pn.val());
-        if (typeof(val) === 'object') {
+        if (typeof (val) === 'object') {
             _pn.val(val.number);
             setCaretPosition(_pn, val.cur);
         } else _pn.val(val);
         // Reset phone number on load
-        _pn.keyup(function() {
+        _pn.keyup(function () {
             var val = fpn($(this).val());
-            if (typeof(val) === 'object') {
+            if (typeof (val) === 'object') {
                 $(this).val(val.number);
                 setCaretPosition(this, val.cur);
             } else $(this).val(val);
@@ -2920,12 +3262,12 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         }
 
 
-        $('#applicant_profile_form').submit(function(e) {
+        $('#applicant_profile_form').submit(function (e) {
             // TODO
             var is_error = false;
             // Check for phone number
             if (_pn.val() != '' && _pn.val().trim() != '(___) ___-____' && !fpn(_pn.val(), '', true)) {
-                alertify.alert('Error!', 'Invalid Primary number provided.', function() {
+                alertify.alert('Error!', 'Invalid Primary number provided.', function () {
                     return;
                 });
                 e.preventDefault();
@@ -2950,9 +3292,9 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
 
     <?php } ?>
 
-    $(function() {
+    $(function () {
 
-        $('#js-review-form').submit(function(e) {
+        $('#js-review-form').submit(function (e) {
             console.log('Triggered');
             if ($('input[class="review_video_source"]:checked').val() == 'no_video') return true;
             var flag = 0;
@@ -2986,7 +3328,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             url: $('#review_yt_vm_video_url').val()
                         },
                         async: false,
-                        success: function(data) {
+                        success: function (data) {
                             if (data == false) {
                                 $('#my_loader').hide();
                                 alertify.alert('ERROR!', 'Please add a valid Vimeo video URL.');
@@ -2997,7 +3339,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                 flag = 1;
                             }
                         },
-                        error: function(data) {}
+                        error: function (data) { }
                     });
                 } else {
                     flag = 0;
@@ -3031,7 +3373,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
 
         $('#review_youtube_vimeo_input').hide();
         $('#review_upload_input').hide();
-        $('.review_video_source').on('click', function() {
+        $('.review_video_source').on('click', function () {
             var selected = $(this).val();
 
             if (selected == 'youtube') {
@@ -3068,7 +3410,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             $('#job_title').hide();
         <?php } ?>
 
-        $('.titleoption').click(function() {
+        $('.titleoption').click(function () {
             var titleOption = $(this).val();
             if (titleOption == 'dropdown') {
                 $('#template_job_title').show();
