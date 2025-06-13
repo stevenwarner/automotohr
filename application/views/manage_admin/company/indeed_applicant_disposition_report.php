@@ -97,7 +97,8 @@
                                                             <?php if ($companies): ?>
                                                                 <?php foreach ($companies as $v0): ?>
                                                                     <option value="<?= $v0["sid"]; ?>" <?= in_array($v0["sid"], $filter["companies"]) ? "selected" : ""; ?>>
-                                                                        <?= $v0["CompanyName"]; ?></option>
+                                                                        <?= $v0["CompanyName"]; ?>
+                                                                    </option>
                                                                 <?php endforeach; ?>
                                                             <?php endif; ?>
                                                         </select>
@@ -187,7 +188,8 @@
                                         <div class="row">
                                             <div class="col-sm-4">
                                                 <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of
-                                                    <?php echo $counts["records"]; ?></p>
+                                                    <?php echo $counts["records"]; ?>
+                                                </p>
                                             </div>
                                             <div class="col-sm-8">
                                                 <?php echo $page_links ?>
@@ -199,18 +201,19 @@
                                             <table class="table table-striped">
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col">Applicant Name</th>
-                                                        <th class="text-right" scope="col">Company Name</th>
-                                                        <th class="text-right" scope="col">ATS Status</th>
-                                                        <th class="text-right" scope="col">Indeed Status</th>
-                                                        <th class="text-right" scope="col">Changed By</th>
-                                                        <th class="text-right" scope="col">Action Date</th>
-                                                        <th class="text-right" scope="col">Errors/Success</th>
+                                                        <th scope="col">Applicant<br>Name</th>
+                                                        <th class="text-right" scope="col">Company <br>Name</th>
+                                                        <th class="text-right" scope="col">ATS <br>Status</th>
+                                                        <th class="text-right" scope="col">Indeed <br>Status</th>
+                                                        <th class="text-right" scope="col">Changed<br> By</th>
+                                                        <th class="text-right" scope="col">Action <br>Date</th>
+                                                        <th class="text-right" scope="col">Status</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php $companyCache = []; ?>
                                                     <?php foreach ($records as $v0):
+                                                        $response = json_decode($v0["status"], true);
                                                         ?>
                                                         <tr>
                                                             <td>
@@ -229,13 +232,20 @@
                                                             </td>
                                                             <td class="text-right">
                                                                 <?= $v0["created_by"] != 0 ? getEmployeeOnlyNameBySID($v0['created_by']) : ''; ?>
-
                                                             </td>
                                                             <td class="text-right">
                                                                 <?= formatDateToDB($v0['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                                             </td>
                                                             <td class="text-right">
-                                                                <?= $v0["status"]; ?>
+                                                                <?php if ($response["error"]): ?>
+                                                                    <label class="label label-danger">
+                                                                        ERROR
+                                                                    </label>
+                                                                <?php else: ?>
+                                                                    <label class="label label-success">
+                                                                        SUCCESS
+                                                                    </label>
+                                                                <?php endif; ?>
                                                             </td>
                                                         </tr>
                                                     <?php endforeach; ?>
@@ -248,7 +258,8 @@
                                         <div class="row">
                                             <div class="col-sm-4">
                                                 <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of
-                                                    <?php echo $applicants_count ?></p>
+                                                    <?php echo $applicants_count ?>
+                                                </p>
                                             </div>
                                             <div class="col-sm-8">
                                                 <?php echo $page_links ?>
