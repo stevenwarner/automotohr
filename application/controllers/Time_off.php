@@ -7369,6 +7369,9 @@ class Time_off extends Public_Controller
 
                 //
                 foreach ($request['approvers'] as $approver) {
+                    if ($approver['userId'] == $request['employee_sid']) {
+                        continue;
+                    }
                     //
                     $eRP['{{approver_first_name}}'] = $approver['first_name'];
                     $eRP['{{approver_last_name}}'] = $approver['last_name'];

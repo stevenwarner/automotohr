@@ -183,12 +183,15 @@ $(function () {
 		//
 		$.each(resp.Data, function (i, v) {
 			//
+			if (v.employee_sid == employeeId) return;
+			//
 			let allow_update = v.allow_update;
 			let userRow = getUserById(
 				v.employee_sid,
 				window.timeoff.employees,
 				"user_id"
 			);
+			//
 			if (Object.keys(userRow).length == 0) return;
 			//
 			let tab_status = callOBJ.Requests.Main.type;

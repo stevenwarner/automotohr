@@ -201,6 +201,8 @@ $(function () {
         //
         $.each(resp.Data, function (i, v) {
             //
+            if (v.employee_sid == employeeId) return;
+            //
             let userRow = getUserById(
                 v.employee_sid,
                 window.timeoff.employees,
