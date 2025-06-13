@@ -36,35 +36,35 @@
                                     <select id="voiceSelect" name="model" class="form-control">
                                         <!-- Female Voices -->
                                         <optgroup label="Female Voices (English - US)">
-                                            <option <?= $result["model"] == "aura-asteria-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-asteria-en" ? "selected" : ""; ?>
                                                 value="aura-asteria-en">Asteria</option>
-                                            <option <?= $result["model"] == "aura-luna-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-luna-en" ? "selected" : ""; ?>
                                                 value="aura-luna-en">Luna</option>
-                                            <option <?= $result["model"] == "aura-stella-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-stella-en" ? "selected" : ""; ?>
                                                 value="aura-stella-en">Stella</option>
-                                            <option <?= $result["model"] == "aura-athena-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-athena-en" ? "selected" : ""; ?>
                                                 value="aura-athena-en">Athena</option>
-                                            <option <?= $result["model"] == "aura-hera-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-hera-en" ? "selected" : ""; ?>
                                                 value="aura-hera-en">Hera</option>
                                         </optgroup>
 
                                         <!-- Male Voices -->
                                         <optgroup label="Male Voices (English - US)">
-                                            <option <?= $result["model"] == "aura-orion-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-orion-en" ? "selected" : ""; ?>
                                                 value="aura-orion-en">Orion</option>
-                                            <option <?= $result["model"] == "aura-arcas-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-arcas-en" ? "selected" : ""; ?>
                                                 value="aura-arcas-en">Arcas</option>
-                                            <option <?= $result["model"] == "aura-perseus-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-perseus-en" ? "selected" : ""; ?>
                                                 value="aura-perseus-en">Perseus</option>
-                                            <option <?= $result["model"] == "aura-angus-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-angus-en" ? "selected" : ""; ?>
                                                 value="aura-angus-en">Angus</option>
-                                            <option <?= $result["model"] == "aura-orpheus-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-orpheus-en" ? "selected" : ""; ?>
                                                 value="aura-orpheus-en">Orpheus</option>
-                                            <option <?= $result["model"] == "aura-helios-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-helios-en" ? "selected" : ""; ?>
                                                 value="aura-helios-en">Helios</option>
-                                            <option <?= $result["model"] == "aura-zeus-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-zeus-en" ? "selected" : ""; ?>
                                                 value="aura-zeus-en">Zeus</option>
-                                            <option <?= $result["model"] == "aura-2-mars-en" ? "selected" : ""; ?>
+                                            <option <?= $conversation["model"] == "aura-2-mars-en" ? "selected" : ""; ?>
                                                 value="aura-2-mars-en">Mars</option>
                                         </optgroup>
                                     </select>
@@ -72,11 +72,20 @@
                                 </div>
                                 <div class="form-group">
                                     <label>
-                                        Prompt
+                                        Conversation Prompt
                                         <strong class="text-danger">*</strong>
                                     </label>
-                                    <textarea name="prompt" id="" rows="20"
-                                        class="form-control"><?= $result["prompt"]; ?></textarea>
+                                    <textarea name="conversation_prompt" id="" rows="20"
+                                        class="form-control"><?= $conversation["prompt"]; ?></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        Generate Report Prompt
+                                        <strong class="text-danger">*</strong>
+                                    </label>
+                                    <textarea name="generate_report_prompt" id="" rows="20"
+                                        class="form-control"><?= $generate_report["prompt"]; ?></textarea>
                                 </div>
 
                                 <div class="form-group">
