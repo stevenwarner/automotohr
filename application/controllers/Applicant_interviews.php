@@ -1,7 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 ini_set("memory_limit", "1024M");
 
-
 class Applicant_interviews extends CI_Controller
 {
     public function __construct()
@@ -16,6 +15,7 @@ class Applicant_interviews extends CI_Controller
         //     ->replaceStatusCheck(
         //         $this->session->userdata('logged_in')['company_detail']['sid'] ?? 0
         //     );
+        
     }
 
     public function interviewCall($id)
@@ -25,6 +25,14 @@ class Applicant_interviews extends CI_Controller
             'name' => $portal_job_list['CompanyName'],
             'logo' => $portal_job_list['profile_picture'] ? $portal_job_list['profile_picture'] : $portal_job_list['Logo']
         );
+        $data['portal_employeer'] = $this->applicant_interview_model->get_portal_employer($portal_job_list['userId']);
+
+        $interview_logs = $this->application_tracking_system_model->get_interview_log($id);
+        if(!empty($interview_logs['reports'])) {
+            $this->load->view('applicant/interview-expired', $data);
+            return;
+        }
+        
         $data['portal_job_list'] = $portal_job_list;
         $this->load->view('applicant/interview', $data);
     }
