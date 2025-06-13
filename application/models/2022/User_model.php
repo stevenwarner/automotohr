@@ -884,29 +884,135 @@ class User_model extends CI_Model
     }
 
 
+    //
+    function get_all_companies($active = 1)
+    {
+        $this->db->select('sid, CompanyName');
+        $this->db->where('parent_sid', 0);
+        $this->db->where('active', $active);
+        $this->db->where('is_paid', 1);
+        $this->db->where('career_page_type', 'standard_career_site');
+        $this->db->order_by('CompanyName', 'ASC');
+        $this->db->from('users');
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        return $records_arr;
+    }
 
     //
-    public function getIndeedApplicantDispositionData($get)
+    public function getIndeedApplicantDispositionDataCount(array $filter)
     {
-        //
-        $whereArray = [];
-        if ($get && $get['start_date'] && $get['end_date']) {
-            //
-            if ($get['start_date'] != '') {
-                $whereArray['portal_applicant_indeed_status_log.created_at >='] = (formatDateToDB($get['start_date'], SITE_DATE, DB_DATE)) . ' 00:00:00';
-            }
-            //
-            if ($get['end_date']) {
-                $whereArray['portal_applicant_indeed_status_log.created_at <='] = (formatDateToDB($get['end_date'], SITE_DATE, DB_DATE)) . ' 23:59:59';
+
+
+        if ($filter["status"]) {
+            $status = $filter["status"];
+            if ($status[0] != 'All') {
+                $this->db->where("portal_applicant_indeed_status_log.status LIKE '%$status[0]%'");
             }
         }
 
-        if ($get['client_ip'] != '') {
-            $whereArray['client_ip ='] = trim($get['client_ip']);
+        if ($filter["companies"] && !in_array("All", $filter["companies"])) {
+            $this->db->where_in(
+                "portal_applicant_jobs_list.company_sid",
+                $filter["companies"]
+            );
         }
-        //
-        $resultData =
-            $this->db
+
+        if ($filter['applicantName']) {
+
+            $keyword = $filter['applicantName'];
+            $keyword = explode(" ", $filter['applicantName']);
+            $this->db->group_start();
+            $this->db->where("portal_job_applications.first_name LIKE '%$keyword[0]%'");
+            if ($keyword[1]) {
+                $this->db->or_where("portal_job_applications.last_name LIKE '%$keyword[1]%'");
+            }
+            $this->db->group_end();
+        }
+
+        if ($filter['startDate'] && $filter['endDate']) {
+            //
+            if ($filter['startDate'] != '') {
+                $this->db->where(
+                    'portal_applicant_indeed_status_log.created_at >=',
+                    (formatDateToDB($filter['startDate'], SITE_DATE, DB_DATE)) . ' 00:00:00'
+                );
+            }
+            //
+            if ($filter['endDate']) {
+
+                $this->db->where(
+                    'portal_applicant_indeed_status_log.created_at <=',
+                    (formatDateToDB($filter['endDate'], SITE_DATE, DB_DATE)) . ' 23:59:59'
+                );
+            }
+        }
+
+        $returnArray["records"] = $this
+            ->db
+            ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.sid = portal_applicant_indeed_status_log.portal_applicant_job_list_sid', 'left')
+            ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
+            ->join('users', 'users.sid = portal_applicant_jobs_list.company_sid', 'left')
+            ->count_all_results("portal_applicant_indeed_status_log");
+
+        return $returnArray;
+    }
+
+
+    //
+    public function getIndeedApplicantDispositionRecords(array $filter, int $limit, int $offset)
+    {
+        // set company filter
+        if (!in_array("All", $filter["companies"])) {
+            $this->db->where_in(
+                "portal_applicant_jobs_list.company_sid",
+                $filter["companies"]
+            );
+        }
+
+
+        if ($filter['startDate'] && $filter['endDate']) {
+            //
+            if ($filter['startDate'] != '') {
+                $this->db->where(
+                    'portal_applicant_indeed_status_log.created_at >=',
+                    (formatDateToDB($filter['startDate'], SITE_DATE, DB_DATE)) . ' 00:00:00'
+                );
+            }
+            //
+            if ($filter['endDate']) {
+
+                $this->db->where(
+                    'portal_applicant_indeed_status_log.created_at <=',
+                    (formatDateToDB($filter['endDate'], SITE_DATE, DB_DATE)) . ' 23:59:59'
+                );
+            }
+        }
+
+
+        if ($filter['applicantName']) {
+            $keyword = $filter['applicantName'];
+            $keyword = explode(" ", $filter['applicantName']);
+            $this->db->group_start();
+            $this->db->where("portal_job_applications.first_name LIKE '%$keyword[0]%'");
+            if ($keyword[1]) {
+                $this->db->or_where("portal_job_applications.last_name LIKE '%$keyword[1]%'");
+            }
+            $this->db->group_end();
+        }
+
+
+        if ($filter["status"]) {
+            $status = $filter["status"];
+            if ($status[0] != 'All') {
+                $this->db->where("portal_applicant_indeed_status_log.status LIKE '%$status[0]%'");
+            }
+        }
+
+        // add columns to be selected
+        return $this
+            ->db
             ->select('
             portal_applicant_indeed_status_log.ats_status,
             portal_applicant_indeed_status_log.indeed_status,
@@ -917,17 +1023,90 @@ class User_model extends CI_Model
             portal_job_applications.first_name,
             portal_job_applications.middle_name,
             portal_job_applications.last_name,
-            users.CompanyName
-          
+            users.CompanyName          
         ')
-            ->where($whereArray)
             ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.sid = portal_applicant_indeed_status_log.portal_applicant_job_list_sid', 'left')
             ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
             ->join('users', 'users.sid = portal_applicant_jobs_list.company_sid', 'left')
-            ->order_by('portal_applicant_indeed_status_log.sid', 'DESC')
-            ->get('portal_applicant_indeed_status_log')
-            ->result_array();
 
-        return  $resultData;
+            ->order_by("portal_applicant_indeed_status_log.sid", "DESC")
+            ->limit($limit, $offset)
+            ->get("portal_applicant_indeed_status_log")
+            ->result_array();
+    }
+
+    //
+    public function getIndeedApplicantDispositionCSV(array $filter)
+    {
+
+        if (!in_array("All", $filter["companies"])) {
+            $this->db->where_in(
+                "portal_applicant_jobs_list.company_sid",
+                $filter["companies"]
+            );
+        }
+
+
+        if ($filter['startDate'] && $filter['endDate']) {
+            //
+            if ($filter['startDate'] != '') {
+                $this->db->where(
+                    'portal_applicant_indeed_status_log.created_at >=',
+                    (formatDateToDB($filter['startDate'], SITE_DATE, DB_DATE)) . ' 00:00:00'
+                );
+            }
+            //
+            if ($filter['endDate']) {
+
+                $this->db->where(
+                    'portal_applicant_indeed_status_log.created_at <=',
+                    (formatDateToDB($filter['endDate'], SITE_DATE, DB_DATE)) . ' 23:59:59'
+                );
+            }
+        }
+
+
+        if ($filter['applicantName']) {
+
+            $keyword = $filter['applicantName'];
+            $keyword = explode(" ", $filter['applicantName']);
+            $this->db->group_start();
+            $this->db->where("portal_job_applications.first_name LIKE '%$keyword[0]%'");
+            if ($keyword[1]) {
+                $this->db->or_where("portal_job_applications.last_name LIKE '%$keyword[1]%'");
+            }
+            $this->db->group_end();
+        }
+
+
+        if ($filter["status"]) {
+            $status = $filter["status"];
+            if ($status[0] != 'All') {
+                $this->db->where("portal_applicant_indeed_status_log.status LIKE '%$status[0]%'");
+            }
+        }
+
+
+        return $this
+            ->db
+            ->select('
+            portal_applicant_indeed_status_log.ats_status,
+            portal_applicant_indeed_status_log.indeed_status,
+            portal_applicant_indeed_status_log.created_by,
+            portal_applicant_indeed_status_log.created_at,
+            portal_applicant_indeed_status_log.status,
+            portal_applicant_jobs_list.company_sid,
+            portal_job_applications.first_name,
+            portal_job_applications.middle_name,
+            portal_job_applications.last_name,
+            users.CompanyName          
+        ')
+            ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.sid = portal_applicant_indeed_status_log.portal_applicant_job_list_sid', 'left')
+            ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
+            ->join('users', 'users.sid = portal_applicant_jobs_list.company_sid', 'left')
+
+            ->order_by("portal_applicant_indeed_status_log.sid", "DESC")
+            ->get("portal_applicant_indeed_status_log")
+            ->result_array();
     }
 }
