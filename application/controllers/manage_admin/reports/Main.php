@@ -10,6 +10,11 @@ class Main extends Admin_Controller
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->model('manage_admin/advanced_report_model');
+
+
+        $this->load->library('form_validation');
+        $this->load->library("pagination");
+        $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
     //
@@ -143,14 +148,19 @@ class Main extends Admin_Controller
     }
 
     //
-    public function indeedApplicantDispositionReport()
+    public function indeedApplicantDispositionReport(int $pageNumber = 0)
     {
+
+        /*
+        
         //
         $this->data['page_title'] = 'Indeed Applicant Disposition Status Report';
         // load user model
         $this->load->model('2022/User_model', 'user_model');
         // get filter records
         $this->data['records'] = $this->user_model->getIndeedApplicantDispositionData($this->input->get(null, false));
+        $this->data['active_companies'] = $this->user_model->get_all_companies();
+
 
         if ($this->input->get('export') == 1) {
 
@@ -176,7 +186,144 @@ class Main extends Admin_Controller
             fclose($output);
             exit;
         }
+*/
 
+
+        $this->load->model('2022/User_model', 'user_model');
+        // query params
+        $this->data["filter"]["companies"] = $this->input->get("companies", true) ?? ["All"];
+        $this->data["filter"]["status"] = $this->input->get("status", true) ?? ["All"];
+        $this->data["filter"]["startDate"] = $this->input->get("start", true) ?? "";
+        $this->data["filter"]["endDate"] = $this->input->get("end", true) ?? "";
+        $this->data["filter"]["applicantName"] = $this->input->get("applicantname", true) ?? "";
+
+        $this->data['page_title'] = 'Indeed Applicant Disposition Status Report';
+        $this->data['companies'] = $this->user_model->get_all_companies();
+        $this->data['flag'] = true;
+
+        // get the records
+        $this->data["counts"] = $this
+            ->user_model
+            ->getIndeedApplicantDispositionDataCount(
+                $this->data["filter"]
+            );
+
+        // set pagination
+        $per_page =  PAGINATION_RECORDS_PER_PAGE;
+        // $page_number = $pageNumber;
+        $page_number = isset($_GET['page']) ? $_GET['page'] : 0;
+        $offset = 0;
+        if ($page_number > 1) {
+            $offset = ($page_number - 1) * $per_page;
+        }
+
+        $config = array();
+        $config["base_url"] = base_url("indeed_applicant_disposition_report?" . (str_replace("page=", "pg=", $_SERVER['QUERY_STRING'])));
+        $config["total_rows"] = $this->data["counts"]["records"];
+        $config["per_page"] = $per_page;
+        $config['page_query_string'] = TRUE; // Enable query string for pagination
+        $config['query_string_segment'] = 'page'; // Query string parameter for pagination (default: 'per_page')
+
+        $config["use_page_numbers"] = true;
+        $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+        $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+        $config['first_link'] = '<i class="fa fa-angle-double-left"></i>';
+        $config['first_tag_open'] = '<li class="prev page">';
+        $config['first_tag_close'] = '</li>';
+        $config['last_link'] = '<i class="fa fa-angle-double-right"></i>';
+        $config['last_tag_open'] = '<li class="next page">';
+        $config['last_tag_close'] = '</li>';
+        $config['next_link'] = '<i class="fa fa-angle-right" style="line-height: 32px;"></i>';
+        $config['next_tag_open'] = '<li class="next page">';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '<i class="fa fa-angle-left" style="line-height: 32px;"></i>';
+        $config['prev_tag_open'] = '<li class="prev page">';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li class="page">';
+        $config['num_tag_close'] = '</li>';
+
+        $this->pagination->initialize($config);
+        $this->data["page_links"] = $this->pagination->create_links();
+        $this->data['current_page'] = $page_number;
+        $this->data['from_records'] = $offset == 0 ? 1 : $offset;
+        $this->data['to_records'] = $this->data["counts"]["records"] < $per_page ? $this->data["counts"]["records"] : $offset + $per_page;
+
+        //ExportData
+        if ($this->input->get("perform_action", true)) {
+
+            // query params
+            $data["filter"]["companies"] = $this->input->get("companies", true) ?? ["All"];
+            $data["filter"]["status"] = $this->input->get("status", true) ?? ["All"];
+            $data["filter"]["startDate"] = $this->input->get("start", true) ?? "";
+            $data["filter"]["endDate"] = $this->input->get("end", true) ?? "";
+             $data["filter"]["applicantName"] = $this->input->get("applicantname", true) ?? "";
+
+            $records = $this
+                ->user_model
+                ->getIndeedApplicantDispositionCSV(
+                    $data["filter"]
+                );
+
+            header('Content-Type: text/csv; charset=utf-8');
+            header("Content-Disposition: attachment; filename= indeed_applicant_disposition_status_report_" . (date('Y_m_d_H_i_s', strtotime('now'))) . ".csv");
+            $output = fopen('php://output', 'w');
+
+            if (!empty($data["filter"]["startDate"]) && !empty($data["filter"]["endDate"])) {
+                fputcsv($output, array(
+                    "Period: ",
+                    $data["filter"]["startDate"] . " - " . $data["filter"]["endDate"],
+                ));
+            }
+
+            fputcsv($output, array(
+                "Export Date",
+                date('m/d/Y H:i:s ', strtotime('now'))
+            ));
+
+            fputcsv($output, array('', ''));
+
+            fputcsv(
+                $output,
+                array(
+                    'Applicant Name',
+                    'Company Name',
+                    'ATS Status',
+                    'Indeed Status',
+                    'Changed By',
+                    'Action Date'
+                )
+            );
+
+            if (!empty($records)) {
+                $companyCache = [];
+
+                foreach ($records as $row) {
+                    $a = [];
+                    $a[] = $row['first_name'] . ' ' . $row['last_name'];
+                    $a[] = $row['CompanyName'];
+                    $a[] = $row['ats_status'];
+                    $a[] = $row['indeed_status'];
+                    $a[] =  $row['created_by'] != 0 ? getEmployeeOnlyNameBySID($row['created_by']) : '';
+                    $a[] = $row['created_at'];
+                    //
+                    fputcsv($output, $a);
+                }
+            }
+
+            fclose($output);
+            exit;
+        }
+
+        // get the records
+        $this->data["records"] = $this
+            ->user_model
+            ->getIndeedApplicantDispositionRecords(
+                $this->data["filter"],
+                $per_page,
+                $offset
+            );
         //
         $this->render('manage_admin/company/indeed_applicant_disposition_report');
     }
