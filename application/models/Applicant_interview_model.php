@@ -9,7 +9,8 @@ class Applicant_interview_model extends CI_Model
             portal_job_listings.Title as job_title,
             portal_job_applications.first_name, 
             portal_job_applications.middle_name, 
-            portal_job_applications.last_name, 
+            portal_job_applications.last_name,
+            users.sid as userId, 
             users.CompanyName, 
             users.profile_picture, 
             users.Logo
@@ -20,5 +21,14 @@ class Applicant_interview_model extends CI_Model
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
         $this->db->from('portal_applicant_jobs_list');
         return $this->db->order_by('portal_applicant_jobs_list.sid', 'desc')->get()->row_array();
+    }
+
+    function get_portal_employer($user_sid) {
+        $this->db->select('
+            portal_employer.sub_domain
+        ');
+        $this->db->where('user_sid', $user_sid);
+        $this->db->from('portal_employer');
+        return $this->db->get()->row_array();
     }
 }
