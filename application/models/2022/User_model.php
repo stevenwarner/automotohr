@@ -905,6 +905,11 @@ class User_model extends CI_Model
     {
 
 
+
+        if ($filter["atsIndeedId"]) {
+            $this->db->where("portal_applicant_jobs_list.indeed_ats_sid", $filter["atsIndeedId"]);
+        }
+
         if ($filter["status"]) {
             $status = $filter["status"];
             if ($status[0] != 'All') {
@@ -926,7 +931,7 @@ class User_model extends CI_Model
             $this->db->group_start();
             $this->db->where("portal_job_applications.first_name LIKE '%$keyword[0]%'");
             if ($keyword[1]) {
-                $this->db->or_where("portal_job_applications.last_name LIKE '%$keyword[1]%'");
+                $this->db->where("portal_job_applications.last_name LIKE '%$keyword[1]%'");
             }
             $this->db->group_end();
         }
@@ -963,7 +968,11 @@ class User_model extends CI_Model
     //
     public function getIndeedApplicantDispositionRecords(array $filter, int $limit, int $offset)
     {
-        // set company filter
+
+        if ($filter["atsIndeedId"]) {
+            $this->db->where("portal_applicant_jobs_list.indeed_ats_sid", $filter["atsIndeedId"]);
+        }
+
         if (!in_array("All", $filter["companies"])) {
             $this->db->where_in(
                 "portal_applicant_jobs_list.company_sid",
@@ -1023,7 +1032,8 @@ class User_model extends CI_Model
             portal_job_applications.first_name,
             portal_job_applications.middle_name,
             portal_job_applications.last_name,
-            users.CompanyName          
+            users.CompanyName,
+            portal_applicant_jobs_list.indeed_ats_sid          
         ')
             ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.sid = portal_applicant_indeed_status_log.portal_applicant_job_list_sid', 'left')
             ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
@@ -1039,13 +1049,17 @@ class User_model extends CI_Model
     public function getIndeedApplicantDispositionCSV(array $filter)
     {
 
+
+        if ($filter["atsIndeedId"]) {
+            $this->db->where("portal_applicant_jobs_list.indeed_ats_sid", $filter["atsIndeedId"]);
+        }
+
         if (!in_array("All", $filter["companies"])) {
             $this->db->where_in(
                 "portal_applicant_jobs_list.company_sid",
                 $filter["companies"]
             );
         }
-
 
         if ($filter['startDate'] && $filter['endDate']) {
             //
@@ -1099,7 +1113,8 @@ class User_model extends CI_Model
             portal_job_applications.first_name,
             portal_job_applications.middle_name,
             portal_job_applications.last_name,
-            users.CompanyName          
+            users.CompanyName,
+            portal_applicant_jobs_list.indeed_ats_sid          
         ')
             ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.sid = portal_applicant_indeed_status_log.portal_applicant_job_list_sid', 'left')
             ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
