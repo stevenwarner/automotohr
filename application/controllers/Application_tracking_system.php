@@ -524,6 +524,13 @@ class Application_tracking_system extends Public_Controller
                 $applicants[$key]['match_score'] = empty($submitted_resume_data['match_score']) ? '0' : $submitted_resume_data['match_score'];
             }
 
+
+            // Descending
+            usort($applicants, function ($a, $b) {
+                return $b['match_score'] <=> $a['match_score'];
+            });
+
+            
             $data['applicant_total'] = $applicant_total;
             $data['all_manual_applicants'] = $all_manual_applicants;
             $data['all_talent_applicants'] = $all_talent_applicants;
