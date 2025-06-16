@@ -517,6 +517,13 @@ class Application_tracking_system extends Public_Controller
                 $data['job_sid_array'] = explode(',', $job_sid_urldecode);
             }
 
+
+            //
+            foreach ($applicants as $key => $val) {
+                $submitted_resume_data = $this->application_tracking_system_model->get_submitted_resume_data($val['sid']);
+                $applicants[$key]['match_score'] = empty($submitted_resume_data['match_score']) ? '0' : $submitted_resume_data['match_score'];
+            }
+
             $data['applicant_total'] = $applicant_total;
             $data['all_manual_applicants'] = $all_manual_applicants;
             $data['all_talent_applicants'] = $all_talent_applicants;

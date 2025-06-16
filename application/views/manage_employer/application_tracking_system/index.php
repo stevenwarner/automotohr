@@ -751,9 +751,17 @@
                                                 </div>
                                             </div>
 
+
                                             <div class="interview-scoreing">
                                                 <?php  //if(check_access_permissions_for_view($security_details, 'resend_screening_questionnaire')) { 
                                                 ?>
+
+
+                                                <div class="rating-col">
+                                                    <span class="text-left pull-left float_left">
+                                                        <a class="text-success"><span class="float_left">Applicant Scoring: <?php echo $employer_job['match_score'];?>/100</span></a>
+                                                    </span>
+                                                </div>
                                                 <div class="rating-score">
                                                     <div class="rating-col">
                                                         <span class="text-left pull-left float_left">

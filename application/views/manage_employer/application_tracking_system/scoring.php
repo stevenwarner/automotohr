@@ -207,7 +207,7 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
     <div class="row">
         <div class="col-xs-12">
             <ul class="nav nav-tabs nav-justified">
-                <li class="active"><a data-toggle="tab" href="#parsed_data">Applicant Data</a></li>
+                <li class="active" style="color: #ffffff;"><a style="color: #ffffff !important" data-toggle="tab" href="#parsed_data">Applicant Data</a></li>
                 <?php if ($interview_logs): ?>
                     <li><a data-toggle="tab" href="#interview_data" onclick="activeInterviewData()">Interview Data</a></li>
                 <?php endif; ?>
@@ -220,7 +220,7 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                 <div class="score_wrapper">
                                     <h3>Applicant Score</h3>
                                     <div style="display: flex;align-items: center;">
-                                        <span class="score_range"> <?= $submitted_resume_data['match_score']; ?> /
+                                        <span class="score_range"> <?= empty($submitted_resume_data['match_score']) ? '0' : $submitted_resume_data['match_score']; ?> /
                                             100</span>
                                         <a href="javascript:;" class="action-btn" onclick="displayScoring()">
                                             <i class="fa fa-pencil"></i>
@@ -250,18 +250,18 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                             <?php foreach ($skills as $skill) {
                                                 if (is_array($skill) || is_object($skill)) {
                                                     foreach ($skill as $key => $value) {
-                                                        ?>
+                                            ?>
                                                         <div>
                                                             <span style="text-transform: capitalize;font-weight:600;">
                                                                 <?php echo $key; ?> </span>:
                                                             <span> <?php echo $value; ?> </span>
                                                         </div>
-                                                        <?php
+                                                    <?php
                                                     }
                                                 } else {
                                                     ?>
                                                     <span style="display: block;"> <?php echo ($skill); ?> </span>
-                                                    <?php
+                                            <?php
                                                 }
                                             } ?>
                                         </div>
@@ -287,19 +287,19 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                         <?php foreach ($screening_questions as $ques) {
                                             if (is_array($ques) || is_object($ques)) {
                                                 foreach ($ques as $key => $value) {
-                                                    ?>
+                                        ?>
                                                     <div>
                                                         <span style="text-transform: capitalize;font-weight:600;">
                                                             <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                    <?php
+                                                <?php
                                                 }
                                             } else {
                                                 ?>
                                                 <span style="display: block;"><strong>Q.</strong> &nbsp; <?php echo ($ques); ?>
                                                 </span>
-                                                <?php
+                                        <?php
                                             }
                                         } ?>
                                     </div>
@@ -316,18 +316,18 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                             }
                                             if (is_array($edu) || is_object($edu)) {
                                                 foreach ($edu as $key => $value) {
-                                                    ?>
+                                        ?>
                                                     <div>
                                                         <span style="text-transform: capitalize;font-weight:600;">
                                                             <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                    <?php
+                                                <?php
                                                 }
                                             } else {
                                                 ?>
                                                 <span style="display: block;"> <?php echo $edu; ?> </span>
-                                                <?php
+                                        <?php
                                             }
                                         } ?>
                                     </div>
@@ -341,18 +341,18 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                         <?php foreach ($certifications as $certificate) {
                                             if (is_array($certificate) || is_object($certificate)) {
                                                 foreach ($certificate as $key => $value) {
-                                                    ?>
+                                        ?>
                                                     <div>
                                                         <span style="text-transform: capitalize;font-weight:600;">
                                                             <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                    <?php
+                                                <?php
                                                 }
                                             } else {
                                                 ?>
                                                 <span style="display: block;"> - <?php echo $certificate; ?> </span>
-                                                <?php
+                                        <?php
                                             }
                                         } ?>
                                     </div>
@@ -369,18 +369,18 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                             }
                                             if (is_array($exp) || is_object($exp)) {
                                                 foreach ($exp as $key => $value) {
-                                                    ?>
+                                        ?>
                                                     <div>
                                                         <span style="text-transform: capitalize;font-weight:600;">
                                                             <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                    <?php
+                                                <?php
                                                 }
                                             } else {
                                                 ?>
                                                 <span style="display: block;"> <?php echo ($exp); ?> </span>
-                                                <?php
+                                        <?php
                                             }
                                         } ?>
                                     </div>
@@ -482,7 +482,7 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                     if ($trans->role === "system") {
                                         continue;
                                     }
-                                    ?>
+                                ?>
                                     <tr>
                                         <th style="vertical-align: baseline;width:100px;padding:10px;">Role:</th>
                                         <td style="padding:10px;">
@@ -493,7 +493,7 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                         <th style="vertical-align: baseline;width:100px;padding:10px;">Content:</th>
                                         <td style="padding:10px;"><?php echo $trans->content; ?></td>
                                     </tr>
-                                    <?php
+                                <?php
                                 }
                                 ?>
                             </table>
@@ -506,14 +506,13 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
 </div>
 
 <script>
-
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#HorizontalTab').easyResponsiveTabs({
             type: 'default', //Types: default, vertical, accordion
             width: 'auto', //auto or any width like 600px
             fit: true, // 100% fit in a container
             tabidentify: 'hor_1', // The tab groups identifier
-            activate: function () { }
+            activate: function() {}
         });
 
         let customTabs = document.querySelectorAll('.custom-tabs span');
