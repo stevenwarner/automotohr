@@ -294,4 +294,48 @@ class Main extends Admin_Controller
         //
         $this->render('manage_admin/company/indeed_applicant_disposition_report');
     }
+
+    //
+    public function indeedApplicantDispositionReportLog($indeedATSId, $atsStatus)
+    {
+        // 
+        $record = $this
+            ->user_model
+            ->getIndeedApplicantDispositionReportLog(
+                $indeedATSId,
+                $atsStatus
+            );
+
+        return SendResponse(
+            200,
+            [
+                "view" => $this->load->view("manage_admin/company/indeed_applicant_disposition_report_log", ["record" => $record], true)
+            ]
+        );
+    }
+
+
+    //
+
+    public function indeedApplicantDispositionReportResend($companySId, $jobSid)
+    {
+        //
+        $this->load->model("Indeed_model", "indeed_model");
+        $msg = $this->indeed_model->updateJobToQueue(
+            $jobSid,
+            $companySId,
+            true
+        );
+
+        $this->resp($msg);
+    }
+
+
+
+    private function resp($array)
+    {
+        header('content-type: application/json');
+        echo json_encode($array);
+        exit(0);
+    }
 }

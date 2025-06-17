@@ -2942,3 +2942,6 @@ $route['interview/(:any)'] = 'Applicant_interviews/interviewCall/$1';
 $route["ai_recruiter/config"]["get"] =
   "manage_admin/Ai_recruiter/config";
 $route['indeed_applicant_disposition_report'] = 'manage_admin/reports/Main/indeedApplicantDispositionReport';
+$route['indeed_applicant_disposition_report_log/(:any)/(:any)'] = 'manage_admin/reports/Main/indeedApplicantDispositionReportLog/$1/$2';
+$route['indeed_applicant_disposition_report_resend/(:any)/(:any)'] = 'manage_admin/reports/Main/indeedApplicantDispositionReportResend/$1/$2';
+

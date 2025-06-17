@@ -139,18 +139,18 @@
                                             <div class="row">
                                                 <div class="col-sm-6 col-xs-12">
                                                     <div class="form-group">
-                                                        <label>Applicant Name</label>                                                      
-                                                            <input type="text" name="applicantname"
-                                                                class="form-control"
-                                                                value="<?= $filter["applicantName"]; ?>" />                                                    
+                                                        <label>Applicant Name</label>
+                                                        <input type="text" name="applicantname"
+                                                            class="form-control"
+                                                            value="<?= $filter["applicantName"]; ?>" />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-6 col-xs-12">
                                                     <div class="form-group">
-                                                        <label>ATS Indeed Id</label>                                                      
-                                                            <input type="text" name="atsindeedid"
-                                                                class="form-control"
-                                                                value="<?= $filter["atsIndeedId"]; ?>" />                                                    
+                                                        <label>ATS Indeed Id</label>
+                                                        <input type="text" name="atsindeedid"
+                                                            class="form-control"
+                                                            value="<?= $filter["atsIndeedId"]; ?>" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -207,6 +207,7 @@
                                                         <th class="text-right" scope="col">Changed<br> By</th>
                                                         <th class="text-right" scope="col">Action <br>Date</th>
                                                         <th class="text-right" scope="col">Status</th>
+                                                        <th class="text-right" scope="col">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -214,7 +215,8 @@
                                                     <?php foreach ($records as $v0):
                                                         $response = json_decode($v0["status"], true);
                                                     ?>
-                                                        <tr>
+                                                        <tr data-indeedatssid="<?= $v0["indeed_ats_sid"]; ?>" data-atsstatus="<?= $v0["ats_status"]; ?>" data-companysid="<?= $v0["company_sid"]; ?>" data-jobsid="<?= $v0["job_sid"]; ?>">
+
                                                             <td>
                                                                 <strong>
                                                                     <?= $v0["first_name"] . ' ' . $v0["last_name"]; ?>
@@ -243,10 +245,24 @@
                                                                     <label class="label label-danger">
                                                                         ERROR
                                                                     </label>
+                                                                    <p><?php echo $response["error"]; ?></p>
                                                                 <?php else: ?>
                                                                     <label class="label label-success">
                                                                         SUCCESS
                                                                     </label>
+                                                                <?php endif; ?>
+                                                            </td>
+
+                                                            <td class="text-right">
+                                                                <button class="btn btn-success jsButton" data-target="log">
+                                                                    <i class="fa fa-eye"></i>
+                                                                    Log
+                                                                </button>
+                                                                <?php if ($response["error"]): ?>
+                                                                    <br><br> <button class="btn btn-success jsButtonResend" data-target="log">
+                                                                        <i class="fa fa-send"></i>
+                                                                        Resend
+                                                                    </button>
                                                                 <?php endif; ?>
                                                             </td>
                                                         </tr>
@@ -414,10 +430,9 @@
 
         $(".jsButton").click(function(event) {
             event.preventDefault();
+            const indeedATSId = $(this).closest("tr").data("indeedatssid");
+            const atsStatus = $(this).closest("tr").data("atsstatus");
 
-            const recordId = $(this).closest("tr").data("id");
-            const logId = $(this).closest("tr").data("logid");
-            const target = $(this).data("target");
 
             Modal({
                     Id: "jsModal",
@@ -426,18 +441,16 @@
                     Body: '<div id="jsModalBody"></div>'
                 },
                 function() {
-                    if (target === "log") {
-                        loadLog(logId)
-                    }
+                    loadLog(indeedATSId, atsStatus)
                 }
             );
         });
 
         // load log
-        function loadLog(logId) {
+        function loadLog(indeedATSId, atsStatus) {
             $
                 .ajax({
-                    url: window.location.origin + "/manage_admin/reports/indeed/log/" + logId,
+                    url: window.location.origin + "/indeed_applicant_disposition_report_log/" + indeedATSId + '/' + atsStatus,
                     method: "GET"
                 })
                 .fail(function() {
@@ -450,6 +463,67 @@
                 });
         }
     })
+
+
+    //
+    $(".jsButtonResend").click(function(event) {
+        event.preventDefault();
+        const jobSid = $(this).closest("tr").data("jobsid");
+        const companySid = $(this).closest("tr").data("companysid");
+
+        alertify.confirm(
+            'Are You Sure?',
+            'Are you sure want to Resend This Job?',
+            function() {
+                $
+                    .ajax({
+                        url: window.location.origin + "/indeed_applicant_disposition_report_resend/" + companySid + '/' + jobSid,
+                        method: "GET"
+                    })
+                    .fail(function() {
+                        $("#jsModal .jsModalCancel").click();
+                        alert("Something went wrong!");
+                    })
+                    .success(function(resp) {
+                        if (resp.success) {
+                            alertify.alert("Success", resp.success);
+                        }
+
+                        if (resp.errors) {
+                            const errorMessage = resp.errors.join('<br>');
+                            alertify.alert("Error", errorMessage);
+                        }
+
+                    });
+
+            },
+            function() {
+
+            }
+        )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    });
+
+
+
+
 
     //js-search
     $("#js-search").click(function(event) {
@@ -467,40 +541,9 @@
         $("#js-indeedform").submit();
     });
 
-    // load history
-    function loadHistory(logId) {
-        $
-            .ajax({
-                url: window.location.origin + "/manage_admin/reports/indeed/history/" + logId,
-                method: "GET"
-            })
-            .fail(function() {
-                $("#jsModal .jsModalCancel").click();
-                alert("Something went wrong!");
-            })
-            .success(function(resp) {
-                $("#jsModalBody").html(resp.view);
-                $('.jsIPLoader[data-page="jsModalLoader"]').hide(0);
-            });
-    }
 
-    //
-    $(".jsHistory").click(function(event) {
-        event.preventDefault();
 
-        const jobId = $(this).closest("tr").data("jobid");
 
-        Modal({
-                Id: "jsModal",
-                Title: "",
-                Loader: "jsModalLoader",
-                Body: '<div id="jsModalBody"></div>'
-            },
-            function() {
-                loadHistory(jobId)
-            }
-        );
-    });
 
     $(".jsHasErrors").click(function(event) {
         event.preventDefault();

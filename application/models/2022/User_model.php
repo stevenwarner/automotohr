@@ -1033,7 +1033,8 @@ class User_model extends CI_Model
             portal_job_applications.middle_name,
             portal_job_applications.last_name,
             users.CompanyName,
-            portal_applicant_jobs_list.indeed_ats_sid          
+            portal_applicant_jobs_list.indeed_ats_sid,
+            portal_applicant_jobs_list.job_sid,          
         ')
             ->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.sid = portal_applicant_indeed_status_log.portal_applicant_job_list_sid', 'left')
             ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
@@ -1123,5 +1124,18 @@ class User_model extends CI_Model
             ->order_by("portal_applicant_indeed_status_log.sid", "DESC")
             ->get("portal_applicant_indeed_status_log")
             ->result_array();
+    }
+
+    //
+    public function getIndeedApplicantDispositionReportLog($indeedATSId, $atsStatus)
+    {
+        // 
+        return $this
+            ->db
+            ->where("request_json REGEXP", $indeedATSId)
+            ->where("request_json REGEXP", $atsStatus)
+            ->limit(1)
+            ->get("automotohr_logs.indeed_api_logs")
+            ->row_array();
     }
 }
