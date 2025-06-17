@@ -611,6 +611,22 @@ class Application_tracking_system extends Public_Controller
         if ($app_id == NULL) {
             redirect('application_tracking_system/active/all/all/all/all/all/all');
         } else {
+
+            if (isset($_POST['resume_id'])) {
+                $data = array();
+                if (isset($_POST['questions'])) {
+                    $questions = $_POST['questions'];
+                    $data = array('screening_questions' => json_encode($questions));
+                }
+
+                if (isset($_POST['score'])) {
+                    $score = $_POST['score'];
+                    $data = array('match_score' => $score);
+                }
+                $this->application_tracking_system_model->update_submitted_resume($_POST['resume_id'], $data);
+                return redirect("applicant_profile/" . $app_id . '/' . $job_list_sid);
+            }
+
             $ats_full_url = $this->session->userdata('ats_full_url');
             $ats_params = $this->session->userdata('ats_params');
             $data = applicant_right_nav($app_id, $job_list_sid, $ats_params);
@@ -1102,7 +1118,7 @@ class Application_tracking_system extends Public_Controller
                 $data = array('match_score' => $score);
             }
             $this->application_tracking_system_model->update_submitted_resume($_POST['resume_id'], $data);
-            return redirect("applicant_profile/submitted/resume/" . $app_id . '/' . $applicant_id);
+            return redirect("applicant_profile/" . $app_id . '/' . $applicant_id);
         }
 
         $ats_params = $this->session->userdata('ats_params');

@@ -207,7 +207,8 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
     <div class="row">
         <div class="col-xs-12">
             <ul class="nav nav-tabs nav-justified">
-                <li class="active" style="color: #ffffff;"><a style="color: #ffffff !important" data-toggle="tab" href="#parsed_data">Applicant Data</a></li>
+                <li class="active" style="color: #ffffff;"><a style="color: #ffffff !important" data-toggle="tab"
+                        href="#parsed_data">Applicant Data</a></li>
                 <?php if ($interview_logs): ?>
                     <li><a data-toggle="tab" href="#interview_data" onclick="activeInterviewData()">Interview Data</a></li>
                 <?php endif; ?>
@@ -220,7 +221,9 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                 <div class="score_wrapper">
                                     <h3>Applicant Score</h3>
                                     <div style="display: flex;align-items: center;">
-                                        <span class="score_range"> <?= empty($submitted_resume_data['match_score']) ? '0' : $submitted_resume_data['match_score']; ?> /
+                                        <span class="score_range">
+                                            <?= empty($submitted_resume_data['match_score']) ? '0' : $submitted_resume_data['match_score']; ?>
+                                            /
                                             100</span>
                                         <a href="javascript:;" class="action-btn" onclick="displayScoring()">
                                             <i class="fa fa-pencil"></i>
@@ -250,18 +253,18 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                             <?php foreach ($skills as $skill) {
                                                 if (is_array($skill) || is_object($skill)) {
                                                     foreach ($skill as $key => $value) {
-                                            ?>
+                                                        ?>
                                                         <div>
                                                             <span style="text-transform: capitalize;font-weight:600;">
                                                                 <?php echo $key; ?> </span>:
                                                             <span> <?php echo $value; ?> </span>
                                                         </div>
-                                                    <?php
+                                                        <?php
                                                     }
                                                 } else {
                                                     ?>
                                                     <span style="display: block;"> <?php echo ($skill); ?> </span>
-                                            <?php
+                                                    <?php
                                                 }
                                             } ?>
                                         </div>
@@ -287,19 +290,19 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                         <?php foreach ($screening_questions as $ques) {
                                             if (is_array($ques) || is_object($ques)) {
                                                 foreach ($ques as $key => $value) {
-                                        ?>
+                                                    ?>
                                                     <div>
                                                         <span style="text-transform: capitalize;font-weight:600;">
                                                             <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                <?php
+                                                    <?php
                                                 }
                                             } else {
                                                 ?>
                                                 <span style="display: block;"><strong>Q.</strong> &nbsp; <?php echo ($ques); ?>
                                                 </span>
-                                        <?php
+                                                <?php
                                             }
                                         } ?>
                                     </div>
@@ -316,18 +319,18 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                             }
                                             if (is_array($edu) || is_object($edu)) {
                                                 foreach ($edu as $key => $value) {
-                                        ?>
+                                                    ?>
                                                     <div>
                                                         <span style="text-transform: capitalize;font-weight:600;">
                                                             <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                <?php
+                                                    <?php
                                                 }
                                             } else {
                                                 ?>
                                                 <span style="display: block;"> <?php echo $edu; ?> </span>
-                                        <?php
+                                                <?php
                                             }
                                         } ?>
                                     </div>
@@ -341,18 +344,18 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                         <?php foreach ($certifications as $certificate) {
                                             if (is_array($certificate) || is_object($certificate)) {
                                                 foreach ($certificate as $key => $value) {
-                                        ?>
+                                                    ?>
                                                     <div>
                                                         <span style="text-transform: capitalize;font-weight:600;">
                                                             <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                <?php
+                                                    <?php
                                                 }
                                             } else {
                                                 ?>
                                                 <span style="display: block;"> - <?php echo $certificate; ?> </span>
-                                        <?php
+                                                <?php
                                             }
                                         } ?>
                                     </div>
@@ -369,18 +372,18 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                             }
                                             if (is_array($exp) || is_object($exp)) {
                                                 foreach ($exp as $key => $value) {
-                                        ?>
+                                                    ?>
                                                     <div>
                                                         <span style="text-transform: capitalize;font-weight:600;">
                                                             <?php echo $key; ?> </span>:
                                                         <span> <?php echo $value; ?> </span>
                                                     </div>
-                                                <?php
+                                                    <?php
                                                 }
                                             } else {
                                                 ?>
                                                 <span style="display: block;"> <?php echo ($exp); ?> </span>
-                                        <?php
+                                                <?php
                                             }
                                         } ?>
                                     </div>
@@ -482,7 +485,7 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                     if ($trans->role === "system") {
                                         continue;
                                     }
-                                ?>
+                                    ?>
                                     <tr>
                                         <th style="vertical-align: baseline;width:100px;padding:10px;">Role:</th>
                                         <td style="padding:10px;">
@@ -493,7 +496,7 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                         <th style="vertical-align: baseline;width:100px;padding:10px;">Content:</th>
                                         <td style="padding:10px;"><?php echo $trans->content; ?></td>
                                     </tr>
-                                <?php
+                                    <?php
                                 }
                                 ?>
                             </table>
@@ -504,15 +507,105 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
         </div>
     </div>
 </div>
+<!-- Main End -->
+
+<div id="edit_questionnaire_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form method="post">
+            <input type="hidden" name="resume_id" value="<?php echo $submitted_resume_data['sid']; ?>" />
+            <div class="modal-content">
+                <div class="modal-header modal-header-bg">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Questions</h4>
+                </div>
+                <div class="modal-body" id="edit_questionnaire_body_data">
+                    <!-- Questions Input List -->
+                    <div id="question_wrapper"></div>
+                    <button class="btn btn-success" type="button" onclick="addQuestion()">Add More</button>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="submit" id="submit_prompt">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="edit_scoring_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form method="post">
+            <input type="hidden" name="resume_id" value="<?php echo $submitted_resume_data['sid']; ?>" />
+            <div class="modal-content">
+                <div class="modal-header modal-header-bg">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Applicant Scoring</h4>
+                </div>
+                <div class="modal-body" id="edit_scoring_body_data">
+                    <!-- Scoring Input -->
+                    <input type="number" class="invoice-fields" name="score" id="score"
+                        value="<?= $submitted_resume_data['match_score']; ?>" min="1" max="100" required />
+                    <p>Maximum scoring will be 100.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" type="submit" id="submit_prompt">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
-    $(document).ready(function() {
+
+    // --------------------------
+    // Parsed Data Script Code
+    // --------------------------
+
+    let screening_questions = JSON.parse(`<?php echo $submitted_resume_data['screening_questions'] ?>`);
+    const displayQuestions = () => {
+        let question_html_data = ``;
+        for (let i = 0; i < screening_questions.length; i++) {
+            question_html_data += `<div style="margin-bottom: 10px;display:grid;">
+                <div style="display:flex;justify-content: space-between;align-items: center;"> <label>Question:</label> <i class="fa fa-trash"></i> </div>
+                <textarea name="questions[]" key="${i}" rows="${3}" >${screening_questions[i]}</textarea>
+            </div>`;
+        }
+        $('#edit_questionnaire_body_data #question_wrapper').html(question_html_data);
+        $('#edit_questionnaire_modal').modal('show');
+
+        removeQuestionJS();
+    }
+
+    const addQuestion = () => {
+        let question_html_data = `<div style="margin-bottom: 10px;display:grid;">
+            <div style="display:flex;justify-content: space-between;align-items: center;"> <label>Question:</label> <i class="fa fa-trash"></i> </div>
+            <textarea name="questions[]" rows="3" >${''}</textarea>
+        </div>`;
+        $('#edit_questionnaire_body_data #question_wrapper').append(question_html_data);
+
+        removeQuestionJS();
+    }
+
+    const removeQuestionJS = () => {
+        $('#edit_questionnaire_body_data .fa-trash').click(function (e) {
+            e.target.parentElement.parentElement.remove();
+        })
+    }
+
+    const displayScoring = () => {
+        $('#edit_scoring_modal').modal('show');
+    }
+
+    // --------------------------
+    // Interview Data Script Code
+    // --------------------------
+
+    $(document).ready(function () {
         $('#HorizontalTab').easyResponsiveTabs({
             type: 'default', //Types: default, vertical, accordion
             width: 'auto', //auto or any width like 600px
             fit: true, // 100% fit in a container
             tabidentify: 'hor_1', // The tab groups identifier
-            activate: function() {}
+            activate: function () { }
         });
 
         let customTabs = document.querySelectorAll('.custom-tabs span');

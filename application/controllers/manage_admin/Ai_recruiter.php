@@ -19,14 +19,22 @@ class Ai_recruiter extends Admin_Controller
     {
 
 
-        if ($this->input->post(null)) {
+        if ($this->input->post("conversation_prompt") || $this->input->post("generate_report_prompt")) {
             $this->db
-                ->where("sid", 1)
+                ->where("slug", 'conversation')
                 ->update(
                     "ai_recruiter_config",
                     [
                         "model" => $this->input->post("model"),
-                        "prompt" => $this->input->post("prompt", false)
+                        "prompt" => $this->input->post("conversation_prompt")
+                    ]
+                );
+            $this->db
+                ->where("slug", 'generate_report')
+                ->update(
+                    "ai_recruiter_config",
+                    [
+                        "prompt" => $this->input->post("generate_report_prompt")
                     ]
                 );
             $this->session->set_flashdata('success', 'Configuration updated successfully.');
@@ -36,9 +44,15 @@ class Ai_recruiter extends Admin_Controller
         // set the title
         $this->data['page_title'] = 'Ai Recruiter Configuration :: ' . (STORE_NAME);
 
-        $this->data["result"] = $this->db
+        $this->data["conversation"] = $this->db
             ->select("prompt, model")
-            ->where("sid", 1)
+            ->where("slug", 'conversation')
+            ->get("ai_recruiter_config")
+            ->row_array();
+
+        $this->data["generate_report"] = $this->db
+            ->select("prompt, model")
+            ->where("slug", 'generate_report')
             ->get("ai_recruiter_config")
             ->row_array();
 
