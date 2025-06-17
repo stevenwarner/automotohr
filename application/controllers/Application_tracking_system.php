@@ -526,9 +526,9 @@ class Application_tracking_system extends Public_Controller
 
 
             // Descending
-            usort($applicants, function ($a, $b) {
-                return $b['match_score'] <=> $a['match_score'];
-            });
+            // usort($applicants, function ($a, $b) {
+            //     return $b['match_score'] <=> $a['match_score'];
+            // });
 
             
             $data['applicant_total'] = $applicant_total;
