@@ -5048,3 +5048,20 @@ if (!function_exists('storeApplicantInQueueToProcess')) {
         return ["success" => true, "message" => "You have successfully updated an applicant to queue.", "is_updated" => true];
     }
 }
+
+if (!function_exists('getApplicantJobTitleByQueueId')) {
+    function getApplicantJobTitleByQueueId ($id)
+    {
+        //
+        $CI = &get_instance();
+        $CI->db
+            ->select('portal_job_listings.title');
+        $CI->db->where('portal_applicant_jobs_queue.sid', $id);
+        $CI->db->join(
+                "portal_job_listings",
+                "portal_job_listings.sid = portal_applicant_jobs_queue.job_sid",
+                "inner"
+        );
+        return $CI->db->get('portal_applicant_jobs_queue')->row_array()['title'];
+    }
+}

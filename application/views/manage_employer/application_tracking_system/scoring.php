@@ -217,6 +217,14 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                 <div id="parsed_data" class="tab-pane fade in active hr-innerpadding">
                     <div class="row">
                         <div class="col-lg-4 col-sm-12">
+                            <div class="hr-widget">
+                                <div class="score_wrapper">
+                                    <h3>Job Title:</h3>
+                                    <?php 
+                                        echo '<b>'.getApplicantJobTitleByQueueId($submitted_resume_data['portal_applicant_jobs_queue_sid']).'</b>';
+                                    ?>
+                                </div>
+                            </div>        
                             <div class="submitted_card_wrapper hr-widget">
                                 <div class="score_wrapper">
                                     <h3>Applicant Score</h3>
@@ -239,7 +247,23 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                     </div>
                                     <div class="panel-body">
                                         <div class="reasoning">
-                                            <?php echo $extra_content; ?>
+                                            <?php
+                                                $points = preg_split('/\n-\s/', $extra_content);
+
+                                                // The first element will have a leading "- ", so fix it if needed
+                                                foreach ($points as $index => $point) {
+                                                    if ($index === 0 && strpos($point, '- ') !== 0) {
+                                                        $points[$index] = '- ' . $point;
+                                                    } elseif ($index > 0) {
+                                                        $points[$index] = '- ' . $point;
+                                                    }
+                                                }
+                                                echo '<br>';
+                                                // Output each point
+                                                foreach ($points as $point) {
+                                                    echo $point . '<br><br>';
+                                                }
+                                            ?>
                                         </div>
                                     </div>
                                 </div>

@@ -751,17 +751,45 @@
                                                 </div>
                                             </div>
 
+                                            <div class="applicant-scoring" style="margin-bottom: 10px;">
+                                                <div class="rating-col">
+                                                    <span class="text-left pull-left float_left">
+                                                        <a class="text-success"><span class="float_left">Applicant Scoring: </a>
+                                                    </span>
+                                                </div>
+                                            
+                                                <div class="rating-score">
+                                                    <div class="rating-col text-left">
+                                                        <span class="text-left text-success pull-left">Pre Interview Score :</span>
+                                                    </div>
+                                                    <div class="rating-col text-center">
+                                                        <span class="pull-right"> <?php echo $employer_job['match_score'];?> Out of 100 Points</span>
+                                                    </div>
+                                                    <div class="rating-col text-left">
+                                                        <span class="start-rating applicant-rating">
+                                                            <input readonly="readonly" value="<?php echo $employer_job['match_score']; ?>" type="number" name="rating" class="rating" min=0 max=100 step=0.2 data-size="xs">
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="rating-score">
+                                                    <div class="rating-col text-left">
+                                                        <span class="text-left text-success pull-left">Post Interview Score :</span>
+                                                    </div>
+                                                    <div class="rating-col text-center">
+                                                        <span class="pull-right"> <?php echo $employer_job['match_score'];?> Out of 100 Points</span>
+                                                    </div>
+                                                    <div class="rating-col text-left">
+                                                        <span class="start-rating applicant-rating">
+                                                            <input readonly="readonly" value="<?php echo $employer_job['match_score']; ?>" type="number" name="rating" class="rating" min=0 max=100 step=0.2 data-size="xs">
+                                                        </span>
+                                                    </div>
+                                                </div> -->
+                                            </div>    
 
                                             <div class="interview-scoreing">
                                                 <?php  //if(check_access_permissions_for_view($security_details, 'resend_screening_questionnaire')) { 
                                                 ?>
 
-
-                                                <div class="rating-col">
-                                                    <span class="text-left pull-left float_left">
-                                                        <a class="text-success"><span class="float_left">Applicant Scoring: <?php echo $employer_job['match_score'];?>/100</span></a>
-                                                    </span>
-                                                </div>
                                                 <div class="rating-score">
                                                     <div class="rating-col">
                                                         <span class="text-left pull-left float_left">

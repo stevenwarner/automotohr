@@ -7751,7 +7751,7 @@ ul.tabs li.active {
 .applicant-box {
     float: left;
     width: 32.3333%;
-    height: 416px;
+    height: 445px;
     margin: 0 0 1% 1%;
     border: 1px solid #ababab;
     vertical-align: top;
@@ -14406,6 +14406,11 @@ ul.phone-number a {
 .review-score span {
     color: #0000FF;
     font-weight: 600;
+}
+
+.applicant-scoring {
+    float: left;
+    width: 100%;
 }
 
 .interview-scoreing {

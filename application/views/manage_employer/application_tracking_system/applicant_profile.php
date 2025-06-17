@@ -2164,6 +2164,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/chosen.jquery.js"></script>
 <script language="JavaScript" type="text/javascript">
+    $(document).ready(function() {
+        
+        const hash = window.location.hash;
+        
+        if (hash) {
+            $('#HorizontalTab').easyResponsiveTabs('activate', 'tab6');
+        }
+    });
+
     var mylimit = parseInt($('#choiceLimit').html());
     multiselectbox();
     $(".chosen-select").chosen({
