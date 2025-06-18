@@ -301,39 +301,6 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
 
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <strong>
-                                            Screening Questions
-                                        </strong>
-
-                                        <a href="javascript:;" class="action-btn" onclick="displayQuestions()">
-                                            <i class="fa fa-pencil"></i>
-                                            <span class="btn-tooltip">Edit</span>
-                                        </a>
-                                    </div>
-                                    <div class="panel-body questions">
-                                        <?php foreach ($screening_questions as $ques) {
-                                            if (is_array($ques) || is_object($ques)) {
-                                                foreach ($ques as $key => $value) {
-                                                    ?>
-                                                    <div>
-                                                        <span style="text-transform: capitalize;font-weight:600;">
-                                                            <?php echo $key; ?> </span>:
-                                                        <span> <?php echo $value; ?> </span>
-                                                    </div>
-                                                    <?php
-                                                }
-                                            } else {
-                                                ?>
-                                                <span style="display: block;"><strong>Q.</strong> &nbsp; <?php echo ($ques); ?>
-                                                </span>
-                                                <?php
-                                            }
-                                        } ?>
-                                    </div>
-                                </div>
-
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
                                         <strong> Education </strong>
                                     </div>
                                     <div class="panel-body">
@@ -407,6 +374,39 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                             } else {
                                                 ?>
                                                 <span style="display: block;"> <?php echo ($exp); ?> </span>
+                                                <?php
+                                            }
+                                        } ?>
+                                    </div>
+                                </div>
+
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <strong>
+                                            Screening Questions
+                                        </strong>
+
+                                        <a href="javascript:;" class="action-btn" onclick="displayQuestions()">
+                                            <i class="fa fa-pencil"></i>
+                                            <span class="btn-tooltip">Edit</span>
+                                        </a>
+                                    </div>
+                                    <div class="panel-body questions">
+                                        <?php foreach ($screening_questions as $ques) {
+                                            if (is_array($ques) || is_object($ques)) {
+                                                foreach ($ques as $key => $value) {
+                                                    ?>
+                                                    <div>
+                                                        <span style="text-transform: capitalize;font-weight:600;">
+                                                            <?php echo $key; ?> </span>:
+                                                        <span> <?php echo $value; ?> </span>
+                                                    </div>
+                                                    <?php
+                                                }
+                                            } else {
+                                                ?>
+                                                <span style="display: block;"><strong>Q.</strong> &nbsp; <?php echo ($ques); ?>
+                                                </span>
                                                 <?php
                                             }
                                         } ?>
