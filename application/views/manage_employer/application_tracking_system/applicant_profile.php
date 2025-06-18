@@ -125,11 +125,11 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             <div class="applicant-profile-wrp">
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
                     <script type="text/javascript">
-                        $(document).ready(function () {
+                        $(document).ready(function() {
                             $(".tab_content").hide();
                             $(".tab_content:first").show();
 
-                            $("ul.tabs li").click(function () {
+                            $("ul.tabs li").click(function() {
                                 $("ul.tabs li").removeClass("active");
                                 $(this).addClass("active");
                                 $(".tab_content").hide();
@@ -151,9 +151,9 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             <div>
                                 <figure>
                                     <img src="<?php if (isset($applicant_info['pictures']) && $applicant_info['pictures'] != '') {
-                                        echo AWS_S3_BUCKET_URL . $applicant_info['pictures'];
-                                    } else {
-                                        echo AWS_S3_BUCKET_URL; ?>default_pic-ySWxT.jpg<?php } ?>"
+                                                    echo AWS_S3_BUCKET_URL . $applicant_info['pictures'];
+                                                } else {
+                                                    echo AWS_S3_BUCKET_URL; ?>default_pic-ySWxT.jpg<?php } ?>"
                                         alt="Profile Picture">
                                 </figure>
                                 <div class="text">
@@ -161,7 +161,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                     </h2>
                                     <div class="start-rating">
                                         <input readonly="readonly" id="input-21b" <?php if (!empty($applicant_average_rating)) { ?>
-                                                value="<?php echo $applicant_average_rating; ?>" <?php } ?> type="number"
+                                            value="<?php echo $applicant_average_rating; ?>" <?php } ?> type="number"
                                             name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs">
                                     </div>
                                     <?php if (check_blue_panel_status() && $applicant_info['is_onboarding'] == 1) { ?>
@@ -215,7 +215,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                         <div class="resp-tabs-container hor_1">
                             <div id="tab1" class="tabs-content">
                                 <div class="universal-form-style-v2 info_view" <?php if ($edit_form) { ?>
-                                        style="display: none;" <?php } ?>>
+                                    style="display: none;" <?php } ?>>
                                     <div class="row">
                                         <div class="col-md-12 col-xs-12">
                                             <div class="form-title-section">
@@ -530,7 +530,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                             src="https://player.vimeo.com/video/<?php echo $applicant_info['YouTube_Video']; ?>"
                                                             frameborder="0" webkitallowfullscreen mozallowfullscreen
                                                             allowfullscreen></iframe>
-                                                    <?php } else {
+                                                        <?php } else {
                                                         if ($fileExt == 'mp3') { ?>
                                                             <audio controls>
                                                                 <source
@@ -543,7 +543,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                     src="<?php echo base_url() . 'assets/uploaded_videos/' . $applicant_info['YouTube_Video']; ?>"
                                                                     type='video/mp4'>
                                                             </video>
-                                                        <?php }
+                                                    <?php }
                                                     } ?>
                                                 </div>
                                             </div>
@@ -573,8 +573,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <input type="text" class="invoice-fields" name="first_name"
                                                         id="first_name"
                                                         value="<?php if (isset($applicant_info['first_name'])) {
-                                                            echo $applicant_info['first_name'];
-                                                        } ?>">
+                                                                    echo $applicant_info['first_name'];
+                                                                } ?>">
                                                     <?php echo form_error('first_name'); ?>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
@@ -582,8 +582,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <input type="text" class="invoice-fields" name="nick_name"
                                                         id="nick_name"
                                                         value="<?php if (isset($applicant_info['nick_name'])) {
-                                                            echo $applicant_info['nick_name'];
-                                                        } ?>">
+                                                                    echo $applicant_info['nick_name'];
+                                                                } ?>">
                                                     <?php echo form_error('nick_name'); ?>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
@@ -652,7 +652,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                         <?php } ?>
                                                         <?php foreach ($active_countries as $active_country) { ?>
                                                             <option value="<?= $active_country["sid"]; ?>" <?php if ($applicant_info['country'] == $active_country["sid"]) { ?>
-                                                                    selected <?php } ?>>
+                                                                selected <?php } ?>>
                                                                 <?= $active_country["country_name"]; ?>
                                                             </option>
                                                         <?php } ?>
@@ -668,11 +668,11 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <select class="invoice-fields" name="state" id="state">
                                                         <?php if (empty($country_id)) { ?>
                                                             <option value="">Select State</option>
-                                                        <?php } else {
+                                                            <?php } else {
                                                             foreach ($active_states[$country_id] as $active_state) { ?>
                                                                 <option value="<?= $active_state["sid"] ?>" <?php if ($active_state["sid"] == $applicant_info['state']) { ?>selected="selected" <?php } ?>>
                                                                     <?= $active_state["state_name"] ?></option>
-                                                                <?php
+                                                        <?php
                                                             }
                                                         }
                                                         ?>
@@ -805,12 +805,12 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                         <select class="invoice-fields" name="notified_by[]" id="employees"
                                                             multiple="true">
                                                             <option value="email" <?php if (in_array('email', explode(',', $applicant_info['notified_by']))) {
-                                                                echo 'selected';
-                                                            } ?>>
+                                                                                        echo 'selected';
+                                                                                    } ?>>
                                                                 Email</option>
                                                             <option value="sms" <?php if (in_array('sms', explode(',', $applicant_info['notified_by']))) {
-                                                                echo 'selected';
-                                                            } ?>>
+                                                                                    echo 'selected';
+                                                                                } ?>>
                                                                 SMS</option>
                                                         </select>
                                                     </div>
@@ -1029,7 +1029,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                             </div>
 
                                             <script>
-                                                $('[name="secondaryOption"]').click(function () {
+                                                $('[name="secondaryOption"]').click(function() {
                                                     $('.jsOtherLanguage').toggleClass('dn');
                                                 });
                                             </script>
@@ -1102,16 +1102,16 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <div class="upload-file invoice-fields">
                                                         <?php
                                                         if (!empty($applicant_info['YouTube_Video']) && $applicant_info['video_type'] == 'uploaded') {
-                                                            ?>
+                                                        ?>
                                                             <input type="hidden" id="pre_upload_video_url"
                                                                 name="pre_upload_video_url"
                                                                 value="<?php echo $applicant_info['YouTube_Video']; ?>">
-                                                            <?php
+                                                        <?php
                                                         } else {
-                                                            ?>
+                                                        ?>
                                                             <input type="hidden" id="pre_upload_video_url"
                                                                 name="pre_upload_video_url" value="">
-                                                            <?php
+                                                        <?php
                                                         }
                                                         ?>
                                                         <span class="selected-file" id="name_upload_video">No video
@@ -1140,7 +1140,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                         src="https://player.vimeo.com/video/<?php echo $applicant_info['YouTube_Video']; ?>"
                                                                         frameborder="0" webkitallowfullscreen mozallowfullscreen
                                                                         allowfullscreen></iframe>
-                                                                <?php } else {
+                                                                    <?php } else {
                                                                     if ($fileExt == 'mp3') { ?>
                                                                         <audio controls>
                                                                             <source
@@ -1153,7 +1153,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                                 src="<?php echo base_url() . 'assets/uploaded_videos/' . $applicant_info['YouTube_Video']; ?>"
                                                                                 type='video/mp4'>
                                                                         </video>
-                                                                    <?php }
+                                                                <?php }
                                                                 } ?>
                                                             </div>
                                                         </div>
@@ -1447,7 +1447,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                                         href="javascript:0;" data-toggle="modal"
                                                                                         data-target="#job-id-<?php echo $applicant_job['sid']; ?>">Resend</a>
                                                                                     <!-- <a class="btn btn-sm btn-success" href="--><?php //echo base_url('resend_screening_questionnaire') . '/' . $applicant_info['sid'] . '/' . $applicant_job['sid'] . '/' . $applicant_job['job_sid'] ; 
-                                                                                                ?>
+                                                                                                                                    ?>
                                                                                     <!--">Resend</a>-->
                                                                                 </span>
                                                                             </p>
@@ -1565,12 +1565,12 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                                                     Click for Details</button>
                                                                                             </div>
                                                                                         <?php } else if ($applicant_job['approval_status_type'] == 'rejected_conditionally') { ?>
-                                                                                                <div class="">
-                                                                                                    <button class="btn btn-success btn-sm"
-                                                                                                        onclick="func_show_rejection_information(<?php echo $applicant_job['portal_job_applications_sid']; ?>, <?php echo $applicant_job['company_sid']; ?>, <?php echo $applicant_job['job_sid']; ?>);"><i
-                                                                                                            class="fa fa-ban"></i>&nbsp;<?php echo ucwords($applicant_job['approval_status']); ?>
-                                                                                                        Click for Details</button>
-                                                                                                </div>
+                                                                                            <div class="">
+                                                                                                <button class="btn btn-success btn-sm"
+                                                                                                    onclick="func_show_rejection_information(<?php echo $applicant_job['portal_job_applications_sid']; ?>, <?php echo $applicant_job['company_sid']; ?>, <?php echo $applicant_job['job_sid']; ?>);"><i
+                                                                                                        class="fa fa-ban"></i>&nbsp;<?php echo ucwords($applicant_job['approval_status']); ?>
+                                                                                                    Click for Details</button>
+                                                                                            </div>
                                                                                         <?php } ?>
                                                                                     <?php } ?>
                                                                                 <?php } ?>
@@ -1745,13 +1745,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                                     src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>"
                                                                                     type="audio/mpeg">
                                                                             <?php } else if ($note['attachment_extension'] == 'ogg') { ?>
-                                                                                    <source
-                                                                                        src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>"
-                                                                                        type="audio/ogg">
+                                                                                <source
+                                                                                    src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>"
+                                                                                    type="audio/ogg">
                                                                             <?php } else if ($note['attachment_extension'] == 'wav') { ?>
-                                                                                        <source
-                                                                                            src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>"
-                                                                                            type="audio/wav">
+                                                                                <source
+                                                                                    src="<?php echo AWS_S3_BUCKET_URL . $note['attachment']; ?>"
+                                                                                    type="audio/wav">
                                                                             <?php } ?>
                                                                             Your browser does not support the audio element.
                                                                         </audio>
@@ -1879,7 +1879,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <li class="list-group-item">No Attachments</li>
                                                 <?php } ?>
                                             </ul>
-                                            <?php
+                                    <?php
                                         }
                                     } ?>
                                     <ul class="list-group" id="empty-attachment" style="float: left; width: 100%;">
@@ -1924,13 +1924,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                 id="delete_message<?php echo $message['id']; ?>">
                                                 <figure>
                                                     <img <?php if (empty($message['profile_picture'])) { ?>
-                                                            src="<?= base_url() ?>assets/images/attachment-img.png" <?php } else { ?>             <?php if (isset($message['sender_logo'])) { ?>
-                                                                src="<?php echo $message['sender_logo']; ?>" width="48"
-                                                                style="height: 50px" <?php } else if ($message['sender_profile_picture']) { ?>
-                                                                    src="<?php echo AWS_S3_BUCKET_URL . $message['sender_profile_picture']; ?>"
-                                                                    width="48" <?php } else { ?>
-                                                                    src="<?php echo AWS_S3_BUCKET_URL . $message['profile_picture']; ?>"
-                                                                    width="48" <?php } ?>         <?php } ?>>
+                                                        src="<?= base_url() ?>assets/images/attachment-img.png" <?php } else { ?> <?php if (isset($message['sender_logo'])) { ?>
+                                                        src="<?php echo $message['sender_logo']; ?>" width="48"
+                                                        style="height: 50px" <?php } else if ($message['sender_profile_picture']) { ?>
+                                                        src="<?php echo AWS_S3_BUCKET_URL . $message['sender_profile_picture']; ?>"
+                                                        width="48" <?php } else { ?>
+                                                        src="<?php echo AWS_S3_BUCKET_URL . $message['profile_picture']; ?>"
+                                                        width="48" <?php } ?> <?php } ?>>
                                                 </figure>
                                                 <div class="text">
                                                     <div class="message-header">
@@ -1957,7 +1957,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                             <?php if ($message['outbox'] == 1) { ?>
                                                                 <!--  <li>
                                                                         <a class="action-btn" onclick="resend_message(<?php //echo $message['id']; 
-                                                                                    ?>)" href="javascript:;">
+                                                                                                                        ?>)" href="javascript:;">
                                                                             <i class="fa fa-refresh"></i>
                                                                             <span class="btn-tooltip">Resend</span>
                                                                         </a>
@@ -1991,7 +1991,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                     <p><?php echo ucfirst($message['message']); ?></p>
                                                 </div>
                                             </article>
-                                            <?php
+                                    <?php
                                         }
                                     } ?>
                                 </div>
@@ -2126,7 +2126,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     tags: true
                 });
             <?php } ?>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 $("#resendQueForm-<?php echo $applicant_job['sid']; ?>").validate({
                     ignore: ":hidden:not(select)",
                     rules: {
@@ -2139,13 +2139,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             required: 'Please Select Questionnaire'
                         }
                     },
-                    submitHandler: function (form) {
+                    submitHandler: function(form) {
                         form.submit();
                     }
                 });
             });
         </script>
-    <?php }
+<?php }
 } ?>
 
 <div id="my_loader" class="text-center my_loader" style="display: none;">
@@ -2165,12 +2165,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/chosen.jquery.js"></script>
 <script language="JavaScript" type="text/javascript">
     $(document).ready(function() {
-        
+
         const hash = window.location.hash;
-        
+
         if (hash) {
             $('#HorizontalTab').easyResponsiveTabs('activate', 'tab6');
         }
+
     });
 
     var mylimit = parseInt($('#choiceLimit').html());
@@ -2178,8 +2179,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     $(".chosen-select").chosen({
         max_selected_options: mylimit
     });
-    $(".chosen-select").bind("liszt:maxselected", function () { });
-    $(".chosen-select").chosen().change(function () { });
+    $(".chosen-select").bind("liszt:maxselected", function() {});
+    $(".chosen-select").chosen().change(function() {});
 
     function multiselectbox() {
         var items_length = $('#job_fit_category_sid :selected').length;
@@ -2195,7 +2196,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         var i = 1;
 
         if (items_length > total_allowed) {
-            $('#Category option:selected').each(function () {
+            $('#Category option:selected').each(function() {
                 if (i > total_allowed) {
                     $(this).removeAttr("selected");
                     no_error = 1;
@@ -2209,12 +2210,14 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         }
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
+
+
         <?php if (check_access_permissions_for_view($security_details, 'review_score')) { ?>
             CKEDITOR.replace('rating_comment');
         <?php } ?>
         CKEDITOR.replace('applicantMessage');
-        $('#interview_questionnaire').on('change', function () {
+        $('#interview_questionnaire').on('change', function() {
             $('#btn_launch_interview').attr('href', $(this).val());
         }).trigger('change');
 
@@ -2225,9 +2228,28 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             width: 'auto', //auto or any width like 600px
             fit: true, // 100% fit in a container
             tabidentify: 'hor_1', // The tab groups identifier
-            activate: function () { }
+            activate: function() {}
         });
-        $('#template').on('change', function () {
+
+        //
+        var path = window.location.pathname;
+        var segments = path.split('/').filter(function(segment) {
+            return segment.length > 0;
+        });
+        var lastSegment = segments[segments.length - 1];
+
+        if (lastSegment === 'apd') {
+            $('#HorizontalTab .resp-tab-item:eq(6)').click();
+            var url = new URL(window.location.href);
+            var segments = url.pathname.split('/').filter(Boolean); 
+            segments.pop();
+            var newPath = '/' + segments.join('/');
+            var newUrl = url.origin + newPath + url.search + url.hash;
+            history.pushState(null, '', newUrl);
+        }
+
+
+        $('#template').on('change', function() {
             var template_sid = $(this).val();
             var msg_subject = $('#template_' + template_sid).attr('data-subject');
             var msg_body = $('#template_' + template_sid).attr('data-body');
@@ -2285,7 +2307,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         alertify.confirm(
             'Are you sure?',
             'Are you sure you want to delete this event?',
-            function () {
+            function() {
                 var my_request;
                 my_request = $.ajax({
                     url: '<?php echo base_url('calendar/tasks'); ?>',
@@ -2296,13 +2318,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     }
                 });
 
-                my_request.success(function (response) {
+                my_request.success(function(response) {
                     $('#remove_li' + event_sid + '').remove();
                     $('.btn').removeClass('disabled').prop('disabled', false);
                     // window.location.reload();
                 });
             },
-            function () {
+            function() {
                 alertify.error('Canceled!');
             });
     }
@@ -2311,16 +2333,16 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         var sid = val;
         alertify.defaults.glossary.title = 'Delete Message';
         alertify.confirm("Are you sure you want to delete this message?",
-            function () {
+            function() {
                 $.ajax({
                     url: "<?= base_url('applicant_profile/deleteMessage') ?>?action=delete_message&sid=" + sid,
-                    success: function (data) {
+                    success: function(data) {
                         $('#delete_message' + val).hide();
                         alertify.success('Message deleted successfully.');
                     }
                 });
             },
-            function () { });
+            function() {});
     }
 
     function resend_message(id) {
@@ -2332,11 +2354,11 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                 cancel: 'No'
             },
             'message': 'Are you sure you want to Resend this Message?',
-            'onok': function () {
+            'onok': function() {
                 $.post(url, {
-                    id: id
-                })
-                    .done(function (data) {
+                        id: id
+                    })
+                    .done(function(data) {
                         // console.log(data);
                     });
             }
@@ -2372,15 +2394,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         }
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         var myid = $('#state_id').html();
 
-        setTimeout(function () {
+        setTimeout(function() {
             $("#country").change();
         }, 1000);
 
         if (myid) {
-            setTimeout(function () {
+            setTimeout(function() {
                 $('#state').val(myid);
             }, 1200);
         }
@@ -2413,7 +2435,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             $('#tab4_nav').addClass('active');
         <?php } ?>
 
-        $('.interviewer_comment').click(function () {
+        $('.interviewer_comment').click(function() {
             if ($('.interviewer_comment').is(":checked")) {
                 $('.comment-div').fadeIn();
                 $('#interviewerComment').prop('required', true);
@@ -2423,7 +2445,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             }
         });
 
-        $('.goto_meeting').click(function () {
+        $('.goto_meeting').click(function() {
             if ($('.goto_meeting').is(":checked")) {
                 $('.meeting-div').fadeIn();
                 $('#meetingId').prop('required', true);
@@ -2437,7 +2459,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             }
         });
 
-        $('#candidate_msg').click(function () {
+        $('#candidate_msg').click(function() {
             if ($('#candidate_msg').is(":checked")) {
                 $('.message-div').fadeIn();
                 $('#applicantMessage').prop('required', true);
@@ -2459,7 +2481,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             format: 'g:iA',
             formatTime: 'g:iA',
             step: 15,
-            onShow: function (ct) {
+            onShow: function(ct) {
                 time = $('.eventstarttime').val();
                 timeAr = time.split(":");
                 last = parseInt(timeAr[1].substr(0, 2)) + 15;
@@ -2478,7 +2500,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             format: 'g:iA',
             formatTime: 'g:iA',
             step: 15,
-            onShow: function (ct) {
+            onShow: function(ct) {
                 this.setOptions({
                     maxTime: $('.eventendtime').val() ? $('.eventendtime').val() : false
                 })
@@ -2490,7 +2512,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             format: 'g:iA',
             formatTime: 'g:iA',
             step: 15,
-            onShow: function (ct) {
+            onShow: function(ct) {
 
                 //                console.log($('.in').find('.eventstarttime1').val());
                 time = $('.in').find('.eventstarttime1').val();
@@ -2511,7 +2533,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             format: 'g:iA',
             formatTime: 'g:iA',
             step: 15,
-            onShow: function (ct) {
+            onShow: function(ct) {
                 this.setOptions({
                     maxTime: $('.in').find('.eventendtime1').val() ? $('.in').find('.eventendtime1').val() : false
                 })
@@ -2531,35 +2553,35 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
         $("#eventdate").datepicker("setDate", new Date());
-        $('.selected').click(function () {
+        $('.selected').click(function() {
             $(this).next().css("display", "block");
         });
 
-        $('#edit_button').click(function (event) {
+        $('#edit_button').click(function(event) {
             event.preventDefault();
             $('.info_edit').fadeIn();
             $('.info_view').hide();
         });
 
-        $('#add_notes').click(function (event) {
+        $('#add_notes').click(function(event) {
             event.preventDefault();
             $('.note_div').fadeIn();
             $('.no_note').hide();
         });
 
-        $('#cancel_note').click(function (event) {
+        $('#cancel_note').click(function(event) {
             event.preventDefault();
             $('.note_div').hide();
             $('.no_note').fadeIn();
         });
 
-        $('.view_button').click(function (event) {
+        $('.view_button').click(function(event) {
             event.preventDefault();
             $('.info_edit').hide();
             $('.info_view').fadeIn();
         });
 
-        $('#add_event').click(function () {
+        $('#add_event').click(function() {
             $('.event_create').fadeIn();
             $('.event_detail').hide();
         });
@@ -2603,15 +2625,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     function delete_note(id) {
         url = "<?= base_url() ?>applicant_profile/delete_note";
         alertify.confirm('Confirmation', "Are you sure you want to delete this Note?",
-            function () {
+            function() {
                 $.post(url, {
-                    sid: id
-                })
-                    .done(function (data) {
+                        sid: id
+                    })
+                    .done(function(data) {
                         location.reload();
                     });
             },
-            function () {
+            function() {
                 alertify.error('Canceled');
             });
     }
@@ -2629,7 +2651,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     required: 'Please select an interviewer',
                 }
             },
-            submitHandler: function (form) {
+            submitHandler: function(form) {
                 form.submit();
             }
         });
@@ -2637,7 +2659,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
 
     function hire_applicant() {
         alertify.confirm("Please Confirm Hire", "Are you sure you want to Hire applicant?",
-            function () {
+            function() {
                 $.ajax({
                     url: "<?= base_url() ?>hire_applicant/hire_applicant",
                     type: "POST",
@@ -2648,7 +2670,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                         action: "hire_now"
                     },
                     dataType: "json",
-                    success: function (response) {
+                    success: function(response) {
                         if (response[0] == 'error') {
                             alertify.error(response[1]);
                         } else {
@@ -2656,12 +2678,12 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             window.location.assign(response[2]);
                         }
                     },
-                    error: function (request, status, error) {
+                    error: function(request, status, error) {
                         //console.log(request.responseText);
                     }
                 });
             },
-            function () {
+            function() {
                 alertify.error('Cancelled');
             });
     }
@@ -2669,15 +2691,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     function myPopup() {
         //$('#cc_send').addClass("disabled-btn");
         $('#loginForm').css('display', 'block');
-        alertify.genericDialog || alertify.dialog('genericDialog', function () {
+        alertify.genericDialog || alertify.dialog('genericDialog', function() {
             return {
-                main: function (content) {
+                main: function(content) {
                     this.setContent(content);
                 },
-                setup: function () {
+                setup: function() {
                     return {
                         focus: {
-                            element: function () {
+                            element: function() {
                                 return this.elements.body.querySelector(this.get('selector'));
                             },
                             select: true
@@ -2700,7 +2722,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         alertify.genericDialog($('#loginForm')[0]);
     }
 
-    $('#loginForm').on('submit', function (e) {
+    $('#loginForm').on('submit', function(e) {
         e.preventDefault();
         if ($('#myCheckbox').is(":checked")) {
             myFunctionAjax();
@@ -2717,15 +2739,15 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         }
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#yes-btn').attr('disabled', 'disabled');
         $('#yes-btn').addClass('disabled-btn');
-        $('.applied-jobs .selected').click(function () {
+        $('.applied-jobs .selected').click(function() {
             $(this).closest("tr").css({
                 'height': '420px'
             });
         });
-        $('.applied-jobs .cross, .applied-jobs .label').click(function () {
+        $('.applied-jobs .cross, .applied-jobs .label').click(function() {
             $(this).closest("tr").css({
                 'height': 'auto'
             });
@@ -2736,7 +2758,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         alertify.confirm(
             'Are You Sure!',
             'Are You Sure you Want to Get this Applicant Approved For Hiring?',
-            function () { //console.log(applicant_id);
+            function() { //console.log(applicant_id);
                 var url = '<?php echo base_url('applicant_profile/ajax_responder'); ?>';
                 var dataToSend = {
                     'applicant_id': applicant_id,
@@ -2751,14 +2773,14 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     type: 'POST'
                 });
 
-                myRequest.done(function (response) {
+                myRequest.done(function(response) {
                     if (response == 'success') {
                         url = '<?php echo base_url('applicant_profile') ?>' + '/' + applicant_id;
                         window.location = url;
                     }
                 });
             },
-            function () {
+            function() {
                 //Cancel
             }
         );
@@ -2784,7 +2806,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             responseType: 'json'
         });
 
-        my_request.done(function (response) {
+        my_request.done(function(response) {
             if (response != '') {
                 response = JSON.parse(response);
             }
@@ -2809,12 +2831,12 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     }
 
     //Code Related to Status Bar -start
-    $(document).ready(function () {
-        $('.selected').click(function () {
+    $(document).ready(function() {
+        $('.selected').click(function() {
             $(this).next().css("display", "block");
         });
 
-        $('.label').click(function () {
+        $('.label').click(function() {
             $(this).parent().find('.check').css("visibility", "hidden");
             $(this).parent().prev().html($(this).find('#status').html());
             $(this).find('.check').css("visibility", "visible");
@@ -2838,7 +2860,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                 }
             });
 
-            my_request.done(function (response) {
+            my_request.done(function(response) {
                 if (response == 'success' || response == 'Done') {
                     alertify.success("Candidate status updated successfully.");
                 } else {
@@ -2847,14 +2869,14 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             });
         });
 
-        $('.label').hover(function () {
+        $('.label').hover(function() {
             $(this).find('#status').animate({
                 'padding-top': 0,
                 'padding-right': 0,
                 'padding-bottom': 0,
                 'padding-left': 15,
             }, "fast");
-        }, function () {
+        }, function() {
             $(this).find('#status').animate({
                 'padding-top': 0,
                 'padding-right': 0,
@@ -2863,23 +2885,23 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             }, "fast");
         });
 
-        $('.cross').click(function () {
+        $('.cross').click(function() {
             $(this).parent().parent().css("display", "none");
         });
 
         var $selected = $('.selected');
-        $('.selected').each(function () {
+        $('.selected').each(function() {
             class_name = $(this).attr('class').split(' ');
             if (class_name.length > 0 && class_name[1] != '') {
                 $(this).next().find('.' + class_name[1]).find('.check').css("visibility", "visible");
             }
         });
 
-        $('.cross').click(function () {
+        $('.cross').click(function() {
             $(this).parent().parent().css("display", "none");
         });
 
-        $('.label').click(function () {
+        $('.label').click(function() {
             $(this).parent().css("display", "none");
         });
     });
@@ -2888,8 +2910,8 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         alertify.alert('Permanently Rejected', 'This Applicant has been permanently rejected!');
     }
 
-    $(document).ready(function () {
-        $('#popupmodal').on('shown.bs.modal', function () {
+    $(document).ready(function() {
+        $('#popupmodal').on('shown.bs.modal', function() {
             $('#response_container').hide('blind');
             $('#response_container').prop('disabled', true);
         });
@@ -2911,7 +2933,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                 'data': form_data
             });
 
-            my_request.done(function (response) {
+            my_request.done(function(response) {
                 if (response == 'success') {
                     window.location.href = window.location.href;
                 } else {
@@ -2932,7 +2954,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                 'action': "hire_now"
             },
             dataType: "json",
-            success: function (response) {
+            success: function(response) {
                 if (response[0] == 'error') {
                     alertify.error(response[1]);
                 } else {
@@ -2940,7 +2962,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                     window.location.assign(response[2]);
                 }
             },
-            error: function (request, status, error) {
+            error: function(request, status, error) {
                 //console.log(request.responseText);
             }
         });
@@ -2962,7 +2984,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             }
         });
 
-        my_request.done(function (response) {
+        my_request.done(function(response) {
             if (response != '') {
                 response = JSON.parse(response); // comment it at LOCALHOST
             }
@@ -2984,7 +3006,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             dataType: "json",
         });
 
-        my_request.done(function (response) {
+        my_request.done(function(response) {
             if (response[0] == 'error') {
                 $('#popupmodal').modal('toggle');
                 alertify.error(response[1]);
@@ -2999,10 +3021,10 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
     function send_questionnaire_confirmation() {
         alertify.defaults.glossary.title = 'Send Questionnaire Confirmation';
         alertify.confirm("Are you sure you want to send Screening Questionnaire?",
-            function () {
+            function() {
                 document.getElementById('questionnaire_confirm_click').click();
             },
-            function () {
+            function() {
                 alertify.error('Cancelled');
             });
     }
@@ -3014,7 +3036,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         yearRange: "-100:+50",
     }).val();
 
-    $('.add_edit_submit').click(function () {
+    $('.add_edit_submit').click(function() {
         if ($('input[name="video_source"]:checked').val() != 'no_video') {
             var flag = 0;
             if ($('input[name="video_source"]:checked').val() == 'youtube') {
@@ -3046,7 +3068,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             url: $('#yt_vm_video_url').val()
                         },
                         async: false,
-                        success: function (data) {
+                        success: function(data) {
                             if (data == false) {
                                 alertify.error('Not a Valid Vimeo URL');
                                 flag = 0;
@@ -3055,7 +3077,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                 flag = 1;
                             }
                         },
-                        error: function (data) { }
+                        error: function(data) {}
                     });
                 } else {
                     flag = 0;
@@ -3088,7 +3110,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         }
     });
 
-    $('.video_source').on('click', function () {
+    $('.video_source').on('click', function() {
         var selected = $(this).val();
         if (selected == 'youtube') {
             $('#label_youtube').show();
@@ -3157,14 +3179,14 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         // Reset phone number on load
         // Added on: 05-07-2019
         var val = fpn(_pn.val());
-        if (typeof (val) === 'object') {
+        if (typeof(val) === 'object') {
             _pn.val(val.number);
             setCaretPosition(_pn, val.cur);
         } else _pn.val(val);
         // Reset phone number on load
-        _pn.keyup(function () {
+        _pn.keyup(function() {
             var val = fpn($(this).val());
-            if (typeof (val) === 'object') {
+            if (typeof(val) === 'object') {
                 $(this).val(val.number);
                 setCaretPosition(this, val.cur);
             } else $(this).val(val);
@@ -3271,12 +3293,12 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
         }
 
 
-        $('#applicant_profile_form').submit(function (e) {
+        $('#applicant_profile_form').submit(function(e) {
             // TODO
             var is_error = false;
             // Check for phone number
             if (_pn.val() != '' && _pn.val().trim() != '(___) ___-____' && !fpn(_pn.val(), '', true)) {
-                alertify.alert('Error!', 'Invalid Primary number provided.', function () {
+                alertify.alert('Error!', 'Invalid Primary number provided.', function() {
                     return;
                 });
                 e.preventDefault();
@@ -3301,9 +3323,9 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
 
     <?php } ?>
 
-    $(function () {
+    $(function() {
 
-        $('#js-review-form').submit(function (e) {
+        $('#js-review-form').submit(function(e) {
             console.log('Triggered');
             if ($('input[class="review_video_source"]:checked').val() == 'no_video') return true;
             var flag = 0;
@@ -3337,7 +3359,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             url: $('#review_yt_vm_video_url').val()
                         },
                         async: false,
-                        success: function (data) {
+                        success: function(data) {
                             if (data == false) {
                                 $('#my_loader').hide();
                                 alertify.alert('ERROR!', 'Please add a valid Vimeo video URL.');
@@ -3348,7 +3370,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                 flag = 1;
                             }
                         },
-                        error: function (data) { }
+                        error: function(data) {}
                     });
                 } else {
                     flag = 0;
@@ -3382,7 +3404,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
 
         $('#review_youtube_vimeo_input').hide();
         $('#review_upload_input').hide();
-        $('.review_video_source').on('click', function () {
+        $('.review_video_source').on('click', function() {
             var selected = $(this).val();
 
             if (selected == 'youtube') {
@@ -3419,7 +3441,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
             $('#job_title').hide();
         <?php } ?>
 
-        $('.titleoption').click(function () {
+        $('.titleoption').click(function() {
             var titleOption = $(this).val();
             if (titleOption == 'dropdown') {
                 $('#template_job_title').show();

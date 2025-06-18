@@ -754,16 +754,21 @@
                                             <div class="applicant-scoring" style="margin-bottom: 10px;">
                                                 <div class="rating-col">
                                                     <span class="text-left pull-left float_left">
-                                                        <a class="text-success"><span class="float_left">Applicant Scoring: </a>
+                                                        <?php if ($has_access_to_profile) { ?>
+                                                            <a class="text-success" href="<?php echo base_url('/applicant_profile/' . $employer_job["applicant_sid"] . '/' . $employer_job['sid'] . '/apd'); ?>"><span class="float_left">Applicant Scoring: </a>
+                                                        <?php } else { ?>
+                                                            <a class="text-success"><span class="float_left">Applicant Scoring: </a>
+
+                                                        <?php } ?>
                                                     </span>
                                                 </div>
-                                            
+
                                                 <div class="rating-score">
                                                     <div class="rating-col text-left">
                                                         <span class="text-left text-success pull-left">Pre Interview Score :</span>
                                                     </div>
                                                     <div class="rating-col text-center">
-                                                        <span class="pull-right"> <?php echo $employer_job['match_score'];?> Out of 100 Points</span>
+                                                        <span class="pull-right"> <?php echo $employer_job['match_score']; ?> Out of 100 Points</span>
                                                     </div>
                                                     <div class="rating-col text-left">
                                                         <span class="start-rating applicant-rating">
@@ -776,7 +781,7 @@
                                                         <span class="text-left text-success pull-left">Post Interview Score :</span>
                                                     </div>
                                                     <div class="rating-col text-center">
-                                                        <span class="pull-right"> <?php echo $employer_job['match_score'];?> Out of 100 Points</span>
+                                                        <span class="pull-right"> <?php echo $employer_job['match_score']; ?> Out of 100 Points</span>
                                                     </div>
                                                     <div class="rating-col text-left">
                                                         <span class="start-rating applicant-rating">
@@ -784,7 +789,7 @@
                                                         </span>
                                                     </div>
                                                 </div> -->
-                                            </div>    
+                                            </div>
 
                                             <div class="interview-scoreing">
                                                 <?php  //if(check_access_permissions_for_view($security_details, 'resend_screening_questionnaire')) { 
