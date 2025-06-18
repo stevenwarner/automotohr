@@ -51,100 +51,100 @@ class Advanced_report_model extends CI_Model
     }
 
     //    function get_applicants($company_sid = NULL, $brand_sid = NULL, $search = '', $search2 = '') {
-//        if ($company_sid == NULL) {
-//            $companies = $this->get_brand_companies($brand_sid);
-//            $company_sids = array();
-//
-//            foreach ($companies as $company) {
-//                $company_sids[] = $company['company_sid'];
-//            }
-//        }
-//
-//        if ($brand_sid == NULL) {
-//            $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
-//        } else {
-//            if (!empty($company_sids)) {
-//                $this->db->where_in('portal_applicant_jobs_list.company_sid', $company_sids);
-//            } else {
-//                return array();
-//            }
-//        }
-//
-//        $this->db->select('portal_applicant_jobs_list.sid as application_sid');
-//        $this->db->select('portal_applicant_jobs_list.date_applied');
-//        $this->db->select('portal_applicant_jobs_list.status');
-//        $this->db->select('portal_applicant_jobs_list.job_sid');
-//        $this->db->select('portal_applicant_jobs_list.applicant_type');
-//        $this->db->select('portal_applicant_jobs_list.questionnaire');
-//        $this->db->select('portal_applicant_jobs_list.score');
-//        $this->db->select('portal_applicant_jobs_list.passing_score');
-//        $this->db->select('portal_applicant_jobs_list.desired_job_title');
-//        $this->db->select('portal_job_applications.sid as applicant_sid');
-//        $this->db->select('portal_applicant_jobs_list.company_sid');
-//        $this->db->select('portal_job_applications.first_name');
-//        $this->db->select('portal_job_applications.last_name');
-//        $this->db->select('portal_job_applications.email');
-//        $this->db->select('portal_job_applications.phone_number');
-//
-//        $this->db->where('portal_applicant_jobs_list.archived', 0);
-//        $this->db->where('portal_job_applications.hired_status', 0);
-//
-//        if($search != ''){
-//            $this->db->where($search);
-//        }
-//        if($search2 != ''){
-//            $this->db->where($search2);
-//        }
-//
-//        $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
-//        $this->db->order_by('date_applied', 'DESC');
-//        $applications = $this->db->get('portal_applicant_jobs_list')->result_array();
-//
-//        foreach($applications as $key => $application){
-//            $applications[$key]['Title'] = $this->get_job_title_by_type($application['job_sid'], $application['applicant_type'], $application['desired_job_title']);
-//
-//            $review_count = $this->getApplicantReviewsCount($application['applicant_sid']);
-//            $review_score = $this->getApplicantAverageRating($application['applicant_sid']);
-//
-//            if($review_score == '' || $review_score == NULL){
-//                $review_score = 0;
-//            }
-//
-//            $applications[$key]['review_count'] = $review_count;
-//            $applications[$key]['review_score'] = $review_score;
-//
-//            $company_det = get_company_details($application['company_sid']);
-//            if (isset($company_det['CompanyName'])) {
-//                $company_name = $company_det['CompanyName'];
-//            } else {
-//                $company_name = '';
-//            }
-//            $applications[$key]['CompanyName'] = $company_name;
-//
-//            //**** get interview quesionnaire score ****//
-//            $this->db->select('interview_questionnaire_score.candidate_score, interview_questionnaire_score.job_relevancy_score, interview_questionnaire_score.employer_sid');
-//            $this->db->select('users.first_name, users.last_name');
-//            $this->db->where('interview_questionnaire_score.job_sid', $application['job_sid']);
-//            $this->db->where('interview_questionnaire_score.candidate_sid', $application['applicant_sid']);
-//            //$this->db->where('interview_questionnaire_score.company_sid', $company_sid);
-//
-//            if ($brand_sid == NULL) {
-//                $this->db->where('interview_questionnaire_score.company_sid', $company_sid);
-//            } else {
-//                if (!empty($company_sids)) {
-//                    $this->db->where_in('interview_questionnaire_score.company_sid', $company_sids);
-//                } else {
-//                    return array();
-//                }
-//            }
-//
-//            $this->db->join('users', 'users.sid = interview_questionnaire_score.employer_sid');
-//            $applications[$key]['scores'] = $this->db->get('interview_questionnaire_score')->result_array();
-//            //**** get interview quesionnaire score ****//
-//        }
-//
-//        return $applications;
-//    }
+    //        if ($company_sid == NULL) {
+    //            $companies = $this->get_brand_companies($brand_sid);
+    //            $company_sids = array();
+    //
+    //            foreach ($companies as $company) {
+    //                $company_sids[] = $company['company_sid'];
+    //            }
+    //        }
+    //
+    //        if ($brand_sid == NULL) {
+    //            $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
+    //        } else {
+    //            if (!empty($company_sids)) {
+    //                $this->db->where_in('portal_applicant_jobs_list.company_sid', $company_sids);
+    //            } else {
+    //                return array();
+    //            }
+    //        }
+    //
+    //        $this->db->select('portal_applicant_jobs_list.sid as application_sid');
+    //        $this->db->select('portal_applicant_jobs_list.date_applied');
+    //        $this->db->select('portal_applicant_jobs_list.status');
+    //        $this->db->select('portal_applicant_jobs_list.job_sid');
+    //        $this->db->select('portal_applicant_jobs_list.applicant_type');
+    //        $this->db->select('portal_applicant_jobs_list.questionnaire');
+    //        $this->db->select('portal_applicant_jobs_list.score');
+    //        $this->db->select('portal_applicant_jobs_list.passing_score');
+    //        $this->db->select('portal_applicant_jobs_list.desired_job_title');
+    //        $this->db->select('portal_job_applications.sid as applicant_sid');
+    //        $this->db->select('portal_applicant_jobs_list.company_sid');
+    //        $this->db->select('portal_job_applications.first_name');
+    //        $this->db->select('portal_job_applications.last_name');
+    //        $this->db->select('portal_job_applications.email');
+    //        $this->db->select('portal_job_applications.phone_number');
+    //
+    //        $this->db->where('portal_applicant_jobs_list.archived', 0);
+    //        $this->db->where('portal_job_applications.hired_status', 0);
+    //
+    //        if($search != ''){
+    //            $this->db->where($search);
+    //        }
+    //        if($search2 != ''){
+    //            $this->db->where($search2);
+    //        }
+    //
+    //        $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
+    //        $this->db->order_by('date_applied', 'DESC');
+    //        $applications = $this->db->get('portal_applicant_jobs_list')->result_array();
+    //
+    //        foreach($applications as $key => $application){
+    //            $applications[$key]['Title'] = $this->get_job_title_by_type($application['job_sid'], $application['applicant_type'], $application['desired_job_title']);
+    //
+    //            $review_count = $this->getApplicantReviewsCount($application['applicant_sid']);
+    //            $review_score = $this->getApplicantAverageRating($application['applicant_sid']);
+    //
+    //            if($review_score == '' || $review_score == NULL){
+    //                $review_score = 0;
+    //            }
+    //
+    //            $applications[$key]['review_count'] = $review_count;
+    //            $applications[$key]['review_score'] = $review_score;
+    //
+    //            $company_det = get_company_details($application['company_sid']);
+    //            if (isset($company_det['CompanyName'])) {
+    //                $company_name = $company_det['CompanyName'];
+    //            } else {
+    //                $company_name = '';
+    //            }
+    //            $applications[$key]['CompanyName'] = $company_name;
+    //
+    //            //**** get interview quesionnaire score ****//
+    //            $this->db->select('interview_questionnaire_score.candidate_score, interview_questionnaire_score.job_relevancy_score, interview_questionnaire_score.employer_sid');
+    //            $this->db->select('users.first_name, users.last_name');
+    //            $this->db->where('interview_questionnaire_score.job_sid', $application['job_sid']);
+    //            $this->db->where('interview_questionnaire_score.candidate_sid', $application['applicant_sid']);
+    //            //$this->db->where('interview_questionnaire_score.company_sid', $company_sid);
+    //
+    //            if ($brand_sid == NULL) {
+    //                $this->db->where('interview_questionnaire_score.company_sid', $company_sid);
+    //            } else {
+    //                if (!empty($company_sids)) {
+    //                    $this->db->where_in('interview_questionnaire_score.company_sid', $company_sids);
+    //                } else {
+    //                    return array();
+    //                }
+    //            }
+    //
+    //            $this->db->join('users', 'users.sid = interview_questionnaire_score.employer_sid');
+    //            $applications[$key]['scores'] = $this->db->get('interview_questionnaire_score')->result_array();
+    //            //**** get interview quesionnaire score ****//
+    //        }
+    //
+    //        return $applications;
+    //    }
 
     function get_job_title_by_type($job_sid, $applicant_type, $desired_job_title)
     {
@@ -311,27 +311,27 @@ class Advanced_report_model extends CI_Model
     function GetAllApplicantsBetween($company_sid = NULL, $brand_sid = NULL, $start_date, $end_date, $keyword, $hired_status = null, $check_hired_date = false, $count, $all, $limit = NULL, $offset = NULL)
     {
         //        if ($company_sid != NULL || $brand_sid != NULL) {
-//            if ($company_sid == NULL) { // create array beforehand in case of brand selection to avoid errors between where conditions
-//                $companies = $this->get_brand_companies($brand_sid);
-//                $company_sids = array();
-//
-//                foreach ($companies as $company) {
-//                    $company_sids[] = $company['company_sid'];
-//                }
-//
-////                $start_date = '2015-01-01 00:00:00';
-//            }
-//
-//            if ($brand_sid == NULL) { // always keep this where at the top to avoid conflict error with other queries
-//                $this->db->where('portal_job_applications.employer_sid', $company_sid);
-//            } else {
-//                if (!empty($company_sids)) {
-//                    $this->db->where_in('portal_job_applications.employer_sid', $company_sids);
-//                } else {
-//                    return array();
-//                }
-//            }
-//        }
+        //            if ($company_sid == NULL) { // create array beforehand in case of brand selection to avoid errors between where conditions
+        //                $companies = $this->get_brand_companies($brand_sid);
+        //                $company_sids = array();
+        //
+        //                foreach ($companies as $company) {
+        //                    $company_sids[] = $company['company_sid'];
+        //                }
+        //
+        ////                $start_date = '2015-01-01 00:00:00';
+        //            }
+        //
+        //            if ($brand_sid == NULL) { // always keep this where at the top to avoid conflict error with other queries
+        //                $this->db->where('portal_job_applications.employer_sid', $company_sid);
+        //            } else {
+        //                if (!empty($company_sids)) {
+        //                    $this->db->where_in('portal_job_applications.employer_sid', $company_sids);
+        //                } else {
+        //                    return array();
+        //                }
+        //            }
+        //        }
         $company_sids = array();
         if ($company_sid != NULL || $brand_sid != NULL) {
             if ($company_sid != NULL)
@@ -387,8 +387,8 @@ class Advanced_report_model extends CI_Model
 
         if ($check_hired_date == true) {
             //            if ($start_date != null && $end_date != null) {
-//                $this->db->where('portal_job_applications.hired_date BETWEEN "' . date('Y-m-d', strtotime($start_date)) . '" and "' . date('Y-m-d', strtotime($end_date)) . '"');
-//            }
+            //                $this->db->where('portal_job_applications.hired_date BETWEEN "' . date('Y-m-d', strtotime($start_date)) . '" and "' . date('Y-m-d', strtotime($end_date)) . '"');
+            //            }
             if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
                 $this->db->where('portal_job_applications.hired_date BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
             } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
@@ -398,8 +398,8 @@ class Advanced_report_model extends CI_Model
             }
         } else {
             //            if ($start_date != null && $end_date != null) {
-//                $this->db->where('portal_applicant_jobs_list.date_applied BETWEEN "' . date('Y-m-d 00:00:00', strtotime($start_date)) . '" and "' . date('Y-m-d 23:59:59', strtotime($end_date)) . '"');
-//            }
+            //                $this->db->where('portal_applicant_jobs_list.date_applied BETWEEN "' . date('Y-m-d 00:00:00', strtotime($start_date)) . '" and "' . date('Y-m-d 23:59:59', strtotime($end_date)) . '"');
+            //            }
             if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
                 $this->db->where('portal_applicant_jobs_list.date_applied BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
             } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
@@ -684,31 +684,30 @@ class Advanced_report_model extends CI_Model
             }
             return $count;
         }
-
     }
 
     function GetAllApplicantsOnboarding($company_sid = NULL, $brand_sid = NULL, $start_date, $end_date, $keyword, $check_hired_date = false, $count, $all, $limit = NULL, $offset = NULL)
     {
         //        if ($company_sid == NULL) { // create array beforehand in case of brand selection to avoid errors between where conditions
-//            $companies = $this->get_brand_companies($brand_sid);
-//            $company_sids = array();
-//
-//            foreach ($companies as $company) {
-//                $company_sids[] = $company['company_sid'];
-//            }
-//        }
-//
-//        if ($brand_sid == NULL) {
-//            $this->db->where('users.parent_sid', $company_sid);
-//            $this->db->where('portal_job_applications.employer_sid', $company_sid);
-//        } else {
-//            if (!empty($company_sids)) {
-//                $this->db->where_in('users.parent_sid', $company_sids);
-//                $this->db->where_in('portal_job_applications.employer_sid', $company_sids);
-//            } else {
-//                return array();
-//            }
-//        }
+        //            $companies = $this->get_brand_companies($brand_sid);
+        //            $company_sids = array();
+        //
+        //            foreach ($companies as $company) {
+        //                $company_sids[] = $company['company_sid'];
+        //            }
+        //        }
+        //
+        //        if ($brand_sid == NULL) {
+        //            $this->db->where('users.parent_sid', $company_sid);
+        //            $this->db->where('portal_job_applications.employer_sid', $company_sid);
+        //        } else {
+        //            if (!empty($company_sids)) {
+        //                $this->db->where_in('users.parent_sid', $company_sids);
+        //                $this->db->where_in('portal_job_applications.employer_sid', $company_sids);
+        //            } else {
+        //                return array();
+        //            }
+        //        }
         $company_sids = array();
         if ($company_sid != NULL || $brand_sid != NULL) {
             if ($company_sid != NULL)
@@ -793,8 +792,8 @@ class Advanced_report_model extends CI_Model
             }
         } else {
             //            if ($start_date != null && $end_date != null) {
-//                $this->db->where('portal_job_applications.date_applied BETWEEN "' . $start_date . '" and "' . $end_date . '"');
-//            }
+            //                $this->db->where('portal_job_applications.date_applied BETWEEN "' . $start_date . '" and "' . $end_date . '"');
+            //            }
             if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
                 $this->db->where('portal_job_applications.date_applied BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
             } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
@@ -1061,7 +1060,6 @@ class Advanced_report_model extends CI_Model
                     $applications[$key]['status_text_css_class'] = $status[0]['text_css_class'];
                 }
             }
-
         }
 
         return $applications;
@@ -1160,7 +1158,6 @@ class Advanced_report_model extends CI_Model
             } else {
                 $candidates[$key]['job_title'] = 'Job Deleted';
             }
-
         }
         return $candidates;
     }
@@ -1206,7 +1203,6 @@ class Advanced_report_model extends CI_Model
                 $this->db->or_where('portal_applicant_jobs_list.applicant_source', NULL);
                 $this->db->or_where('portal_applicant_jobs_list.applicant_source', '');
                 $this->db->group_end();
-
             } else {
                 $this->db->where('portal_applicant_jobs_list.applicant_source', $applicant_source);
             }
@@ -1226,7 +1222,6 @@ class Advanced_report_model extends CI_Model
         }
 
         return $applicants;
-
     }
 
     function get_applicant_interview_scores($company_sid)
@@ -1634,8 +1629,8 @@ class Advanced_report_model extends CI_Model
             }
         }
         //        if (!empty($job_sid) && $job_sid != 'all') {
-//            $this->db->where('portal_applicant_jobs_list.job_sid', $job_sid);
-//        }
+        //            $this->db->where('portal_applicant_jobs_list.job_sid', $job_sid);
+        //        }
 
         if (!empty($applicant_status) && $applicant_status != 'all') {
             $this->db->like('portal_applicant_jobs_list.status', $applicant_status);
@@ -1732,22 +1727,22 @@ class Advanced_report_model extends CI_Model
     function get_all_advanced_jobs($company_sid, $start_date = null, $end_date = null, $priority, $count, $limit = null, $offset = null)
     {
         //        if ($brand_sid == NULL) {
-//            $this->db->where('user_sid', $company_sid);
-//        }
-//        else {
-//            $companies = $this->get_brand_companies($brand_sid);
-//            $company_sids = array();
-//
-//            foreach ($companies as $company) {
-//                $company_sids[] = $company['company_sid'];
-//            }
-//
-//            if (!empty($company_sids)) {
-//                $this->db->where_in('user_sid', $company_sids);
-//            } else {
-//                return array();
-//            }
-//        }
+        //            $this->db->where('user_sid', $company_sid);
+        //        }
+        //        else {
+        //            $companies = $this->get_brand_companies($brand_sid);
+        //            $company_sids = array();
+        //
+        //            foreach ($companies as $company) {
+        //                $company_sids[] = $company['company_sid'];
+        //            }
+        //
+        //            if (!empty($company_sids)) {
+        //                $this->db->where_in('user_sid', $company_sids);
+        //            } else {
+        //                return array();
+        //            }
+        //        }
         $this->db->select('activation_date,deactivation_date,Title,active,views,user_sid,sid');
         $this->db->select('Location_State');
         $this->db->select('Location_City');
@@ -1930,7 +1925,7 @@ class Advanced_report_model extends CI_Model
         $this->db->select('portal_job_listings.Location_State');
         $this->db->select('portal_job_listings.Title');
         $this->db->select('portal_applicant_jobs_list.indeed_ats_sid');
-
+        $this->db->select('portal_job_applications.score');
         $this->db->select('users.CompanyName');
 
         if (!empty($keyword) && $keyword != 'all') {
@@ -1969,7 +1964,7 @@ class Advanced_report_model extends CI_Model
             } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
                 $this->db->where('portal_applicant_jobs_queue.created_at >=', $start_date);
             } else if ((empty($start_date) || is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
-               // $this->db->where('portal_applicant_jobs_queue.created_at <=', $end_date);
+                // $this->db->where('portal_applicant_jobs_queue.created_at <=', $end_date);
             }
         }
 
@@ -1984,7 +1979,8 @@ class Advanced_report_model extends CI_Model
         $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'inner');
         $this->db->join('users', 'portal_applicant_jobs_queue.company_sid = users.sid', 'inner');
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_queue.job_sid', 'inner');
-        $this->db->order_by('portal_applicant_jobs_queue.sid', 'DESC');
+        //$this->db->order_by('portal_applicant_jobs_queue.sid', 'DESC');
+         $this->db->order_by('portal_job_applications.score', 'DESC');
         // 
 
         if ($count) {
@@ -2002,9 +1998,10 @@ class Advanced_report_model extends CI_Model
         }
 
         return $applications;
-    } 
+    }
 
-    public function get_applicant_resume_analysis ($sid) {
+    public function get_applicant_resume_analysis($sid)
+    {
         $this->db->select('portal_applicant_jobs_queue.sid');
         $this->db->select('portal_applicant_jobs_queue.created_at');
         $this->db->select('portal_applicant_jobs_queue.job_sid');
@@ -2031,7 +2028,7 @@ class Advanced_report_model extends CI_Model
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_queue.portal_job_applications_sid = portal_job_applications.sid', 'inner');
         $this->db->join('users', 'portal_applicant_jobs_queue.company_sid = users.sid', 'inner');
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_queue.job_sid', 'inner');
-        $this->db->join('portal_applicant_resume_analysis', 'portal_applicant_resume_analysis.portal_applicant_jobs_queue_sid = portal_applicant_jobs_queue.sid','inner');
+        $this->db->join('portal_applicant_resume_analysis', 'portal_applicant_resume_analysis.portal_applicant_jobs_queue_sid = portal_applicant_jobs_queue.sid', 'inner');
         // 
         $applicantInfo = $this->db->get('portal_applicant_jobs_queue')->row_array();
         //

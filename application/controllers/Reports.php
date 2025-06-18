@@ -2970,7 +2970,7 @@ class Reports extends Public_Controller
         $formpost['companySid'] = $companyId;
         //
         switch (strtolower($formpost['action'])) {
-                //
+            //
             case 'get_driving_license_filter':
                 // Fetch employees
                 $employees = $this->reports_model->getEmployeesByCompanyId($companyId);
@@ -2984,7 +2984,7 @@ class Reports extends Public_Controller
                 $this->res['Data'] = $employees;
                 $this->resp();
                 break;
-                //
+            //
             case 'get_driving_licenses':
                 // Fetch licenses
                 $licenses = $this->reports_model->getDriverLicenses($formpost);
@@ -3793,6 +3793,122 @@ class Reports extends Public_Controller
             //
             $this->load->view('main/header', $data);
             $this->load->view('reports/employees_termination_report');
+            $this->load->view('main/footer');
+        } else {
+            redirect('login', "refresh");
+        }
+    }
+
+
+    //
+
+    public function applicantsAiScoreReport($keyword = 'all', $startdate = 'all', $enddate = 'all', $status = 'all', $page_number = 1)
+    {
+
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'my_settings', 'reports');
+            $company_sid = $data['session']['company_detail']['sid'];
+            $employer_sid = $data['session']['employer_detail']['sid'];
+            $data['title'] = 'Advanced Hr Reports - Applicants AI Score Report';
+            //
+            $data["flag"] = true;
+
+
+            //  $company_sid = urldecode($company_sid);
+            $start_date = urldecode($startdate);
+            $end_date = urldecode($enddate);
+            $keyword = urldecode($keyword);
+            $status = urldecode($status);
+            $indeed_id = ''; //urldecode($indeed_id);
+            $this->data['flag'] = true;
+
+            if (!empty($start_date) && $start_date != 'all') {
+                $start_date_applied = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
+            } else {
+                $start_date_applied = "";
+            }
+
+            if (!empty($end_date) && $end_date != 'all') {
+                $end_date_applied = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
+            } else {
+                $end_date_applied = "";
+            }
+
+
+
+            $this->load->library('pagination');
+
+            $per_page = PAGINATION_RECORDS_PER_PAGE;
+            // $per_page = 2;
+            $offset = 0;
+            if ($page_number > 1) {
+                $offset = ($page_number - 1) * $per_page;
+            }
+
+
+
+            $this->load->model('manage_admin/advanced_report_model');
+            //
+            $total_records = $this->advanced_report_model->get_applicant_ai_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 1);
+            $applicants = $this->advanced_report_model->get_applicant_ai_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 0, $per_page, $offset);
+
+            $final_applicants = array();
+            $final_applicants = $applicants;
+
+            $pagination_base = base_url('reports/applicantsAiScoreReport') .  '/' . urlencode($keyword) . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($status);
+
+
+            $config = array();
+            $config["base_url"] = $pagination_base;
+            $config["total_rows"] = $total_records;
+            $config["per_page"] = $per_page;
+            $config["uri_segment"] = 10;
+            $config["num_links"] = 10;
+            $config["use_page_numbers"] = true;
+            $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+            $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+            $config['first_link'] = '<i class="fa fa-angle-double-left"></i>';
+            $config['first_tag_open'] = '<li class="prev page">';
+            $config['first_tag_close'] = '</li>';
+            $config['last_link'] = '<i class="fa fa-angle-double-right"></i>';
+            $config['last_tag_open'] = '<li class="next page">';
+            $config['last_tag_close'] = '</li>';
+            $config['next_link'] = '<i class="fa fa-angle-right" style="line-height: 32px;"></i>';
+            $config['next_tag_open'] = '<li class="next page">';
+            $config['next_tag_close'] = '</li>';
+            $config['prev_link'] = '<i class="fa fa-angle-left" style="line-height: 32px;"></i>';
+            $config['prev_tag_open'] = '<li class="prev page">';
+            $config['prev_tag_close'] = '</li>';
+            $config['cur_tag_open'] = '<li class="active"><a href="">';
+            $config['cur_tag_close'] = '</a></li>';
+            $config['num_tag_open'] = '<li class="page">';
+            $config['num_tag_close'] = '</li>';
+
+
+            $this->pagination->initialize($config);
+            $data["page_links"] = $this->pagination->create_links();
+
+            $data['current_page'] = $page_number;
+            $data['from_records'] = $offset == 0 ? 1 : $offset;
+            $data['to_records'] = $total_records < $per_page ? $total_records : $offset + $per_page;
+
+            $data['applicants_count'] = $total_records;
+            $data['applicants'] = $final_applicants;
+
+
+            //
+            /** pagination * */
+            //   $this->load->library('pagination');
+            //    $records_per_page = PAGINATION_RECORDS_PER_PAGE;
+
+
+            //
+            $this->load->view('main/header', $data);
+            $this->load->view('reports/applicant_ai_score_report');
             $this->load->view('main/footer');
         } else {
             redirect('login', "refresh");
