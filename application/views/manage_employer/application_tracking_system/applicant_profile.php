@@ -1603,7 +1603,7 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                 </tr>
 
                                                                 <tr>
-                                                                    <td colspan="6">
+                                                                    <td colspan="7">
                                                                         <p>
                                                                             <small>
                                                                                 <span>Applicant Source: </span>
