@@ -898,7 +898,10 @@ class Application_tracking_system extends Public_Controller
                 //
                 if ($appliedJobQueues > 1) {
                     $applicantResumeResult = [];
-                    $applicantResumeResult[] = $data['submitted_resume_data'];
+                    //
+                    if ($data['submitted_resume_data']) {
+                        $applicantResumeResult[] = $data['submitted_resume_data'];
+                    }
                     //
                     $otherResumeData = $this->application_tracking_system_model->getOthersSubmittedResumeData(
                         $app_id,
@@ -910,7 +913,7 @@ class Application_tracking_system extends Public_Controller
                     }
                     //
                     $data['applicantResumeResult'] = $applicantResumeResult;
-                    // _e($applicantResumeResult,true);
+                    _e($applicantResumeResult,true);
                     // _e($data['applicant_jobs'],true);
                 }
                 //
