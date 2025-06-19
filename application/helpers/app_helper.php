@@ -5068,9 +5068,15 @@ if (!function_exists('getApplicantJobTitleByQueueId')) {
         );
         //
         $jobInfo = $CI->db->get('portal_applicant_jobs_queue')->row_array();
-        $state = getStateColumnById($jobInfo['Location_State'],'state_name');
-        $title = $jobInfo['title'];
-        $city = $jobInfo['Location_City'];
-        return $title.' - '.$city.', '.$state;
+        //
+        if ($jobInfo['Location_State'] && $jobInfo['Location_City']) {
+            $state = getStateColumnById($jobInfo['Location_State'],'state_name');
+            $title = $jobInfo['title'];
+            $city = $jobInfo['Location_City'];
+            return $title.' - '.$city.', '.$state;
+        } else {
+            return $jobInfo['title'];
+        }
+        
     }
 }
