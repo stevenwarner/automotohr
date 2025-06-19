@@ -913,7 +913,7 @@ class Application_tracking_system extends Public_Controller
                     }
                     //
                     $data['applicantResumeResult'] = $applicantResumeResult;
-                    _e($applicantResumeResult,true);
+                    // _e($applicantResumeResult,true);
                     // _e($data['applicant_jobs'],true);
                 }
                 //
