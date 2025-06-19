@@ -1184,11 +1184,10 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                         <tr>
                                                             <th class="col-xs-4">Job Title / Desired Job Title</th>
                                                             <th class="col-xs-1 text-center">Applicant Type</th>
-                                                            <th class="col-xs-3 text-center">Applicant Status</th>
-                                                            <th class="col-xs-1 text-center">Screening Questionnaire
-                                                            </th>
-                                                            <th class="col-xs-2 text-center">Job Specific Interview
-                                                                Questionnaire</th>
+                                                            <th class="col-xs-2 text-center">Applicant Status</th>
+                                                            <th class="col-xs-1 text-center">Screening Questionnaire</th>
+                                                            <th class="col-xs-1 text-center">AI Applicant Score</th>
+                                                            <th class="col-xs-2 text-center">Job Specific Interview Questionnaire</th>
                                                             <?php if (check_access_permissions_for_view($security_details, 'send_documents_onboarding_request')) { ?>
                                                                 <th class="col-xs-1 text-center">Actions</th>
                                                             <?php } ?>
@@ -1453,6 +1452,30 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                                                                             </p>
                                                                         <?php } ?>
 
+                                                                    </td>
+                                                                    <td>
+                                                                        <?php 
+                                                                            if (isset($applicantResumeResult)) {
+                                                                                $preScore = '';
+                                                                                foreach ($applicantResumeResult as $resume) {
+                                                                                    if ($resume['portal_applicant_job_sid'] == $applicant_job['sid']) {
+                                                                                        $preScore = $resume['match_score'].' out of 100';
+                                                                                    }
+                                                                                }
+                                                                                //
+                                                                                if ($preScore) {
+                                                                                    echo $preScore;
+                                                                                } else {
+                                                                                    echo '<p class="fail">N/A</p>';
+                                                                                }
+                                                                            } else {
+                                                                                if ($submitted_resume_data['portal_applicant_job_sid'] == $applicant_job['sid']) {
+                                                                                    echo empty($submitted_resume_data['match_score']) ? '0 out of 100' : $submitted_resume_data['match_score'].' out of 100';
+                                                                                } else {
+                                                                                    echo '<p class="fail">N/A</p>';
+                                                                                }
+                                                                            }    
+                                                                        ?>
                                                                     </td>
                                                                     <td class="text-center">
                                                                         <?php if ($applicant_job['interview_questionnaire_sid'] > 0) { ?>
@@ -2006,7 +2029,13 @@ $profile_scoring = (!empty($interview_logs['reports']) && $reports) ? explode('/
                             </div>
                             <!-- #tab6 -->
                             <div id="tab7" class="tabs-content">
-                                <?php $this->load->view('manage_employer/application_tracking_system/scoring'); ?>
+                                <?php 
+                                    if (isset($applicantResumeResult)) {
+                                        $this->load->view('manage_employer/application_tracking_system/scoring_new');
+                                    } else {
+                                        $this->load->view('manage_employer/application_tracking_system/scoring');
+                                    }
+                                ?>
                             </div>
                             <!-- #tab7 -->
                             <?php if ($phone_sid != '') { ?>

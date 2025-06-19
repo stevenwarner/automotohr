@@ -3597,6 +3597,21 @@ class Application_tracking_system_model extends CI_Model
         $this->db->from('portal_applicant_interview_logs');
         return $this->db->order_by('portal_applicant_interview_logs.sid', 'desc')->get()->row_array();
     }
+
+    function getOthersSubmittedResumeData ($applicantId, $queueId) {
+        $this->db->select('sid');
+        $this->db->where('portal_job_applications_sid', $applicantId);
+        $this->db->where('sid <>', $queueId);
+        $this->db->from('portal_applicant_jobs_queue');
+        $queueIds = $this->db->get()->result_array();
+        //
+        $resumeIds = array_column($queueIds, 'sid');
+        //
+        $this->db->select('*');
+        $this->db->where_in('portal_applicant_jobs_queue_sid', $resumeIds);
+        $this->db->from('portal_applicant_resume_analysis');
+        return $this->db->order_by('sid', 'desc')->get()->result_array();
+    }
 }
 
 //

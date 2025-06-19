@@ -891,6 +891,29 @@ class Application_tracking_system extends Public_Controller
                 $data['submitted_resume_data'] = $this->application_tracking_system_model->get_submitted_resume_data($job_list_sid);
                 $data['interview_logs'] = $this->application_tracking_system_model->get_interview_log($job_list_sid);
                 //
+                $appliedJobQueues =
+                    $this->db->where([
+                        "portal_job_applications_sid" => $app_id,
+                    ])->count_all_results("portal_applicant_jobs_queue");
+                //
+                if ($appliedJobQueues > 1) {
+                    $applicantResumeResult = [];
+                    $applicantResumeResult[] = $data['submitted_resume_data'];
+                    //
+                    $otherResumeData = $this->application_tracking_system_model->getOthersSubmittedResumeData(
+                        $app_id,
+                        $data['submitted_resume_data']['portal_applicant_jobs_queue_sid']
+                    );
+                    //
+                    foreach ($otherResumeData as $resumeData) {
+                        $applicantResumeResult[] = $resumeData;
+                    }
+                    //
+                    $data['applicantResumeResult'] = $applicantResumeResult;
+                    // _e($applicantResumeResult,true);
+                    // _e($data['applicant_jobs'],true);
+                }
+                //
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/application_tracking_system/applicant_profile');
                 $this->load->view('main/footer');
