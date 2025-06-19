@@ -221,7 +221,22 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                 <div class="score_wrapper">
                                     <h3>Job Title:</h3>
                                     <?php 
-                                        echo '<b>'.getApplicantJobTitleByQueueId($submitted_resume_data['portal_applicant_jobs_queue_sid']).'</b>';
+                                        if ($submitted_resume_data) {
+                                            echo '<b>'.getApplicantJobTitleByQueueId($submitted_resume_data['portal_applicant_jobs_queue_sid']).'</b>';
+                                        } else {
+                                            foreach ($applicant_jobs as $applicant_job) { 
+                                                if ($applicant_job['sid'] = $applicantJobId) {
+                                                    if (isset($applicant_job['Location_City']) && $applicant_job['Location_City'] != NULL) {
+                                                        $applicant_job['job_title'] .= ' - ' . ucfirst($applicant_job['Location_City']);
+                                                    }
+                                                    if (isset($applicant_job['Location_State']) && $applicant_job['Location_State'] != NULL) {
+                                                        $applicant_job['job_title'] .= ', ' . db_get_state_name($applicant_job['Location_State'])['state_name'];
+                                                    }
+                                                    //
+                                                    echo '<b>'.$applicant_job['job_title'].'</b>';
+                                                }    
+                                            }    
+                                        }    
                                     ?>
                                 </div>
                             </div>        

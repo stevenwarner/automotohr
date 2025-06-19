@@ -638,6 +638,7 @@ class Application_tracking_system extends Public_Controller
             $employer_id = $data['applicant_info']['employer_sid'];
             $data['main_employer_id'] = $security_sid;
             $data['tab_type'] = $tab_type;
+            $data['applicantJobId'] = $job_list_sid;
             if ($company_sid != $employer_id) {
                 $this->session->set_flashdata('message', '<b>Error:</b> Applicant not found!');
                 redirect('application_tracking_system/active/all/all/all/all');
