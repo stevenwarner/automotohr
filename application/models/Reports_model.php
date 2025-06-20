@@ -3205,9 +3205,8 @@ class Reports_model extends CI_Model
         $this->db->select('portal_job_applications.score');
         $this->db->select('users.CompanyName');
         $this->db->select('portal_job_applications.sid as applicant_sid');
-        $this->db->select('portal_applicant_jobs_queue.portal_job_applications_sid');        
-
-
+        $this->db->select('portal_applicant_jobs_queue.portal_job_applications_sid');     
+        $this->db->select('portal_applicant_resume_analysis.match_score');   
 
         if (!empty($keyword) && $keyword != 'all') {
             $multiple_keywords = explode(' ', $keyword);
@@ -3259,8 +3258,9 @@ class Reports_model extends CI_Model
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_queue.portal_job_applications_sid = portal_job_applications.sid', 'inner');
         $this->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.sid = portal_applicant_jobs_queue.portal_applicant_job_sid', 'inner');
         $this->db->join('users', 'portal_applicant_jobs_queue.company_sid = users.sid', 'inner');
+        $this->db->join('portal_applicant_resume_analysis', 'portal_applicant_resume_analysis.portal_applicant_jobs_queue_sid = portal_applicant_jobs_queue.sid', 'inner');
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_queue.job_sid', 'inner');
-        $this->db->order_by('portal_job_applications.score', 'DESC');
+        $this->db->order_by('portal_applicant_resume_analysis.match_score', 'DESC');
         // 
 
         if ($count) {

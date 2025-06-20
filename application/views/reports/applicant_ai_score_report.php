@@ -178,7 +178,7 @@
 
 
                                                                                 <td style="vertical-align: middle;">
-                                                                                    <?php echo ucfirst($applicant['score']); ?>
+                                                                                    <?php echo ucfirst($applicant['match_score']); ?>
                                                                                 </td>
 
 
