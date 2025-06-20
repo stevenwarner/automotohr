@@ -3840,19 +3840,17 @@ class Reports extends Public_Controller
 
             $this->load->library('pagination');
 
-            $per_page = 2;//PAGINATION_RECORDS_PER_PAGE;
-            // $per_page = 2;
+            $per_page = PAGINATION_RECORDS_PER_PAGE;
             $offset = 0;
+            //
             if ($page_number > 1) {
                 $offset = ($page_number - 1) * $per_page;
             }
-
-
-
+            //
             $this->load->model('manage_admin/advanced_report_model');
             //
-            $total_records = $this->advanced_report_model->get_applicant_ai_score_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 1);
-            $applicants = $this->advanced_report_model->get_applicant_ai_score_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 0, $per_page, $offset);
+            $total_records = $this->reports_model->get_applicant_ai_score_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 1);
+            $applicants = $this->reports_model->get_applicant_ai_score_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 0, $per_page, $offset);
 
             $final_applicants = array();
             $final_applicants = $applicants;

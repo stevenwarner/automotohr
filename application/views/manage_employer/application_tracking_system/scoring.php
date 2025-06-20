@@ -225,7 +225,7 @@ $reports = !empty($interview_logs['reports']) ? json_decode($interview_logs['rep
                                             echo '<b>'.getApplicantJobTitleByQueueId($submitted_resume_data['portal_applicant_jobs_queue_sid']).'</b>';
                                         } else {
                                             foreach ($applicant_jobs as $applicant_job) { 
-                                                if ($applicant_job['sid'] = $applicantJobId) {
+                                                if ($applicant_job['sid'] == $applicantJobId) {
                                                     if (isset($applicant_job['Location_City']) && $applicant_job['Location_City'] != NULL) {
                                                         $applicant_job['job_title'] .= ' - ' . ucfirst($applicant_job['Location_City']);
                                                     }
