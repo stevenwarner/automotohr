@@ -189,10 +189,9 @@
                                                                                 <td style="vertical-align: middle;">
                                                                                     <?php echo date_with_time($applicant['created_at']); ?>
                                                                                 </td>
-
                                                                                 <td style="vertical-align: middle;">
                                                                                     <div class="">
-                                                                                        <a href="<?= base_url("/applicant_profile/" . $applicant["applicant_sid"] . "/" . $applicant["portal_job_applications_sid"] . "/apd"); ?>"
+                                                                                        <a href="<?= base_url("/applicant_profile/" . $applicant["applicant_sid"] . "/" . $applicant["portal_applicant_job_sid"] . "/apd"); ?>"
                                                                                             target="_blank" class="btn btn-success">
                                                                                             View Score
                                                                                         </a>
