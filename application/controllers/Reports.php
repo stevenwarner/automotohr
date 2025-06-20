@@ -3838,11 +3838,9 @@ class Reports extends Public_Controller
                 $end_date_applied = "";
             }
 
-
-
             $this->load->library('pagination');
 
-            $per_page = PAGINATION_RECORDS_PER_PAGE;
+            $per_page = 2;//PAGINATION_RECORDS_PER_PAGE;
             // $per_page = 2;
             $offset = 0;
             if ($page_number > 1) {
@@ -3853,21 +3851,22 @@ class Reports extends Public_Controller
 
             $this->load->model('manage_admin/advanced_report_model');
             //
-            $total_records = $this->advanced_report_model->get_applicant_ai_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 1);
-            $applicants = $this->advanced_report_model->get_applicant_ai_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 0, $per_page, $offset);
+            $total_records = $this->advanced_report_model->get_applicant_ai_score_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 1);
+            $applicants = $this->advanced_report_model->get_applicant_ai_score_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 0, $per_page, $offset);
 
             $final_applicants = array();
             $final_applicants = $applicants;
 
             $pagination_base = base_url('reports/applicantsAiScoreReport') .  '/' . urlencode($keyword) . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($status);
 
-
             $config = array();
             $config["base_url"] = $pagination_base;
             $config["total_rows"] = $total_records;
             $config["per_page"] = $per_page;
-            $config["uri_segment"] = 10;
-            $config["num_links"] = 10;
+            $config["uri_segment"] = 7;
+            $choice = $config["total_rows"] / $config["per_page"];
+
+            $config["num_links"] = ceil($choice);
             $config["use_page_numbers"] = true;
             $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
             $config['full_tag_close'] = '</ul></nav><!--pagination-->';

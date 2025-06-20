@@ -30,7 +30,7 @@
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <div class="field-row">
                                                                 <label>Applicant Name</label>
-                                                                <?php $keyword = $this->uri->segment(5) != 'all' ? urldecode($this->uri->segment(5)) : ''; ?>
+                                                                <?php $keyword = $this->uri->segment(3) != 'all' ? urldecode($this->uri->segment(3)) : ''; ?>
                                                                 <input class="invoice-fields" type="text" id="keyword"
                                                                     name="keyword"
                                                                     value="<?php echo set_value('keyword', $keyword); ?>" />
@@ -40,7 +40,7 @@
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <div class="field-row">
                                                                 <label class="text-left">Status :</label>
-                                                                <?php $status = $this->uri->segment(8) != 'all' ? urldecode($this->uri->segment(8)) : ''; ?>
+                                                                <?php $status = $this->uri->segment(6) != 'all' ? urldecode($this->uri->segment(6)) : ''; ?>
                                                                 <div class="hr-select-dropdown">
                                                                     <select class="invoice-fields" name="status" id="status">
                                                                         <option value="all">Please Select</option>
@@ -62,7 +62,7 @@
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <div class="field-row">
                                                                 <label>Date From </label>
-                                                                <?php $start_date = $this->uri->segment(6) != 'all' && $this->uri->segment(6) != '' ? urldecode($this->uri->segment(6)) : ''; ?>
+                                                                <?php $start_date = $this->uri->segment(4) != 'all' && $this->uri->segment(4) != '' ? urldecode($this->uri->segment(4)) : ''; ?>
                                                                 <input class="invoice-fields"
                                                                     type="text" readonly
                                                                     name="start_date_applied" id="start_date_applied"
@@ -72,7 +72,7 @@
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <div class="field-row">
                                                                 <label>Date To </label>
-                                                                <?php $end_date = $this->uri->segment(7) != 'all' && $this->uri->segment(7) != '' ? urldecode($this->uri->segment(7)) : ''; ?>
+                                                                <?php $end_date = $this->uri->segment(5) != 'all' && $this->uri->segment(5) != '' ? urldecode($this->uri->segment(5)) : ''; ?>
                                                                 <input class="invoice-fields"
                                                                     type="text" readonly
                                                                     name="end_date_applied" id="end_date_applied"
@@ -149,7 +149,8 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php if (!empty($applicants)) { ?>
-                                                                        <?php foreach ($applicants as $applicant) { ?>
+                                                                        <?php foreach ($applicants as $applicant) {
+                                                                        ?>
                                                                             <tr>
                                                                                 <td style="vertical-align: middle;">
                                                                                     <?php echo $applicant['sid']; ?>
@@ -176,7 +177,7 @@
                                                                                 </td>
 
 
-                                                                                 <td style="vertical-align: middle;">
+                                                                                <td style="vertical-align: middle;">
                                                                                     <?php echo ucfirst($applicant['score']); ?>
                                                                                 </td>
 
@@ -190,14 +191,12 @@
                                                                                 </td>
 
                                                                                 <td style="vertical-align: middle;">
-                                                                                    <?php if ($applicant["status"] == "completed"): ?>
-                                                                                        <div class="">
-                                                                                            <a href="<?= base_url('manage_admin/reports/applicants_ai_report/view_detail/' . $applicant["sid"]); ?>"
-                                                                                                target="_blank" class="btn btn-success">
-                                                                                                View Detail
-                                                                                            </a>
-                                                                                        </div>
-                                                                                    <?php endif; ?>
+                                                                                    <div class="">
+                                                                                        <a href="<?= base_url("/applicant_profile/" . $applicant["applicant_sid"] . "/" . $applicant["portal_job_applications_sid"] . "/apd"); ?>"
+                                                                                            target="_blank" class="btn btn-success">
+                                                                                            View Score
+                                                                                        </a>
+                                                                                    </div>
                                                                                 </td>
                                                                             </tr>
                                                                         <?php } ?>
