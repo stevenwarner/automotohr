@@ -1807,7 +1807,16 @@ class Reports extends Public_Controller
             $applicant_status = urldecode($applicant_status);
             $start_date = urldecode($start_date);
             $end_date = urldecode($end_date);
-            $data['title'] = 'Advanced Hr Reports - Applicants Between ( ' . date('m-d-Y', strtotime($start_date)) . ' - ' . date('m-d-Y', strtotime($end_date)) . ' )';
+
+            //
+            if ($end_date != 'all' && $start_date != 'all') {
+                $endDate = DateTime::createFromFormat('m-d-Y', $end_date);
+                $startDate = DateTime::createFromFormat('m-d-Y', $start_date);
+                $data['title'] = 'Advanced Hr Reports - Applicant Interview Scores Between ( ' . $startDate->format('m-d-Y') . ' - ' . $endDate->format('m-d-Y') . ' )';
+            }
+
+
+
             $data['startdate'] = date('m-d-Y', strtotime($start_date));
             $data['enddate'] = date('m-d-Y', strtotime($end_date));
             $data['keyword'] = $keyword;
@@ -2970,7 +2979,7 @@ class Reports extends Public_Controller
         $formpost['companySid'] = $companyId;
         //
         switch (strtolower($formpost['action'])) {
-                //
+            //
             case 'get_driving_license_filter':
                 // Fetch employees
                 $employees = $this->reports_model->getEmployeesByCompanyId($companyId);
@@ -2984,7 +2993,7 @@ class Reports extends Public_Controller
                 $this->res['Data'] = $employees;
                 $this->resp();
                 break;
-                //
+            //
             case 'get_driving_licenses':
                 // Fetch licenses
                 $licenses = $this->reports_model->getDriverLicenses($formpost);
