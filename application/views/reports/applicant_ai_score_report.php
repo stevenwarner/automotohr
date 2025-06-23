@@ -82,10 +82,10 @@
                                                     </div>
 
                                                     <div class="row">
-                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                        </div>
-
-                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                       
+                                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                    </div>
+                                                        <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
                                                             <div class="field-row">
                                                                 <label>&nbsp;</label>
                                                                 <a id="btn_apply_filters" class="btn btn-success btn-block"
@@ -93,7 +93,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                        <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
                                                             <div class="field-row">
                                                                 <label>&nbsp;</label>
                                                                 <a class="btn btn-success btn-block"
@@ -102,12 +102,24 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                        <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
                                                             <div class="field-row">
                                                                 <label>&nbsp;</label>
                                                                 <a id="btn_apply_filters_export" class="btn btn-success btn-block" href="#">Export CSV</a>
+
                                                             </div>
                                                         </div>
+
+
+                                                             <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
+                                                            <div class="field-row">
+                                                                <label>&nbsp;</label>
+                                                                <a href="javascript:;" class="btn btn-success btn-block" onclick="print_page('#print_div');"><i class="fa fa-print" aria-hidden="true"></i> Print</a>
+
+                                                            </div>
+                                                        </div>
+
+                                                   
 
                                                     </div>
                                                 </form>
@@ -404,7 +416,6 @@
         mywindow.document.write('<scr' + 'ipt type="text/javascript">$(window).load(function() { window.print(); window.close(); });</scr' + 'ipt>');
         mywindow.document.close();
         mywindow.focus();
-
-        $("table").addClass("horizontal-scroll");
+      //  $("table").addClass("horizontal-scroll");
     }
 </script>
