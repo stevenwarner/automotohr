@@ -3920,4 +3920,75 @@ class Reports extends Public_Controller
             redirect('login', "refresh");
         }
     }
+
+
+
+    public function applicantsAiScoreReportExport($keyword = 'all', $startdate = 'all', $enddate = 'all', $status = 'all', $page_number = 1)
+    {
+
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'my_settings', 'reports');
+            $company_sid = $data['session']['company_detail']['sid'];
+
+            $start_date = urldecode($startdate);
+            $end_date = urldecode($enddate);
+            $keyword = urldecode($keyword);
+            $status = urldecode($status);
+            $indeed_id = ''; //urldecode($indeed_id);
+            $this->data['flag'] = true;
+
+            if (!empty($start_date) && $start_date != 'all') {
+                $start_date_applied = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
+            } else {
+                $start_date_applied = "";
+            }
+
+            if (!empty($end_date) && $end_date != 'all') {
+                $end_date_applied = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
+            } else {
+                $end_date_applied = "";
+            }
+
+            $this->load->model('manage_admin/advanced_report_model');
+            //
+            $applicants = $this->reports_model->get_applicant_ai_score_report($company_sid, $keyword, $start_date_applied, $end_date_applied, $status, $indeed_id, 0);
+
+            header('Content-Type: text/csv; charset=utf-8');
+            header("Content-Disposition: attachment; filename=applicants_Ai_score_report_" . (date('YmdHis')) . ".csv");
+            $output = fopen('php://output', 'w');
+            fputcsv($output, array("Company: " . $data['session']['company_detail']['CompanyName'], '', '', '', '', '', '', '', ''));
+            fputcsv($output, array('', '', '', '', '', '', '', '', ''));
+            fputcsv($output, array('Applicant Name', 'Job Title', 'Status', 'interview Pre Score', 'Failed Reason', 'Date Applied'));
+
+            foreach ($applicants as $applicant) {
+                $city = '';
+                $state = '';
+                if (isset($applicant['Location_City']) && $applicant['Location_City'] != NULL) {
+                    $city = ' - ' . ucfirst($applicant['Location_City']);
+                }
+                if (isset($applicant['Location_State']) && $applicant['Location_State'] != NULL) {
+                    $state = ', ' . db_get_state_name($applicant['Location_State'])['state_name'];
+                }
+
+                $a = array();
+                $a[] = ucwords($applicant['first_name'] . ' ' . $applicant['last_name']);
+                $a[] = $applicant['Title'] . $city . $state;
+                $a[] = ucfirst($applicant['status']);
+                $a[] = ucfirst($applicant['match_score']);
+                $a[] = !empty($applicant['failed_message']) ? $applicant['failed_message'] : 'N/A';
+                $a[] = $applicant['created_at'];
+                fputcsv($output, $a);
+            }
+
+            fclose($output);
+            exit;
+            //
+        } else {
+            redirect('login', "refresh");
+        }
+    }
 }

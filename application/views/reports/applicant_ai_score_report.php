@@ -82,8 +82,9 @@
                                                     </div>
 
                                                     <div class="row">
-                                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                         </div>
+
                                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                             <div class="field-row">
                                                                 <label>&nbsp;</label>
@@ -91,6 +92,7 @@
                                                                     href="#">Apply Filters</a>
                                                             </div>
                                                         </div>
+
                                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                             <div class="field-row">
                                                                 <label>&nbsp;</label>
@@ -99,9 +101,22 @@
                                                                     Report</a>
                                                             </div>
                                                         </div>
+
+                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                            <div class="field-row">
+                                                                <label>&nbsp;</label>
+                                                                <a id="btn_apply_filters_export" class="btn btn-success btn-block" href="#">Export CSV</a>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
                                                 </form>
                                             </div>
+
+
+
+
+
                                             <!-- *** table *** -->
 
                                             <div class="hr-box" id="print_div">
@@ -264,8 +279,12 @@
         indeed_id = indeed_id != '' && indeed_id != null && indeed_id != undefined && indeed_id != 0 ? encodeURIComponent(indeed_id) : 'all';
         //
         var url = '<?php echo base_url('reports/applicantsAiScoreReport'); ?>' + '/' + keyword + '/' + start_date_applied + '/' + end_date_applied + '/' + status;
+        var url_export = '<?php echo base_url('reports/applicantsAiScoreReportExport'); ?>' + '/' + keyword + '/' + start_date_applied + '/' + end_date_applied + '/' + status;
+
         //
         $('#btn_apply_filters').attr('href', url);
+
+        $('#btn_apply_filters_export').attr('href', url_export);
 
 
     }
@@ -293,6 +312,15 @@
 
             window.location = $(this).attr('href').toString();
         });
+
+
+        //
+        $('#btn_apply_filters_export').on('click', function(e) {
+            e.preventDefault();
+            generate_search_url();
+            window.location = $(this).attr('href').toString();
+        });
+
 
         $('#job_sid').on('change', function(value) {
             generate_search_url();
