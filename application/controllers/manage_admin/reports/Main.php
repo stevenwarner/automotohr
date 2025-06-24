@@ -299,6 +299,8 @@ class Main extends Admin_Controller
     public function indeedApplicantDispositionReportLog($indeedATSId, $atsStatus)
     {
         // 
+        $this->load->model('2022/User_model', 'user_model');
+
         $record = $this
             ->user_model
             ->getIndeedApplicantDispositionReportLog(
