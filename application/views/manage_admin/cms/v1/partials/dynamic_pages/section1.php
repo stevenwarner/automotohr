@@ -24,7 +24,7 @@ $collapseIn =  $this->input->get("page") == 'pageDetails' ? "in" : "";
                     <input type="text" class="form-control" name="heading" value="<?= $pageContent["pageDetails"]["heading"]; ?>" />
                 </div>
                 <div class="form-group">
-                    <label>Banner</label>
+                    <label>Banner <strong class="text-danger">*</strong></label>
                     <input type="file" class="hidden" accept="image/*" id="jsSection1Banner" />
                 </div>
                 <div class="form-group">
