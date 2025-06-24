@@ -43,7 +43,13 @@ $(function () {
             newHireTime: 0,
             newHireTimeType: 0,
             newHireRate: 0,
-            plans: []
+            plans: [],
+            isCustomPolicy: 0,
+            waitingPeriodValue: 0,
+            waitingPeriodType: 'days',
+            maximumAllowed: 0,
+            accrueValue: 0,
+            accrueType: 'per_week'
         },
         cmnOBJ = {
             Policies: {
@@ -63,6 +69,16 @@ $(function () {
     window.timeoff.finalStepCompletedEdit = finalStepCompletedEdit;
     window.timeoff.stepCompletedReset = stepCompletedReset;
     window.timeoff.finalStepCompletedReset = finalStepCompletedReset;
+
+    //
+    $('#jsPartTimePolicyEdit').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.jsPartTimePolicySection').show(0);
+            // $('#js-custom-date-add').val('');
+        } else {
+            $('.jsPartTimePolicySection').hide(0)
+        }
+    });
 
     //
     $('.jsEditResetCheckbox').click(function () {
@@ -568,6 +584,12 @@ $(function () {
         policy.plans = accruals.plans;
         policy.policy_category_type = resp.Data.policy_category_type;
         policy.approverList = resp.Data.allowed_approvers;
+        policy.isCustomPolicy = resp.Data.is_custom_policy;
+        policy.waitingPeriodValue = resp.Data.custom_waiting_period;
+        policy.waitingPeriodType = resp.Data.custom_waiting_period_type;
+        policy.maximumAllowed = resp.Data.custom_carry_over;
+        policy.accrueValue = resp.Data.custom_accrue_value;
+        policy.accrueType = resp.Data.custom_accrue_type;
         //
         policy.accuralDefaultFlow = accruals.defaultFlow;
         //
@@ -609,6 +631,16 @@ $(function () {
         //
         $('#js-is-esst-edit').prop('checked', policy.isESST == 1 ? true : false);
         $('#js-is-esta-edit').prop('checked', policy.isESTA == 1 ? true : false);
+        $('#jsPartTimePolicyEdit').prop('checked', policy.isCustomPolicy == 1 ? true : false);
+        //
+        if (policy.isCustomPolicy == 1) {
+            $('.jsPartTimePolicySection').show(0);
+            $('#jsWaitingPeriodValueEdit').val(policy.waitingPeriodValue);
+            $(`#jsWaitingPeriodTypeEdit[value="${policy.waitingPeriodType}"]`).prop('checked', true).trigger('change');
+            $('#jsMaximumAllowedValueEdit').val(policy.maximumAllowed);
+            $('#jsAccrueValueEdit').val(policy.accrueValue);
+            $(`#jsAccrueTypeEdit[value="${policy.accrueType}"]`).prop('checked', true).trigger('change');
+        }
         // Set accrual method
         // $('#js-accrual-method-edit').select2('val', policy.method);
         // $('#js-accrual-method-edit').trigger('change');
@@ -829,6 +861,25 @@ $(function () {
             policyOBJ.isESTA = $('#js-is-esta-edit').prop('checked') === true ? 1 : 0;
             // Set deactivate check
             policyOBJ.include = $('#js-include-check-edit').prop('checked') == true ? 1 : 0;
+            //
+            if ($('#jsPartTimePolicyEdit').prop('checked')) {
+                policyOBJ.isCustomPolicy = 1;
+                policyOBJ.waitingPeriodValue = getField('#jsWaitingPeriodValueEdit');
+                if (policyOBJ.waitingPeriodValue == 0) {
+                    alertify.alert('WARNING!', 'Please, add the waiting period.', () => { });
+                    return false;
+                }
+                policyOBJ.waitingPeriodType = getField('#jsWaitingPeriodTypeEdit');
+                policyOBJ.maximumAllowed = getField('#jsMaximumAllowedValueEdit');
+                policyOBJ.accrueValue = getField('#jsAccrueValueEdit');
+                if (policyOBJ.accrueValue == 0) {
+                    alertify.alert('WARNING!', 'Please, add the accrue rate.', () => { });
+                    return false;
+                }
+                policyOBJ.accrueType = getField('#jsAccrueTypeEdit');
+            } else {
+                policyOBJ.isCustomPolicy = 0;
+            }
             //
             saveStep(policyOBJ);
             //

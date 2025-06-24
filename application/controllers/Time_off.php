@@ -2757,7 +2757,15 @@ class Time_off extends Public_Controller
                 $in['is_entitled_employee'] = $post['isEntitledEmployees'];
                 $in['policy_category_type'] = $post['policyCategory'];
                 $in['allowed_approvers'] = $post['approver'] == 1 ? implode(',', $post['approverList']) : '';
-
+                $in['is_custom_policy'] = $post['isCustomPolicy'];
+                //
+                if ($in['is_custom_policy'] == 1) {
+                    $in['custom_waiting_period'] = $post['waitingPeriodValue'];
+                    $in['custom_waiting_period_type'] = $post['waitingPeriodType'];
+                    $in['custom_carry_over'] = $post['maximumAllowed'];
+                    $in['custom_accrue_value'] = $post['accrueValue'];
+                    $in['custom_accrue_type'] = $post['accrueType'];
+                }
                 //
                 $policyId = $this->timeoff_model->insertPolicy($in);
                 //
@@ -2855,6 +2863,15 @@ class Time_off extends Public_Controller
                 $up['is_entitled_employee'] = $post['isEntitledEmployees'];
                 $up['policy_category_type'] = $post['policy_category_type'];
                 $up['allowed_approvers'] = $post['approver'] == 1 ? implode(',', $post['approverList']) : '';
+                $up['is_custom_policy'] = $post['isCustomPolicy'];
+                //
+                if ($up['is_custom_policy'] == 1) {
+                    $up['custom_waiting_period'] = $post['waitingPeriodValue'];
+                    $up['custom_waiting_period_type'] = $post['waitingPeriodType'];
+                    $up['custom_carry_over'] = $post['maximumAllowed'];
+                    $up['custom_accrue_value'] = $post['accrueValue'];
+                    $up['custom_accrue_type'] = $post['accrueType'];
+                }
 
                 //
                 $policyId = $post['policyId'];

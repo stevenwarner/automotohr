@@ -58,6 +58,15 @@ $(function () {
         }
     });
 
+    $('#jsPartTimePolicy').on('change', function () {
+        if ($(this).is(':checked')) {
+            $('.jsPartTimePolicySection').show(0);
+            // $('#js-custom-date-add').val('');
+        } else {
+            $('.jsPartTimePolicySection').hide(0)
+        }
+    });
+
     $('#js-employee-add').on('select2:select', function (event) {
         //
         if (event.params.data.text != 'All') {
@@ -307,8 +316,25 @@ $(function () {
                 alertify.alert('WARNING!', 'Please, add the employee type.', () => { });
                 return false;
             }
-
-
+            //
+            if ($('#jsPartTimePolicy').prop('checked')) {
+                policyOBJ.isCustomPolicy = 1;
+                policyOBJ.waitingPeriodValue = getField('#jsWaitingPeriodValue');
+                if (policyOBJ.waitingPeriodValue == 0) {
+                    alertify.alert('WARNING!', 'Please, add the waiting period.', () => { });
+                    return false;
+                }
+                policyOBJ.waitingPeriodType = getField('#jsWaitingPeriodType');
+                policyOBJ.maximumAllowed = getField('#jsMaximumAllowedValue');
+                policyOBJ.accrueValue = getField('#jsAccrueValue');
+                if (policyOBJ.accrueValue == 0) {
+                    alertify.alert('WARNING!', 'Please, add the accrue rate.', () => { });
+                    return false;
+                }
+                policyOBJ.accrueType = getField('#jsAccrueType');
+            } else {
+                policyOBJ.isCustomPolicy = 0;
+            }
             //
             saveStep(policyOBJ);
             //
