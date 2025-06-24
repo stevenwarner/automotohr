@@ -226,8 +226,8 @@
                     <?php echo $get_policy_item_info['is_esst_policy_label']; ?>
                     <span class="control__indicator"></span>
                 </label>
-                <i class="fa fa-question-circle" data-hint="js-hint" data-target="balance"></i>
-                <div class="js-hint js-hint-balance"><?php echo $get_policy_item_info['is_esst_policy_hint']; ?></div>
+                <i class="fa fa-question-circle" data-hint="js-hint" data-target="esst"></i>
+                <div class="js-hint js-hint-esst"><?php echo $get_policy_item_info['is_esst_policy_hint']; ?></div>
             </div>
         </div>
     </div>
