@@ -2936,10 +2936,11 @@ $route["cron/scheduled_document_report"]["cli"] = "Cron_lms_courses/sendDocument
 
 $route['manage_admin/reports/applicants_ai_report/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/applicants_ai_report/index/$1/$2/$3/$4/$5/$6/$7';
 $route['manage_admin/reports/applicants_ai_report/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/applicants_ai_report/index/$1/$2/$3/$4/$5/$6';
+
 $route['interview/(:any)'] = 'Applicant_interviews/interviewCall/$1';
+$route["ai_recruiter/config"]["get"] = "manage_admin/Ai_recruiter/config";
 
-
-$route["ai_recruiter/config"]["get"] =
-  "manage_admin/Ai_recruiter/config";
 $route['indeed_applicant_disposition_report'] = 'manage_admin/reports/Main/indeedApplicantDispositionReport';
+$route['indeed_applicant_disposition_report_log/(:any)/(:any)'] = 'manage_admin/reports/Main/indeedApplicantDispositionReportLog/$1/$2';
+$route['indeed_applicant_disposition_report_resend/(:any)/(:any)'] = 'manage_admin/reports/Main/indeedApplicantDispositionReportResend/$1/$2';
 
