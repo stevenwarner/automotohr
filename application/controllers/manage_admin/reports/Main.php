@@ -300,6 +300,7 @@ class Main extends Admin_Controller
     {
         // 
         $this->load->model('2022/User_model', 'user_model');
+        
 
         $record = $this
             ->user_model
