@@ -262,8 +262,8 @@
                                         <?php echo $get_policy_item_info['is_esst_policy_label']; ?>
                                         <span class="control__indicator"></span>
                                     </label>
-                                    <i class="fa fa-question-circle" data-hint="js-hint" data-target="balance"></i>
-                                    <div class="js-hint js-hint-balance">
+                                    <i class="fa fa-question-circle" data-hint="js-hint" data-target="esst"></i>
+                                    <div class="js-hint js-hint-esst">
                                         <?php echo $get_policy_item_info['is_esst_policy_hint']; ?></div>
                                 </div>
                             </div>
@@ -277,11 +277,94 @@
                                         <?php echo $get_policy_item_info['is_esta_policy_label']; ?>
                                         <span class="control__indicator"></span>
                                     </label>
-                                    <i class="fa fa-question-circle" data-hint="js-hint" data-target="balance"></i>
-                                    <div class="js-hint js-hint-balance">
+                                    <i class="fa fa-question-circle" data-hint="js-hint" data-target="esta"></i>
+                                    <div class="js-hint js-hint-esta">
                                         <?php echo $get_policy_item_info['is_esta_policy_hint']; ?></div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="row mb10 csRow">
+                            <div class="col-sm-6 col-xs-12">
+                                <div class="">
+                                    <label class="control control--checkbox">
+                                        <input type="checkbox" id="jsPartTimePolicy" />
+                                        <?php echo $get_policy_item_info['custom_policy_label']; ?>
+                                        <span class="control__indicator"></span>
+                                    </label>
+                                    <i class="fa fa-question-circle" data-hint="js-hint" data-target="custom"></i>
+                                    <div class="js-hint js-hint-custom">
+                                        <?php echo $get_policy_item_info['custom_policy_hint']; ?></div>
+                                </div>
+                            </div>
+                        </div>
+                                            
+                        <!-- PartTime Policy values - add -->
+                        <div class="jsPartTimePolicySection" style="display: none;">
+                            <div class="row mb10 csRow">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <h5 class="timeline-title allowed-time-off-title-custom">
+                                            <?php echo $get_policy_item_info['waiting_period_label']; ?>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="waiting_period"></i>
+                                        </h5>
+                                        <div class="js-hint js-hint-waiting_period">
+                                            <?php echo $get_policy_item_info['waiting_period_hint']; ?></div>
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <input class="form-control" name="template" id="jsWaitingPeriodValue" />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <select class="form-control" id="jsWaitingPeriodType">
+                                                    <option value="days">Days</option>
+                                                    <option value="weeks">Weeks</option>
+                                                    <option value="months">Months</option>
+                                                </select>    
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="row mb10 csRow">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <h5 class="timeline-title allowed-time-off-title-custom">
+                                            <?php echo $get_policy_item_info['maximum_allowed_label']; ?>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="maximum_allowed"></i>
+                                        </h5>
+                                        <div class="js-hint js-hint-maximum_allowed">
+                                            <?php echo $get_policy_item_info['maximum_allowed_hint']; ?></div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <input class="form-control" name="template" id="jsMaximumAllowedValue" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="row mb10 csRow">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <h5 class="timeline-title allowed-time-off-title-custom">
+                                            <?php echo $get_policy_item_info['accrue_time_label']; ?>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="accrue_time"></i>
+                                        </h5>
+                                        <div class="js-hint js-hint-accrue_time">
+                                            <?php echo $get_policy_item_info['accrue_time_hint']; ?></div>
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <input class="form-control" name="template" id="jsAccrueValue" />
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <select class="form-control" id="jsAccrueType">
+                                                    <option value="per_week">Per Week</option>
+                                                    <option value="per_month">Per Month</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
                         </div>
 
                         <!-- FMLA Range -->

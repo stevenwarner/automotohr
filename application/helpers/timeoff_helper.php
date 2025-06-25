@@ -831,6 +831,22 @@ if (!function_exists('getEmployeeAccrual')) {
             $todayDate
         );
         //
+        if (checkCustomPolicy($policyId) == 1) {
+            return processCustomPolicy(
+                $policyId,
+                $employeeId,
+                $employementStatus,
+                $employeeJoiningDate,
+                $durationInMinutes,
+                $accruals,
+                $balanceInMinutes,
+                $asOfToday,
+                $slug,
+                $categoryType,
+                $r
+            );
+        }
+        //
         if (checkPolicyESST($policyId) == 1) {
             //
             return processESSTPolicy(
@@ -2355,7 +2371,6 @@ if (!function_exists('processESTAPolicy')) {
     }
 }
 
-
 function hasAllowedTimeBeforePolicyImplements(
     $employeeId,
     $policyId,
@@ -2426,7 +2441,6 @@ function hasAllowedTimeBeforePolicyImplements(
     return $r;
 }
 
-
 if (!function_exists('isAllowedESTAPolicy')) {
     function isAllowedESTAPolicy($asOfToday, $employeeJoiningDate, $employeeType)
     {
@@ -2446,7 +2460,6 @@ if (!function_exists('isAllowedESTAPolicy')) {
         return $difference >= 730 ? 0 : 1;
     }
 }
-
 
 if (!function_exists("getTheAllowedTimeForSpecificYear")) {
     function getTheAllowedTimeForSpecificYear(
@@ -2494,4 +2507,272 @@ if (!function_exists("getTheAllowedTimeForSpecificYear")) {
 
         return $allowedHours;
     }
+}
+
+if (!function_exists('checkCustomPolicy')) {
+    /**
+     * Check is policy is ESTA
+     * 
+     * @param int $policyId
+     * 
+     * @return int
+     */
+    function checkCustomPolicy(
+        int $policyId
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $CI->db->select('is_custom_policy');
+        $CI->db->where('sid', $policyId);
+        $result = $CI->db->get('timeoff_policies')->row_array();
+        //
+        return $result['is_custom_policy'];
+    }
+}
+
+if (!function_exists('getCustomPolicyInfo')) {
+    /**
+     * Get custom policy data
+     * 
+     * @param int $policyId
+     * 
+     * @return int
+     */
+    function getCustomPolicyInfo(
+        int $policyId
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $CI->db->select('custom_waiting_period, custom_waiting_period_type, custom_carry_over, custom_accrue_value, custom_accrue_type');
+        $CI->db->where('sid', $policyId);
+        $result = $CI->db->get('timeoff_policies')->row_array();
+        //
+        return $result;
+    }
+}
+
+if (!function_exists('processCustomPolicy')) {
+    /**
+     * Policy for those employees which are not lies is ESST or ESTA
+     */
+    function processCustomPolicy(
+        $policyId,
+        $employeeId,
+        $employementStatus,
+        $employeeJoiningDate,
+        $durationInMinutes,
+        $accruals,
+        $balanceInMinutes,
+        $asOfToday,
+        $slug,
+        $categoryType,
+        $r
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        // Load time off modal
+        $CI->load->model('timeoff_model');
+        //
+        $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
+        $todayDate = getFormatedDate($todayDate);
+
+        $todayDateObj = new DateTime($todayDate);
+        $employeeJoiningDateObj = new DateTime($employeeJoiningDate);
+        //
+        if ($todayDateObj < $employeeJoiningDateObj) {
+            $r['Reason'] = "The employee doesn't meet the policy 'Effective Date'.";
+            return $r;
+        }
+        //
+        $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
+        //
+        // set for full time employees
+        if ($accruals['employee_type_original'] == 'fulltime') {
+            $r['Reason'] = 'Employee has worked as full time.';
+            return $r;
+        }
+        // set the default hours
+        $allowedHours = 0;
+        $dayscheck = 0;
+        //
+        // get custom policy info
+        $policyCustomInfo = getCustomPolicyInfo($policyId);
+        //
+        if ($policyCustomInfo['custom_waiting_period_type'] == 'months') {
+            $dayscheck = $policyCustomInfo['custom_waiting_period'] * 30;
+        } else if ($policyCustomInfo['custom_waiting_period_type'] == 'weeks') {
+            $dayscheck = $policyCustomInfo['custom_waiting_period'] * 7;
+        } else {
+            $dayscheck = $policyCustomInfo['custom_waiting_period'];
+        }
+        // check if policy is applicable
+        // after completing the accrual time
+        if ($difference < $dayscheck) {
+            $r['Reason'] = 'Employee do not meet accrual of ' . ($dayscheck) . ' days for this policy';
+            return $r;
+        }
+        // get the list of worked years and
+        // current year
+        $anniversaryList = getAnniversaryPeriods($employeeJoiningDate, $todayDate);
+        // allow default 40 hours
+        $allowedHours = 0;
+        //
+        $employeeAnniversaryDate = getEmployeeAnniversary($employeeJoiningDate, $todayDate);
+        //
+        $balanceHolder = [];
+        //
+        foreach ($anniversaryList as $k0 => $item) {
+            // get the time between periods
+            $consumedTimeInMinutes = $CI
+                ->timeoff_model
+                ->getEmployeeConsumedTimeByResetDateNew(
+                    $policyId,
+                    $employeeId,
+                    $item['start'],
+                    $item['end']
+                );
+            // get the difference
+            $periodDiff = dateDifferenceInDays($item["start"], $todayDate);
+            //
+            if ($employeeJoiningDate == $item["start"]) {
+                $timeAfterProbetion = $periodDiff - $dayscheck;
+                if ($policyCustomInfo['custom_accrue_type'] == 'per_week') {
+                    $allowedHours =  floor(($timeAfterProbetion / 7) * $policyCustomInfo['custom_accrue_value']);
+                } else if ($policyCustomInfo['custom_accrue_type'] == 'per_month') {
+                    if ($timeAfterProbetion > 30) {
+                        $allowedHours = floor(($timeAfterProbetion / 30) * $policyCustomInfo['custom_accrue_value']);
+                    } else {
+                        $allowedHours = 0;
+                    }
+                }
+            } else {
+                //
+                if ($policyCustomInfo['custom_accrue_type'] == 'per_week') {
+                    $allowedHours =  floor(($periodDiff / 7) * $policyCustomInfo['custom_accrue_value']);
+                } else if ($policyCustomInfo['custom_accrue_type'] == 'per_month') {
+                    if ($periodDiff > 30) {
+                        $allowedHours = floor(($periodDiff / 30) * $policyCustomInfo['custom_accrue_value']);
+                    } else {
+                        $allowedHours = 0;
+                    }
+                }
+            }
+            
+            // for first year
+            if ($k0 != 0) {
+                // get the time from last year
+                if ($balanceHolder["remaining"] > $policyCustomInfo['custom_carry_over']) {
+                    $allowedHours = $allowedHours + $policyCustomInfo['custom_carry_over'];
+                } else { 
+                    $allowedHours = $allowedHours + $balanceHolder["remaining"];
+                }
+            }
+            //
+            $balanceInMinutes = getEmployeeManualBalance(
+                $employeeId,
+                $policyId,
+                $item['start'],
+                $item['end'],
+                0
+            );
+            $balanceInMinutes = $balanceInMinutes > 0 ? $balanceInMinutes / 60 : 0;
+            // set the balance
+            $balanceHolder = [
+                "start" => $item["start"],
+                "end" => $item["end"],
+                "period" => $item["start"] . " - " . $item["end"],
+                "allowed" => $allowedHours + $balanceInMinutes,
+                "consumed" => $consumedTimeInMinutes,
+                "remaining" => ($allowedHours + $balanceInMinutes) - ($consumedTimeInMinutes / 60),
+            ];
+        }
+        //
+        // today's date
+        $currentDate = getSystemDate('Y-m-d');
+        // all Part time and full time employee allowed time is 72 years
+        // $allowedTime = 72 * 60;
+        $allowedTime = $balanceHolder["allowed"] * 60;
+        //
+        // for adding time off balance
+
+        //
+        if ($allowedTime != 0) {
+            //
+            $is_added = $CI->timeoff_model->checkAllowedBalanceAdded(
+                $employeeId,
+                $policyId,
+                1,
+                $todayDate,
+                $allowedTime
+            );
+            //
+            if ($is_added == 0) {
+                // This section add allowed balance of current year
+                $company_sid = $CI->timeoff_model->getEmployeeCompanySid($employeeId);
+                $policyName = $CI->timeoff_model->getPolicyNameById($policyId);
+                //
+                $added_by = getCompanyAdminSid($company_sid);
+                //
+                $balanceToAdd = array();
+                $balanceToAdd['user_sid'] = $employeeId;
+                $balanceToAdd['policy_sid'] = $policyId;
+                $balanceToAdd['added_by'] = $added_by;
+                $balanceToAdd['is_added'] = 1;
+                $balanceToAdd['added_time'] = $allowedTime;
+                $balanceToAdd['note'] = getAddPolicyBalanceNote(
+                    $allowedTime,
+                    $accruals['applicableTime'],
+                    $accruals['applicableTimeType'],
+                    $policyName,
+                    $slug,
+                    $durationInMinutes
+                );
+                $balanceToAdd['effective_at'] = $todayDate;
+                //
+                $CI->timeoff_model->addEmployeeAllowedBalance($balanceToAdd);
+            } else {
+                // This section add allowed balance of current year
+                $company_sid = $CI->timeoff_model->getEmployeeCompanySid($employeeId);
+                $policyName = $CI->timeoff_model->getPolicyNameById($policyId);
+                //
+                $added_by = getCompanyAdminSid($company_sid);
+                //
+                $balanceToAdd = array();
+                $balanceToAdd['added_by'] = $added_by;
+                $balanceToAdd['is_added'] = 1;
+                $balanceToAdd['added_time'] = $allowedTime;
+                $balanceToAdd['note'] = getAddPolicyBalanceNote(
+                    $allowedTime,
+                    $accruals['applicableTime'],
+                    $accruals['applicableTimeType'],
+                    $policyName,
+                    $slug,
+                    $durationInMinutes
+                );
+                $balanceToAdd['effective_at'] = $todayDate;
+                //
+                $CI->timeoff_model->updateEmployeeAllowedBalance(
+                    $employeeId,
+                    $policyId,
+                    $todayDate,
+                    $balanceToAdd
+                );
+            }
+        }
+        //
+        $remainingTime = $balanceHolder["remaining"] * 60;
+        //
+        $r['AllowedTime'] = $balanceHolder["allowed"] * 60;
+        $r['ConsumedTime'] = $consumedTimeInMinutes;
+        $r['RemainingTime'] = $remainingTime;
+        $r['MaxNegativeTime'] = $r['RemainingTime'];
+        $r['RemainingTimeWithNegative'] = $r['RemainingTime'];
+        $r['EmployementStatus'] = $employementStatus;
+        $r['lastAnniversaryDate'] = $balanceHolder['start'];
+        $r['upcomingAnniversaryDate'] = $balanceHolder['end'];
+        //
+        return $r;
+    }    
 }
