@@ -2617,7 +2617,11 @@ if (!function_exists('processCustomPolicy')) {
         // current year
         $anniversaryList = getAnniversaryPeriods($employeeJoiningDate, $todayDate);
         // allow default 40 hours
-        $allowedHours = 0;
+        $allowedHours = 40;
+        if (count($anniversaryList) > 1) {
+            $r["Reason"] = "This policy is not applicable for employees who have worked more than one year.";
+            return $r;
+        }
         //
         $employeeAnniversaryDate = getEmployeeAnniversary($employeeJoiningDate, $todayDate);
         //
@@ -2639,7 +2643,7 @@ if (!function_exists('processCustomPolicy')) {
             if ($employeeJoiningDate == $item["start"]) {
                 $timeAfterProbetion = $periodDiff - $dayscheck;
                 if ($policyCustomInfo['custom_accrue_type'] == 'per_week') {
-                    $allowedHours =  floor(($timeAfterProbetion / 7) * $policyCustomInfo['custom_accrue_value']);
+                    $allowedHours = floor(($timeAfterProbetion / 7) * $policyCustomInfo['custom_accrue_value']);
                 } else if ($policyCustomInfo['custom_accrue_type'] == 'per_month') {
                     if ($timeAfterProbetion > 30) {
                         $allowedHours = floor(($timeAfterProbetion / 30) * $policyCustomInfo['custom_accrue_value']);
@@ -2650,7 +2654,7 @@ if (!function_exists('processCustomPolicy')) {
             } else {
                 //
                 if ($policyCustomInfo['custom_accrue_type'] == 'per_week') {
-                    $allowedHours =  floor(($periodDiff / 7) * $policyCustomInfo['custom_accrue_value']);
+                    $allowedHours = floor(($periodDiff / 7) * $policyCustomInfo['custom_accrue_value']);
                 } else if ($policyCustomInfo['custom_accrue_type'] == 'per_month') {
                     if ($periodDiff > 30) {
                         $allowedHours = floor(($periodDiff / 30) * $policyCustomInfo['custom_accrue_value']);
@@ -2659,13 +2663,13 @@ if (!function_exists('processCustomPolicy')) {
                     }
                 }
             }
-            
+
             // for first year
             if ($k0 != 0) {
                 // get the time from last year
                 if ($balanceHolder["remaining"] > $policyCustomInfo['custom_carry_over']) {
                     $allowedHours = $allowedHours + $policyCustomInfo['custom_carry_over'];
-                } else { 
+                } else {
                     $allowedHours = $allowedHours + $balanceHolder["remaining"];
                 }
             }
@@ -2778,5 +2782,5 @@ if (!function_exists('processCustomPolicy')) {
         $r['upcomingAnniversaryDate'] = $balanceHolder['end'];
         //
         return $r;
-    }    
+    }
 }
