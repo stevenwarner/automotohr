@@ -2643,12 +2643,12 @@ if (!function_exists('processCustomPolicy')) {
             if ($employeeJoiningDate == $item["start"]) {
                 $timeAfterProbetion = $periodDiff - $dayscheck;
                 if ($policyCustomInfo['custom_accrue_type'] == 'per_week') {
-                    $allowedHours = floor(($timeAfterProbetion / 7) * $policyCustomInfo['custom_accrue_value']);
+                    $allowedHours += floor(($timeAfterProbetion / 7) * $policyCustomInfo['custom_accrue_value']);
                 } else if ($policyCustomInfo['custom_accrue_type'] == 'per_month') {
                     if ($timeAfterProbetion > 30) {
-                        $allowedHours = floor(($timeAfterProbetion / 30) * $policyCustomInfo['custom_accrue_value']);
+                        $allowedHours += floor(($timeAfterProbetion / 30) * $policyCustomInfo['custom_accrue_value']);
                     } else {
-                        $allowedHours = 0;
+                        $allowedHours += 0;
                     }
                 }
             } else {
@@ -2657,9 +2657,9 @@ if (!function_exists('processCustomPolicy')) {
                     $allowedHours = floor(($periodDiff / 7) * $policyCustomInfo['custom_accrue_value']);
                 } else if ($policyCustomInfo['custom_accrue_type'] == 'per_month') {
                     if ($periodDiff > 30) {
-                        $allowedHours = floor(($periodDiff / 30) * $policyCustomInfo['custom_accrue_value']);
+                        $allowedHours += floor(($periodDiff / 30) * $policyCustomInfo['custom_accrue_value']);
                     } else {
-                        $allowedHours = 0;
+                        $allowedHours += 0;
                     }
                 }
             }
@@ -2768,6 +2768,10 @@ if (!function_exists('processCustomPolicy')) {
                     $balanceToAdd
                 );
             }
+        }
+
+        if (($balanceHolder["remaining"] * 60) > 72) {
+            $balanceHolder["remaining"] = 72;
         }
         //
         $remainingTime = $balanceHolder["remaining"] * 60;
