@@ -2555,7 +2555,7 @@ if (!function_exists('getCustomPolicyInfo')) {
 
 if (!function_exists('processCustomPolicy')) {
     /**
-     * IPolicy for those employees which are not lies is ESST or ESTA
+     * Policy for those employees which are not lies is ESST or ESTA
      */
     function processCustomPolicy(
         $policyId,
@@ -2588,15 +2588,18 @@ if (!function_exists('processCustomPolicy')) {
         //
         $difference = dateDifferenceInDays($employeeJoiningDate, $todayDate);
         //
+        // set for full time employees
         if ($accruals['employee_type_original'] == 'fulltime') {
-            $r['Reason'] = 'Employee has worked as part time.';
+            $r['Reason'] = 'Employee has worked as full time.';
             return $r;
         }
         // set the default hours
         $allowedHours = 0;
+        $dayscheck = 0;
         //
         // get custom policy info
         $policyCustomInfo = getCustomPolicyInfo($policyId);
+        //
         if ($policyCustomInfo['custom_waiting_period_type'] == 'months') {
             $dayscheck = $policyCustomInfo['custom_waiting_period'] * 30;
         } else if ($policyCustomInfo['custom_waiting_period_type'] == 'weeks') {
@@ -2604,10 +2607,9 @@ if (!function_exists('processCustomPolicy')) {
         } else {
             $dayscheck = $policyCustomInfo['custom_waiting_period'];
         }
-        //
         // check if policy is applicable
         // after completing the accrual time
-        if ($accruals['employee_type_original'] == "parttime" && $difference < $dayscheck) {
+        if ($difference < $dayscheck) {
             $r['Reason'] = 'Employee do not meet accrual of ' . ($dayscheck) . ' days for this policy';
             return $r;
         }
@@ -2634,21 +2636,37 @@ if (!function_exists('processCustomPolicy')) {
             // get the difference
             $periodDiff = dateDifferenceInDays($item["start"], $todayDate);
             //
-            $allowedHours = getTheAllowedTimeForSpecificYear(
-                $periodDiff,
-                $dayscheck,
-                $item["start"],
-                $todayDate,
-                $accruals,
-            );
+            if ($employeeJoiningDate == $item["start"]) {
+                $timeAfterProbetion = $periodDiff - $dayscheck;
+                if ($policyCustomInfo['custom_accrue_type'] == 'per_week') {
+                    $allowedHours =  floor(($timeAfterProbetion / 7) * $policyCustomInfo['custom_accrue_value']);
+                } else if ($policyCustomInfo['custom_accrue_type'] == 'per_month') {
+                    if ($timeAfterProbetion > 30) {
+                        $allowedHours = floor(($timeAfterProbetion / 30) * $policyCustomInfo['custom_accrue_value']);
+                    } else {
+                        $allowedHours = 0;
+                    }
+                }
+            } else {
+                //
+                if ($policyCustomInfo['custom_accrue_type'] == 'per_week') {
+                    $allowedHours =  floor(($periodDiff / 7) * $policyCustomInfo['custom_accrue_value']);
+                } else if ($policyCustomInfo['custom_accrue_type'] == 'per_month') {
+                    if ($periodDiff > 30) {
+                        $allowedHours = floor(($periodDiff / 30) * $policyCustomInfo['custom_accrue_value']);
+                    } else {
+                        $allowedHours = 0;
+                    }
+                }
+            }
+            
             // for first year
             if ($k0 != 0) {
                 // get the time from last year
-                $allowedHours =
-                    $allowedHours + $balanceHolder["remaining"];
-                //
-                if ($allowedHours > 72) {
-                    $allowedHours = 72;
+                if ($balanceHolder["remaining"] > $policyCustomInfo['custom_carry_over']) {
+                    $allowedHours = $allowedHours + $policyCustomInfo['custom_carry_over'];
+                } else { 
+                    $allowedHours = $allowedHours + $balanceHolder["remaining"];
                 }
             }
             //
@@ -2756,5 +2774,5 @@ if (!function_exists('processCustomPolicy')) {
         $r['upcomingAnniversaryDate'] = $balanceHolder['end'];
         //
         return $r;
-    }
+    }    
 }
