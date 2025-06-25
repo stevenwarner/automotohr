@@ -2670,6 +2670,10 @@ if (!function_exists('processCustomPolicy')) {
                 }
             }
             //
+            if ($allowedHours > $policyCustomInfo['custom_carry_over']) {
+                $allowedHours = $policyCustomInfo['custom_carry_over'];
+            }
+            //
             $balanceInMinutes = getEmployeeManualBalance(
                 $employeeId,
                 $policyId,

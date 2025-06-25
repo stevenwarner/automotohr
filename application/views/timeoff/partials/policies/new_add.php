@@ -343,27 +343,28 @@
                                 </div>
                             </div> 
                             <div class="row mb10 csRow">
-                                <div class="col-sm-6">
+                                <div class="col-sm-4">
                                     <div class="form-group">
                                         <h5 class="timeline-title allowed-time-off-title-custom">
                                             <?php echo $get_policy_item_info['accrue_time_label']; ?>
                                             <i class="fa fa-question-circle" data-hint="js-hint" data-target="accrue_time"></i>
                                         </h5>
                                         <div class="js-hint js-hint-accrue_time">
-                                            <?php echo $get_policy_item_info['accrue_time_hint']; ?></div>
-                                        <div class="row">
-                                            <div class="col-sm-8">
-                                                <input class="form-control" name="template" id="jsAccrueValue" />
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <select class="form-control" id="jsAccrueType">
-                                                    <option value="per_week">Per Week</option>
-                                                    <option value="per_month">Per Month</option>
-                                                </select>
-                                            </div>
+                                            <?php echo $get_policy_item_info['accrue_time_hint']; ?>
+                                        </div>
+                                        <div class="input-group">
+                                            <input class="form-control" name="template" id="jsAccrueValue" />
+                                            <span class="input-group-addon">Hour(s)</span>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-sm-2">
+                                    <h5 class="timeline-title allowed-time-off-title-custom">&nbsp;</h5>
+                                    <select class="form-control" id="jsAccrueType">
+                                        <option value="per_week">Per Week</option>
+                                        <option value="per_month">Per Month</option>
+                                    </select>
+                                </div> 
                             </div> 
                         </div>
 

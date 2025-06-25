@@ -273,7 +273,7 @@
                                     </div>
                                 </div>
                             </div>
-                                                
+
                             <!-- PartTime Policy values - add -->
                             <div class="jsPartTimePolicySection" style="display: none;">
                                 <div class="row mb10 csRow">
@@ -294,12 +294,12 @@
                                                         <option value="days">Days</option>
                                                         <option value="weeks">Weeks</option>
                                                         <option value="months">Months</option>
-                                                    </select>    
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div> 
+                                </div>
                                 <div class="row mb10 csRow">
                                     <div class="col-sm-6">
                                         <div class="form-group">
@@ -316,30 +316,31 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div> 
+                                </div>
                                 <div class="row mb10 csRow">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-4">
                                         <div class="form-group">
                                             <h5 class="timeline-title allowed-time-off-title-custom">
                                                 <?php echo $get_policy_item_info['accrue_time_label']; ?>
                                                 <i class="fa fa-question-circle" data-hint="js-hint" data-target="accrue_time"></i>
                                             </h5>
                                             <div class="js-hint js-hint-accrue_time">
-                                                <?php echo $get_policy_item_info['accrue_time_hint']; ?></div>
-                                            <div class="row">
-                                                <div class="col-sm-8">
-                                                    <input class="form-control" name="template" id="jsAccrueValueEdit" />
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <select class="form-control" id="jsAccrueTypeEdit">
-                                                        <option value="per_week">Per Week</option>
-                                                        <option value="per_month">Per Month</option>
-                                                    </select>
-                                                </div>
+                                                <?php echo $get_policy_item_info['accrue_time_hint']; ?>
+                                            </div>
+                                            <div class="input-group">
+                                                <input class="form-control" name="template" id="jsAccrueValueEdit" />
+                                                <span class="input-group-addon">Hour(s)</span>
                                             </div>
                                         </div>
                                     </div>
-                                </div> 
+                                    <div class="col-sm-2">
+                                        <h5 class="timeline-title allowed-time-off-title-custom">&nbsp;</h5>
+                                        <select class="form-control" id="jsAccrueTypeEdit">
+                                            <option value="per_week">Per Week</option>
+                                            <option value="per_month">Per Month</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- FMLA Range -->
@@ -610,7 +611,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Carryover Cycle - Edit -->
                             <div class="row mb10 csRow js-hider-edit js-carryover-box-edit">
                                 <div class="col-sm-6">
