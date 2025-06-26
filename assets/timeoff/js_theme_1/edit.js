@@ -128,8 +128,7 @@ $(function () {
 			//
 			if (
 				cOBJ.dateRows.totalTime >
-				selectedPolicy.RemainingTimeWithNegative.M.minutes &&
-				cOBJ.dateRows.totalTime > oldTime
+				(selectedPolicy.RemainingTimeWithNegative.M.minutes + oldTime)
 			) {
 				alertify.alert(
 					"WARNING!",
