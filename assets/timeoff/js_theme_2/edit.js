@@ -115,6 +115,9 @@ $(function () {
 		// Check if it's not unlimited
 		if (selectedPolicy.IsUnlimited == 0) {
 			//
+			console.log(cOBJ)
+			console.log(oldTime)
+			//
 			if (selectedPolicy.RemainingTimeWithNegative.M.minutes <= 0) {
 				alertify.alert(
 					"WARNING!",
@@ -126,8 +129,10 @@ $(function () {
 			//
 			if (
 				cOBJ.dateRows.totalTime >
-				selectedPolicy.RemainingTimeWithNegative.M.minutes
+				selectedPolicy.RemainingTimeWithNegative.M.minutes &&
+				cOBJ.dateRows.totalTime > oldTime
 			) {
+				
 				alertify.alert(
 					"WARNING!",
 					`Requested time-off can not be greater than the allowed time i.e. "${selectedPolicy.RemainingTimeWithNegative.text}"`,
