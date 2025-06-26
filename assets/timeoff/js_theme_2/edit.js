@@ -115,9 +115,6 @@ $(function () {
 		// Check if it's not unlimited
 		if (selectedPolicy.IsUnlimited == 0) {
 			//
-			console.log(cOBJ)
-			console.log(oldTime)
-			//
 			if (selectedPolicy.RemainingTimeWithNegative.M.minutes <= 0) {
 				alertify.alert(
 					"WARNING!",
