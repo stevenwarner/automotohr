@@ -8124,4 +8124,5 @@ class Compliance_report_model extends CI_Model
 		//
 		return $reports;
 	}
+
 }

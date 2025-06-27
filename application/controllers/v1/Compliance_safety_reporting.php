@@ -2424,7 +2424,6 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
-
     public function updateItemExternalEmployee(int $reportId, int $incidentId, int $issueId)
     {
         $id = $this->compliance_report_model->updateItemExternalEmployee(
@@ -2628,6 +2627,22 @@ class Compliance_safety_reporting extends Base_csp
         $this->zip->archive($basePath);
         deleteFolderWithFiles(ROOTPATH . 'assets/compliance_safety_reports/' . strtolower(preg_replace('/\s+/', '_', $companyName)));
         $this->zip->download($zip_name);
+    }
+
+    public function deleteReportById($reportId)
+    {
+        //
+        $companyId = $this->getLoggedInCompany("sid");
+        //
+        $this->compliance_report_model->deleteReportById(
+            $reportId,
+            $companyId
+        );
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Report removed successfully."]
+        );
     }
 
 }
