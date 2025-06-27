@@ -62,8 +62,7 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                     <div class="field-row">
                                                         <label>Date From </label>
                                                         <?php $start_date = $this->uri->segment(6) != 'all' && $this->uri->segment(6) != '' ? urldecode($this->uri->segment(6)) : ''; ?>
-                                                        <input class="invoice-fields"
-                                                            type="text" readonly
+                                                        <input class="invoice-fields" type="text" readonly
                                                             name="start_date_applied" id="start_date_applied"
                                                             value="<?php echo set_value('start_date_applied', $start_date); ?>" />
                                                     </div>
@@ -72,8 +71,7 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                     <div class="field-row">
                                                         <label>Date To </label>
                                                         <?php $end_date = $this->uri->segment(7) != 'all' && $this->uri->segment(7) != '' ? urldecode($this->uri->segment(7)) : ''; ?>
-                                                        <input class="invoice-fields"
-                                                            type="text" readonly
+                                                        <input class="invoice-fields" type="text" readonly
                                                             name="end_date_applied" id="end_date_applied"
                                                             value="<?php echo set_value('end_date_applied', $end_date); ?>" />
                                                     </div>
@@ -107,11 +105,11 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                             name="indeed_ats_id"
                                                             value="<?php echo set_value('indeed_ats_id', $indeed_ats_id); ?>" />
                                                     </div>
-                                                </div>    
+                                                </div>
                                             </div>
-                                            <div class="row">   
+                                            <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                </div>  
+                                                </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                     <div class="field-row">
                                                         <label>&nbsp;</label>
@@ -159,9 +157,9 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-xs-12">
+                                                <div class="col-xs-12 table-responsive">
                                                     <table
-                                                        class="table table-bordered table-striped table-hover table-condensed"
+                                                        class="table table-bordered table-striped table-hover table-condensed "
                                                         id="example">
                                                         <thead>
                                                             <tr>
@@ -217,11 +215,11 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                                         <td style="vertical-align: middle;">
                                                                             <?php if ($applicant["status"] == "completed"): ?>
                                                                                 <div class="">
-                                                                                    <a href="<?= "https://staging.automotohr.com/interview/{$applicant["portal_applicant_job_sid"]}"; ?>"
+                                                                                    <a href="<?= "https://interview.automotohr.com/interview/{$applicant["portal_applicant_job_sid"]}"; ?>"
                                                                                         target="_blank" class="btn btn-success">
                                                                                         Start Interview
                                                                                     </a>
-                                                                                    <a href="<?= base_url('manage_admin/reports/applicants_ai_report/view_detail/'.$applicant["sid"]); ?>"
+                                                                                    <a href="<?= base_url('manage_admin/reports/applicants_ai_report/view_detail/' . $applicant["sid"]); ?>"
                                                                                         target="_blank" class="btn btn-success">
                                                                                         View Detail
                                                                                     </a>
