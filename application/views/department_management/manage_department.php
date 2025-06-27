@@ -101,8 +101,8 @@
 
                                                 //
                                                 $cspManagersHTML = '<ul style="padding-left: 15px;">';
-                                                if (!empty($department['csp_managers_ids'])) {
-                                                    $t = explode(',', $department['csp_managers_ids']);
+                                                if (!empty($team['csp_managers_ids'])) {
+                                                    $t = explode(',', $team['csp_managers_ids']);
                                                     foreach ($t as $f) {
                                                         $cspManagersHTML .= '<li><a href="' . (base_url('employee_profile/' . ($f) . '')) . '" target="_blank" style="color: #000;">' . remakeEmployeeName(db_get_employee_profile($f)[0]) . '</a> </li>';
                                                     }
