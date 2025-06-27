@@ -304,7 +304,7 @@ $activePages = getAllActivePages();
         <div class="row">
             <div class="col-sm-12 col-lg-6">
                 <p class="margin-top-10">
-                    ©2023 AutomotoHR All Rights Reserved
+                    ©<?php echo date('Y');?> AutomotoHR All Rights Reserved
                 </p>
             </div>
             <div class="col-sm-12 col-lg-6 text-right">
