@@ -179,5 +179,10 @@ $('#privay_policy_apply_now').on('hide.bs.modal', function (e) {
   }, 1200);
 });
 </script>
+
+
+<?php $this->load->view('cookie'); ?>
+
+
 </body>
 </html>

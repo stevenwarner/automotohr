@@ -206,5 +206,9 @@
 }
 
 </style>
+
+<?php $this->load->view('cookie'); ?>
+
+
 </body>
 </html>
