@@ -655,9 +655,7 @@ class Home extends CI_Controller
         }
     }
 
-    public function get_jobs($page_no = 1)
-    {
-    }
+    public function get_jobs($page_no = 1) {}
 
 
     public function contact_us()
@@ -5716,6 +5714,19 @@ class Home extends CI_Controller
         }
         return $validSlug;
     }
+
+    public function saveCookieData()
+    {
+        $post = $this->input->post(NULL, TRUE);
+        $ip = getUserIP();
+
+        $insertData = [];
+        $insertData['client_ip'] = $ip;
+        $insertData['client_agent'] = $post['userAgent'];
+        $insertData['page_url'] = $post['currentUrl'];
+        $insertData['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        $this->themes_pages_model->insert_cookie_log($insertData);
+    }
 }
 
 if (!function_exists('remakeSalary')) {
@@ -5745,4 +5756,6 @@ if (!function_exists('remakeSalary')) {
         //
         return $salary;
     }
+
+    //
 }

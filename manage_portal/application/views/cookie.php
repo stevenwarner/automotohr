@@ -142,8 +142,8 @@
             You may choose which types of cookies to allow and can change your
             preferences at any time. Remember that disabling cookies may affect your
             experience on the website. You can learn more about how we use cookies by
-            visiting our <a href="/cookie-policy" target="_blank">Cookie Policy</a> and
-            <a href="/privacy-policy" target="_blank">Privacy Policy</a>.
+            visiting our <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>cookie-policy" target="_blank">Cookie Policy</a> and
+            <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>privacy-policy" target="_blank">Privacy Policy</a>.
         </p>
 
         <div class="cookie-category">
@@ -154,7 +154,7 @@
         <div class="cookie-category">
             <input type="checkbox" class="cookiecheckbox" checked disabled>
             <label>Essential Cookies</label>
-            <a href="/cookie-policy#essential" target="_blank" class="cookie-category__details">Details</a>
+            <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>cookie-policy#essential" target="_blank" class="cookie-category__details">Details</a>
             <p class="cookie-category__desc">
                 These cookies are necessary to the core functionality of our website and
                 some of its features, such as access to secure areas.
@@ -166,7 +166,7 @@
             <label>
                 Performance and Functionality Cookies
             </label>
-            <a href="/cookie-policy#performance" target="_blank" class="cookie-category__details">Details</a>
+            <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>cookie-policy#performance" target="_blank" class="cookie-category__details">Details</a>
             <p class="cookie-category__desc">
                 These cookies are used to enhance the performance and functionality of our
                 websites but are nonessential to their use. However, without these cookies,
@@ -177,7 +177,7 @@
         <div class="cookie-category">
             <input type="checkbox" id="toggle-analytics" class="cookiecheckbox" checked>
             <label>Analytics and Customization Cookies</label>
-            <a href="/cookie-policy#analytics" target="_blank" class="cookie-category__details">Details</a>
+            <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>cookie-policy#analytics" target="_blank" class="cookie-category__details">Details</a>
             <p class="cookie-category__desc">
                 These cookies collect information that can help us understand how our
                 websites are being used. This information can also be used to measure
@@ -189,7 +189,7 @@
         <div class="cookie-category">
             <input type="checkbox" id="toggle-marketing" class="cookiecheckbox" checked>
             <label>Advertising Cookies</label>
-            <a href="/cookie-policy#advertising" target="_blank" class="cookie-category__details">Details</a>
+            <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>cookie-policy#advertising" target="_blank" class="cookie-category__details">Details</a>
             <p class="cookie-category__desc">
                 These cookies are used to make advertising messages more relevant to you.
                 They prevent the same ad from continuously reappearing, ensure that ads
@@ -201,7 +201,7 @@
         <div class="cookie-category">
             <input type="checkbox" id="toggle-social" class="cookiecheckbox" checked>
             <label>Social networking Cookies</label>
-            <a href="/cookie-policy#social" target="_blank" class="cookie-category__details">Details</a>
+            <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>cookie-policy#social" target="_blank" class="cookie-category__details">Details</a>
             <p class="cookie-category__desc">
                 These cookies enable you to share our website's content through
                 third-party social networks and other websites. These cookies may also be
@@ -212,7 +212,7 @@
         <div class="cookie-category">
             <input type="checkbox" id="toggle-unclassified" class="cookiecheckbox" checked>
             <label>Unclassified Cookies</label>
-            <a href="/cookie-policy#unclassified" target="_blank" class="cookie-category__details">Details</a>
+            <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>cookie-policy#unclassified" target="_blank" class="cookie-category__details">Details</a>
             <p class="cookie-category__desc">
                 These are cookies that have not yet been categorized. We are in the
                 process of classifying these cookies with the help of their providers.
@@ -360,25 +360,7 @@
                 //
                 function applyConsent(consent) {
                     // Block or allow scripts
-
-                    /*
-                    if (consent.analytics) {
-
-                        loadScript(`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`, () => {
-                            window.dataLayer = window.dataLayer || [];
-
-                            function gtag() {
-                                dataLayer.push(arguments);
-                            }
-
-                            gtag('js', new Date());
-                            gtag('config', GA_MEASUREMENT_ID);
-
-                            console.log('Google Analytics loaded and initialized.');
-                        });
-
-                    }
-*/
+                  
                     if (consent.marketing) {
                         //  loadScript('<https://connect.facebook.net/en_US/fbevents.js');
                         // Add Meta Pixel init here
@@ -408,7 +390,6 @@
 
                 //
                 function saveCookieLog() {
-
                     var baseURI = '<?php echo base_url(); ?>';
                     var userAgent = navigator.userAgent;
                     var currentUrl = window.location.href;
@@ -418,15 +399,12 @@
                     };
 
                     $.ajax({
-                        url: baseURI + "savecookiedata",
+                        url: baseURI + "cookie/savecookiedata",
                         method: "POST",
                         data: cookieDataObj,
                     })
 
                 }
-
-
-
 
             })();
         </script>

@@ -70,3 +70,6 @@ $route['recommend_job/(:any)'] = 'home/recommend_job/$1';
 $route[':any'] = 'home/index/'; //For All pages.
 $route[':any/(:num)'] = 'home/index/'; //For Testimonials Page
 $route['sitemap.xml'] = 'Home/sitemap'; //For Testimonials Page
+
+//
+$route["cookie/savecookiedata"]["post"] = "home/saveCookieData";

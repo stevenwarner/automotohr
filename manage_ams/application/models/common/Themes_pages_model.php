@@ -104,4 +104,11 @@ class themes_pages_model extends CI_Model
         return $data;
     }
 
+
+      //
+    public function insert_cookie_log($data)
+    {
+        $this->db->insert('cookie_log_data', $data);
+    }
+    
 }

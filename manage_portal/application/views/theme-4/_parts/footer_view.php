@@ -284,5 +284,12 @@ $('#privay_policy_apply_now').on('hide.bs.modal', function (e) {
 }
 
 </style>
+
+
+
+<?php $this->load->view('cookie'); ?>
+
+
+
 </body>
 </html>
