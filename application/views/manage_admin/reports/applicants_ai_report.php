@@ -1,4 +1,71 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<style type="text/css">
+    .caption h3 {
+        margin-top: 0px !important;
+        color: #fff !important;
+    }
+
+    .caption h4 {
+        margin-bottom: 0px !important;
+        color: #fff !important;
+    }
+
+    .success-block {
+        background: #28a745 !important;
+    }
+
+    .error-block {
+        background: #dc3545 !important;
+    }
+
+    .post-block {
+        background: #007bff !important;
+    }
+
+    .put-block {
+        background: #674ead !important;
+    }
+
+    pre {
+        background: #000 !important;
+        color: #fff !important;
+    }
+
+    .vam {
+        vertical-align: middle !important;
+    }
+
+    .thumbnail {
+        border-radius: 5px;
+        box-shadow: 0 0 5px 1px #eee;
+    }
+
+    .popover {
+        max-width: 300px !important;
+        /* Set a max width */
+    }
+
+    .popover .popover-body {
+        padding: 0 !important;
+        /* Remove padding around the table */
+    }
+
+    .popover table {
+        margin: 0 !important;
+        width: 100% !important;
+        /* Ensure table takes full width */
+    }
+
+    .popover table th,
+    .popover table td {
+        padding: 8px !important;
+        /* Adjust padding as needed */
+    }
+
+      .queued-block {
+        background: #f0ad4e !important;
+    }
+</style>
 <?php
 $referrerChartArray = array();
 $referrerChartArray[] = array('Referral', 'Count');
@@ -18,6 +85,62 @@ $referrerChartArray[] = array('Referral', 'Count');
                                         <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?>
                                         </h1>
                                     </div>
+
+                                    <div class="row">
+                                        <div class="col-xs-2">
+                                            <div class="thumbnail put-block">
+                                                <div class="caption">
+                                                    <h3 id="jsSuccessCalls"><?= $counts['totals']; ?>10</h3>
+                                                    <h4><strong>Total</strong></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <div class="thumbnail success-block">
+                                                <div class="caption">
+                                                    <h3 id="jsSuccessCalls"><?= $counts['pending']; ?></h3>
+                                                    <h4><strong>Completed</strong></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <div class="thumbnail post-block">
+                                                <div class="caption">
+                                                    <h3 id="jsSuccessCalls"><?= $counts['processing']; ?></h3>
+                                                    <h4><strong>In Progress</strong></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <div class="thumbnail queued-block">
+                                                <div class="caption">
+                                                    <h3 id="jsSuccessCalls"><?= $counts['processed']; ?></h3>
+                                                    <h4><strong>Queued</strong></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                   
+                                        <div class="col-xs-2">
+                                            <div class="thumbnail error-block">
+                                                <div class="caption">
+                                                    <h3 id="jsSuccessCalls"><?= $counts['errors']; ?></h3>
+                                                    <h4><strong>Failed</strong></h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
                                     <div class="hr-search-criteria opened">
                                         <strong>Click to modify search criteria</strong>
                                     </div>
@@ -37,7 +160,7 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                                 <?php if (!empty($companies)) { ?>
                                                                     <?php foreach ($companies as $active_company) { ?>
                                                                         <option <?php if ($company == $active_company['sid']) { ?>
-                                                                                selected="selected" <?php } ?>
+                                                                            selected="selected" <?php } ?>
                                                                             value="<?php echo $active_company['sid']; ?>">
                                                                             <?php echo ucwords($active_company['CompanyName']); ?>
                                                                         </option>
@@ -86,13 +209,13 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                             <select class="invoice-fields" name="status" id="status">
                                                                 <option value="all">Please Select</option>
                                                                 <option value="queued" <?php if ($status == 'queued') { ?>
-                                                                        selected="selected" <?php } ?>>Queued</option>
+                                                                    selected="selected" <?php } ?>>Queued</option>
                                                                 <option value="in_progress" <?php if ($status == 'in_progress') { ?> selected="selected"
                                                                     <?php } ?>>In Progress</option>
                                                                 <option value="completed" <?php if ($status == 'completed') { ?> selected="selected"
                                                                     <?php } ?>>Completed</option>
                                                                 <option value="failed" <?php if ($status == 'failed') { ?>
-                                                                        selected="selected" <?php } ?>>Failed</option>
+                                                                    selected="selected" <?php } ?>>Failed</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -263,7 +386,7 @@ $referrerChartArray[] = array('Referral', 'Count');
 <script language="JavaScript" type="text/javascript"
     src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script language="JavaScript" type="text/javascript">
-    $(document).keypress(function (e) {
+    $(document).keypress(function(e) {
         if (e.which == 13) {
             // enter pressed
             $('#btn_apply_filters').click();
@@ -291,13 +414,13 @@ $referrerChartArray[] = array('Referral', 'Count');
         $('#btn_apply_filters').attr('href', url);
     }
 
-    $(document).ready(function () {
-        $('.btn-link').hover(function () {
+    $(document).ready(function() {
+        $('.btn-link').hover(function() {
             $(this).popover('show');
-        }, function () {
+        }, function() {
             $(this).popover('hide');
         });
-        $('#btn_apply_filters').click(function (e) {
+        $('#btn_apply_filters').click(function(e) {
             var company_sid = $('#company_sid').val();
             //
             if (company_sid == '') {
@@ -310,21 +433,21 @@ $referrerChartArray[] = array('Referral', 'Count');
             window.location = $(this).attr('href').toString();
         });
 
-        $('#status').on('change', function (value) {
+        $('#status').on('change', function(value) {
             generate_search_url();
         });
 
-        $('#company_sid').on('change', function (value) {
+        $('#company_sid').on('change', function(value) {
             generate_search_url();
         });
 
-        $('#keyword').on('keyup', function () {
+        $('#keyword').on('keyup', function() {
             generate_search_url();
         });
 
         $('#keyword').trigger('keyup');
 
-        $('#indeed_ats_id').on('keyup', function () {
+        $('#indeed_ats_id').on('keyup', function() {
             generate_search_url();
         });
 
@@ -339,7 +462,7 @@ $referrerChartArray[] = array('Referral', 'Count');
             changeMonth: true,
             changeYear: true,
             yearRange: "<?php echo DOB_LIMIT; ?>",
-            onSelect: function (value) {
+            onSelect: function(value) {
                 //console.log(value);
                 $('#end_date_applied').datepicker('option', 'minDate', value);
 
@@ -352,7 +475,7 @@ $referrerChartArray[] = array('Referral', 'Count');
             changeMonth: true,
             changeYear: true,
             yearRange: "<?php echo DOB_LIMIT; ?>",
-            onSelect: function (value) {
+            onSelect: function(value) {
                 //console.log(value);
                 $('#start_date_applied').datepicker('option', 'maxDate', value);
 
@@ -362,7 +485,7 @@ $referrerChartArray[] = array('Referral', 'Count');
 
 
         // Search Area Toggle Function
-        jQuery('.hr-search-criteria').click(function () {
+        jQuery('.hr-search-criteria').click(function() {
             jQuery(this).next().slideToggle('1000');
             jQuery(this).toggleClass("opened");
         });

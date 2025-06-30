@@ -2038,4 +2038,7 @@ class Advanced_report_model extends CI_Model
         return $applicantInfo;
     }
 
+
+
+
 }
