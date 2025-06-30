@@ -147,9 +147,7 @@
         </div>
         <div class="col-md-4 text-center">
             <button id="accept-cookies" class="btn btn-success">Accept</button>
-            <?php if ($this->uri->segment(1) != 'cookie-policy' && $this->uri->segment(1) != 'privacy-policy') { ?>
                 <button id="cookies-preferences" class="btn btn-success">Preferences</button>
-            <?php } ?>
         </div>
     </div>
 </div>
