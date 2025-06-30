@@ -1,4 +1,3 @@
-<!-- 2) CSS STYLES (adjust to your design system or extract into a .scss file) -->
 <style>
     .cookie-modal {
         position: fixed;
@@ -118,20 +117,45 @@
         width: 8%;
         height: 30px !important;
     }
+
+
+
+
+    #cookie-banner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: #222;
+        display: none;
+        color: #fff;
+        padding: 20px;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+    }
 </style>
 
+<div id="cookie-banner">
+    <div class="row">
+        <div class="col-md-8" style="margin-top: 10px;">
+            <span>
+                This website uses cookies to enhance your browsing experience, analyze website traffic, and remember
+                your preferences. For more details about the cookies we use and how we manage your data, please review
+                our <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>privacy-policy" class="">Privacy Policy</a>.
+            </span>
+        </div>
+        <div class="col-md-4 text-center">
+            <button id="accept-cookies" class="btn btn-success">Accept</button>
+            <button id="cookies-preferences" class="btn btn-success">Preferences</button>
+        </div>
+    </div>
+</div>
 
 
 
 
 
-
-
-
-
-
-
-<!-- 1) COOKIE PREFERENCES MODAL HTML -->
 <div id="cookie-modal" class="cookie-modal">
     <div class="cookie-modal__content">
         <button class="cookie-modal__close" onclick="closeModal()">×</button>
@@ -226,185 +250,230 @@
         </div>
 
 
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
         <script>
-            (function() {
-                const modal = document.getElementById('cookie-modal');
-                const LS_KEY = 'automotohr_cookie_preferences';
+            // Utility to set a cookie
+            function setCookie(name, value, days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                const expires = "expires=" + date.toUTCString();
+                document.cookie = `${name}=${value};${expires};path=/`;
 
-                // Load saved preferences or show modal
-                const saved = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+                //
+                var baseURI = '<?php echo base_url(); ?>';
+                var userAgent = navigator.userAgent;
+                var currentUrl = window.location.href;
+                const cookieDataObj = {
+                    userAgent: userAgent,
+                    currentUrl: currentUrl
+                };
 
-                console.log(saved);
-                if (!saved) {
+                $.ajax({
+                    url: baseURI + "cookie/savecookiedata",
+                    method: "POST",
+                    data: cookieDataObj,
+                })
+
+            }
+
+            // Utility to get a cookie
+            function getCookie(name) {
+
+                const nameEQ = name + "=";
+                const ca = document.cookie.split(';');
+                for (let c of ca) {
+                    while (c.charAt(0) === ' ') c = c.substring(1);
+                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length);
+                }
+                return null;
+            }
+
+            // Check cookie on page load
+            window.addEventListener("load", function() {
+                const cookieConsent = getCookie("cookie_consent");
+                if (!cookieConsent) {
+                    document.getElementById("cookie-banner").style.display = "flex";
+                }
+
+                document.getElementById("accept-cookies").addEventListener("click", function() {
+                    setCookie("cookie_consent", "accepted", 365);
+                    document.getElementById("cookie-banner").style.display = "none";
+                });
+
+                //
+                document.getElementById("cookies-preferences").addEventListener("click", function() {
                     modal.style.display = 'flex';
+                });
+            });
+
+
+        </script>
+
+
+
+        <script>
+            const modal = document.getElementById('cookie-modal');
+            const LS_KEY = 'automotohr_cookie_preferences';
+
+            modal.style.display = 'none';
+
+            // Load saved preferences or show modal
+            const saved = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+
+            console.log(saved);
+            if (!saved) {
+                // modal.style.display = 'flex';
+            } else {
+
+                applyConsent(saved);
+                modal.style.display = 'none';
+
+            }
+            // Helpers to read toggles
+            function readPrefs() {
+                return {
+                    doNotSell: document.getElementById('toggle-donotsell').checked,
+                    performance: document.getElementById('toggle-performance').checked,
+                    analytics: document.getElementById('toggle-analytics').checked,
+                    marketing: document.getElementById('toggle-marketing').checked,
+                    social: document.getElementById('toggle-social').checked,
+                    unclassified: document.getElementById('toggle-unclassified').checked,
+                    timestamp: new Date().toISOString()
+                };
+            }
+            // Actions
+            window.acceptAll = () => {
+                ['toggle-performance', 'toggle-analytics', 'toggle-marketing', 'toggle-social', 'toggle-unclassified']
+                .forEach(id => document.getElementById(id).checked = true);
+                savePreferences();
+            };
+
+            window.rejectAll = () => {
+                ['toggle-performance', 'toggle-analytics', 'toggle-marketing', 'toggle-social', 'toggle-unclassified']
+                .forEach(id => document.getElementById(id).checked = false);
+                savePreferences();
+            };
+
+            window.savePreferences = () => {
+                const prefs = readPrefs();
+                localStorage.setItem(LS_KEY, JSON.stringify(prefs));
+                closeModal();
+                applyConsent(prefs);
+                saveCookieLog();
+            };
+
+            window.closeModal = () => {
+                modal.style.display = 'none';
+            };
+
+            // Your hook: fire or block scripts based on prefs
+            window.applyConsent = (prefs) => {
+                // Example: Analytics                  
+                // Example: Marketing pixel
+                if (prefs.marketing && !prefs.doNotSell) {
+                    loadScript('https://connect.facebook.net/en_US/fbevents.js', () => {
+                        fbq('init', 'YOUR_PIXEL_ID'); // Replace with your actual Pixel ID
+                    });
+                }
+
+            };
+
+            // Utility to inject ∂ scripts
+            function loadScript(src) {
+                const s = document.createElement('script');
+                s.src = src;
+                s.async = true;
+                document.head.appendChild(s);
+            }
+
+            //
+            const banner = document.getElementById('cookie-banner');
+            const gpcEnabled = navigator.globalPrivacyControl === true;
+
+            function getConsent() {
+                return JSON.parse(localStorage.getItem('automotohr_cookie_consent') || 'null');
+            }
+
+            function showBanner() {
+                //  banner.style.display = 'block';
+            }
+
+            //
+            function saveConsent(acceptAll) {
+                const consent = {
+                    functional: true,
+                    analytics: acceptAll || document.getElementById('consent-analytics').checked,
+                    marketing: acceptAll || document.getElementById('consent-marketing').checked,
+                    gpc: gpcEnabled,
+                    timestamp: new Date().toISOString()
+                };
+
+                localStorage.setItem('automotohr_cookie_consent', JSON.stringify(consent));
+                banner.style.display = 'none';
+                applyConsent(consent);
+            }
+
+            //
+            function denyAll() {
+                const consent = {
+                    functional: true,
+                    analytics: false,
+                    marketing: false,
+                    gpc: gpcEnabled,
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem('automotohr_cookie_consent', JSON.stringify(consent));
+                banner.style.display = 'none';
+                applyConsent(consent);
+            }
+
+            //
+            function applyConsent(consent) {
+                // Block or allow scripts                  
+                if (consent.marketing) {
+                    //  loadScript('<https://connect.facebook.net/en_US/fbevents.js');
+                    // Add Meta Pixel init here
+                }
+            }
+
+            //
+            function loadScript(src) {
+                const s = document.createElement('script');
+                s.src = src;
+                s.async = true;
+                document.head.appendChild(s);
+            }
+
+            // Check GPC
+            if (gpcEnabled) {
+                denyAll(); // Auto opt-out under CPRA
+            } else {
+                const consent = getConsent();
+                if (!consent) {
+                    showBanner();
                 } else {
-
-                    applyConsent(saved);
-                    modal.style.display = 'none';
-
-                }
-                // Helpers to read toggles
-                function readPrefs() {
-                    return {
-                        doNotSell: document.getElementById('toggle-donotsell').checked,
-                        performance: document.getElementById('toggle-performance').checked,
-                        analytics: document.getElementById('toggle-analytics').checked,
-                        marketing: document.getElementById('toggle-marketing').checked,
-                        social: document.getElementById('toggle-social').checked,
-                        unclassified: document.getElementById('toggle-unclassified').checked,
-                        timestamp: new Date().toISOString()
-                    };
-                }
-                // Actions
-                window.acceptAll = () => {
-                    ['toggle-performance', 'toggle-analytics', 'toggle-marketing', 'toggle-social', 'toggle-unclassified']
-                    .forEach(id => document.getElementById(id).checked = true);
-                    savePreferences();
-                };
-
-                window.rejectAll = () => {
-                    ['toggle-performance', 'toggle-analytics', 'toggle-marketing', 'toggle-social', 'toggle-unclassified']
-                    .forEach(id => document.getElementById(id).checked = false);
-                    savePreferences();
-                };
-
-                window.savePreferences = () => {
-                    const prefs = readPrefs();
-                    localStorage.setItem(LS_KEY, JSON.stringify(prefs));
-                    closeModal();
-                    applyConsent(prefs);
-                    saveCookieLog();
-                };
-
-                window.closeModal = () => {
-                    modal.style.display = 'none';
-                };
-
-                // Your hook: fire or block scripts based on prefs
-                window.applyConsent = (prefs) => {
-                    // Example: Analytics
-                    /*
-                    if (prefs.analytics) {
-                        loadScript('https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID', () => {
-                            window.dataLayer = window.dataLayer || [];
-
-                            function gtag() {
-                                dataLayer.push(arguments);
-                            }
-                            gtag('js', new Date());
-
-                            gtag('config', 'GA_MEASUREMENT_ID');
-                        });
-
-                    } */
-
-
-                    // Example: Marketing pixel
-                    if (prefs.marketing && !prefs.doNotSell) {
-                        loadScript('https://connect.facebook.net/en_US/fbevents.js', () => {
-                            fbq('init', 'YOUR_PIXEL_ID'); // Replace with your actual Pixel ID
-                        });
-                    }
-
-                };
-
-                // Utility to inject ∂ scripts
-                function loadScript(src) {
-                    const s = document.createElement('script');
-                    s.src = src;
-                    s.async = true;
-                    document.head.appendChild(s);
-                }
-
-                //
-                const banner = document.getElementById('cookie-banner');
-                const gpcEnabled = navigator.globalPrivacyControl === true;
-
-                function getConsent() {
-                    return JSON.parse(localStorage.getItem('automotohr_cookie_consent') || 'null');
-                }
-
-                function showBanner() {
-                    //  banner.style.display = 'block';
-                }
-
-                //
-                function saveConsent(acceptAll) {
-                    const consent = {
-                        functional: true,
-                        analytics: acceptAll || document.getElementById('consent-analytics').checked,
-                        marketing: acceptAll || document.getElementById('consent-marketing').checked,
-                        gpc: gpcEnabled,
-                        timestamp: new Date().toISOString()
-                    };
-
-                    localStorage.setItem('automotohr_cookie_consent', JSON.stringify(consent));
-                    banner.style.display = 'none';
                     applyConsent(consent);
-                }
-
-                //
-                function denyAll() {
-                    const consent = {
-                        functional: true,
-                        analytics: false,
-                        marketing: false,
-                        gpc: gpcEnabled,
-                        timestamp: new Date().toISOString()
-                    };
-                    localStorage.setItem('automotohr_cookie_consent', JSON.stringify(consent));
-                    banner.style.display = 'none';
-                    applyConsent(consent);
-                }
-
-                //
-                function applyConsent(consent) {
-                    // Block or allow scripts
-                  
-                    if (consent.marketing) {
-                        //  loadScript('<https://connect.facebook.net/en_US/fbevents.js');
-                        // Add Meta Pixel init here
-                    }
-                }
-
-                //
-                function loadScript(src) {
-                    const s = document.createElement('script');
-                    s.src = src;
-                    s.async = true;
-                    document.head.appendChild(s);
-                }
-
-                // Check GPC
-                if (gpcEnabled) {
-                    denyAll(); // Auto opt-out under CPRA
-                } else {
-                    const consent = getConsent();
-                    if (!consent) {
-                        showBanner();
-                    } else {
-                        applyConsent(consent);
-
-                    }
-                }
-
-                //
-                function saveCookieLog() {
-                    var baseURI = '<?php echo base_url(); ?>';
-                    var userAgent = navigator.userAgent;
-                    var currentUrl = window.location.href;
-                    const cookieDataObj = {
-                        userAgent: userAgent,
-                        currentUrl: currentUrl
-                    };
-
-                    $.ajax({
-                        url: baseURI + "cookie/savecookiedata",
-                        method: "POST",
-                        data: cookieDataObj,
-                    })
 
                 }
+            }
 
-            })();
+            //
+            function saveCookieLog() {
+
+                var baseURI = '<?php echo base_url(); ?>';
+                var userAgent = navigator.userAgent;
+                var currentUrl = window.location.href;
+                const cookieDataObj = {
+                    userAgent: userAgent,
+                    currentUrl: currentUrl
+                };
+
+                $.ajax({
+                    url: baseURI + "cookie/savecookiedata",
+                    method: "POST",
+                    data: cookieDataObj,
+                })
+
+            }
         </script>
