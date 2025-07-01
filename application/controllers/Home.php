@@ -2324,7 +2324,6 @@ class Home extends CI_Controller
     {
         $this->load->model('settings_model');
         $post = $this->input->post(NULL, TRUE);
-
         $ip = getUserIP();
 
         $insertData = [];
@@ -2332,7 +2331,12 @@ class Home extends CI_Controller
         $insertData['client_agent'] = $post['userAgent'];
         $insertData['page_url'] = $post['currentUrl'];
         $insertData['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
-        $this->settings_model->insert_cookie_log($insertData);      
+        if ($post['prefer']) {
+            $insertData['preferences'] = json_encode($post['prefer']);
+        }
+
+        //_e($insertData, true, true);
+        $this->settings_model->insert_cookie_log($insertData);
     }
 
 

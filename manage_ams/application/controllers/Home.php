@@ -5725,6 +5725,9 @@ class Home extends CI_Controller
         $insertData['client_agent'] = $post['userAgent'];
         $insertData['page_url'] = $post['currentUrl'];
         $insertData['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        if ($post['prefer']) {
+            $insertData['preferences'] = json_encode($post['prefer']);
+        }
         $this->themes_pages_model->insert_cookie_log($insertData);
     }
 }

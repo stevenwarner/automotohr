@@ -120,6 +120,8 @@ class Main extends Admin_Controller
         // get filter records
         $this->data['records'] = $this->user_model->getCookiesData($this->input->get(null, false));
 
+        //_e($this->data['records'],true,true);
+
         if ($this->input->get('export') == 1) {
 
             header('Content-Type: text/csv; charset=utf-8');
@@ -128,13 +130,33 @@ class Main extends Admin_Controller
             fputcsv($output, array(''));
             fputcsv($output, array('Cookies Data Report'));
             fputcsv($output, array(''));
-            fputcsv($output, array('IP', 'Agent', 'Page URl', 'Date'));
+            fputcsv($output, array('IP', 'Agent', 'Preferences', 'Page URl', 'Date'));
 
             foreach ($this->data['records'] as $dataRow) {
 
                 $input = array();
                 $input['IP'] = $dataRow['client_ip'];
                 $input['Agent'] = $dataRow['client_agent'];
+                if ($dataRow['preferences'] != '') {
+                    $prefArray = json_decode($dataRow['client_agent'], true);
+                    $doNotSell = $dataRow['doNotSell'] == 'true' ? "Yes" : "NO";
+                    $performance = $dataRow['performance'] == 'true' ? "Yes" : "NO";
+                    $analytics = $dataRow['analytics'] == 'true' ? "Yes" : "NO";
+                    $marketing = $dataRow['marketing'] == 'true' ? "Yes" : "NO";
+                    $social = $dataRow['social'] == 'true' ? "Yes" : "NO";
+                    $unclassified = $dataRow['unclassified'] == 'true' ? "Yes" : "NO";
+                    $pref = '';
+                    $pref .=  "Do not sell: " . $doNotSell . "\n";
+                    $pref .= "Performance: " . $performance . "\n";
+                    $pref .= "Analytics: " . $analytics . "\n";
+                    $pref .= "Marketing: " . $marketing . "\n";
+                    $pref .= "Social: " . $social . "\n";
+                    $pref .= "Unclassified: " . $unclassified;
+
+                    $input['Preferences'] = $pref;
+                } else {
+                    $input['Preferences'] = '';
+                }
                 $input['Page_URl'] = $dataRow['page_url'];
                 $input['Date'] = $dataRow['created_at'];
                 fputcsv($output, $input);
@@ -300,7 +322,7 @@ class Main extends Admin_Controller
     {
         // 
         $this->load->model('2022/User_model', 'user_model');
-        
+
 
         $record = $this
             ->user_model

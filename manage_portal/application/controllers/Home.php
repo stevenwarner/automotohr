@@ -576,8 +576,7 @@ class Home extends CI_Controller
                         $testimonialData = $this->testimonials_model->GetTestimonial($testimonialId);
                         $jobs_page_title = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'jobs', 'jobs_page_title');
                         $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
-                        $data['jobs_page_title'] = strtolower(str_replace(' ', '_', $jobs_page_title));
-                        ;
+                        $data['jobs_page_title'] = strtolower(str_replace(' ', '_', $jobs_page_title));;
                         $testimonialData['author_name'] = str_replace("{{company_name}}", $data['company_details']['CompanyName'], $testimonialData['author_name']);
                         $testimonialData['short_description'] = str_replace("{{company_name}}", $data['company_details']['CompanyName'], $testimonialData['short_description']);
                         $testimonialData['full_description'] = str_replace("{{company_name}}", $data['company_details']['CompanyName'], $testimonialData['full_description']);
@@ -607,8 +606,7 @@ class Home extends CI_Controller
                                 $data['footer_content'] = $footer_content;
                                 $jobs_page_title = $this->theme_meta_model->fGetThemeMetaData($company_id, $theme_name, 'jobs', 'jobs_page_title');
                                 $jobs_page_title = !empty($jobs_page_title) ? $jobs_page_title : 'jobs';
-                                $data['jobs_page_title'] = strtolower(str_replace(' ', '_', $jobs_page_title));
-                                ;
+                                $data['jobs_page_title'] = strtolower(str_replace(' ', '_', $jobs_page_title));;
                                 $data['pageData'] = $pageData;
 
                                 if ($pageData['job_fair'] == 1) {
@@ -657,7 +655,6 @@ class Home extends CI_Controller
                 $this->load->view('common/maintenance_mode', $data);
             }
         }
-
     }
 
     public function contact_us()
@@ -4011,7 +4008,7 @@ class Home extends CI_Controller
     }
 
 
-      public function saveCookieData()
+    public function saveCookieData()
     {
 
         $post = $this->input->post(NULL, TRUE);
@@ -4023,7 +4020,9 @@ class Home extends CI_Controller
         $insertData['client_agent'] = $post['userAgent'];
         $insertData['page_url'] = $post['currentUrl'];
         $insertData['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
-        $this->themes_pages_model->insert_cookie_log($insertData);      
+        if ($post['prefer']) {
+            $insertData['preferences'] = json_encode($post['prefer']);
+        }
+        $this->themes_pages_model->insert_cookie_log($insertData);
     }
-
 }

@@ -21,12 +21,12 @@
                                                 <div class="col-xs-12">
                                                     <div class="col-lg-4 col-md-3 col-xs-12 col-sm-3 field-row">
                                                         <label>Start Date</label>
-                                                        <input type="text" name="start_date" readonly class="invoice-fields"  value="<?= $this->input->get('start_date') ?? ''; ?>">
+                                                        <input type="text" name="start_date" readonly class="invoice-fields" value="<?= $this->input->get('start_date') ?? ''; ?>">
                                                     </div>
 
                                                     <div class="col-lg-4 col-md-3 col-xs-12 col-sm-3 field-row">
                                                         <label>End Date</label>
-                                                        <input type="text" name="end_date" readonly class="invoice-fields"  value="<?= $this->input->get('end_date') ?? ''; ?>">
+                                                        <input type="text" name="end_date" readonly class="invoice-fields" value="<?= $this->input->get('end_date') ?? ''; ?>">
                                                     </div>
 
                                                     <div class="col-lg-4 col-md-3 col-xs-12 col-sm-3 field-row">
@@ -87,6 +87,7 @@
                                                 <th>
                                                     Agent
                                                 </th>
+                                                <th>Preferences</th>
                                                 <th>
                                                     Page URl
                                                 </th>
@@ -102,6 +103,28 @@
                                                             <td>
                                                                 <p><?php echo $record['client_agent']; ?></p>
                                                             </td>
+                                                            <td>
+                                                                <p><?php
+                                                                    if ($record['preferences'] != '') {
+                                                                        $preferencesArray = $record['preferences'] = json_decode($record['preferences'], true);
+
+                                                                        $doNotSell = $preferencesArray['doNotSell'] == 'true' ? "Yes" : "NO";
+                                                                        $performance = $preferencesArray['performance'] == 'true' ? "Yes" : "NO";
+                                                                        $analytics = $preferencesArray['analytics'] == 'true' ? "Yes" : "NO";
+                                                                        $marketing = $preferencesArray['marketing'] == 'true' ? "Yes" : "NO";
+                                                                        $social = $preferencesArray['social'] == 'true' ? "Yes" : "NO";
+                                                                        $unclassified = $preferencesArray['unclassified'] == 'true' ? "Yes" : "NO";
+
+                                                                        echo "Do not sell: " . $doNotSell . "<br>";
+                                                                        echo "Performance: " . $performance . "<br>";
+                                                                        echo "Analytics: " . $analytics . "<br>";
+                                                                        echo "Marketing: " . $marketing . "<br>";
+                                                                        echo "Social: " . $social . "<br>";
+                                                                        echo "Unclassified: " . $unclassified;
+                                                                    }
+                                                                    ?></p>
+                                                            </td>
+
                                                             <td>
                                                                 <?php echo $record['page_url']; ?>
                                                             </td>
@@ -149,9 +172,9 @@
 
     //
     $('#js-export').click(function() {
-        
-         $("#export").val("1");
-         $('#cookies_form').submit();
-        
+
+        $("#export").val("1");
+        $('#cookies_form').submit();
+
     });
 </script>

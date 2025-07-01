@@ -253,6 +253,8 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
         <script>
+            const LS_KEY = 'automotohr_cookie_preferences_dev';
+
             // Utility to set a cookie
             function setCookie(name, value, days) {
                 const date = new Date();
@@ -304,17 +306,29 @@
                 //
                 document.getElementById("cookies-preferences").addEventListener("click", function() {
                     modal.style.display = 'flex';
+
+                    const savedPref = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+
+                    if (savedPref) {
+
+                        saved.analytics ? document.getElementById('toggle-donotsell').checked = true : document.getElementById('toggle-donotsell').checked = false;
+                        saved.performance ? document.getElementById('toggle-performance').checked = true : document.getElementById('toggle-performance').checked = false;
+                        saved.analytics ? document.getElementById('toggle-analytics').checked = true : document.getElementById('toggle-analytics').checked = false;
+                        saved.marketing ? document.getElementById('toggle-marketing').checked = true : document.getElementById('toggle-marketing').checked = false;
+                        saved.social ? document.getElementById('toggle-social').checked = true : document.getElementById('toggle-social').checked = false;
+                        saved.unclassified ? document.getElementById('toggle-unclassified').checked = true : document.getElementById('toggle-unclassified').checked = false;
+
+                    }
                 });
             });
-
-
         </script>
 
 
 
         <script>
+            let getsavedPrefs = [];
             const modal = document.getElementById('cookie-modal');
-            const LS_KEY = 'automotohr_cookie_preferences';
+            // const LS_KEY = 'automotohr_cookie_preferences';
 
             modal.style.display = 'none';
 
@@ -356,10 +370,14 @@
             };
 
             window.savePreferences = () => {
+                localStorage.removeItem(LS_KEY);
                 const prefs = readPrefs();
                 localStorage.setItem(LS_KEY, JSON.stringify(prefs));
                 closeModal();
                 applyConsent(prefs);
+
+                getsavedPrefs = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+
                 saveCookieLog();
             };
 
@@ -466,7 +484,8 @@
                 var currentUrl = window.location.href;
                 const cookieDataObj = {
                     userAgent: userAgent,
-                    currentUrl: currentUrl
+                    currentUrl: currentUrl,
+                    prefer: getsavedPrefs
                 };
 
                 $.ajax({
