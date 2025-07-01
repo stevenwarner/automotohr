@@ -2039,6 +2039,11 @@ class Advanced_report_model extends CI_Model
     }
 
 
-
-
+    //
+    function get_applicant_ai_report_count()
+    {
+        $this->db->select('portal_applicant_jobs_queue.status');
+        $applications = $this->db->get('portal_applicant_jobs_queue')->result_array();
+        return $applications;
+    }
 }

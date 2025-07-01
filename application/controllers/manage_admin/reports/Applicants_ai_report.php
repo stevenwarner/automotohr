@@ -110,12 +110,38 @@ class Applicants_ai_report extends Admin_Controller
 
         //-----------------------------------Pagination Ends-----------------------------//
 
+        $applicantsCountSummary  = $this->advanced_report_model->get_applicant_ai_report_count();
+        //_e($this->data['applicants_count_summary'] ,true,true);
+
+
+        $summaryCount['total'] = count($applicantsCountSummary);
+        $summaryCount['queued'] = 0;
+        $summaryCount['in_progress'] = 0;
+        $summaryCount['completed'] = 0;
+        $summaryCount['failed'] = 0;
+        foreach ($applicantsCountSummary as $rowdata) {
+            if ($rowdata['status'] == 'queued') {
+                $summaryCount['queued'] = $summaryCount['queued'] + 1;
+            }
+            if ($rowdata['status'] == 'in_progress') {
+                $summaryCount['in_progress'] = $summaryCount['in_progress'] + 1;
+            }
+            if ($rowdata['status'] == 'completed') {
+                $summaryCount['completed'] = $summaryCount['completed'] + 1;
+            }
+
+            if ($rowdata['status'] == 'failed') {
+                $summaryCount['failed'] = $summaryCount['failed'] + 1;
+            }
+        }
+        $this->data['summary_count'] = $summaryCount;
         $this->data['applicants_count'] = $total_records;
         $this->data['applicants'] = $final_applicants;
         $this->render('manage_admin/reports/applicants_ai_report');
     }
 
-    public function view_detail ($sid) {
+    public function view_detail($sid)
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'applicant_resume_analysis_detail';
@@ -130,5 +156,4 @@ class Applicants_ai_report extends Admin_Controller
         $this->data["applicant"] = $applicantResume;
         $this->render('manage_admin/reports/applicant_resume_analysis');
     }
-
 }

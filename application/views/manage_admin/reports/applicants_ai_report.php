@@ -62,7 +62,7 @@
         /* Adjust padding as needed */
     }
 
-      .queued-block {
+    .queued-block {
         background: #f0ad4e !important;
     }
 </style>
@@ -81,16 +81,15 @@ $referrerChartArray[] = array('Referral', 'Count');
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
-                                    <div class="heading-title page-title">
+                                    <div class="heading-title">
                                         <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?>
                                         </h1>
                                     </div>
-
                                     <div class="row">
                                         <div class="col-xs-2">
                                             <div class="thumbnail put-block">
                                                 <div class="caption">
-                                                    <h3 id="jsSuccessCalls"><?= $counts['totals']; ?>10</h3>
+                                                    <h3 id="jsSuccessCalls"><?= $summary_count['total']; ?></h3>
                                                     <h4><strong>Total</strong></h4>
                                                 </div>
                                             </div>
@@ -98,7 +97,7 @@ $referrerChartArray[] = array('Referral', 'Count');
                                         <div class="col-xs-2">
                                             <div class="thumbnail success-block">
                                                 <div class="caption">
-                                                    <h3 id="jsSuccessCalls"><?= $counts['pending']; ?></h3>
+                                                    <h3 id="jsSuccessCalls"><?= $summary_count['completed']; ?></h3>
                                                     <h4><strong>Completed</strong></h4>
                                                 </div>
                                             </div>
@@ -106,7 +105,7 @@ $referrerChartArray[] = array('Referral', 'Count');
                                         <div class="col-xs-2">
                                             <div class="thumbnail post-block">
                                                 <div class="caption">
-                                                    <h3 id="jsSuccessCalls"><?= $counts['processing']; ?></h3>
+                                                    <h3 id="jsSuccessCalls"><?= $summary_count['in_progress']; ?></h3>
                                                     <h4><strong>In Progress</strong></h4>
                                                 </div>
                                             </div>
@@ -114,33 +113,21 @@ $referrerChartArray[] = array('Referral', 'Count');
                                         <div class="col-xs-2">
                                             <div class="thumbnail queued-block">
                                                 <div class="caption">
-                                                    <h3 id="jsSuccessCalls"><?= $counts['processed']; ?></h3>
+                                                    <h3 id="jsSuccessCalls"><?= $summary_count['queued']; ?></h3>
                                                     <h4><strong>Queued</strong></h4>
                                                 </div>
                                             </div>
                                         </div>
-                                   
+
                                         <div class="col-xs-2">
                                             <div class="thumbnail error-block">
                                                 <div class="caption">
-                                                    <h3 id="jsSuccessCalls"><?= $counts['errors']; ?></h3>
+                                                    <h3 id="jsSuccessCalls"><?= $summary_count['failed']; ?></h3>
                                                     <h4><strong>Failed</strong></h4>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
                                     <div class="hr-search-criteria opened">
                                         <strong>Click to modify search criteria</strong>
                                     </div>
