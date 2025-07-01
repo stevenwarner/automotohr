@@ -85,6 +85,12 @@
                             (<?= count($report["notes"]); ?>)
                         </a>
                     </li>
+                    <li class="nav-item <?= $this->input->get("tab", true) == "employees" ? "active" : ""; ?>">
+                        <a class="nav-link" data-toggle="tab" href="#tab-employees" role="tab">
+                            <i class="fa fa-user"></i> Employees
+                            (<?= $employeesCount; ?>)
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -95,9 +101,9 @@
             <?php $this->load->view('compliance_safety_reporting/reporting/issues'); ?>
             <?php $this->load->view('compliance_safety_reporting/reporting/questions'); ?>
             <?php $this->load->view("compliance_safety_reporting/reporting/files"); ?>
-
             <?php $this->load->view("compliance_safety_reporting/partials/files/emails"); ?>
             <?php $this->load->view('compliance_safety_reporting/reporting/notes'); ?>
+            <?php $this->load->view('compliance_safety_reporting/reporting/employees'); ?>
         </div>
     </div>
 </div>

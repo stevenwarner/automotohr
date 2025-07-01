@@ -43,7 +43,14 @@ $(function Overview() {
 			allowCapture: true,
 		},
 	};
-
+	//
+	$('#jsCompanyDepartments').select2({
+		closeOnSelect: false
+	});
+	//
+	$('#jsTeams').select2({
+		closeOnSelect: false
+	});
 
 	$(".jsDeleteReportBtn").click(
 		function (event) {
@@ -165,42 +172,6 @@ $(function Overview() {
 		submitHandler: function (form) {
 			handleFormSubmission(form);
 		},
-	});
-
-	$(".jsAddExternalEmployee").click(function (event) {
-		event.preventDefault();
-		$(".jsAddExternalBody .alert").remove();
-		generateExternalEmployees();
-	});
-
-	$(document).on("click", ".jsRemoveExternalEmployee", function () {
-		const external = $(this).closest(".row");
-		if (external.data("id")) {
-			return confirmAndDeleteFromServer(external);
-		}
-		alertify.confirm(
-			"Are you sure you want to remove this external employee?",
-			function () {
-				$(
-					`input[name="external_employees[${external.data(
-						"external"
-					)}]['name']"]`
-				).rules("remove");
-				$(
-					`input[name="external_employees[${external.data(
-						"external"
-					)}]['email']"]`
-				).rules("remove");
-				external.remove();
-				externalPointer--;
-
-				if (externalPointer == 0) {
-					$(".jsAddExternalBody").html(
-						' <div class="alert alert-info text-center">No External employees found</div>'
-					);
-				}
-			}
-		);
 	});
 
 	$(document).on("click", ".jsDeleteReportIncident", function () {
@@ -332,13 +303,13 @@ $(function Overview() {
             <div class="col-md-5">
                 <div class="form-group">
                     <label for="external_employee_name">Name</label>
-                    <input type="text" name="external_employees_names[${externalPointer}]['name']" class="form-control" required>
+                    <input type="text" name="external_employees_names[${externalPointer}]['name']" class="form-control jsEPName${externalPointer}" required>
                 </div>
             </div>
             <div class="col-md-5">
                 <div class="form-group">
                     <label for="external_employee_email">Email</label>
-                    <input type="email" name="external_employees_emails[${externalPointer}]['email']" class="form-control" required>
+                    <input type="email" name="external_employees_emails[${externalPointer}]['email']" class="form-control jsEPEmail${externalPointer}" required>
                 </div>
             </div>
             <div class="col-md-1">
@@ -346,6 +317,14 @@ $(function Overview() {
                     <label>&nbsp;</label>
                     <button type="button" class="btn btn-red btn-block jsRemoveExternalEmployee">
                         <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+			 <div class="col-md-1 jsAddExternalEmployeeRow">
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-orange btn-block jsAddExternalEmployeeBtn">
+                        <i class="fa fa-plus-circle"></i>
                     </button>
                 </div>
             </div>
@@ -1572,6 +1551,234 @@ $(function Overview() {
 			return note.id !== remove_note_sid;
 		});
 	});
+
+	$(document).on("click", ".jsAddDepartmentsAndTeams", function () {
+		//
+		var obj = {};
+		obj.departments = $('#jsCompanyDepartments').val() || '';
+		obj.teams = $('#jsTeams').val() || '';
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl("compliance_safety_reporting/add_department_and_team_to_report/" + reportId),
+				method: "POST",
+				data: $.param(obj),
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success(resp.message, function () {
+						window.location.refresh();
+					});
+				});
+		}
+	});
+
+	$(document).on("click", ".jsRemoveDepartmentsAndTeams", function () {
+		_confirm(
+			"Are you sure you want to remove department(s) and team(s).",
+			function () {
+				deleteDepartmentsAndTeams();
+			}
+		);
+	});
+
+	function deleteDepartmentsAndTeams() {
+		//
+		if (XHR === null) {
+			//
+			ml(true, "jsPageLoader");
+			//
+			XHR = $.ajax({
+				url: baseUrl(
+					"compliance_safety_reporting/delete_department_and_team_from_report/" +
+					reportId
+				),
+				method: "DELETE",
+			})
+				.always(function () {
+					XHR = null;
+					ml(false, "jsPageLoader");
+				})
+				.fail(handleErrorResponse)
+				.done(function (resp) {
+					_success("Removed department and team successfully", function () {
+						window.location.reload();
+					});
+				});
+		}
+	}
+
+	$(".jsUpdateItemBtn").click(
+		function (event) {
+			event.preventDefault();
+			//
+			const type = $(this).data("type");
+
+			if (type === "internal") {
+				processInternalEmployees();
+			} else {
+				processExternalEmployees();
+			}
+		}
+	);
+
+
+	function processInternalEmployees() {
+		const selectedEmployeeIds = $(".jsInternalEmployees:checked").length > 0 ? $(".jsInternalEmployees:checked")
+			.map(function () {
+				return $(this).val();
+			})
+			.get() : [];
+		//
+		ml(true, "jsPageLoader")
+		//
+		$
+			.ajax({
+				url: baseUrl(`compliance_safety_reporting/report/${reportId}/employees/internal`),
+				method: "POST",
+				data: {
+					ids: selectedEmployeeIds,
+				}
+			})
+			.always(function () {
+				ml(false, "jsPageLoader")
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.message)
+			});
+	}
+
+	$(".jsAddExternalEmployee").click(function (event) {
+		event.preventDefault();
+		$(".jsAddExternalBody .alert").remove();
+		generateExternalEmployees();
+	});
+
+	$(document).on("click", ".jsRemoveExternalEmployee", function () {
+		const external = $(this).closest(".row");
+		if (external.data("id")) {
+			return confirmAndDeleteFromServer(external);
+		}
+		alertify.confirm(
+			"Are you sure you want to remove this external employee?",
+			function () {
+				$(
+					`input[name="external_employees[${external.data(
+						"external"
+					)}]['name']"]`
+				).rules("remove");
+				$(
+					`input[name="external_employees[${external.data(
+						"external"
+					)}]['email']"]`
+				).rules("remove");
+				external.remove();
+				externalPointer--;
+
+				if (externalPointer == 0) {
+					$(".jsAddExternalBody").html(
+						' <div class="alert alert-info text-center">No External employees found</div>'
+					);
+				}
+			}
+		);
+	});
+
+	$(document).on("click", ".jsSaveExternalEmployee", function () {
+		const external = $(this).closest(".row");
+		if (external.data("id")) {
+			return confirmAndDeleteFromServer(external);
+		}
+		alertify.confirm(
+			"Are you sure you want to remove this external employee?",
+			function () {
+				$(
+					`input[name="external_employees[${external.data(
+						"external"
+					)}]['name']"]`
+				).rules("remove");
+				$(
+					`input[name="external_employees[${external.data(
+						"external"
+					)}]['email']"]`
+				).rules("remove");
+				external.remove();
+				externalPointer--;
+
+				if (externalPointer == 0) {
+					$(".jsAddExternalBody").html(
+						' <div class="alert alert-info text-center">No External employees found</div>'
+					);
+				}
+			}
+		);
+	});
+
+	//
+	$(document).on(
+		"click",
+		".jsAddExternalEmployeeBtn",
+		function (event) {
+			event.preventDefault();
+			processExternalEmployee(
+				$(this).closest(".row").data("external")
+			);
+		}
+	);
+
+	function processExternalEmployee(id) {
+
+		const obj = {
+			name: $(`.jsEPName${id}`).val().trim(),
+			email: $(`.jsEPEmail${id}`).val().trim(),
+		}
+		//
+		if (!obj.name) {
+			_error("Employee name is required.");
+			return;
+		}
+
+		if (!obj.email) {
+			_error("Employee email is required.");
+			return;
+		}
+
+		let regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+		if (!regex.test(obj.email)) {
+			_error("Employee email is invalid.");
+			return;
+		}
+		//
+		ml(true, "jsPageLoader")
+		//
+		$
+			.ajax({
+				url: baseUrl(`compliance_safety_reporting/report/${reportId}/employees/external`),
+				method: "POST",
+				data: {
+					external: obj,
+				}
+			})
+			.always(function () {
+				ml(false, "jsPageLoader")
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.message)
+
+				$(`.row [data-external="${id}"]`).data("id", resp.id);
+				$(`.row [data-external="${id}"]`).find(".jsAddExternalEmployeeRow").remove();
+			});
+	}
 
 	ml(false, "jsPageLoader");
 });

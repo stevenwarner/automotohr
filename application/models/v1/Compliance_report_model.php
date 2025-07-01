@@ -1926,6 +1926,7 @@ class Compliance_report_model extends CI_Model
 			->where("csp_reports_employees.csp_reports_sid", $reportId)
 			->where("csp_reports_employees.is_external_employee", 0)
 			->where("csp_reports_employees.csp_report_incident_sid", 0)
+			->where("csp_reports_employees.is_manager", 0)
 			->where("csp_reports_employees.status", 1)
 			->get("csp_reports_employees")
 			->result_array();
@@ -3232,11 +3233,12 @@ class Compliance_report_model extends CI_Model
 		//
 		$where = [
 			"csp_reports_employees.employee_sid" => $employeeId,
-			"csp_reports_employees.csp_reports_incidents_items_sid <> " => 0,
+			// "csp_reports_employees.csp_reports_incidents_items_sid <> " => 0,
 		];
 		//
 		$records = $this
 			->db
+			->select("csp_reports_employees.sid")
 			->select("csp_reports_employees.csp_reports_sid")
 			->select("csp_reports_employees.csp_report_incident_sid")
 			->select("csp_reports_employees.csp_reports_incidents_items_sid")
@@ -3250,6 +3252,7 @@ class Compliance_report_model extends CI_Model
 			$incidents = [];
 			//
 			foreach ($records as $item) {
+				
 				// add report ids
 				// if (!in_array($item["csp_reports_sid"], $reports)) {
 				// 	$reports[] = $item["csp_reports_sid"];
@@ -3257,8 +3260,31 @@ class Compliance_report_model extends CI_Model
 				// if (!in_array($item["csp_report_incident_sid"], $incidents)) {
 				// 	$incidents[] = $item["csp_report_incident_sid"];
 				// }
-				if (!in_array($item["csp_reports_incidents_items_sid"], $tasks)) {
-					$tasks[] = $item["csp_reports_incidents_items_sid"];
+				if ($item["csp_reports_incidents_items_sid"] != 0) {
+					if (!in_array($item["csp_reports_incidents_items_sid"], $tasks)) {
+						$tasks[] = $item["csp_reports_incidents_items_sid"];
+					}
+				} else {
+					$issues = $this->db
+						->select('csp_reports_incidents_items.sid')
+						->where([
+							'csp_reports_incidents.csp_reports_sid' => $item["csp_reports_sid"],
+						])
+						->join(
+							"csp_reports_incidents",
+							"csp_reports_incidents.sid = csp_reports_incidents_items.csp_reports_incidents_sid",
+							"inner"
+						)
+						->get('csp_reports_incidents_items')
+						->result_array();
+					//
+					if ($issues) {
+						foreach ($issues as $issue) {
+							if (!in_array($issue["sid"], $tasks)) {
+								$tasks[] = $issue["sid"];
+							}
+						}
+					}	
 				}
 			}
 		}
@@ -3758,8 +3784,32 @@ class Compliance_report_model extends CI_Model
 				// if (!in_array($item["csp_report_incident_sid"], $incidents) && $item["csp_report_incident_sid"] != 0) {
 				// 	$incidents[] = $item["csp_report_incident_sid"];
 				// }
-				if (!in_array($item["csp_reports_incidents_items_sid"], $tasks) && $item["csp_reports_incidents_items_sid"] != 0) {
-					$tasks[] = $item["csp_reports_incidents_items_sid"];
+				
+				if ($item["csp_reports_incidents_items_sid"] != 0) {
+					if (!in_array($item["csp_reports_incidents_items_sid"], $tasks)) {
+						$tasks[] = $item["csp_reports_incidents_items_sid"];
+					}
+				} else {
+					$issues = $this->db
+						->select('csp_reports_incidents_items.sid')
+						->where([
+							'csp_reports_incidents.csp_reports_sid' => $item["csp_reports_sid"],
+						])
+						->join(
+							"csp_reports_incidents",
+							"csp_reports_incidents.sid = csp_reports_incidents_items.csp_reports_incidents_sid",
+							"inner"
+						)
+						->get('csp_reports_incidents_items')
+						->result_array();
+					//
+					if ($issues) {
+						foreach ($issues as $issue) {
+							if (!in_array($issue["sid"], $tasks)) {
+								$tasks[] = $issue["sid"];
+							}
+						}
+					}	
 				}
 			}
 		}
@@ -6396,12 +6446,25 @@ class Compliance_report_model extends CI_Model
 		// 	"csp_reports_incidents.updated_at",
 		// 	"csp_reports_incidents.created_by"
 		// ]);
+		//
+		//
+		$report["internal_employees"] = $this->getCSPReportInternalEmployeesById($reportId, [
+			"sid",
+			"employee_sid"
+		]);
+		$report["external_employees"] = $this->getCSPReportExternalEmployeesById($reportId, [
+			"sid",
+			"external_name",
+			"external_email",
+		]);
 
 		$report["issuesWithIncident"] = $this->getIssuesWithIncident($reportId);
 		$report["question_answers"] = $this->getCSPReportQuestionAnswers($reportId);
 		//
 		// $report["emails"] = $this->getComplianceEmails($reportId, 0);
 		$report["libraryItems"] = $this->getComplianceReportFiles($reportId, 0, 0);
+		//
+
 		//
 		return $report;
 	}
@@ -7035,6 +7098,78 @@ class Compliance_report_model extends CI_Model
 			);
 	}
 
+	public function updateReportEmployees($reportId, $selectedEmployees, $loggedInEmployeeId)
+	{
+		if ($selectedEmployees) {
+			$employeeIds = [];
+			//
+			$reportEmployees = [];
+			foreach ($selectedEmployees as $employeeId) {
+				//
+				$employeeIds[] = $employeeId;
+				//
+				if (
+					$this
+						->db
+						->where('csp_reports_sid', $reportId)
+						->where('csp_report_incident_sid', 0)
+						->where('csp_reports_incidents_items_sid', 0)
+						->where('employee_sid', $employeeId)
+						->count_all_results('csp_reports_employees') > 0
+				) {
+					continue;
+				}
+				$reportEmployees[] = [
+					"csp_reports_sid" => $reportId,
+					"csp_report_incident_sid" => 0,
+					"csp_reports_incidents_items_sid" => 0,
+					"employee_sid" => $employeeId,
+					"created_by" => $loggedInEmployeeId,
+					"created_at" => getSystemDate(),
+					"updated_at" => getSystemDate(),
+				];
+			}
+			if ($reportEmployees) {
+				// insert new employees
+				$this->db->insert_batch("csp_reports_employees", $reportEmployees);
+			}
+			// update the count
+			$this
+				->db
+				->where("sid", $reportId)
+				->update("csp_reports", [
+					"allowed_internal_system_count" => count($reportEmployees),
+				]);
+			//
+			// delete
+			$this
+				->db
+				->where('csp_reports_sid', $reportId)
+				->where('csp_report_incident_sid', 0)
+				->where('csp_reports_incidents_items_sid', 0)
+				->where('is_manager', 0)
+				->where('is_external_employee', 0)
+				->where_not_in('employee_sid', $employeeIds)
+				->delete("csp_reports_employees");
+		} else {
+			$this
+				->db
+				->where('csp_reports_sid', $reportId)
+				->where('csp_report_incident_sid', 0)
+				->where('csp_reports_incidents_items_sid', 0)
+				->where('is_manager', 0)
+				->where('is_external_employee', 0)
+				->delete('csp_reports_employees');
+			// update the count
+			$this
+				->db
+				->where("sid", $reportId)
+				->update("csp_reports", [
+					"allowed_internal_system_count" => 0,
+				]);
+		}
+	}
+
 	public function updateItemEmployees($reportId, $incidentId, $issueId, $selectedEmployees, $loggedInEmployeeId)
 	{
 		if ($selectedEmployees) {
@@ -7085,6 +7220,7 @@ class Compliance_report_model extends CI_Model
 				->where('csp_report_incident_sid', $incidentId)
 				->where('csp_reports_incidents_items_sid', $issueId)
 				->where('is_external_employee', 0)
+				->where('is_manager', 0)
 				->where_not_in('employee_sid', $employeeIds)
 				->delete("csp_reports_employees");
 		} else {
@@ -7094,6 +7230,7 @@ class Compliance_report_model extends CI_Model
 				->where('csp_report_incident_sid', $incidentId)
 				->where('csp_reports_incidents_items_sid', $issueId)
 				->where('is_external_employee', 0)
+				->where('is_manager', 0)
 				->delete('csp_reports_employees');
 			// update the count
 			$this
@@ -7103,6 +7240,25 @@ class Compliance_report_model extends CI_Model
 					"allowed_internal_system_count" => 0,
 				]);
 		}
+	}
+
+	public function updateReportExternalEmployee($reportId, $employee, $loggedInEmployeeId)
+	{
+		// add external employees
+		$externalEmployees = [
+			"csp_reports_sid" => $reportId,
+			"csp_report_incident_sid" => 0,
+			"csp_reports_incidents_items_sid" => 0,
+			"is_external_employee" => 1,
+			"external_name" => $employee["name"],
+			"external_email" => $employee["email"],
+			"created_by" => $loggedInEmployeeId,
+			"created_at" => getSystemDate(),
+			"updated_at" => getSystemDate(),
+		];
+		$this->db->insert("csp_reports_employees", $externalEmployees);
+
+		return $this->db->insert_id();
 	}
 
 	public function updateItemExternalEmployee($reportId, $incidentId, $issueId, $employee, $loggedInEmployeeId)
@@ -7191,6 +7347,64 @@ class Compliance_report_model extends CI_Model
 		$a = $a->free_result();
 		//
 		return $b;
+	}
+
+	/**
+	 * Get all compliance reports
+	 *
+	 * @param int $reportId
+	 * @param int $loggedInEmployeeId
+	 * @param array $post
+	 * @return array
+	 */
+	public function addDepartmentsAndTeamsToReport(
+		int $reportId,
+		int $loggedInEmployeeId,
+		array $post
+	) {
+		//
+		$this
+			->db
+			->where("sid", $reportId)
+			->update(
+				"csp_reports",
+				[
+					"allowed_departments" => isset($post['departments']) ? implode(',', $post['departments']) : NULL,
+					"allowed_teams" => isset($post['teams']) ? implode(',', $post['teams']) : NULL,
+					"last_modified_by" => $loggedInEmployeeId,
+					"updated_at" => getSystemDate(),
+				]
+			);
+
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_report_incident_sid', 0);
+		$this->db->where('csp_reports_incidents_items_sid', 0);
+		$this->db->where('is_manager', 1);
+		$this->db->delete('csp_reports_employees');
+		//
+		$managersIds = $this->getDepartmentAndTeamManagers($post['departments'], $post['teams']);
+		//
+		if ($managersIds) {
+			//
+			$todayDateTime = getSystemDate();
+			//
+			foreach ($managersIds as $managerId) {
+				//
+				$dataToInsert = [];
+				$dataToInsert['csp_reports_sid'] = $reportId;
+				$dataToInsert['csp_report_incident_sid'] = 0;
+				$dataToInsert['csp_reports_incidents_items_sid'] = 0;
+				$dataToInsert['employee_sid'] = $managerId;
+				$dataToInsert['is_manager'] = 1;
+				$dataToInsert['created_by'] = $loggedInEmployeeId;
+				$dataToInsert['created_at'] = $todayDateTime;
+				$dataToInsert['updated_at'] = $todayDateTime;
+				//
+				$this->db->insert('csp_reports_employees', $dataToInsert);
+			}
+		}
+		//
+		return true;
 	}
 
 	/**
@@ -7305,7 +7519,7 @@ class Compliance_report_model extends CI_Model
 			}
 		}
 		//
-		return $managerIdsList;
+		return array_filter($managerIdsList);
 	}
 
 	public function getDepartmentAndTeamManagersInfo($departments, $teams)
@@ -7624,6 +7838,29 @@ class Compliance_report_model extends CI_Model
 		$this->db->trans_complete();
 
 		return $this->db->trans_status();
+	}
+
+	public function deleteReportDepartmentsAndTeams($reportId, $loggedInEmployeeId)
+	{
+		//
+		$this
+			->db
+			->where("sid", $reportId)
+			->update(
+				"csp_reports",
+				[
+					"allowed_departments" => NULL,
+					"allowed_teams" => NULL,
+					"last_modified_by" => $loggedInEmployeeId,
+					"updated_at" => getSystemDate(),
+				]
+			);
+		//
+		$this->db->where('csp_reports_sid', $reportId);
+		$this->db->where('csp_report_incident_sid', 0);
+		$this->db->where('csp_reports_incidents_items_sid', 0);
+		$this->db->where('is_manager', 1);
+		$this->db->delete('csp_reports_employees');
 	}
 
 	public function deleteAttachedDepartmentsAndTeams($issueId, $loggedInEmployeeId)

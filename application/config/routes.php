@@ -2866,6 +2866,11 @@ $route["csp/issues/(:num)/mark/done"]["post"] =
 $route["csp/add_file_to_incident_item"]["post"] =
   "v1/Compliance_safety_reporting_public/uploadAttachmentItemFile";
 
+$route["compliance_safety_reporting/report/(:num)/employees/internal"]["post"] =
+  "v1/Compliance_safety_reporting/updateReportEmployees/$1";  
+
+$route["compliance_safety_reporting/report/(:num)/employees/external"]["post"] =
+  "v1/Compliance_safety_reporting/updateReportExternalEmployee/$1";
 
 $route["compliance_safety_reporting/issues/(:num)/(:num)/(:num)/employees/internal"]["post"] =
   "v1/Compliance_safety_reporting/updateItemEmployees/$1/$2/$3";
@@ -2878,6 +2883,9 @@ $route["csp/delete_file/(:num)"]["delete"] =
 
 $route["compliance_safety_reporting/employee_dashboard/(:num)"]["get"] =
   "v1/Compliance_safety_reporting_employer/dashboard/$1";
+
+$route["compliance_safety_reporting/add_department_and_team_to_report/(:num)"]["post"] =
+  "v1/Compliance_safety_reporting/addDepartmentsAndTeamsToReport/$1";
 
 $route["compliance_safety_reporting/add_department_and_team/(:num)/(:num)/(:num)"]["post"] =
   "v1/Compliance_safety_reporting/addDepartmentsAndTeams/$1/$2/$3";
@@ -2909,8 +2917,12 @@ $route["cms/(:num)/home/product/status/(:num)/(:any)"] = "manage_admin/Cms/Produ
 $route["cms/(:num)/subtagstatus/(:num)/(:num)/(:any)"] =
   "manage_admin/Cms/PageSubTagStatus/$1/$2/$3/$4";
 
+$route["compliance_safety_reporting/delete_department_and_team_from_report/(:num)"]["delete"] =
+  "v1/Compliance_safety_reporting/deleteReportDepartmentsAndTeamsById/$1";
+
 $route["compliance_safety_reporting/delete_department_and_team/(:num)"]["delete"] =
   "v1/Compliance_safety_reporting/deleteIssueDepartmentsAndTeamsById/$1";
+
 $route["cms/update_product_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateHomeProductSortOrder/$1";
 $route["cms/update_product_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateHomeProductSortOrder/$1";
 

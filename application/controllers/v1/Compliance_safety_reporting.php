@@ -309,6 +309,8 @@ class Compliance_safety_reporting extends Base_csp
                     "csp_reports.updated_at",
                     "csp_reports.last_modified_by",
                     "csp_reports.answers_json",
+                    "csp_reports.allowed_departments",
+                    "csp_reports.allowed_teams",
                     "compliance_report_types.compliance_report_name",
                     "users.first_name",
                     "users.last_name",
@@ -320,7 +322,7 @@ class Compliance_safety_reporting extends Base_csp
                     "users.is_executive_admin",
                 ]
             );
-        // //
+        //
         if ($this->data["report"]['issuesWithIncident']) {
             foreach ($this->data["report"]['issuesWithIncident'] as $key => $issue) {
                 $filesCount = $this
@@ -381,6 +383,48 @@ class Compliance_safety_reporting extends Base_csp
         $this->data['pageJs'][] = 'https://code.highcharts.com/modules/export-data.js';
         $this->data['pageJs'][] = 'https://code.highcharts.com/modules/accessibility.js';
         $this->data['pageJs'][] = 'csp/dashboard';
+        //
+        $allDTEmployeeIds = [];
+        if ($this->data["report"]["allowed_departments"]) {
+            // get department CSP employees
+            $allDTEmployeeIds = $this
+                ->compliance_report_model
+                ->getDepartmentsCSPManagers(
+                    $this->data["report"]["allowed_departments"]
+                );
+        }
+        if ($this->data["report"]["allowed_teams"]) {
+            // get department CSP employees
+            $allDTEmployeeIds = array_merge($allDTEmployeeIds, $this
+                ->compliance_report_model
+                ->getTeamsCSPManagers(
+                    $this->data["report"]["allowed_teams"]
+                ));
+        }
+        //
+        $this->data["allDTEmployeeIds"] = array_unique(array_filter($allDTEmployeeIds));
+        //
+        // get the employees
+        $this->data["employees"] = $this
+            ->compliance_report_model
+            ->getActiveEmployees(
+                $this->getLoggedInCompany("sid"),
+                0
+            );
+        //
+        $departments = [];
+        $teams = [];
+        //
+        $this->data["employeesCount"] = count($this->data["allDTEmployeeIds"]) + count($this->data["report"]["internal_employees"]) + count($this->data["report"]["external_employees"]);
+        //
+        $departments = $this->compliance_report_model->getActiveDepartments($this->getLoggedInCompany("sid"));
+        //
+        if ($departments) {
+            $teams = $this->compliance_report_model->getTeams($this->getLoggedInCompany("sid"), $departments);
+        }
+        //
+        $this->data['departments'] = $departments;
+        $this->data['teams'] = $teams;
         //
         $this->renderView('compliance_safety_reporting/edit_report_new');
     }
@@ -1791,6 +1835,28 @@ class Compliance_safety_reporting extends Base_csp
      * process departments and teams
      * 
      * @param int $reportId
+     */
+    public function addDepartmentsAndTeamsToReport(int $reportId)
+    {
+        // get the post
+        $post = $this->input->post(null, true);
+        //
+        $this->compliance_report_model->addDepartmentsAndTeamsToReport(
+            $reportId,
+            $this->getLoggedInEmployee("sid"),
+            $post
+        );
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Data added successfully."]
+        );
+    }
+
+    /**
+     * process departments and teams
+     * 
+     * @param int $reportId
      * @param int $incidentId
      * @param int $itemId
      */
@@ -2406,6 +2472,22 @@ class Compliance_safety_reporting extends Base_csp
         );
     }
 
+    public function updateReportEmployees(int $reportId)
+    {
+        $this->compliance_report_model->updateReportEmployees(
+            $reportId,
+            $this->input->post("ids", true),
+            $this->getLoggedInEmployee("sid")
+        );
+
+        return SendResponse(
+            200,
+            [
+                "message" => "You have successfully updated the internal employees."
+            ]
+        );
+    }
+
     public function updateItemEmployees(int $reportId, int $incidentId, int $issueId)
     {
         $this->compliance_report_model->updateItemEmployees(
@@ -2420,6 +2502,23 @@ class Compliance_safety_reporting extends Base_csp
             200,
             [
                 "message" => "You have successfully updated the internal employees."
+            ]
+        );
+    }
+
+    public function updateReportExternalEmployee(int $reportId)
+    {
+        $id = $this->compliance_report_model->updateReportExternalEmployee(
+            $reportId,
+            $this->input->post("external", true),
+            $this->getLoggedInEmployee("sid")
+        );
+
+        return SendResponse(
+            200,
+            [
+                "message" => "You have successfully updated the internal employees.",
+                "id" => $id,
             ]
         );
     }
@@ -2479,6 +2578,19 @@ class Compliance_safety_reporting extends Base_csp
                 "message" => "You have successfully updated the issue questions.",
                 "reloadURL" => base_url("compliance_safety_reporting/edit/") . $reportId . "?tab=questions"
             ]
+        );
+    }
+
+    public function deleteReportDepartmentsAndTeamsById($reportId)
+    {
+        $this->compliance_report_model->deleteReportDepartmentsAndTeams(
+            $reportId,
+            $this->getLoggedInEmployee("sid")
+        );
+        // return the success
+        return sendResponse(
+            200,
+            ["message" => "Departments and teams removed successfully."]
         );
     }
 
