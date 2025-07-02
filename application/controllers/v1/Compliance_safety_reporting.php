@@ -1403,8 +1403,8 @@ class Compliance_safety_reporting extends Base_csp
     public function sendEmailsToReportManagers(int $reportId)
     {
         //allowed_internal_system_count
-        $this->compliance_report_model
-            ->manageAllowedDepartmentsAndTeamsManagers();
+        $this->compliance_report_model->manageAllowedDepartmentsAndTeamsManagers();
+        $this->compliance_report_model->manageReportAllowedDepartmentsAndTeamsManagers();
         //
         $this
             ->compliance_report_model
@@ -2043,8 +2043,8 @@ class Compliance_safety_reporting extends Base_csp
         //allowed_internal_system_count
         $issuesIds = $_POST['issuesIds'];
         //
-        $this->compliance_report_model
-            ->manageAllowedDepartmentsAndTeamsManagers();
+        $this->compliance_report_model->manageAllowedDepartmentsAndTeamsManagers();
+        $this->compliance_report_model->manageReportAllowedDepartmentsAndTeamsManagers();
         //
         foreach ($issuesIds as $issueId) {
             $this

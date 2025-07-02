@@ -7679,7 +7679,7 @@ class Compliance_report_model extends CI_Model
 	}
 
 	/**
-	 * manage departments and teams
+	 * manage departments and teams for issue
 	 *
 	 */
 	public function manageAllowedDepartmentsAndTeamsManagers()
@@ -7785,6 +7785,114 @@ class Compliance_report_model extends CI_Model
 			}
 		}
 	}
+
+	/**
+	 * manage departments and teams for report
+	 *
+	 */
+	public function manageReportAllowedDepartmentsAndTeamsManagers()
+	{
+		$allowedDepartmentsAndTeams = $this->db
+			->select("sid, allowed_departments, allowed_teams")
+			->get("csp_reports")
+			->result_array();
+		//
+		$session = $this->session->userdata('logged_in');
+		$loggedInEmployeeId = $session["employer_detail"]["sid"];
+		//
+		if ($allowedDepartmentsAndTeams) {
+			foreach ($allowedDepartmentsAndTeams as $reportRow) {
+				//
+				$managerIdsList = [];
+				//
+				if ($reportRow['allowed_departments']) {
+					//
+					$departments = explode(',', $reportRow['allowed_departments']);
+					//
+					foreach ($departments as $departmentId) {
+						$this->db->select("csp_managers_ids");
+						$this->db->where("sid", $departmentId);
+						$this->db->where("is_deleted", 0);
+						//
+						$records_obj = $this->db->get("departments_management");
+						$cspDepartmentManagerIds = $records_obj->row_array();
+						$records_obj->free_result();
+						//
+						if ($cspDepartmentManagerIds) {
+							//
+							$departmentManagerIds = explode(',', $cspDepartmentManagerIds['csp_managers_ids']);
+							//
+							foreach ($departmentManagerIds as $managerId) {
+								if (!in_array($managerId, $managerIdsList)) {
+									$managerIdsList[] = $managerId;
+								}
+							}
+						}
+					}
+				}
+				//
+				if ($reportRow['allowed_teams']) {
+					//
+					$teams = explode(',', $reportRow['allowed_teams']);
+					//
+					foreach ($teams as $teamId) {
+						$this->db->select("csp_managers_ids");
+						$this->db->where("sid", $teamId);
+						$this->db->where("is_deleted", 0);
+						//
+						$records_obj = $this->db->get("departments_team_management");
+						$cspTeamManagerIds = $records_obj->row_array();
+						$records_obj->free_result();
+						//
+						if ($cspTeamManagerIds) {
+							//
+							$teamManagerIds = explode(',', $cspTeamManagerIds['csp_managers_ids']);
+							//
+							foreach ($teamManagerIds as $managerId) {
+								if (!in_array($managerId, $managerIdsList)) {
+									$managerIdsList[] = $managerId;
+								}
+							}
+						}
+					}
+
+				}
+				//
+				$reportId = $reportRow['sid'];
+
+
+				//
+				$this->db->where('csp_reports_sid', $reportId);
+				$this->db->where('csp_report_incident_sid', 0);
+				$this->db->where('csp_reports_incidents_items_sid', 0);
+				$this->db->where('is_manager', 1);
+				$this->db->delete('csp_reports_employees');
+				//
+				$managersIds = array_filter($managerIdsList);
+				//
+				if ($managersIds) {
+					$todayDateTime = getSystemDate();
+					//
+					foreach ($managersIds as $managerId) {
+						//
+						$dataToInsert = [];
+						$dataToInsert['csp_reports_sid'] = $reportId;
+						$dataToInsert['csp_report_incident_sid'] = 0;
+						$dataToInsert['csp_reports_incidents_items_sid'] = 0;
+						$dataToInsert['employee_sid'] = $managerId;
+						$dataToInsert['is_manager'] = 1;
+						$dataToInsert['created_by'] = $loggedInEmployeeId;
+						$dataToInsert['created_at'] = $todayDateTime;
+						$dataToInsert['updated_at'] = $todayDateTime;
+						//
+						$this->db->insert('csp_reports_employees', $dataToInsert);
+					}
+				}
+			}
+		}
+	}
+
+
 
 	public function getReportIdByIncidentID($incidentId)
 	{

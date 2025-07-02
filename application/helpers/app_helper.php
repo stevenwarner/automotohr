@@ -4726,6 +4726,10 @@ if (!function_exists("isAllowedForCSP")) {
         $CI = get_instance();
         // load the model
         $CI->load->model("v1/compliance_report_model");
+        //
+        $CI->compliance_report_model->manageAllowedDepartmentsAndTeamsManagers();
+        $CI->compliance_report_model->manageReportAllowedDepartmentsAndTeamsManagers();
+        //
         // check the permission
         return (int) $CI->compliance_report_model->hasAccess($employeeId) >= 1;
     }

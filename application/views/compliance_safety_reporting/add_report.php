@@ -27,7 +27,7 @@
                     <div class="row">
                         <div class="col-lg-8 col-md-8 col-xs-12 col-sm-8">
                             <div class="form-group">
-                                <label for="report_title">Report Title <strong class="text-danger">*</strong></label>
+                                <label for="report_title">Report Title </label>
                                 <input type="text" class="form-control" id="report_title" name="report_title"
                                     value="<?= $type['report_title'] ?>" />
                             </div>

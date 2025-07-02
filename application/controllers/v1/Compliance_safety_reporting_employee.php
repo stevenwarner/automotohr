@@ -55,8 +55,6 @@ class Compliance_safety_reporting_employee extends Base_csp
             $this->data['downloadUrl'] = $this->data['downloadUrl'] . '?' . $queryString;
         }
         //
-        $this->compliance_report_model->manageAllowedDepartmentsAndTeamsManagers();
-        //
         $this->data["severity_levels"] = $this
             ->compliance_report_model
             ->getSeverityLevels();

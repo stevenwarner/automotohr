@@ -37,9 +37,9 @@ $(function Overview() {
 	//
 	$("#jsAddReportForm").validate({
 		rules: {
-			report_title: {
-				required: true,
-			},
+			// report_title: {
+			// 	required: true,
+			// },
 			report_type: {
 				required: true,
 			},
@@ -48,9 +48,9 @@ $(function Overview() {
 			},
 		},
 		messages: {
-			report_title: {
-				required: "Please enter report title",
-			},
+			// report_title: {
+			// 	required: "Please enter report title",
+			// },
 			report_date: {
 				required: "Please select report date",
 			},
