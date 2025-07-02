@@ -168,8 +168,8 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                                 <tr>
                                                                     <th class="col-xs-1">IP</th>
                                                                     <th class="col-xs-1">User</th>
-                                                                    <th class="col-xs-2">Page</th>
-                                                                    <th class="col-xs-4">Preferences</th>
+                                                                    <th class="col-xs-3">Page</th>
+                                                                    <th class="col-xs-3">Preferences</th>
                                                                     <th class="col-xs-2">Agent</th>
                                                                     <th class="col-xs-2">Date</th>
                                                                 </tr>
