@@ -2335,7 +2335,12 @@ class Home extends CI_Controller
             $insertData['preferences'] = json_encode($post['prefer']);
         }
 
-        //_e($insertData, true, true);
+         if ($this->session->userdata('logged_in')) {
+            $session_details = $this->session->userdata('logged_in');
+            $userSid = $session_details['employer_detail']['sid'];
+            $insertData['user_sid'] = $userSid;
+        }
+
         $this->settings_model->insert_cookie_log($insertData);
     }
 

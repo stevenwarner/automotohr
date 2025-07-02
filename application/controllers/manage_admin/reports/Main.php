@@ -120,8 +120,6 @@ class Main extends Admin_Controller
         // get filter records
         $this->data['records'] = $this->user_model->getCookiesData($this->input->get(null, false));
 
-        //_e($this->data['records'],true,true);
-
         if ($this->input->get('export') == 1) {
 
             header('Content-Type: text/csv; charset=utf-8');

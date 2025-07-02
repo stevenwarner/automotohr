@@ -2046,4 +2046,60 @@ class Advanced_report_model extends CI_Model
         $applications = $this->db->get('portal_applicant_jobs_queue')->result_array();
         return $applications;
     }
+
+    function get_cookies_report($preferences, $website = '', $start_date = '', $end_date = '',  $ip, $count, $per_page = NULL, $offset = NULL)
+    {
+
+        if (!empty($website) && $website != 'all') {
+            $multiple_keywords = explode(' ', $website);
+
+            if (count($multiple_keywords) == 1) {
+                $this->db->group_start();
+                $this->db->like('cookie_log_data.page_url', $website);
+                $this->db->group_end();
+            } else {
+                foreach ($multiple_keywords as $website) {
+                    $this->db->group_start();
+                    $this->db->like('cookie_log_data.page_url', $website);
+                    $this->db->group_end();
+                }
+            }
+        }
+
+        if (!empty($ip) && $ip != 'all') {
+            $this->db->where('cookie_log_data.client_ip', $ip);
+        }
+
+        if (!empty($preferences) && $preferences != 'all') {
+            $this->db->where("cookie_log_data.preferences REGEXP", $preferences);
+        }
+
+
+        if ($start_date && $end_date) {
+
+            if ((!empty($start_date) || !is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
+                $this->db->where('cookie_log_data.created_at BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
+            } else if ((!empty($start_date) || !is_null($start_date)) && (empty($end_date) || is_null($end_date))) {
+                $this->db->where('cookie_log_data.created_at >=', $start_date);
+            } else if ((empty($start_date) || is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
+            }
+        }
+
+
+        if ($per_page !== null && $offset !== null) {
+            $this->db->limit($per_page, $offset);
+        }
+
+        $this->db->order_by('cookie_log_data.sid', 'DESC');
+        // 
+
+        if ($count) {
+            $this->db->from('cookie_log_data');
+            $logData = $this->db->count_all_results();
+        } else {
+            $logData = $this->db->get('cookie_log_data')->result_array();
+        }
+
+        return $logData;
+    }
 }
