@@ -161,10 +161,8 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-xs-12 table-responsive">
-                                                    <table
-                                                        class="table table-bordered table-striped table-hover table-condensed "
-                                                        id="example">
+                                                <div class="table-responsive hr-innerpadding">
+                                                    <table class="table table-bordered table-stripped table-hover">
                                                         <thead>
                                                             <tr>
                                                                 <th class="col-xs-1">IP</th>
