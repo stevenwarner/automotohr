@@ -238,14 +238,14 @@ class Compliance_safety_reporting extends Base_csp
             ->compliance_report_model
             ->getAllReportTypes();
         // get the employees
-        // $this->data["employees"] = $this
-        //     ->compliance_report_model
-        //     ->getActiveEmployees(
-        //         $this->getLoggedInCompany("sid"),
-        //         $this->getLoggedInEmployee("sid")
-        //     );
+        $this->data["employees"] = $this
+            ->compliance_report_model
+            ->getActiveEmployees(
+                $this->getLoggedInCompany("sid"),
+                $this->getLoggedInEmployee("sid")
+            );
         // get the employees
-        $this->data["employees"] = [];
+        // $this->data["employees"] = [];
         $this->data['departments'] = $this->compliance_report_model->getDepartments($this->getLoggedInCompany("sid"));
         //
         $this->renderView('compliance_safety_reporting/add_report');
@@ -354,14 +354,7 @@ class Compliance_safety_reporting extends Base_csp
         $this->data['pageJs'][] = main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0");
         // load CSS
         $this->data['pageCSS'][] = main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0");
-        // get the employees
-        $this->data["employees"] = $this
-            ->compliance_report_model
-            ->getActiveEmployees(
-                $this->getLoggedInCompany("sid"),
-                0
-            );
-        $this->data["employees"] = [];
+        //
         // get the report incident types
         // $this->data["incidentTypes"] = $this
         //     ->compliance_report_model

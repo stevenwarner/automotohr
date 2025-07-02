@@ -82,7 +82,7 @@
                     <?php $this->load->view("compliance_safety_reporting/partials/incidents/report_question"); ?>
 
                     <!-- Employees -->
-                    <div class="panel panel-default hidden">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
                             <h1 class="panel-heading-text text-medium">
                                 <strong>Internal Employees</strong>
