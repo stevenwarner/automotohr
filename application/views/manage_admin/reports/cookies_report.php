@@ -179,16 +179,16 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                             <?php if (!empty($logData)) { ?>
                                                                 <?php foreach ($logData as $row) { ?>
                                                                     <tr>
-                                                                        <td style="vertical-align: middle;">
+                                                                        <td style="vertical-align: middle;width:10%;">
                                                                             <?php echo $row['client_ip']; ?>
                                                                         </td>
-                                                                        <td>
+                                                                        <td style="width:5%;">
                                                                             <?php echo $row['user_sid'] == 0 ? "Applicant" : "Employee"; ?>
                                                                         </td>
-                                                                        <td>
+                                                                        <td style="width:15%;">
                                                                             <?php echo $row['page_url']; ?>
                                                                         </td>
-                                                                        <td style="width:60%;">
+                                                                        <td style="width:40%;">
                                                                             <?php
                                                                             if ($row['preferences'] != '') {
 
@@ -237,11 +237,11 @@ $referrerChartArray[] = array('Referral', 'Count');
 
                                                                         </td>
 
-                                                                        <td>
+                                                                        <td style="width:15%;">
                                                                             <?php echo $row['client_agent']; ?>
 
                                                                         </td>
-                                                                        <td>
+                                                                        <td style="width:15%;">
                                                                             <?= formatDateToDB($row['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                                                         </td>
 
