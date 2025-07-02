@@ -161,101 +161,103 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="table-responsive hr-innerpadding">
-                                                    <table class="table table-bordered table-stripped table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="col-xs-1">IP</th>
-                                                                <th class="col-xs-1">User</th>
-                                                                <th class="col-xs-2">Page</th>
-                                                                <th class="col-xs-4">Preferences</th>
-                                                                <th class="col-xs-2">Agent</th>
-                                                                <th class="col-xs-2">Date</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <?php if (!empty($logData)) { ?>
-                                                                <?php foreach ($logData as $row) { ?>
+                                                <div class="col-xs-12">
+                                                    <div class="table-responsive hr-innerpadding">
+                                                        <table class="table table-bordered table-striped table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="col-xs-1">IP</th>
+                                                                    <th class="col-xs-1">User</th>
+                                                                    <th class="col-xs-2">Page</th>
+                                                                    <th class="col-xs-4">Preferences</th>
+                                                                    <th class="col-xs-2">Agent</th>
+                                                                    <th class="col-xs-2">Date</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php if (!empty($logData)) { ?>
+                                                                    <?php foreach ($logData as $row) { ?>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <?php echo $row['client_ip']; ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <?php echo $row['user_sid'] == 0 ? "Applicant" : "Employee"; ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <?php echo $row['page_url']; ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <?php
+                                                                                if ($row['preferences'] != '') {
+
+                                                                                    $preferencesArray = json_decode($row['preferences'], true);
+                                                                                ?>
+
+                                                                                    <div class="cookie-category">
+                                                                                        <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['doNotSell'] == 'true' ? " checked " : ""; ?> disabled>
+                                                                                        <label>Do not sell or share my personal information </label>
+                                                                                    </div>
+
+                                                                                    <div class="cookie-category">
+                                                                                        <input type="checkbox" class="cookiecheckbox" checked disabled>
+                                                                                        <label>Essential Cookies</label>
+                                                                                    </div>
+
+                                                                                    <div class="cookie-category">
+                                                                                        <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['performance'] == 'true' ? " checked " : ""; ?> disabled>
+                                                                                        <label>
+                                                                                            Performance and Functionality Cookies
+                                                                                        </label>
+                                                                                    </div>
+
+                                                                                    <div class="cookie-category">
+                                                                                        <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['analytics'] == 'true' ? " checked " : ""; ?> disabled>
+                                                                                        <label>Analytics and Customization Cookies</label>
+
+                                                                                    </div>
+
+                                                                                    <div class="cookie-category">
+                                                                                        <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['marketing'] == 'true' ? "checked" : ""; ?> disabled>
+                                                                                        <label>Advertising Cookies</label>
+
+                                                                                    </div>
+
+                                                                                    <div class="cookie-category">
+                                                                                        <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['social'] == 'true' ? " checked " : ""; ?> disabled>
+                                                                                        <label>Social networking Cookies</label>
+                                                                                    </div>
+
+                                                                                    <div class="cookie-category">
+                                                                                        <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['unclassified'] == 'true' ? " checked " : ""; ?> disabled>
+                                                                                        <label>Unclassified Cookies</label>
+                                                                                    </div>
+                                                                                <?php } ?>
+
+                                                                            </td>
+
+                                                                            <td>
+                                                                                <?php echo $row['client_agent']; ?>
+
+                                                                            </td>
+                                                                            <td>
+                                                                                <?= formatDateToDB($row['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
+                                                                            </td>
+
+
+                                                                        </tr>
+                                                                    <?php } ?>
+                                                                <?php } else { ?>
                                                                     <tr>
-                                                                        <td>
-                                                                            <?php echo $row['client_ip']; ?>
+                                                                        <td class="text-center" colspan="6">
+                                                                            No data found <?php echo $source; ?>
                                                                         </td>
-                                                                        <td>
-                                                                            <?php echo $row['user_sid'] == 0 ? "Applicant" : "Employee"; ?>
-                                                                        </td>
-                                                                        <td>
-                                                                            <?php echo $row['page_url']; ?>
-                                                                        </td>
-                                                                        <td>
-                                                                            <?php
-                                                                            if ($row['preferences'] != '') {
-
-                                                                                $preferencesArray = json_decode($row['preferences'], true);
-                                                                            ?>
-
-                                                                                <div class="cookie-category">
-                                                                                    <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['doNotSell'] == 'true' ? " checked " : ""; ?> disabled>
-                                                                                    <label>Do not sell or share my personal information </label>
-                                                                                </div>
-
-                                                                                <div class="cookie-category">
-                                                                                    <input type="checkbox" class="cookiecheckbox" checked disabled>
-                                                                                    <label>Essential Cookies</label>
-                                                                                </div>
-
-                                                                                <div class="cookie-category">
-                                                                                    <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['performance'] == 'true' ? " checked " : ""; ?> disabled>
-                                                                                    <label>
-                                                                                        Performance and Functionality Cookies
-                                                                                    </label>
-                                                                                </div>
-
-                                                                                <div class="cookie-category">
-                                                                                    <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['analytics'] == 'true' ? " checked " : ""; ?> disabled>
-                                                                                    <label>Analytics and Customization Cookies</label>
-
-                                                                                </div>
-
-                                                                                <div class="cookie-category">
-                                                                                    <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['marketing'] == 'true' ? "checked" : ""; ?> disabled>
-                                                                                    <label>Advertising Cookies</label>
-
-                                                                                </div>
-
-                                                                                <div class="cookie-category">
-                                                                                    <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['social'] == 'true' ? " checked " : ""; ?> disabled>
-                                                                                    <label>Social networking Cookies</label>
-                                                                                </div>
-
-                                                                                <div class="cookie-category">
-                                                                                    <input type="checkbox" class="cookiecheckbox" <?php echo $preferencesArray['unclassified'] == 'true' ? " checked " : ""; ?> disabled>
-                                                                                    <label>Unclassified Cookies</label>
-                                                                                </div>
-                                                                            <?php } ?>
-
-                                                                        </td>
-
-                                                                        <td>
-                                                                            <?php echo $row['client_agent']; ?>
-
-                                                                        </td>
-                                                                        <td>
-                                                                            <?= formatDateToDB($row['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
-                                                                        </td>
-
-
                                                                     </tr>
                                                                 <?php } ?>
-                                                            <?php } else { ?>
-                                                                <tr>
-                                                                    <td class="text-center" colspan="5">
-                                                                        No data found <?php echo $source; ?>
-                                                                    </td>
-                                                                </tr>
-                                                            <?php } ?>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>    
                                             </div>
                                             <hr />
                                             <div class="row">
