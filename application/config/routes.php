@@ -2945,3 +2945,8 @@ $route['indeed_applicant_disposition_report'] = 'manage_admin/reports/Main/indee
 $route['indeed_applicant_disposition_report_log/(:any)/(:any)']["get"] = 'manage_admin/reports/Main/indeedApplicantDispositionReportLog/$1/$2';
 $route['indeed_applicant_disposition_report_resend/(:any)/(:any)'] = 'manage_admin/reports/Main/indeedApplicantDispositionReportResend/$1/$2';
 
+//
+$route['manage_admin/reports/cookies_report/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/cookies_report/index/$1/$2/$3/$4/$5/$6';
+$route['manage_admin/reports/cookies_report/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/cookies_report/index/$1/$2/$3/$4/$5';
+
+$route['manage_admin/reports/cookies_report_export/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/cookies_report/export/$1/$2/$3/$4/$5';
