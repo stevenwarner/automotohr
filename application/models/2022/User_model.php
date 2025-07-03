@@ -791,6 +791,8 @@ class User_model extends CI_Model
         return  $changedData;
     }
 
+
+
     //
     public function getW4(
         $userId,
@@ -1137,5 +1139,98 @@ class User_model extends CI_Model
             ->limit(1)
             ->get("automotohr_logs.indeed_api_logs")
             ->row_array();
+    }
+
+    //
+    public function getEmployeeHistoryReport($start_date = '', $end_date = '', $count, $per_page = NULL, $offset = NULL)
+    {
+        //
+        $whereArray = [];
+        if ($start_date && $end_date) {
+            //
+            if ($start_date != '' && $start_date != 'all') {
+                $whereArray['profile_history.created_at >='] = $start_date;
+            }
+            //
+            if ($end_date != '' && $end_date != 'all') {
+                $whereArray['profile_history.created_at <='] = $end_date;
+            }
+        } else {
+            $whereArray['profile_history.created_at >='] = getSystemDate(DB_DATE) . ' 00:00:00';
+            $whereArray['profile_history.created_at <='] = getSystemDate(DB_DATE) . ' 23:59:59';
+        }
+
+        //
+        $changedData = $this->db
+            ->select('
+                profile_history.sid, 
+                profile_history.created_at,  
+                profile_history.profile_data,
+                users.first_name,
+                users.last_name,
+                users.nick_name,
+                users.access_level,
+                users.access_level_plus,
+                users.is_executive_admin,
+                users.job_title,
+                users.CompanyName,
+                users.parent_sid
+            ');
+        $changedData = $this->db->group_start();
+        $changedData = $this->db->where("profile_history.profile_data REGEXP '\"job_title\"'");
+        $changedData = $this->db->or_where("profile_history.profile_data REGEXP '\"email\"'");
+        $changedData = $this->db->group_end();
+        $changedData = $this->db->join('users', 'users.sid = profile_history.user_sid', 'inner');
+        $changedData = $this->db->where($whereArray);
+
+        if ($per_page !== null && $offset !== null) {
+            $this->db->limit($per_page, $offset);
+        }
+
+        $changedData = $this->db->order_by('profile_history.sid', 'DESC');
+
+        if ($count) {
+            $this->db->from('profile_history');
+            $changedData = $this->db->count_all_results();
+            return  $changedData;
+        } else {
+            $changedData = $this->db->get('profile_history')->result_array();
+        }
+
+        if (!empty($changedData)) {
+            foreach ($changedData as $key => $val) {
+                if ($val['CompanyName'] == '' || $val['CompanyName'] == null) {
+                    $companyName = $this->db
+                        ->select('CompanyName')
+                        ->where('sid', $val['parent_sid'])
+                        ->get('users')
+                        ->row_array();
+                    $changedData[$key]['CompanyName'] = $companyName['CompanyName'];
+                }
+            }
+        }
+
+        return  $changedData;
+    }
+
+    //
+    public function getBlacklistEmailReport($count, $per_page = NULL, $offset = NULL)
+    {
+    
+        //   
+        if ($per_page !== null && $offset !== null) {
+            $this->db->limit($per_page, $offset);
+        }
+
+        $emailData = $this->db->order_by('blacklist_emails.note', 'DESC');
+
+        if ($count) {
+            $this->db->from('blacklist_emails');
+            $emailData = $this->db->count_all_results();
+        } else {
+            $emailData = $this->db->get('blacklist_emails')->result_array();
+        }      
+
+        return  $emailData;
     }
 }

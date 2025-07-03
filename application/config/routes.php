@@ -915,7 +915,7 @@ $route['order_history/(:any)'] = 'order_history/index/$1';
 $route['manage_admin/reports/job_products_report/(:any)'] = 'manage_admin/reports/job_products_report/index/$1';
 $route['manage_admin/reports/applicant_source_report_daily/(:any)'] = 'manage_admin/reports/applicant_source_report_daily/index/$1';
 $route['manage_admin/reports/main/facebook_job_report'] = 'manage_admin/reports/Main/facebook_job_report';
-$route['manage_admin/reports/main/blacklist_email'] = 'manage_admin/reports/Main/blacklist_email';
+//$route['manage_admin/reports/main/blacklist_email'] = 'manage_admin/reports/Main/blacklist_email';
 //Resumes Module
 $route['resume_database'] = 'resume_database/index';
 $route['resume_database/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'resume_database/index/$1/$2/$3/$4/$5/$6';
@@ -1692,7 +1692,8 @@ $route['cn/redirect'] = 'Testing/redirectToComply';
 $route['cn/redirect/(:num)'] = 'Testing/redirectToComply/$1';
 
 //
-$route['employee_profile_data_report'] = 'manage_admin/reports/Main/employeeProfileDataReport';
+
+//$route['employee_profile_data_report'] = 'manage_admin/reports/Main/employeeProfileDataReport';
 
 //
 $route['fixEmployeeType'] = 'Cron_common/fixEmployeeType';
@@ -2962,3 +2963,15 @@ $route['manage_admin/reports/cookies_report/(:any)/(:any)/(:any)/(:any)/(:any)/(
 $route['manage_admin/reports/cookies_report/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/cookies_report/index/$1/$2/$3/$4/$5';
 
 $route['manage_admin/reports/cookies_report_export/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/cookies_report/export/$1/$2/$3/$4/$5';
+
+
+
+//
+$route['employee_profile_data_report/(:any)/(:any)/(:any)'] = 'manage_admin/reports/Main/employeeProfileDataReport/$1/$2/$3';
+$route['employee_profile_data_report/(:any)/(:any)'] = 'manage_admin/reports/Main/employeeProfileDataReport/$1/$2';
+$route['employee_profile_data_report'] = 'manage_admin/reports/Main/employeeProfileDataReport';
+
+
+$route['manage_admin/reports/main/blacklist_email'] = 'manage_admin/reports/Main/blacklist_email';
+$route['manage_admin/reports/main/blacklist_email/(:any)'] = 'manage_admin/reports/Main/blacklist_email/$1';
+

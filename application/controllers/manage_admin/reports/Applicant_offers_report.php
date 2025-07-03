@@ -13,11 +13,11 @@ class Applicant_offers_report extends Admin_Controller {
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
-    public function index($company_sid = 'all', $start_date = 'all', $end_date = 'all', $oem = 'all', $all = 1, $keyword = 'all') {
+    public function index($company_sid = 'all', $start_date = 'all', $end_date = 'all', $oem = 'all', $all = 1, $keyword = 'all', $page_number = 1) {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url       = 'manage_admin';
         $function_name      = 'applicant_offers_report';
-
+        
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;

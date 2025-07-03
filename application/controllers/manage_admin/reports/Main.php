@@ -71,21 +71,155 @@ class Main extends Admin_Controller
 
 
     //
-    function blacklist_email()
+    function blacklist_email($page_number = 1)
     {
         //
-        $this->data['jobs'] = $this->db
-            ->order_by('blacklist_emails.note', 'DESC')
-            ->get('blacklist_emails')
-            ->result_array();
+        $this->load->model('2022/User_model', 'user_model');
+        $this->data['flag'] = true;
 
+        $per_page = PAGINATION_RECORDS_PER_PAGE;
+        $offset = 0;
+        if ($page_number > 1) {
+            $offset = ($page_number - 1) * $per_page;
+        }
+
+        $total_records = $this->user_model->getBlacklistEmailReport(1);
+        $reportData = $this->user_model->getBlacklistEmailReport(0, $per_page, $offset);
+
+        $this->load->library('pagination');
+
+        $pagination_base = base_url('manage_admin/reports/main/blacklist_email');
+
+        //echo $pagination_base;
+        $config = array();
+        $config["base_url"] = $pagination_base;
+        $config["total_rows"] = $total_records;
+        $config["per_page"] = $per_page;
+        $config["uri_segment"] = 0;
+        $config["num_links"] = 1;
+        $config["use_page_numbers"] = true;
+        $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+        $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+        $config['first_link'] = '<i class="fa fa-angle-double-left"></i>';
+        $config['first_tag_open'] = '<li class="prev page">';
+        $config['first_tag_close'] = '</li>';
+        $config['last_link'] = '<i class="fa fa-angle-double-right"></i>';
+        $config['last_tag_open'] = '<li class="next page">';
+        $config['last_tag_close'] = '</li>';
+        $config['next_link'] = '<i class="fa fa-angle-right" style="line-height: 32px;"></i>';
+        $config['next_tag_open'] = '<li class="next page">';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '<i class="fa fa-angle-left" style="line-height: 32px;"></i>';
+        $config['prev_tag_open'] = '<li class="prev page">';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li class="page">';
+        $config['num_tag_close'] = '</li>';
+
+        $this->pagination->initialize($config);
+        $this->data["page_links"] = $this->pagination->create_links();
+
+        $this->data['current_page'] = $page_number;
+        $this->data['from_records'] = $offset == 0 ? 1 : $offset;
+        $this->data['to_records'] = $total_records < $per_page ? $total_records : $offset + $per_page;
+
+        //-----------------------------------Pagination Ends-----------------------------//
+        $this->data['data_count'] = $total_records;
+        $this->data['reportData'] = $reportData;
         //
         $this->render('manage_admin/reports/blacklist_emails');
     }
 
 
-    public function employeeProfileDataReport()
+    //
+    public function employeeProfileDataReport(
+        $startdate = 'all',
+        $enddate = 'all',
+        $page_number = 1
+    ) {
+
+        //
+        $this->data['page_title'] = 'Employee Profile Update - Report';
+        // load user model
+        $this->load->model('2022/User_model', 'user_model');
+        // get filter records
+
+        $start_date = urldecode($startdate);
+        $end_date = urldecode($enddate);
+        $this->data['flag'] = true;
+
+        if (!empty($start_date) && $start_date != 'all') {
+            $start_date_applied = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
+        } else {
+            $start_date_applied = "";
+        }
+
+        if (!empty($end_date) && $end_date != 'all') {
+            $end_date_applied = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
+        } else {
+            $end_date_applied = "";
+        }
+
+        $per_page = PAGINATION_RECORDS_PER_PAGE;
+        $offset = 0;
+        if ($page_number > 1) {
+            $offset = ($page_number - 1) * $per_page;
+        }
+        //
+        $total_records = $this->user_model->getEmployeeHistoryReport($start_date_applied, $end_date_applied, 1);
+
+        $reportData = $this->user_model->getEmployeeHistoryReport($start_date_applied, $end_date_applied, 0, $per_page, $offset);
+
+        $this->load->library('pagination');
+
+        $pagination_base = base_url('employee_profile_data_report') . '/' . urlencode($start_date) . '/' . urlencode($end_date);
+
+        //echo $pagination_base;
+        $config = array();
+        $config["base_url"] = $pagination_base;
+        $config["total_rows"] = $total_records;
+        $config["per_page"] = $per_page;
+        $config["uri_segment"] = 4;
+        $config["num_links"] = 4;
+        $config["use_page_numbers"] = true;
+        $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+        $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+        $config['first_link'] = '<i class="fa fa-angle-double-left"></i>';
+        $config['first_tag_open'] = '<li class="prev page">';
+        $config['first_tag_close'] = '</li>';
+        $config['last_link'] = '<i class="fa fa-angle-double-right"></i>';
+        $config['last_tag_open'] = '<li class="next page">';
+        $config['last_tag_close'] = '</li>';
+        $config['next_link'] = '<i class="fa fa-angle-right" style="line-height: 32px;"></i>';
+        $config['next_tag_open'] = '<li class="next page">';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '<i class="fa fa-angle-left" style="line-height: 32px;"></i>';
+        $config['prev_tag_open'] = '<li class="prev page">';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li class="page">';
+        $config['num_tag_close'] = '</li>';
+
+
+        $this->pagination->initialize($config);
+        $this->data["page_links"] = $this->pagination->create_links();
+
+        $this->data['current_page'] = $page_number;
+        $this->data['from_records'] = $offset == 0 ? 1 : $offset;
+        $this->data['to_records'] = $total_records < $per_page ? $total_records : $offset + $per_page;
+
+        //-----------------------------------Pagination Ends-----------------------------//
+        $this->data['applicants_count'] = $total_records;
+        $this->data['reportData'] = $reportData;
+        //
+        $this->render('manage_admin/company/employee_profile_change_report');
+    }
+
+    public function employeeProfileDataReport_OLD()
     {
+
         //
         $this->data['page_title'] = 'Employee Profile Update - Report';
         // load user model
