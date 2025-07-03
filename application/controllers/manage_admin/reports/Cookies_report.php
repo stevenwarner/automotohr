@@ -172,12 +172,11 @@ class Cookies_report extends Admin_Controller
         fputcsv($output, array(''));
         fputcsv($output, array('Cookies Data Report'));
         fputcsv($output, array(''));
-        fputcsv($output, array('IP', 'User', 'Page', 'Preferences', 'Agent', 'Date'));
+        fputcsv($output, array('IP', 'Page', 'Preferences', 'Agent', 'Date'));
         foreach ($logData as $dataRow) {
 
             $input = array();
             $input['IP'] = $dataRow['client_ip'];
-            $input['User'] =  $dataRow['user_sid'] == 0 ? "Applicant" : "Employee";
             $input['Page_URl'] = $dataRow['page_url'];
 
             if ($dataRow['preferences'] != '') {

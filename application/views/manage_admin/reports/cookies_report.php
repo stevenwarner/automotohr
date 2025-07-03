@@ -166,12 +166,11 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                         <table class="table table-bordered table-striped table-hover">
                                                             <thead>
                                                                 <tr>
-                                                                    <th class="col-xs-1">IP</th>
-                                                                    <th class="col-xs-1">User</th>
-                                                                    <th class="col-xs-3">Page</th>
-                                                                    <th class="col-xs-3">Preferences</th>
-                                                                    <th class="col-xs-2">Agent</th>
-                                                                    <th class="col-xs-2">Date</th>
+                                                                    <th class="col-lg-2">IP</th>
+                                                                    <th class="col-lg-3">Page</th>
+                                                                    <th class="col-lg-3">Preferences</th>
+                                                                    <th class="col-lg-2">Agent</th>
+                                                                    <th class="col-lg-2">Date</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -181,9 +180,7 @@ $referrerChartArray[] = array('Referral', 'Count');
                                                                             <td>
                                                                                 <?php echo $row['client_ip']; ?>
                                                                             </td>
-                                                                            <td>
-                                                                                <?php echo $row['user_sid'] == 0 ? "Applicant" : "Employee"; ?>
-                                                                            </td>
+                                                                          
                                                                             <td>
                                                                                 <?php echo $row['page_url']; ?>
                                                                             </td>

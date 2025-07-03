@@ -142,7 +142,7 @@
             <span>
                 This website uses cookies to enhance your browsing experience, analyze website traffic, and remember
                 your preferences. For more details about the cookies we use and how we manage your data, please review
-                our <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>privacy-policy" class="">Privacy Policy</a>.
+                our <a href="<?php echo base_url('terms-of-use');?>" class="">Privacy Policy</a>.
             </span>
         </div>
         <div class="col-md-4 text-center">
@@ -167,7 +167,7 @@
             preferences at any time. Remember that disabling cookies may affect your
             experience on the website. You can learn more about how we use cookies by
             visiting our <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>cookie-policy" target="_blank">Cookie Policy</a> and
-            <a href="<?php echo MAIN_STORE_FULL_URL_SSL; ?>privacy-policy" target="_blank">Privacy Policy</a>.
+            <a href="<?php echo base_url('terms-of-use');?>" target="_blank">Privacy Policy</a>.
         </p>
 
         <div class="cookie-category">
