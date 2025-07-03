@@ -254,6 +254,7 @@
 
         <script>
             const LS_KEY = 'automotohr_cookie_preferences_ams';
+            let getsavedPrefs = [];
             // Utility to set a cookie
             function setCookie(name, value, days) {
                 const date = new Date();
@@ -261,20 +262,23 @@
                 const expires = "expires=" + date.toUTCString();
                 document.cookie = `${name}=${value};${expires};path=/`;
 
-                //
-                var baseURI = '<?php echo base_url(); ?>';
-                var userAgent = navigator.userAgent;
-                var currentUrl = window.location.href;
-                const cookieDataObj = {
-                    userAgent: userAgent,
-                    currentUrl: currentUrl
-                };
+                //             
+                ['toggle-performance', 'toggle-analytics', 'toggle-marketing', 'toggle-social', 'toggle-unclassified']
+                .forEach(id => document.getElementById(id).checked = true);
+                savePreferences();
 
-                $.ajax({
-                    url: baseURI + "cookie/savecookiedata",
-                    method: "POST",
-                    data: cookieDataObj,
-                })
+            }
+
+            function setCookiePref(name, value, days, savepref = true) {
+
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                const expires = "expires=" + date.toUTCString();
+                document.cookie = `${name}=${value};${expires};path=/`;
+                //
+                if (savepref == true) {
+                    savePreferences();
+                }
 
             }
 
@@ -320,9 +324,7 @@
         </script>
 
 
-
         <script>
-            let getsavedPrefs = [];
             const modal = document.getElementById('cookie-modal');
 
             modal.style.display = 'none';
@@ -355,13 +357,15 @@
             window.acceptAll = () => {
                 ['toggle-performance', 'toggle-analytics', 'toggle-marketing', 'toggle-social', 'toggle-unclassified']
                 .forEach(id => document.getElementById(id).checked = true);
-                savePreferences();
+                setCookiePref("cookie_consent", "accepted", 365);
+                document.getElementById("cookie-banner").style.display = "none";
             };
 
             window.rejectAll = () => {
                 ['toggle-performance', 'toggle-analytics', 'toggle-marketing', 'toggle-social', 'toggle-unclassified']
                 .forEach(id => document.getElementById(id).checked = false);
-                savePreferences();
+                setCookiePref("cookie_consent", "accepted", 365);
+                document.getElementById("cookie-banner").style.display = "none";
             };
 
             window.savePreferences = () => {
@@ -371,7 +375,10 @@
                 closeModal();
                 applyConsent(prefs);
                 getsavedPrefs = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+                setCookiePref("cookie_consent", "accepted", 365, false);
                 saveCookieLog();
+                document.getElementById("cookie-banner").style.display = "none";
+
             };
 
             window.closeModal = () => {
