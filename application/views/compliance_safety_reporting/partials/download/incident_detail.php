@@ -5,7 +5,7 @@
 </article>
 
 <!-- Incident Creator Information section Start -->
-<table class="incident-table">
+<!-- <table class="incident-table">
     <thead>
         <tr class="bg-gray">
             <th colspan="4">
@@ -36,7 +36,7 @@
             </td>
         </tr>
     </tbody>
-</table>
+</table> -->
 <!-- Incident Creator Information section End -->
 
 <?php 
